@@ -1,0 +1,6724 @@
+{
+  "interactions": [
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 185164,
+        "name": "Mastery: Demonic Presence",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 206477,
+        "name": "Unleashed Power",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207744,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207771,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 208628,
+        "name": "Exergy",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 247938,
+        "name": "Chaos Blades",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        2,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 390213,
+        "name": "Burning Blood",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 394934,
+        "name": "Seething Chaos",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 427641,
+        "name": "Inertia",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 428241,
+        "name": "Demon Hide",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 442688,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238676,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 179057,
+        "name": "Chaos Nova"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 208628,
+        "name": "Exergy",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 208826,
+        "name": "Mo'arg Bionic Stabilizers",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 247938,
+        "name": "Chaos Blades",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        2,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 320386,
+        "name": "Bouncing Glaives",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 390155,
+        "name": "Serrated Glaive",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 391275,
+        "name": "Accelerated Blade",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 394934,
+        "name": "Seething Chaos",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 427641,
+        "name": "Inertia",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 429211,
+        "name": "Champion of the Glaive",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "range_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 442688,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238676,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 185123,
+        "name": "Throw Glaive"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 204909,
+        "name": "Soul Rending",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 187827,
+        "name": "Metamorphosis"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 217996,
+        "name": "Soul Rending",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 187827,
+        "name": "Metamorphosis"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 235893,
+        "name": "First of the Illidari",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 187827,
+        "name": "Metamorphosis"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 320421,
+        "name": "Rush of Chaos",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 187827,
+        "name": "Metamorphosis"
+      },
+      "type": "cooldown_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 321068,
+        "name": "Metamorphosis",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 187827,
+        "name": "Metamorphosis"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 357419,
+        "name": "Cover of Darkness",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 196718,
+        "name": "Darkness"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 389781,
+        "name": "Long Night",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 196718,
+        "name": "Darkness"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 389783,
+        "name": "Pitch Black",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 196718,
+        "name": "Darkness"
+      },
+      "type": "cooldown_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 203550,
+        "name": "Blind Fury",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 198013,
+        "name": "Eye Beam"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 226334,
+        "name": "Soul Flame of Insight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 198013,
+        "name": "Eye Beam"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 203551,
+        "name": "Prepared",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 198793,
+        "name": "Vengeful Retreat"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 389688,
+        "name": "Tactical Retreat",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 198793,
+        "name": "Vengeful Retreat"
+      },
+      "type": "cooldown_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 444929,
+        "name": "Evasive Action",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 198793,
+        "name": "Vengeful Retreat"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 209281,
+        "name": "Quickened Sigils",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 202137,
+        "name": "Sigil of Silence"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 202137,
+        "name": "Sigil of Silence"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 389715,
+        "name": "Chains of Anger",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 202137,
+        "name": "Sigil of Silence"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 209281,
+        "name": "Quickened Sigils",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 202138,
+        "name": "Sigil of Chains"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 202138,
+        "name": "Sigil of Chains"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 389715,
+        "name": "Chains of Anger",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 202138,
+        "name": "Sigil of Chains"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 187827,
+        "name": "Metamorphosis",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 212818,
+        "name": "Fiery Demise",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 326486,
+        "name": "Mark of the Ogre",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 345871,
+        "name": "Half-Giant Empowerment",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 389997,
+        "name": "Shear Fury",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 409645,
+        "name": "Fires of Fel",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203782,
+        "name": "Shear"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207744,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207771,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 212818,
+        "name": "Fiery Demise",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 235543,
+        "name": "Spirit of the Darkness Flame",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 272985,
+        "name": "Revel in Pain",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 337542,
+        "name": "Spirit of the Darkness Flame",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 343010,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 390213,
+        "name": "Burning Blood",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 409645,
+        "name": "Fires of Fel",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 428241,
+        "name": "Demon Hide",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204021,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 209281,
+        "name": "Quickened Sigils",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204596,
+        "name": "Sigil of Flame"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204596,
+        "name": "Sigil of Flame"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 389715,
+        "name": "Chains of Anger",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 204596,
+        "name": "Sigil of Flame"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207744,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207771,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 212818,
+        "name": "Fiery Demise",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 390213,
+        "name": "Burning Blood",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 409645,
+        "name": "Fires of Fel",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 428241,
+        "name": "Demon Hide",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207407,
+        "name": "Soul Carver"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 209281,
+        "name": "Quickened Sigils",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207684,
+        "name": "Sigil of Misery"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207684,
+        "name": "Sigil of Misery"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 389715,
+        "name": "Chains of Anger",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207684,
+        "name": "Sigil of Misery"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 235543,
+        "name": "Spirit of the Darkness Flame",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207744,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 272985,
+        "name": "Revel in Pain",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207744,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 337542,
+        "name": "Spirit of the Darkness Flame",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207744,
+        "name": "Fiery Brand"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 343010,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 207744,
+        "name": "Fiery Brand"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 338671,
+        "name": "Fel Defender",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 212084,
+        "name": "Fel Devastation"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 452489,
+        "name": "Demonsurge",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 212084,
+        "name": "Fel Devastation"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 258920,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "buff_grant",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 326486,
+        "name": "Mark of the Ogre",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 345871,
+        "name": "Half-Giant Empowerment",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 427913,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 427914,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 427915,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 452435,
+        "name": "Demonsurge",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "buff_grant",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 258920,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "buff_grant",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 326486,
+        "name": "Mark of the Ogre",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 345871,
+        "name": "Half-Giant Empowerment",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 391172,
+        "name": "Soul Furnace",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 427913,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 427914,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 427915,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        6
+      ]
+    },
+    {
+      "source": {
+        "id": 442492,
+        "name": "Incisive Blade",
+        "isTalent": true,
+        "tree": "hero",
+        "heroSpec": "Aldrachi Reaver"
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 452435,
+        "name": "Demonsurge",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "buff_grant",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238462,
+        "name": "Scarred Strikes",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 232893,
+        "name": "Felblade"
+      },
+      "type": "unknown",
+      "effects": [
+        3,
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207744,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207771,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 212818,
+        "name": "Fiery Demise",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 390213,
+        "name": "Burning Blood",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 391172,
+        "name": "Soul Furnace",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 409645,
+        "name": "Fires of Fel",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 428241,
+        "name": "Demon Hide",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 452435,
+        "name": "Demonsurge",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247455,
+        "name": "Spirit Bomb"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 389985,
+        "name": "Soulcrush",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247456,
+        "name": "Frailty"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 185164,
+        "name": "Mastery: Demonic Presence",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207744,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207771,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 208628,
+        "name": "Exergy",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 247938,
+        "name": "Chaos Blades",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        2,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 390213,
+        "name": "Burning Blood",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 394934,
+        "name": "Seething Chaos",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 427641,
+        "name": "Inertia",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 428241,
+        "name": "Demon Hide",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 442688,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238676,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258860,
+        "name": "Essence Break"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207548,
+        "name": "Agonizing Flames",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 320331,
+        "name": "Infernal Armor",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 320377,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 346278,
+        "name": "Burning Wound",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 433719,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 433721,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 433724,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 433737,
+        "name": "Immolation Aura",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 452489,
+        "name": "Demonsurge",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258920,
+        "name": "Immolation Aura"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 326486,
+        "name": "Mark of the Ogre",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258925,
+        "name": "Fel Barrage"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 345871,
+        "name": "Half-Giant Empowerment",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 258925,
+        "name": "Fel Barrage"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 187827,
+        "name": "Metamorphosis",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 263642,
+        "name": "Fracture"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        9,
+        10
+      ]
+    },
+    {
+      "source": {
+        "id": 212818,
+        "name": "Fiery Demise",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 263642,
+        "name": "Fracture"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 326486,
+        "name": "Mark of the Ogre",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 263642,
+        "name": "Fracture"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 345871,
+        "name": "Half-Giant Empowerment",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 263642,
+        "name": "Fracture"
+      },
+      "type": "unknown",
+      "effects": [
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 409645,
+        "name": "Fires of Fel",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 263642,
+        "name": "Fracture"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207744,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207771,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 212818,
+        "name": "Fiery Demise",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 390213,
+        "name": "Burning Blood",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 409645,
+        "name": "Fires of Fel",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 428241,
+        "name": "Demon Hide",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 320341,
+        "name": "Bulk Extraction"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 370965,
+        "name": "The Hunt"
+      },
+      "type": "unknown",
+      "effects": [
+        1,
+        3,
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 209281,
+        "name": "Quickened Sigils",
+        "isTalent": true,
+        "tree": "class",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 390163,
+        "name": "Sigil of Spite"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 390163,
+        "name": "Sigil of Spite"
+      },
+      "type": "unknown",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 389715,
+        "name": "Chains of Anger",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 390163,
+        "name": "Sigil of Spite"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    }
+  ],
+  "bySpell": {
+    "179057": {
+      "name": "Chaos Nova",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Mastery: Demonic Presence",
+          "sourceId": 185164,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Unleashed Power",
+          "sourceId": 206477,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207744,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207771,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Exergy",
+          "sourceId": 208628,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chaos Blades",
+          "sourceId": 247938,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Blood",
+          "sourceId": 390213,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Seething Chaos",
+          "sourceId": 394934,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Inertia",
+          "sourceId": 427641,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Hide",
+          "sourceId": 428241,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 442688,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238676,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "185123": {
+      "name": "Throw Glaive",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Exergy",
+          "sourceId": 208628,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Mo'arg Bionic Stabilizers",
+          "sourceId": 208826,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chaos Blades",
+          "sourceId": 247938,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Bouncing Glaives",
+          "sourceId": 320386,
+          "type": "damage_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Serrated Glaive",
+          "sourceId": 390155,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Accelerated Blade",
+          "sourceId": 391275,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Seething Chaos",
+          "sourceId": 394934,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Inertia",
+          "sourceId": 427641,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Champion of the Glaive",
+          "sourceId": 429211,
+          "type": "range_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 442688,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238676,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "187827": {
+      "name": "Metamorphosis",
+      "modifiers": [
+        {
+          "source": "Soul Rending",
+          "sourceId": 204909,
+          "type": "damage_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Soul Rending",
+          "sourceId": 217996,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "First of the Illidari",
+          "sourceId": 235893,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Rush of Chaos",
+          "sourceId": 320421,
+          "type": "cooldown_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Metamorphosis",
+          "sourceId": 321068,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "196718": {
+      "name": "Darkness",
+      "modifiers": [
+        {
+          "source": "Cover of Darkness",
+          "sourceId": 357419,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Long Night",
+          "sourceId": 389781,
+          "type": "duration_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Pitch Black",
+          "sourceId": 389783,
+          "type": "cooldown_modifier",
+          "tree": "class",
+          "heroSpec": null
+        }
+      ]
+    },
+    "198013": {
+      "name": "Eye Beam",
+      "modifiers": [
+        {
+          "source": "Blind Fury",
+          "sourceId": 203550,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Soul Flame of Insight",
+          "sourceId": 226334,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "198793": {
+      "name": "Vengeful Retreat",
+      "modifiers": [
+        {
+          "source": "Prepared",
+          "sourceId": 203551,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Tactical Retreat",
+          "sourceId": 389688,
+          "type": "cooldown_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Evasive Action",
+          "sourceId": 444929,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "202137": {
+      "name": "Sigil of Silence",
+      "modifiers": [
+        {
+          "source": "Quickened Sigils",
+          "sourceId": 209281,
+          "type": "duration_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chains of Anger",
+          "sourceId": 389715,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        }
+      ]
+    },
+    "202138": {
+      "name": "Sigil of Chains",
+      "modifiers": [
+        {
+          "source": "Quickened Sigils",
+          "sourceId": 209281,
+          "type": "duration_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chains of Anger",
+          "sourceId": 389715,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        }
+      ]
+    },
+    "203782": {
+      "name": "Shear",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Metamorphosis",
+          "sourceId": 187827,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Demise",
+          "sourceId": 212818,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Mark of the Ogre",
+          "sourceId": 326486,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Half-Giant Empowerment",
+          "sourceId": 345871,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Shear Fury",
+          "sourceId": 389997,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Fires of Fel",
+          "sourceId": 409645,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "204021": {
+      "name": "Fiery Brand",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207744,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207771,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Demise",
+          "sourceId": 212818,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Spirit of the Darkness Flame",
+          "sourceId": 235543,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Revel in Pain",
+          "sourceId": 272985,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Spirit of the Darkness Flame",
+          "sourceId": 337542,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 343010,
+          "type": "duration_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Blood",
+          "sourceId": 390213,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Fires of Fel",
+          "sourceId": 409645,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Hide",
+          "sourceId": 428241,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "204596": {
+      "name": "Sigil of Flame",
+      "modifiers": [
+        {
+          "source": "Quickened Sigils",
+          "sourceId": 209281,
+          "type": "duration_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chains of Anger",
+          "sourceId": 389715,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        }
+      ]
+    },
+    "207407": {
+      "name": "Soul Carver",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207744,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207771,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Demise",
+          "sourceId": 212818,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Blood",
+          "sourceId": 390213,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Fires of Fel",
+          "sourceId": 409645,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Hide",
+          "sourceId": 428241,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "207684": {
+      "name": "Sigil of Misery",
+      "modifiers": [
+        {
+          "source": "Quickened Sigils",
+          "sourceId": 209281,
+          "type": "duration_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chains of Anger",
+          "sourceId": 389715,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        }
+      ]
+    },
+    "207744": {
+      "name": "Fiery Brand",
+      "modifiers": [
+        {
+          "source": "Spirit of the Darkness Flame",
+          "sourceId": 235543,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Revel in Pain",
+          "sourceId": 272985,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Spirit of the Darkness Flame",
+          "sourceId": 337542,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 343010,
+          "type": "duration_modifier",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "212084": {
+      "name": "Fel Devastation",
+      "modifiers": [
+        {
+          "source": "Fel Defender",
+          "sourceId": 338671,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demonsurge",
+          "sourceId": 452489,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "228477": {
+      "name": "Soul Cleave",
+      "modifiers": [
+        {
+          "source": "Immolation Aura",
+          "sourceId": 258920,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Mark of the Ogre",
+          "sourceId": 326486,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Half-Giant Empowerment",
+          "sourceId": 345871,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 427913,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 427914,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 427915,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demonsurge",
+          "sourceId": 452435,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "228478": {
+      "name": "Soul Cleave",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 258920,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Mark of the Ogre",
+          "sourceId": 326486,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Half-Giant Empowerment",
+          "sourceId": 345871,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Soul Furnace",
+          "sourceId": 391172,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 427913,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 427914,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 427915,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Incisive Blade",
+          "sourceId": 442492,
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver"
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demonsurge",
+          "sourceId": 452435,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Scarred Strikes",
+          "sourceId": 1238462,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "232893": {
+      "name": "Felblade",
+      "modifiers": [
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "247455": {
+      "name": "Spirit Bomb",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207744,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207771,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Demise",
+          "sourceId": 212818,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Blood",
+          "sourceId": 390213,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Soul Furnace",
+          "sourceId": 391172,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fires of Fel",
+          "sourceId": 409645,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Hide",
+          "sourceId": 428241,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demonsurge",
+          "sourceId": 452435,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "247456": {
+      "name": "Frailty",
+      "modifiers": [
+        {
+          "source": "Soulcrush",
+          "sourceId": 389985,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        }
+      ]
+    },
+    "258860": {
+      "name": "Essence Break",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Mastery: Demonic Presence",
+          "sourceId": 185164,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207744,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207771,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Exergy",
+          "sourceId": 208628,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chaos Blades",
+          "sourceId": 247938,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Blood",
+          "sourceId": 390213,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Seething Chaos",
+          "sourceId": 394934,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Inertia",
+          "sourceId": 427641,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Hide",
+          "sourceId": 428241,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 442688,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238676,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "258920": {
+      "name": "Immolation Aura",
+      "modifiers": [
+        {
+          "source": "Agonizing Flames",
+          "sourceId": 207548,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Infernal Armor",
+          "sourceId": 320331,
+          "type": "damage_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 320377,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Wound",
+          "sourceId": 346278,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 433719,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 433721,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 433724,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Immolation Aura",
+          "sourceId": 433737,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demonsurge",
+          "sourceId": 452489,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "258925": {
+      "name": "Fel Barrage",
+      "modifiers": [
+        {
+          "source": "Mark of the Ogre",
+          "sourceId": 326486,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Half-Giant Empowerment",
+          "sourceId": 345871,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "263642": {
+      "name": "Fracture",
+      "modifiers": [
+        {
+          "source": "Metamorphosis",
+          "sourceId": 187827,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Demise",
+          "sourceId": 212818,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Mark of the Ogre",
+          "sourceId": 326486,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Half-Giant Empowerment",
+          "sourceId": 345871,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fires of Fel",
+          "sourceId": 409645,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "320341": {
+      "name": "Bulk Extraction",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207744,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207771,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Demise",
+          "sourceId": 212818,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Blood",
+          "sourceId": 390213,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Fires of Fel",
+          "sourceId": 409645,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Hide",
+          "sourceId": 428241,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "370965": {
+      "name": "The Hunt",
+      "modifiers": [
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "390163": {
+      "name": "Sigil of Spite",
+      "modifiers": [
+        {
+          "source": "Quickened Sigils",
+          "sourceId": 209281,
+          "type": "duration_modifier",
+          "tree": "class",
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "unknown",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Chains of Anger",
+          "sourceId": 389715,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        }
+      ]
+    }
+  },
+  "byTalent": {
+    "163073": {
+      "name": "Demon Soul",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "185164": {
+      "name": "Mastery: Demonic Presence",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        }
+      ]
+    },
+    "187827": {
+      "name": "Metamorphosis",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Fracture",
+          "spellId": 263642,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "203550": {
+      "name": "Blind Fury",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Eye Beam",
+          "spellId": 198013,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "203551": {
+      "name": "Prepared",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Vengeful Retreat",
+          "spellId": 198793,
+          "type": "unknown"
+        }
+      ]
+    },
+    "204909": {
+      "name": "Soul Rending",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Metamorphosis",
+          "spellId": 187827,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "206477": {
+      "name": "Unleashed Power",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        }
+      ]
+    },
+    "207548": {
+      "name": "Agonizing Flames",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "207744": {
+      "name": "Fiery Brand",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "buff_grant"
+        }
+      ]
+    },
+    "207771": {
+      "name": "Fiery Brand",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "208628": {
+      "name": "Exergy",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        }
+      ]
+    },
+    "208826": {
+      "name": "Mo'arg Bionic Stabilizers",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        }
+      ]
+    },
+    "209281": {
+      "name": "Quickened Sigils",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Sigil of Silence",
+          "spellId": 202137,
+          "type": "duration_modifier"
+        },
+        {
+          "spell": "Sigil of Chains",
+          "spellId": 202138,
+          "type": "duration_modifier"
+        },
+        {
+          "spell": "Sigil of Flame",
+          "spellId": 204596,
+          "type": "duration_modifier"
+        },
+        {
+          "spell": "Sigil of Misery",
+          "spellId": 207684,
+          "type": "duration_modifier"
+        },
+        {
+          "spell": "Sigil of Spite",
+          "spellId": 390163,
+          "type": "duration_modifier"
+        }
+      ]
+    },
+    "212818": {
+      "name": "Fiery Demise",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fracture",
+          "spellId": 263642,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "217996": {
+      "name": "Soul Rending",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Metamorphosis",
+          "spellId": 187827,
+          "type": "unknown"
+        }
+      ]
+    },
+    "226334": {
+      "name": "Soul Flame of Insight",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Eye Beam",
+          "spellId": 198013,
+          "type": "unknown"
+        }
+      ]
+    },
+    "235543": {
+      "name": "Spirit of the Darkness Flame",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 207744,
+          "type": "unknown"
+        }
+      ]
+    },
+    "235893": {
+      "name": "First of the Illidari",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Metamorphosis",
+          "spellId": 187827,
+          "type": "unknown"
+        }
+      ]
+    },
+    "247456": {
+      "name": "Frailty",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "buff_grant"
+        }
+      ]
+    },
+    "247938": {
+      "name": "Chaos Blades",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        }
+      ]
+    },
+    "258920": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "buff_grant"
+        }
+      ]
+    },
+    "272985": {
+      "name": "Revel in Pain",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 207744,
+          "type": "unknown"
+        }
+      ]
+    },
+    "320331": {
+      "name": "Infernal Armor",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "320377": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        }
+      ]
+    },
+    "320386": {
+      "name": "Bouncing Glaives",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "320421": {
+      "name": "Rush of Chaos",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Metamorphosis",
+          "spellId": 187827,
+          "type": "cooldown_modifier"
+        }
+      ]
+    },
+    "321068": {
+      "name": "Metamorphosis",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Metamorphosis",
+          "spellId": 187827,
+          "type": "unknown"
+        }
+      ]
+    },
+    "326486": {
+      "name": "Mark of the Ogre",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fel Barrage",
+          "spellId": 258925,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fracture",
+          "spellId": 263642,
+          "type": "unknown"
+        }
+      ]
+    },
+    "337542": {
+      "name": "Spirit of the Darkness Flame",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 207744,
+          "type": "unknown"
+        }
+      ]
+    },
+    "338671": {
+      "name": "Fel Defender",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Fel Devastation",
+          "spellId": 212084,
+          "type": "unknown"
+        }
+      ]
+    },
+    "343010": {
+      "name": "Fiery Brand",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "duration_modifier"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 207744,
+          "type": "duration_modifier"
+        }
+      ]
+    },
+    "345871": {
+      "name": "Half-Giant Empowerment",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fel Barrage",
+          "spellId": 258925,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fracture",
+          "spellId": 263642,
+          "type": "unknown"
+        }
+      ]
+    },
+    "346278": {
+      "name": "Burning Wound",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        }
+      ]
+    },
+    "347765": {
+      "name": "Demon Soul",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "357419": {
+      "name": "Cover of Darkness",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Darkness",
+          "spellId": 196718,
+          "type": "unknown"
+        }
+      ]
+    },
+    "388114": {
+      "name": "Any Means Necessary",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Sigil of Silence",
+          "spellId": 202137,
+          "type": "unknown"
+        },
+        {
+          "spell": "Sigil of Chains",
+          "spellId": 202138,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Sigil of Flame",
+          "spellId": 204596,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Sigil of Misery",
+          "spellId": 207684,
+          "type": "unknown"
+        },
+        {
+          "spell": "Felblade",
+          "spellId": 232893,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        },
+        {
+          "spell": "The Hunt",
+          "spellId": 370965,
+          "type": "unknown"
+        },
+        {
+          "spell": "Sigil of Spite",
+          "spellId": 390163,
+          "type": "unknown"
+        }
+      ]
+    },
+    "389688": {
+      "name": "Tactical Retreat",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Vengeful Retreat",
+          "spellId": 198793,
+          "type": "cooldown_modifier"
+        }
+      ]
+    },
+    "389715": {
+      "name": "Chains of Anger",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Sigil of Silence",
+          "spellId": 202137,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Sigil of Chains",
+          "spellId": 202138,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Sigil of Flame",
+          "spellId": 204596,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Sigil of Misery",
+          "spellId": 207684,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Sigil of Spite",
+          "spellId": 390163,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "389781": {
+      "name": "Long Night",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Darkness",
+          "spellId": 196718,
+          "type": "duration_modifier"
+        }
+      ]
+    },
+    "389783": {
+      "name": "Pitch Black",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Darkness",
+          "spellId": 196718,
+          "type": "cooldown_modifier"
+        }
+      ]
+    },
+    "389985": {
+      "name": "Soulcrush",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Frailty",
+          "spellId": 247456,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "389997": {
+      "name": "Shear Fury",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "390155": {
+      "name": "Serrated Glaive",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        }
+      ]
+    },
+    "390213": {
+      "name": "Burning Blood",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "391172": {
+      "name": "Soul Furnace",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        }
+      ]
+    },
+    "391275": {
+      "name": "Accelerated Blade",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "394934": {
+      "name": "Seething Chaos",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        }
+      ]
+    },
+    "409645": {
+      "name": "Fires of Fel",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fracture",
+          "spellId": 263642,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "425653": {
+      "name": "Fiery Resolve",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "427641": {
+      "name": "Inertia",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        }
+      ]
+    },
+    "427913": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        }
+      ]
+    },
+    "427914": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        }
+      ]
+    },
+    "427915": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        }
+      ]
+    },
+    "428241": {
+      "name": "Demon Hide",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "429211": {
+      "name": "Champion of the Glaive",
+      "tree": "class",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "range_modifier"
+        }
+      ]
+    },
+    "433719": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        }
+      ]
+    },
+    "433721": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        }
+      ]
+    },
+    "433724": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        }
+      ]
+    },
+    "433737": {
+      "name": "Immolation Aura",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        }
+      ]
+    },
+    "442492": {
+      "name": "Incisive Blade",
+      "tree": "hero",
+      "heroSpec": "Aldrachi Reaver",
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "442624": {
+      "name": "Reaver's Mark",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "442688": {
+      "name": "Thrill of the Fight",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        }
+      ]
+    },
+    "444929": {
+      "name": "Evasive Action",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Vengeful Retreat",
+          "spellId": 198793,
+          "type": "unknown"
+        }
+      ]
+    },
+    "452435": {
+      "name": "Demonsurge",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "damage_modifier"
+        }
+      ]
+    },
+    "452489": {
+      "name": "Demonsurge",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Fel Devastation",
+          "spellId": 212084,
+          "type": "unknown"
+        },
+        {
+          "spell": "Immolation Aura",
+          "spellId": 258920,
+          "type": "unknown"
+        }
+      ]
+    },
+    "1219012": {
+      "name": "Luck of the Draw!",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "1227062": {
+      "name": "Thrill of the Fight",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "1238462": {
+      "name": "Scarred Strikes",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        }
+      ]
+    },
+    "1238675": {
+      "name": "Demon Soul",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Shear",
+          "spellId": 203782,
+          "type": "unknown"
+        },
+        {
+          "spell": "Fiery Brand",
+          "spellId": 204021,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Carver",
+          "spellId": 207407,
+          "type": "unknown"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "unknown"
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247455,
+          "type": "unknown"
+        },
+        {
+          "spell": "Bulk Extraction",
+          "spellId": 320341,
+          "type": "unknown"
+        }
+      ]
+    },
+    "1238676": {
+      "name": "Demon Soul",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Chaos Nova",
+          "spellId": 179057,
+          "type": "unknown"
+        },
+        {
+          "spell": "Throw Glaive",
+          "spellId": 185123,
+          "type": "unknown"
+        },
+        {
+          "spell": "Essence Break",
+          "spellId": 258860,
+          "type": "unknown"
+        }
+      ]
+    }
+  }
+}

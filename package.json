@@ -1,0 +1,16 @@
+{
+  "name": "dh-apl",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "extract": "node src/extract/spells.js",
+    "talents": "node src/model/talents.js",
+    "interactions": "node src/model/interactions.js",
+    "report": "node src/visualize/text-report.js",
+    "graph": "node src/visualize/graph.js",
+    "sim": "node src/sim/runner.js",
+    "analyze": "node src/sim/analyze.js",
+    "build-data": "npm run extract && npm run talents && npm run interactions && npm run report && npm run graph"
+  }
+}
