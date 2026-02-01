@@ -118,10 +118,23 @@ npm run verify          →  validates data against Raidbots + simc C++
 - Baseline APL uses TWW3 Fel-Scarred profile — needs Midnight/Aldrachi Reaver and Annihilator profiles
 - Spell descriptions contain unresolved template variables ($s1, $s2)
 
+### Step 9: SimC Reference Data Extraction
+
+- [x] `reference/vengeance-apl.simc` — simc default VDH APL
+- [x] `reference/simc-talent-variables.json` — C++ talent variable names (219 total across all trees)
+- [x] `reference/spelldatadump-vdh.txt` — Full DH spell effect data from SpellDataDump
+- [x] `reference/trait-data.md` — Key simc structs: trait_data_t, player_talent_t, soul_fragment enum
+- [x] `reference/tww3-profiles/` — TWW3 VDH profiles (base + Aldrachi Reaver)
+- [x] `reference/apl-conversion/` — ConvertAPL.py + generate_demon_hunter.py
+- [x] `reference/wiki/` — 15 SimC wiki pages (APL syntax, expressions, DH options, etc.)
+- [x] `src/extract/simc-talents.js` — Extracts talent variables from sc_demon_hunter.cpp
+- [x] Updated `package.json` with `extract-simc` script
+- [x] Updated `CLAUDE.md` with reference directory documentation
+
 ## Future Sessions
 
-- Classify remaining unknown interactions using SpellDataDump
-- APL parser/generator (AST-based)
+- Classify remaining unknown interactions using SpellDataDump (now available locally at `reference/spelldatadump-vdh.txt`)
+- APL parser/generator (AST-based) — reference APL conversion tools in `reference/apl-conversion/`
 - Talent combination generator
 - Optimization loop (isolated variable testing)
 - Hero tree comparison (Aldrachi Reaver vs Annihilator)

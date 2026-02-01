@@ -73,6 +73,36 @@ data/
   interactions.json  # Talent → spell interaction map
 apls/             # APL files (.simc)
 results/          # Simulation output (gitignored)
+reference/
+  vengeance-apl.simc           # simc default VDH APL
+  simc-talent-variables.json   # C++ talent variable names mapped to trees
+  spelldatadump-vdh.txt        # Full spell effect data (SpellDataDump)
+  trait-data.md                # Key simc struct definitions
+  tww3-profiles/               # TWW3 VDH profiles from simc
+  apl-conversion/              # APL ↔ C++ conversion tools
+  wiki/                        # SimC wiki docs (APL syntax, expressions, options, etc.)
+    action-lists.md            # APL syntax reference
+    action-list-expressions.md # Complete expression/condition reference
+    demon-hunters.md           # DH-specific SimC options
+    textual-config.md          # TCI basics
+    options.md                 # General simulation options
+    equipment.md               # Gear, gems, enchants, set bonuses
+    output.md                  # Report formats, combat logs
+    spell-query.md             # spell_query syntax and data sources
+    spell-data-overrides.md    # Override spell/effect data
+    statistical-behaviour.md   # Iterations, target_error, RNG
+    profile-sets.md            # Batch talent/gear comparison
+    coded-flags.md             # Action flags, scaling coefficients
+    developer-docs.md          # Architecture: sim_t, player_t, action_t
+    fighting-variance.md       # Law of Large Numbers, confidence
+    formulation-vs-simulation.md # Analytical vs simulation tradeoffs
+    how-to-build.md            # Building simc from source
+    stats-scaling.md           # Scale factors, stat plotting, reforge plots
+    buffs-and-debuffs.md       # Raid buffs, bloodlust, external buffs
+    raid-events.md             # Fight styles, adds, movement, DungeonRoute
+    characters.md              # Character declaration, talents, consumables
+    enemies.md                 # Custom enemies, tank dummies, action lists
+    expansion-options.md       # TWW/DF/SL expansion-specific options
 ```
 
 ## Commands
@@ -102,6 +132,9 @@ node src/sim/analyze.js
 
 # Verify data against simc C++ source
 npm run verify
+
+# Extract simc C++ talent variables to reference/
+npm run extract-simc
 ```
 
 ## Key Paths
