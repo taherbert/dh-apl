@@ -235,8 +235,8 @@
       "source": {
         "id": 428241,
         "name": "Demon Hide",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -484,8 +484,8 @@
       "source": {
         "id": 391275,
         "name": "Accelerated Blade",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -744,8 +744,8 @@
       "source": {
         "id": 203550,
         "name": "Blind Fury",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -796,8 +796,8 @@
       "source": {
         "id": 389688,
         "name": "Tactical Retreat",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -1418,8 +1418,8 @@
       "source": {
         "id": 428241,
         "name": "Demon Hide",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -1732,8 +1732,8 @@
       "source": {
         "id": 428241,
         "name": "Demon Hide",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -2615,8 +2615,8 @@
       "source": {
         "id": 428241,
         "name": "Demon Hide",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -2916,8 +2916,8 @@
       "source": {
         "id": 428241,
         "name": "Demon Hide",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -3452,8 +3452,8 @@
       "source": {
         "id": 428241,
         "name": "Demon Hide",
-        "isTalent": true,
-        "tree": "spec",
+        "isTalent": false,
+        "tree": null,
         "heroSpec": null
       },
       "target": {
@@ -3707,7 +3707,7 @@
           "source": "Demon Hide",
           "sourceId": 428241,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -3810,7 +3810,7 @@
           "source": "Accelerated Blade",
           "sourceId": 391275,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -3930,7 +3930,7 @@
           "source": "Blind Fury",
           "sourceId": 203550,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -3956,7 +3956,7 @@
           "source": "Tactical Retreat",
           "sourceId": 389688,
           "type": "cooldown_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -4228,7 +4228,7 @@
           "source": "Demon Hide",
           "sourceId": 428241,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -4364,7 +4364,7 @@
           "source": "Demon Hide",
           "sourceId": 428241,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -4756,7 +4756,7 @@
           "source": "Demon Hide",
           "sourceId": 428241,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -4885,7 +4885,7 @@
           "source": "Demon Hide",
           "sourceId": 428241,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -5122,7 +5122,7 @@
           "source": "Demon Hide",
           "sourceId": 428241,
           "type": "damage_modifier",
-          "tree": "spec",
+          "tree": null,
           "heroSpec": null
         },
         {
@@ -5283,7 +5283,7 @@
     },
     "203550": {
       "name": "Blind Fury",
-      "tree": "spec",
+      "tree": null,
       "heroSpec": null,
       "targets": [
         {
@@ -5984,7 +5984,7 @@
     },
     "389688": {
       "name": "Tactical Retreat",
-      "tree": "spec",
+      "tree": null,
       "heroSpec": null,
       "targets": [
         {
@@ -6142,7 +6142,7 @@
     },
     "391275": {
       "name": "Accelerated Blade",
-      "tree": "spec",
+      "tree": null,
       "heroSpec": null,
       "targets": [
         {
@@ -6328,7 +6328,7 @@
     },
     "428241": {
       "name": "Demon Hide",
-      "tree": "spec",
+      "tree": null,
       "heroSpec": null,
       "targets": [
         {

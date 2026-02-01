@@ -1,5 +1,6 @@
 // Structures DH talent data into organized class/spec/hero trees.
 // Reads talents-raw.json (from extraction) and spells.json, outputs talents.json.
+// Parses simc C++ source to determine Havoc vs Vengeance spec assignments.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -7,6 +8,29 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
+const SIMC_DH_CPP =
+  "/Users/tom/Documents/GitHub/simc/engine/class_modules/sc_demon_hunter.cpp";
+
+// Parse the simc C++ source to build talent name → spec mapping.
+// Looks for lines like: talent.vengeance.spirit_bomb = find_talent_spell(..., "Spirit Bomb" );
+// and: talent.havoc.eye_beam = find_talent_spell(..., "Eye Beam" );
+function parseSpecAssignments() {
+  const src = readFileSync(SIMC_DH_CPP, "utf-8");
+  const specByName = new Map();
+
+  const re =
+    /talent\.(havoc|vengeance)\.(\w+)\s*=\s*find_talent_spell\([^"]*"([^"]+)"/g;
+  let match;
+  while ((match = re.exec(src)) !== null) {
+    const [, spec, , name] = match;
+    // First assignment wins (some talents have multiple rank entries)
+    if (!specByName.has(name)) {
+      specByName.set(name, spec);
+    }
+  }
+
+  return specByName;
+}
 
 function buildTalentTrees() {
   const rawTalents = JSON.parse(
@@ -16,6 +40,11 @@ function buildTalentTrees() {
     readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
   );
   const spellMap = new Map(spells.map((s) => [s.id, s]));
+  const specByName = parseSpecAssignments();
+
+  console.log(
+    `Parsed ${specByName.size} spec assignments from simc C++ (${[...specByName.values()].filter((s) => s === "vengeance").length} vengeance, ${[...specByName.values()].filter((s) => s === "havoc").length} havoc)`,
+  );
 
   const trees = {
     class: { name: "Demon Hunter", talents: [] },
@@ -26,10 +55,24 @@ function buildTalentTrees() {
     },
   };
 
+  let havocSkipped = 0;
+
   for (const raw of rawTalents) {
     if (raw.tree === "selection") continue;
 
     const spell = spellMap.get(raw.spellId);
+
+    // Determine spec from multiple sources:
+    // 1. simc C++ talent.{spec}.{name} assignments (most authoritative)
+    // 2. Spell data talentEntry.spec field
+    const cppSpec = specByName.get(raw.name);
+    const spellSpec = spell?.talentEntry?.spec?.toLowerCase();
+
+    if (cppSpec === "havoc" || (!cppSpec && spellSpec === "havoc")) {
+      havocSkipped++;
+      continue;
+    }
+
     const talent = {
       name: raw.name,
       entry: raw.entry,
@@ -77,6 +120,7 @@ function buildTalentTrees() {
 
   writeFileSync(join(DATA_DIR, "talents.json"), JSON.stringify(trees, null, 2));
 
+  console.log(`Skipped ${havocSkipped} Havoc-only talents`);
   console.log("Wrote data/talents.json");
   console.log(`  Class tree: ${trees.class.talents.length} talents`);
   console.log(`  Spec tree: ${trees.spec.talents.length} talents`);

@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { BASE_SPELL_IDS } from "../model/vengeance-base.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -28,17 +29,26 @@ function generateReport() {
   );
   lines.push("");
 
+  // Build set of Vengeance-relevant spell IDs from talent trees
+  const vengSpellIds = new Set();
+  for (const tal of talents.class.talents) vengSpellIds.add(tal.spellId);
+  for (const tal of talents.spec.talents) vengSpellIds.add(tal.spellId);
+  for (const heroTree of Object.values(talents.hero)) {
+    for (const tal of heroTree.talents || heroTree)
+      vengSpellIds.add(tal.spellId);
+  }
+  // Include base spec abilities and Vengeance-tagged spells
+  for (const id of BASE_SPELL_IDS) vengSpellIds.add(id);
+  for (const s of spells) {
+    if (s.talentEntry?.spec === "Vengeance") vengSpellIds.add(s.id);
+  }
+
   // Active abilities section
   lines.push("## Active Abilities");
   lines.push("");
 
   const activeSpells = spells
-    .filter(
-      (s) =>
-        !s.passive &&
-        s.gcd &&
-        (s.class?.includes("Demon Hunter") || s.class?.includes("Vengeance")),
-    )
+    .filter((s) => !s.passive && s.gcd && vengSpellIds.has(s.id))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   for (const spell of activeSpells) {

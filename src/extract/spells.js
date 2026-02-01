@@ -6,6 +6,7 @@ import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
+import { BASE_SPELL_IDS } from "../model/vengeance-base.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -119,24 +120,6 @@ function extractSpells() {
   // Collect all unique talent spell IDs plus base abilities not in talent tree
   const talentSpellIds = new Set(dhTalents.map((t) => t.spellId));
 
-  // Base abilities granted by spec, not talent tree
-  const BASE_SPELL_IDS = [
-    228477,
-    228478, // Soul Cleave + damage component
-    258920, // Immolation Aura
-    204596, // Sigil of Flame
-    203720, // Demon Spikes
-    187827, // Metamorphosis (Vengeance)
-    198793, // Vengeful Retreat
-    185123, // Throw Glaive
-    203782, // Shear
-    247455,
-    247456, // Spirit Bomb damage + Frailty debuff
-    203981, // Soul Fragments
-    452435, // Demonsurge
-    207744, // Fiery Brand debuff
-    343010, // Fiery Brand modifier
-  ];
   for (const id of BASE_SPELL_IDS) talentSpellIds.add(id);
 
   // Step 2: Get DH class spells

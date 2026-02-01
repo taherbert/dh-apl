@@ -21,7 +21,7 @@ School: Fire | GCD: 1.5s | CD: 60s
 - Burning Blood (damage_modifier) [spec]
 - Fires of Fel (unknown)
 - Fiery Resolve (unknown)
-- Demon Hide (damage_modifier) [spec]
+- Demon Hide (damage_modifier)
 - Reaver's Mark (unknown)
 - Luck of the Draw! (unknown)
 - Thrill of the Fight (unknown)
@@ -47,7 +47,7 @@ School: Chromatic | Cost: 25 Fury | GCD: 1.5s | CD: 45s | Duration: 2s
 - Seething Chaos (unknown)
 - Fiery Resolve (unknown)
 - Inertia (unknown)
-- Demon Hide (damage_modifier) [spec]
+- Demon Hide (damage_modifier)
 - Reaver's Mark (unknown)
 - Thrill of the Fight (unknown)
 - Luck of the Draw! (unknown)
@@ -71,48 +71,6 @@ School: Physical | GCD: 1.5s | CD: 300s | Duration: 8s
 - Cover of Darkness (unknown)
 - Long Night (duration_modifier) [class]
 - Pitch Black (cooldown_modifier) [class]
-
-### Essence Break (258860)
-
-School: Chaos | GCD: 1.5s | CD: 40s | Range: 10yd
-
-> Slash all enemies in front of you for $s1 Chaos damage, and increase the damage your Chaos Strike and Blade Dance deal to them by $320338s1% for $320338d. Deals reduced damage beyond $s2 targets.
-
-**Modified by:**
-- Demon Soul (unknown)
-- Mastery: Demonic Presence (unknown)
-- Fiery Brand (buff_grant)
-- Fiery Brand (unknown)
-- Exergy (unknown)
-- Chaos Blades (unknown)
-- Demon Soul (unknown)
-- Burning Blood (damage_modifier) [spec]
-- Seething Chaos (unknown)
-- Inertia (unknown)
-- Demon Hide (damage_modifier) [spec]
-- Reaver's Mark (unknown)
-- Thrill of the Fight (unknown)
-- Demon Soul (unknown)
-
-### Eye Beam (198013)
-
-School: Chromatic | Cost: 30 Fury | GCD: 1.5s | CD: 40s | Duration: 2s | Range: 20yd
-
-> Blasts all enemies in front of you,$?s320415[ dealing guaranteed critical strikes][] for up to $<dmg> Chaos damage over $d. Deals reduced damage beyond $s5 targets.$?s343311[ When Eye Beam finishes fully channeling, your Haste is increased by an additional $343312s1% for $343312d.][]
-
-**Modified by:**
-- Blind Fury (damage_modifier) [spec]
-- Soul Flame of Insight (unknown)
-
-### Fel Barrage (258925)
-
-School: Chromatic | Cost: 10 Fury | GCD: 1.5s | CD: 90s | Duration: 8s
-
-> Unleash a torrent of Fel energy, rapidly consuming Fury to inflict $258926s1 Chaos damage to all enemies within $258926A1 yds, lasting $d or until Fury is depleted. Deals reduced damage beyond $258926s2 targets.
-
-**Modified by:**
-- Mark of the Ogre (unknown)
-- Half-Giant Empowerment (unknown)
 
 ### Fel Devastation (212084)
 
@@ -154,7 +112,7 @@ School: Fire | GCD: 1.5s | Charges: 1 (60s) | Range: 30yd
 - Burning Blood (damage_modifier) [spec]
 - Fires of Fel (unknown)
 - Fiery Resolve (unknown)
-- Demon Hide (damage_modifier) [spec]
+- Demon Hide (damage_modifier)
 - Reaver's Mark (unknown)
 - Luck of the Draw! (unknown)
 - Thrill of the Fight (unknown)
@@ -172,12 +130,6 @@ School: Physical | GCD: 1.5s | Charges: 2 (4.5s) | Range: 5yd
 - Mark of the Ogre (unknown)
 - Half-Giant Empowerment (unknown)
 - Fires of Fel (unknown)
-
-### Glaive Tempest (342817)
-
-School: Magic | Cost: 30 Fury | GCD: 1.5s | CD: 25s | Duration: 3s
-
-> Launch two demonic glaives in a whirlwind of energy, causing ${14*$342857s1} Chaos damage over $d to all nearby enemies. Deals reduced damage beyond $s2 targets.
 
 ### Immolation Aura (258920)
 
@@ -202,12 +154,6 @@ School: Fire | GCD: 1.5s | CD: 1.5s | Charges: 1 (30s) | Duration: 6s
 School: Shadow | GCD: 1.5s | CD: 45s | Duration: 60s | Range: 20yd
 
 > Imprisons a demon, beast, or humanoid, incapacitating them for $d. Damage may cancel the effect. Limit 1.
-
-### Netherwalk (196555)
-
-School: Physical | GCD: 1.5s | CD: 180s | Duration: 6s
-
-> Slip into the nether, increasing movement speed by $s3% and becoming immune to damage, but unable to attack. Lasts $d.
 
 ### Shear (203782)
 
@@ -309,7 +255,7 @@ School: Fire | GCD: 1.5s | CD: 60s | Duration: 3s | Range: 5yd
 - Burning Blood (damage_modifier) [spec]
 - Fires of Fel (unknown)
 - Fiery Resolve (unknown)
-- Demon Hide (damage_modifier) [spec]
+- Demon Hide (damage_modifier)
 - Reaver's Mark (unknown)
 - Luck of the Draw! (unknown)
 - Thrill of the Fight (unknown)
@@ -336,15 +282,6 @@ School: Fire | Cost: 40 Fury | GCD: 1.5s | Duration: 1.5s
 
 > Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for $247456s1% of damage you deal to them. Deals reduced damage beyond $s3 targets.
 
-### The Hunt (370965)
-
-School: Chromatic | GCD: 1.5s | CD: 90s | Duration: 2s | Range: 50yd
-
-> Charge to your target, striking them for $370966s1 Chaos damage, rooting them in place for $370970d and inflicting $370969o1 Chaos damage over $370969d to up to $370967s2 enemies in your path. The pursuit invigorates your soul, healing you for $?c1[$370968s1%][$370968s2%] of the damage you deal to your Hunt target for $370966d.
-
-**Modified by:**
-- Any Means Necessary (unknown)
-
 ### Throw Glaive (185123)
 
 School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
@@ -359,7 +296,7 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 - Bouncing Glaives (damage_modifier) [class]
 - Demon Soul (unknown)
 - Serrated Glaive (unknown)
-- Accelerated Blade (damage_modifier) [spec]
+- Accelerated Blade (damage_modifier)
 - Seething Chaos (unknown)
 - Inertia (unknown)
 - Champion of the Glaive (range_modifier) [class]
@@ -369,7 +306,7 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 
 ## Talent Trees
 
-### Class (44 talents)
+### Class (41 talents)
 
 **Row 1:**
 - (1) **Vengeful Retreat** (198793) [off_gcd_ability]
@@ -444,8 +381,6 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   _$?c1[Fel Rush][Infernal Strike] increases your movement speed by $389847s1% for $389847d._
 - (2) **Illidari Knowledge** (389696) [passive]
   _Reduces magic damage taken by $s1%._
-- (3) **Demonic** (213410) [passive_buff]
-  _$?a212613[Fel Devastation][Eye Beam] causes you to enter demon form for ${$s1/1000} sec after it finishes dealing damage._
 - (4) **Will of the Illidari** (389695) [passive]
   _Increases maximum health by $s1%._
 - (5) **Precise Sigils** (389799) [spell_modifier]
@@ -484,34 +419,24 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   _Sigil of Flame deals $s2% increased damage and generates $s1 additional Fury per target hit._
 
 **Row 10:**
-- (1) **Collective Anguish** (390152) [passive_buff]
-  _$?a212613[Fel Devastation][Eye Beam] summons an allied $?a212613[Havoc][Vengeance] Demon Hunter who casts $?a212613[Eye Beam][Fel Devastation], dealing $?a212613[${$391058s1*10*2} Chaos][${$393834s1*(..._
-- (2) **The Hunt** (370965) [active_ability]
-  _Charge to your target, striking them for $370966s1 Chaos damage, rooting them in place for $370970d and inflicting $370969o1 Chaos damage over $370969d to up to $370967s2 enemies in your path. The pur..._
 - (3) **Sigil of Spite** (390163) [active_ability]
   _Place a demonic sigil at the target location that activates after $d. Detonates to deal $389860s1 Chaos damage and shatter up to $s3 Lesser Soul Fragments from enemies affected by the sigil. Deals red..._
 
-### Spec (Vengeance) (92 talents)
+### Spec (Vengeance) (49 talents)
 
 **Row 1:**
 - (1) **Fel Devastation** (212084) [active_ability]
   _Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d.$?s320639[ Causing damage also heals you for up to ${$212106s1*(2/$t1)} health.][]_
-- (1) **Eye Beam** (198013) [active_ability]
-  _Blasts all enemies in front of you,$?s320415[ dealing guaranteed critical strikes][] for up to $<dmg> Chaos damage over $d. Deals reduced damage beyond $s5 targets.$?s343311[ When Eye Beam finishes fu..._
 
 **Row 2:**
 - (1) **Frailty** (389958) [passive_buff]
   _Enemies struck by Sigil of Flame are afflicted with Frailty for $247456d. You heal for $247456s1% of all damage you deal to targets with Frailty._
-- (1) **Critical Chaos** (320413) [spell_modifier]
-  _The chance that Chaos Strike will refund $193840s1 Fury is increased by $s2% of your critical strike chance._
 - (2) **Fiery Brand** (204021) [active_ability]
   _Brand an enemy with a demonic symbol, instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][]. The enemy's damage done to you is reduced by $s1% for $207744d..._
 - (2) **Demon Blades** (203555) [proc_trigger]
   _Your auto attacks deal an additional $203796s1 $@spelldesc395041 damage and generate $203796m2-$203796M2 Fury._
 - (2) **Insatiable Hunger** (258876) [passive_buff]
   _Demon's Bite deals $s2% more damage and generates $s3 to $s4 additional Fury._
-- (3) **Burning Hatred** (320374) [passive_buff]
-  _Immolation Aura generates an additional ${$258922s2*$258920d} Fury over $258920d._
 
 **Row 3:**
 - (1) **Fracture** (263642) [active_ability]
@@ -521,41 +446,16 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   _Shear generates $s1 additional Fury._
 - (1) **Improved Fel Rush** (343017) [spell_modifier]
   _Fel Rush damage increased by $s1%._
-- (1) **Dash of Chaos** (427794) [passive_buff]
-  _For ${$427793D-($428160s1/10)} sec after using Fel Rush, activating it again will dash back towards your initial location._
 - (2) **Deflecting Spikes** (321028) [passive_buff]
   _Demon Spikes also increases your Parry chance by $203819s1% for $203819d._
-- (2) **Improved Chaos Strike** (343206) [spell_modifier]
-  _Chaos Strike damage increased by $s1%._
-- (3) **First Blood** (206416) [passive_buff]
-  _Blade Dance deals $<firstbloodDmg> Chaos damage to the first target struck._
 - (3) **Ascending Flame** (428603) [passive]
   _Sigil of Flame's initial damage is increased by $s2%. Multiple applications of Sigil of Flame may overlap._
-- (4) **Accelerated Blade** (391275) [spell_modifier]
-  → Throw Glaive (damage_modifier)
-  _Throw Glaive deals $s2% increased damage, reduced by ${$s2/2}% for each previous enemy hit._
-- (5) **Demon Hide** (428241) [spell_modifier]
-  → Chaos Nova (damage_modifier)
-  → Fiery Brand (damage_modifier)
-  → Soul Carver (damage_modifier)
-  → Spirit Bomb (damage_modifier)
-  → Essence Break (damage_modifier)
-  → Bulk Extraction (damage_modifier)
-  _Magical damage increased by $s1%, and Physical damage taken reduced by $s2%._
 
 **Row 4:**
 - (1) **Perfectly Balanced Glaive** (320387) [passive]
   _Reduces the cooldown of Throw Glaive by ${$abs($s0/1000)} sec._
-- (1) **Netherwalk** (196555) [active_ability]
-  _Slip into the nether, increasing movement speed by $s3% and becoming immune to damage, but unable to attack. Lasts $d._
-- (1) **Desperate Instincts** (205411) [passive_buff]
-  _Blur now reduces damage taken by an additional ${$abs($m3)}%. Additionally, you automatically trigger Blur with $s4% reduced cooldown and duration when you fall below $s1% health. This effect can only..._
 - (2) **Calcified Spikes** (389720) [passive_buff]
   _You take $391171s2% reduced damage after Demon Spikes ends, fading by 1% per second._
-- (2) **Deflecting Dance** (427776) [passive_buff]
-  _You deflect incoming attacks while Blade Dancing, absorbing damage up to $s1% of your maximum health._
-- (2) **Mortal Dance** (328725) [proc_trigger]
-  _Blade Dance now reduces targets' healing received by $356608s1% for $356608d._
 - (3) **Sigil of Silence** (202137) [active_ability]
   _Place a Sigil of Silence at the target location that activates after $d. Silences all enemies affected by the sigil for $204490d._
 - (3) **Roaring Fire** (391178) [passive]
@@ -568,15 +468,9 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 **Row 5:**
 - (1) **Spirit Bomb** (247454) [active_ability]
   _Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for..._
-- (1) **Initiative** (388108) [passive_buff]
-  _Damaging an enemy before they damage you increases your critical strike chance by $391215s1% for $391215d. Vengeful Retreat refreshes your potential to trigger this effect on any enemies you are in co..._
-- (2) **Scars of Suffering** (428232) [passive]
-  _Increases Versatility by $s1% and reduces threat generated by ${$s2*-1}%._
 - (2) **Agonizing Flames** (207548) [spell_modifier]
   → Immolation Aura (damage_modifier)
   _Immolation Aura increases your movement speed by $s1% and its duration is increased by $s2%._
-- (3) **Chaotic Transformation** (388112) [passive_buff]
-  _When you activate Metamorphosis, the cooldowns of Blade Dance and Eye Beam are immediately reset._
 - (3) **Extended Spikes** (389721) [spell_modifier]
   _Increases the duration of Demon Spikes by ${$s1/1000} sec._
 - (4) **Burning Blood** (390213) [spell_modifier]
@@ -587,34 +481,18 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   → Essence Break (damage_modifier)
   → Bulk Extraction (damage_modifier)
   _Fire damage increased by $s1%._
-- (4) **Furious Throws** (393029) [passive_buff]
-  _Throw Glaive now costs $s1 Fury and throws a second glaive at the target._
-- (5) **Trail of Ruin** (258881) [proc_trigger]
-  _The final slash of Blade Dance inflicts an additional $258883o1 Chaos damage over $258883d._
 - (5) **Revel in Pain** (343014) [proc_trigger]
   _When Fiery Brand expires on your primary target, you gain a shield that absorbs up ${$AP*($s2/100)*(1+$@versadmg)} damage for $343013d, based on your damage dealt to them while Fiery Brand was active._
 
 **Row 6:**
 - (1) **Void Reaver** (268175) [proc_trigger]
   _Frailty now also reduces all damage you take from afflicted targets by $s2%. Enemies struck by Soul Cleave are afflicted with Frailty for $247456d._
-- (1) **Tactical Retreat** (389688) [spell_modifier]
-  → Vengeful Retreat (cooldown_modifier)
-  _Vengeful Retreat has a ${$s1/-1000} sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over $389890d._
 - (2) **Feast of Souls** (207697) [passive_buff]
   _Soul Cleave heals you for an additional $207693o1 over $207693d._
-- (2) **Blind Fury** (203550) [spell_modifier]
-  → Eye Beam (damage_modifier)
-  _Eye Beam generates ${$s3/5} Fury every second, and its damage and duration are increased by $s1%._
-- (3) **Looks Can Kill** (320415) [spell_modifier]
-  _Eye Beam deals guaranteed critical strikes._
 - (3) **Fallout** (227174) [passive_buff]
   _Immolation Aura's initial burst has a chance to shatter Lesser Soul Fragments from enemies._
 - (4) **Ruinous Bulwark** (326853) [spell_modifier]
   _Fel Devastation heals for an additional $s1%, and $s2% of its healing is converted into an absorb shield for $326863d._
-- (4) **Dancing with Fate** (389978) [spell_modifier]
-  _The final slash of Blade Dance deals an additional $s1% damage._
-- (5) **Growing Inferno** (390158) [passive_buff]
-  _Immolation Aura's damage increases by $s1% each time it deals damage._
 - (5) **Volatile Flameblood** (390808) [passive_buff]
   _Immolation Aura generates $m-$M Fury when it deals critical damage. This effect may only occur once per ${$proccooldown+0.1} sec._
 - (6) **Bulk Extraction** (320341) [active_ability]
@@ -627,24 +505,12 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 **Row 7:**
 - (1) **Soul Furnace** (391165) [proc_trigger]
   _Every $391166u Soul Fragments you consume increases the damage of your next Soul Cleave or Spirit Bomb by $391172s1%._
-- (1) **Exergy** (206476) [passive_buff]
-  _The Hunt and Vengeful Retreat increase your damage by $208628s1% for $208628d._
-- (1) **Inertia** (427640) [passive_buff]
-  _The Hunt and Vengeful Retreat cause your next Fel Rush or Felblade to empower you, increasing damage by $427641s1% for $427641d._
 - (2) **Painbringer** (207387) [passive_buff]
   _Consuming a Soul Fragment reduces all damage you take by $s1% for $212988d. Multiple applications may overlap._
-- (2) **Isolated Prey** (388113) [passive_buff]
-  _Chaos Nova, Eye Beam, and Immolation Aura gain bonuses when striking 1 target. $@spellicon179057 $@spellname179057: Stun duration increased by ${$s1/1000} sec. $@spellicon198013 $@spellname198013: Dea..._
 - (3) **Sigil of Chains** (202138) [active_ability]
   _Place a Sigil of Chains at the target location that activates after $d. All enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by $204843s1% for $204843d._
-- (3) **Furious Gaze** (343311) [passive_buff]
-  _When Eye Beam finishes fully channeling, your Haste is increased by an additional $343312s1% for $343312d._
 - (4) **Fiery Demise** (389220) [passive]
   _Fiery Brand also increases Fire damage you deal to the target by $s1%._
-- (4) **Serrated Glaive** (390154) [passive]
-  _Enemies hit by Chaos Strike or Throw Glaive take $s1% increased damage from Chaos Strike and Throw Glaive for $390155d._
-- (5) **Burning Wound** (391189) [proc_trigger]
-  _$?s203555[Demon Blades][Demon's Bite] and Throw Glaive leave open wounds on your enemies, dealing $391191o1 Chaos damage over $391191d and increasing damage taken from your Immolation Aura by $391191s..._
 - (5) **Chains of Anger** (389715) [spell_modifier]
   → Sigil of Silence (damage_modifier)
   → Sigil of Chains (damage_modifier)
@@ -656,67 +522,37 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 **Row 8:**
 - (1) **Focused Cleave** (343207) [passive_buff]
   _Soul Cleave deals $s1% increased damage to your primary target._
-- (1) **Unbound Chaos** (347461) [passive_buff]
-  _The Hunt and Vengeful Retreat increase the damage of your next Fel Rush or Felblade by $s2%. Lasts $347462d._
 - (2) **Soulmonger** (389711) [passive_buff]
   _When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}._
-- (2) **Chaos Theory** (389687) [passive_buff]
-  _Blade Dance causes your next Chaos Strike within $337567d to have a $s1-$s2% increased critical strike chance and will always refund Fury._
-- (2) **Glaive Tempest** (342817) [active_ability]
-  _Launch two demonic glaives in a whirlwind of energy, causing ${14*$342857s1} Chaos damage over $d to all nearby enemies. Deals reduced damage beyond $s2 targets._
 - (3) **Stoke the Flames** (393827) [spell_modifier]
   _Fel Devastation damage increased by $s1%._
-- (3) **Inner Demon** (389693) [passive_buff]
-  _Entering demon form causes your next Chaos Strike to unleash your inner demon, causing it to crash into your target and deal $390137s1 Chaos damage to all nearby enemies. Deals reduced damage beyond $..._
 - (3) **Restless Hunter** (390142) [passive_buff]
   _Leaving demon form grants a charge of Fel Rush and increases the damage of your next Blade Dance by $390212s1%._
 - (4) **Burning Alive** (207739) [passive_buff]
   _Every $207771t3 sec, Fiery Brand spreads to one nearby enemy._
-- (4) **Relentless Onslaught** (389977) [passive_buff]
-  _Chaos Strike has a $s1% chance to trigger a second Chaos Strike._
-- (4) **Soulscar** (388106) [passive_buff]
-  _Throw Glaive causes targets to take an additional $s1% of damage dealt as Chaos over $390181d._
-- (5) **Ragefire** (388107) [passive_buff]
-  _Each time Immolation Aura deals damage, $s1% of the damage dealt by up to $s2 critical strikes is gathered as Ragefire. When Immolation Aura expires you explode, dealing all stored Ragefire damage to ..._
 - (5) **Cycle of Binding** (389718) [passive_buff]
   _Sigil of Flame reduces the cooldown of your Sigils by $s1 sec._
 
 **Row 9:**
 - (1) **Vulnerability** (389976) [passive_buff]
   _Frailty now also increases all damage you deal to afflicted targets by $s1%._
-- (1) **Know Your Enemy** (388118) [passive_buff]
-  _Gain critical strike damage equal to $s2% of your critical strike chance._
 - (2) **Feed the Demon** (218612) [passive_buff]
   _Consuming a Soul Fragment reduces the remaining cooldown of Demon Spikes by ${$s1/100}.2 sec._
-- (2) **Cycle of Hatred** (258887) [passive_buff]
-  _Activating Eye Beam reduces the cooldown of your next Eye Beam by ${$s1/1000}.1 sec, stacking up to $s2 sec._
 - (3) **Charred Flesh** (336639) [passive_buff]
   _Immolation Aura damage increases the duration of your Fiery Brand and Sigil of Flame by ${$s1/1000}.2 sec._
-- (3) **Chaotic Disposition** (428492) [passive_buff]
-  _Your Chaos damage has a ${$s2/100}.2% chance to be increased by $s3%, occurring up to $m1 total $Ltime:times;._
 
 **Row 10:**
 - (1) **Soulcrush** (389985) [spell_modifier]
   → Frailty (damage_modifier)
   _Multiple applications of Frailty may overlap. Soul Cleave applies Frailty to your primary target for $s2 sec._
-- (1) **A Fire Inside** (427775) [passive_buff]
-  _Immolation Aura has $m1 additional $Lcharge:charges;, $s3% chance to refund a charge when used, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time._
 - (2) **Soul Carver** (207407) [active_ability]
   _Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional $o1 Fire damage over $d.  Immediately shatters $s3 Lesser Soul Fragments from the target and $s4 additional L..._
-- (2) **Essence Break** (258860) [active_ability]
-  _Slash all enemies in front of you for $s1 Chaos damage, and increase the damage your Chaos Strike and Blade Dance deal to them by $320338s1% for $320338d. Deals reduced damage beyond $s2 targets._
 - (3) **Last Resort** (209258) [passive]
   _Sustaining fatal damage instead transforms you to Metamorphosis form. This may occur once every $209261d._
-- (3) **Shattered Destiny** (388116) [passive_buff]
-  _The duration of your active demon form is extended by ${$s1/1000}.1 sec per $s2 Fury spent._
-- (4) **Screaming Brutality** (1220506) [passive_buff]
-  _Blade Dance automatically triggers Throw Glaive on your primary target for $s3% damage and each slash has a $s2% chance to Throw Glaive an enemy for $s1% damage._
 - (4) **Darkglare Boon** (389708) [passive_buff]
   _When Fel Devastation finishes fully channeling, it refreshes $s1-$s2% of its cooldown and refunds $s3-$s4 Fury._
 - (5) **Down in Flames** (389732) [passive]
   _Fiery Brand has ${$s1/-1000} sec reduced cooldown and $s2 additional $lcharge:charges;._
-- (5) **Fel Barrage** (258925) [active_ability]
-  _Unleash a torrent of Fel energy, rapidly consuming Fury to inflict $258926s1 Chaos damage to all enemies within $258926A1 yds, lasting $d or until Fury is depleted. Deals reduced damage beyond $258926..._
 - (5) **Illuminated Sigils** (428557) [passive]
   _Sigil of Flame has ${$s3/-1000} sec reduced cooldown and $s1 additional $lcharge:charges;. You have $s2% increased chance to parry attacks from enemies afflicted by your Sigil of Flame._
 
