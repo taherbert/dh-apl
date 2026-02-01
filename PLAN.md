@@ -27,33 +27,32 @@ Build the foundation for creating an optimal Vengeance Demon Hunter APL targetin
 
 - [x] `src/extract/parser.js` — spell_query text → JSON parser
 - [x] `src/extract/spells.js` — runs simc spell_query, produces `data/spells.json`
-- Note: 178 spells extracted, 106 with talent entries, 42 Vengeance-specific
-- Note: Also extracts talent data from `talent` query (different format than `spell` query)
+- Note: ~104 spells extracted from Raidbots spell IDs + base abilities + class spells
 - Note: Descriptions contain simc template variables ($s1, $s2, etc.) — future: resolve to actual values
 
 ### Step 3: Talent Tree Mapping
 
 - [x] `src/model/talents.js` — structures talent data into class/spec/hero trees
 - [x] Output: `data/talents.json`
-- Note: Class=41, Spec=48, Aldrachi Reaver=14 talents (Annihilator not yet in DBC)
-- Note: DBC subtree IDs (34, 35) do NOT map to hero tree names — both contain mixed talents. Hero tree identity determined by C++ `talent.{tree}.*` assignments
+- [x] Raidbots integration: 42 class nodes, 42 spec nodes, 14+14 hero nodes
+- [x] Talent entries (with choice node expansion): 45 class, 44 spec, 17 Aldrachi Reaver, 16 Annihilator
+- Note: Raidbots is authoritative for tree structure; simc C++ is implementation reference
 - Note: Devourer is a third DH spec (Intellect caster), not a hero tree
-- Note: Annihilator is the new Vengeance hero tree (replaces Fel-Scarred); C++ has 16 talents but simc binary (Sep 5) predates DBC updates — needs rebuild
-- Note: Vengeance hero trees in Midnight: Aldrachi Reaver + Annihilator
-- Note: Annihilator talent spells (Voidfall, Catastrophe, etc.) exist in SpellDataDump/demonhunter.txt (updated Feb 1) but not in compiled binary
+- Note: Vengeance hero trees in Midnight: Aldrachi Reaver (subtree 35) + Annihilator (subtree 124)
+- Note: Class node spell IDs are identical across all three DH specs
 
 ### Step 4: Interaction Mapping
 
 - [x] `src/model/interaction-types.js` — interaction category definitions
 - [x] `src/model/interactions.js` — builds talent→spell interaction graph
 - [x] Output: `data/interactions.json`
-- Note: 207 interactions, 27 spells have modifiers, 70 modifier sources
-- Note: Many "unknown" type interactions where modifier spell data not in collection
+- Note: 190 interactions, 24 spells have modifiers, 70 modifier sources
+- Note: 10 unknown-type interactions (~5.3%) — target is 0%
 
 ### Step 5: Visualization
 
-- [x] `src/visualize/text-report.js` — markdown ability/talent report (838 lines)
-- [x] `src/visualize/graph.js` — Mermaid interaction graph (38 nodes, 36 edges)
+- [x] `src/visualize/text-report.js` — markdown ability/talent report
+- [x] `src/visualize/graph.js` — Mermaid interaction graph
 - [x] Output: `data/ability-report.md`, `data/interaction-graph.mermaid`
 
 ### Step 6: SimC Runner
@@ -83,23 +82,57 @@ Build the foundation for creating an optimal Vengeance Demon Hunter APL targetin
 - Demon Spikes uptime: 63.8%, Metamorphosis uptime: 39.0%
 - Soul Furnace damage amp uptime only 11.2% — potential optimization target
 
+### Step 8: Raidbots Integration & Project Setup
+
+- [x] `src/config.js` — Central config (DATA_ENV, paths, Raidbots URLs, VDH identifiers)
+- [x] `src/extract/raidbots.js` — Fetch Raidbots talent data → `data/raidbots-talents.json`
+- [x] Refactored `src/model/talents.js` — Raidbots as primary source (replaces DBC talent dump)
+- [x] Refactored `src/extract/spells.js` — Spell IDs from Raidbots (removed `parseTalentDump()`)
+- [x] Updated `src/verify.js` — Raidbots-based verification (count matching, stale detection, choice nodes)
+- [x] `.claude/commands/` skills: verify, build, sim, audit
+- [x] Updated `package.json` — `fetch-raidbots` script, updated `build-data` pipeline
+- [x] Updated `.claude/settings.local.json` — `npm run *` permission
+- [x] Updated `CLAUDE.md` — Data sources, environment toggle, hero trees, choice nodes
+- [x] Rewritten `prompts/verify-data.md` — Raidbots as primary authority
+
+**Current verification status:** 18 passed, 0 failed, 1 warning (5.3% unknown interactions)
+
+## Current Data Pipeline
+
+```
+npm run fetch-raidbots  →  data/raidbots-talents.json (from Raidbots API)
+npm run extract         →  data/spells.json (simc spell_query for each Raidbots spell ID)
+npm run talents         →  data/talents.json (structured class/spec/hero trees)
+npm run interactions    →  data/interactions.json (talent → spell interaction graph)
+npm run report          →  data/ability-report.md
+npm run graph           →  data/interaction-graph.mermaid
+
+npm run build-data      →  runs all of the above in sequence
+npm run verify          →  validates data against Raidbots + simc C++
+```
+
+## Known Gaps
+
+- 10 unknown-type interactions (~5.3%) — need SpellDataDump effect data to classify
+- Demonsurge (452435) not found in simc spell_query — not yet in compiled binary's spell data
+- Baseline APL uses TWW3 Fel-Scarred profile — needs Midnight/Aldrachi Reaver and Annihilator profiles
+- Spell descriptions contain unresolved template variables ($s1, $s2)
+
 ## Future Sessions
 
+- Classify remaining unknown interactions using SpellDataDump
 - APL parser/generator (AST-based)
 - Talent combination generator
 - Optimization loop (isolated variable testing)
 - Hero tree comparison (Aldrachi Reaver vs Annihilator)
 - Resolve spell description template variables to actual values
-- Save simc wiki pages locally as reference
+- Create Midnight-era baseline profiles
 
 ## Findings & Notes
 
 - SimC `midnight` branch version string still shows "thewarwithin" — the version identifier hasn't been updated
-- `spell.class=demon_hunter` query returns many shared/legacy spells, not DH-specific. Better approach: query `talent` for all talent spell IDs, then query each spell individually
-- `talent` query has a different format than `spell` query (flat key-value vs nested)
+- Raidbots returns spec-specific talent trees (filtered by specId), but class node spell IDs are identical across all DH specs
+- DBC subtree IDs map correctly to hero trees: 35 = Aldrachi Reaver, 124 = Annihilator
+- simc binary built Sep 5 2025; some newer spells (e.g., Demonsurge) not in binary's spell data
 - Buff uptimes from simc JSON are percentages (0-100), not fractions (0-1)
 - GCD efficiency metric needs refinement for AoE scenarios (currently counts per-target hits)
-- simc binary built Sep 5 2025; DBC updates exist since then (may include Annihilator talent data)
-- Rebuilding simc may resolve missing Annihilator/new talent data
-- C++ has 8 Vengeance spec talents not yet in DBC, and DBC has 12 talents not in C++ (midnight branch in flux)
-- simc midnight branch version string still says "thewarwithin" despite Midnight-era code
