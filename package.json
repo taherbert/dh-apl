@@ -13,6 +13,7 @@
     "analyze": "node src/sim/analyze.js",
     "fetch-raidbots": "node src/extract/raidbots.js",
     "build-data": "npm run fetch-raidbots && npm run extract && npm run talents && npm run interactions && npm run report && npm run graph",
-    "verify": "node src/verify.js"
+    "verify": "node src/verify.js",
+    "extract-simc": "node src/extract/simc-talents.js"
   }
 }

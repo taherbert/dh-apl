@@ -1,0 +1,1111 @@
+{
+  "demon_hunter": [
+    {
+      "variable": "aldrachi_design",
+      "treeType": "CLASS",
+      "spellName": "Aldrachi Design"
+    },
+    {
+      "variable": "aura_of_pain",
+      "treeType": "CLASS",
+      "spellName": "Aura of Pain"
+    },
+    {
+      "variable": "blazing_path",
+      "treeType": "CLASS",
+      "spellName": "Blazing Path"
+    },
+    {
+      "variable": "bouncing_glaives",
+      "treeType": "CLASS",
+      "spellName": "Bouncing Glaives"
+    },
+    {
+      "variable": "burn_it_out",
+      "treeType": "CLASS",
+      "spellName": "Burn It Out"
+    },
+    {
+      "variable": "champion_of_the_glaive",
+      "treeType": "CLASS",
+      "spellName": "Champion of the Glaive"
+    },
+    {
+      "variable": "chaos_nova",
+      "treeType": "CLASS",
+      "spellName": "Chaos Nova"
+    },
+    {
+      "variable": "charred_warblades",
+      "treeType": "CLASS",
+      "spellName": "Charred Warglaives"
+    },
+    {
+      "variable": "consume_magic",
+      "treeType": "CLASS",
+      "spellName": "Consume Magic"
+    },
+    {
+      "variable": "darkness",
+      "treeType": "CLASS",
+      "spellName": "Darkness"
+    },
+    {
+      "variable": "darkness",
+      "treeType": "CLASS",
+      "spellName": "Darkness"
+    },
+    {
+      "variable": "demon_muzzle",
+      "treeType": "CLASS",
+      "spellName": "Demon Muzzle"
+    },
+    {
+      "variable": "demonic_resilience",
+      "treeType": "CLASS",
+      "spellName": "Demonic Resilience"
+    },
+    {
+      "variable": "disrupting_fury",
+      "treeType": "CLASS",
+      "spellName": "Disrupting Fury"
+    },
+    {
+      "variable": "erratic_felheart",
+      "treeType": "CLASS",
+      "spellName": "Erratic Felheart"
+    },
+    {
+      "variable": "felblade",
+      "treeType": "CLASS",
+      "spellName": "Felblade"
+    },
+    {
+      "variable": "felbound",
+      "treeType": "CLASS",
+      "spellName": "Felbound"
+    },
+    {
+      "variable": "felfire_haste",
+      "treeType": "CLASS",
+      "spellName": "Felfire Haste"
+    },
+    {
+      "variable": "final_breath",
+      "treeType": "CLASS",
+      "spellName": "Final Breath"
+    },
+    {
+      "variable": "focused_ire",
+      "treeType": "CLASS",
+      "spellName": "Master of the Glaive"
+    },
+    {
+      "variable": "furious",
+      "treeType": "CLASS",
+      "spellName": "Furious"
+    },
+    {
+      "variable": "guile",
+      "treeType": "CLASS",
+      "spellName": "Guile"
+    },
+    {
+      "variable": "illidari_knowledge",
+      "treeType": "CLASS",
+      "spellName": "Illidari Knowledge"
+    },
+    {
+      "variable": "imprison",
+      "treeType": "CLASS",
+      "spellName": "Imprison"
+    },
+    {
+      "variable": "improved_disrupt",
+      "treeType": "CLASS",
+      "spellName": "Improved Disrupt"
+    },
+    {
+      "variable": "improved_sigil_of_misery",
+      "treeType": "CLASS",
+      "spellName": "Improved Sigil of Misery"
+    },
+    {
+      "variable": "infernal_armor",
+      "treeType": "CLASS",
+      "spellName": "Infernal Armor"
+    },
+    {
+      "variable": "internal_struggle",
+      "treeType": "CLASS",
+      "spellName": "Internal Struggle"
+    },
+    {
+      "variable": "live_by_the_glaive",
+      "treeType": "CLASS",
+      "spellName": "Live by the Glaive"
+    },
+    {
+      "variable": "long_night",
+      "treeType": "CLASS",
+      "spellName": "Long Night"
+    },
+    {
+      "variable": "lost_in_darkness",
+      "treeType": "CLASS",
+      "spellName": "Lost in Darkness"
+    },
+    {
+      "variable": "master_of_the_glaive",
+      "treeType": "CLASS",
+      "spellName": "Master of the Glaive"
+    },
+    {
+      "variable": "pitch_black",
+      "treeType": "CLASS",
+      "spellName": "Pitch Black"
+    },
+    {
+      "variable": "pursuit",
+      "treeType": "CLASS",
+      "spellName": "Pursuit"
+    },
+    {
+      "variable": "remorseless",
+      "treeType": "CLASS",
+      "spellName": "Remorseless"
+    },
+    {
+      "variable": "shattered_restoration",
+      "treeType": "CLASS",
+      "spellName": "Shattered Restoration"
+    },
+    {
+      "variable": "sigil_of_misery",
+      "treeType": "CLASS",
+      "spellName": "Sigil of Misery"
+    },
+    {
+      "variable": "soul_cleanse",
+      "treeType": "CLASS",
+      "spellName": "Soul Cleanse"
+    },
+    {
+      "variable": "soul_rending",
+      "treeType": "CLASS",
+      "spellName": "Soul Rending"
+    },
+    {
+      "variable": "soul_splitter",
+      "treeType": "CLASS",
+      "spellName": "Soul Splitter"
+    },
+    {
+      "variable": "swallowed_anger",
+      "treeType": "CLASS",
+      "spellName": "Swallowed Anger"
+    },
+    {
+      "variable": "unrestrained_fury",
+      "treeType": "CLASS",
+      "spellName": "Unrestrained Fury"
+    },
+    {
+      "variable": "vengeful_bonds",
+      "treeType": "CLASS",
+      "spellName": "Vengeful Bonds"
+    },
+    {
+      "variable": "vengeful_retreat",
+      "treeType": "CLASS",
+      "spellName": "Vengeful Retreat"
+    },
+    {
+      "variable": "void_nova",
+      "treeType": "CLASS",
+      "spellName": "Void Nova"
+    },
+    {
+      "variable": "voidblade",
+      "treeType": "CLASS",
+      "spellName": "Voidblade"
+    },
+    {
+      "variable": "will_of_the_illidari",
+      "treeType": "CLASS",
+      "spellName": "Will of the Illidari"
+    },
+    {
+      "variable": "wings_of_wrath",
+      "treeType": "CLASS",
+      "spellName": "Wings of Wrath"
+    }
+  ],
+  "devourer": [
+    {
+      "variable": "calamitous",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Calamitous"
+    },
+    {
+      "variable": "collapsing_star",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Collapsing Star"
+    },
+    {
+      "variable": "demonic_instinct",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Demonic Instinct"
+    },
+    {
+      "variable": "devourers_bite",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Devourer's Bite"
+    },
+    {
+      "variable": "devourers_edge",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Devourer's Edge"
+    },
+    {
+      "variable": "duty_eternal",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Duty Eternal"
+    },
+    {
+      "variable": "emptiness",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Emptiness"
+    },
+    {
+      "variable": "entropy",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Entropy"
+    },
+    {
+      "variable": "eradicate",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Eradicate"
+    },
+    {
+      "variable": "feast_of_souls",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Feast of Souls"
+    },
+    {
+      "variable": "focused_ray",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Focused Ray"
+    },
+    {
+      "variable": "gift_of_the_void",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Gift of the Void"
+    },
+    {
+      "variable": "hungering_slash",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Hungering Slash"
+    },
+    {
+      "variable": "impending_apocalypse",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Impending Apocalypse"
+    },
+    {
+      "variable": "improved_consume",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Improved Consume"
+    },
+    {
+      "variable": "midnight1",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Midnight"
+    },
+    {
+      "variable": "midnight2",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Midnight"
+    },
+    {
+      "variable": "midnight3",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Midnight"
+    },
+    {
+      "variable": "moment_of_craving",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Moment of Craving"
+    },
+    {
+      "variable": "predators_thirst",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Predator's Thirst"
+    },
+    {
+      "variable": "rolling_torment",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Rolling Torment"
+    },
+    {
+      "variable": "scythes_embrace",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Scythe's Embrace"
+    },
+    {
+      "variable": "second_helping",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Second Helping"
+    },
+    {
+      "variable": "singed_spirit",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Singed Spirit"
+    },
+    {
+      "variable": "singular_strikes",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Singular Strikes"
+    },
+    {
+      "variable": "soul_glutton",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soul Glutton"
+    },
+    {
+      "variable": "soul_immolation",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soul Immolation"
+    },
+    {
+      "variable": "soulforged_blades",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soulforged Blades"
+    },
+    {
+      "variable": "soulshaper",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soulshaper"
+    },
+    {
+      "variable": "spontaneous_immolation",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Spontaneous Immolation"
+    },
+    {
+      "variable": "star_fragments",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Star Fragments"
+    },
+    {
+      "variable": "sweet_release",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Sweet Release"
+    },
+    {
+      "variable": "sweet_suffering",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Sweet Suffering"
+    },
+    {
+      "variable": "tempered_soul",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Tempered Soul"
+    },
+    {
+      "variable": "the_hunt",
+      "treeType": "SPECIALIZATION",
+      "spellName": "The Hunt"
+    },
+    {
+      "variable": "umbral_blade",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Umbral Blade"
+    },
+    {
+      "variable": "void_metamorphosis",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Void Metamorphosis"
+    },
+    {
+      "variable": "void_ray",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Void Ray"
+    },
+    {
+      "variable": "voidglare_boon",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Voidglare Boon"
+    },
+    {
+      "variable": "voidpurge",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Voidpurge"
+    },
+    {
+      "variable": "voidrage",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Voidrage"
+    },
+    {
+      "variable": "voidrush",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Voidrush"
+    },
+    {
+      "variable": "waste_not",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Waste Not"
+    }
+  ],
+  "havoc": [
+    {
+      "variable": "a_fire_inside",
+      "treeType": "SPECIALIZATION",
+      "spellName": "A Fire Inside"
+    },
+    {
+      "variable": "accelerated_blade",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Accelerated Blade"
+    },
+    {
+      "variable": "blind_fury",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Blind Fury"
+    },
+    {
+      "variable": "burning_hatred",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Burning Hatred"
+    },
+    {
+      "variable": "burning_wound",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Burning Wound"
+    },
+    {
+      "variable": "chaos_theory",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Chaos Theory"
+    },
+    {
+      "variable": "chaotic_disposition",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Chaotic Disposition"
+    },
+    {
+      "variable": "chaotic_transformation",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Chaotic Transformation"
+    },
+    {
+      "variable": "collective_anguish",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Collective Anguish"
+    },
+    {
+      "variable": "critical_chaos",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Critical Chaos"
+    },
+    {
+      "variable": "cycle_of_hatred",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Cycle of Hatred"
+    },
+    {
+      "variable": "dancing_with_fate",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Dancing with Fate"
+    },
+    {
+      "variable": "dash_of_chaos",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Dash of Chaos"
+    },
+    {
+      "variable": "deflecting_dance",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Deflecting Dance"
+    },
+    {
+      "variable": "demon_hide",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Demon Hide"
+    },
+    {
+      "variable": "demonic",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Demonic"
+    },
+    {
+      "variable": "desperate_instincts",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Desperate Instincts"
+    },
+    {
+      "variable": "essence_break",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Essence Break"
+    },
+    {
+      "variable": "eternal_hunt_1",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Eternal Hunt"
+    },
+    {
+      "variable": "eternal_hunt_2",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Eternal Hunt"
+    },
+    {
+      "variable": "eternal_hunt_3",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Eternal Hunt"
+    },
+    {
+      "variable": "exergy",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Exergy"
+    },
+    {
+      "variable": "eye_beam",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Eye Beam"
+    },
+    {
+      "variable": "first_blood",
+      "treeType": "SPECIALIZATION",
+      "spellName": "First Blood"
+    },
+    {
+      "variable": "furious_gaze",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Furious Gaze"
+    },
+    {
+      "variable": "furious_throws",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Furious Throws"
+    },
+    {
+      "variable": "glaive_tempest",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Glaive Tempest"
+    },
+    {
+      "variable": "growing_inferno",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Growing Inferno"
+    },
+    {
+      "variable": "improved_chaos_strike",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Improved Chaos Strike"
+    },
+    {
+      "variable": "inertia",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Inertia"
+    },
+    {
+      "variable": "initiative",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Initiative"
+    },
+    {
+      "variable": "inner_demon",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Inner Demon"
+    },
+    {
+      "variable": "isolated_prey",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Isolated Prey"
+    },
+    {
+      "variable": "know_your_enemy",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Know Your Enemy"
+    },
+    {
+      "variable": "mortal_dance",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Mortal Dance"
+    },
+    {
+      "variable": "netherwalk",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Netherwalk"
+    },
+    {
+      "variable": "ragefire",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Ragefire"
+    },
+    {
+      "variable": "relentless_onslaught",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Relentless Onslaught"
+    },
+    {
+      "variable": "scars_of_suffering",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Scars of Suffering"
+    },
+    {
+      "variable": "screaming_brutality",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Screaming Brutality"
+    },
+    {
+      "variable": "serrated_glaive",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Serrated Glaive"
+    },
+    {
+      "variable": "shattered_destiny",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Shattered Destiny"
+    },
+    {
+      "variable": "soulscar",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soulscar"
+    },
+    {
+      "variable": "tactical_retreat",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Tactical Retreat"
+    },
+    {
+      "variable": "the_hunt",
+      "treeType": "SPECIALIZATION",
+      "spellName": "The Hunt"
+    },
+    {
+      "variable": "trail_of_ruin",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Trail of Ruin"
+    },
+    {
+      "variable": "unbound_chaos",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Unbound Chaos"
+    }
+  ],
+  "vengeance": [
+    {
+      "variable": "agonizing_flames",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Agonizing Flames"
+    },
+    {
+      "variable": "ascending_flame",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Ascending Flame"
+    },
+    {
+      "variable": "burning_alive",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Burning Alive"
+    },
+    {
+      "variable": "burning_blood",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Burning Blood"
+    },
+    {
+      "variable": "calcified_spikes",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Calcified Spikes"
+    },
+    {
+      "variable": "chains_of_anger",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Chains of Anger"
+    },
+    {
+      "variable": "charred_flesh",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Charred Flesh"
+    },
+    {
+      "variable": "cycle_of_binding",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Cycle of Binding"
+    },
+    {
+      "variable": "darkglare_boon",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Darkglare Boon"
+    },
+    {
+      "variable": "down_in_flames",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Down in Flames"
+    },
+    {
+      "variable": "fallout",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Fallout"
+    },
+    {
+      "variable": "feast_of_souls",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Feast of Souls"
+    },
+    {
+      "variable": "feed_the_demon",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Feed the Demon"
+    },
+    {
+      "variable": "fel_devastation",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Fel Devastation"
+    },
+    {
+      "variable": "fel_flame_fortification",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Fel Flame Fortification"
+    },
+    {
+      "variable": "felfire_fist",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Felfire Fist"
+    },
+    {
+      "variable": "fiery_brand",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Fiery Brand"
+    },
+    {
+      "variable": "fiery_demise",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Fiery Demise"
+    },
+    {
+      "variable": "focused_cleave",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Focused Cleave"
+    },
+    {
+      "variable": "frailty",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Frailty"
+    },
+    {
+      "variable": "last_resort",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Last Resort"
+    },
+    {
+      "variable": "painbringer",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Painbringer"
+    },
+    {
+      "variable": "perfectly_balanced_glaive",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Perfectly Balanced Glaive"
+    },
+    {
+      "variable": "quickened_sigils",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Quickened Sigils"
+    },
+    {
+      "variable": "retaliation",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Retaliation"
+    },
+    {
+      "variable": "revel_in_pain",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Revel in Pain"
+    },
+    {
+      "variable": "roaring_fire",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Roaring Fire"
+    },
+    {
+      "variable": "ruinous_bulwark",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Ruinous Bulwark"
+    },
+    {
+      "variable": "sigil_of_chains",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Sigil of Chains"
+    },
+    {
+      "variable": "sigil_of_silence",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Sigil of Silence"
+    },
+    {
+      "variable": "sigil_of_spite",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Sigil of Spite"
+    },
+    {
+      "variable": "soul_barrier",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soul Barrier"
+    },
+    {
+      "variable": "soul_carver",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soul Carver"
+    },
+    {
+      "variable": "soul_sigils",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soul Sigils"
+    },
+    {
+      "variable": "soulcrush",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soulcrush"
+    },
+    {
+      "variable": "soulmonger",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Soulmonger"
+    },
+    {
+      "variable": "spirit_bomb",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Spirit Bomb"
+    },
+    {
+      "variable": "stoke_the_flames",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Stoke the Flames"
+    },
+    {
+      "variable": "tempered_steel",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Tempered Steel"
+    },
+    {
+      "variable": "untethered_rage1",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Untethered Rage"
+    },
+    {
+      "variable": "untethered_rage2",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Untethered Rage"
+    },
+    {
+      "variable": "untethered_rage3",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Untethered Rage"
+    },
+    {
+      "variable": "vengeful_beast",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Vengeful Beast"
+    },
+    {
+      "variable": "void_reaver",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Void Reaver"
+    },
+    {
+      "variable": "volatile_flameblood",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Volatile Flameblood"
+    },
+    {
+      "variable": "vulnerability",
+      "treeType": "SPECIALIZATION",
+      "spellName": "Vulnerability"
+    }
+  ],
+  "aldrachi_reaver": [
+    {
+      "variable": "aldrachi_tactics",
+      "treeType": "HERO",
+      "spellName": "Aldrachi Tactics"
+    },
+    {
+      "variable": "army_unto_oneself",
+      "treeType": "HERO",
+      "spellName": "Army Unto Oneself"
+    },
+    {
+      "variable": "art_of_the_glaive",
+      "treeType": "HERO",
+      "spellName": "Art of the Glaive"
+    },
+    {
+      "variable": "bladecraft",
+      "treeType": "HERO",
+      "spellName": "Bladecraft"
+    },
+    {
+      "variable": "broken_spirit",
+      "treeType": "HERO",
+      "spellName": "Broken Spirit"
+    },
+    {
+      "variable": "evasive_action",
+      "treeType": "HERO",
+      "spellName": "Evasive Action"
+    },
+    {
+      "variable": "fury_of_the_aldrachi",
+      "treeType": "HERO",
+      "spellName": "Fury of the Aldrachi"
+    },
+    {
+      "variable": "incisive_blade",
+      "treeType": "HERO",
+      "spellName": "Incisive Blade"
+    },
+    {
+      "variable": "incorruptible_spirit",
+      "treeType": "HERO",
+      "spellName": "Incorruptible Spirit"
+    },
+    {
+      "variable": "keen_edge",
+      "treeType": "HERO",
+      "spellName": "Keen Edge"
+    },
+    {
+      "variable": "keen_engagement",
+      "treeType": "HERO",
+      "spellName": "Keen Engagement"
+    },
+    {
+      "variable": "preemptive_strike",
+      "treeType": "HERO",
+      "spellName": "Preemptive Strike"
+    },
+    {
+      "variable": "reavers_mark",
+      "treeType": "HERO",
+      "spellName": "Reaver's Mark"
+    },
+    {
+      "variable": "thrill_of_the_fight",
+      "treeType": "HERO",
+      "spellName": "Thrill of the Fight"
+    },
+    {
+      "variable": "unhindered_assault",
+      "treeType": "HERO",
+      "spellName": "Unhindered Assault"
+    },
+    {
+      "variable": "warblades_hunger",
+      "treeType": "HERO",
+      "spellName": "Warblade's Hunger"
+    },
+    {
+      "variable": "wounded_quarry",
+      "treeType": "HERO",
+      "spellName": "Wounded Quarry"
+    }
+  ],
+  "annihilator": [
+    {
+      "variable": "catastrophe",
+      "treeType": "HERO",
+      "spellName": "Catastrophe"
+    },
+    {
+      "variable": "celestial_echoes",
+      "treeType": "HERO",
+      "spellName": "Celestial Echoes"
+    },
+    {
+      "variable": "dark_matter",
+      "treeType": "HERO",
+      "spellName": "Dark Matter"
+    },
+    {
+      "variable": "doomsayer",
+      "treeType": "HERO",
+      "spellName": "Doomsayer"
+    },
+    {
+      "variable": "final_hour",
+      "treeType": "HERO",
+      "spellName": "Final Hour"
+    },
+    {
+      "variable": "harness_the_cosmos",
+      "treeType": "HERO",
+      "spellName": "Harness the Cosmos"
+    },
+    {
+      "variable": "mass_acceleration",
+      "treeType": "HERO",
+      "spellName": "Mass Acceleration"
+    },
+    {
+      "variable": "meteoric_fall",
+      "treeType": "HERO",
+      "spellName": "Meteoric Fall"
+    },
+    {
+      "variable": "meteoric_rise",
+      "treeType": "HERO",
+      "spellName": "Meteoric Rise"
+    },
+    {
+      "variable": "otherworldly_focus",
+      "treeType": "HERO",
+      "spellName": "Otherworldly Focus"
+    },
+    {
+      "variable": "path_to_oblivion",
+      "treeType": "HERO",
+      "spellName": "Path to Oblivion"
+    },
+    {
+      "variable": "phase_shift",
+      "treeType": "HERO",
+      "spellName": "Phase Shift"
+    },
+    {
+      "variable": "state_of_matter",
+      "treeType": "HERO",
+      "spellName": "State of Matter"
+    },
+    {
+      "variable": "swift_erasure",
+      "treeType": "HERO",
+      "spellName": "Swift Erasure"
+    },
+    {
+      "variable": "voidfall",
+      "treeType": "HERO",
+      "spellName": "Voidfall"
+    },
+    {
+      "variable": "world_killer",
+      "treeType": "HERO",
+      "spellName": "World Killer"
+    }
+  ],
+  "scarred": [
+    {
+      "variable": "demonsurge",
+      "treeType": "HERO",
+      "spellName": "Demonsurge"
+    },
+    {
+      "variable": "demonsurge",
+      "treeType": "HERO",
+      "spellName": "Voidsurge"
+    }
+  ]
+}
