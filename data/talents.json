@@ -1605,20 +1605,6 @@
         "type": "proc_trigger"
       },
       {
-        "name": "Feast of Souls",
-        "entry": 112884,
-        "node": 90969,
-        "row": 6,
-        "col": 2,
-        "maxRank": 1,
-        "spellId": 207697,
-        "spellName": "Feast of Souls",
-        "school": "Physical",
-        "passive": true,
-        "description": "Soul Cleave heals you for an additional $207693o1 over $207693d.",
-        "type": "passive_buff"
-      },
-      {
         "name": "Fallout",
         "entry": 112888,
         "node": 90972,
@@ -2298,209 +2284,7 @@
     ]
   },
   "hero": {
-    "Fel-Scarred": {
-      "subtreeId": 34,
-      "talents": [
-        {
-          "name": "Demonsurge",
-          "entry": 117514,
-          "node": 94917,
-          "row": 1,
-          "col": 1,
-          "maxRank": 1,
-          "spellId": 452402,
-          "spellName": "Demonsurge",
-          "school": "Physical",
-          "passive": true,
-          "description": "Metamorphosis now also $?a203555[causes Demon Blades to generate $162264s10 additional Fury]?a212612[causes Demon's Bite to generate $162264s11 additional Fury][greatly empowers Soul Cleave and Spirit Bomb].\nWhile demon form is active, the first cast of each empowered ability induces a Demonsurge, causing you to explode with Fel energy, dealing $452416s1 Fire damage to nearby enemies. Deals reduced damage beyond $452416s3 targets.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Wave of Debilitation",
-          "entry": 117510,
-          "node": 94913,
-          "row": 2,
-          "col": 1,
-          "maxRank": 1,
-          "spellId": 452403,
-          "spellName": "Wave of Debilitation",
-          "school": "Physical",
-          "passive": true,
-          "description": "Chaos Nova slows enemies by 60% and reduces attack and cast speed by 15% for 5 sec after its stun fades.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Pursuit of Angriness",
-          "entry": 124011,
-          "node": 94913,
-          "row": 2,
-          "col": 1,
-          "maxRank": 1,
-          "spellId": 452404,
-          "spellName": "Pursuit of Angriness",
-          "school": "Physical",
-          "passive": true,
-          "description": "Movement speed increased by $s1% per $s2 Fury.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Focused Hatred",
-          "entry": 117515,
-          "node": 94918,
-          "row": 2,
-          "col": 2,
-          "maxRank": 1,
-          "spellId": 452405,
-          "spellName": "Focused Hatred",
-          "school": "Physical",
-          "passive": true,
-          "description": "Demonsurge deals $s1% increased damage when it strikes a single target.\nEach additional target reduces this bonus by $s2%.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Set Fire to the Pain",
-          "entry": 117496,
-          "node": 94899,
-          "row": 2,
-          "col": 3,
-          "maxRank": 1,
-          "spellId": 452406,
-          "spellName": "Set Fire to the Pain",
-          "school": "Physical",
-          "passive": true,
-          "description": "$s2% of all non-Fire damage taken is instead taken as Fire damage over $453286d.\nFire damage taken reduced by $S3%.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Improved Soul Rending",
-          "entry": 124010,
-          "node": 94899,
-          "row": 2,
-          "col": 3,
-          "maxRank": 1,
-          "spellId": 452407,
-          "spellName": "Improved Soul Rending",
-          "school": "Physical",
-          "passive": true,
-          "description": "Leech granted by Soul Rending increased by $s1% and an additional $s2% while Metamorphosis is active.",
-          "type": "passive"
-        },
-        {
-          "name": "Burning Blades",
-          "entry": 117502,
-          "node": 94905,
-          "row": 3,
-          "col": 1,
-          "maxRank": 1,
-          "spellId": 452408,
-          "spellName": "Burning Blades",
-          "school": "Physical",
-          "passive": true,
-          "description": "Your blades burn with Fel energy, causing your $?a212612[Chaos Strike][Soul Cleave], Throw Glaive, and auto-attacks to deal an additional $s1% damage as Fire over $453177d.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Violent Transformation",
-          "entry": 117509,
-          "node": 94912,
-          "row": 3,
-          "col": 2,
-          "maxRank": 1,
-          "spellId": 452409,
-          "spellName": "Violent Transformation",
-          "school": "Physical",
-          "passive": true,
-          "description": "When you activate Metamorphosis, the cooldowns of your Sigil of Flame and $?a212612[Immolation Aura][Fel Devastation] are immediately reset.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Enduring Torment",
-          "entry": 117513,
-          "node": 94916,
-          "row": 3,
-          "col": 3,
-          "maxRank": 1,
-          "spellId": 452410,
-          "spellName": "Enduring Torment",
-          "school": "Physical",
-          "passive": true,
-          "description": "The effects of your demon form persist outside of it in a weakened state, increasing $?a212612[Chaos Strike and Blade Dance damage by $453314s2%, and Haste by $453314s1%][maximum health by 5% and Armor by 20%].",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Untethered Fury",
-          "entry": 117501,
-          "node": 94904,
-          "row": 4,
-          "col": 1,
-          "maxRank": 1,
-          "spellId": 452411,
-          "spellName": "Untethered Fury",
-          "school": "Physical",
-          "passive": true,
-          "description": "Maximum Fury increased by $s1.",
-          "type": "passive"
-        },
-        {
-          "name": "Student of Suffering",
-          "entry": 117499,
-          "node": 94902,
-          "row": 4,
-          "col": 2,
-          "maxRank": 1,
-          "spellId": 452412,
-          "spellName": "Student of Suffering",
-          "school": "Physical",
-          "passive": true,
-          "description": "Sigil of Flame applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting $453236s1 Fury every $453239t2 sec, for $453239d.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Flamebound",
-          "entry": 124009,
-          "node": 94902,
-          "row": 4,
-          "col": 2,
-          "maxRank": 1,
-          "spellId": 452413,
-          "spellName": "Flamebound",
-          "school": "Physical",
-          "passive": true,
-          "description": "Immolation Aura has $s1 yd increased radius and $s2% increased critical strike damage bonus.",
-          "type": "spell_modifier"
-        },
-        {
-          "name": "Monster Rising",
-          "entry": 117506,
-          "node": 94909,
-          "row": 4,
-          "col": 3,
-          "maxRank": 1,
-          "spellId": 452414,
-          "spellName": "Monster Rising",
-          "school": "Physical",
-          "passive": true,
-          "description": "Agility increased by $452550s1% while not in demon form.",
-          "type": "passive_buff"
-        },
-        {
-          "name": "Demonic Intensity",
-          "entry": 117498,
-          "node": 94901,
-          "row": 5,
-          "col": 1,
-          "maxRank": 1,
-          "spellId": 452415,
-          "spellName": "Demonic Intensity",
-          "school": "Physical",
-          "passive": true,
-          "description": "Activating Metamorphosis greatly empowers $?a212612[Eye Beam][Fel Devastation], Immolation Aura, and Sigil of Flame.\nDemonsurge damage is increased by $?a452416[${$452416s2/$452416u}][$452416s2]% for each time it previously triggered while your demon form is active.",
-          "type": "passive_buff"
-        }
-      ]
-    },
     "Aldrachi Reaver": {
-      "subtreeId": 35,
       "talents": [
         {
           "name": "Art of the Glaive",
@@ -2699,6 +2483,9 @@
           "type": "passive_buff"
         }
       ]
+    },
+    "Annihilator": {
+      "talents": []
     }
   }
 }

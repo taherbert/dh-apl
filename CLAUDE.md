@@ -72,6 +72,9 @@ node src/sim/runner.js apls/baseline.simc
 
 # Analyze results
 node src/sim/analyze.js
+
+# Verify data against simc C++ source
+npm run verify
 ```
 
 ## Key Paths

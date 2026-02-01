@@ -4,7 +4,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { classifyEffect } from "./interaction-types.js";
+import { classifyEffect, classifyByName } from "./interaction-types.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -51,7 +51,7 @@ function buildInteractions() {
           ? classifyFromEffects(modifierSpell, ref.effects)
           : modifierSpell
             ? classifyFromSpell(modifierSpell)
-            : "unknown";
+            : classifyByName(ref.name) || "unknown";
 
       const interaction = {
         source: {
@@ -178,6 +178,8 @@ function classifyFromSpell(spell) {
     if (classified) return classified;
   }
   if (spell.passive) return "buff_grant";
+  const byName = classifyByName(spell.name);
+  if (byName) return byName;
   return "unknown";
 }
 

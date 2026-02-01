@@ -35,8 +35,12 @@ Build the foundation for creating an optimal Vengeance Demon Hunter APL targetin
 
 - [x] `src/model/talents.js` — structures talent data into class/spec/hero trees
 - [x] Output: `data/talents.json`
-- Note: Class=44, Spec=92, Fel-Scarred=14, Aldrachi Reaver=14 talents
-- Note: Subtree IDs: 34=Fel-Scarred, 35=Aldrachi Reaver
+- Note: Class=41, Spec=48, Aldrachi Reaver=14 talents (Annihilator not yet in DBC)
+- Note: DBC subtree IDs (34, 35) do NOT map to hero tree names — both contain mixed talents. Hero tree identity determined by C++ `talent.{tree}.*` assignments
+- Note: Devourer is a third DH spec (Intellect caster), not a hero tree
+- Note: Annihilator is the new Vengeance hero tree (replaces Fel-Scarred); C++ has 16 talents but simc binary (Sep 5) predates DBC updates — needs rebuild
+- Note: Vengeance hero trees in Midnight: Aldrachi Reaver + Annihilator
+- Note: Annihilator talent spells (Voidfall, Catastrophe, etc.) exist in SpellDataDump/demonhunter.txt (updated Feb 1) but not in compiled binary
 
 ### Step 4: Interaction Mapping
 
@@ -84,7 +88,7 @@ Build the foundation for creating an optimal Vengeance Demon Hunter APL targetin
 - APL parser/generator (AST-based)
 - Talent combination generator
 - Optimization loop (isolated variable testing)
-- Hero tree comparison (Aldrachi Reaver vs Felscarred)
+- Hero tree comparison (Aldrachi Reaver vs Annihilator)
 - Resolve spell description template variables to actual values
 - Save simc wiki pages locally as reference
 
@@ -95,3 +99,7 @@ Build the foundation for creating an optimal Vengeance Demon Hunter APL targetin
 - `talent` query has a different format than `spell` query (flat key-value vs nested)
 - Buff uptimes from simc JSON are percentages (0-100), not fractions (0-1)
 - GCD efficiency metric needs refinement for AoE scenarios (currently counts per-target hits)
+- simc binary built Sep 5 2025; DBC updates exist since then (may include Annihilator talent data)
+- Rebuilding simc may resolve missing Annihilator/new talent data
+- C++ has 8 Vengeance spec talents not yet in DBC, and DBC has 12 talents not in C++ (midnight branch in flux)
+- simc midnight branch version string still says "thewarwithin" despite Midnight-era code

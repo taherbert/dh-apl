@@ -7,6 +7,7 @@ graph LR
   t204909["Soul Rending"]
   s187827(("Metamorphosis"))
   t320421["Rush of Chaos"]
+  s189112(("Infernal Strike"))
   t389781["Long Night"]
   s196718(("Darkness"))
   t389783["Pitch Black"]
@@ -16,6 +17,8 @@ graph LR
   s202138(("Sigil of Chains"))
   t389997["Shear Fury"]
   s203782(("Shear"))
+  t389721["Extended Spikes"]
+  s203819(("Demon Spikes"))
   s204021(("Fiery Brand"))
   s204596(("Sigil of Flame"))
   s207407(("Soul Carver"))
@@ -36,27 +39,29 @@ graph LR
   t429211 -->|range modifier| s185123
   t204909 -->|damage modifier| s187827
   t320421 -->|cooldown modifier| s187827
+  t390213 -->|damage modifier| s189112
   t389781 -->|duration modifier| s196718
   t389783 -->|cooldown modifier| s196718
   t209281 -->|duration modifier| s202137
-  t389715 -->|damage modifier| s202137
+  t389715 -->|range modifier| s202137
   t209281 -->|duration modifier| s202138
-  t389715 -->|damage modifier| s202138
+  t389715 -->|range modifier| s202138
   t389997 -->|damage modifier| s203782
+  t389721 -->|duration modifier| s203819
   t390213 -->|damage modifier| s204021
   t209281 -->|duration modifier| s204596
-  t389715 -->|damage modifier| s204596
+  t389715 -->|range modifier| s204596
   t390213 -->|damage modifier| s207407
   t209281 -->|duration modifier| s207684
-  t389715 -->|damage modifier| s207684
+  t389715 -->|range modifier| s207684
   t442492 -->|damage modifier| s228478
   t390213 -->|damage modifier| s247455
-  t389985 -->|damage modifier| s247456
+  t389985 -->|stacking modifier| s247456
   t390213 -->|damage modifier| s258860
   t207548 -->|damage modifier| s258920
   t320331 -->|damage modifier| s258920
   t390213 -->|damage modifier| s320341
   t209281 -->|duration modifier| s390163
-  t389715 -->|damage modifier| s390163
+  t389715 -->|range modifier| s390163
   classDef hero fill:#f9d,stroke:#333
   class t442492 hero

@@ -1531,8 +1531,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 442492,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Army Unto Oneself",
@@ -1545,8 +1544,7 @@
     "row": 3,
     "maxRank": 1,
     "spellId": 442714,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Wounded Quarry",
@@ -1559,8 +1557,7 @@
     "row": 3,
     "maxRank": 1,
     "spellId": 442806,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Fury of the Aldrachi",
@@ -1573,8 +1570,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 442718,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Set Fire to the Pain",
@@ -1587,8 +1583,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 452406,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Demonic Intensity",
@@ -1601,8 +1596,7 @@
     "row": 5,
     "maxRank": 1,
     "spellId": 452415,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Student of Suffering",
@@ -1615,8 +1609,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 452412,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Reaver's Mark",
@@ -1629,8 +1622,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 442679,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Untethered Fury",
@@ -1643,8 +1635,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 452411,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Burning Blades",
@@ -1657,8 +1648,7 @@
     "row": 3,
     "maxRank": 1,
     "spellId": 452408,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Warblade's Hunger",
@@ -1671,8 +1661,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 442502,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Monster Rising",
@@ -1685,8 +1674,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 452414,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Keen Engagement",
@@ -1699,8 +1687,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 442497,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Evasive Action",
@@ -1713,8 +1700,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 444926,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Violent Transformation",
@@ -1727,8 +1713,7 @@
     "row": 3,
     "maxRank": 1,
     "spellId": 452409,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Wave of Debilitation",
@@ -1741,8 +1726,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 452403,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Aldrachi Tactics",
@@ -1755,8 +1739,7 @@
     "row": 3,
     "maxRank": 1,
     "spellId": 442683,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Art of the Glaive",
@@ -1769,8 +1752,7 @@
     "row": 1,
     "maxRank": 1,
     "spellId": 442290,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Enduring Torment",
@@ -1783,8 +1765,7 @@
     "row": 3,
     "maxRank": 1,
     "spellId": 452410,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Demonsurge",
@@ -1797,8 +1778,7 @@
     "row": 1,
     "maxRank": 1,
     "spellId": 452402,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Focused Hatred",
@@ -1811,8 +1791,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 452405,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Thrill of the Fight",
@@ -1825,8 +1804,7 @@
     "row": 5,
     "maxRank": 1,
     "spellId": 442686,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "A Fire Inside",
@@ -2086,8 +2064,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 444997,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Incorruptible Spirit",
@@ -2100,8 +2077,7 @@
     "row": 3,
     "maxRank": 1,
     "spellId": 442736,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Unhindered Assault",
@@ -2114,8 +2090,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 444931,
-    "subtree": 35,
-    "heroSpec": "Aldrachi Reaver"
+    "subtree": 35
   },
   {
     "name": "Flamebound",
@@ -2128,8 +2103,7 @@
     "row": 4,
     "maxRank": 1,
     "spellId": 452413,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Improved Soul Rending",
@@ -2142,8 +2116,7 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 452407,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   },
   {
     "name": "Pursuit of Angriness",
@@ -2156,7 +2129,6 @@
     "row": 2,
     "maxRank": 1,
     "spellId": 452404,
-    "subtree": 34,
-    "heroSpec": "Fel-Scarred"
+    "subtree": 34
   }
 ]

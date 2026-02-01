@@ -753,6 +753,181 @@
     "tooltip": "Maximum health increased by $w2%.\nArmor increased by $w8%.\n$?s235893[Versatility increased by $w5%. ][]$?s263642[Fracture][Shear] generates $w4 additional Fury and one additional Lesser Soul Fragment."
   },
   {
+    "name": "Infernal Strike",
+    "id": 189112,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 276573,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.417,
+          "radius": "6 yards",
+          "target": "At Enemy in Area (16)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Melee",
+    "range": 50000,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "1",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Do Not Sheath (18)",
+      "No Active Defense (21)",
+      "Not a Proc (105)",
+      "Always Hit (114)",
+      "Do Not Display Range (126)",
+      "Not In Spellbook (143)",
+      "Always AOE Line of Sight (186)",
+      "Always Show Ground Texture (190)",
+      "Ignore Distance Check On Charge/Jump Charge Done Trigger Spell (398)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc189110"
+  },
+  {
     "name": "Netherwalk",
     "id": 196555,
     "flags": [
@@ -1761,6 +1936,82 @@
       "Allow Class Ability Procs (416)"
     ],
     "description": "Shears an enemy for $s1 Physical damage, and shatters $?a187827[two Lesser Soul Fragments][a Lesser Soul Fragment] from your target.\n|cFFFFFFFFGenerates $m2 Fury.|r"
+  },
+  {
+    "name": "Demon Spikes",
+    "id": 203819,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 300687,
+        "type": "Apply Aura (6) | Modify Parry% (47)",
+        "details": {
+          "baseValue": 8,
+          "scaledValue": 8,
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 300915,
+        "type": "Apply Aura (6) | Modify Armor by Primary Stat% (268)",
+        "details": {
+          "baseValue": 75,
+          "scaledValue": 75,
+          "miscValue": "1",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "spellLevel": 1,
+    "duration": 8,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "114",
+      "292",
+      "824: Will to Survive (312922 effect#1)"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Mastery: Fel Blood",
+        "id": 203747,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Extended Spikes",
+        "id": 389721,
+        "effects": [
+          1
+        ]
+      }
+    ],
+    "familyFlags": [
+      "7"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Not Shapeshifted (16)",
+      "Do Not Sheath (18)",
+      "No Aura Cancel (31)",
+      "No Threat (42)",
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)",
+      "Nameplate Personal Buffs/Debuffs (423)"
+    ],
+    "auraInterrupt": "Enter World (22)",
+    "description": "$@spelldesc203720",
+    "tooltip": "Armor increased by ${$W2*$AGI/100}.$?s321028[\nParry chance increased by $w1%.][]"
   },
   {
     "name": "Soul Fragments",
@@ -5997,6 +6248,56 @@
       "Do Not Log on Learn (355)"
     ],
     "description": "Immolation Aura generates an additional ${$258922s2*$258920d} Fury over $258920d."
+  },
+  {
+    "name": "Immolation Aura",
+    "id": 320378,
+    "flags": [
+      "Spell Family (107)",
+      "Passive"
+    ],
+    "passive": true,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 807417,
+        "type": "Apply Aura (6) | Modify Recharge Time (Category) (453)",
+        "details": {
+          "baseValue": -15000,
+          "scaledValue": -15000,
+          "miscValue": "1676 (Category)",
+          "target": "Self (1)",
+          "Affected Spells (Category)": "Immolation Aura (258920), Immolation Aura (427917), Consuming Fire (452487), Consuming Fire (456640)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1157658,
+        "type": "Apply Aura (6) | Modify Recharge Time (Category) (453)",
+        "details": {
+          "baseValue": -15000,
+          "scaledValue": -15000,
+          "miscValue": "2298 (Category)",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Vengeance Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "spellLevel": 27,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Only In Spellbook Until Learned (240)",
+      "Cooldown Shared With AI Group (418)"
+    ],
+    "description": "Reduces the cooldown of Immolation Aura by ${$abs($s0/1000)} sec."
   },
   {
     "name": "Bouncing Glaives",
@@ -12108,75 +12409,6 @@
       "Do Not Log on Learn (355)"
     ],
     "description": "Activating Metamorphosis greatly empowers $?a212612[Eye Beam][Fel Devastation], Immolation Aura, and Sigil of Flame.\nDemonsurge damage is increased by $?a452416[${$452416s2/$452416u}][$452416s2]% for each time it previously triggered while your demon form is active."
-  },
-  {
-    "name": "Demonsurge",
-    "id": 452435,
-    "flags": [
-      "Spell Family (107)",
-      "Hidden"
-    ],
-    "passive": false,
-    "hidden": true,
-    "effects": [
-      {
-        "index": 1,
-        "effectId": 1153593,
-        "type": "Apply Aura (6) | Override Action Spell (Misc /w Base) (332)",
-        "details": {
-          "baseValue": 452436,
-          "scaledValue": 452436,
-          "target": "Self (1)",
-          "Affected Spells": "Soul Cleave (228477), Soul Cleave (228478), Soul Sunder (452436)",
-          "Family Flags": "34"
-        }
-      },
-      {
-        "index": 2,
-        "effectId": 1153594,
-        "type": "Apply Aura (6) | Override Action Spell (Misc /w Base) (332)",
-        "details": {
-          "baseValue": 452437,
-          "scaledValue": 452437,
-          "miscValue": "247454",
-          "target": "Self (1)"
-        }
-      },
-      {
-        "index": 3,
-        "effectId": 1158336,
-        "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-        "details": {
-          "baseValue": 30,
-          "scaledValue": 30,
-          "target": "Self (1)",
-          "Affected Spells": "Soul Cleave (228478), Spirit Bomb (247455)",
-          "Family Flags": "31, 68"
-        }
-      }
-    ],
-    "class": "Demon Hunter",
-    "school": "Chaos",
-    "spellType": null,
-    "labels": [
-      "16: Class Spells",
-      "66: Demon Hunter Spells",
-      "292",
-      "3022"
-    ],
-    "attributes": [
-      "Do Not Display (Spellbook",
-      "Aura Icon",
-      "Combat Log) (7)",
-      "No Aura Cancel (31)",
-      "Aura Expires Offline (130)",
-      "Aura Points On Client (268)",
-      "Spellcast Override In Spellbook (310)",
-      "Allow Class Ability Procs (416)",
-      "Nameplate Personal Buffs/Debuffs (423)",
-      "Periodic Refresh Extends Duration (436)"
-    ],
-    "auraInterrupt": "Change Specialization (38)"
   },
   {
     "name": "Screaming Brutality",

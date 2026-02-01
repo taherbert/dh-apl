@@ -1,6 +1,6 @@
 // Structures DH talent data into organized class/spec/hero trees.
 // Reads talents-raw.json (from extraction) and spells.json, outputs talents.json.
-// Parses simc C++ source to determine Havoc vs Vengeance spec assignments.
+// Parses simc C++ source to determine spec and hero tree assignments.
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
@@ -11,26 +11,41 @@ const DATA_DIR = join(__dirname, "..", "..", "data");
 const SIMC_DH_CPP =
   "/Users/tom/Documents/GitHub/simc/engine/class_modules/sc_demon_hunter.cpp";
 
-// Parse the simc C++ source to build talent name → spec mapping.
-// Looks for lines like: talent.vengeance.spirit_bomb = find_talent_spell(..., "Spirit Bomb" );
-// and: talent.havoc.eye_beam = find_talent_spell(..., "Eye Beam" );
-function parseSpecAssignments() {
+// Parse the simc C++ source to build talent name → category mapping.
+// Categories: havoc, vengeance, devourer (spec trees) and
+// aldrachi_reaver, annihilator, scarred (hero trees)
+function parseTalentAssignments() {
   const src = readFileSync(SIMC_DH_CPP, "utf-8");
-  const specByName = new Map();
+  const byName = new Map();
 
-  const re =
-    /talent\.(havoc|vengeance)\.(\w+)\s*=\s*find_talent_spell\([^"]*"([^"]+)"/g;
+  // Spec talents: talent.{spec}.{var} = find_talent_spell(..., "Name")
+  const specRe =
+    /talent\.(havoc|vengeance|devourer)\.(\w+)\s*=\s*find_talent_spell\([^"]*"([^"]+)"/g;
   let match;
-  while ((match = re.exec(src)) !== null) {
-    const [, spec, , name] = match;
-    // First assignment wins (some talents have multiple rank entries)
-    if (!specByName.has(name)) {
-      specByName.set(name, spec);
-    }
+  while ((match = specRe.exec(src)) !== null) {
+    const [, category, , name] = match;
+    if (!byName.has(name)) byName.set(name, category);
   }
 
-  return specByName;
+  // Hero talents: talent.{hero}.{var} = find_talent_spell(..., "Name")
+  const heroRe =
+    /talent\.(aldrachi_reaver|annihilator|scarred)\.(\w+)\s*=\s*find_talent_spell\([^"]*"([^"]+)"/g;
+  while ((match = heroRe.exec(src)) !== null) {
+    const [, category, , name] = match;
+    if (!byName.has(name)) byName.set(name, category);
+  }
+
+  return byName;
 }
+
+const HERO_TREE_DISPLAY_NAMES = {
+  aldrachi_reaver: "Aldrachi Reaver",
+  annihilator: "Annihilator",
+  scarred: "Scarred",
+};
+
+// Hero trees available to Vengeance
+const VENGEANCE_HERO_TREES = new Set(["aldrachi_reaver", "annihilator"]);
 
 function buildTalentTrees() {
   const rawTalents = JSON.parse(
@@ -40,36 +55,50 @@ function buildTalentTrees() {
     readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
   );
   const spellMap = new Map(spells.map((s) => [s.id, s]));
-  const specByName = parseSpecAssignments();
+  const assignments = parseTalentAssignments();
 
+  const specCounts = {};
+  for (const cat of assignments.values()) {
+    specCounts[cat] = (specCounts[cat] || 0) + 1;
+  }
   console.log(
-    `Parsed ${specByName.size} spec assignments from simc C++ (${[...specByName.values()].filter((s) => s === "vengeance").length} vengeance, ${[...specByName.values()].filter((s) => s === "havoc").length} havoc)`,
+    `Parsed ${assignments.size} talent assignments from simc C++:`,
+    Object.entries(specCounts)
+      .map(([k, v]) => `${k}=${v}`)
+      .join(", "),
   );
 
   const trees = {
     class: { name: "Demon Hunter", talents: [] },
     spec: { name: "Vengeance", talents: [] },
     hero: {
-      "Fel-Scarred": { subtreeId: 34, talents: [] },
-      "Aldrachi Reaver": { subtreeId: 35, talents: [] },
+      "Aldrachi Reaver": { talents: [] },
+      Annihilator: { talents: [] },
     },
   };
 
-  let havocSkipped = 0;
+  let skipped = 0;
 
   for (const raw of rawTalents) {
     if (raw.tree === "selection") continue;
 
     const spell = spellMap.get(raw.spellId);
-
-    // Determine spec from multiple sources:
-    // 1. simc C++ talent.{spec}.{name} assignments (most authoritative)
-    // 2. Spell data talentEntry.spec field
-    const cppSpec = specByName.get(raw.name);
+    const category = assignments.get(raw.name);
     const spellSpec = spell?.talentEntry?.spec?.toLowerCase();
 
-    if (cppSpec === "havoc" || (!cppSpec && spellSpec === "havoc")) {
-      havocSkipped++;
+    // Skip non-Vengeance spec talents
+    if (
+      category === "havoc" ||
+      category === "devourer" ||
+      (!category && (spellSpec === "havoc" || spellSpec === "devourer"))
+    ) {
+      skipped++;
+      continue;
+    }
+
+    // Skip Scarred hero tree (Havoc/Devourer only in Midnight)
+    if (category === "scarred") {
+      skipped++;
       continue;
     }
 
@@ -87,7 +116,6 @@ function buildTalentTrees() {
       description: spell?.description || null,
     };
 
-    // Determine what this talent does based on spell data
     if (spell) {
       talent.type = categorizeTalent(spell);
       if (spell.resource) talent.resource = spell.resource;
@@ -103,10 +131,14 @@ function buildTalentTrees() {
     } else if (raw.tree === "spec") {
       trees.spec.talents.push(talent);
     } else if (raw.tree === "hero") {
-      const heroName = raw.heroSpec || `Subtree ${raw.subtree}`;
-      if (trees.hero[heroName]) {
-        trees.hero[heroName].talents.push(talent);
+      // Use C++ assignment to determine hero tree, not subtree ID
+      const heroKey = HERO_TREE_DISPLAY_NAMES[category];
+      if (heroKey && trees.hero[heroKey]) {
+        trees.hero[heroKey].talents.push(talent);
+      } else if (category === "aldrachi_reaver" || category === "annihilator") {
+        trees.hero[HERO_TREE_DISPLAY_NAMES[category]].talents.push(talent);
       }
+      // Hero talents without C++ assignment are unclassified — skip silently
     }
   }
 
@@ -120,7 +152,7 @@ function buildTalentTrees() {
 
   writeFileSync(join(DATA_DIR, "talents.json"), JSON.stringify(trees, null, 2));
 
-  console.log(`Skipped ${havocSkipped} Havoc-only talents`);
+  console.log(`Skipped ${skipped} non-Vengeance talents`);
   console.log("Wrote data/talents.json");
   console.log(`  Class tree: ${trees.class.talents.length} talents`);
   console.log(`  Spec tree: ${trees.spec.talents.length} talents`);
@@ -128,7 +160,6 @@ function buildTalentTrees() {
     console.log(`  Hero (${name}): ${hero.talents.length} talents`);
   }
 
-  // Show talent type breakdown
   const allTalents = [
     ...trees.class.talents,
     ...trees.spec.talents,
@@ -151,7 +182,6 @@ function categorizeTalent(spell) {
   if (!spell.passive && spell.gcd) return "active_ability";
   if (!spell.passive && spell.cooldown && !spell.gcd) return "off_gcd_ability";
 
-  // Check effects for modification patterns
   const effects = spell.effects || [];
   for (const e of effects) {
     const type = e.type?.toLowerCase() || "";

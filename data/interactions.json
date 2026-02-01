@@ -12,7 +12,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -30,7 +30,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -48,7 +48,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "resource_modifier",
       "effects": [
         1,
         2
@@ -83,7 +83,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -100,7 +100,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -135,7 +135,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2,
         3
@@ -153,7 +153,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -189,7 +189,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -207,7 +207,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1,
         2
@@ -225,7 +225,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -261,7 +261,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -278,7 +278,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -296,7 +296,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "proc_trigger",
       "effects": [
         1,
         2
@@ -314,7 +314,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -332,7 +332,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -350,7 +350,7 @@
         "id": 179057,
         "name": "Chaos Nova"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -368,7 +368,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -386,7 +386,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -404,7 +404,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -422,7 +422,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2,
         3
@@ -457,7 +457,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -475,7 +475,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -510,7 +510,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -528,7 +528,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -563,7 +563,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -580,7 +580,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -598,7 +598,7 @@
         "id": 185123,
         "name": "Throw Glaive"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -633,7 +633,7 @@
         "id": 187827,
         "name": "Metamorphosis"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -650,7 +650,7 @@
         "id": 187827,
         "name": "Metamorphosis"
       },
-      "type": "unknown",
+      "type": "cooldown_modifier",
       "effects": [
         1
       ]
@@ -684,9 +684,272 @@
         "id": 187827,
         "name": "Metamorphosis"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
+      ]
+    },
+    {
+      "source": {
+        "id": 163073,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207744,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 207771,
+        "name": "Fiery Brand",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "buff_grant",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 212818,
+        "name": "Fiery Demise",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 247456,
+        "name": "Frailty",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "buff_grant",
+      "effects": [
+        4
+      ]
+    },
+    {
+      "source": {
+        "id": 347765,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 388114,
+        "name": "Any Means Necessary",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 390213,
+        "name": "Burning Blood",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 409645,
+        "name": "Fires of Fel",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 425653,
+        "name": "Fiery Resolve",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "buff_grant",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 428241,
+        "name": "Demon Hide",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        3
+      ]
+    },
+    {
+      "source": {
+        "id": 442624,
+        "name": "Reaver's Mark",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "buff_grant",
+      "effects": [
+        1
+      ]
+    },
+    {
+      "source": {
+        "id": 1219012,
+        "name": "Luck of the Draw!",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "proc_trigger",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1227062,
+        "name": "Thrill of the Fight",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "mechanic_change",
+      "effects": [
+        1,
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 1238675,
+        "name": "Demon Soul",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 189112,
+        "name": "Infernal Strike"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
       ]
     },
     {
@@ -701,7 +964,7 @@
         "id": 196718,
         "name": "Darkness"
       },
-      "type": "unknown",
+      "type": "duration_modifier",
       "effects": [
         2
       ]
@@ -770,7 +1033,7 @@
         "id": 198013,
         "name": "Eye Beam"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2
       ]
@@ -787,7 +1050,7 @@
         "id": 198793,
         "name": "Vengeful Retreat"
       },
-      "type": "unknown",
+      "type": "resource_modifier",
       "effects": [
         2
       ]
@@ -821,7 +1084,7 @@
         "id": 198793,
         "name": "Vengeful Retreat"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1
       ]
@@ -855,7 +1118,7 @@
         "id": 202137,
         "name": "Sigil of Silence"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -872,7 +1135,7 @@
         "id": 202137,
         "name": "Sigil of Silence"
       },
-      "type": "damage_modifier",
+      "type": "range_modifier",
       "effects": [
         1
       ]
@@ -906,7 +1169,7 @@
         "id": 202138,
         "name": "Sigil of Chains"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -923,7 +1186,7 @@
         "id": 202138,
         "name": "Sigil of Chains"
       },
-      "type": "damage_modifier",
+      "type": "range_modifier",
       "effects": [
         1
       ]
@@ -940,7 +1203,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -975,7 +1238,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2
       ]
@@ -1009,7 +1272,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         3
       ]
@@ -1026,7 +1289,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         3
       ]
@@ -1043,7 +1306,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -1078,7 +1341,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2
       ]
@@ -1095,7 +1358,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1,
         2
@@ -1113,7 +1376,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -1130,7 +1393,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "proc_trigger",
       "effects": [
         1,
         2
@@ -1148,7 +1411,7 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -1166,10 +1429,44 @@
         "id": 203782,
         "name": "Shear"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
+      ]
+    },
+    {
+      "source": {
+        "id": 203747,
+        "name": "Mastery: Fel Blood",
+        "isTalent": false,
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203819,
+        "name": "Demon Spikes"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        2
+      ]
+    },
+    {
+      "source": {
+        "id": 389721,
+        "name": "Extended Spikes",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 203819,
+        "name": "Demon Spikes"
+      },
+      "type": "duration_modifier",
+      "effects": [
+        1
       ]
     },
     {
@@ -1184,7 +1481,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -1219,7 +1516,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -1236,7 +1533,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1253,7 +1550,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -1287,7 +1584,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -1304,7 +1601,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -1338,7 +1635,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -1356,7 +1653,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1391,7 +1688,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1408,7 +1705,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1,
         2
@@ -1444,7 +1741,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -1461,7 +1758,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "proc_trigger",
       "effects": [
         1,
         2
@@ -1479,7 +1776,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -1497,7 +1794,7 @@
         "id": 204021,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -1532,7 +1829,7 @@
         "id": 204596,
         "name": "Sigil of Flame"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1549,7 +1846,7 @@
         "id": 204596,
         "name": "Sigil of Flame"
       },
-      "type": "damage_modifier",
+      "type": "range_modifier",
       "effects": [
         1
       ]
@@ -1566,7 +1863,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -1601,7 +1898,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -1618,7 +1915,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1652,7 +1949,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -1670,7 +1967,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1705,7 +2002,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1722,7 +2019,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1,
         2
@@ -1758,7 +2055,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -1775,7 +2072,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "proc_trigger",
       "effects": [
         1,
         2
@@ -1793,7 +2090,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -1811,7 +2108,7 @@
         "id": 207407,
         "name": "Soul Carver"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -1846,7 +2143,7 @@
         "id": 207684,
         "name": "Sigil of Misery"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -1863,7 +2160,7 @@
         "id": 207684,
         "name": "Sigil of Misery"
       },
-      "type": "damage_modifier",
+      "type": "range_modifier",
       "effects": [
         1
       ]
@@ -1880,7 +2177,7 @@
         "id": 207744,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -1897,7 +2194,7 @@
         "id": 207744,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -1914,7 +2211,7 @@
         "id": 207744,
         "name": "Fiery Brand"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -1948,7 +2245,7 @@
         "id": 212084,
         "name": "Fel Devastation"
       },
-      "type": "unknown",
+      "type": "cooldown_modifier",
       "effects": [
         1
       ]
@@ -1965,7 +2262,7 @@
         "id": 212084,
         "name": "Fel Devastation"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1
       ]
@@ -1999,7 +2296,7 @@
         "id": 228477,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         3
       ]
@@ -2016,7 +2313,7 @@
         "id": 228477,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         3
       ]
@@ -2033,7 +2330,7 @@
         "id": 228477,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         6
       ]
@@ -2050,7 +2347,7 @@
         "id": 228477,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         6
       ]
@@ -2067,7 +2364,7 @@
         "id": 228477,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         6
       ]
@@ -2084,7 +2381,7 @@
         "id": 228477,
         "name": "Soul Cleave"
       },
-      "type": "buff_grant",
+      "type": "mechanic_change",
       "effects": [
         1
       ]
@@ -2101,7 +2398,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2153,7 +2450,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         3
       ]
@@ -2170,7 +2467,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         3
       ]
@@ -2187,7 +2484,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2205,7 +2502,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -2222,7 +2519,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1,
         2
@@ -2240,7 +2537,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         6
       ]
@@ -2257,7 +2554,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         6
       ]
@@ -2274,7 +2571,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         6
       ]
@@ -2308,7 +2605,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -2325,7 +2622,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "buff_grant",
+      "type": "mechanic_change",
       "effects": [
         1,
         3
@@ -2343,7 +2640,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "proc_trigger",
       "effects": [
         1,
         2
@@ -2361,7 +2658,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -2379,7 +2676,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -2396,7 +2693,7 @@
         "id": 228478,
         "name": "Soul Cleave"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2414,7 +2711,7 @@
         "id": 232893,
         "name": "Felblade"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         3,
         4
@@ -2432,7 +2729,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2467,7 +2764,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -2484,7 +2781,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -2518,7 +2815,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2536,7 +2833,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -2571,7 +2868,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -2588,7 +2885,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -2605,7 +2902,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1,
         2
@@ -2641,7 +2938,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -2658,7 +2955,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "damage_modifier",
+      "type": "mechanic_change",
       "effects": [
         3
       ]
@@ -2675,7 +2972,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "proc_trigger",
       "effects": [
         1,
         2
@@ -2693,7 +2990,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -2711,7 +3008,7 @@
         "id": 247455,
         "name": "Spirit Bomb"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2729,7 +3026,7 @@
         "id": 247456,
         "name": "Frailty"
       },
-      "type": "damage_modifier",
+      "type": "stacking_modifier",
       "effects": [
         1
       ]
@@ -2746,7 +3043,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2764,7 +3061,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2799,7 +3096,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -2816,7 +3113,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2834,7 +3131,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2,
         3
@@ -2852,7 +3149,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2888,7 +3185,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2906,7 +3203,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -2942,7 +3239,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -2959,7 +3256,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -2977,7 +3274,7 @@
         "id": 258860,
         "name": "Essence Break"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -3030,7 +3327,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3047,7 +3344,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2
       ]
@@ -3064,7 +3361,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3081,7 +3378,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3098,7 +3395,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3115,7 +3412,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3132,7 +3429,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3149,7 +3446,7 @@
         "id": 258920,
         "name": "Immolation Aura"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         2
       ]
@@ -3166,7 +3463,7 @@
         "id": 258925,
         "name": "Fel Barrage"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         3
       ]
@@ -3183,7 +3480,7 @@
         "id": 258925,
         "name": "Fel Barrage"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         3
       ]
@@ -3218,7 +3515,7 @@
         "id": 263642,
         "name": "Fracture"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2
       ]
@@ -3235,7 +3532,7 @@
         "id": 263642,
         "name": "Fracture"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         3
       ]
@@ -3252,7 +3549,7 @@
         "id": 263642,
         "name": "Fracture"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         3
       ]
@@ -3269,7 +3566,7 @@
         "id": 263642,
         "name": "Fracture"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         2
       ]
@@ -3286,7 +3583,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -3321,7 +3618,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         2
       ]
@@ -3338,7 +3635,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3372,7 +3669,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -3390,7 +3687,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3425,7 +3722,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3442,7 +3739,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1,
         2
@@ -3478,7 +3775,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "buff_grant",
       "effects": [
         1
       ]
@@ -3495,7 +3792,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "proc_trigger",
       "effects": [
         1,
         2
@@ -3513,7 +3810,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "mechanic_change",
       "effects": [
         1,
         2
@@ -3531,7 +3828,7 @@
         "id": 320341,
         "name": "Bulk Extraction"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         2
@@ -3549,7 +3846,7 @@
         "id": 370965,
         "name": "The Hunt"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1,
         3,
@@ -3585,7 +3882,7 @@
         "id": 390163,
         "name": "Sigil of Spite"
       },
-      "type": "unknown",
+      "type": "damage_modifier",
       "effects": [
         1
       ]
@@ -3602,7 +3899,7 @@
         "id": 390163,
         "name": "Sigil of Spite"
       },
-      "type": "damage_modifier",
+      "type": "range_modifier",
       "effects": [
         1
       ]
@@ -3615,21 +3912,21 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Mastery: Demonic Presence",
           "sourceId": 185164,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Unleashed Power",
           "sourceId": 206477,
-          "type": "unknown",
+          "type": "resource_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3643,14 +3940,14 @@
         {
           "source": "Fiery Brand",
           "sourceId": 207771,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Exergy",
           "sourceId": 208628,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3664,14 +3961,14 @@
         {
           "source": "Chaos Blades",
           "sourceId": 247938,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3685,21 +3982,21 @@
         {
           "source": "Seething Chaos",
           "sourceId": 394934,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Resolve",
           "sourceId": 425653,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Inertia",
           "sourceId": 427641,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3713,42 +4010,42 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Luck of the Draw!",
           "sourceId": 1219012,
-          "type": "unknown",
+          "type": "proc_trigger",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 1227062,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238675,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238676,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -3760,28 +4057,28 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Exergy",
           "sourceId": 208628,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Mo'arg Bionic Stabilizers",
           "sourceId": 208826,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Chaos Blades",
           "sourceId": 247938,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3795,14 +4092,14 @@
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Serrated Glaive",
           "sourceId": 390155,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3816,14 +4113,14 @@
         {
           "source": "Seething Chaos",
           "sourceId": 394934,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Inertia",
           "sourceId": 427641,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3837,21 +4134,21 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238676,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -3870,14 +4167,14 @@
         {
           "source": "Soul Rending",
           "sourceId": 217996,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "First of the Illidari",
           "sourceId": 235893,
-          "type": "unknown",
+          "type": "cooldown_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3891,7 +4188,117 @@
         {
           "source": "Metamorphosis",
           "sourceId": 321068,
-          "type": "unknown",
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "189112": {
+      "name": "Infernal Strike",
+      "modifiers": [
+        {
+          "source": "Demon Soul",
+          "sourceId": 163073,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207744,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Brand",
+          "sourceId": 207771,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Demise",
+          "sourceId": 212818,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Frailty",
+          "sourceId": 247456,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 347765,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Any Means Necessary",
+          "sourceId": 388114,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Burning Blood",
+          "sourceId": 390213,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null
+        },
+        {
+          "source": "Fires of Fel",
+          "sourceId": 409645,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Fiery Resolve",
+          "sourceId": 425653,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Hide",
+          "sourceId": 428241,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Reaver's Mark",
+          "sourceId": 442624,
+          "type": "buff_grant",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Luck of the Draw!",
+          "sourceId": 1219012,
+          "type": "proc_trigger",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Thrill of the Fight",
+          "sourceId": 1227062,
+          "type": "mechanic_change",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Demon Soul",
+          "sourceId": 1238675,
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -3903,7 +4310,7 @@
         {
           "source": "Cover of Darkness",
           "sourceId": 357419,
-          "type": "unknown",
+          "type": "duration_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3936,7 +4343,7 @@
         {
           "source": "Soul Flame of Insight",
           "sourceId": 226334,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -3948,7 +4355,7 @@
         {
           "source": "Prepared",
           "sourceId": 203551,
-          "type": "unknown",
+          "type": "resource_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -3962,7 +4369,7 @@
         {
           "source": "Evasive Action",
           "sourceId": 444929,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         }
@@ -3981,14 +4388,14 @@
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Chains of Anger",
           "sourceId": 389715,
-          "type": "damage_modifier",
+          "type": "range_modifier",
           "tree": "spec",
           "heroSpec": null
         }
@@ -4007,14 +4414,14 @@
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Chains of Anger",
           "sourceId": 389715,
-          "type": "damage_modifier",
+          "type": "range_modifier",
           "tree": "spec",
           "heroSpec": null
         }
@@ -4026,7 +4433,7 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4040,7 +4447,7 @@
         {
           "source": "Fiery Demise",
           "sourceId": 212818,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4054,21 +4461,21 @@
         {
           "source": "Mark of the Ogre",
           "sourceId": 326486,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Half-Giant Empowerment",
           "sourceId": 345871,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4082,43 +4489,62 @@
         {
           "source": "Fires of Fel",
           "sourceId": 409645,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Resolve",
           "sourceId": 425653,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Luck of the Draw!",
           "sourceId": 1219012,
-          "type": "unknown",
+          "type": "proc_trigger",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 1227062,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238675,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
+          "heroSpec": null
+        }
+      ]
+    },
+    "203819": {
+      "name": "Demon Spikes",
+      "modifiers": [
+        {
+          "source": "Mastery: Fel Blood",
+          "sourceId": 203747,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null
+        },
+        {
+          "source": "Extended Spikes",
+          "sourceId": 389721,
+          "type": "duration_modifier",
+          "tree": "spec",
           "heroSpec": null
         }
       ]
@@ -4129,7 +4555,7 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4143,21 +4569,21 @@
         {
           "source": "Fiery Brand",
           "sourceId": 207771,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Demise",
           "sourceId": 212818,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Spirit of the Darkness Flame",
           "sourceId": 235543,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
@@ -4171,14 +4597,14 @@
         {
           "source": "Revel in Pain",
           "sourceId": 272985,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Spirit of the Darkness Flame",
           "sourceId": 337542,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
@@ -4192,14 +4618,14 @@
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4213,14 +4639,14 @@
         {
           "source": "Fires of Fel",
           "sourceId": 409645,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Resolve",
           "sourceId": 425653,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
@@ -4234,28 +4660,28 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Luck of the Draw!",
           "sourceId": 1219012,
-          "type": "unknown",
+          "type": "proc_trigger",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 1227062,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238675,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -4274,14 +4700,14 @@
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Chains of Anger",
           "sourceId": 389715,
-          "type": "damage_modifier",
+          "type": "range_modifier",
           "tree": "spec",
           "heroSpec": null
         }
@@ -4293,7 +4719,7 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4307,14 +4733,14 @@
         {
           "source": "Fiery Brand",
           "sourceId": 207771,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Demise",
           "sourceId": 212818,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4328,14 +4754,14 @@
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4349,14 +4775,14 @@
         {
           "source": "Fires of Fel",
           "sourceId": 409645,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Resolve",
           "sourceId": 425653,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
@@ -4370,28 +4796,28 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Luck of the Draw!",
           "sourceId": 1219012,
-          "type": "unknown",
+          "type": "proc_trigger",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 1227062,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238675,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -4410,14 +4836,14 @@
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Chains of Anger",
           "sourceId": 389715,
-          "type": "damage_modifier",
+          "type": "range_modifier",
           "tree": "spec",
           "heroSpec": null
         }
@@ -4429,21 +4855,21 @@
         {
           "source": "Spirit of the Darkness Flame",
           "sourceId": 235543,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Revel in Pain",
           "sourceId": 272985,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Spirit of the Darkness Flame",
           "sourceId": 337542,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
@@ -4462,14 +4888,14 @@
         {
           "source": "Fel Defender",
           "sourceId": 338671,
-          "type": "unknown",
+          "type": "cooldown_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demonsurge",
           "sourceId": 452489,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         }
@@ -4488,42 +4914,42 @@
         {
           "source": "Mark of the Ogre",
           "sourceId": 326486,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Half-Giant Empowerment",
           "sourceId": 345871,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 427913,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 427914,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 427915,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demonsurge",
           "sourceId": 452435,
-          "type": "buff_grant",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         }
@@ -4535,7 +4961,7 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4556,56 +4982,56 @@
         {
           "source": "Mark of the Ogre",
           "sourceId": 326486,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Half-Giant Empowerment",
           "sourceId": 345871,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Soul Furnace",
           "sourceId": 391172,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Resolve",
           "sourceId": 425653,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 427913,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 427914,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 427915,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4619,42 +5045,42 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demonsurge",
           "sourceId": 452435,
-          "type": "buff_grant",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Luck of the Draw!",
           "sourceId": 1219012,
-          "type": "unknown",
+          "type": "proc_trigger",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 1227062,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Scarred Strikes",
           "sourceId": 1238462,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238675,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -4666,7 +5092,7 @@
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -4678,7 +5104,7 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4692,14 +5118,14 @@
         {
           "source": "Fiery Brand",
           "sourceId": 207771,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Demise",
           "sourceId": 212818,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4713,14 +5139,14 @@
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4734,21 +5160,21 @@
         {
           "source": "Soul Furnace",
           "sourceId": 391172,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fires of Fel",
           "sourceId": 409645,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Resolve",
           "sourceId": 425653,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
@@ -4762,35 +5188,35 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demonsurge",
           "sourceId": 452435,
-          "type": "damage_modifier",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Luck of the Draw!",
           "sourceId": 1219012,
-          "type": "unknown",
+          "type": "proc_trigger",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 1227062,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238675,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -4802,7 +5228,7 @@
         {
           "source": "Soulcrush",
           "sourceId": 389985,
-          "type": "damage_modifier",
+          "type": "stacking_modifier",
           "tree": "spec",
           "heroSpec": null
         }
@@ -4814,14 +5240,14 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Mastery: Demonic Presence",
           "sourceId": 185164,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4835,28 +5261,28 @@
         {
           "source": "Fiery Brand",
           "sourceId": 207771,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Exergy",
           "sourceId": 208628,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Chaos Blades",
           "sourceId": 247938,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4870,14 +5296,14 @@
         {
           "source": "Seething Chaos",
           "sourceId": 394934,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Inertia",
           "sourceId": 427641,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -4891,21 +5317,21 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238676,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -4931,56 +5357,56 @@
         {
           "source": "Immolation Aura",
           "sourceId": 320377,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Burning Wound",
           "sourceId": 346278,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 433719,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 433721,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 433724,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Immolation Aura",
           "sourceId": 433737,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demonsurge",
           "sourceId": 452489,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         }
@@ -4992,14 +5418,14 @@
         {
           "source": "Mark of the Ogre",
           "sourceId": 326486,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Half-Giant Empowerment",
           "sourceId": 345871,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -5018,28 +5444,28 @@
         {
           "source": "Fiery Demise",
           "sourceId": 212818,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Mark of the Ogre",
           "sourceId": 326486,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Half-Giant Empowerment",
           "sourceId": 345871,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fires of Fel",
           "sourceId": 409645,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -5051,7 +5477,7 @@
         {
           "source": "Demon Soul",
           "sourceId": 163073,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -5065,14 +5491,14 @@
         {
           "source": "Fiery Brand",
           "sourceId": 207771,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Demise",
           "sourceId": 212818,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -5086,14 +5512,14 @@
         {
           "source": "Demon Soul",
           "sourceId": 347765,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
@@ -5107,14 +5533,14 @@
         {
           "source": "Fires of Fel",
           "sourceId": 409645,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Fiery Resolve",
           "sourceId": 425653,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
@@ -5128,28 +5554,28 @@
         {
           "source": "Reaver's Mark",
           "sourceId": 442624,
-          "type": "unknown",
+          "type": "buff_grant",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Luck of the Draw!",
           "sourceId": 1219012,
-          "type": "unknown",
+          "type": "proc_trigger",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Thrill of the Fight",
           "sourceId": 1227062,
-          "type": "unknown",
+          "type": "mechanic_change",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Demon Soul",
           "sourceId": 1238675,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -5161,7 +5587,7 @@
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         }
@@ -5180,14 +5606,14 @@
         {
           "source": "Any Means Necessary",
           "sourceId": 388114,
-          "type": "unknown",
+          "type": "damage_modifier",
           "tree": null,
           "heroSpec": null
         },
         {
           "source": "Chains of Anger",
           "sourceId": 389715,
-          "type": "damage_modifier",
+          "type": "range_modifier",
           "tree": "spec",
           "heroSpec": null
         }
@@ -5203,47 +5629,52 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "damage_modifier"
         },
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5255,12 +5686,12 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5301,7 +5732,19 @@
         {
           "spell": "Vengeful Retreat",
           "spellId": 198793,
-          "type": "unknown"
+          "type": "resource_modifier"
+        }
+      ]
+    },
+    "203747": {
+      "name": "Mastery: Fel Blood",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Demon Spikes",
+          "spellId": 203819,
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5325,7 +5768,7 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "resource_modifier"
         }
       ]
     },
@@ -5349,6 +5792,11 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
           "type": "buff_grant"
         },
         {
@@ -5386,32 +5834,37 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "buff_grant"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -5423,17 +5876,17 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5445,7 +5898,7 @@
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5487,34 +5940,39 @@
       "heroSpec": null,
       "targets": [
         {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "damage_modifier"
+        },
+        {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fracture",
           "spellId": 263642,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5526,7 +5984,7 @@
         {
           "spell": "Metamorphosis",
           "spellId": 187827,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -5538,7 +5996,7 @@
         {
           "spell": "Eye Beam",
           "spellId": 198013,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5550,12 +6008,12 @@
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 207744,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -5567,7 +6025,7 @@
         {
           "spell": "Metamorphosis",
           "spellId": 187827,
-          "type": "unknown"
+          "type": "cooldown_modifier"
         }
       ]
     },
@@ -5579,6 +6037,11 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
           "type": "buff_grant"
         },
         {
@@ -5621,17 +6084,17 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5660,12 +6123,12 @@
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 207744,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -5689,7 +6152,7 @@
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5725,7 +6188,7 @@
         {
           "spell": "Metamorphosis",
           "spellId": 187827,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -5737,27 +6200,27 @@
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228477,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Fel Barrage",
           "spellId": 258925,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Fracture",
           "spellId": 263642,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -5769,12 +6232,12 @@
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 207744,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -5786,7 +6249,7 @@
         {
           "spell": "Fel Devastation",
           "spellId": 212084,
-          "type": "unknown"
+          "type": "cooldown_modifier"
         }
       ]
     },
@@ -5815,27 +6278,27 @@
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228477,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fel Barrage",
           "spellId": 258925,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fracture",
           "spellId": 263642,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5847,7 +6310,7 @@
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5859,47 +6322,52 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "damage_modifier"
         },
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -5911,7 +6379,7 @@
         {
           "spell": "Darkness",
           "spellId": 196718,
-          "type": "unknown"
+          "type": "duration_modifier"
         }
       ]
     },
@@ -5921,64 +6389,69 @@
       "heroSpec": null,
       "targets": [
         {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "damage_modifier"
+        },
+        {
           "spell": "Sigil of Silence",
           "spellId": 202137,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Sigil of Chains",
           "spellId": 202138,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Sigil of Flame",
           "spellId": 204596,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Sigil of Misery",
           "spellId": 207684,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Felblade",
           "spellId": 232893,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "The Hunt",
           "spellId": 370965,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Sigil of Spite",
           "spellId": 390163,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6002,27 +6475,39 @@
         {
           "spell": "Sigil of Silence",
           "spellId": 202137,
-          "type": "damage_modifier"
+          "type": "range_modifier"
         },
         {
           "spell": "Sigil of Chains",
           "spellId": 202138,
-          "type": "damage_modifier"
+          "type": "range_modifier"
         },
         {
           "spell": "Sigil of Flame",
           "spellId": 204596,
-          "type": "damage_modifier"
+          "type": "range_modifier"
         },
         {
           "spell": "Sigil of Misery",
           "spellId": 207684,
-          "type": "damage_modifier"
+          "type": "range_modifier"
         },
         {
           "spell": "Sigil of Spite",
           "spellId": 390163,
-          "type": "damage_modifier"
+          "type": "range_modifier"
+        }
+      ]
+    },
+    "389721": {
+      "name": "Extended Spikes",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Demon Spikes",
+          "spellId": 203819,
+          "type": "duration_modifier"
         }
       ]
     },
@@ -6058,7 +6543,7 @@
         {
           "spell": "Frailty",
           "spellId": 247456,
-          "type": "damage_modifier"
+          "type": "stacking_modifier"
         }
       ]
     },
@@ -6082,7 +6567,7 @@
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6094,6 +6579,11 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
           "type": "damage_modifier"
         },
         {
@@ -6131,12 +6621,12 @@
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6160,17 +6650,17 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6180,34 +6670,39 @@
       "heroSpec": null,
       "targets": [
         {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "damage_modifier"
+        },
+        {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fracture",
           "spellId": 263642,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6219,37 +6714,42 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "buff_grant"
         },
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -6261,17 +6761,17 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6283,12 +6783,12 @@
         {
           "spell": "Soul Cleave",
           "spellId": 228477,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6300,12 +6800,12 @@
         {
           "spell": "Soul Cleave",
           "spellId": 228477,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6317,12 +6817,12 @@
         {
           "spell": "Soul Cleave",
           "spellId": 228477,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6334,6 +6834,11 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
           "type": "damage_modifier"
         },
         {
@@ -6383,7 +6888,7 @@
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6395,7 +6900,7 @@
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6407,7 +6912,7 @@
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6419,7 +6924,7 @@
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6443,47 +6948,52 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "buff_grant"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "buff_grant"
         },
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "buff_grant"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "buff_grant"
         }
       ]
     },
@@ -6495,17 +7005,17 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "mechanic_change"
         }
       ]
     },
@@ -6517,7 +7027,7 @@
         {
           "spell": "Vengeful Retreat",
           "spellId": 198793,
-          "type": "unknown"
+          "type": "mechanic_change"
         }
       ]
     },
@@ -6529,17 +7039,17 @@
         {
           "spell": "Soul Cleave",
           "spellId": 228477,
-          "type": "buff_grant"
+          "type": "mechanic_change"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "buff_grant"
+          "type": "mechanic_change"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "damage_modifier"
+          "type": "mechanic_change"
         }
       ]
     },
@@ -6551,12 +7061,12 @@
         {
           "spell": "Fel Devastation",
           "spellId": 212084,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Immolation Aura",
           "spellId": 258920,
-          "type": "unknown"
+          "type": "mechanic_change"
         }
       ]
     },
@@ -6568,37 +7078,42 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "proc_trigger"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "proc_trigger"
         },
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "proc_trigger"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "proc_trigger"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "proc_trigger"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "proc_trigger"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "proc_trigger"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "proc_trigger"
         }
       ]
     },
@@ -6610,37 +7125,42 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "mechanic_change"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "mechanic_change"
         },
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "mechanic_change"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "mechanic_change"
         }
       ]
     },
@@ -6652,7 +7172,7 @@
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6664,37 +7184,42 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Infernal Strike",
+          "spellId": 189112,
+          "type": "damage_modifier"
         },
         {
           "spell": "Shear",
           "spellId": 203782,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Fiery Brand",
           "spellId": 204021,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Carver",
           "spellId": 207407,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Soul Cleave",
           "spellId": 228478,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Spirit Bomb",
           "spellId": 247455,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Bulk Extraction",
           "spellId": 320341,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     },
@@ -6706,17 +7231,17 @@
         {
           "spell": "Chaos Nova",
           "spellId": 179057,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Throw Glaive",
           "spellId": 185123,
-          "type": "unknown"
+          "type": "damage_modifier"
         },
         {
           "spell": "Essence Break",
           "spellId": 258860,
-          "type": "unknown"
+          "type": "damage_modifier"
         }
       ]
     }

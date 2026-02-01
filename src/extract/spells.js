@@ -14,11 +14,6 @@ const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
 const DATA_DIR = join(ROOT, "data");
 const RAW_DIR = join(DATA_DIR, "raw");
 
-const SUBTREE_NAMES = {
-  34: "Fel-Scarred",
-  35: "Aldrachi Reaver",
-};
-
 function runSpellQuery(query) {
   try {
     return execSync(`${SIMC} spell_query="${query}"`, {
@@ -103,13 +98,6 @@ function extractSpells() {
   const dhTalents = allTalents.filter(
     (t) => t.class === "demonhunter" && t.spellId > 0,
   );
-
-  // Annotate hero tree subtree names
-  for (const t of dhTalents) {
-    if (t.tree === "hero" && SUBTREE_NAMES[t.subtree]) {
-      t.heroSpec = SUBTREE_NAMES[t.subtree];
-    }
-  }
 
   console.log(`Found ${dhTalents.length} DH talents with spell IDs`);
   writeFileSync(
