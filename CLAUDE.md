@@ -33,17 +33,41 @@ Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spike
 3. Record surprising findings under "Findings & Notes" in PLAN.md
 4. Update this file if new commands, patterns, or architectural decisions emerge
 
+## Data Sources
+
+- **Raidbots** (`raidbots.com/static/data/{env}/talents.json`): Authoritative talent tree source. Provides class/spec/hero nodes with spell IDs, positions, choice variants. Environment: `live` or `ptr` (controlled by `src/config.js` `DATA_ENV`).
+- **simc C++** (`sc_demon_hunter.cpp`): Implementation reference. Talent assignments via `talent.{tree}.{var}` patterns.
+- **simc spell_query**: Runtime spell data (effects, coefficients). Limited by binary age.
+- **SpellDataDump**: Full spell effect data, updated more frequently than the binary.
+
+### Environment Toggle
+
+Change `DATA_ENV` in `src/config.js` to switch between `"live"` and `"ptr"`. Then run `npm run build-data` to regenerate from the new environment.
+
+### Hero Trees
+
+Vengeance has two hero trees:
+
+- **Aldrachi Reaver** (subtree 35): Art of the Glaive, Reaver's Mark, Keen Edge, etc.
+- **Annihilator** (subtree 124): Voidfall, Catastrophe, Dark Matter, World Killer, etc.
+
+### Choice Nodes
+
+Raidbots nodes with `type: "choice"` have multiple `entries` (index 100/200/300). Each entry is a separate talent option — all are included in `talents.json`.
+
 ## Architecture
 
 ```
 src/
-  extract/        # Spell data extraction from simc (parser.js, spells.js)
+  config.js       # Central config (DATA_ENV, paths, identifiers)
+  extract/        # Data extraction (raidbots.js, spells.js, parser.js)
   model/          # Data models (talents.js, interactions.js, interaction-types.js)
   visualize/      # Reports and graphs (text-report.js, graph.js)
   sim/            # SimC runner and analysis (runner.js, analyze.js)
   apl/            # APL parser and generator (future)
 data/
   raw/            # Raw simc dumps (gitignored)
+  raidbots-talents.json  # Raidbots talent data (filtered to VDH)
   spells.json     # Parsed VDH spell catalog
   talents.json    # Full talent tree
   interactions.json  # Talent → spell interaction map
@@ -54,6 +78,9 @@ results/          # Simulation output (gitignored)
 ## Commands
 
 ```bash
+# Fetch Raidbots talent data
+npm run fetch-raidbots
+
 # Extract spell data
 node src/extract/spells.js
 

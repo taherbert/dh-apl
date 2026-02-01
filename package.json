@@ -11,7 +11,8 @@
     "graph": "node src/visualize/graph.js",
     "sim": "node src/sim/runner.js",
     "analyze": "node src/sim/analyze.js",
-    "build-data": "npm run extract && npm run talents && npm run interactions && npm run report && npm run graph",
+    "fetch-raidbots": "node src/extract/raidbots.js",
+    "build-data": "npm run fetch-raidbots && npm run extract && npm run talents && npm run interactions && npm run report && npm run graph",
     "verify": "node src/verify.js"
   }
 }

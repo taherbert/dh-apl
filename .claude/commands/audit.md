@@ -1,0 +1,1 @@
+Read prompts/verify-data.md and execute the full verification procedure. This is a comprehensive audit — cross-reference Raidbots, simc C++, SpellDataDump, and our data files. Report all findings and fix what can be fixed.

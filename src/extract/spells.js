@@ -1,22 +1,22 @@
 // Extracts Vengeance DH spell data from simc's spell_query into structured JSON.
-// Also parses the talent query to get all spell IDs referenced by DH talents.
+// Gets spell IDs from Raidbots talent data instead of simc talent dump.
 
 import { execSync } from "node:child_process";
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
 import { BASE_SPELL_IDS } from "../model/vengeance-base.js";
+import { SIMC_BIN } from "../config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
-const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
 const DATA_DIR = join(ROOT, "data");
 const RAW_DIR = join(DATA_DIR, "raw");
 
 function runSpellQuery(query) {
   try {
-    return execSync(`${SIMC} spell_query="${query}"`, {
+    return execSync(`${SIMC_BIN} spell_query="${query}"`, {
       encoding: "utf-8",
       maxBuffer: 50 * 1024 * 1024,
       timeout: 30000,
@@ -28,87 +28,29 @@ function runSpellQuery(query) {
   }
 }
 
-function parseTalentDump(text) {
-  const talents = [];
-  let current = null;
-
-  for (const line of text.split("\n")) {
-    if (line.startsWith("SimulationCraft")) continue;
-    if (line.trim() === "") {
-      if (current) {
-        talents.push(current);
-        current = null;
-      }
-      continue;
-    }
-    const match = line.match(/^(\w[\w\s]*?)\s{2,}: (.+)$/);
-    if (!match) continue;
-    if (!current) current = {};
-    const [, key, val] = match;
-    switch (key.trim()) {
-      case "Name":
-        current.name = val.trim();
-        break;
-      case "Entry":
-        current.entry = parseInt(val);
-        break;
-      case "Node":
-        current.node = parseInt(val);
-        break;
-      case "Definition":
-        current.definition = parseInt(val);
-        break;
-      case "Tree":
-        current.tree = val.trim();
-        break;
-      case "Class":
-        current.class = val.trim();
-        break;
-      case "Column":
-        current.col = parseInt(val);
-        break;
-      case "Row":
-        current.row = parseInt(val);
-        break;
-      case "Max Rank":
-        current.maxRank = parseInt(val);
-        break;
-      case "Spell":
-        current.spellId = parseInt(val);
-        break;
-      case "Subtree":
-        current.subtree = parseInt(val);
-        break;
-    }
-  }
-  if (current) talents.push(current);
-  return talents;
-}
-
 function extractSpells() {
   mkdirSync(RAW_DIR, { recursive: true });
-  mkdirSync(DATA_DIR, { recursive: true });
 
-  // Step 1: Get all talent data to find DH talent spell IDs
-  console.log("Querying all talents...");
-  const talentRaw = runSpellQuery("talent");
-  writeFileSync(join(RAW_DIR, "all_talents.txt"), talentRaw);
-
-  const allTalents = parseTalentDump(talentRaw);
-  const dhTalents = allTalents.filter(
-    (t) => t.class === "demonhunter" && t.spellId > 0,
+  // Step 1: Get spell IDs from Raidbots talent data
+  const raidbots = JSON.parse(
+    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf-8"),
   );
-
-  console.log(`Found ${dhTalents.length} DH talents with spell IDs`);
-  writeFileSync(
-    join(DATA_DIR, "talents-raw.json"),
-    JSON.stringify(dhTalents, null, 2),
-  );
-
-  // Collect all unique talent spell IDs plus base abilities not in talent tree
-  const talentSpellIds = new Set(dhTalents.map((t) => t.spellId));
-
+  const allNodes = [
+    ...raidbots.classNodes,
+    ...raidbots.specNodes,
+    ...raidbots.heroNodes,
+  ];
+  const talentSpellIds = new Set();
+  for (const node of allNodes) {
+    for (const entry of node.entries) {
+      if (entry.spellId > 0) talentSpellIds.add(entry.spellId);
+    }
+  }
   for (const id of BASE_SPELL_IDS) talentSpellIds.add(id);
+
+  console.log(
+    `Found ${talentSpellIds.size} spell IDs from Raidbots + base abilities`,
+  );
 
   // Step 2: Get DH class spells
   console.log("Querying DH class spells...");
@@ -122,6 +64,10 @@ function extractSpells() {
   console.log(`Querying ${talentSpellIds.size} talent spell IDs...`);
   const talentSpellRaws = [];
   for (const id of talentSpellIds) {
+    if (!Number.isInteger(id) || id <= 0) {
+      console.warn(`Skipping invalid spell ID: ${id}`);
+      continue;
+    }
     const raw = runSpellQuery(`spell.id=${id}`);
     if (raw.includes(`id=${id}`)) talentSpellRaws.push(raw);
   }
@@ -140,7 +86,7 @@ function extractSpells() {
     if (spell.id) spellMap.set(spell.id, spell);
   }
 
-  // Filter to DH-relevant: has DH class, has talent entry, is a talent spell, or has DH labels
+  // Filter to DH-relevant
   const dhSpells = [...spellMap.values()].filter((spell) => {
     if (talentSpellIds.has(spell.id)) return true;
     if (spell.class?.includes("Demon Hunter")) return true;
@@ -162,7 +108,6 @@ function extractSpells() {
   console.log(`  ${withTalent.length} with talent entries`);
   console.log(`  ${vengeance.length} Vengeance-specific`);
 
-  // Verify key spells
   const checks = [
     [247454, "Spirit Bomb"],
     [228477, "Soul Cleave"],
@@ -176,7 +121,7 @@ function extractSpells() {
   ];
   for (const [id, name] of checks) {
     const found = output.find((s) => s.id === id);
-    console.log(`  ${found ? "✓" : "✗"} ${name} (${id})`);
+    console.log(`  ${found ? "\u2713" : "\u2717"} ${name} (${id})`);
   }
 }
 
