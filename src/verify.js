@@ -68,11 +68,11 @@ if (raidbots) {
   // Raidbots counts are nodes, our counts include choice node entries
   // Compare entry counts: total entries across all Raidbots nodes
   const rbClassEntries = raidbots.classNodes.reduce(
-    (s, n) => s + n.entries.length,
+    (s, n) => s + n.entries.filter((e) => e.spellId).length,
     0,
   );
   const rbSpecEntries = raidbots.specNodes.reduce(
-    (s, n) => s + n.entries.length,
+    (s, n) => s + n.entries.filter((e) => e.spellId).length,
     0,
   );
 
@@ -96,7 +96,7 @@ if (raidbots) {
     const heroTalents = talents.hero[name]?.talents || [];
     const rbEntries = raidbots.heroNodes
       .filter((n) => HERO_SUBTREES[n.subTreeId] === name)
-      .reduce((s, n) => s + n.entries.length, 0);
+      .reduce((s, n) => s + n.entries.filter((e) => e.spellId).length, 0);
     if (heroTalents.length === rbEntries) {
       pass(`Hero (${name}) entries match Raidbots: ${heroTalents.length}`);
     } else {
@@ -117,6 +117,7 @@ if (raidbots) {
   const missingFromUs = [];
   for (const node of allRbNodes) {
     for (const entry of node.entries) {
+      if (!entry.spellId) continue;
       if (!ourSpellIds.has(entry.spellId)) {
         missingFromUs.push(`${entry.name} (${entry.spellId})`);
       }

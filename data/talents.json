@@ -1108,15 +1108,6 @@
     "name": "Vengeance",
     "talents": [
       {
-        "nodeId": 90912,
-        "school": null,
-        "passive": false,
-        "description": null,
-        "posX": 16640,
-        "posY": -320,
-        "entryNode": true
-      },
-      {
         "name": "Fel Devastation",
         "nodeId": 90991,
         "entryId": 112908,
