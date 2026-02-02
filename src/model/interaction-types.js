@@ -18,7 +18,10 @@ export function classifyEffect(effectType) {
   const t = (effectType || "").toLowerCase();
   if (t.includes("add percent modifier") || t.includes("school damage"))
     return "damage_modifier";
-  if (t.includes("add flat modifier")) {
+  if (
+    t.includes("add flat modifier") ||
+    t.includes("apply flat modifier w/ label")
+  ) {
     if (t.includes("cooldown")) return "cooldown_modifier";
     if (t.includes("duration")) return "duration_modifier";
     if (t.includes("range")) return "range_modifier";
@@ -27,8 +30,20 @@ export function classifyEffect(effectType) {
     if (t.includes("period")) return "duration_modifier";
     if (t.includes("radius")) return "range_modifier";
     if (t.includes("max stacks")) return "stacking_modifier";
+    if (t.includes("critical")) return "damage_modifier";
     return "damage_modifier";
   }
+  if (t.includes("apply percent modifier w/ label")) return "damage_modifier";
+  if (t.includes("modify recharge time")) return "cooldown_modifier";
+  if (t.includes("modify cooldown charge")) return "cooldown_modifier";
+  if (t.includes("modify max resource")) return "resource_modifier";
+  if (t.includes("modify healing")) return "buff_grant";
+  if (t.includes("modify parry") || t.includes("modify dodge"))
+    return "buff_grant";
+  if (t.includes("modify mastery")) return "damage_modifier";
+  if (t.includes("modify damage taken")) return "damage_modifier";
+  if (t.includes("modify max health")) return "buff_grant";
+  if (t.includes("modify movement speed")) return "buff_grant";
   if (t.includes("proc trigger spell")) return "proc_trigger";
   if (t.includes("trigger spell")) return "proc_trigger";
   if (t.includes("apply aura") && t.includes("mod damage done"))
@@ -103,6 +118,12 @@ export function classifyByName(sourceName) {
   if (n.includes("burning wound")) return "damage_modifier";
   if (n.includes("scarred strikes")) return "damage_modifier";
   if (n.includes("soul flame")) return "damage_modifier";
+  if (n.includes("demon hide")) return "buff_grant";
+  if (n.includes("extended spikes")) return "duration_modifier";
+  if (n.includes("shear fury")) return "resource_modifier";
+  if (n.includes("rush of chaos")) return "cooldown_modifier";
+  if (n.includes("tactical retreat")) return "resource_modifier";
+  if (n.includes("accelerated blade")) return "damage_modifier";
 
   return null;
 }

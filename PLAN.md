@@ -43,11 +43,15 @@ Build the foundation for creating an optimal Vengeance Demon Hunter APL targetin
 
 ### Step 4: Interaction Mapping
 
-- [x] `src/model/interaction-types.js` — interaction category definitions
-- [x] `src/model/interactions.js` — builds talent→spell interaction graph
-- [x] Output: `data/interactions.json`
-- Note: 190 interactions, 24 spells have modifiers, 70 modifier sources
-- Note: 10 unknown-type interactions (~5.3%) — target is 0%
+- [x] `src/model/interaction-types.js` — interaction category definitions + effect/name heuristics
+- [x] `src/model/interactions.js` — merges spell_data + C++ scanner + effect scan
+- [x] `src/extract/cpp-interactions.js` — C++ cross-reference scanner (talent↔talent, talent→ability)
+- [x] `src/visualize/audit-report.js` — comprehensive audit report
+- [x] Output: `data/interactions.json`, `data/cpp-interactions.json`, `data/audit-report.md`
+- [x] **Zero unknown interactions** (was 10)
+- [x] **266 interactions** (was 190): 190 spell_data + 59 cpp_scanner + 17 effect_scan
+- [x] **114 talents** have interactions (was 70), 11 stat passives excluded, 44 C++-only
+- [x] Verification: 20 passed, 0 failed, 2 warnings (orphan sub-spells, 1 active ability gap)
 
 ### Step 5: Visualization
 
@@ -133,7 +137,7 @@ npm run verify          →  validates data against Raidbots + simc C++
 
 ## Future Sessions
 
-- Classify remaining unknown interactions using SpellDataDump (now available locally at `reference/spelldatadump-vdh.txt`)
+- ~~Classify remaining unknown interactions~~ — DONE: zero unknowns achieved
 - APL parser/generator (AST-based) — reference APL conversion tools in `reference/apl-conversion/`
 - Talent combination generator
 - Optimization loop (isolated variable testing)
