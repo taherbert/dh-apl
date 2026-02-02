@@ -117,12 +117,18 @@ node src/extract/spells.js
 # Build talent tree
 node src/model/talents.js
 
-# Build interaction map
+# Extract C++ talent cross-references
+npm run cpp-interactions
+
+# Build interaction map (merges spell_data + C++ + effect scan)
 node src/model/interactions.js
 
 # Generate reports
 node src/visualize/text-report.js
 node src/visualize/graph.js
+
+# Generate interaction audit report
+npm run audit-report
 
 # Run simulation
 node src/sim/runner.js apls/baseline.simc

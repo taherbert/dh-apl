@@ -1,55 +1,162 @@
 graph LR
-  t390213["Burning Blood"]
+  t206477{{"Unleashed Power"}}
   s179057(("Chaos Nova"))
+  t207744{{"Fiery Brand"}}
+  t207771{{"Fiery Brand"}}
+  t247456{{"Frailty"}}
+  t390213["Burning Blood"]
+  t425653{{"Fiery Resolve"}}
+  t442624{{"Reaver's Mark"}}
+  t442688{{"Thrill of the Fight"}}
+  t1219012{{"Luck of the Draw!"}}
+  t1227062{{"Thrill of the Fight"}}
   t320386["Bouncing Glaives"]
   s185123(("Throw Glaive"))
   t429211["Champion of the Glaive"]
   t204909["Soul Rending"]
   s187827(("Metamorphosis"))
+  t217996{{"Soul Rending"}}
+  t235893{{"First of the Illidari"}}
+  t321068{{"Metamorphosis"}}
   s189112(("Infernal Strike"))
-  t389781["Long Night"]
+  t357419{{"Cover of Darkness"}}
   s196718(("Darkness"))
+  t389781["Long Night"]
   t389783["Pitch Black"]
+  t203551{{"Prepared"}}
+  s198793(("Vengeful Retreat"))
+  t444929{{"Evasive Action"}}
   t209281["Quickened Sigils"]
   s202137(("Sigil of Silence"))
   t389715["Chains of Anger"]
   s202138(("Sigil of Chains"))
+  s203782(("Shear"))
+  t326486{{"Mark of the Ogre"}}
   s204021(("Fiery Brand"))
+  t235543{{"Spirit of the Darkness Flame"}}
+  t272985{{"Revel in Pain"}}
+  t337542{{"Spirit of the Darkness Flame"}}
+  t343010{{"Fiery Brand"}}
   s204596(("Sigil of Flame"))
   s207407(("Soul Carver"))
   s207684(("Sigil of Misery"))
-  t442492[/"Incisive Blade"/]
+  s207744(("Fiery Brand"))
+  t338671{{"Fel Defender"}}
+  s212084(("Fel Devastation"))
+  t452489{{"Demonsurge"}}
+  t258920{{"Immolation Aura"}}
+  s228477(("Soul Cleave"))
+  t452435{{"Demonsurge"}}
   s228478(("Soul Cleave"))
+  t442492[/"Incisive Blade"/]
   s247455(("Spirit Bomb"))
   t389985["Soulcrush"]
   s247456(("Frailty"))
   t207548["Agonizing Flames"]
   s258920(("Immolation Aura"))
   t320331["Infernal Armor"]
+  s263642(("Fracture"))
   s390163(("Sigil of Spite"))
+  t206477 -->|resource modifier| s179057
+  t207744 -->|buff grant| s179057
+  t207771 -->|buff grant| s179057
+  t247456 -->|buff grant| s179057
   t390213 -->|damage modifier| s179057
+  t425653 -->|buff grant| s179057
+  t442624 -->|buff grant| s179057
+  t442688 -->|mechanic change| s179057
+  t1219012 -->|proc trigger| s179057
+  t1227062 -->|mechanic change| s179057
   t320386 -->|damage modifier| s185123
   t429211 -->|range modifier| s185123
+  t442624 -->|buff grant| s185123
+  t442688 -->|mechanic change| s185123
   t204909 -->|damage modifier| s187827
+  t217996 -->|buff grant| s187827
+  t235893 -->|cooldown modifier| s187827
+  t321068 -->|buff grant| s187827
+  t207744 -->|buff grant| s189112
+  t207771 -->|buff grant| s189112
+  t247456 -->|buff grant| s189112
   t390213 -->|damage modifier| s189112
+  t425653 -->|buff grant| s189112
+  t442624 -->|buff grant| s189112
+  t1219012 -->|proc trigger| s189112
+  t1227062 -->|mechanic change| s189112
+  t357419 -->|duration modifier| s196718
   t389781 -->|duration modifier| s196718
   t389783 -->|cooldown modifier| s196718
+  t203551 -->|resource modifier| s198793
+  t444929 -->|mechanic change| s198793
   t209281 -->|duration modifier| s202137
   t389715 -->|range modifier| s202137
   t209281 -->|duration modifier| s202138
   t389715 -->|range modifier| s202138
+  t247456 -->|buff grant| s203782
+  t326486 -->|buff grant| s203782
+  t425653 -->|buff grant| s203782
+  t442624 -->|buff grant| s203782
+  t1219012 -->|proc trigger| s203782
+  t1227062 -->|mechanic change| s203782
+  t207744 -->|buff grant| s204021
+  t207771 -->|buff grant| s204021
+  t235543 -->|buff grant| s204021
+  t247456 -->|buff grant| s204021
+  t272985 -->|buff grant| s204021
+  t337542 -->|buff grant| s204021
+  t343010 -->|duration modifier| s204021
   t390213 -->|damage modifier| s204021
+  t425653 -->|buff grant| s204021
+  t442624 -->|buff grant| s204021
+  t1219012 -->|proc trigger| s204021
+  t1227062 -->|mechanic change| s204021
   t209281 -->|duration modifier| s204596
   t389715 -->|range modifier| s204596
+  t207744 -->|buff grant| s207407
+  t207771 -->|buff grant| s207407
+  t247456 -->|buff grant| s207407
   t390213 -->|damage modifier| s207407
+  t425653 -->|buff grant| s207407
+  t442624 -->|buff grant| s207407
+  t1219012 -->|proc trigger| s207407
+  t1227062 -->|mechanic change| s207407
   t209281 -->|duration modifier| s207684
   t389715 -->|range modifier| s207684
+  t235543 -->|buff grant| s207744
+  t272985 -->|buff grant| s207744
+  t337542 -->|buff grant| s207744
+  t343010 -->|duration modifier| s207744
+  t338671 -->|cooldown modifier| s212084
+  t452489 -->|mechanic change| s212084
+  t258920 -->|buff grant| s228477
+  t326486 -->|buff grant| s228477
+  t452435 -->|mechanic change| s228477
+  t247456 -->|buff grant| s228478
+  t258920 -->|buff grant| s228478
+  t326486 -->|buff grant| s228478
+  t425653 -->|buff grant| s228478
   t442492 -->|damage modifier| s228478
+  t442624 -->|buff grant| s228478
+  t452435 -->|mechanic change| s228478
+  t1219012 -->|proc trigger| s228478
+  t1227062 -->|mechanic change| s228478
+  t207744 -->|buff grant| s247455
+  t207771 -->|buff grant| s247455
+  t247456 -->|buff grant| s247455
   t390213 -->|damage modifier| s247455
+  t425653 -->|buff grant| s247455
+  t442624 -->|buff grant| s247455
+  t452435 -->|mechanic change| s247455
+  t1219012 -->|proc trigger| s247455
+  t1227062 -->|mechanic change| s247455
   t389985 -->|stacking modifier| s247456
   t207548 -->|damage modifier| s258920
   t320331 -->|damage modifier| s258920
+  t452489 -->|mechanic change| s258920
+  t326486 -->|buff grant| s263642
   t209281 -->|duration modifier| s390163
   t389715 -->|range modifier| s390163
   classDef hero fill:#f9d,stroke:#333
   class t442492 hero
+  classDef mechanic fill:#bdf,stroke:#333
+  class t206477,t207744,t207771,t247456,t425653,t442624,t442688,t1219012,t1227062,t217996,t235893,t321068,t357419,t203551,t444929,t326486,t235543,t272985,t337542,t343010,t338671,t452489,t258920,t452435 mechanic

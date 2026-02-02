@@ -34,6 +34,7 @@ function buildTalentTrees() {
 
   function processNode(node, treeName) {
     for (const entry of node.entries) {
+      if (!entry.spellId) continue;
       const spell = spellMap.get(entry.spellId);
       const talent = {
         name: entry.name,

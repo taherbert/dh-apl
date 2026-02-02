@@ -1,7 +1,10 @@
 // Builds the talent → spell interaction graph.
-// Uses "Affecting Spells" from spell data to map which talents modify which abilities.
+// Merges three discovery methods:
+// 1. affectingSpells from spell data (primary)
+// 2. C++ scanner talent→ability and talent↔talent references
+// 3. Effect scan (self-buff talents with proc/modifier effects)
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { classifyEffect, classifyByName } from "./interaction-types.js";
@@ -19,7 +22,6 @@ function buildInteractions() {
 
   const spellMap = new Map(spells.map((s) => [s.id, s]));
 
-  // Build a map of talent spell IDs for quick lookup
   const allTalents = [
     ...talents.class.talents.map((t) => ({ ...t, treeName: "class" })),
     ...talents.spec.talents.map((t) => ({ ...t, treeName: "spec" })),
@@ -28,22 +30,41 @@ function buildInteractions() {
     ),
   ];
   const talentBySpellId = new Map(allTalents.map((t) => [t.spellId, t]));
+  const talentByName = new Map(allTalents.map((t) => [t.name, t]));
 
-  // Interactions: for each spell, check its "affectingSpells" to find talents that modify it
+  // Name→spellId lookup for resolving C++ scanner targets
+  const nameToSpellId = new Map();
+  for (const [id, sp] of spellMap) {
+    if (!nameToSpellId.has(sp.name)) nameToSpellId.set(sp.name, id);
+  }
+
+  // Build alias groups: spells sharing the same name (e.g. Soul Cleave 228477/228478)
+  const spellAliases = new Map();
+  const nameToIds = new Map();
+  for (const [id, sp] of spellMap) {
+    if (!nameToIds.has(sp.name)) nameToIds.set(sp.name, []);
+    nameToIds.get(sp.name).push(id);
+  }
+  for (const ids of nameToIds.values()) {
+    if (ids.length > 1) {
+      const group = new Set(ids);
+      for (const id of ids) spellAliases.set(id, group);
+    }
+  }
+
   const interactions = [];
-  const spellToModifiers = new Map(); // spellId -> [{talent, type}]
-  const talentToTargets = new Map(); // talentSpellId -> [{spell, type}]
+  const spellToModifiers = new Map();
+  const talentToTargets = new Map();
 
+  // === Phase 1: affectingSpells from spell data ===
   for (const spell of spells) {
     if (!spell.affectingSpells?.length) continue;
 
     for (const ref of spell.affectingSpells) {
       const modifierSpell = spellMap.get(ref.id);
       const talent = talentBySpellId.get(ref.id);
-
       const isTalent = !!talent;
 
-      // Skip base spec/class passives (e.g. "Vengeance Demon Hunter", "Havoc Demon Hunter")
       if (ref.name.includes("Demon Hunter") && !isTalent) continue;
 
       const interactionType =
@@ -53,7 +74,7 @@ function buildInteractions() {
             ? classifyFromSpell(modifierSpell)
             : classifyByName(ref.name) || "unknown";
 
-      const interaction = {
+      addInteraction({
         source: {
           id: ref.id,
           name: ref.name,
@@ -67,21 +88,150 @@ function buildInteractions() {
         },
         type: interactionType,
         effects: ref.effects || [],
-      };
-
-      interactions.push(interaction);
-
-      if (!spellToModifiers.has(spell.id)) spellToModifiers.set(spell.id, []);
-      spellToModifiers.get(spell.id).push(interaction);
-
-      if (!talentToTargets.has(ref.id)) talentToTargets.set(ref.id, []);
-      talentToTargets.get(ref.id).push(interaction);
+        discoveryMethod: "spell_data",
+        confidence: "high",
+      });
     }
   }
 
-  // Build summary structures
+  // === Phase 2: Merge C++ scanner interactions ===
+  const cppPath = join(DATA_DIR, "cpp-interactions.json");
+  if (existsSync(cppPath)) {
+    const cppData = JSON.parse(readFileSync(cppPath, "utf-8"));
+
+    // Talent→ability references
+    for (const ref of cppData.talentAbility || []) {
+      const sourceTalent = talentByName.get(ref.source);
+      if (!sourceTalent) continue;
+
+      // Check if this interaction already exists from spell_data
+      const existing = interactions.find(
+        (i) =>
+          i.source.name === ref.source &&
+          i.target.name === ref.target &&
+          i.discoveryMethod === "spell_data",
+      );
+      if (existing) continue;
+
+      addInteraction({
+        source: {
+          id: sourceTalent.spellId,
+          name: ref.source,
+          isTalent: true,
+          tree: sourceTalent.treeName,
+          heroSpec: sourceTalent.heroSpec || null,
+        },
+        target: {
+          id: ref.target.startsWith("buff:")
+            ? null
+            : nameToSpellId.get(ref.target) || null,
+          name: ref.target,
+        },
+        type: ref.type,
+        mechanism: ref.mechanism,
+        discoveryMethod: "cpp_scanner",
+        confidence: "medium",
+      });
+    }
+
+    // Talent↔talent cross-references
+    for (const ref of cppData.talentTalent || []) {
+      const sourceTalent = talentByName.get(ref.source);
+      const targetTalent = talentByName.get(ref.target);
+      if (!sourceTalent || !targetTalent) continue;
+
+      addInteraction({
+        source: {
+          id: sourceTalent.spellId,
+          name: ref.source,
+          isTalent: true,
+          tree: sourceTalent.treeName,
+          heroSpec: sourceTalent.heroSpec || null,
+        },
+        target: {
+          id: targetTalent.spellId,
+          name: ref.target,
+        },
+        type: ref.type,
+        mechanism: ref.mechanism,
+        discoveryMethod: "cpp_scanner",
+        confidence: "medium",
+      });
+    }
+
+    // Effect scans (buff grants)
+    for (const ref of cppData.effectScans || []) {
+      const talent = talentByName.get(ref.talent);
+      if (!talent) continue;
+
+      addInteraction({
+        source: {
+          id: talent.spellId,
+          name: ref.talent,
+          isTalent: true,
+          tree: talent.treeName,
+          heroSpec: talent.heroSpec || null,
+        },
+        target: {
+          id: null,
+          name: ref.target,
+        },
+        type: ref.type,
+        mechanism: ref.mechanism,
+        discoveryMethod: "effect_scan",
+        confidence: "medium",
+      });
+    }
+  }
+
+  // === Phase 3: Self-buff talents (proc trigger / labeled modifier effects) ===
+  for (const talent of allTalents) {
+    const sp = spellMap.get(talent.spellId);
+    if (!sp?.effects) continue;
+    if (talentToTargets.has(talent.spellId)) continue; // already has interactions
+
+    const effects = sp.effects.map((e) => (e.type || "").toLowerCase());
+    const hasProcTrigger = effects.some((e) =>
+      e.includes("proc trigger spell"),
+    );
+    const hasLabeledMod = effects.some(
+      (e) =>
+        e.includes("flat modifier w/ label") ||
+        e.includes("percent modifier w/ label"),
+    );
+
+    if (hasProcTrigger || hasLabeledMod) {
+      addInteraction({
+        source: {
+          id: talent.spellId,
+          name: talent.name,
+          isTalent: true,
+          tree: talent.treeName,
+          heroSpec: talent.heroSpec || null,
+        },
+        target: {
+          id: talent.spellId,
+          name: talent.name,
+        },
+        type: hasProcTrigger ? "proc_trigger" : "damage_modifier",
+        discoveryMethod: "effect_scan",
+        confidence: "medium",
+      });
+    }
+  }
+
+  // === Talent triage categories ===
+  const talentCategories = triageTalents(
+    allTalents,
+    spellMap,
+    talentToTargets,
+    spellToModifiers,
+  );
+
+  // === Build output ===
   const output = {
     interactions,
+    talentCategories,
     bySpell: Object.fromEntries(
       [...spellToModifiers.entries()].map(([id, ints]) => [
         id,
@@ -93,6 +243,7 @@ function buildInteractions() {
             type: i.type,
             tree: i.source.tree,
             heroSpec: i.source.heroSpec,
+            discoveryMethod: i.discoveryMethod,
           })),
         },
       ]),
@@ -108,6 +259,7 @@ function buildInteractions() {
             spell: i.target.name,
             spellId: i.target.id,
             type: i.type,
+            discoveryMethod: i.discoveryMethod,
           })),
         },
       ]),
@@ -124,6 +276,19 @@ function buildInteractions() {
   console.log(`  ${spellToModifiers.size} spells have modifiers`);
   console.log(`  ${talentToTargets.size} talents/passives modify spells`);
 
+  // Discovery method breakdown
+  const methodCounts = {};
+  for (const i of interactions) {
+    methodCounts[i.discoveryMethod] =
+      (methodCounts[i.discoveryMethod] || 0) + 1;
+  }
+  console.log("\n  Discovery methods:");
+  for (const [method, count] of Object.entries(methodCounts).sort(
+    (a, b) => b[1] - a[1],
+  )) {
+    console.log(`    ${method}: ${count}`);
+  }
+
   // Type breakdown
   const typeCounts = {};
   for (const i of interactions) {
@@ -136,7 +301,19 @@ function buildInteractions() {
     console.log(`    ${type}: ${count}`);
   }
 
-  // Highlight key VDH interactions
+  // Talent triage summary
+  console.log("\n  Talent triage:");
+  const triageCounts = {};
+  for (const cat of Object.values(talentCategories)) {
+    triageCounts[cat] = (triageCounts[cat] || 0) + 1;
+  }
+  for (const [cat, count] of Object.entries(triageCounts).sort(
+    (a, b) => b[1] - a[1],
+  )) {
+    console.log(`    ${cat}: ${count}`);
+  }
+
+  // Key spell modifiers
   const keySpells = [
     [204021, "Fiery Brand"],
     [247454, "Spirit Bomb"],
@@ -150,13 +327,115 @@ function buildInteractions() {
     if (mods) {
       console.log(`    ${name}: ${mods.length} modifiers`);
       for (const m of mods.slice(0, 5)) {
-        console.log(`      - ${m.source.name} (${m.type})`);
+        console.log(
+          `      - ${m.source.name} (${m.type}, ${m.discoveryMethod})`,
+        );
       }
       if (mods.length > 5) console.log(`      ... and ${mods.length - 5} more`);
     } else {
       console.log(`    ${name}: no modifiers found`);
     }
   }
+
+  function addInteraction(interaction) {
+    interactions.push(interaction);
+
+    const targetId = interaction.target.id;
+    if (targetId) {
+      if (!spellToModifiers.has(targetId)) spellToModifiers.set(targetId, []);
+      spellToModifiers.get(targetId).push(interaction);
+
+      if (spellAliases.has(targetId)) {
+        for (const aliasId of spellAliases.get(targetId)) {
+          if (aliasId === targetId) continue;
+          if (!spellToModifiers.has(aliasId)) spellToModifiers.set(aliasId, []);
+          spellToModifiers.get(aliasId).push(interaction);
+        }
+      }
+    }
+
+    const sourceId = interaction.source.id;
+    if (!talentToTargets.has(sourceId)) talentToTargets.set(sourceId, []);
+    talentToTargets.get(sourceId).push(interaction);
+  }
+}
+
+function triageTalents(
+  allTalents,
+  spellMap,
+  talentToTargets,
+  spellToModifiers,
+) {
+  const categories = {};
+
+  const STAT_EFFECTS = [
+    "mod stat",
+    "modify parry",
+    "modify dodge",
+    "modify max health",
+    "modify damage taken",
+    "modify mastery",
+    "modify max resource",
+    "modify movement speed",
+    "modify healing",
+    "modify recharge time",
+    "modify cooldown charge",
+  ];
+
+  for (const t of allTalents) {
+    if (talentToTargets.has(t.spellId) || spellToModifiers.has(t.spellId)) {
+      categories[t.name] = "has_interactions";
+      continue;
+    }
+
+    const sp = spellMap.get(t.spellId);
+    if (!sp) {
+      categories[t.name] = "cpp_only";
+      continue;
+    }
+
+    const effects = (sp.effects || []).map((e) => (e.type || "").toLowerCase());
+    const nonDummy = effects.filter((e) => !e.includes("dummy"));
+
+    if (
+      sp.passive &&
+      nonDummy.length > 0 &&
+      nonDummy.every((e) => STAT_EFFECTS.some((p) => e.includes(p)))
+    ) {
+      categories[t.name] = "stat_passive";
+      continue;
+    }
+
+    if (effects.some((e) => e.includes("proc trigger spell"))) {
+      categories[t.name] = "self_buff";
+      continue;
+    }
+
+    if (
+      effects.some(
+        (e) =>
+          e.includes("flat modifier w/ label") ||
+          e.includes("percent modifier w/ label"),
+      )
+    ) {
+      categories[t.name] = "self_buff";
+      continue;
+    }
+
+    if (!sp.passive) {
+      categories[t.name] = "active_ability";
+      continue;
+    }
+
+    if (effects.every((e) => e.includes("dummy") || e.includes("apply aura"))) {
+      categories[t.name] = "cpp_only";
+      continue;
+    }
+
+    categories[t.name] = "cpp_only";
+  }
+
+  return categories;
 }
 
 function classifyFromEffects(spell, effectIndices) {

@@ -24,18 +24,39 @@ function generateGraph() {
   const nodes = new Set();
   const edges = [];
 
-  // Focus on talent interactions (skip unknown external refs)
+  // APL-relevant interaction types (excludes generic stat passives)
+  const APL_TYPES = new Set([
+    "buff_grant",
+    "proc_trigger",
+    "mechanic_change",
+    "cooldown_modifier",
+    "resource_modifier",
+    "duration_modifier",
+    "stacking_modifier",
+    "spell_unlock",
+  ]);
+
   for (const int of interactions.interactions) {
-    if (!int.source.isTalent) continue;
+    // Include talent interactions always; non-talent only if APL-relevant type
+    if (!int.source.isTalent) {
+      if (!APL_TYPES.has(int.type)) continue;
+    }
+    // Skip unknowns from non-talent sources
+    if (!int.source.isTalent && int.type === "unknown") continue;
 
     const srcId = `t${int.source.id}`;
     const tgtId = `s${int.target.id}`;
 
     if (!nodes.has(srcId)) {
-      const style =
-        int.source.tree === "hero"
-          ? `${srcId}[/"${sanitize(int.source.name)}"/]`
-          : `${srcId}["${sanitize(int.source.name)}"]`;
+      let style;
+      if (int.source.tree === "hero") {
+        style = `${srcId}[/"${sanitize(int.source.name)}"/]`;
+      } else if (int.source.isTalent) {
+        style = `${srcId}["${sanitize(int.source.name)}"]`;
+      } else {
+        // Non-talent sources: hexagon shape
+        style = `${srcId}{{"${sanitize(int.source.name)}"}}`;
+      }
       lines.push(`  ${style}`);
       nodes.add(srcId);
     }
@@ -51,13 +72,23 @@ function generateGraph() {
   lines.push(...edges);
 
   // Style hero tree nodes differently
-  const heroNodes = interactions.interactions
-    .filter((i) => i.source.tree === "hero" && i.source.isTalent)
+  const heroNodeIds = interactions.interactions
+    .filter((i) => i.source.tree === "hero")
     .map((i) => `t${i.source.id}`);
 
-  if (heroNodes.length) {
+  if (heroNodeIds.length) {
     lines.push(`  classDef hero fill:#f9d,stroke:#333`);
-    lines.push(`  class ${[...new Set(heroNodes)].join(",")} hero`);
+    lines.push(`  class ${[...new Set(heroNodeIds)].join(",")} hero`);
+  }
+
+  // Style non-talent nodes
+  const nonTalentIds = interactions.interactions
+    .filter((i) => !i.source.isTalent && APL_TYPES.has(i.type))
+    .map((i) => `t${i.source.id}`);
+
+  if (nonTalentIds.length) {
+    lines.push(`  classDef mechanic fill:#bdf,stroke:#333`);
+    lines.push(`  class ${[...new Set(nonTalentIds)].join(",")} mechanic`);
   }
 
   const graph = lines.join("\n");

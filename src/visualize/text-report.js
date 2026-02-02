@@ -102,20 +102,32 @@ function generateReport() {
     lines.push(`### ${treeName} (${treeData.talents.length} talents)`);
     lines.push("");
 
+    // Derive row/col indices from posY/posX pixel coordinates
+    const uniqueYs = [...new Set(treeData.talents.map((t) => t.posY))].sort(
+      (a, b) => a - b,
+    );
+    const yToRow = new Map(uniqueYs.map((y, i) => [y, i]));
+    const uniqueXs = [...new Set(treeData.talents.map((t) => t.posX))].sort(
+      (a, b) => a - b,
+    );
+    const xToCol = new Map(uniqueXs.map((x, i) => [x, i]));
+
     // Group by row
     const byRow = new Map();
     for (const t of treeData.talents) {
-      if (!byRow.has(t.row)) byRow.set(t.row, []);
-      byRow.get(t.row).push(t);
+      const row = yToRow.get(t.posY);
+      if (!byRow.has(row)) byRow.set(row, []);
+      byRow.get(row).push(t);
     }
 
     for (const [row, rowTalents] of [...byRow.entries()].sort(
       (a, b) => a[0] - b[0],
     )) {
       lines.push(`**Row ${row}:**`);
-      for (const t of rowTalents.sort((a, b) => a.col - b.col)) {
+      for (const t of rowTalents.sort((a, b) => a.posX - b.posX)) {
+        const col = xToCol.get(t.posX);
         const typeTag = t.type ? ` [${t.type}]` : "";
-        lines.push(`- (${t.col}) **${t.name}** (${t.spellId})${typeTag}`);
+        lines.push(`- (${col}) **${t.name}** (${t.spellId})${typeTag}`);
 
         // Show what this talent modifies
         const targets = interactions.byTalent[t.spellId];
