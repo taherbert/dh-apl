@@ -6,6 +6,7 @@ import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
+import { resolveAllDescriptions } from "./template-resolver.js";
 import { BASE_SPELL_IDS } from "../model/vengeance-base.js";
 import { SIMC_BIN } from "../config.js";
 
@@ -160,8 +161,48 @@ function extractSpells() {
 
   const output = dhSpells.map(cleanSpell).sort((a, b) => a.id - b.id);
 
+  // Fetch sub-spells referenced in descriptions (e.g., $204598s1 → spell 204598)
+  const descReferencedIds = new Set();
+  for (const spell of output) {
+    if (!spell.description) continue;
+    const refs = spell.description.matchAll(/\$(\d{4,})(?:[sdatxmo]\d*|d)/g);
+    for (const m of refs) descReferencedIds.add(parseInt(m[1]));
+    // Also $@spelldesc references
+    const descRefs = spell.description.matchAll(/\$@spelldesc(\d+)/g);
+    for (const m of descRefs) descReferencedIds.add(parseInt(m[1]));
+  }
+  const missingDescRefs = [...descReferencedIds].filter(
+    (id) => !spellMap.has(id) && !output.find((s) => s.id === id),
+  );
+  if (missingDescRefs.length > 0) {
+    console.log(
+      `\nFetching ${missingDescRefs.length} sub-spells referenced in descriptions...`,
+    );
+    let fetched = 0;
+    for (const id of missingDescRefs) {
+      const raw = runSpellQuery(`spell.id=${id}`);
+      if (raw.includes(`id=${id}`)) {
+        const parsed = parseSpellQueryOutput(raw);
+        for (const spell of parsed) {
+          if (spell.id) {
+            output.push(cleanSpell(spell));
+            fetched++;
+          }
+        }
+      }
+    }
+    output.sort((a, b) => a.id - b.id);
+    console.log(`Fetched ${fetched} sub-spells for template resolution`);
+  }
+
+  // Resolve template variables in descriptions
+  const stats = resolveAllDescriptions(output);
+  console.log(
+    `\nTemplate resolution: ${stats.resolved} fully resolved, ${stats.partial} partial, ${stats.unresolved} unresolved out of ${stats.total}`,
+  );
+
   writeFileSync(join(DATA_DIR, "spells.json"), JSON.stringify(output, null, 2));
-  console.log(`\nWrote ${output.length} spells to data/spells.json`);
+  console.log(`Wrote ${output.length} spells to data/spells.json`);
 
   const withTalent = output.filter((s) => s.talentEntry);
   const vengeance = output.filter(

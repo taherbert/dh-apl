@@ -135,15 +135,68 @@ npm run verify          →  validates data against Raidbots + simc C++
 - [x] Updated `package.json` with `extract-simc` script
 - [x] Updated `CLAUDE.md` with reference directory documentation
 
-## Future Sessions
+## Phase 2: APL Tooling Pipeline
 
-- ~~Classify remaining unknown interactions~~ — DONE: zero unknowns achieved
-- APL parser/generator (AST-based) — reference APL conversion tools in `reference/apl-conversion/`
-- Talent combination generator
-- Optimization loop (isolated variable testing)
-- Hero tree comparison (Aldrachi Reaver vs Annihilator)
-- Resolve spell description template variables to actual values
-- Create Midnight-era baseline profiles
+Build all tooling needed to programmatically create, test, and iterate on VDH APLs, then establish a workflow where Claude can autonomously run simulation loops and reason about improvements.
+
+### Step 10: Resolve Spell Template Variables
+
+- [x] Add `resolvedDescription` field to each spell in `data/spells.json`
+- [x] Substitute `$s1`/`$s2`/`$s3` → effect N's `scaledValue` or `baseValue`
+- [x] Substitute `$d` → spell duration, `$t1`/`$t2` → tick period, `$a1` → radius
+- [x] Handle `$SpellIds1` cross-references, `$?sSpellId[yes][no]` conditionals
+- [x] Handle `${expr}` arithmetic (e.g., `$s1*2`, `$s1/1000`)
+- [x] Target ~85-90% resolution; leave unresolvable as raw template
+- Note: `src/extract/template-resolver.js` — standalone module, integrated into spells.js
+- Note: 110/167 spells fully resolved (65.9%), 22 partial, 35 unresolved
+- Note: 65.4% variable-level resolution; remaining are stat-dependent ($AGI, $sw), compound conditionals, and sub-spells missing from binary
+- Note: Also fetches 43 sub-spells referenced in descriptions for better resolution
+
+### Step 11: APL Parser/Generator
+
+- [x] `src/apl/parser.js` — Parse `.simc` APL text into AST, serialize back
+- [x] AST nodes: ActionList, RawSection, Action, Variable, RunActionList, Comment
+- [x] Operations: `parse()`, `serialize()`, `getActionLists()`, `findAction()`, `insertAction()`, `removeAction()`, `replaceCondition()`, `createAction()`, `createVariable()`
+- [x] Round-trip fidelity: `serialize(parse(text))` produces PERFECT output
+- Note: Preserves document order — non-APL lines (gear, profile) stay in position
+- Note: baseline.simc: 10 action lists, 166 actions, perfect round-trip
+- Note: reference/vengeance-apl.simc: 5 action lists, 67 actions, perfect round-trip
+
+### Step 12: Talent Combination Generator
+
+- [ ] `src/model/talent-combos.js` — Generate valid talent sets from tree graph
+- [ ] Validation: entry nodes, `prev` connectivity, `reqPoints` gates, choice node exclusivity
+- [ ] Hero tree simplification: enumerate choice node combinations only
+- [ ] Anchor-based generation: key build-defining picks + BFS/greedy fill
+- [ ] Output ~20-50 curated builds with SimC talent strings
+
+### Step 13: Batch Testing via Profilesets
+
+- [ ] `src/sim/profilesets.js` — Generate and run SimC profileset files
+- [ ] Support talent, APL, and action line overrides per variant
+- [ ] Parse ranked JSON results with delta comparison
+- [ ] Regression testing: golden results, flag >1% regressions
+
+### Step 14: Autonomous Simulation Workflow
+
+- [ ] `src/sim/workflow.js` — Single entry point for full sim→analyze cycle
+- [ ] Parse APL, run across scenarios, return structured JSON analysis
+- [ ] No user interaction required; designed for Claude to call
+
+### Step 15: APL Reasoning Framework
+
+- [ ] `src/analyze/reasoning.js` — Generate improvement hypotheses from sim results
+- [ ] Analysis: underused abilities, buff uptime gaps, cooldown alignment, conditional tightness
+- [ ] Output ranked hypotheses with category, confidence, suggested tests
+
+### Dependency Order
+
+```
+Step 10 (template vars) ──────────────────────────────────┐
+Step 11 (APL parser) ──────┬──────────────────────────────┤
+Step 12 (talent combos) ───┤                              │
+                           ├─→ Step 13 (profilesets) ──→ Step 14 (workflow) ──→ Step 15 (reasoning)
+```
 
 ## Findings & Notes
 
