@@ -70,62 +70,65 @@ export function classifyEffect(effectType) {
 export function classifyByName(sourceName) {
   const n = (sourceName || "").toLowerCase();
 
-  // Known damage modifiers
-  if (
-    n.includes("empowerment") ||
-    n.includes("any means necessary") ||
-    n.includes("chaos blades") ||
-    n.includes("seething chaos") ||
-    n.includes("exergy") ||
-    n.includes("inertia") ||
-    n.includes("demon soul") ||
-    n.includes("burning blades") ||
-    n.includes("fires of fel") ||
-    n.includes("fiery demise") ||
-    n.includes("mastery:")
-  )
-    return "damage_modifier";
+  const damageNames = [
+    "empowerment",
+    "any means necessary",
+    "chaos blades",
+    "seething chaos",
+    "exergy",
+    "inertia",
+    "demon soul",
+    "burning blades",
+    "fires of fel",
+    "fiery demise",
+    "mastery:",
+    "immolation aura",
+    "soul furnace",
+    "bionic stabilizer",
+    "serrated glaive",
+    "burning wound",
+    "scarred strikes",
+    "soul flame",
+    "accelerated blade",
+  ];
+  if (damageNames.some((name) => n.includes(name))) return "damage_modifier";
 
-  // Known buff/debuff grants
-  if (
-    n.includes("mark") ||
-    n.includes("brand") ||
-    n.includes("reaver") ||
-    n.includes("revel in pain") ||
-    n.includes("spirit of the darkness flame") ||
-    n.includes("fiery resolve")
-  )
-    return "buff_grant";
+  const buffNames = [
+    "mark",
+    "brand",
+    "reaver",
+    "revel in pain",
+    "spirit of the darkness flame",
+    "fiery resolve",
+    "soul rending",
+    "metamorphosis",
+    "demon hide",
+  ];
+  if (buffNames.some((name) => n.includes(name))) return "buff_grant";
 
-  // Known mechanic changes
-  if (n.includes("thrill of the fight") || n.includes("demonsurge"))
-    return "mechanic_change";
+  const mechNames = ["thrill of the fight", "demonsurge", "evasive action"];
+  if (mechNames.some((name) => n.includes(name))) return "mechanic_change";
 
-  // Lucky procs
-  if (n.includes("luck of the draw")) return "proc_trigger";
+  const cooldownNames = [
+    "first of the illidari",
+    "fel defender",
+    "rush of chaos",
+  ];
+  if (cooldownNames.some((name) => n.includes(name)))
+    return "cooldown_modifier";
 
-  // Modifier/rank spells that modify the parent ability
-  if (n.includes("immolation aura")) return "damage_modifier";
-  if (n.includes("soul furnace")) return "damage_modifier";
-  if (n.includes("soul rending")) return "buff_grant";
-  if (n.includes("evasive action")) return "mechanic_change";
-  if (n.includes("unleashed power")) return "resource_modifier";
-  if (n.includes("prepared")) return "resource_modifier";
+  const resourceNames = [
+    "unleashed power",
+    "prepared",
+    "shear fury",
+    "tactical retreat",
+  ];
+  if (resourceNames.some((name) => n.includes(name)))
+    return "resource_modifier";
+
   if (n.includes("cover of darkness")) return "duration_modifier";
-  if (n.includes("bionic stabilizer")) return "damage_modifier";
-  if (n.includes("serrated glaive")) return "damage_modifier";
-  if (n.includes("first of the illidari")) return "cooldown_modifier";
-  if (n.includes("metamorphosis")) return "buff_grant";
-  if (n.includes("fel defender")) return "cooldown_modifier";
-  if (n.includes("burning wound")) return "damage_modifier";
-  if (n.includes("scarred strikes")) return "damage_modifier";
-  if (n.includes("soul flame")) return "damage_modifier";
-  if (n.includes("demon hide")) return "buff_grant";
   if (n.includes("extended spikes")) return "duration_modifier";
-  if (n.includes("shear fury")) return "resource_modifier";
-  if (n.includes("rush of chaos")) return "cooldown_modifier";
-  if (n.includes("tactical retreat")) return "resource_modifier";
-  if (n.includes("accelerated blade")) return "damage_modifier";
+  if (n.includes("luck of the draw")) return "proc_trigger";
 
   return null;
 }
@@ -230,30 +233,27 @@ export function resolveEffectMagnitude(
 }
 
 function inferUnit(effectType, value) {
-  if (
-    effectType.includes("percent modifier") ||
-    effectType.includes("modify damage") ||
-    effectType.includes("mod damage") ||
-    effectType.includes("modify healing") ||
-    effectType.includes("modify parry") ||
-    effectType.includes("modify dodge") ||
-    effectType.includes("modify mastery") ||
-    effectType.includes("haste") ||
-    effectType.includes("damage taken")
-  ) {
-    return "percent";
-  }
-  if (Math.abs(value) <= 100 && effectType.includes("modifier"))
-    return "percent";
+  const percentPatterns = [
+    "percent modifier",
+    "modify damage",
+    "mod damage",
+    "modify healing",
+    "modify parry",
+    "modify dodge",
+    "modify mastery",
+    "haste",
+    "damage taken",
+  ];
+  if (percentPatterns.some((p) => effectType.includes(p))) return "percent";
+
+  const absVal = Math.abs(value);
+  if (absVal <= 100 && effectType.includes("modifier")) return "percent";
+
   // Dummy effects on talent spells are typically percentage modifiers
   // when the value is in a reasonable range (1-100)
-  if (
-    effectType.includes("dummy") &&
-    Math.abs(value) > 0 &&
-    Math.abs(value) <= 100
-  )
+  if (effectType.includes("dummy") && absVal > 0 && absVal <= 100)
     return "percent";
-  if (effectType.includes("flat modifier")) return "flat";
+
   return "flat";
 }
 
@@ -308,7 +308,12 @@ export function resolveSchoolTarget(sourceSpell, effectIndices) {
 }
 
 // Extract detailed effect info for enriched interaction output.
-export function extractEffectDetails(sourceSpell, effectIndices) {
+// vdhSpellNames: optional Set<string> to filter affectedSpells to VDH-relevant only.
+export function extractEffectDetails(
+  sourceSpell,
+  effectIndices,
+  vdhSpellNames,
+) {
   if (!sourceSpell?.effects?.length) return null;
 
   const targetEffects = effectIndices?.length
@@ -317,36 +322,48 @@ export function extractEffectDetails(sourceSpell, effectIndices) {
 
   if (targetEffects.length === 0) return null;
 
-  return targetEffects.map((e) => ({
-    index: e.index,
-    type: e.type,
-    baseValue: e.details?.baseValue ?? null,
-    scaledValue: e.details?.scaledValue ?? null,
-    target: e.details?.target ?? null,
-    schoolMask: e.details?.schoolMask ?? null,
-    affectedSpells:
+  return targetEffects.map((e) => {
+    let affectedSpells =
       e.details?.["Affected Spells"] ||
       e.details?.["Affected Spells (Label)"] ||
-      null,
-    triggerSpell: e.details?.triggerSpell ?? null,
-  }));
+      null;
+
+    if (affectedSpells && vdhSpellNames) {
+      const filtered = affectedSpells
+        .split(", ")
+        .filter((s) => vdhSpellNames.has(s.replace(/\s*\(\d{5,6}\)$/, "")))
+        .join(", ");
+      affectedSpells = filtered || null;
+    }
+
+    return {
+      index: e.index,
+      type: e.type,
+      baseValue: e.details?.baseValue ?? null,
+      scaledValue: e.details?.scaledValue ?? null,
+      target: e.details?.target ?? null,
+      schoolMask: e.details?.schoolMask ?? null,
+      affectedSpells,
+      triggerSpell: e.details?.triggerSpell ?? null,
+    };
+  });
 }
 
 // Infer categories for an interaction (offensive, defensive, resource, utility).
 export function inferCategories(interactionType, sourceSpell, effectIndices) {
   const categories = [];
 
-  if (
-    interactionType === "damage_modifier" ||
-    interactionType === "proc_trigger"
-  ) {
-    categories.push("offensive");
-  }
-  if (interactionType === "resource_modifier") {
-    categories.push("resource");
-  }
-  if (interactionType === "range_modifier") {
-    categories.push("utility");
+  switch (interactionType) {
+    case "damage_modifier":
+    case "proc_trigger":
+      categories.push("offensive");
+      break;
+    case "resource_modifier":
+      categories.push("resource");
+      break;
+    case "range_modifier":
+      categories.push("utility");
+      break;
   }
 
   // Check for defensive signals in effects
@@ -355,20 +372,21 @@ export function inferCategories(interactionType, sourceSpell, effectIndices) {
       ? sourceSpell.effects.filter((e) => effectIndices.includes(e.index))
       : sourceSpell.effects;
 
+    const defensivePatterns = [
+      "damage taken",
+      "damage done% to caster",
+      "modify parry",
+      "modify dodge",
+      "absorb",
+      "modify max health",
+      "modify healing",
+    ];
+
     for (const effect of targetEffects) {
       const type = (effect.type || "").toLowerCase();
-      if (
-        type.includes("damage taken") ||
-        type.includes("damage done% to caster") ||
-        type.includes("modify parry") ||
-        type.includes("modify dodge") ||
-        type.includes("absorb") ||
-        type.includes("modify max health")
-      ) {
+      if (defensivePatterns.some((p) => type.includes(p))) {
         if (!categories.includes("defensive")) categories.push("defensive");
-      }
-      if (type.includes("modify healing")) {
-        if (!categories.includes("defensive")) categories.push("defensive");
+        break;
       }
     }
   }
@@ -376,16 +394,17 @@ export function inferCategories(interactionType, sourceSpell, effectIndices) {
   // Defensive type heuristics from interaction type
   if (interactionType === "buff_grant") {
     const name = (sourceSpell?.name || "").toLowerCase();
-    if (
-      name.includes("spikes") ||
-      name.includes("brand") ||
-      name.includes("barrier") ||
-      name.includes("meta") ||
-      name.includes("painbringer") ||
-      name.includes("frailty") ||
-      name.includes("demonic wards") ||
-      name.includes("demon hide")
-    ) {
+    const defensiveNames = [
+      "spikes",
+      "brand",
+      "barrier",
+      "meta",
+      "painbringer",
+      "frailty",
+      "demonic wards",
+      "demon hide",
+    ];
+    if (defensiveNames.some((n) => name.includes(n))) {
       if (!categories.includes("defensive")) categories.push("defensive");
     }
   }
