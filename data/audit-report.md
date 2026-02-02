@@ -1,10 +1,10 @@
 # Interaction Audit Report
 
-Generated: 2026-02-02T03:41:56.640Z
+Generated: 2026-02-02T22:15:28.642Z
 
 ## Summary
 
-- **Total interactions:** 192
+- **Total interactions:** 290
 - **Talents with interactions:** 82
 - **Total talents:** 121
 
@@ -12,13 +12,13 @@ Generated: 2026-02-02T03:41:56.640Z
 
 | Type | Count |
 |------|-------|
-| damage_modifier | 80 |
+| damage_modifier | 168 |
+| buff_grant | 35 |
 | proc_trigger | 31 |
-| buff_grant | 29 |
-| duration_modifier | 17 |
+| duration_modifier | 15 |
 | resource_modifier | 14 |
-| cooldown_modifier | 13 |
-| range_modifier | 6 |
+| range_modifier | 13 |
+| cooldown_modifier | 12 |
 | stacking_modifier | 1 |
 | mechanic_change | 1 |
 
@@ -26,34 +26,35 @@ Generated: 2026-02-02T03:41:56.640Z
 
 | Method | Count |
 |--------|-------|
-| spell_data | 116 |
-| cpp_scanner | 59 |
-| effect_scan | 17 |
+| spell_data | 219 |
+| cpp_scanner | 57 |
+| effect_scan | 14 |
 
 ### By Confidence
 
 | Confidence | Count |
 |------------|-------|
-| high | 116 |
-| medium | 76 |
+| high | 219 |
+| medium | 71 |
 
 ### By Source Tree
 
 | Tree | Count |
 |------|-------|
-| non-talent | 85 |
-| spec | 57 |
-| hero | 33 |
-| class | 17 |
+| non-talent | 162 |
+| spec | 71 |
+| hero | 32 |
+| class | 25 |
 
 ## Talent Triage
 
 | Category | Count |
 |----------|-------|
-| has_interactions | 65 |
-| cpp_only | 44 |
-| stat_passive | 11 |
+| has_interactions | 68 |
+| cpp_only | 46 |
+| stat_passive | 5 |
 | active_ability | 1 |
+| self_buff | 1 |
 
 ## Per-Talent Detail
 
@@ -64,7 +65,6 @@ Generated: 2026-02-02T03:41:56.640Z
 _No outgoing interactions_
 
 **Incoming:**
-- Tactical Retreat [cooldown_modifier, spell_data]
 - Evasive Action [buff_grant, spell_data]
 
 #### Felblade (232893) — has_interactions
@@ -72,9 +72,6 @@ _No outgoing interactions_
 | Target | Type | Method |
 |--------|------|--------|
 | Warblade's Hunger | damage_modifier | cpp_scanner |
-
-**Incoming:**
-- Warblade's Hunger [damage_modifier, cpp_scanner]
 
 #### Sigil of Misery (207684) — has_interactions
 
@@ -98,7 +95,7 @@ _No outgoing interactions_
 |--------|------|--------|
 | Consume Soul | resource_modifier | cpp_scanner |
 
-#### Improved Sigil of Misery (320418) — stat_passive
+#### Improved Sigil of Misery (320418) — cpp_only
 
 _No outgoing interactions_
 
@@ -107,6 +104,8 @@ _No outgoing interactions_
 | Target | Type | Method |
 |--------|------|--------|
 | Throw Glaive | damage_modifier | spell_data |
+| Throw Glaive | damage_modifier | spell_data |
+| Reaver's Glaive | damage_modifier | spell_data |
 
 #### Imprison (217832) — active_ability
 
@@ -126,7 +125,6 @@ _No outgoing interactions_
 - Fiery Brand [damage_modifier, spell_data]
 - Frailty [damage_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
-- Demon Hide [damage_modifier, spell_data]
 - Reaver's Mark [damage_modifier, spell_data]
 - Thrill of the Fight [damage_modifier, spell_data]
 - Thrill of the Fight [damage_modifier, spell_data]
@@ -163,6 +161,8 @@ _No outgoing interactions_
 | Target | Type | Method |
 |--------|------|--------|
 | Throw Glaive | range_modifier | spell_data |
+| Throw Glaive | range_modifier | spell_data |
+| Reaver's Glaive | range_modifier | spell_data |
 
 #### Disrupting Fury (183782) — has_interactions
 
@@ -170,7 +170,7 @@ _No outgoing interactions_
 |--------|------|--------|
 | Disrupting Fury | proc_trigger | effect_scan |
 
-#### Blazing Path (320416) — stat_passive
+#### Blazing Path (320416) — cpp_only
 
 _No outgoing interactions_
 
@@ -183,9 +183,12 @@ _No outgoing interactions_
 **Incoming:**
 - Consume Magic [resource_modifier, cpp_scanner]
 
-#### Aura of Pain (207347) — cpp_only
+#### Aura of Pain (207347) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
 
 #### Live by the Glaive (428607) — has_interactions
 
@@ -213,6 +216,8 @@ _No outgoing interactions_
 
 | Target | Type | Method |
 |--------|------|--------|
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
@@ -264,7 +269,7 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Erratic Felheart (391397) — stat_passive
+#### Erratic Felheart (391397) — cpp_only
 
 _No outgoing interactions_
 
@@ -342,13 +347,11 @@ _No outgoing interactions_
 - Frailty [damage_modifier, spell_data]
 - Fiery Brand [duration_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
-- Demon Hide [damage_modifier, spell_data]
 - Reaver's Mark [damage_modifier, spell_data]
 - Thrill of the Fight [damage_modifier, spell_data]
 - Burning Alive [duration_modifier, cpp_scanner]
-- Burning Alive [duration_modifier, cpp_scanner]
 
-#### Perfectly Balanced Glaive (320387) — stat_passive
+#### Perfectly Balanced Glaive (320387) — cpp_only
 
 _No outgoing interactions_
 
@@ -380,9 +383,11 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Roaring Fire (391178) — stat_passive
+#### Roaring Fire (391178) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Fel Devastation | buff_grant | spell_data |
 
 #### Sigil of Silence (202137) — has_interactions
 
@@ -402,7 +407,6 @@ _No outgoing interactions_
 |--------|------|--------|
 | Infernal Strike | proc_trigger | cpp_scanner |
 | buff:felfire_fist_in_combat | buff_grant | effect_scan |
-| buff:felfire_fist_out_of_combat | buff_grant | effect_scan |
 
 #### Sigil of Spite (390163) — has_interactions
 
@@ -420,6 +424,8 @@ _No outgoing interactions_
 | Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
 | Infernal Armor | cooldown_modifier | cpp_scanner |
 
 #### Feed the Demon (218612) — cpp_only
@@ -433,9 +439,17 @@ _No outgoing interactions_
 | Chaos Nova | damage_modifier | spell_data |
 | Infernal Strike | damage_modifier | spell_data |
 | Fiery Brand | damage_modifier | spell_data |
+| Sigil of Flame | damage_modifier | spell_data |
 | Soul Carver | damage_modifier | spell_data |
 | Fiery Brand | damage_modifier | spell_data |
+| Fel Devastation | damage_modifier | spell_data |
+| Felblade | damage_modifier | spell_data |
+| Soul Carver | damage_modifier | spell_data |
 | Spirit Bomb | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
+| Infernal Armor | damage_modifier | spell_data |
+| Sigil of Spite | damage_modifier | spell_data |
 
 #### Revel in Pain (343014) — has_interactions
 
@@ -447,7 +461,6 @@ _No outgoing interactions_
 
 | Target | Type | Method |
 |--------|------|--------|
-| Sigil of Flame | duration_modifier | cpp_scanner |
 | Ascending Flame | duration_modifier | cpp_scanner |
 | Dark Matter | proc_trigger | cpp_scanner |
 | Focused Cleave | damage_modifier | cpp_scanner |
@@ -471,9 +484,11 @@ _No outgoing interactions_
 | Volatile Flameblood | resource_modifier | cpp_scanner |
 | Infernal Armor | resource_modifier | cpp_scanner |
 
-#### Ruinous Bulwark (326853) — cpp_only
+#### Ruinous Bulwark (326853) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Fel Devastation | damage_modifier | spell_data |
 
 #### Volatile Flameblood (390808) — has_interactions
 
@@ -509,11 +524,9 @@ _No outgoing interactions_
 |--------|------|--------|
 | Void Reaver | proc_trigger | effect_scan |
 
-#### Painbringer (207387) — has_interactions
+#### Painbringer (207387) — self_buff
 
-| Target | Type | Method |
-|--------|------|--------|
-| Painbringer | damage_modifier | effect_scan |
+_No outgoing interactions_
 
 #### Sigil of Chains (202138) — has_interactions
 
@@ -535,8 +548,13 @@ _No outgoing interactions_
 |--------|------|--------|
 | Sigil of Silence | range_modifier | spell_data |
 | Sigil of Chains | range_modifier | spell_data |
+| Sigil of Silence | range_modifier | spell_data |
 | Sigil of Flame | range_modifier | spell_data |
+| Sigil of Flame | range_modifier | spell_data |
+| Sigil of Chains | range_modifier | spell_data |
 | Sigil of Misery | range_modifier | spell_data |
+| Sigil of Misery | range_modifier | spell_data |
+| Sigil of Spite | range_modifier | spell_data |
 | Sigil of Spite | range_modifier | spell_data |
 
 #### Focused Cleave (343207) — has_interactions
@@ -552,15 +570,16 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Stoke the Flames (393827) — cpp_only
+#### Stoke the Flames (393827) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Fel Devastation | damage_modifier | spell_data |
 
 #### Burning Alive (207739) — has_interactions
 
 | Target | Type | Method |
 |--------|------|--------|
-| Fiery Brand | duration_modifier | cpp_scanner |
 | Fiery Brand | duration_modifier | cpp_scanner |
 
 #### Cycle of Binding (389718) — has_interactions
@@ -607,7 +626,6 @@ _No outgoing interactions_
 - Fiery Demise [damage_modifier, spell_data]
 - Frailty [damage_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
-- Demon Hide [damage_modifier, spell_data]
 - Reaver's Mark [damage_modifier, spell_data]
 - Thrill of the Fight [damage_modifier, spell_data]
 
@@ -625,7 +643,7 @@ _No outgoing interactions_
 - Fel Devastation [cooldown_modifier, cpp_scanner]
 - Meteoric Rise [cooldown_modifier, cpp_scanner]
 
-#### Down in Flames (389732) — stat_passive
+#### Down in Flames (389732) — cpp_only
 
 _No outgoing interactions_
 
@@ -811,7 +829,6 @@ _No outgoing interactions_
 |--------|------|--------|
 | World Killer | proc_trigger | cpp_scanner |
 | buff:doomsayer_in_combat | buff_grant | effect_scan |
-| buff:doomsayer_out_of_combat | buff_grant | effect_scan |
 
 #### Harness the Cosmos (1279247) — cpp_only
 
@@ -875,7 +892,6 @@ Hero talents that interact with spec/class abilities:
 - **Mass Acceleration** (Annihilator) → buff:voidfall_building [buff_grant]
 - **Meteoric Rise** (Annihilator) → buff:voidfall_building [buff_grant]
 - **Doomsayer** (Annihilator) → buff:doomsayer_in_combat [buff_grant]
-- **Doomsayer** (Annihilator) → buff:doomsayer_out_of_combat [buff_grant]
 
 ## Resource Economy
 
@@ -901,11 +917,12 @@ Interactions involving resource generation/spending:
 Talents with zero interactions (excluding stat passives):
 
 - **Vengeful Bonds** (320635) — cpp_only [class]
+- **Improved Sigil of Misery** (320418) — cpp_only [class]
 - **Imprison** (217832) — active_ability [class]
 - **Charred Warblades** (213010) — cpp_only [class]
 - **Improved Disrupt** (320361) — cpp_only [class]
 - **Focused Ire** (1266296) — cpp_only [class]
-- **Aura of Pain** (207347) — cpp_only [class]
+- **Blazing Path** (320416) — cpp_only [class]
 - **Pursuit** (320654) — cpp_only [class]
 - **Burn It Out** (1266316) — cpp_only [class]
 - **Soul Cleanse** (1266496) — cpp_only [class]
@@ -914,23 +931,25 @@ Talents with zero interactions (excluding stat passives):
 - **Furious** (1266326) — cpp_only [class]
 - **Remorseless** (1266328) — cpp_only [class]
 - **First In, Last Out** (1266497) — cpp_only [class]
+- **Erratic Felheart** (391397) — cpp_only [class]
 - **Final Breath** (1266500) — cpp_only [class]
 - **Demon Muzzle** (1266329) — cpp_only [class]
 - **Soul Splitter** (1266330) — cpp_only [class]
 - **Wings of Wrath** (1266493) — cpp_only [class]
 - **Demonic Resilience** (1266307) — cpp_only [class]
+- **Perfectly Balanced Glaive** (320387) — cpp_only [spec]
 - **Tempered Steel** (1265800) — cpp_only [spec]
 - **Calcified Spikes** (389720) — cpp_only [spec]
 - **Retaliation** (389729) — cpp_only [spec]
 - **Feed the Demon** (218612) — cpp_only [spec]
-- **Ruinous Bulwark** (326853) — cpp_only [spec]
 - **Soul Barrier** (1265924) — cpp_only [spec]
 - **Fel Flame Fortification** (389705) — cpp_only [spec]
+- **Painbringer** (207387) — self_buff [spec]
 - **Soulmonger** (389711) — cpp_only [spec]
-- **Stoke the Flames** (393827) — cpp_only [spec]
 - **Vulnerability** (389976) — cpp_only [spec]
 - **Vengeful Beast** (1265818) — cpp_only [spec]
 - **Last Resort** (209258) — cpp_only [spec]
+- **Down in Flames** (389732) — cpp_only [spec]
 - **Unhindered Assault** (444931) — cpp_only [hero/Aldrachi Reaver]
 - **Broken Spirit** (1272143) — cpp_only [hero/Aldrachi Reaver]
 - **Army Unto Oneself** (442714) — cpp_only [hero/Aldrachi Reaver]
@@ -949,13 +968,7 @@ Talents with zero interactions (excluding stat passives):
 ## Stat Passives (Excluded from Coverage)
 
 - Unrestrained Fury (320770)
-- Improved Sigil of Misery (320418)
 - Aldrachi Design (391409)
-- Blazing Path (320416)
 - Illidari Knowledge (389696)
 - Will of the Illidari (389695)
 - Internal Struggle (393822)
-- Erratic Felheart (391397)
-- Perfectly Balanced Glaive (320387)
-- Roaring Fire (391178)
-- Down in Flames (389732)

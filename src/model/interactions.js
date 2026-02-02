@@ -69,6 +69,8 @@ function buildInteractions() {
     spellsByName.get(sp.name).push(sp);
   }
 
+  const vdhSpellNames = new Set(spells.map((s) => s.name));
+
   const interactions = [];
   const spellToModifiers = new Map();
   const talentToTargets = new Map();
@@ -278,6 +280,7 @@ function buildInteractions() {
             tree: i.source.tree,
             heroSpec: i.source.heroSpec,
             discoveryMethod: i.discoveryMethod,
+            ...enrichedFields(i),
           })),
         },
       ]),
@@ -294,6 +297,8 @@ function buildInteractions() {
             spellId: i.target.id,
             type: i.type,
             discoveryMethod: i.discoveryMethod,
+            ...enrichedFields(i),
+            ...(i.mechanism && { mechanism: i.mechanism }),
           })),
         },
       ]),
@@ -311,39 +316,23 @@ function buildInteractions() {
   console.log(`  ${talentToTargets.size} talents/passives modify spells`);
 
   // Discovery method breakdown
-  const methodCounts = {};
-  for (const i of interactions) {
-    methodCounts[i.discoveryMethod] =
-      (methodCounts[i.discoveryMethod] || 0) + 1;
-  }
+  const methodCounts = countBy(interactions, (i) => i.discoveryMethod);
   console.log("\n  Discovery methods:");
-  for (const [method, count] of Object.entries(methodCounts).sort(
-    (a, b) => b[1] - a[1],
-  )) {
+  for (const [method, count] of sortCounts(methodCounts)) {
     console.log(`    ${method}: ${count}`);
   }
 
   // Type breakdown
-  const typeCounts = {};
-  for (const i of interactions) {
-    typeCounts[i.type] = (typeCounts[i.type] || 0) + 1;
-  }
+  const typeCounts = countBy(interactions, (i) => i.type);
   console.log("\n  Interaction types:");
-  for (const [type, count] of Object.entries(typeCounts).sort(
-    (a, b) => b[1] - a[1],
-  )) {
+  for (const [type, count] of sortCounts(typeCounts)) {
     console.log(`    ${type}: ${count}`);
   }
 
   // Talent triage summary
   console.log("\n  Talent triage:");
-  const triageCounts = {};
-  for (const cat of Object.values(talentCategories)) {
-    triageCounts[cat] = (triageCounts[cat] || 0) + 1;
-  }
-  for (const [cat, count] of Object.entries(triageCounts).sort(
-    (a, b) => b[1] - a[1],
-  )) {
+  const triageCounts = countBy(Object.values(talentCategories), (v) => v);
+  for (const [cat, count] of sortCounts(triageCounts)) {
     console.log(`    ${cat}: ${count}`);
   }
 
@@ -358,17 +347,24 @@ function buildInteractions() {
   console.log("\n  Key spell modifiers:");
   for (const [id, name] of keySpells) {
     const mods = spellToModifiers.get(id);
-    if (mods) {
-      console.log(`    ${name}: ${mods.length} modifiers`);
-      for (const m of mods.slice(0, 5)) {
-        console.log(
-          `      - ${m.source.name} (${m.type}, ${m.discoveryMethod})`,
-        );
-      }
-      if (mods.length > 5) console.log(`      ... and ${mods.length - 5} more`);
-    } else {
+    if (!mods) {
       console.log(`    ${name}: no modifiers found`);
+      continue;
     }
+    console.log(`    ${name}: ${mods.length} modifiers`);
+    const displayed = mods.slice(0, 5);
+    for (const m of displayed) {
+      console.log(`      - ${m.source.name} (${m.type}, ${m.discoveryMethod})`);
+    }
+    if (mods.length > 5) console.log(`      ... and ${mods.length - 5} more`);
+  }
+
+  function enrichedFields(i) {
+    const result = {};
+    if (i.magnitude) result.magnitude = i.magnitude;
+    if (i.application) result.application = i.application;
+    if (i.categories) result.categories = i.categories;
+    return result;
   }
 
   function addInteraction(interaction) {
@@ -389,7 +385,11 @@ function buildInteractions() {
     const schoolTarget = resolveSchoolTarget(sourceSpell, effectIndices);
     if (schoolTarget) interaction.schoolTarget = schoolTarget;
 
-    const effectDetails = extractEffectDetails(sourceSpell, effectIndices);
+    const effectDetails = extractEffectDetails(
+      sourceSpell,
+      effectIndices,
+      vdhSpellNames,
+    );
     if (effectDetails) interaction.effectDetails = effectDetails;
 
     interaction.categories = inferCategories(
@@ -406,6 +406,14 @@ function buildInteractions() {
       interaction.magnitude?.value < 0
     )
       return;
+
+    const isDuplicate = interactions.some(
+      (existing) =>
+        existing.source.id === interaction.source.id &&
+        existing.target.id === interaction.target.id &&
+        existing.type === interaction.type,
+    );
+    if (isDuplicate) return;
 
     interactions.push(interaction);
 
@@ -447,8 +455,6 @@ function triageTalents(
     "modify max resource",
     "modify movement speed",
     "modify healing",
-    "modify recharge time",
-    "modify cooldown charge",
   ];
 
   for (const t of allTalents) {
@@ -529,6 +535,19 @@ function classifyFromSpell(spell) {
   const byName = classifyByName(spell.name);
   if (byName) return byName;
   return "unknown";
+}
+
+function countBy(items, keyFn) {
+  const counts = {};
+  for (const item of items) {
+    const key = keyFn(item);
+    counts[key] = (counts[key] || 0) + 1;
+  }
+  return counts;
+}
+
+function sortCounts(countsObj) {
+  return Object.entries(countsObj).sort((a, b) => b[1] - a[1]);
 }
 
 buildInteractions();
