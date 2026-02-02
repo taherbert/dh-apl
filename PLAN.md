@@ -190,9 +190,11 @@ Build all tooling needed to programmatically create, test, and iterate on VDH AP
 
 ### Step 15: APL Reasoning Framework
 
-- [ ] `src/analyze/reasoning.js` — Generate improvement hypotheses from sim results
-- [ ] Analysis: underused abilities, buff uptime gaps, cooldown alignment, conditional tightness
-- [ ] Output ranked hypotheses with category, confidence, suggested tests
+- [x] `src/analyze/reasoning.js` — Generate improvement hypotheses from sim results
+- [x] Analysis: underused abilities, buff uptime gaps, cooldown alignment, conditional tightness
+- [x] Output ranked hypotheses with category, confidence, suggested tests
+- Note: 6 analysis dimensions: underused abilities, modifier alignment, buff uptime gaps, cooldown alignment, conditional tightness, AoE mismatch
+- Note: Uses interaction graph data to correlate talent modifiers with ability DPS share
 
 ### Dependency Order
 
