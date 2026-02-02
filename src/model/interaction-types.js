@@ -1,5 +1,7 @@
 // Interaction categories for talent → spell relationships.
 
+import { parseMiscValueMask, maskToSchoolNames } from "./schools.js";
+
 export const INTERACTION_TYPES = {
   damage_modifier: "Changes spell damage (% increase/decrease)",
   cooldown_modifier: "Changes cooldown duration or charge behavior",
@@ -126,4 +128,214 @@ export function classifyByName(sourceName) {
   if (n.includes("accelerated blade")) return "damage_modifier";
 
   return null;
+}
+
+export const APPLICATION_METHODS = {
+  buff_on_player: "Buff applied to player",
+  debuff_on_target: "Debuff applied to enemy target",
+  passive_always: "Passive effect, always active",
+  conditional: "Conditionally applied (talent gate, threshold, etc.)",
+};
+
+export const CATEGORIES = {
+  defensive: "Reduces damage taken or increases survivability",
+  offensive: "Increases damage dealt",
+  resource: "Modifies resource generation or costs",
+  utility: "Movement, crowd control, or non-combat effects",
+};
+
+// Resolve magnitude from a source spell's effect data at specific indices.
+// Returns { value, unit, perRank?, maxRank? } or null if no magnitude found.
+export function resolveEffectMagnitude(sourceSpell, effectIndices) {
+  if (!sourceSpell?.effects?.length) return null;
+
+  const targetEffects = effectIndices?.length
+    ? sourceSpell.effects.filter((e) => effectIndices.includes(e.index))
+    : sourceSpell.effects;
+
+  for (const effect of targetEffects) {
+    const d = effect.details || {};
+    const type = (effect.type || "").toLowerCase();
+
+    // Direct baseValue (most modifiers)
+    if (d.baseValue != null && d.baseValue !== 0) {
+      const unit = inferUnit(type, d.baseValue);
+      const result = { value: d.baseValue, unit };
+      if (sourceSpell.talentEntry?.maxRank > 1) {
+        result.perRank = true;
+        result.maxRank = sourceSpell.talentEntry.maxRank;
+      }
+      return result;
+    }
+
+    // scaledValue when baseValue is 0 but scaled isn't
+    if (d.scaledValue != null && d.scaledValue !== 0) {
+      return { value: d.scaledValue, unit: inferUnit(type, d.scaledValue) };
+    }
+
+    // AP/SP coefficient (damage/heal scaling)
+    if (d.apCoefficient && d.apCoefficient !== 0) {
+      return { value: d.apCoefficient, unit: "ap_coefficient" };
+    }
+    if (d.spCoefficient && d.spCoefficient !== 0) {
+      return { value: d.spCoefficient, unit: "sp_coefficient" };
+    }
+  }
+
+  return null;
+}
+
+function inferUnit(effectType, value) {
+  if (
+    effectType.includes("percent modifier") ||
+    effectType.includes("modify damage") ||
+    effectType.includes("mod damage") ||
+    effectType.includes("modify healing") ||
+    effectType.includes("modify parry") ||
+    effectType.includes("modify dodge") ||
+    effectType.includes("modify mastery") ||
+    effectType.includes("haste")
+  ) {
+    return "percent";
+  }
+  if (Math.abs(value) <= 100 && effectType.includes("modifier"))
+    return "percent";
+  if (effectType.includes("flat modifier")) return "flat";
+  return "flat";
+}
+
+// Resolve application method from effect target and spell properties.
+export function resolveApplicationMethod(sourceSpell, effectIndices) {
+  if (!sourceSpell?.effects?.length) return "passive_always";
+
+  const targetEffects = effectIndices?.length
+    ? sourceSpell.effects.filter((e) => effectIndices.includes(e.index))
+    : sourceSpell.effects;
+
+  for (const effect of targetEffects) {
+    const target = (effect.details?.target || "").toLowerCase();
+    if (target.includes("enemy")) return "debuff_on_target";
+    if (target.includes("self")) return "buff_on_player";
+  }
+
+  if (sourceSpell.passive) return "passive_always";
+  if (sourceSpell.duration > 0) return "buff_on_player";
+  return "conditional";
+}
+
+// Resolve school targeting from effect data (e.g., "all fire damage" modifiers).
+export function resolveSchoolTarget(sourceSpell, effectIndices) {
+  if (!sourceSpell?.effects?.length) return null;
+
+  const targetEffects = effectIndices?.length
+    ? sourceSpell.effects.filter((e) => effectIndices.includes(e.index))
+    : sourceSpell.effects;
+
+  for (const effect of targetEffects) {
+    const d = effect.details || {};
+    if (d.schoolMask) return maskToSchoolNames(d.schoolMask);
+    if (d["Affected School(s)"]) {
+      const s = d["Affected School(s)"];
+      if (s === "All") return ["All"];
+      return s.split(",").map((n) => n.trim());
+    }
+    // Check miscValue for school bitmask on damage modifier effects
+    if (d.miscValue) {
+      const type = (effect.type || "").toLowerCase();
+      if (type.includes("damage done") || type.includes("damage taken")) {
+        const mask = parseMiscValueMask(d.miscValue);
+        if (mask != null && mask > 0 && mask <= 0x7f) {
+          return maskToSchoolNames(mask);
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+// Extract detailed effect info for enriched interaction output.
+export function extractEffectDetails(sourceSpell, effectIndices) {
+  if (!sourceSpell?.effects?.length) return null;
+
+  const targetEffects = effectIndices?.length
+    ? sourceSpell.effects.filter((e) => effectIndices.includes(e.index))
+    : sourceSpell.effects;
+
+  if (targetEffects.length === 0) return null;
+
+  return targetEffects.map((e) => ({
+    index: e.index,
+    type: e.type,
+    baseValue: e.details?.baseValue ?? null,
+    scaledValue: e.details?.scaledValue ?? null,
+    target: e.details?.target ?? null,
+    schoolMask: e.details?.schoolMask ?? null,
+    affectedSpells:
+      e.details?.["Affected Spells"] ||
+      e.details?.["Affected Spells (Label)"] ||
+      null,
+    triggerSpell: e.details?.triggerSpell ?? null,
+  }));
+}
+
+// Infer categories for an interaction (offensive, defensive, resource, utility).
+export function inferCategories(interactionType, sourceSpell, effectIndices) {
+  const categories = [];
+
+  if (
+    interactionType === "damage_modifier" ||
+    interactionType === "proc_trigger"
+  ) {
+    categories.push("offensive");
+  }
+  if (interactionType === "resource_modifier") {
+    categories.push("resource");
+  }
+  if (interactionType === "range_modifier") {
+    categories.push("utility");
+  }
+
+  // Check for defensive signals in effects
+  if (sourceSpell?.effects) {
+    const targetEffects = effectIndices?.length
+      ? sourceSpell.effects.filter((e) => effectIndices.includes(e.index))
+      : sourceSpell.effects;
+
+    for (const effect of targetEffects) {
+      const type = (effect.type || "").toLowerCase();
+      if (
+        type.includes("damage taken") ||
+        type.includes("damage done% to caster") ||
+        type.includes("modify parry") ||
+        type.includes("modify dodge") ||
+        type.includes("absorb") ||
+        type.includes("modify max health")
+      ) {
+        if (!categories.includes("defensive")) categories.push("defensive");
+      }
+      if (type.includes("modify healing")) {
+        if (!categories.includes("defensive")) categories.push("defensive");
+      }
+    }
+  }
+
+  // Defensive type heuristics from interaction type
+  if (interactionType === "buff_grant") {
+    const name = (sourceSpell?.name || "").toLowerCase();
+    if (
+      name.includes("spikes") ||
+      name.includes("brand") ||
+      name.includes("barrier") ||
+      name.includes("meta") ||
+      name.includes("painbringer") ||
+      name.includes("frailty") ||
+      name.includes("demonic wards") ||
+      name.includes("demon hide")
+    ) {
+      if (!categories.includes("defensive")) categories.push("defensive");
+    }
+  }
+
+  return categories.length > 0 ? categories : ["offensive"];
 }

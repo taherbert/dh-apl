@@ -256,7 +256,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1);
   }
 
-  const combos = JSON.parse(readFileSync(combosPath, "utf-8"));
+  const combosData = JSON.parse(readFileSync(combosPath, "utf-8"));
+  // Support both old (array) and new (object with .builds) formats
+  const combos = Array.isArray(combosData)
+    ? combosData
+    : combosData.builds || [];
   // Pick first 3 builds as demo variants
   const variants = combos.slice(0, 3).map((build) => ({
     name: build.name,

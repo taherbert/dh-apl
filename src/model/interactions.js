@@ -7,7 +7,15 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { classifyEffect, classifyByName } from "./interaction-types.js";
+import {
+  classifyEffect,
+  classifyByName,
+  resolveEffectMagnitude,
+  resolveApplicationMethod,
+  resolveSchoolTarget,
+  extractEffectDetails,
+  inferCategories,
+} from "./interaction-types.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -347,6 +355,28 @@ function buildInteractions() {
   }
 
   function addInteraction(interaction) {
+    // Enrich with magnitude, application, school target, effect details, categories
+    const sourceSpell = spellMap.get(interaction.source.id);
+    const effectIndices = interaction.effects || [];
+
+    const magnitude = resolveEffectMagnitude(sourceSpell, effectIndices);
+    if (magnitude) interaction.magnitude = magnitude;
+
+    const application = resolveApplicationMethod(sourceSpell, effectIndices);
+    if (application) interaction.application = application;
+
+    const schoolTarget = resolveSchoolTarget(sourceSpell, effectIndices);
+    if (schoolTarget) interaction.schoolTarget = schoolTarget;
+
+    const effectDetails = extractEffectDetails(sourceSpell, effectIndices);
+    if (effectDetails) interaction.effectDetails = effectDetails;
+
+    interaction.categories = inferCategories(
+      interaction.type,
+      sourceSpell,
+      effectIndices,
+    );
+
     interactions.push(interaction);
 
     const targetId = interaction.target.id;

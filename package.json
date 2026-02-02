@@ -13,7 +13,9 @@
     "analyze": "node src/sim/analyze.js",
     "fetch-raidbots": "node src/extract/raidbots.js",
     "cpp-interactions": "node src/extract/cpp-interactions.js",
-    "build-data": "npm run fetch-raidbots && npm run extract && npm run talents && npm run cpp-interactions && npm run interactions && npm run report && npm run graph",
+    "cpp-effects": "node src/extract/cpp-effects-scanner.js",
+    "effects-gap": "node src/visualize/effects-gap-report.js",
+    "build-data": "npm run fetch-raidbots && npm run extract && npm run talents && npm run cpp-interactions && npm run cpp-effects && npm run interactions && npm run report && npm run graph && npm run effects-gap",
     "verify": "node src/verify.js",
     "extract-simc": "node src/extract/simc-talents.js",
     "audit-report": "node src/visualize/audit-report.js"

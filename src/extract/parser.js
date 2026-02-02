@@ -1,5 +1,11 @@
 // Parses simc spell_query text output into structured JSON objects.
 
+import {
+  schoolNameToMask,
+  parseMiscValueMask,
+  maskToSchoolNames,
+} from "../model/schools.js";
+
 const FIELD_REGEX = /^(\w[\w ]*\w)\s+: (.+)$/;
 const EFFECT_HEADER_REGEX = /^#(\d+)\s+\(id=(\d+)\)\s+: (.+)$/;
 const EFFECT_DETAIL_REGEX = /^\s{19}(.+)$/;
@@ -400,9 +406,37 @@ function parseSpellReference(text) {
   return ref;
 }
 
-// Clean up internal tracking fields from output
+// Clean up internal tracking fields from output and enrich with school masks.
 export function cleanSpell(spell) {
   const cleaned = { ...spell };
   delete cleaned._lastMultiField;
+
+  // Add spell-level schoolMask from the school string
+  if (cleaned.school) {
+    const mask = schoolNameToMask(cleaned.school);
+    if (mask != null) cleaned.schoolMask = mask;
+  }
+
+  // Add effect-level schoolMask where miscValue contains a school bitmask
+  if (cleaned.effects) {
+    for (const effect of cleaned.effects) {
+      if (!effect.details?.miscValue) continue;
+      const type = (effect.type || "").toLowerCase();
+      // School masks appear on damage modification, school damage, and "affected school" effects
+      if (
+        type.includes("damage done") ||
+        type.includes("damage taken") ||
+        type.includes("school damage") ||
+        effect.details["Affected School(s)"]
+      ) {
+        const mask = parseMiscValueMask(effect.details.miscValue);
+        if (mask != null && mask > 0 && mask <= 0x7f) {
+          effect.details.schoolMask = mask;
+          effect.details.schoolNames = maskToSchoolNames(mask);
+        }
+      }
+    }
+  }
+
   return cleaned;
 }

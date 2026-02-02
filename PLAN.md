@@ -167,10 +167,19 @@ Build all tooling needed to programmatically create, test, and iterate on VDH AP
 - [x] `src/model/talent-combos.js` — Generate valid talent sets from tree graph
 - [x] Validation: entry nodes, `prev` connectivity, `reqPoints` gates, choice node exclusivity
 - [x] Hero tree simplification: enumerate choice node combinations only
-- [x] Anchor-based generation: key build-defining picks + BFS/greedy fill
-- [x] Output ~20-50 curated builds with SimC talent strings
-- Note: 48 valid builds (32 Aldrachi Reaver, 16 Annihilator), 4 anchor sets × hero choice combos
-- Note: BFS backwards path-finding for anchor connectivity, greedy fill for remaining budget
+- [x] **Reworked to DoE fractional factorial design** (replaces anchor-based generation)
+- [x] Node classification: locked (entry/free) vs factor (decision points)
+- [x] Factor identification: binary, multi-rank (2 factors), choice nodes
+- [x] Resolution IV fractional factorial: 512 rows for 44 factors (9 base + 35 generators)
+- [x] Build mapping: design rows → valid builds with connectivity repair + budget reconciliation
+- [x] Cross-product with hero tree choice combos (8 AR + 4 Annihilator = 12)
+- [x] Design quality metrics: balance, orthogonality, pair coverage
+- [x] `src/analyze/doe-analysis.js` — OLS regression with main effects + 2-way interactions
+- [x] Optimal build prediction, confirmation builds, diagnostic output
+- Note: 5856 valid builds (488 unique spec designs × 12 hero combos), 98% feasibility rate
+- Note: 44 binary factors from 40 spec tree factor nodes (2 locked entry, 40 flex)
+- Note: Budget reconciliation degrades orthogonality (max corr 0.79, pair coverage 81%)
+- Note: 10 infeasible design rows due to reqPoints gate edge cases (7 of 8 required points)
 
 ### Step 13: Batch Testing via Profilesets
 
