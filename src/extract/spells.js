@@ -86,6 +86,69 @@ function extractSpells() {
     if (spell.id) spellMap.set(spell.id, spell);
   }
 
+  // Step 5: Fetch modifier spells referenced in affectingSpells but not yet extracted.
+  // Only scan primary spells (Raidbots talents + base abilities) to avoid pulling in
+  // legacy modifiers from old class spells still in simc's data.
+  const missingModifierIds = new Set();
+  for (const spell of spellMap.values()) {
+    if (!talentSpellIds.has(spell.id)) continue;
+    for (const ref of spell.affectingSpells || []) {
+      if (ref.id && !spellMap.has(ref.id)) missingModifierIds.add(ref.id);
+    }
+  }
+
+  // Build talent name set for filtering modifiers to current VDH
+  const raidbotTalentNames = new Set();
+  for (const node of allNodes) {
+    raidbotTalentNames.add(node.name);
+    for (const entry of node.entries) {
+      if (entry.name) raidbotTalentNames.add(entry.name);
+    }
+  }
+  const baseSpellNames = new Set(
+    [...spellMap.values()]
+      .filter((s) => BASE_SPELL_IDS.has(s.id))
+      .map((s) => s.name),
+  );
+
+  if (missingModifierIds.size > 0) {
+    console.log(
+      `Fetching ${missingModifierIds.size} modifier spells from affectingSpells...`,
+    );
+    let kept = 0;
+    let skipped = 0;
+    for (const id of missingModifierIds) {
+      const raw = runSpellQuery(`spell.id=${id}`);
+      if (raw.includes(`id=${id}`)) {
+        const parsed = parseSpellQueryOutput(raw);
+        for (const spell of parsed) {
+          if (!spell.id) continue;
+          // Keep modifier if it has a current VDH signal:
+          // - Name matches a Raidbots talent (secondary spell ID for current talent)
+          // - Name matches a base ability (e.g. Immolation Aura rank spells)
+          // - Has a talentEntry (simc maps it to a talent)
+          // - Is a mastery or spec aura spell
+          const name = spell.name || "";
+          const isCurrent =
+            raidbotTalentNames.has(name) ||
+            baseSpellNames.has(name) ||
+            spell.talentEntry ||
+            name.startsWith("Mastery:") ||
+            name === "Vengeance Demon Hunter";
+          if (isCurrent) {
+            spellMap.set(spell.id, spell);
+            kept++;
+          } else {
+            skipped++;
+          }
+        }
+      }
+    }
+    console.log(
+      `Modifier spells: ${kept} kept, ${skipped} skipped (legacy/irrelevant)`,
+    );
+  }
+
   // Filter to DH-relevant
   const dhSpells = [...spellMap.values()].filter((spell) => {
     if (talentSpellIds.has(spell.id)) return true;
@@ -117,7 +180,6 @@ function extractSpells() {
     [258920, "Immolation Aura"],
     [204596, "Sigil of Flame"],
     [390163, "Sigil of Spite"],
-    [452435, "Demonsurge"],
   ];
   for (const [id, name] of checks) {
     const found = output.find((s) => s.id === id);
