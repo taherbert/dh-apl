@@ -145,6 +145,12 @@ npm run verify
 
 # Extract simc C++ talent variables to reference/
 npm run extract-simc
+
+# Analyze APL — load methodology guide and data for analysis session
+/analyze-apl [apls/baseline.simc]
+
+# SimC reference — look up SimC syntax, expressions, fight styles
+/simc-reference [topic]
 ```
 
 ## Key Paths

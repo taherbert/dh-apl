@@ -189,12 +189,24 @@ export function resolveEffectMagnitude(
         result.perRank = true;
         result.maxRank = sourceSpell.talentEntry.maxRank;
       }
+      result.stacking =
+        type.includes("percent") || unit === "percent"
+          ? "multiplicative"
+          : "additive";
       return result;
     }
 
     // scaledValue when baseValue is 0 but scaled isn't
     if (d.scaledValue != null && d.scaledValue !== 0) {
-      return { value: d.scaledValue, unit: inferUnit(type, d.scaledValue) };
+      const unit = inferUnit(type, d.scaledValue);
+      return {
+        value: d.scaledValue,
+        unit,
+        stacking:
+          type.includes("percent") || unit === "percent"
+            ? "multiplicative"
+            : "additive",
+      };
     }
 
     // AP/SP coefficient (damage/heal scaling)
@@ -287,21 +299,31 @@ export function resolveSchoolTarget(sourceSpell, effectIndices) {
   for (const effect of targetEffects) {
     const d = effect.details || {};
     if (d.schoolMask) return maskToSchoolNames(d.schoolMask);
+    if (d.schoolNames) return d.schoolNames;
     if (d["Affected School(s)"]) {
       const s = d["Affected School(s)"];
       if (s === "All") return ["All"];
       return s.split(",").map((n) => n.trim());
     }
-    // Check miscValue for school bitmask on damage modifier effects
+    // Check miscValue for school bitmask on damage/modifier effects
     if (d.miscValue) {
       const type = (effect.type || "").toLowerCase();
-      if (type.includes("damage done") || type.includes("damage taken")) {
+      if (
+        type.includes("damage done") ||
+        type.includes("damage taken") ||
+        type.includes("modifier")
+      ) {
         const mask = parseMiscValueMask(d.miscValue);
         if (mask != null && mask > 0 && mask <= 0x7f) {
           return maskToSchoolNames(mask);
         }
       }
     }
+  }
+
+  // Fall back to source spell's own school for school-specific talents
+  if (sourceSpell.school && sourceSpell.school !== "Physical") {
+    return [sourceSpell.school];
   }
 
   return null;

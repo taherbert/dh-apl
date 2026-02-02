@@ -269,6 +269,20 @@
     "description": "Unleash an eruption of fel energy, dealing $s2 Chaos damage and stunning all nearby enemies for $d.$?s320412[\nEach enemy stunned by Chaos Nova has a $s3% chance to generate a Lesser Soul Fragment.][]",
     "tooltip": "Stunned.",
     "schoolMask": 124,
+    "resourceFlow": {
+      "costs": [
+        {
+          "amount": 25,
+          "resourceType": "Fury"
+        }
+      ]
+    },
+    "hasteScaling": {
+      "gcd": true
+    },
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Unleash an eruption of fel energy, dealing 0 Chaos damage and stunning all nearby enemies for 2 sec."
   },
   {
@@ -522,6 +536,17 @@
     ],
     "description": "Throw a demonic glaive at the target, dealing $337819s1 Physical damage. The glaive can ricochet to $?$s320386[${$337819x1-1} additional enemies][an additional enemy] within 10 yards.",
     "schoolMask": 1,
+    "resourceFlow": {
+      "costs": [
+        {
+          "amount": 25,
+          "resourceType": "Fury"
+        }
+      ]
+    },
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
   },
   {
@@ -558,7 +583,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Essence Break (258860), Trail of Ruin (258883), Fel Barrage (258926), Unbound Chaos (275148), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Metamorphosis - Alex S Copy (418583)",
-          "Family Flags": "43"
+          "Family Flags": "43",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -633,7 +664,12 @@
           "miscValue": "12",
           "target": "Self (1)",
           "Affected Spells": "Shear (203782)",
-          "Family Flags": "22"
+          "Family Flags": "22",
+          "schoolMask": 12,
+          "schoolNames": [
+            "Fire",
+            "Nature"
+          ]
         }
       },
       {
@@ -687,7 +723,12 @@
           "miscValue": "3",
           "target": "Self (1)",
           "Affected Spells": "Fracture (263642)",
-          "Family Flags": "73"
+          "Family Flags": "73",
+          "schoolMask": 3,
+          "schoolNames": [
+            "Physical",
+            "Holy"
+          ]
         }
       },
       {
@@ -700,7 +741,11 @@
           "miscValue": "32",
           "target": "Self (1)",
           "Affected Spells": "Fracture (263642)",
-          "Family Flags": "73"
+          "Family Flags": "73",
+          "schoolMask": 32,
+          "schoolNames": [
+            "Shadow"
+          ]
         }
       },
       {
@@ -815,6 +860,7 @@
     "description": "Transform to demon form for $d, increasing current health by $s2%, healing for that amount, and increasing Armor by $s8%$?s235893[. Versatility increased by $s5%][]$?s321067[. While transformed, Shear and Fracture generate one additional Lesser Soul Fragment][]$?s321068[ and $s4 additional Fury][].",
     "tooltip": "Maximum health increased by $w2%.\nArmor increased by $w8%.\n$?s235893[Versatility increased by $w5%. ][]$?s263642[Fracture][Shear] generates $w4 additional Fury and one additional Lesser Soul Fragment.",
     "schoolMask": 127,
+    "gcd": 0,
     "resolvedDescription": "Transform to demon form for 15 sec, increasing current health by 40%, healing for that amount, and increasing Armor by 200%."
   },
   {
@@ -881,6 +927,10 @@
     ],
     "description": "Leap through the air toward a targeted location, dealing $189112s1 Fire damage to all enemies within $189112a1 yards.",
     "schoolMask": 1,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Leap through the air toward a targeted location, dealing 0 Fire damage to all enemies within 6 yards."
   },
   {
@@ -1058,6 +1108,10 @@
     ],
     "description": "$@spelldesc189110",
     "schoolMask": 4,
+    "gcd": 0,
+    "aoe": {
+      "radius": 6
+    },
     "resolvedDescription": "Leap through the air toward a targeted location, dealing 0 Fire damage to all enemies within 6 yards."
   },
   {
@@ -1175,6 +1229,9 @@
     ],
     "description": "Summons darkness around you in a$?a357419[ 12 yd][n 8 yd] radius, granting friendly targets a $209426s2% chance to avoid all damage from an attack. Lasts $d.\nChance to avoid damage increased by $s3% when not in a raid.",
     "schoolMask": 1,
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec.\nChance to avoid damage increased by 100% when not in a raid."
   },
   {
@@ -1287,6 +1344,7 @@
     ],
     "description": "Remove all snares and vault away. Nearby enemies take $198813s2 Physical damage$?s320635[ and have their movement speed reduced by $198813s1% for $198813d][].$?a203551[\n|cFFFFFFFFGenerates ${($203650s1/5)*$203650d} Fury over $203650d if you damage an enemy.|r][]",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
   },
   {
@@ -1518,6 +1576,10 @@
     "description": "$@spelldesc198793",
     "tooltip": "Movement speed reduced by $s1%.",
     "schoolMask": 1,
+    "gcd": 0,
+    "aoe": {
+      "radius": 5
+    },
     "resolvedDescription": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
   },
   {
@@ -1619,6 +1681,12 @@
     ],
     "description": "Place a Sigil of Silence at the target location that activates after $d.\nSilences all enemies affected by the sigil for $204490d.",
     "schoolMask": 1,
+    "hasteScaling": {
+      "gcd": true
+    },
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Place a Sigil of Silence at the target location that activates after 2 sec.\nSilences all enemies affected by the sigil for 2 sec."
   },
   {
@@ -1726,6 +1794,12 @@
     ],
     "description": "Place a Sigil of Chains at the target location that activates after $d.\nAll enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by $204843s1% for $204843d.",
     "schoolMask": 1,
+    "hasteScaling": {
+      "gcd": true
+    },
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Place a Sigil of Chains at the target location that activates after 2 sec.\nAll enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by -70% for 6 sec."
   },
   {
@@ -1774,6 +1848,7 @@
     "description": "$@spelldesc203551",
     "tooltip": "Generating ${$m1/5} Fury every sec.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "$@spelldesc203551"
   },
   {
@@ -1819,6 +1894,7 @@
     ],
     "description": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}$?s321028[, and your Parry chance by $203819s1%, for $203819d][].",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}."
   },
   {
@@ -1853,7 +1929,12 @@
           "miscValue": "12",
           "target": "Self (1)",
           "Affected Spells": "Demon Spikes (203819)",
-          "Family Flags": "7"
+          "Family Flags": "7",
+          "schoolMask": 12,
+          "schoolNames": [
+            "Fire",
+            "Nature"
+          ]
         }
       },
       {
@@ -2098,6 +2179,23 @@
     ],
     "description": "Shears an enemy for $s1 Physical damage, and shatters $?a187827[two Lesser Soul Fragments][a Lesser Soul Fragment] from your target.\n|cFFFFFFFFGenerates $m2 Fury.|r",
     "schoolMask": 1,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 10,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 10,
+        "resourceType": "fury"
+      }
+    ],
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Shears an enemy for 0 Physical damage, and shatters two Lesser Soul Fragments from your target.\n|cFFFFFFFFGenerates $m2 Fury.|r"
   },
   {
@@ -2176,6 +2274,7 @@
     "description": "$@spelldesc203720",
     "tooltip": "Armor increased by ${$W2*$AGI/100}.$?s321028[\nParry chance increased by $w1%.][]",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}."
   },
   {
@@ -2278,6 +2377,7 @@
     "description": "Consuming a nearby Soul Fragment heals you.",
     "tooltip": "Soul Fragments are nearby.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Consuming a nearby Soul Fragment heals you."
   },
   {
@@ -2518,6 +2618,9 @@
     "description": "Brand an enemy with a demonic symbol, instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][]. The enemy's damage done to you is reduced by $s1% for $207744d.",
     "tooltip": "Dealing $s1% less damage to the branding Demon Hunter.",
     "schoolMask": 4,
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Brand an enemy with a demonic symbol, instantly dealing 0 Fire damage. The enemy's damage done to you is reduced by 40% for 12 sec."
   },
   {
@@ -2614,6 +2717,10 @@
     "description": "Silence affected enemies for $d.",
     "tooltip": "Silenced.",
     "schoolMask": 1,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Silence affected enemies for 2 sec."
   },
   {
@@ -2715,6 +2822,12 @@
     "description": "Place a Sigil of Flame at the target location that activates after $d.\nDeals $204598s1 $@spelldesc395020 damage, and an additional $204598o3 $@spelldesc395020 damage over $204598d, to all enemies affected by the sigil.\n|CFFffffffGenerates $389787s1 Fury.|R",
     "tooltip": "Sigil of Flame is active.",
     "schoolMask": 4,
+    "hasteScaling": {
+      "gcd": true
+    },
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Place a Sigil of Flame at the target location that activates after 2 sec.\nDeals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil.\n|CFFffffffGenerates 30 Fury.|R"
   },
   {
@@ -3046,6 +3159,10 @@
     "tooltip": "Suffering $w2 $@spelldesc395020 damage every $t2 sec.$?$w4>0[ $@auracaster has $w4% increased chance to parry your attacks.][]",
     "variables": "$pord=$@switch<$s5>[ $@auracaster has $s4% increased chance to parry your attacks.][ $@auracaster has $s4% increased chance to dodge your attacks.]",
     "schoolMask": 4,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Place a Sigil of Flame at the target location that activates after 8 sec.\nDeals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil.\n|CFFffffffGenerates 30 Fury.|R"
   },
   {
@@ -3140,6 +3257,7 @@
     "description": "Slows enemies by $s1% for $d.",
     "tooltip": "Movement slowed by $s1%.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Slows enemies by -70% for 6 sec."
   },
   {
@@ -3174,7 +3292,14 @@
           "miscValue": "23",
           "target": "Self (1)",
           "Affected Spells": "Metamorphosis (162264), Metamorphosis (187827), Metamorphosis (191427)",
-          "Family Flags": "15, 28"
+          "Family Flags": "15, 28",
+          "schoolMask": 23,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -3227,7 +3352,13 @@
           "miscValue": "7",
           "target": "Self (1)",
           "Affected Spells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
-          "Family Flags": "49, 61"
+          "Family Flags": "49, 61",
+          "schoolMask": 7,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire"
+          ]
         }
       }
     ],
@@ -3280,7 +3411,12 @@
           "miscValue": "3",
           "miscValue2": "2406 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Painbringer (212988)"
+          "Affected Spells (Label)": "Painbringer (212988)",
+          "schoolMask": 3,
+          "schoolNames": [
+            "Physical",
+            "Holy"
+          ]
         }
       },
       {
@@ -3540,6 +3676,23 @@
     "description": "Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional $o1 Fire damage over $d.  Immediately shatters $s3 Lesser Soul Fragments from the target and $s4 additional Lesser Soul Fragment every $t1 sec.",
     "tooltip": "Suffering $s1 Fire damage every $t1 sec.",
     "schoolMask": 4,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 3,
+          "resourceType": "Soul Fragments"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 3,
+        "resourceType": "Soul Fragments"
+      }
+    ],
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Carve into the soul of your target, dealing 0 Fire damage and an additional 0 Fire damage over 3 sec.  Immediately shatters 3 Lesser Soul Fragments from the target and 1 additional Lesser Soul Fragment every $t1 sec."
   },
   {
@@ -3562,7 +3715,11 @@
           "miscValue": "32",
           "target": "Self (1)",
           "Affected Spells": "Immolation Aura (258920), Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427913), Immolation Aura (427914), Immolation Aura (427915), Immolation Aura (427916)",
-          "Family Flags": "11"
+          "Family Flags": "11",
+          "schoolMask": 32,
+          "schoolNames": [
+            "Shadow"
+          ]
         }
       },
       {
@@ -3575,7 +3732,11 @@
           "miscValue": "1",
           "target": "Self (1)",
           "Affected Spells": "Immolation Aura (258920), Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427913), Immolation Aura (427914), Immolation Aura (427915), Immolation Aura (427916)",
-          "Family Flags": "11"
+          "Family Flags": "11",
+          "schoolMask": 1,
+          "schoolNames": [
+            "Physical"
+          ]
         }
       }
     ],
@@ -3705,6 +3866,12 @@
     ],
     "description": "Place a Sigil of Misery at the target location that activates after $d.\nCauses all enemies affected by the sigil to cower in fear, disorienting them for $207685d.",
     "schoolMask": 1,
+    "hasteScaling": {
+      "gcd": true
+    },
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Place a Sigil of Misery at the target location that activates after 2 sec.\nCauses all enemies affected by the sigil to cower in fear, disorienting them for 15 sec."
   },
   {
@@ -3804,6 +3971,10 @@
     "description": "Disorient affected enemies for $d.",
     "tooltip": "Disoriented.",
     "schoolMask": 1,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Disorient affected enemies for 15 sec."
   },
   {
@@ -3848,6 +4019,7 @@
     "description": "$@spelldesc207697",
     "tooltip": "Healing $w1 health every $t1 sec.",
     "schoolMask": 32,
+    "gcd": 0,
     "resolvedDescription": "Soul Cleave heals you for an additional 0 over 6 sec."
   },
   {
@@ -4082,6 +4254,7 @@
     "description": "$@spelldesc204021",
     "tooltip": "Branded, dealing $204021s1% less damage to $@auracaster$?s389220[ and taking $w2% more Fire damage from them][].",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "Brand an enemy with a demonic symbol, instantly dealing 0 Fire damage. The enemy's damage done to you is reduced by 0% for 12 sec."
   },
   {
@@ -4335,6 +4508,7 @@
     "description": "$@spelldesc204021",
     "tooltip": "Branded, taking $w5 Fire damage every $t5 sec, and dealing $204021s1% less damage to $@auracaster$?s389220[ and taking $w2% more Fire damage from them][].",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "Brand an enemy with a demonic symbol, instantly dealing 0 Fire damage. The enemy's damage done to you is reduced by -40% for 12 sec."
   },
   {
@@ -4444,6 +4618,7 @@
     "description": "You cannot benefit from Last Resort again for $d.",
     "tooltip": "You have recently benefited from Last Resort and cannot benefit from it again.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "You cannot benefit from Last Resort again for 480 sec."
   },
   {
@@ -4467,7 +4642,11 @@
           "miscValue": "1",
           "target": "Self (1)",
           "Affected Spells": "Sigil of Silence (202137), Sigil of Chains (202138), Sigil of Misery (202140), Sigil of Flame (204513), Sigil of Flame (204596), Sigil of Chains (207665), Sigil of Silence (207682), Sigil of Misery (207684), Elysian Decree (306830), Elysian Decree (327839), Sigil of Chains (389807), Sigil of Silence (389809), Sigil of Flame (389810), Sigil of Misery (389813), Sigil of Spite (389815), Sigil of Spite (389858), Sigil of Spite (390163), Elysian Decree (394985), Sigil of Doom (452490), Sigil of Doom (469991)",
-          "Family Flags": "24"
+          "Family Flags": "24",
+          "schoolMask": 1,
+          "schoolNames": [
+            "Physical"
+          ]
         }
       },
       {
@@ -4622,6 +4801,7 @@
     "description": "$@spelldesc196718",
     "tooltip": "Attacks against you have a $w2% chance to inflict no damage.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec.\nChance to avoid damage increased by $s3% when not in a raid."
   },
   {
@@ -4745,6 +4925,18 @@
     ],
     "description": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d.$?s320639[ Causing damage also heals you for up to ${$212106s1*(2/$t1)} health.][]",
     "schoolMask": 4,
+    "resourceFlow": {
+      "costs": [
+        {
+          "amount": 50,
+          "resourceType": "Fury"
+        }
+      ]
+    },
+    "hasteScaling": {
+      "ticks": true,
+      "gcd": true
+    },
     "resolvedDescription": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over 2 sec."
   },
   {
@@ -5015,6 +5207,10 @@
     ],
     "description": "$@spelldesc212084",
     "schoolMask": 4,
+    "gcd": 0,
+    "aoe": {
+      "radius": 13
+    },
     "resolvedDescription": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d."
   },
   {
@@ -5114,6 +5310,7 @@
     ],
     "description": "$@spelldesc212084",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d."
   },
   {
@@ -5149,7 +5346,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), The Hunt (323802), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "Family Flags": "70"
+          "Family Flags": "70",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       },
       {
@@ -5278,7 +5481,12 @@
           "miscValue": "3",
           "miscValue2": "2667 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Charred Warblades (213010)"
+          "Affected Spells (Label)": "Charred Warblades (213010)",
+          "schoolMask": 3,
+          "schoolNames": [
+            "Physical",
+            "Holy"
+          ]
         }
       },
       {
@@ -5314,7 +5522,12 @@
           "miscValue": "3",
           "miscValue2": "4706 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Burning Blades (452408)"
+          "Affected Spells (Label)": "Burning Blades (452408)",
+          "schoolMask": 3,
+          "schoolNames": [
+            "Physical",
+            "Holy"
+          ]
         }
       },
       {
@@ -5339,7 +5552,12 @@
           "miscValue": "3",
           "miscValue2": "5145 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Incorruptible Spirit (442736)"
+          "Affected Spells (Label)": "Incorruptible Spirit (442736)",
+          "schoolMask": 3,
+          "schoolNames": [
+            "Physical",
+            "Holy"
+          ]
         }
       }
     ],
@@ -5415,6 +5633,7 @@
     "description": "$@spelldesc389220",
     "tooltip": "Fire damage taken from $@auracaster increased by $w1%.",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "Fiery Brand also increases Fire damage you deal to the target by 0%."
   },
   {
@@ -5480,6 +5699,7 @@
     "description": "$@spelldesc207387",
     "tooltip": "Damage taken reduced by $w1%.",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "Consuming a Soul Fragment reduces all damage you take by 0% for 6 sec.\nMultiple applications may overlap."
   },
   {
@@ -5795,6 +6015,21 @@
     ],
     "description": "$@spelldesc232893",
     "schoolMask": 4,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 40,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 40,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "Charge to your target and deal $213243sw2 Fire damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]"
   },
   {
@@ -5839,6 +6074,7 @@
     "description": "$@spelldesc389763",
     "tooltip": "Movement speed reduced by $s1%.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by -50% for 6 sec."
   },
   {
@@ -6015,6 +6251,9 @@
     ],
     "description": "$@spelldesc207407",
     "schoolMask": 4,
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional 0 Fire damage over $d.  Immediately shatters $s3 Lesser Soul Fragments from the target and $s4 additional Lesser Soul Fragment every $t1 sec."
   },
   {
@@ -6106,6 +6345,9 @@
     "description": "Imprisons a demon, beast, or humanoid, incapacitating them for $d. Damage may cancel the effect. Limit 1.",
     "tooltip": "Incapacitated.",
     "schoolMask": 32,
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Imprisons a demon, beast, or humanoid, incapacitating them for 60 sec. Damage may cancel the effect. Limit 1."
   },
   {
@@ -6138,7 +6380,14 @@
           "miscValue": "23",
           "target": "Self (1)",
           "Affected Spells": "Metamorphosis (187827)",
-          "Family Flags": "28"
+          "Family Flags": "28",
+          "schoolMask": 23,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -6268,6 +6517,29 @@
     ],
     "description": "$@spelldesc183752",
     "schoolMask": 127,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 30,
+          "resourceType": "fury"
+        },
+        {
+          "amount": 300,
+          "resourceType": "pain"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 30,
+        "resourceType": "fury"
+      },
+      {
+        "amount": 300,
+        "resourceType": "pain"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "$@spelldesc183752"
   },
   {
@@ -6457,6 +6729,7 @@
     ],
     "description": "$@spelldesc263642",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 0 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates $s4 Fury.|r"
   },
   {
@@ -6646,6 +6919,7 @@
     ],
     "description": "$@spelldesc263642",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 0 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates $s4 Fury.|r"
   },
   {
@@ -6872,6 +7146,17 @@
     "description": "Viciously strike up to $228478s2 enemies in front of you for $228478s1 Physical damage and heal yourself for $s4.\nConsumes up to $s3 available Soul Fragments$?s321021[ and heals you for an additional $s5 for each Soul Fragment consumed][].",
     "variables": "$cleaveDamage=${2.0*$228478sw1}\n$cleaveHeal=${2.0*$AP*5.8*$s4/1000}",
     "schoolMask": 1,
+    "resourceFlow": {
+      "costs": [
+        {
+          "amount": 30,
+          "resourceType": "Fury"
+        }
+      ]
+    },
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Viciously strike up to 5 enemies in front of you for 0 Physical damage and heal yourself for 0.\nConsumes up to 2 available Soul Fragments."
   },
   {
@@ -7095,6 +7380,10 @@
     ],
     "description": "$@spelldesc228477",
     "schoolMask": 1,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Viciously strike up to 5 enemies in front of you for 0 Physical damage and heal yourself for $s4.\nConsumes up to $s3 available Soul Fragments."
   },
   {
@@ -7180,6 +7469,9 @@
     ],
     "description": "Charge to your target and deal $213243sw2 $@spelldesc395020 damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]",
     "schoolMask": 1,
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Charge to your target and deal $213243sw2 Fire damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]"
   },
   {
@@ -7283,6 +7575,17 @@
     ],
     "description": "Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for $247456s1% of damage you deal to them. Deals reduced damage beyond $s3 targets.",
     "schoolMask": 4,
+    "resourceFlow": {
+      "costs": [
+        {
+          "amount": 40,
+          "resourceType": "Fury"
+        }
+      ]
+    },
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Consume up to 5 available Soul Fragments then explode, damaging nearby enemies for 0 Fire damage per fragment consumed, and afflicting them with Frailty for 6 sec, causing you to heal for 8% of damage you deal to them. Deals reduced damage beyond 8 targets."
   },
   {
@@ -7478,6 +7781,10 @@
     ],
     "description": "$@spelldesc247454",
     "schoolMask": 4,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for 0 Fire damage per fragment consumed, and afflicting them with Frailty for 6 sec, causing you to heal for 8% of damage you deal to them. Deals reduced damage beyond $s3 targets."
   },
   {
@@ -7611,6 +7918,7 @@
     "description": "$@spelldesc247454",
     "tooltip": "$@auracaster is healed for $w1% of all damage they deal to you.$?$w3!=0[\nDealing $w3% reduced damage to $@auracaster.][]$?$w4!=0[\nSuffering $w4% increased damage from $@auracaster.][]",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "Consume up to 0 available Soul Fragments then explode, damaging nearby enemies for 0 Fire damage per fragment consumed, and afflicting them with Frailty for 6 sec, causing you to heal for 8% of damage you deal to them. Deals reduced damage beyond -3 targets."
   },
   {
@@ -7821,6 +8129,31 @@
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc1224451 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc1224451 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
     "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
     "schoolMask": 4,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 20,
+          "resourceType": "fury"
+        },
+        {
+          "amount": 8,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 20,
+        "resourceType": "fury"
+      },
+      {
+        "amount": 8,
+        "resourceType": "fury"
+      }
+    ],
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Engulf yourself in flames, radiating 0 Chaos damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
   },
   {
@@ -8173,6 +8506,10 @@
     ],
     "description": "$@spelldesc258920",
     "schoolMask": 4,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r"
   },
   {
@@ -8550,6 +8887,32 @@
     ],
     "description": "$@spelldesc258920",
     "schoolMask": 4,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 4,
+          "resourceType": "fury"
+        },
+        {
+          "amount": 2,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 4,
+        "resourceType": "fury"
+      },
+      {
+        "amount": 2,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r"
   },
   {
@@ -8701,6 +9064,31 @@
     ],
     "description": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter $s1 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates $s4 Fury.|r",
     "schoolMask": 1,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 25,
+          "resourceType": "fury"
+        },
+        {
+          "amount": 2,
+          "resourceType": "Soul Fragments"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 25,
+        "resourceType": "fury"
+      },
+      {
+        "amount": 2,
+        "resourceType": "Soul Fragments"
+      }
+    ],
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 2 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates 25 Fury.|r"
   },
   {
@@ -8840,6 +9228,26 @@
     ],
     "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][].",
     "schoolMask": 124,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 20,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 20,
+        "resourceType": "fury"
+      }
+    ],
+    "hasteScaling": {
+      "gcd": true
+    },
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Consume 1 beneficial Magic effect removing it from the target and granting you 20 Fury."
   },
   {
@@ -8910,7 +9318,12 @@
           "miscValue": "33",
           "target": "Self (1)",
           "Affected Spells": "Immolation Aura (258920), Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427913), Immolation Aura (427914), Immolation Aura (427915), Immolation Aura (427916)",
-          "Family Flags": "11"
+          "Family Flags": "11",
+          "schoolMask": 33,
+          "schoolNames": [
+            "Physical",
+            "Shadow"
+          ]
         }
       },
       {
@@ -9192,6 +9605,7 @@
     ],
     "description": "$@spelldesc320331",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "Immolation Aura increases your armor by 0% and causes melee attackers to suffer ${$320334s1/$s3} Fire damage."
   },
   {
@@ -9214,7 +9628,12 @@
           "miscValue": "5",
           "target": "Self (1)",
           "Affected Spells": "Disrupt (183752)",
-          "Family Flags": "19"
+          "Family Flags": "19",
+          "schoolMask": 5,
+          "schoolNames": [
+            "Physical",
+            "Fire"
+          ]
         }
       },
       {
@@ -9325,7 +9744,12 @@
           "miscValue": "17",
           "target": "Self (1)",
           "Affected Spells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "Family Flags": "5"
+          "Family Flags": "5",
+          "schoolMask": 17,
+          "schoolNames": [
+            "Physical",
+            "Frost"
+          ]
         }
       }
     ],
@@ -9531,7 +9955,13 @@
           "miscValue": "11",
           "target": "Self (1)",
           "Affected Spells": "Metamorphosis (162264), Metamorphosis (187827), Metamorphosis (191427)",
-          "Family Flags": "15, 28"
+          "Family Flags": "15, 28",
+          "schoolMask": 11,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Nature"
+          ]
         }
       }
     ],
@@ -9854,7 +10284,8 @@
       "Aura Points On Client (268)"
     ],
     "tooltip": "Absorbs $w1 damage.",
-    "schoolMask": 32
+    "schoolMask": 32,
+    "gcd": 0
   },
   {
     "name": "Charred Flesh",
@@ -10110,6 +10541,7 @@
     ],
     "description": "Throw a demonic glaive at the target, dealing $s1 Physical damage. The glaive can ricochet to $?$s320386[${$x1-1} additional enemies][an additional enemy] within 10 yards.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
   },
   {
@@ -10133,7 +10565,11 @@
           "miscValue": "1",
           "target": "Self (1)",
           "Affected Spells": "Fiery Brand (204021), Fiery Brand (207744), Fiery Brand (207771), Charred Flesh (336640)",
-          "Family Flags": "36"
+          "Family Flags": "36",
+          "schoolMask": 1,
+          "schoolNames": [
+            "Physical"
+          ]
         }
       }
     ],
@@ -10210,6 +10646,7 @@
     "description": "$@spelldesc343010",
     "tooltip": "Absorbs $w1 damage.",
     "schoolMask": 4,
+    "gcd": 0,
     "resolvedDescription": "The duration of Fiery Brand is increased by 0 sec."
   },
   {
@@ -10340,7 +10777,12 @@
           "miscValue": "12",
           "miscValue2": "2308 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Fiery Brand (207744), Fiery Brand (207771)"
+          "Affected Spells (Label)": "Fiery Brand (207744), Fiery Brand (207771)",
+          "schoolMask": 12,
+          "schoolNames": [
+            "Fire",
+            "Nature"
+          ]
         }
       }
     ],
@@ -10396,7 +10838,13 @@
           "miscValue": "11",
           "target": "Self (1)",
           "Affected Spells": "Vengeful Retreat (198793), Vengeful Retreat (198813), Vengeful Retreat (344866), Blazing Nova (436899), Blazing Nova (436964)",
-          "Family Flags": "3"
+          "Family Flags": "3",
+          "schoolMask": 11,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Nature"
+          ]
         }
       }
     ],
@@ -10731,7 +11179,12 @@
           "miscValue": "6",
           "target": "Self (1)",
           "Affected Spells": "Sigil of Silence (202137), Sigil of Chains (202138), Sigil of Misery (202140), Sigil of Silence (204490), Sigil of Flame (204513), Sigil of Flame (204596), Sigil of Flame (204598), Sigil of Chains (204843), Sigil of Chains (207665), Sigil of Silence (207682), Sigil of Misery (207684), Sigil of Misery (207685), Elysian Decree (306830), Elysian Decree (307046), Elysian Decree (327839), Elysian Decree (339893), Elysian Decree (339894), Blind Faith (355894), Sigil of Chains (389807), Sigil of Silence (389809), Sigil of Flame (389810), Sigil of Misery (389813), Sigil of Spite (389815), Sigil of Spite (389858), Sigil of Spite (389860), Sigil of Spite (390163), Elysian Decree (394985), Sigil of Doom (452490), Sigil of Doom (462030), Sigil of Doom (469991)",
-          "Family Flags": "24, 33"
+          "Family Flags": "24, 33",
+          "schoolMask": 6,
+          "schoolNames": [
+            "Holy",
+            "Fire"
+          ]
         }
       },
       {
@@ -10745,7 +11198,11 @@
           "miscValue": "1",
           "target": "Self (1)",
           "Affected Spells": "Sigil of Silence (204490), Sigil of Flame (204598), Sigil of Chains (204843), Sigil of Misery (207685), Elysian Decree (307046), Elysian Decree (339893), Elysian Decree (339894), Blind Faith (355894), Sigil of Spite (389860), Sigil of Doom (462030)",
-          "Family Flags": "33"
+          "Family Flags": "33",
+          "schoolMask": 1,
+          "schoolNames": [
+            "Physical"
+          ]
         }
       }
     ],
@@ -10891,7 +11348,11 @@
           "miscValue": "1",
           "target": "Self (1)",
           "Affected Spells": "Demon Spikes (203819)",
-          "Family Flags": "7"
+          "Family Flags": "7",
+          "schoolMask": 1,
+          "schoolNames": [
+            "Physical"
+          ]
         }
       }
     ],
@@ -11152,7 +11613,11 @@
           "miscValue": "1",
           "target": "Self (1)",
           "Affected Spells": "Darkness (196718)",
-          "Family Flags": "77"
+          "Family Flags": "77",
+          "schoolMask": 1,
+          "schoolNames": [
+            "Physical"
+          ]
         }
       }
     ],
@@ -11194,7 +11659,13 @@
           "miscValue": "11",
           "target": "Self (1)",
           "Affected Spells": "Darkness (196718)",
-          "Family Flags": "77"
+          "Family Flags": "77",
+          "schoolMask": 11,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Nature"
+          ]
         }
       }
     ],
@@ -11248,6 +11719,21 @@
     ],
     "description": "$@spelldesc204596",
     "schoolMask": 1,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 30,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 30,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "Place a Sigil of Flame at the target location that activates after $d.\nDeals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil.\n|CFFffffffGenerates 30 Fury.|R"
   },
   {
@@ -11392,6 +11878,7 @@
     "description": "$@spelldesc389846",
     "tooltip": "Movement speed increased by $w1%.",
     "schoolMask": 126,
+    "gcd": 0,
     "resolvedDescription": "$?c1[Fel Rush][Infernal Strike] increases your movement speed by 10% for 8 sec."
   },
   {
@@ -11414,7 +11901,13 @@
           "miscValue": "11",
           "target": "Self (1)",
           "Affected Spells": "Spectral Sight (188501)",
-          "Family Flags": "74"
+          "Family Flags": "74",
+          "schoolMask": 11,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Nature"
+          ]
         }
       },
       {
@@ -11427,7 +11920,11 @@
           "miscValue": "32",
           "target": "Self (1)",
           "Affected Spells": "Spectral Sight (188501)",
-          "Family Flags": "74"
+          "Family Flags": "74",
+          "schoolMask": 32,
+          "schoolNames": [
+            "Shadow"
+          ]
         }
       }
     ],
@@ -11735,6 +12232,10 @@
     ],
     "description": "$@spelldesc306830",
     "schoolMask": 124,
+    "gcd": 0,
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "$@spelldesc306830"
   },
   {
@@ -11774,6 +12275,21 @@
     "description": "$@spelldesc389688",
     "tooltip": "Generating $s1 Fury every $t sec.",
     "schoolMask": 1,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 8,
+          "resourceType": "unknown"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 8,
+        "resourceType": "unknown"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "Vengeful Retreat has a -0.01 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
   },
   {
@@ -11890,7 +12406,13 @@
           "miscValue": "37",
           "target": "Self (1)",
           "Affected Spells": "Frailty (247456)",
-          "Family Flags": "93"
+          "Family Flags": "93",
+          "schoolMask": 37,
+          "schoolNames": [
+            "Physical",
+            "Fire",
+            "Shadow"
+          ]
         }
       },
       {
@@ -12047,6 +12569,12 @@
     ],
     "description": "Place a demonic sigil at the target location that activates after $d.\nDetonates to deal $389860s1 Chaos damage and shatter up to $s3 Lesser Soul Fragments from enemies affected by the sigil. Deals reduced damage beyond $s1 targets.",
     "schoolMask": 124,
+    "hasteScaling": {
+      "gcd": true
+    },
+    "aoe": {
+      "radius": 8
+    },
     "resolvedDescription": "Place a demonic sigil at the target location that activates after 2 sec.\nDetonates to deal 0 Chaos damage and shatter up to 3 Lesser Soul Fragments from enemies affected by the sigil. Deals reduced damage beyond 5 targets."
   },
   {
@@ -12081,7 +12609,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "Family Flags": "43, 72"
+          "Family Flags": "43, 72",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -12298,6 +12832,7 @@
     "description": "$@spelldesc389729",
     "tooltip": "Deals $w1 Physical damage back to attackers.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "While Demon Spikes is active, melee attacks against you cause the attacker to take 0 Physical damage. Generates high threat."
   },
   {
@@ -12367,6 +12902,7 @@
     "description": "$@spelldesc389720",
     "tooltip": "Damage taken reduced by $w1%, fading over $d.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "You take -12% reduced damage after Demon Spikes ends, fading by 1% per second."
   },
   {
@@ -12430,7 +12966,12 @@
           "miscValue": "20",
           "target": "Self (1)",
           "Affected Spells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "Family Flags": "5"
+          "Family Flags": "5",
+          "schoolMask": 20,
+          "schoolNames": [
+            "Fire",
+            "Frost"
+          ]
         }
       },
       {
@@ -12629,6 +13170,7 @@
     "description": "$@spelldesc337546",
     "tooltip": "Magic damage taken reduced by $s1%.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "$@spelldesc337546"
   },
   {
@@ -12715,7 +13257,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Fel Devastation (212105), Fel Devastation (333110), Fel Devastation (346503), Fel Devastation (393834)",
-          "Family Flags": "67"
+          "Family Flags": "67",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -13126,6 +13674,29 @@
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc395020 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc395020 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
     "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
     "schoolMask": 4,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 20,
+          "resourceType": "fury"
+        },
+        {
+          "amount": 8,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 20,
+        "resourceType": "fury"
+      },
+      {
+        "amount": 8,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
   },
   {
@@ -13313,6 +13884,29 @@
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc395020 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc395020 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
     "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
     "schoolMask": 4,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 20,
+          "resourceType": "fury"
+        },
+        {
+          "amount": 8,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 20,
+        "resourceType": "fury"
+      },
+      {
+        "amount": 8,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
   },
   {
@@ -13500,6 +14094,29 @@
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc395020 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc395020 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
     "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
     "schoolMask": 4,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 20,
+          "resourceType": "fury"
+        },
+        {
+          "amount": 8,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 20,
+        "resourceType": "fury"
+      },
+      {
+        "amount": 8,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
   },
   {
@@ -13552,7 +14169,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "Family Flags": "43, 44, 72, 81, 83, 86"
+          "Family Flags": "43, 44, 72, 81, 83, 86",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -13604,7 +14227,13 @@
           "miscValue": "37",
           "miscValue2": "2381 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Sigil of Flame (204598), Sigil of Flame (425672), Illuminated Sigils (428595), Sigil of Doom (462030)"
+          "Affected Spells (Label)": "Sigil of Flame (204598), Sigil of Flame (425672), Illuminated Sigils (428595), Sigil of Doom (462030)",
+          "schoolMask": 37,
+          "schoolNames": [
+            "Physical",
+            "Fire",
+            "Shadow"
+          ]
         }
       },
       {
@@ -13752,6 +14381,21 @@
     ],
     "description": "$@spelldesc428607",
     "schoolMask": 1,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 10,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 10,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
     "resolvedDescription": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury.\nThis effect may only occur once every 10 sec."
   },
   {
@@ -13774,7 +14418,12 @@
           "miscValue": "5",
           "target": "Self (1)",
           "Affected Spells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "Family Flags": "5"
+          "Family Flags": "5",
+          "schoolMask": 5,
+          "schoolNames": [
+            "Physical",
+            "Fire"
+          ]
         }
       },
       {
@@ -14318,6 +14967,9 @@
     ],
     "description": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing $s1 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;.\nBegins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and $?a212612[Blade Dance][Soul Cleave].\nThe enhanced ability you cast first deals $442290s3% increased damage, and the second deals $442290s4% increased damage.$?a442497[\n|CFFffffffGenerates $s2 Fury.|R][]",
     "schoolMask": 1,
+    "hasteScaling": {
+      "gcd": true
+    },
     "resolvedDescription": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to 2 additional $Lenemy:enemies;.\nBegins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave.\nThe enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage.\n|CFFffffffGenerates 0 Fury.|R"
   },
   {
@@ -14380,7 +15032,12 @@
           "miscValue": "12",
           "miscValue2": "3349 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Reaver's Glaive (442294), Reaver's Glaive (444686), Reaver's Glaive (444764)"
+          "Affected Spells (Label)": "Reaver's Glaive (442294), Reaver's Glaive (444686), Reaver's Glaive (444764)",
+          "schoolMask": 12,
+          "schoolNames": [
+            "Fire",
+            "Nature"
+          ]
         }
       }
     ],
@@ -14505,6 +15162,7 @@
     ],
     "description": "$@spelldesc442502",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal 0 additional Physical damage."
   },
   {
@@ -14563,6 +15221,7 @@
     "description": "$@spelldesc442679",
     "tooltip": "Taking $w1% increased damage from $@auracaster.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take 7% increased damage for 20 sec. Max $442624u stacks.\nApplies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after Soul Cleave."
   },
   {
@@ -14724,7 +15383,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Demon's Bite (162243), Consume Soul (178963), Chaos Nova (179057), Throw Glaive (185123), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Consume Soul (202644), Consume Soul (203794), Demon Blades (203796), Sigil of Flame (204598), Consume Soul (210042), Death Sweep (210153), Death Sweep (210155), Fel Eruption (211881), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Chaos Strike (222031), Annihilation (227518), Consume Soul (228532), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Consume Soul (328953), Fel Devastation (333110), Fel Devastation (333120), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume Soul (1238743)",
-          "Family Flags": "16, 20, 80"
+          "Family Flags": "16, 20, 80",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       },
       {
@@ -14749,7 +15414,13 @@
           "miscValue": "22",
           "miscValue2": "3367 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Art of the Glaive (442290), Reaver's Glaive (442294), Keen Engagement (442497), Warblade's Hunger (442503), Warblade's Hunger (442507), Reaver's Mark (442624), Reaver's Mark (442679), Aldrachi Tactics (442683), Thrill of the Fight (442686), Thrill of the Fight (442688), Thrill of the Fight (442695), Army Unto Oneself (442714), Blade Ward (442715), Fury of the Aldrachi (442718), Incorruptible Spirit (442736), Incorruptible Spirit (442788), Wounded Quarry (442806), Art of the Glaive (444661), Reaver's Glaive (444686), Reaver's Glaive (444764), Fury of the Aldrachi (444806), Art of the Glaive (444810), Evasive Action (444926), Evasive Action (444929), Unhindered Assault (444931), Preemptive Strike (444979), Preemptive Strike (444997), Wounded Quarry (474339), Thrill of the Fight (1227062)"
+          "Affected Spells (Label)": "Art of the Glaive (442290), Reaver's Glaive (442294), Keen Engagement (442497), Warblade's Hunger (442503), Warblade's Hunger (442507), Reaver's Mark (442624), Reaver's Mark (442679), Aldrachi Tactics (442683), Thrill of the Fight (442686), Thrill of the Fight (442688), Thrill of the Fight (442695), Army Unto Oneself (442714), Blade Ward (442715), Fury of the Aldrachi (442718), Incorruptible Spirit (442736), Incorruptible Spirit (442788), Wounded Quarry (442806), Art of the Glaive (444661), Reaver's Glaive (444686), Reaver's Glaive (444764), Fury of the Aldrachi (444806), Art of the Glaive (444810), Evasive Action (444926), Evasive Action (444929), Unhindered Assault (444931), Preemptive Strike (444979), Preemptive Strike (444997), Wounded Quarry (474339), Thrill of the Fight (1227062)",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -14771,6 +15442,7 @@
     "description": "$@spelldesc442686",
     "tooltip": "Damage and healing increased by $w1%.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by 15% for 20 sec and your damage and healing by 15% for 10 sec."
   },
   {
@@ -14809,6 +15481,7 @@
     "description": "$@spelldesc442686",
     "tooltip": "Attack Speed increased by $w1%",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by 15% for 20 sec and your damage and healing by 15% for 10 sec."
   },
   {
@@ -14895,6 +15568,7 @@
     "description": "$@spelldesc442714",
     "tooltip": "Damage taken reduced by $s1%.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Felblade surrounds you with a Blade Ward, reducing damage taken by -10% for 5 sec."
   },
   {
@@ -15117,6 +15791,7 @@
     "description": "$@spelldesc444926",
     "tooltip": "Vengeful Retreat may be cast again.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "Vengeful Retreat can be cast a second time within 3 sec."
   },
   {
@@ -15220,6 +15895,10 @@
     ],
     "description": "$@spelldesc444997",
     "schoolMask": 1,
+    "gcd": 0,
+    "aoe": {
+      "radius": 5
+    },
     "resolvedDescription": "Throw Glaive deals 0 Physical damage to enemies near its initial target."
   },
   {
@@ -15307,7 +15986,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
-          "Family Flags": "49, 61"
+          "Family Flags": "49, 61",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -15372,7 +16057,13 @@
           "miscValue": "22",
           "target": "Self (1)",
           "Affected Spells": "Consume Soul (178963), Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Consume Soul (202644), Shear (203782), Consume Soul (203794), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Consume Soul (210042), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Consume Soul (228532), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), The Hunt (323802), Consume Soul (328953), Fel Devastation (333120), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume Soul (1238743)",
-          "Family Flags": "20, 70, 80"
+          "Family Flags": "20, 70, 80",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       },
       {
@@ -15397,7 +16088,13 @@
           "miscValue": "22",
           "miscValue2": "3367 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Art of the Glaive (442290), Reaver's Glaive (442294), Keen Engagement (442497), Warblade's Hunger (442503), Warblade's Hunger (442507), Reaver's Mark (442624), Reaver's Mark (442679), Aldrachi Tactics (442683), Thrill of the Fight (442686), Thrill of the Fight (442688), Thrill of the Fight (442695), Army Unto Oneself (442714), Blade Ward (442715), Fury of the Aldrachi (442718), Incorruptible Spirit (442736), Incorruptible Spirit (442788), Wounded Quarry (442806), Art of the Glaive (444661), Reaver's Glaive (444686), Reaver's Glaive (444764), Fury of the Aldrachi (444806), Art of the Glaive (444810), Evasive Action (444926), Evasive Action (444929), Unhindered Assault (444931), Preemptive Strike (444979), Preemptive Strike (444997), Wounded Quarry (474339), Thrill of the Fight (1227062)"
+          "Affected Spells (Label)": "Art of the Glaive (442290), Reaver's Glaive (442294), Keen Engagement (442497), Warblade's Hunger (442503), Warblade's Hunger (442507), Reaver's Mark (442624), Reaver's Mark (442679), Aldrachi Tactics (442683), Thrill of the Fight (442686), Thrill of the Fight (442688), Thrill of the Fight (442695), Army Unto Oneself (442714), Blade Ward (442715), Fury of the Aldrachi (442718), Incorruptible Spirit (442736), Incorruptible Spirit (442788), Wounded Quarry (442806), Art of the Glaive (444661), Reaver's Glaive (444686), Reaver's Glaive (444764), Fury of the Aldrachi (444806), Art of the Glaive (444810), Evasive Action (444926), Evasive Action (444929), Unhindered Assault (444931), Preemptive Strike (444979), Preemptive Strike (444997), Wounded Quarry (474339), Thrill of the Fight (1227062)",
+          "schoolMask": 22,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Frost"
+          ]
         }
       }
     ],
@@ -15419,6 +16116,7 @@
     "description": "$@spelldesc442686",
     "tooltip": "Damage and healing increased by $w1%.",
     "schoolMask": 1,
+    "gcd": 0,
     "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by 15% for 20 sec and your damage and healing by 15% for 10 sec."
   },
   {
@@ -15453,7 +16151,13 @@
           "miscValue": "37",
           "miscValue2": "4821 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Reaver's Mark (442624)"
+          "Affected Spells (Label)": "Reaver's Mark (442624)",
+          "schoolMask": 37,
+          "schoolNames": [
+            "Physical",
+            "Fire",
+            "Shadow"
+          ]
         }
       },
       {
@@ -15466,7 +16170,12 @@
           "miscValue": "12",
           "miscValue2": "5190 (Label)",
           "target": "Self (1)",
-          "Affected Spells (Label)": "Reaver's Mark (442679)"
+          "Affected Spells (Label)": "Reaver's Mark (442679)",
+          "schoolMask": 12,
+          "schoolNames": [
+            "Fire",
+            "Nature"
+          ]
         }
       },
       {

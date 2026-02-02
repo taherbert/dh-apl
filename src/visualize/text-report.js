@@ -47,8 +47,33 @@ function generateReport() {
   lines.push("## Active Abilities");
   lines.push("");
 
+  // Sub-spells that are triggered by a main cast (e.g., damage components, buff applications)
+  // shouldn't appear as separate active abilities. Identify them by triggeredBy or by being
+  // a secondary spell ID sharing a name with a GCD-bearing primary.
+  const primaryByName = new Map();
+  for (const s of spells) {
+    if (s.gcd > 0 && vengSpellIds.has(s.id)) {
+      primaryByName.set(s.name, s.id);
+    }
+  }
   const activeSpells = spells
-    .filter((s) => !s.passive && s.gcd && vengSpellIds.has(s.id))
+    .filter((s) => {
+      if (s.passive || s.gcd == null) return false;
+      if (!vengSpellIds.has(s.id)) return false;
+      // Exclude triggered sub-spells (but keep real abilities with cooldowns)
+      if (s.triggeredBy?.length && !s.cooldown && !s.charges) return false;
+      // Exclude secondary spell IDs that share a name with a GCD-bearing primary
+      if (
+        s.gcd === 0 &&
+        primaryByName.has(s.name) &&
+        primaryByName.get(s.name) !== s.id
+      )
+        return false;
+      // Off-GCD spells without cooldown, charges, or resource cost are not
+      // player-cast abilities — they're sub-spells, buffs, or proc effects
+      if (s.gcd === 0 && !s.cooldown && !s.charges && !s.resource) return false;
+      return true;
+    })
     .sort((a, b) => a.name.localeCompare(b.name));
 
   for (const spell of activeSpells) {
@@ -59,7 +84,8 @@ function generateReport() {
     if (spell.school) props.push(`School: ${spell.school}`);
     if (spell.resource)
       props.push(`Cost: ${spell.resource.cost} ${spell.resource.type}`);
-    if (spell.gcd) props.push(`GCD: ${spell.gcd}s`);
+    if (spell.gcd != null)
+      props.push(`GCD: ${spell.gcd === 0 ? "off-GCD" : spell.gcd + "s"}`);
     if (spell.cooldown) props.push(`CD: ${spell.cooldown}s`);
     if (spell.charges)
       props.push(
@@ -68,6 +94,38 @@ function generateReport() {
     if (spell.duration) props.push(`Duration: ${spell.duration}s`);
     if (spell.range) props.push(`Range: ${spell.range}yd`);
     if (props.length) lines.push(props.join(" | "));
+
+    // Resource generation
+    if (spell.generates?.length) {
+      const genStr = spell.generates
+        .map((g) => `${g.amount} ${g.resourceType}`)
+        .join(", ");
+      lines.push(`Generates: ${genStr}`);
+    }
+
+    // AoE info
+    if (spell.aoe) {
+      const aoeParts = [];
+      if (spell.aoe.radius) aoeParts.push(`${spell.aoe.radius}yd radius`);
+      if (spell.aoe.maxTargets)
+        aoeParts.push(`max ${spell.aoe.maxTargets} targets`);
+      if (spell.aoe.reducedAoe) aoeParts.push(`reduced AoE`);
+      if (aoeParts.length) lines.push(`AoE: ${aoeParts.join(", ")}`);
+    }
+
+    // Haste scaling
+    if (spell.hasteScaling) {
+      const parts = Object.entries(spell.hasteScaling)
+        .filter(([, v]) => v)
+        .map(([k]) => k);
+      if (parts.length) lines.push(`Haste scales: ${parts.join(", ")}`);
+    }
+
+    // Proc info
+    if (spell.procChance && spell.procChance <= 100)
+      lines.push(`Proc: ${spell.procChance}% chance`);
+    if (spell.realPPM) lines.push(`Proc: ${spell.realPPM} RPPM`);
+    if (spell.internalCooldown) lines.push(`ICD: ${spell.internalCooldown}s`);
 
     if (spell.description) {
       lines.push("");
@@ -154,11 +212,16 @@ function generateReport() {
   lines.push("### Fury Generators");
   const furyGen = spells.filter(
     (s) =>
-      s.description?.toLowerCase().includes("generates") &&
-      s.description?.toLowerCase().includes("fury") &&
-      !s.passive,
+      s.generates?.some(
+        (g) => g.resourceType === "fury" || g.resourceType === "Fury",
+      ) && !s.passive,
   );
-  for (const s of furyGen) lines.push(`- ${s.name} (${s.id})`);
+  for (const s of furyGen) {
+    const amounts = s.generates
+      .filter((g) => g.resourceType === "fury" || g.resourceType === "Fury")
+      .map((g) => g.amount);
+    lines.push(`- ${s.name} (${s.id}): ${amounts.join("+")} Fury`);
+  }
 
   lines.push("");
   lines.push("### Fury Spenders");
@@ -170,13 +233,15 @@ function generateReport() {
 
   lines.push("");
   lines.push("### Soul Fragment Generators");
-  const soulGen = spells.filter(
-    (s) =>
-      s.description?.toLowerCase().includes("soul fragment") &&
-      (s.description?.toLowerCase().includes("generat") ||
-        s.description?.toLowerCase().includes("creat")),
+  const soulGen = spells.filter((s) =>
+    s.generates?.some((g) => g.resourceType === "Soul Fragments"),
   );
-  for (const s of soulGen) lines.push(`- ${s.name} (${s.id})`);
+  for (const s of soulGen) {
+    const amount = s.generates.find(
+      (g) => g.resourceType === "Soul Fragments",
+    )?.amount;
+    lines.push(`- ${s.name} (${s.id}): ${amount} fragments`);
+  }
 
   lines.push("");
   lines.push("### Soul Fragment Consumers");
