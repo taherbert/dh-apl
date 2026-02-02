@@ -3,7 +3,12 @@
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { RAIDBOTS_TALENTS, SPEC_ID, HERO_SUBTREES } from "../config.js";
+import {
+  RAIDBOTS_TALENTS,
+  SPEC_ID,
+  HERO_SUBTREES,
+  FETCH_TIMEOUT_MS,
+} from "../config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -13,7 +18,7 @@ async function fetchRaidbotsTalents() {
 
   console.log(`Fetching ${RAIDBOTS_TALENTS}...`);
   const res = await fetch(RAIDBOTS_TALENTS, {
-    signal: AbortSignal.timeout(30_000),
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 
@@ -24,6 +29,18 @@ async function fetchRaidbotsTalents() {
     throw new Error(
       `specId ${SPEC_ID} not found. Available: ${available.join(", ")}`,
     );
+  }
+
+  const requiredFields = [
+    "classNodes",
+    "specNodes",
+    "heroNodes",
+    "subTreeNodes",
+  ];
+  for (const field of requiredFields) {
+    if (!Array.isArray(vdh[field])) {
+      throw new Error(`Raidbots response missing or invalid field: ${field}`);
+    }
   }
 
   const output = {

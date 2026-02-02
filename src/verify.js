@@ -261,25 +261,6 @@ if (unknownCount === 0) {
   fail(`Unknown interaction rate ${unknownPct.toFixed(1)}% (target: 0%)`);
 }
 
-// === Key Spells ===
-
-console.log("\n=== Key Spells ===\n");
-
-const keySpells = [
-  [247454, "Spirit Bomb"],
-  [228477, "Soul Cleave"],
-  [204021, "Fiery Brand"],
-  [263642, "Fracture"],
-  [212084, "Fel Devastation"],
-  [258920, "Immolation Aura"],
-  [204596, "Sigil of Flame"],
-];
-
-for (const [id, name] of keySpells) {
-  if (spellMap.has(id)) pass(`Key spell: ${name} (${id})`);
-  else fail(`Key spell missing: ${name} (${id})`);
-}
-
 // === Summary Counts ===
 
 console.log("\n=== Summary Counts ===\n");

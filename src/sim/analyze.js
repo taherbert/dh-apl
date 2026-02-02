@@ -4,6 +4,7 @@
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SCENARIOS } from "./runner.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const RESULTS_DIR = join(__dirname, "..", "..", "results");
@@ -52,44 +53,15 @@ function analyzeDPSContribution(result) {
 function analyzeBuffUptime(result) {
   console.log("\n--- Buff Uptime Analysis ---");
 
-  // Key VDH buffs to track
-  const keyBuffs = [
-    "demon_spikes",
-    "fiery_brand",
-    "metamorphosis",
-    "immolation_aura",
-    "frailty",
-    "soul_furnace",
-    "rending_strike",
-    "glaive_flurry",
-    "demonsurge_soul_sunder",
-    "demonsurge_spirit_burst",
-    "student_of_suffering",
-  ];
-
-  const found = result.buffs.filter((b) =>
-    keyBuffs.some((kb) => b.name.toLowerCase().includes(kb)),
-  );
-
-  if (found.length) {
-    console.log("\nKey buff uptimes:");
-    for (const b of found) {
+  const significant = result.buffs.filter((b) => b.uptime >= 10);
+  if (significant.length) {
+    console.log("\nBuff uptimes (≥10%):");
+    for (const b of significant) {
       const upPct = b.uptime.toFixed(1);
-      const status = b.uptime < 30 ? " ⚠ LOW" : b.uptime > 90 ? " ✓ HIGH" : "";
+      let status = "";
+      if (b.uptime < 30) status = " ⚠ LOW";
+      else if (b.uptime > 90) status = " ✓ HIGH";
       console.log(`  ${b.name.padEnd(35)} ${upPct}%${status}`);
-    }
-  }
-
-  // Defensive uptime check
-  const demonSpikes = result.buffs.find((b) =>
-    b.name.toLowerCase().includes("demon_spikes"),
-  );
-  if (demonSpikes) {
-    const uptime = demonSpikes.uptime;
-    if (uptime < 50) {
-      console.log(
-        `\n⚠ Demon Spikes uptime is ${uptime.toFixed(1)}% — consider prioritizing it higher`,
-      );
     }
   }
 }
@@ -99,8 +71,7 @@ function analyzeGCDUsage(result) {
 
   // Estimate total GCDs available from fight length
   // Assume 1.5s GCD base
-  const fightLength =
-    result.scenario === "st" ? 300 : result.scenario === "small_aoe" ? 75 : 60;
+  const fightLength = SCENARIOS[result.scenario]?.maxTime || 300;
   const estimatedGCDs = fightLength / 1.5;
 
   const totalCasts = result.abilities

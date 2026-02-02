@@ -5,7 +5,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { HERO_SUBTREES } from "../config.js";
+import { HERO_SUBTREES, CLASS_NAME, SPEC_NAME } from "../config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -24,12 +24,11 @@ function buildTalentTrees() {
   }
 
   const trees = {
-    class: { name: "Demon Hunter", talents: [] },
-    spec: { name: "Vengeance", talents: [] },
-    hero: {
-      "Aldrachi Reaver": { talents: [] },
-      Annihilator: { talents: [] },
-    },
+    class: { name: CLASS_NAME, talents: [] },
+    spec: { name: SPEC_NAME, talents: [] },
+    hero: Object.fromEntries(
+      Object.values(HERO_SUBTREES).map((name) => [name, { talents: [] }]),
+    ),
   };
 
   function processNode(node, treeName) {

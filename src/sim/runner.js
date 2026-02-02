@@ -6,26 +6,37 @@ import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  SIMC_BIN,
+  SIMC_MAX_BUFFER,
+  SIMC_TIMEOUT_MS,
+  SIMC_THREADS,
+} from "../config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
-const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
 const RESULTS_DIR = join(ROOT, "results");
 
-const SCENARIOS = {
-  st: {
-    name: "Patchwerk ST",
-    overrides: "max_time=300 desired_targets=1 iterations=1000",
-  },
+export const SCENARIOS = {
+  st: { name: "Patchwerk ST", maxTime: 300, targets: 1, iterations: 1000 },
   small_aoe: {
     name: "Small AoE (3 targets)",
-    overrides: "max_time=75 desired_targets=3 iterations=1000",
+    maxTime: 75,
+    targets: 3,
+    iterations: 1000,
   },
   big_aoe: {
     name: "Large AoE (10 targets)",
-    overrides: "max_time=60 desired_targets=10 iterations=1000",
+    maxTime: 60,
+    targets: 10,
+    iterations: 1000,
   },
 };
+
+function scenarioOverrides(scenario) {
+  const s = SCENARIOS[scenario];
+  return `max_time=${s.maxTime} desired_targets=${s.targets} iterations=${s.iterations}`;
+}
 
 export function runSim(profilePath, scenario = "st", extraOverrides = "") {
   const config = SCENARIOS[scenario];
@@ -40,12 +51,12 @@ export function runSim(profilePath, scenario = "st", extraOverrides = "") {
   const jsonPath = join(RESULTS_DIR, `${profileName}_${scenario}.json`);
 
   const cmd = [
-    SIMC,
+    SIMC_BIN,
     profilePath,
-    config.overrides,
+    scenarioOverrides(scenario),
     extraOverrides,
     `json2=${jsonPath}`,
-    "threads=4",
+    `threads=${SIMC_THREADS}`,
   ]
     .filter(Boolean)
     .join(" ");
@@ -54,8 +65,8 @@ export function runSim(profilePath, scenario = "st", extraOverrides = "") {
   try {
     execSync(cmd, {
       encoding: "utf-8",
-      maxBuffer: 50 * 1024 * 1024,
-      timeout: 300000,
+      maxBuffer: SIMC_MAX_BUFFER,
+      timeout: SIMC_TIMEOUT_MS,
     });
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-5).join("\n"));
@@ -67,7 +78,12 @@ export function runSim(profilePath, scenario = "st", extraOverrides = "") {
 }
 
 function parseResults(data, scenario) {
-  const player = data.sim.players[0];
+  const player = data.sim?.players?.[0];
+  if (!player) {
+    throw new Error(
+      "No player data in simulation results — simc may have failed silently",
+    );
+  }
 
   const result = {
     scenario,

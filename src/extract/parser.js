@@ -2,7 +2,7 @@
 
 const FIELD_REGEX = /^(\w[\w ]*\w)\s+: (.+)$/;
 const EFFECT_HEADER_REGEX = /^#(\d+)\s+\(id=(\d+)\)\s+: (.+)$/;
-const EFFECT_DETAIL_REGEX = /^\s{19}(.+)$/;
+const EFFECT_DETAIL_REGEX = /^\s{15,25}(.+)$/;
 const SPELL_HEADER_REGEX = /^Name\s{2,}: (.+)$/;
 
 export function parseSpellQueryOutput(text) {
@@ -155,7 +155,7 @@ export function parseSpellQueryOutput(text) {
     }
 
     // Continuation lines (indented, for multi-value fields like Labels)
-    if (line.startsWith("                 : ")) {
+    if (/^\s{10,25}: /.test(line)) {
       const val = line.replace(/^\s+: /, "").trim();
       handleContinuation(current, val);
     }

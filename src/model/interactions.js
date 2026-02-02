@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { classifyEffect, classifyByName } from "./interaction-types.js";
+import { CLASS_NAME } from "../config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -44,14 +45,16 @@ function buildInteractions() {
       const isTalent = !!talent;
 
       // Skip base spec/class passives (e.g. "Vengeance Demon Hunter", "Havoc Demon Hunter")
-      if (ref.name.includes("Demon Hunter") && !isTalent) continue;
+      if (ref.name.includes(CLASS_NAME) && !isTalent) continue;
 
-      const interactionType =
-        modifierSpell && ref.effects?.length
-          ? classifyFromEffects(modifierSpell, ref.effects)
-          : modifierSpell
-            ? classifyFromSpell(modifierSpell)
-            : classifyByName(ref.name) || "unknown";
+      let interactionType;
+      if (modifierSpell && ref.effects?.length) {
+        interactionType = classifyFromEffects(modifierSpell, ref.effects);
+      } else if (modifierSpell) {
+        interactionType = classifyFromSpell(modifierSpell);
+      } else {
+        interactionType = classifyByName(ref.name) || "unknown";
+      }
 
       const interaction = {
         source: {
@@ -76,6 +79,16 @@ function buildInteractions() {
 
       if (!talentToTargets.has(ref.id)) talentToTargets.set(ref.id, []);
       talentToTargets.get(ref.id).push(interaction);
+    }
+  }
+
+  const unknowns = interactions.filter((i) => i.type === "unknown");
+  if (unknowns.length) {
+    console.warn(
+      `\n  WARNING: ${unknowns.length} interactions classified as "unknown":`,
+    );
+    for (const u of unknowns) {
+      console.warn(`    ${u.source.name} (${u.source.id}) → ${u.target.name}`);
     }
   }
 
@@ -136,26 +149,13 @@ function buildInteractions() {
     console.log(`    ${type}: ${count}`);
   }
 
-  // Highlight key VDH interactions
-  const keySpells = [
-    [204021, "Fiery Brand"],
-    [247454, "Spirit Bomb"],
-    [228477, "Soul Cleave"],
-    [212084, "Fel Devastation"],
-    [258920, "Immolation Aura"],
-  ];
-  console.log("\n  Key spell modifiers:");
-  for (const [id, name] of keySpells) {
-    const mods = spellToModifiers.get(id);
-    if (mods) {
-      console.log(`    ${name}: ${mods.length} modifiers`);
-      for (const m of mods.slice(0, 5)) {
-        console.log(`      - ${m.source.name} (${m.type})`);
-      }
-      if (mods.length > 5) console.log(`      ... and ${mods.length - 5} more`);
-    } else {
-      console.log(`    ${name}: no modifiers found`);
-    }
+  console.log("\n  Most-modified spells:");
+  const topModified = [...spellToModifiers.entries()]
+    .sort((a, b) => b[1].length - a[1].length)
+    .slice(0, 7);
+  for (const [id, mods] of topModified) {
+    const name = spellMap.get(id)?.name || `Spell ${id}`;
+    console.log(`    ${name}: ${mods.length} modifiers`);
   }
 }
 
