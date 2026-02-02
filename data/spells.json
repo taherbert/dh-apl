@@ -2649,7 +2649,7 @@
       }
     ],
     "class": "Havoc Demon Hunter, Vengeance Demon Hunter",
-    "school": "Physical",
+    "school": "Fire",
     "spellType": null,
     "spellLevel": 10,
     "range": 30,
@@ -2714,7 +2714,7 @@
     ],
     "description": "Place a Sigil of Flame at the target location that activates after $d.\nDeals $204598s1 $@spelldesc395020 damage, and an additional $204598o3 $@spelldesc395020 damage over $204598d, to all enemies affected by the sigil.\n|CFFffffffGenerates $389787s1 Fury.|R",
     "tooltip": "Sigil of Flame is active.",
-    "schoolMask": 1,
+    "schoolMask": 4,
     "resolvedDescription": "Place a Sigil of Flame at the target location that activates after 2 sec.\nDeals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil.\n|CFFffffffGenerates 30 Fury.|R"
   },
   {

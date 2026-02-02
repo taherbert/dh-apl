@@ -62,6 +62,13 @@ function buildInteractions() {
     }
   }
 
+  // Name→spell[] lookup for talent indirection in magnitude resolution
+  const spellsByName = new Map();
+  for (const sp of spells) {
+    if (!spellsByName.has(sp.name)) spellsByName.set(sp.name, []);
+    spellsByName.get(sp.name).push(sp);
+  }
+
   const interactions = [];
   const spellToModifiers = new Map();
   const talentToTargets = new Map();
@@ -81,6 +88,16 @@ function buildInteractions() {
       // legacy references (old runecarving powers, covenant abilities, etc.)
       // retained in simc's spell data but not part of any current talent tree.
       if (!isTalent && !modifierSpell) continue;
+
+      // Skip Havoc-specific talents that leak into Vengeance spell data.
+      // Check both talent entry and name-based lookup for non-talent variants.
+      if (modifierSpell?.talentEntry?.spec === "Havoc") continue;
+      const refNameSpells = spellsByName.get(ref.name);
+      if (
+        refNameSpells?.some((s) => s.talentEntry?.spec === "Havoc") &&
+        !refNameSpells?.some((s) => s.talentEntry?.spec === "Vengeance")
+      )
+        continue;
 
       const interactionType =
         modifierSpell && ref.effects?.length
@@ -359,7 +376,11 @@ function buildInteractions() {
     const sourceSpell = spellMap.get(interaction.source.id);
     const effectIndices = interaction.effects || [];
 
-    const magnitude = resolveEffectMagnitude(sourceSpell, effectIndices);
+    const magnitude = resolveEffectMagnitude(
+      sourceSpell,
+      effectIndices,
+      spellsByName,
+    );
     if (magnitude) interaction.magnitude = magnitude;
 
     const application = resolveApplicationMethod(sourceSpell, effectIndices);

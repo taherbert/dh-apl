@@ -406,10 +406,22 @@ function parseSpellReference(text) {
   return ref;
 }
 
+// Spells where simc's school field is the placement/wrapper school but
+// the actual damage school differs. Override to the damage school for
+// APL reasoning purposes.
+const SCHOOL_OVERRIDES = {
+  204596: "Fire", // Sigil of Flame — placement is Physical, damage (204598) is Fire
+};
+
 // Clean up internal tracking fields from output and enrich with school masks.
 export function cleanSpell(spell) {
   const cleaned = { ...spell };
   delete cleaned._lastMultiField;
+
+  // Apply school overrides for spells whose wrapper school differs from damage school
+  if (SCHOOL_OVERRIDES[cleaned.id]) {
+    cleaned.school = SCHOOL_OVERRIDES[cleaned.id];
+  }
 
   // Add spell-level schoolMask from the school string
   if (cleaned.school) {

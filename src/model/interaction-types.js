@@ -146,7 +146,12 @@ export const CATEGORIES = {
 
 // Resolve magnitude from a source spell's effect data at specific indices.
 // Returns { value, unit, perRank?, maxRank? } or null if no magnitude found.
-export function resolveEffectMagnitude(sourceSpell, effectIndices) {
+// spellsByName: optional Map<name, spell[]> for talent indirection on base=0 debuffs.
+export function resolveEffectMagnitude(
+  sourceSpell,
+  effectIndices,
+  spellsByName,
+) {
   if (!sourceSpell?.effects?.length) return null;
 
   const targetEffects = effectIndices?.length
@@ -156,6 +161,22 @@ export function resolveEffectMagnitude(sourceSpell, effectIndices) {
   for (const effect of targetEffects) {
     const d = effect.details || {};
     const type = (effect.type || "").toLowerCase();
+
+    // Skip DR effects — "enemy does X% less to player" (not relevant for APL)
+    if (
+      type.includes("damage done% to caster") ||
+      type.includes("damage done% to caster's spells")
+    )
+      continue;
+    if (d.baseValue != null && d.baseValue < 0 && type.includes("damage taken"))
+      continue;
+
+    // Skip Override Action Spell — baseValue is a spell ID reference, not a magnitude
+    if (type.includes("override action spell")) continue;
+
+    // Skip Dummy effects with negative values — typically DR tooltip values
+    if (type.includes("dummy") && d.baseValue != null && d.baseValue < 0)
+      continue;
 
     // Direct baseValue (most modifiers)
     if (d.baseValue != null && d.baseValue !== 0) {
@@ -182,6 +203,29 @@ export function resolveEffectMagnitude(sourceSpell, effectIndices) {
     }
   }
 
+  // Talent indirection: for debuff modifier spells with all base=0 effects
+  // (e.g., Fiery Demise 212818), look for a same-named talent spell that
+  // carries the actual magnitude (e.g., Fiery Demise 389220 base=15).
+  // Only accept talent spells with label-based modifier effects — Dummy effects
+  // often hold tooltip values (like DR percentages) that don't represent damage amps.
+  if (spellsByName && sourceSpell.name) {
+    const sameNameSpells = spellsByName.get(sourceSpell.name);
+    if (sameNameSpells) {
+      for (const alt of sameNameSpells) {
+        if (alt.id === sourceSpell.id) continue;
+        if (!alt.talentEntry) continue;
+        // Require the talent to have actual modifier effects, not just Dummy
+        const hasModifierEffect = alt.effects?.some((e) => {
+          const t = (e.type || "").toLowerCase();
+          return t.includes("modifier") || t.includes("damage taken");
+        });
+        if (!hasModifierEffect) continue;
+        const altResult = resolveEffectMagnitude(alt, null, null);
+        if (altResult) return altResult;
+      }
+    }
+  }
+
   return null;
 }
 
@@ -194,11 +238,20 @@ function inferUnit(effectType, value) {
     effectType.includes("modify parry") ||
     effectType.includes("modify dodge") ||
     effectType.includes("modify mastery") ||
-    effectType.includes("haste")
+    effectType.includes("haste") ||
+    effectType.includes("damage taken")
   ) {
     return "percent";
   }
   if (Math.abs(value) <= 100 && effectType.includes("modifier"))
+    return "percent";
+  // Dummy effects on talent spells are typically percentage modifiers
+  // when the value is in a reasonable range (1-100)
+  if (
+    effectType.includes("dummy") &&
+    Math.abs(value) > 0 &&
+    Math.abs(value) <= 100
+  )
     return "percent";
   if (effectType.includes("flat modifier")) return "flat";
   return "flat";

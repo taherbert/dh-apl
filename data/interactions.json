@@ -214,56 +214,6 @@
     },
     {
       "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 179057,
-        "name": "Chaos Nova"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 442624,
         "name": "Reaver's Mark",
         "isTalent": false,
@@ -431,56 +381,6 @@
           "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Targets (17)",
           "baseValue": 1,
           "scaledValue": 1,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 391275,
-        "name": "Accelerated Blade",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 185123,
-        "name": "Throw Glaive"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": -19,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Target Bonus (20)",
-          "baseValue": -19,
-          "scaledValue": -19,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 60,
-          "scaledValue": 60,
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
@@ -831,6 +731,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -932,56 +838,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 189112,
-        "name": "Infernal Strike"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -1159,45 +1015,6 @@
     },
     {
       "source": {
-        "id": 389688,
-        "name": "Tactical Retreat",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 198793,
-        "name": "Vengeful Retreat"
-      },
-      "type": "cooldown_modifier",
-      "effects": [
-        1
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": -5000,
-        "unit": "flat"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Cooldown (11)",
-          "baseValue": -5000,
-          "scaledValue": -5000,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Vengeful Retreat (198793), Vengeful Retreat (198813), Vengeful Retreat (344866), Blazing Nova (436899), Blazing Nova (436964)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 444929,
         "name": "Evasive Action",
         "isTalent": false,
@@ -1269,45 +1086,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 389688,
-        "name": "Tactical Retreat",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 198813,
-        "name": "Vengeful Retreat"
-      },
-      "type": "cooldown_modifier",
-      "effects": [
-        1
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": -5000,
-        "unit": "flat"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Cooldown (11)",
-          "baseValue": -5000,
-          "scaledValue": -5000,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Vengeful Retreat (198793), Vengeful Retreat (198813), Vengeful Retreat (344866), Blazing Nova (436899), Blazing Nova (436964)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -1698,6 +1476,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -2014,6 +1798,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -2154,56 +1944,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 204021,
-        "name": "Fiery Brand"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -2519,6 +2259,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -2670,56 +2416,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 204598,
-        "name": "Sigil of Flame"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -3007,6 +2703,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -3108,56 +2810,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 207407,
-        "name": "Soul Carver"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -3476,6 +3128,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -3616,56 +3274,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 207771,
-        "name": "Fiery Brand"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -3853,6 +3461,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -4004,56 +3618,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Fel Devastation (212105), Fel Devastation (333110), Fel Devastation (346503), Fel Devastation (393834)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 212105,
-        "name": "Fel Devastation"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -4469,6 +4033,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -4570,56 +4140,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 213243,
-        "name": "Felblade"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -4857,6 +4377,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -4958,56 +4484,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 214743,
-        "name": "Soul Carver"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -5123,6 +4599,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -5289,6 +4771,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -5976,6 +5464,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -6077,56 +5571,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 247455,
-        "name": "Spirit Bomb"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -6372,10 +5816,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427917,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -6411,10 +5851,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427913,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -6450,10 +5886,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427914,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -6489,10 +5921,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427915,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -6689,6 +6117,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -6840,91 +6274,6 @@
     },
     {
       "source": {
-        "id": 427775,
-        "name": "A Fire Inside",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258921,
-        "name": "Immolation Aura"
-      },
-      "type": "buff_grant",
-      "effects": [
-        5
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 5,
-          "type": "Apply Aura (6) | Modify Spell School (220)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258921,
-        "name": "Immolation Aura"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 433721,
         "name": "Immolation Aura",
         "isTalent": false,
@@ -6941,10 +6290,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427913,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -6980,10 +6325,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427914,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -7019,10 +6360,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427915,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -7123,56 +6460,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Demon's Bite (162243), Consume Soul (178963), Chaos Nova (179057), Throw Glaive (185123), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Consume Soul (202644), Consume Soul (203794), Demon Blades (203796), Sigil of Flame (204598), Consume Soul (210042), Death Sweep (210153), Death Sweep (210155), Fel Eruption (211881), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Chaos Strike (222031), Annihilation (227518), Consume Soul (228532), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Consume Soul (328953), Fel Devastation (333110), Fel Devastation (333120), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume Soul (1238743)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1224451,
-        "name": "A Fire Inside",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258921,
-        "name": "Immolation Aura"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        2,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 2.25,
-        "unit": "sp_coefficient"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
           "triggerSpell": null
         }
       ],
@@ -7409,6 +6696,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -7560,91 +6853,6 @@
     },
     {
       "source": {
-        "id": 427775,
-        "name": "A Fire Inside",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258922,
-        "name": "Immolation Aura"
-      },
-      "type": "buff_grant",
-      "effects": [
-        5
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 5,
-          "type": "Apply Aura (6) | Modify Spell School (220)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258922,
-        "name": "Immolation Aura"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 433721,
         "name": "Immolation Aura",
         "isTalent": false,
@@ -7661,10 +6869,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427913,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -7700,10 +6904,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427914,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -7739,10 +6939,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427915,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -7843,56 +7039,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Demon's Bite (162243), Consume Soul (178963), Chaos Nova (179057), Throw Glaive (185123), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Consume Soul (202644), Consume Soul (203794), Demon Blades (203796), Sigil of Flame (204598), Consume Soul (210042), Death Sweep (210153), Death Sweep (210155), Fel Eruption (211881), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Chaos Strike (222031), Annihilation (227518), Consume Soul (228532), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Consume Soul (328953), Fel Devastation (333110), Fel Devastation (333120), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume Soul (1238743)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1224451,
-        "name": "A Fire Inside",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258922,
-        "name": "Immolation Aura"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        2,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 2.25,
-        "unit": "sp_coefficient"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
           "triggerSpell": null
         }
       ],
@@ -8018,6 +7164,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -8126,6 +7278,12 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
+      "magnitude": {
+        "value": 15,
+        "unit": "percent",
+        "perRank": true,
+        "maxRank": 2
+      },
       "application": "debuff_on_target",
       "effectDetails": [
         {
@@ -8227,56 +7385,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 320334,
-        "name": "Infernal Armor"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -8453,56 +7561,6 @@
           "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Targets (17)",
           "baseValue": 1,
           "scaledValue": 1,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 391275,
-        "name": "Accelerated Blade",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 337819,
-        "name": "Throw Glaive"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": -19,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Target Bonus (20)",
-          "baseValue": -19,
-          "scaledValue": -19,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 60,
-          "scaledValue": 60,
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
@@ -8897,56 +7955,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Infernal Armor (320334), Bulk Extraction (320341), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 428241,
-        "name": "Demon Hide",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 389860,
-        "name": "Sigil of Spite"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        3
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 3,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 3,
-          "scaledValue": 3,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Eruption (211881), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Fel Barrage (258926), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Bulk Extraction (320341), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030)",
           "triggerSpell": null
         }
       ],
@@ -9411,10 +8419,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427913,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9450,10 +8454,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427914,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9489,10 +8489,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427915,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9619,10 +8615,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427913,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9658,10 +8650,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427914,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9697,10 +8685,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427915,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9827,10 +8811,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427913,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9866,10 +8846,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427914,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9905,10 +8881,6 @@
       ],
       "discoveryMethod": "spell_data",
       "confidence": "high",
-      "magnitude": {
-        "value": 427915,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -9995,56 +8967,6 @@
           "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Targets (17)",
           "baseValue": 1,
           "scaledValue": 1,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 391275,
-        "name": "Accelerated Blade",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 442294,
-        "name": "Reaver's Glaive"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": -19,
-        "unit": "percent"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Target Bonus (20)",
-          "baseValue": -19,
-          "scaledValue": -19,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 60,
-          "scaledValue": 60,
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Throw Glaive (185123), Throw Glaive (204157), Throw Glaive (337819), Throw Glaive (346665), Throw Glaive (393035), Reaver's Glaive (442294)",
@@ -10252,7 +9174,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10299,7 +9221,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10346,7 +9268,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 1,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10383,7 +9305,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 1,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10441,7 +9363,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 5,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10478,7 +9400,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 1,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10515,7 +9437,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 10,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10639,7 +9561,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 15,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -10895,7 +9817,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 7.5,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11109,7 +10031,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 50,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11241,7 +10163,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11288,7 +10210,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11335,7 +10257,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11382,7 +10304,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11429,7 +10351,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11476,7 +10398,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 1,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11576,7 +10498,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 5,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11858,7 +10780,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 5,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -11895,7 +10817,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 5,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -12142,7 +11064,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 7.5,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -12199,7 +11121,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 25,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -12256,7 +11178,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 25,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -12412,7 +11334,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 100,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -12506,7 +11428,7 @@
       "confidence": "medium",
       "magnitude": {
         "value": 1,
-        "unit": "flat"
+        "unit": "percent"
       },
       "application": "buff_on_player",
       "effectDetails": [
@@ -12894,10 +11816,6 @@
       "type": "proc_trigger",
       "discoveryMethod": "effect_scan",
       "confidence": "medium",
-      "magnitude": {
-        "value": -3,
-        "unit": "flat"
-      },
       "application": "buff_on_player",
       "effectDetails": [
         {
@@ -13282,14 +12200,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -13340,14 +12250,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Accelerated Blade",
-          "sourceId": 391275,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Champion of the Glaive",
           "sourceId": 429211,
           "type": "range_modifier",
@@ -13376,14 +12278,6 @@
           "sourceId": 320386,
           "type": "damage_modifier",
           "tree": "class",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Accelerated Blade",
-          "sourceId": 391275,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -13502,14 +12396,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -13579,14 +12465,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -13637,14 +12515,6 @@
       "name": "Vengeful Retreat",
       "modifiers": [
         {
-          "source": "Tactical Retreat",
-          "sourceId": 389688,
-          "type": "cooldown_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Evasive Action",
           "sourceId": 444929,
           "type": "buff_grant",
@@ -13656,14 +12526,6 @@
           "source": "Frailty",
           "sourceId": 247456,
           "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Tactical Retreat",
-          "sourceId": 389688,
-          "type": "cooldown_modifier",
           "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
@@ -13706,14 +12568,6 @@
       "name": "Vengeful Retreat",
       "modifiers": [
         {
-          "source": "Tactical Retreat",
-          "sourceId": 389688,
-          "type": "cooldown_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Evasive Action",
           "sourceId": 444929,
           "type": "buff_grant",
@@ -13725,14 +12579,6 @@
           "source": "Frailty",
           "sourceId": 247456,
           "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Tactical Retreat",
-          "sourceId": 389688,
-          "type": "cooldown_modifier",
           "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
@@ -14029,14 +12875,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -14097,14 +12935,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -14239,14 +13069,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -14360,14 +13182,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -14507,14 +13321,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -14567,14 +13373,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -14706,14 +13504,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -14774,14 +13564,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -14871,14 +13653,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -14939,14 +13713,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -15053,14 +13819,6 @@
           "sourceId": 393827,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -15190,14 +13948,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -15319,14 +14069,6 @@
           "sourceId": 393827,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -15474,14 +14216,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -15572,14 +14306,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -15632,14 +14358,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -16157,14 +14875,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -16242,14 +14952,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -16315,14 +15017,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -16497,22 +15191,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -16547,14 +15225,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -16633,22 +15303,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -16683,14 +15337,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -16966,22 +15612,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -17016,14 +15646,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -17102,22 +15724,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -17152,14 +15758,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -17435,22 +16033,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -17485,14 +16067,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -17571,22 +16145,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -17621,14 +16179,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -17964,14 +16514,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -18069,14 +16611,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -18254,22 +16788,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -18304,14 +16822,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -18390,22 +16900,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -18440,14 +16934,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -18632,14 +17118,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Accelerated Blade",
-          "sourceId": 391275,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Champion of the Glaive",
           "sourceId": 429211,
           "type": "range_modifier",
@@ -18668,14 +17146,6 @@
           "sourceId": 320386,
           "type": "damage_modifier",
           "tree": "class",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Accelerated Blade",
-          "sourceId": 391275,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -18773,14 +17243,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -18841,14 +17303,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -19040,14 +17494,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -19175,14 +17621,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Reaver's Mark",
           "sourceId": 442624,
           "type": "damage_modifier",
@@ -19301,14 +17739,6 @@
           "sourceId": 390213,
           "type": "damage_modifier",
           "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -19549,22 +17979,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -19599,14 +18013,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -19685,22 +18091,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -19735,14 +18125,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -20018,22 +18400,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -20068,14 +18434,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -20154,22 +18512,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -20204,14 +18546,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -20487,22 +18821,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -20537,14 +18855,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -20623,22 +18933,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -20673,14 +18967,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -21003,22 +19289,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -21053,14 +19323,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -21139,22 +19401,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -21189,14 +19435,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -21472,22 +19710,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -21522,14 +19744,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -21608,22 +19822,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -21658,14 +19856,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -21941,22 +20131,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -21991,14 +20165,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -22077,22 +20243,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -22127,14 +20277,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -22410,22 +20552,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -22460,14 +20586,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -22546,22 +20664,6 @@
           "discoveryMethod": "spell_data"
         },
         {
-          "source": "A Fire Inside",
-          "sourceId": 427775,
-          "type": "buff_grant",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Demon Hide",
-          "sourceId": 428241,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
           "source": "Immolation Aura",
           "sourceId": 433721,
           "type": "buff_grant",
@@ -22596,14 +20698,6 @@
         {
           "source": "Thrill of the Fight",
           "sourceId": 442688,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "A Fire Inside",
-          "sourceId": 1224451,
           "type": "damage_modifier",
           "tree": null,
           "heroSpec": null,
@@ -22832,14 +20926,6 @@
           "sourceId": 320386,
           "type": "damage_modifier",
           "tree": "class",
-          "heroSpec": null,
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "source": "Accelerated Blade",
-          "sourceId": 391275,
-          "type": "damage_modifier",
-          "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
         },
@@ -24134,25 +22220,6 @@
         }
       ]
     },
-    "389688": {
-      "name": "Tactical Retreat",
-      "tree": null,
-      "heroSpec": null,
-      "targets": [
-        {
-          "spell": "Vengeful Retreat",
-          "spellId": 198793,
-          "type": "cooldown_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Vengeful Retreat",
-          "spellId": 198813,
-          "type": "cooldown_modifier",
-          "discoveryMethod": "spell_data"
-        }
-      ]
-    },
     "389708": {
       "name": "Darkglare Boon",
       "tree": "spec",
@@ -24528,31 +22595,6 @@
         }
       ]
     },
-    "391275": {
-      "name": "Accelerated Blade",
-      "tree": null,
-      "heroSpec": null,
-      "targets": [
-        {
-          "spell": "Throw Glaive",
-          "spellId": 185123,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Throw Glaive",
-          "spellId": 337819,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Reaver's Glaive",
-          "spellId": 442294,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        }
-      ]
-    },
     "393827": {
       "name": "Stoke the Flames",
       "tree": "spec",
@@ -24576,25 +22618,6 @@
           "spellId": 204596,
           "type": "cooldown_modifier",
           "discoveryMethod": "cpp_scanner"
-        }
-      ]
-    },
-    "427775": {
-      "name": "A Fire Inside",
-      "tree": null,
-      "heroSpec": null,
-      "targets": [
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258921,
-          "type": "buff_grant",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258922,
-          "type": "buff_grant",
-          "discoveryMethod": "spell_data"
         }
       ]
     },
@@ -24651,97 +22674,6 @@
           "spell": "Soul Cleave",
           "spellId": 228478,
           "type": "buff_grant",
-          "discoveryMethod": "spell_data"
-        }
-      ]
-    },
-    "428241": {
-      "name": "Demon Hide",
-      "tree": null,
-      "heroSpec": null,
-      "targets": [
-        {
-          "spell": "Chaos Nova",
-          "spellId": 179057,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Infernal Strike",
-          "spellId": 189112,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Fiery Brand",
-          "spellId": 204021,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Sigil of Flame",
-          "spellId": 204598,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Soul Carver",
-          "spellId": 207407,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Fiery Brand",
-          "spellId": 207771,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Fel Devastation",
-          "spellId": 212105,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Felblade",
-          "spellId": 213243,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Soul Carver",
-          "spellId": 214743,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Spirit Bomb",
-          "spellId": 247455,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258921,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258922,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Infernal Armor",
-          "spellId": 320334,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Sigil of Spite",
-          "spellId": 389860,
-          "type": "damage_modifier",
           "discoveryMethod": "spell_data"
         }
       ]
@@ -25369,25 +23301,6 @@
           "spellId": 185123,
           "type": "proc_trigger",
           "discoveryMethod": "cpp_scanner"
-        }
-      ]
-    },
-    "1224451": {
-      "name": "A Fire Inside",
-      "tree": null,
-      "heroSpec": null,
-      "targets": [
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258921,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
-        },
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258922,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data"
         }
       ]
     },
