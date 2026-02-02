@@ -67,6 +67,11 @@ function buildInteractions() {
 
       if (ref.name.includes("Demon Hunter") && !isTalent) continue;
 
+      // Skip non-talent modifiers that aren't current DH spells — these are
+      // legacy references (old runecarving powers, covenant abilities, etc.)
+      // retained in simc's spell data but not part of any current talent tree.
+      if (!isTalent && !modifierSpell) continue;
+
       const interactionType =
         modifierSpell && ref.effects?.length
           ? classifyFromEffects(modifierSpell, ref.effects)

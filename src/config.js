@@ -1,6 +1,10 @@
 // Central configuration. Change DATA_ENV to switch all data sources.
 export const DATA_ENV = "ptr"; // "live" | "ptr"
 
+if (DATA_ENV !== "live" && DATA_ENV !== "ptr") {
+  throw new Error(`Invalid DATA_ENV: "${DATA_ENV}". Must be "live" or "ptr".`);
+}
+
 export const RAIDBOTS_BASE = `https://www.raidbots.com/static/data/${DATA_ENV}`;
 export const SIMC_DIR = "/Users/tom/Documents/GitHub/simc";
 export const SIMC_BIN = `${SIMC_DIR}/engine/simc`;
