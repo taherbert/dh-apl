@@ -2361,7 +2361,7 @@
         "heroSpec": null
       },
       "target": {
-        "id": null,
+        "id": 203981,
         "name": "Consume Soul"
       },
       "type": "resource_modifier",
@@ -2599,7 +2599,7 @@
         "heroSpec": "Annihilator"
       },
       "target": {
-        "id": null,
+        "id": 1253304,
         "name": "Voidfall"
       },
       "type": "mechanic_change",
@@ -4065,6 +4065,19 @@
           "tree": null,
           "heroSpec": null,
           "discoveryMethod": "spell_data"
+        }
+      ]
+    },
+    "203981": {
+      "name": "Soul Fragments",
+      "modifiers": [
+        {
+          "source": "Shattered Restoration",
+          "sourceId": 389824,
+          "type": "resource_modifier",
+          "tree": "class",
+          "heroSpec": null,
+          "discoveryMethod": "cpp_scanner"
         }
       ]
     },
@@ -7685,6 +7698,19 @@
         }
       ]
     },
+    "1253304": {
+      "name": "Spell 1253304",
+      "modifiers": [
+        {
+          "source": "World Killer",
+          "sourceId": 1256353,
+          "type": "mechanic_change",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "discoveryMethod": "cpp_scanner"
+        }
+      ]
+    },
     "1253377": {
       "name": "Spell 1253377",
       "modifiers": [
@@ -8614,7 +8640,7 @@
       "targets": [
         {
           "spell": "Consume Soul",
-          "spellId": null,
+          "spellId": 203981,
           "type": "resource_modifier",
           "discoveryMethod": "cpp_scanner"
         }
@@ -9470,7 +9496,7 @@
       "targets": [
         {
           "spell": "Voidfall",
-          "spellId": null,
+          "spellId": 1253304,
           "type": "mechanic_change",
           "discoveryMethod": "cpp_scanner"
         }

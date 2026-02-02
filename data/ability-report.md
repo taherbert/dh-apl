@@ -1,6 +1,6 @@
 # Vengeance Demon Hunter — Ability & Talent Report
 
-Generated from SimC midnight branch. 104 spells, 70 modifier sources.
+Generated from SimC midnight branch. 126 spells, 82 modifier sources.
 
 ## Active Abilities
 
@@ -11,32 +11,24 @@ School: Chromatic | Cost: 25 Fury | GCD: 1.5s | CD: 45s | Duration: 2s
 > Unleash an eruption of fel energy, dealing $s2 Chaos damage and stunning all nearby enemies for $d.$?s320412[ Each enemy stunned by Chaos Nova has a $s3% chance to generate a Lesser Soul Fragment.][]
 
 **Modified by:**
-- Demon Soul (damage_modifier)
 - Mastery: Demonic Presence (damage_modifier)
-- Unleashed Power (resource_modifier)
-- Fiery Brand (buff_grant)
-- Fiery Brand (buff_grant)
-- Exergy (damage_modifier)
-- Frailty (buff_grant)
-- Chaos Blades (damage_modifier)
-- Demon Soul (damage_modifier)
+- Fiery Brand (damage_modifier)
+- Fiery Brand (damage_modifier)
+- Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
-- Seething Chaos (damage_modifier)
-- Fiery Resolve (buff_grant)
-- Inertia (damage_modifier)
-- Demon Hide (unknown)
-- Reaver's Mark (buff_grant)
-- Thrill of the Fight (mechanic_change)
-- Luck of the Draw! (proc_trigger)
-- Thrill of the Fight (mechanic_change)
-- Demon Soul (damage_modifier)
-- Demon Soul (damage_modifier)
+- Demon Hide (damage_modifier)
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
+- Thrill of the Fight (damage_modifier)
 
 ### Consume Magic (278326)
 
 School: Chromatic | GCD: 1.5s | CD: 10s | Range: 30yd
 
 > Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][].
+
+**Modified by:**
+- Swallowed Anger (resource_modifier) [class]
 
 ### Darkness (196718)
 
@@ -45,7 +37,6 @@ School: Physical | GCD: 1.5s | CD: 300s | Duration: 8s
 > Summons darkness around you in a$?a357419[ 12 yd][n 8 yd] radius, granting friendly targets a $209426s2% chance to avoid all damage from an attack. Lasts $d. Chance to avoid damage increased by $s3% when not in a raid.
 
 **Modified by:**
-- Cover of Darkness (duration_modifier)
 - Long Night (duration_modifier) [class]
 - Pitch Black (cooldown_modifier) [class]
 
@@ -56,8 +47,8 @@ School: Fire | Cost: 50 Fury | GCD: 1.5s | CD: 40s | Duration: 2s | Range: 20yd
 > Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d.$?s320639[ Causing damage also heals you for up to ${$212106s1*(2/$t1)} health.][]
 
 **Modified by:**
-- Fel Defender (cooldown_modifier)
-- Demonsurge (mechanic_change)
+- Meteoric Rise (cooldown_modifier) [hero:Annihilator]
+- Darkglare Boon (cooldown_modifier) [spec]
 
 ### Felblade (232893)
 
@@ -66,7 +57,7 @@ School: Physical | GCD: 0.5s | CD: 15s | Range: 15yd
 > Charge to your target and deal $213243sw2 $@spelldesc395020 damage. $?s263642[Fracture has a chance to reset the cooldown of Felblade. |cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade. |cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade. |cFFFFFFFFGenerates $213243s3 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade. |cFFFFFFFFGenerates $213243s3 Fury.|r]
 
 **Modified by:**
-- Any Means Necessary (damage_modifier)
+- Warblade's Hunger (damage_modifier) [hero:Aldrachi Reaver]
 
 ### Fiery Brand (204021)
 
@@ -75,25 +66,26 @@ School: Fire | GCD: 1.5s | Charges: 1 (60s) | Range: 30yd
 > Brand an enemy with a demonic symbol, instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][]. The enemy's damage done to you is reduced by $s1% for $207744d.
 
 **Modified by:**
-- Demon Soul (damage_modifier)
-- Fiery Brand (buff_grant)
-- Fiery Brand (buff_grant)
+- Fiery Brand (damage_modifier)
+- Fiery Brand (damage_modifier)
 - Fiery Demise (damage_modifier)
-- Spirit of the Darkness Flame (buff_grant)
-- Frailty (buff_grant)
-- Revel in Pain (buff_grant)
-- Spirit of the Darkness Flame (buff_grant)
+- Frailty (damage_modifier)
 - Fiery Brand (duration_modifier)
-- Demon Soul (damage_modifier)
-- Any Means Necessary (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
-- Fires of Fel (damage_modifier)
-- Fiery Resolve (buff_grant)
-- Demon Hide (unknown)
-- Reaver's Mark (buff_grant)
-- Luck of the Draw! (proc_trigger)
-- Thrill of the Fight (mechanic_change)
-- Demon Soul (damage_modifier)
+- Demon Hide (damage_modifier)
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
+- Fiery Brand (duration_modifier)
+- Fiery Brand (damage_modifier)
+- Fiery Demise (damage_modifier)
+- Frailty (damage_modifier)
+- Fiery Brand (duration_modifier)
+- Burning Blood (damage_modifier) [spec]
+- Demon Hide (damage_modifier)
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
+- Burning Alive (duration_modifier) [spec]
+- Burning Alive (duration_modifier) [spec]
 
 ### Fracture (263642)
 
@@ -104,9 +96,7 @@ School: Physical | GCD: 1.5s | Charges: 2 (4.5s) | Range: 5yd
 **Modified by:**
 - Metamorphosis (damage_modifier)
 - Fiery Demise (damage_modifier)
-- Mark of the Ogre (buff_grant)
-- Half-Giant Empowerment (damage_modifier)
-- Fires of Fel (damage_modifier)
+- Warblade's Hunger (proc_trigger) [hero:Aldrachi Reaver]
 
 ### Immolation Aura (258920)
 
@@ -117,14 +107,28 @@ School: Fire | GCD: 1.5s | CD: 1.5s | Charges: 1 (30s) | Duration: 6s
 **Modified by:**
 - Agonizing Flames (damage_modifier) [spec]
 - Infernal Armor (damage_modifier) [class]
-- Immolation Aura (damage_modifier)
-- Burning Wound (damage_modifier)
-- Any Means Necessary (damage_modifier)
-- Immolation Aura (damage_modifier)
-- Immolation Aura (damage_modifier)
-- Immolation Aura (damage_modifier)
-- Immolation Aura (damage_modifier)
-- Demonsurge (mechanic_change)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Agonizing Flames (damage_modifier) [spec]
+- Infernal Armor (damage_modifier) [class]
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Agonizing Flames (damage_modifier) [spec]
+- Infernal Armor (damage_modifier) [class]
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Agonizing Flames (damage_modifier) [spec]
+- Infernal Armor (damage_modifier) [class]
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Fallout (resource_modifier) [spec]
+- Charred Flesh (resource_modifier) [spec]
+- Volatile Flameblood (resource_modifier) [spec]
 
 ### Imprison (217832)
 
@@ -139,20 +143,11 @@ School: Physical | GCD: 1.5s | Range: 5yd
 > Shears an enemy for $s1 Physical damage, and shatters $?a187827[two Lesser Soul Fragments][a Lesser Soul Fragment] from your target. |cFFFFFFFFGenerates $m2 Fury.|r
 
 **Modified by:**
-- Demon Soul (damage_modifier)
 - Metamorphosis (damage_modifier)
 - Fiery Demise (damage_modifier)
-- Frailty (buff_grant)
-- Mark of the Ogre (buff_grant)
-- Half-Giant Empowerment (damage_modifier)
-- Demon Soul (damage_modifier)
-- Shear Fury (unknown)
-- Fires of Fel (damage_modifier)
-- Fiery Resolve (buff_grant)
-- Reaver's Mark (buff_grant)
-- Luck of the Draw! (proc_trigger)
-- Thrill of the Fight (mechanic_change)
-- Demon Soul (damage_modifier)
+- Frailty (damage_modifier)
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
 
 ### Sigil of Chains (202138)
 
@@ -162,7 +157,6 @@ School: Physical | GCD: 1.5s | Charges: 1 (60s) | Duration: 2s | Range: 30yd
 
 **Modified by:**
 - Quickened Sigils (duration_modifier) [spec]
-- Any Means Necessary (damage_modifier)
 - Chains of Anger (range_modifier) [spec]
 
 ### Sigil of Flame (204596)
@@ -173,8 +167,11 @@ School: Physical | GCD: 1.5s | Charges: 1 (30s) | Duration: 2s | Range: 30yd
 
 **Modified by:**
 - Quickened Sigils (duration_modifier) [spec]
-- Any Means Necessary (damage_modifier)
 - Chains of Anger (range_modifier) [spec]
+- Cycle of Binding (cooldown_modifier) [spec]
+- Soul Sigils (cooldown_modifier) [spec]
+- Frailty (duration_modifier) [spec]
+- Ascending Flame (duration_modifier) [spec]
 
 ### Sigil of Misery (207684)
 
@@ -184,7 +181,6 @@ School: Physical | GCD: 1.5s | Charges: 1 (120s) | Duration: 2s | Range: 30yd
 
 **Modified by:**
 - Quickened Sigils (duration_modifier) [spec]
-- Any Means Necessary (damage_modifier)
 - Chains of Anger (range_modifier) [spec]
 
 ### Sigil of Silence (202137)
@@ -195,7 +191,6 @@ School: Physical | GCD: 1.5s | Charges: 1 (90s) | Duration: 2s | Range: 30yd
 
 **Modified by:**
 - Quickened Sigils (duration_modifier) [spec]
-- Any Means Necessary (damage_modifier)
 - Chains of Anger (range_modifier) [spec]
 
 ### Sigil of Spite (390163)
@@ -206,7 +201,6 @@ School: Chromatic | GCD: 1.5s | Charges: 1 (60s) | Duration: 2s | Range: 30yd
 
 **Modified by:**
 - Quickened Sigils (duration_modifier) [spec]
-- Any Means Necessary (damage_modifier)
 - Chains of Anger (range_modifier) [spec]
 
 ### Soul Carver (207407)
@@ -216,21 +210,14 @@ School: Fire | GCD: 1.5s | CD: 60s | Duration: 3s | Range: 5yd
 > Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional $o1 Fire damage over $d.  Immediately shatters $s3 Lesser Soul Fragments from the target and $s4 additional Lesser Soul Fragment every $t1 sec.
 
 **Modified by:**
-- Demon Soul (damage_modifier)
-- Fiery Brand (buff_grant)
-- Fiery Brand (buff_grant)
+- Fiery Brand (damage_modifier)
+- Fiery Brand (damage_modifier)
 - Fiery Demise (damage_modifier)
-- Frailty (buff_grant)
-- Demon Soul (damage_modifier)
-- Any Means Necessary (damage_modifier)
+- Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
-- Fires of Fel (damage_modifier)
-- Fiery Resolve (buff_grant)
-- Demon Hide (unknown)
-- Reaver's Mark (buff_grant)
-- Luck of the Draw! (proc_trigger)
-- Thrill of the Fight (mechanic_change)
-- Demon Soul (damage_modifier)
+- Demon Hide (damage_modifier)
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
 
 ### Soul Cleave (228477)
 
@@ -240,18 +227,38 @@ School: Physical | Cost: 30 Fury | GCD: 1.5s | Range: 5yd
 
 **Modified by:**
 - Immolation Aura (buff_grant)
-- Mark of the Ogre (buff_grant)
-- Half-Giant Empowerment (damage_modifier)
-- Immolation Aura (damage_modifier)
-- Immolation Aura (damage_modifier)
-- Immolation Aura (damage_modifier)
-- Demonsurge (mechanic_change)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Frailty (damage_modifier)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Immolation Aura (buff_grant)
+- Incisive Blade (damage_modifier) [hero:Aldrachi Reaver]
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
+- Catastrophe (proc_trigger) [hero:Annihilator]
+- Feast of Souls (resource_modifier) [spec]
+- Dark Matter (cooldown_modifier) [hero:Annihilator]
+- Focused Cleave (damage_modifier) [spec]
 
 ### Spirit Bomb (247454)
 
 School: Fire | Cost: 40 Fury | GCD: 1.5s | Duration: 1.5s
 
 > Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for $247456s1% of damage you deal to them. Deals reduced damage beyond $s3 targets.
+
+**Modified by:**
+- Fiery Brand (damage_modifier)
+- Fiery Brand (damage_modifier)
+- Fiery Demise (damage_modifier)
+- Frailty (damage_modifier)
+- Burning Blood (damage_modifier) [spec]
+- Demon Hide (damage_modifier)
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
+- Dark Matter (proc_trigger) [hero:Annihilator]
 
 ### Throw Glaive (185123)
 
@@ -260,20 +267,13 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 > Throw a demonic glaive at the target, dealing $337819s1 Physical damage. The glaive can ricochet to $?$s320386[${$337819x1-1} additional enemies][an additional enemy] within 10 yards.
 
 **Modified by:**
-- Demon Soul (damage_modifier)
-- Exergy (damage_modifier)
-- Mo'arg Bionic Stabilizers (damage_modifier)
-- Chaos Blades (damage_modifier)
 - Bouncing Glaives (damage_modifier) [class]
-- Demon Soul (damage_modifier)
-- Serrated Glaive (damage_modifier)
-- Accelerated Blade (unknown)
-- Seething Chaos (damage_modifier)
-- Inertia (damage_modifier)
+- Accelerated Blade (damage_modifier)
 - Champion of the Glaive (range_modifier) [class]
-- Reaver's Mark (buff_grant)
-- Thrill of the Fight (mechanic_change)
-- Demon Soul (damage_modifier)
+- Reaver's Mark (damage_modifier)
+- Thrill of the Fight (damage_modifier)
+- Keen Engagement (resource_modifier) [hero:Aldrachi Reaver]
+- Preemptive Strike (proc_trigger) [hero:Aldrachi Reaver]
 
 ## Talent Trees
 
@@ -283,6 +283,7 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 - (1) **Vengeful Retreat** (198793) [off_gcd_ability]
   _Remove all snares and vault away. Nearby enemies take $198813s2 Physical damage$?s320635[ and have their movement speed reduced by $198813s1% for $198813d][].$?a203551[ |cFFFFFFFFGenerates ${($203650s..._
 - (3) **Felblade** (232893) [active_ability]
+  → Warblade's Hunger (damage_modifier)
   _Charge to your target and deal $213243sw2 $@spelldesc395020 damage. $?s263642[Fracture has a chance to reset the cooldown of Felblade. |cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[Shear has a chance..._
 - (5) **Sigil of Misery** (207684) [active_ability]
   _Place a Sigil of Misery at the target location that activates after $d. Causes all enemies affected by the sigil to cower in fear, disorienting them for $207685d._
@@ -293,6 +294,7 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 - (2) **Unrestrained Fury** (320770) [passive]
   _Increases maximum Fury by $s1._
 - (4) **Shattered Restoration** (389824) [passive_buff]
+  → Consume Soul (resource_modifier)
   _The healing of Shattered Souls is increased by $s1%._
 - (5) **Improved Sigil of Misery** (320418) [passive]
   _Reduces the cooldown of Sigil of Misery by ${$s1/-1000} sec._
@@ -312,26 +314,31 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 - (2) **Improved Disrupt** (320361) [spell_modifier]
   _Increases the range of Disrupt to ${$s2+$s1} yds._
 - (4) **Consume Magic** (278326) [active_ability]
+  → Swallowed Anger (resource_modifier)
   _Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][]._
 - (6) **Aldrachi Design** (391409) [passive]
   _Increases your chance to parry by $s1%._
 
 **Row 4:**
-- (0) **Focused Ire** (1266296)
+- (0) **Focused Ire** (1266296) [passive]
 - (1) **Master of the Glaive** (389763) [proc_trigger]
+  → Master of the Glaive (proc_trigger)
   _Throw Glaive has ${$s2+1} charges and snares all enemies hit by $213405s1% for $213405d._
 - (1) **Champion of the Glaive** (429211) [spell_modifier]
   → Throw Glaive (range_modifier)
   _Throw Glaive has ${$s2+1} charges and $s1 yard increased range._
 - (2) **Disrupting Fury** (183782) [proc_trigger]
+  → Disrupting Fury (proc_trigger)
   _Disrupt generates $218903s1 Fury on a successful interrupt._
 - (3) **Blazing Path** (320416) [passive]
   _$?a212613[Infernal Strike][Fel Rush] gains an additional charge._
 - (4) **Swallowed Anger** (320313) [passive_buff]
+  → Consume Magic (resource_modifier)
   _Consume Magic generates $278326s2 Fury when a beneficial Magic effect is successfully removed from the target._
 - (5) **Aura of Pain** (207347) [spell_modifier]
   _Increases the critical strike chance of Immolation Aura by $s1%._
 - (6) **Live by the Glaive** (428607) [proc_trigger]
+  → Live by the Glaive (proc_trigger)
   _When you parry an attack or have one of your attacks parried, restore $428608s2% of max health and $428608s1 Fury. This effect may only occur once every $s1 sec._
 
 **Row 5:**
@@ -341,56 +348,64 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   → Metamorphosis (damage_modifier)
   _Leech increased by $s1%. Gain an additional $s2% leech while Metamorphosis is active._
 - (3) **Felfire Haste** (389846) [proc_trigger]
+  → Felfire Haste (proc_trigger)
   _$?c1[Fel Rush][Infernal Strike] increases your movement speed by $389847s1% for $389847d._
 - (4) **Infernal Armor** (320331) [spell_modifier]
   → Immolation Aura (damage_modifier)
+  → Immolation Aura (damage_modifier)
+  → Immolation Aura (damage_modifier)
+  → Immolation Aura (damage_modifier)
   _Immolation Aura increases your armor by $s1% and causes melee attackers to suffer ${$320334s1/$s3} $@spelldesc395020 damage._
-- (5) **Burn It Out** (1266316)
-- (5) **Soul Cleanse** (1266496)
+- (5) **Burn It Out** (1266316) [passive]
+- (5) **Soul Cleanse** (1266496) [passive]
 - (6) **Lost in Darkness** (389849) [spell_modifier]
   _Spectral Sight has ${$s1/-1000} sec reduced cooldown and no longer reduces movement speed._
 
 **Row 6:**
 - (1) **Illidari Knowledge** (389696) [passive]
   _Reduces magic damage taken by $s1%._
-- (3) **Felbound** (1266762)
+- (3) **Felbound** (1266762) [passive]
 - (5) **Will of the Illidari** (389695) [passive]
   _Increases maximum health by $s1%._
 
 **Row 7:**
 - (1) **Internal Struggle** (393822) [passive]
   _Increases your mastery by ${$s1*$mas}.1%._
-- (2) **Furious** (1266326)
-- (4) **Remorseless** (1266328)
-- (5) **First In, Last Out** (1266497)
+- (2) **Furious** (1266326) [passive]
+- (4) **Remorseless** (1266328) [passive]
+- (5) **First In, Last Out** (1266497) [passive]
 
 **Row 8:**
 - (1) **Erratic Felheart** (391397) [passive]
   _The cooldown of $?a212613[Infernal Strike ][Fel Rush ]is reduced by ${-1*$s1}%._
-- (2) **Final Breath** (1266500)
+- (2) **Final Breath** (1266500) [passive]
 - (3) **Darkness** (196718) [active_ability]
   _Summons darkness around you in a$?a357419[ 12 yd][n 8 yd] radius, granting friendly targets a $209426s2% chance to avoid all damage from an attack. Lasts $d. Chance to avoid damage increased by $s3% w..._
-- (4) **Demon Muzzle** (1266329)
-- (5) **Soul Splitter** (1266330)
+- (4) **Demon Muzzle** (1266329) [passive]
+- (5) **Soul Splitter** (1266330) [passive]
 
 **Row 9:**
-- (1) **Wings of Wrath** (1266493)
+- (1) **Wings of Wrath** (1266493) [passive]
 - (3) **Long Night** (389781) [spell_modifier]
   → Darkness (duration_modifier)
   _Increases the duration of Darkness by ${$s1/1000} sec._
 - (3) **Pitch Black** (389783) [spell_modifier]
   → Darkness (cooldown_modifier)
   _Reduces the cooldown of Darkness by ${$s1/-1000} sec._
-- (5) **Demonic Resilience** (1266307)
+- (5) **Demonic Resilience** (1266307) [passive]
 
 ### Spec (Vengeance) (43 talents)
 
 **Row 0:**
 - (4) **Fel Devastation** (212084) [active_ability]
+  → Meteoric Rise (cooldown_modifier)
+  → Darkglare Boon (cooldown_modifier)
   _Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d.$?s320639[ Causing damage also heals you for up to ${$212106s1*(2/$t1)} health.][]_
 
 **Row 1:**
 - (3) **Spirit Bomb** (247454) [active_ability]
+  → Frailty (proc_trigger)
+  → Dark Matter (proc_trigger)
   _Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for..._
 - (5) **Fiery Brand** (204021) [active_ability]
   _Brand an enemy with a demonic symbol, instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][]. The enemy's damage done to you is reduced by $s1% for $207744d..._
@@ -406,10 +421,11 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   → Sigil of Spite (duration_modifier)
   _All Sigils activate ${$s1/-1000} second faster._
 - (6) **Ascending Flame** (428603) [passive]
+  → Sigil of Flame (duration_modifier)
   _Sigil of Flame's initial damage is increased by $s2%. Multiple applications of Sigil of Flame may overlap._
 
 **Row 3:**
-- (1) **Tempered Steel** (1265800)
+- (1) **Tempered Steel** (1265800) [passive]
 - (2) **Calcified Spikes** (389720) [passive_buff]
   _You take $391171s2% reduced damage after Demon Spikes ends, fading by 1% per second._
 - (4) **Roaring Fire** (391178) [passive]
@@ -419,6 +435,9 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 - (6) **Retaliation** (389729) [passive_buff]
   _While Demon Spikes is active, melee attacks against you cause the attacker to take $391159s1 Physical damage. Generates high threat._
 - (7) **Felfire Fist** (389724) [passive]
+  → Infernal Strike (proc_trigger)
+  → buff:felfire_fist_in_combat (buff_grant)
+  → buff:felfire_fist_out_of_combat (buff_grant)
   _Reduce the cooldown of Infernal Strike by ${$s1/-1000} sec._
 
 **Row 4:**
@@ -426,6 +445,10 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   _Place a demonic sigil at the target location that activates after $d. Detonates to deal $389860s1 Chaos damage and shatter up to $s3 Lesser Soul Fragments from enemies affected by the sigil. Deals red..._
 - (2) **Agonizing Flames** (207548) [spell_modifier]
   → Immolation Aura (damage_modifier)
+  → Immolation Aura (damage_modifier)
+  → Immolation Aura (damage_modifier)
+  → Immolation Aura (damage_modifier)
+  → Infernal Armor (cooldown_modifier)
   _Immolation Aura increases your movement speed by $s1% and its duration is increased by $s2%._
 - (4) **Feed the Demon** (218612) [passive_buff]
   _Consuming a Soul Fragment reduces the remaining cooldown of Demon Spikes by ${$s1/100}.2 sec._
@@ -434,36 +457,53 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   → Infernal Strike (damage_modifier)
   → Fiery Brand (damage_modifier)
   → Soul Carver (damage_modifier)
+  → Fiery Brand (damage_modifier)
   → Spirit Bomb (damage_modifier)
   _Fire damage increased by $s1%._
 - (8) **Revel in Pain** (343014) [proc_trigger]
+  → Revel in Pain (proc_trigger)
   _When Fiery Brand expires on your primary target, you gain a shield that absorbs up ${$AP*($s2/100)*(1+$@versadmg)} damage for $343013d, based on your damage dealt to them while Fiery Brand was active._
 
 **Row 5:**
 - (1) **Frailty** (389958) [passive_buff]
+  → Sigil of Flame (duration_modifier)
+  → Ascending Flame (duration_modifier)
+  → Dark Matter (proc_trigger)
+  → Focused Cleave (damage_modifier)
   _Enemies struck by Sigil of Flame are afflicted with Frailty for $247456d. You heal for $247456s1% of all damage you deal to targets with Frailty._
 - (2) **Feast of Souls** (207697) [passive_buff]
+  → Soul Cleave (resource_modifier)
   _Soul Cleave heals you for an additional $207693o1 over $207693d._
 - (3) **Fallout** (227174) [passive_buff]
+  → Immolation Aura (resource_modifier)
+  → Charred Flesh (resource_modifier)
+  → Volatile Flameblood (resource_modifier)
+  → Infernal Armor (resource_modifier)
   _Immolation Aura's initial burst has a chance to shatter Lesser Soul Fragments from enemies._
 - (4) **Ruinous Bulwark** (326853) [spell_modifier]
   _Fel Devastation heals for an additional $s1%, and $s2% of its healing is converted into an absorb shield for $326863d._
 - (5) **Volatile Flameblood** (390808) [passive_buff]
+  → Immolation Aura (resource_modifier)
+  → Infernal Armor (resource_modifier)
   _Immolation Aura generates $m-$M Fury when it deals critical damage. This effect may only occur once per ${$proccooldown+0.1} sec._
-- (6) **Soul Barrier** (1265924)
+- (6) **Soul Barrier** (1265924) [passive]
 - (6) **Soul Sigils** (395446) [passive_buff]
+  → Sigil of Flame (cooldown_modifier)
   _Afflicting an enemy with a Sigil generates $m1 Lesser Soul $LFragment:Fragments;._
 - (7) **Fel Flame Fortification** (389705) [passive_buff]
   _You take $393009s1% reduced magic damage while Immolation Aura is active._
 
 **Row 6:**
 - (0) **Void Reaver** (268175) [proc_trigger]
+  → Void Reaver (proc_trigger)
   _Frailty now also reduces all damage you take from afflicted targets by $s2%. Enemies struck by Soul Cleave are afflicted with Frailty for $247456d._
 - (2) **Painbringer** (207387) [passive_buff]
+  → Painbringer (damage_modifier)
   _Consuming a Soul Fragment reduces all damage you take by $s1% for $212988d. Multiple applications may overlap._
 - (4) **Sigil of Chains** (202138) [active_ability]
   _Place a Sigil of Chains at the target location that activates after $d. All enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by $204843s1% for $204843d._
 - (6) **Fiery Demise** (389220) [passive]
+  → Fiery Demise (damage_modifier)
   _Fiery Brand also increases Fire damage you deal to the target by $s1%._
 - (8) **Chains of Anger** (389715) [spell_modifier]
   → Sigil of Silence (range_modifier)
@@ -475,21 +515,31 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 
 **Row 7:**
 - (1) **Focused Cleave** (343207) [passive_buff]
+  → Soul Cleave (damage_modifier)
   _Soul Cleave deals $s1% increased damage to your primary target._
 - (2) **Soulmonger** (389711) [passive_buff]
   _When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}._
 - (4) **Stoke the Flames** (393827) [spell_modifier]
   _Fel Devastation damage increased by $s1%._
 - (6) **Burning Alive** (207739) [passive_buff]
+  → Fiery Brand (duration_modifier)
+  → Fiery Brand (duration_modifier)
   _Every $207771t3 sec, Fiery Brand spreads to one nearby enemy._
 - (7) **Cycle of Binding** (389718) [passive_buff]
+  → Sigil of Flame (cooldown_modifier)
+  → Soul Sigils (cooldown_modifier)
+  → Frailty (duration_modifier)
+  → Ascending Flame (duration_modifier)
   _Sigil of Flame reduces the cooldown of your Sigils by $s1 sec._
 
 **Row 8:**
 - (2) **Vulnerability** (389976) [passive_buff]
   _Frailty now also increases all damage you deal to afflicted targets by $s1%._
-- (4) **Vengeful Beast** (1265818)
+- (4) **Vengeful Beast** (1265818) [passive]
 - (6) **Charred Flesh** (336639) [passive_buff]
+  → Immolation Aura (resource_modifier)
+  → Volatile Flameblood (resource_modifier)
+  → Infernal Armor (resource_modifier)
   _Immolation Aura damage increases the duration of your Fiery Brand and Sigil of Flame by ${$s1/1000}.2 sec._
 
 **Row 9:**
@@ -501,6 +551,7 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 - (4) **Last Resort** (209258) [passive]
   _Sustaining fatal damage instead transforms you to Metamorphosis form. This may occur once every $209261d._
 - (5) **Darkglare Boon** (389708) [passive_buff]
+  → Fel Devastation (cooldown_modifier)
   _When Fel Devastation finishes fully channeling, it refreshes $s1-$s2% of its cooldown and refunds $s3-$s4 Fury._
 - (6) **Down in Flames** (389732) [passive]
   _Fiery Brand has ${$s1/-1000} sec reduced cooldown and $s2 additional $lcharge:charges;._
@@ -509,21 +560,32 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 
 **Row 0:**
 - (2) **Art of the Glaive** (442290) [proc_trigger]
+  → Art of the Glaive (proc_trigger)
   _Consuming $?a212612[$s1][$s2] Soul Fragments or casting The Hunt converts your next Throw Glaive into Reaver's Glaive. $@spellicon442294 $@spellname442294: $@spelldesc442294_
 
 **Row 1:**
 - (0) **Fury of the Aldrachi** (442718) [passive_buff]
+  → Art of the Glaive (proc_trigger)
+  → Reaver's Mark (proc_trigger)
+  → Thrill of the Fight (proc_trigger)
+  → Aldrachi Tactics (proc_trigger)
+  → Bladecraft (proc_trigger)
   _When enhanced by Reaver's Glaive, $?a212612[Blade Dance][Soul Cleave] casts $s2 additional glaive slashes to nearby targets. If cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast $?a123..._
 - (1) **Evasive Action** (444926) [proc_trigger]
+  → Evasive Action (proc_trigger)
   _Vengeful Retreat can be cast a second time within $444929d._
 - (1) **Unhindered Assault** (444931) [passive_buff]
   _Vengeful Retreat resets the cooldown of Felblade._
 - (3) **Reaver's Mark** (442679) [passive_buff]
+  → Art of the Glaive (proc_trigger)
+  → Thrill of the Fight (proc_trigger)
+  → Aldrachi Tactics (proc_trigger)
   _When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take $442624s1% increased damage for $442624d. Max $442624u stacks...._
-- (4) **Broken Spirit** (1272143)
+- (4) **Broken Spirit** (1272143) [passive]
 
 **Row 2:**
 - (0) **Aldrachi Tactics** (442683) [passive_buff]
+  → Art of the Glaive (proc_trigger)
   _The second enhanced ability in a pattern shatters an additional Soul Fragment._
 - (1) **Army Unto Oneself** (442714) [passive_buff]
   _Felblade surrounds you with a Blade Ward, reducing damage taken by $442715s1% for $442715d._
@@ -531,51 +593,72 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
   _Each Soul Fragment you consume shields you for an additional $s1% of the amount healed._
 - (3) **Wounded Quarry** (442806) [passive_buff]
   _Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal $s1% of the damage dealt to your marked target as Chaos, and sometimes shatter a Lesse..._
-- (4) **Keen Edge** (1272138)
+- (4) **Keen Edge** (1272138) [passive]
 
 **Row 3:**
 - (0) **Incisive Blade** (442492) [spell_modifier]
   → Soul Cleave (damage_modifier)
   _$?a212612[Chaos Strike][Soul Cleave] deals $s1% increased damage._
 - (1) **Keen Engagement** (442497) [passive]
+  → Throw Glaive (resource_modifier)
   _Reaver's Glaive generates $s1 Fury._
 - (1) **Preemptive Strike** (444997) [proc_trigger]
+  → Throw Glaive (proc_trigger)
   _Throw Glaive deals $444979s1 Physical damage to enemies near its initial target._
-- (3) **Bladecraft** (1272153)
+- (3) **Bladecraft** (1272153) [passive]
+  → Art of the Glaive (proc_trigger)
 - (4) **Warblade's Hunger** (442502) [proc_trigger]
+  → Felblade (damage_modifier)
+  → Fracture (proc_trigger)
   _Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal $442507s1 additional Physical damage.$?a212612[ Felblade consumes up to $s2 nearby Soul Fragments.][..._
 
 **Row 4:**
 - (2) **Thrill of the Fight** (442686) [passive_buff]
+  → Art of the Glaive (proc_trigger)
+  → Aldrachi Tactics (proc_trigger)
+  → buff:thrill_of_the_fight_haste (buff_grant)
   _After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by $442695s1% for $442695d and your damage and healing by $442688s1% for $442688d._
 
 ### Hero: Annihilator (16 talents)
 
 **Row 0:**
-- (2) **Voidfall** (1253304)
+- (2) **Voidfall** (1253304) [passive]
+  → World Killer (proc_trigger)
 
 **Row 1:**
-- (0) **Swift Erasure** (1253668)
-- (1) **Meteoric Rise** (1253377)
-- (3) **Catastrophe** (1253769)
-- (4) **Phase Shift** (1256245)
+- (0) **Swift Erasure** (1253668) [passive]
+- (1) **Meteoric Rise** (1253377) [passive]
+  → Fel Devastation (cooldown_modifier)
+  → Darkglare Boon (cooldown_modifier)
+  → buff:voidfall_building (buff_grant)
+- (3) **Catastrophe** (1253769) [passive]
+  → Soul Cleave (proc_trigger)
+- (4) **Phase Shift** (1256245) [passive]
 
 **Row 2:**
-- (0) **Path to Oblivion** (1253399)
-- (0) **State of Matter** (1253402)
-- (1) **Mass Acceleration** (1256295)
-- (3) **Doomsayer** (1253676)
-- (3) **Harness the Cosmos** (1279247)
-- (4) **Celestial Echoes** (1253415)
+- (0) **Path to Oblivion** (1253399) [passive]
+- (0) **State of Matter** (1253402) [passive]
+- (1) **Mass Acceleration** (1256295) [passive]
+  → buff:voidfall_building (buff_grant)
+- (3) **Doomsayer** (1253676) [passive]
+  → World Killer (proc_trigger)
+  → buff:doomsayer_in_combat (buff_grant)
+  → buff:doomsayer_out_of_combat (buff_grant)
+- (3) **Harness the Cosmos** (1279247) [passive]
+- (4) **Celestial Echoes** (1253415) [passive]
 
 **Row 3:**
-- (0) **Final Hour** (1253805)
-- (1) **Meteoric Fall** (1253391)
-- (3) **Dark Matter** (1256307)
-- (4) **Otherworldly Focus** (1253817)
+- (0) **Final Hour** (1253805) [passive]
+- (1) **Meteoric Fall** (1253391) [passive]
+  → World Killer (proc_trigger)
+- (3) **Dark Matter** (1256307) [passive]
+  → Spirit Bomb (proc_trigger)
+  → Soul Cleave (cooldown_modifier)
+- (4) **Otherworldly Focus** (1253817) [passive]
 
 **Row 4:**
-- (2) **World Killer** (1256353)
+- (2) **World Killer** (1256353) [passive]
+  → Voidfall (mechanic_change)
 
 ## Resource Flow
 
@@ -586,6 +669,9 @@ School: Physical | Cost: 25 Fury | GCD: 1.5s | Charges: 1 (9s) | Range: 30yd
 - Felblade (232893)
 - Immolation Aura (258920)
 - Fracture (263642)
+- Immolation Aura (427913)
+- Immolation Aura (427914)
+- Immolation Aura (427915)
 
 ### Fury Spenders
 - Chaos Nova (179057): 25 Fury

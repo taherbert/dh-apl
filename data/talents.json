@@ -549,7 +549,8 @@
         "entryType": "passive",
         "posX": 2100,
         "posY": 3900,
-        "reqPoints": 8
+        "reqPoints": 8,
+        "type": "passive"
       },
       {
         "name": "Master of the Glaive",
@@ -758,7 +759,8 @@
         "posY": 4500,
         "choiceNode": true,
         "choiceIndex": 100,
-        "reqPoints": 8
+        "reqPoints": 8,
+        "type": "passive"
       },
       {
         "name": "Soul Cleanse",
@@ -776,7 +778,8 @@
         "posY": 4500,
         "choiceNode": true,
         "choiceIndex": 200,
-        "reqPoints": 8
+        "reqPoints": 8,
+        "type": "passive"
       },
       {
         "name": "Lost in Darkness",
@@ -826,7 +829,8 @@
         "entryType": "passive",
         "posX": 3900,
         "posY": 5100,
-        "reqPoints": 8
+        "reqPoints": 8,
+        "type": "passive"
       },
       {
         "name": "Will of the Illidari",
@@ -876,7 +880,8 @@
         "entryType": "passive",
         "posX": 3300,
         "posY": 5700,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "Remorseless",
@@ -892,7 +897,8 @@
         "entryType": "passive",
         "posX": 4500,
         "posY": 5700,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "First In, Last Out",
@@ -908,7 +914,8 @@
         "entryType": "passive",
         "posX": 5100,
         "posY": 5700,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "Erratic Felheart",
@@ -941,7 +948,8 @@
         "entryType": "passive",
         "posX": 3300,
         "posY": 6300,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "Darkness",
@@ -1014,7 +1022,8 @@
         "entryType": "passive",
         "posX": 4500,
         "posY": 6300,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "Soul Splitter",
@@ -1030,7 +1039,8 @@
         "entryType": "passive",
         "posX": 5100,
         "posY": 6300,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "Wings of Wrath",
@@ -1046,7 +1056,8 @@
         "entryType": "passive",
         "posX": 2700,
         "posY": 6900,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "Long Night",
@@ -1100,7 +1111,8 @@
         "entryType": "passive",
         "posX": 5100,
         "posY": 6900,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       }
     ]
   },
@@ -1430,7 +1442,8 @@
         "description": null,
         "entryType": "passive",
         "posX": 10500,
-        "posY": 3300
+        "posY": 3300,
+        "type": "passive"
       },
       {
         "name": "Calcified Spikes",
@@ -1788,7 +1801,8 @@
         "posY": 4500,
         "choiceNode": true,
         "choiceIndex": 100,
-        "reqPoints": 8
+        "reqPoints": 8,
+        "type": "passive"
       },
       {
         "name": "Soul Sigils",
@@ -2070,7 +2084,8 @@
         "entryType": "passive",
         "posX": 12300,
         "posY": 6300,
-        "reqPoints": 20
+        "reqPoints": 20,
+        "type": "passive"
       },
       {
         "name": "Charred Flesh",
@@ -2412,7 +2427,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 9000,
-          "posY": 1800
+          "posY": 1800,
+          "type": "passive"
         },
         {
           "name": "Aldrachi Tactics",
@@ -2495,7 +2511,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 9000,
-          "posY": 2400
+          "posY": 2400,
+          "type": "passive"
         },
         {
           "name": "Incisive Blade",
@@ -2562,7 +2579,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 8400,
-          "posY": 3000
+          "posY": 3000,
+          "type": "passive"
         },
         {
           "name": "Warblade's Hunger",
@@ -2615,7 +2633,8 @@
           "posX": 7800,
           "posY": 4200,
           "freeNode": true,
-          "entryNode": true
+          "entryNode": true,
+          "type": "passive"
         },
         {
           "name": "Swift Erasure",
@@ -2630,7 +2649,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 6900,
-          "posY": 4800
+          "posY": 4800,
+          "type": "passive"
         },
         {
           "name": "Meteoric Rise",
@@ -2645,7 +2665,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 7500,
-          "posY": 4800
+          "posY": 4800,
+          "type": "passive"
         },
         {
           "name": "Catastrophe",
@@ -2660,7 +2681,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 8100,
-          "posY": 4800
+          "posY": 4800,
+          "type": "passive"
         },
         {
           "name": "Phase Shift",
@@ -2675,7 +2697,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 8700,
-          "posY": 4800
+          "posY": 4800,
+          "type": "passive"
         },
         {
           "name": "Path to Oblivion",
@@ -2692,7 +2715,8 @@
           "posX": 6900,
           "posY": 5400,
           "choiceNode": true,
-          "choiceIndex": 100
+          "choiceIndex": 100,
+          "type": "passive"
         },
         {
           "name": "State of Matter",
@@ -2709,7 +2733,8 @@
           "posX": 6900,
           "posY": 5400,
           "choiceNode": true,
-          "choiceIndex": 200
+          "choiceIndex": 200,
+          "type": "passive"
         },
         {
           "name": "Mass Acceleration",
@@ -2724,7 +2749,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 7500,
-          "posY": 5400
+          "posY": 5400,
+          "type": "passive"
         },
         {
           "name": "Doomsayer",
@@ -2741,7 +2767,8 @@
           "posX": 8100,
           "posY": 5400,
           "choiceNode": true,
-          "choiceIndex": 100
+          "choiceIndex": 100,
+          "type": "passive"
         },
         {
           "name": "Harness the Cosmos",
@@ -2758,7 +2785,8 @@
           "posX": 8100,
           "posY": 5400,
           "choiceNode": true,
-          "choiceIndex": 200
+          "choiceIndex": 200,
+          "type": "passive"
         },
         {
           "name": "Celestial Echoes",
@@ -2773,7 +2801,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 8700,
-          "posY": 5400
+          "posY": 5400,
+          "type": "passive"
         },
         {
           "name": "Final Hour",
@@ -2788,7 +2817,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 6900,
-          "posY": 6000
+          "posY": 6000,
+          "type": "passive"
         },
         {
           "name": "Meteoric Fall",
@@ -2803,7 +2833,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 7500,
-          "posY": 6000
+          "posY": 6000,
+          "type": "passive"
         },
         {
           "name": "Dark Matter",
@@ -2818,7 +2849,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 8100,
-          "posY": 6000
+          "posY": 6000,
+          "type": "passive"
         },
         {
           "name": "Otherworldly Focus",
@@ -2833,7 +2865,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 8700,
-          "posY": 6000
+          "posY": 6000,
+          "type": "passive"
         },
         {
           "name": "World Killer",
@@ -2848,7 +2881,8 @@
           "description": null,
           "entryType": "passive",
           "posX": 7800,
-          "posY": 6600
+          "posY": 6600,
+          "type": "passive"
         }
       ]
     }

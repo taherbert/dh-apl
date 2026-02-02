@@ -260,6 +260,30 @@ if (unknownCount === 0) {
   }
 }
 
+// Null target IDs on non-buff targets
+const nullNonBuff = interactions.interactions.filter(
+  (i) => i.target && i.target.id === null && !i.target.name.startsWith("buff:"),
+);
+if (nullNonBuff.length === 0) {
+  pass("No null target IDs on non-buff targets");
+} else {
+  fail(`${nullNonBuff.length} null target IDs on non-buff targets`);
+  for (const i of nullNonBuff) {
+    console.log(`    ${i.source.name} -> ${i.target.name}`);
+  }
+}
+
+// Undefined talent types
+const undefinedTypes = allOurTalents.filter((t) => !t.type);
+if (undefinedTypes.length === 0) {
+  pass("All talents have a type classification");
+} else {
+  fail(`${undefinedTypes.length} talents with undefined type`);
+  for (const t of undefinedTypes) {
+    console.log(`    ${t.name} (${t.spellId})`);
+  }
+}
+
 // === Talent Coverage ===
 
 console.log("\n=== Talent Coverage ===\n");
@@ -325,6 +349,38 @@ if (orphans === 0) {
   pass("No orphan interaction sources");
 } else {
   warn(`${orphans} orphan interaction sources`);
+}
+
+// === Stale Spells ===
+
+console.log("\n=== Stale Spells ===\n");
+
+const interactionRefIds = new Set();
+for (const i of interactions.interactions) {
+  if (i.source.id) interactionRefIds.add(i.source.id);
+  if (i.target?.id) interactionRefIds.add(i.target.id);
+}
+
+const staleSpells = spells.filter(
+  (s) =>
+    !allTalentSpellIds.has(s.id) &&
+    !BASE_SPELL_IDS.has(s.id) &&
+    !interactionRefIds.has(s.id),
+);
+
+if (staleSpells.length <= 1) {
+  pass(
+    `${staleSpells.length} unreferenced spell(s) in spells.json${staleSpells.length ? ` (${staleSpells.map((s) => s.name).join(", ")})` : ""}`,
+  );
+} else {
+  warn(
+    `${staleSpells.length} unreferenced spells in spells.json: ${staleSpells
+      .slice(0, 5)
+      .map((s) => `${s.name} (${s.id})`)
+      .join(
+        ", ",
+      )}${staleSpells.length > 5 ? ` and ${staleSpells.length - 5} more` : ""}`,
+  );
 }
 
 // === Cross-Tree Coverage ===
