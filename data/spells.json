@@ -267,7 +267,9 @@
       "Nameplate Enemy Debuffs (426)"
     ],
     "description": "Unleash an eruption of fel energy, dealing $s2 Chaos damage and stunning all nearby enemies for $d.$?s320412[\nEach enemy stunned by Chaos Nova has a $s3% chance to generate a Lesser Soul Fragment.][]",
-    "tooltip": "Stunned."
+    "tooltip": "Stunned.",
+    "schoolMask": 124,
+    "resolvedDescription": "Unleash an eruption of fel energy, dealing 0 Chaos damage and stunning all nearby enemies for 2 sec."
   },
   {
     "name": "Disrupting Fury",
@@ -316,7 +318,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Disrupt generates $218903s1 Fury on a successful interrupt."
+    "description": "Disrupt generates $218903s1 Fury on a successful interrupt.",
+    "schoolMask": 1,
+    "resolvedDescription": "Disrupt generates 30 Fury on a successful interrupt."
   },
   {
     "name": "Throw Glaive",
@@ -516,7 +520,9 @@
       "Allow Class Ability Procs (416)",
       "Interrupts Current Cast (419)"
     ],
-    "description": "Throw a demonic glaive at the target, dealing $337819s1 Physical damage. The glaive can ricochet to $?$s320386[${$337819x1-1} additional enemies][an additional enemy] within 10 yards."
+    "description": "Throw a demonic glaive at the target, dealing $337819s1 Physical damage. The glaive can ricochet to $?$s320386[${$337819x1-1} additional enemies][an additional enemy] within 10 yards.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
   },
   {
     "name": "Mastery: Demonic Presence",
@@ -571,7 +577,9 @@
       "Mastery Affects Points (285)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases your Chaos damage by ${$s1}.1%$?s320654[ and your movement speed by ${$320654s1}.1%.][.]"
+    "description": "Increases your Chaos damage by ${$s1}.1%$?s320654[ and your movement speed by ${$320654s1}.1%.][.]",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases your Chaos damage by 0.1% and your movement speed by 0.1%."
   },
   {
     "name": "Metamorphosis",
@@ -805,7 +813,75 @@
     ],
     "auraInterrupt": "Enter World (22), Enter Instance (43)",
     "description": "Transform to demon form for $d, increasing current health by $s2%, healing for that amount, and increasing Armor by $s8%$?s235893[. Versatility increased by $s5%][]$?s321067[. While transformed, Shear and Fracture generate one additional Lesser Soul Fragment][]$?s321068[ and $s4 additional Fury][].",
-    "tooltip": "Maximum health increased by $w2%.\nArmor increased by $w8%.\n$?s235893[Versatility increased by $w5%. ][]$?s263642[Fracture][Shear] generates $w4 additional Fury and one additional Lesser Soul Fragment."
+    "tooltip": "Maximum health increased by $w2%.\nArmor increased by $w8%.\n$?s235893[Versatility increased by $w5%. ][]$?s263642[Fracture][Shear] generates $w4 additional Fury and one additional Lesser Soul Fragment.",
+    "schoolMask": 127,
+    "resolvedDescription": "Transform to demon form for 15 sec, increasing current health by 40%, healing for that amount, and increasing Armor by 200%."
+  },
+  {
+    "name": "Infernal Strike",
+    "id": 189110,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 276571,
+        "type": "Dummy (3)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 1,
+          "radius": "3 - 8 yards",
+          "target": "Unknown(87)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 476592,
+        "type": "Unknown(254)",
+        "details": {
+          "baseValue": 5,
+          "scaledValue": 5,
+          "miscValue": "2",
+          "target": "Unknown(87)"
+        }
+      }
+    ],
+    "replaces": null,
+    "class": "Vengeance Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 30,
+    "cooldown": 0.8,
+    "charges": {
+      "count": 1,
+      "cooldown": 20
+    },
+    "category": "1553 (Type 0x9): Abyssal Strike (207550 effect#1), Blazing Path (320416 effect#2), Time Spiral (375229 effect#3), Blessing of the Bronze (381741 effect#2), Meteoric Strikes (389724 effect#1), Erratic Felheart (391397 effect#2)",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "4638"
+    ],
+    "familyFlags": [
+      "1"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Do Not Log (8)",
+      "Not Shapeshifted (16)",
+      "Do Not Sheath (18)",
+      "No Jump Pathing (208)",
+      "Cheap Missile AOI (374)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "Leap through the air toward a targeted location, dealing $189112s1 Fire damage to all enemies within $189112a1 yards.",
+    "schoolMask": 1,
+    "resolvedDescription": "Leap through the air toward a targeted location, dealing 0 Fire damage to all enemies within 6 yards."
   },
   {
     "name": "Infernal Strike",
@@ -980,7 +1056,9 @@
       "Ignore Distance Check On Charge/Jump Charge Done Trigger Spell (398)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "$@spelldesc189110"
+    "description": "$@spelldesc189110",
+    "schoolMask": 4,
+    "resolvedDescription": "Leap through the air toward a targeted location, dealing 0 Fire damage to all enemies within 6 yards."
   },
   {
     "name": "Darkness",
@@ -1095,7 +1173,9 @@
       "Caster Death Cancels Persistent Area Auras (347)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Summons darkness around you in a$?a357419[ 12 yd][n 8 yd] radius, granting friendly targets a $209426s2% chance to avoid all damage from an attack. Lasts $d.\nChance to avoid damage increased by $s3% when not in a raid."
+    "description": "Summons darkness around you in a$?a357419[ 12 yd][n 8 yd] radius, granting friendly targets a $209426s2% chance to avoid all damage from an attack. Lasts $d.\nChance to avoid damage increased by $s3% when not in a raid.",
+    "schoolMask": 1,
+    "resolvedDescription": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec.\nChance to avoid damage increased by 100% when not in a raid."
   },
   {
     "name": "Vengeful Retreat",
@@ -1205,7 +1285,240 @@
       "Aura Points On Client (268)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Remove all snares and vault away. Nearby enemies take $198813s2 Physical damage$?s320635[ and have their movement speed reduced by $198813s1% for $198813d][].$?a203551[\n|cFFFFFFFFGenerates ${($203650s1/5)*$203650d} Fury over $203650d if you damage an enemy.|r][]"
+    "description": "Remove all snares and vault away. Nearby enemies take $198813s2 Physical damage$?s320635[ and have their movement speed reduced by $198813s1% for $198813d][].$?a203551[\n|cFFFFFFFFGenerates ${($203650s1/5)*$203650d} Fury over $203650d if you damage an enemy.|r][]",
+    "schoolMask": 1,
+    "resolvedDescription": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
+  },
+  {
+    "name": "Vengeful Retreat",
+    "id": 198813,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 292270,
+        "type": "Apply Aura (6) | Decrease Movement Speed% (33)",
+        "details": {
+          "baseValue": -70,
+          "scaledValue": -70,
+          "radius": "0 - 5 yards",
+          "Mechanic": "Snare",
+          "target": "At Self (22) -> Enemy in Area (15)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 292271,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.16,
+          "radius": "0 - 5 yards",
+          "target": "At Self (22) -> Enemy in Area (15)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "duration": 3,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Prepared",
+        "id": 203551,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Tactical Retreat",
+        "id": 389688,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Evasive Action",
+        "id": 444929,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc",
+        "id": 1236358,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Vengeful Retreat",
+        "id": 198793
+      }
+    ],
+    "familyFlags": [
+      "3",
+      "16",
+      "42",
+      "58",
+      "70"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Not Shapeshifted (16)",
+      "Do Not Sheath (18)",
+      "Initiates Combat (Enables Auto-Attack) (41)",
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc198793",
+    "tooltip": "Movement speed reduced by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
   },
   {
     "name": "Sigil of Silence",
@@ -1304,7 +1617,9 @@
       "Always Show Ground Texture (190)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Place a Sigil of Silence at the target location that activates after $d.\nSilences all enemies affected by the sigil for $204490d."
+    "description": "Place a Sigil of Silence at the target location that activates after $d.\nSilences all enemies affected by the sigil for $204490d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Place a Sigil of Silence at the target location that activates after 2 sec.\nSilences all enemies affected by the sigil for 2 sec."
   },
   {
     "name": "Sigil of Chains",
@@ -1409,7 +1724,57 @@
       "Always Show Ground Texture (190)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Place a Sigil of Chains at the target location that activates after $d.\nAll enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by $204843s1% for $204843d."
+    "description": "Place a Sigil of Chains at the target location that activates after $d.\nAll enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by $204843s1% for $204843d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Place a Sigil of Chains at the target location that activates after 2 sec.\nAll enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by -70% for 6 sec."
+  },
+  {
+    "name": "Prepared",
+    "id": 203650,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 300413,
+        "type": "Apply Aura (6) | Restore Power (85)",
+        "details": {
+          "baseValue": 40,
+          "scaledValue": 40,
+          "miscValue": "17",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "duration": 10,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "719: Memory of Lucid Dreams (298357 effect#17), Memory of Lucid Dreams (299372 effect#17), Memory of Lucid Dreams (299374 effect#17)"
+    ],
+    "triggeredBy": [
+      {
+        "name": "Prepared",
+        "id": 203551
+      }
+    ],
+    "familyFlags": [
+      "40"
+    ],
+    "attributes": [
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc203551",
+    "tooltip": "Generating ${$m1/5} Fury every sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "$@spelldesc203551"
   },
   {
     "name": "Demon Spikes",
@@ -1452,7 +1817,9 @@
       "Allow Cast While Channeling (308)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}$?s321028[, and your Parry chance by $203819s1%, for $203819d][]."
+    "description": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}$?s321028[, and your Parry chance by $203819s1%, for $203819d][].",
+    "schoolMask": 1,
+    "resolvedDescription": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}."
   },
   {
     "name": "Mastery: Fel Blood",
@@ -1516,7 +1883,9 @@
       "Mastery Affects Points (285)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases Armor by ${$s1}.1% of your Agility. Armor bonus is doubled while Demon Spikes is active.$?s321299[\nAlso increases your attack power by ${$321299s1}.1%.][]"
+    "description": "Increases Armor by ${$s1}.1% of your Agility. Armor bonus is doubled while Demon Spikes is active.$?s321299[\nAlso increases your attack power by ${$321299s1}.1%.][]",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases Armor by 0.1% of your Agility. Armor bonus is doubled while Demon Spikes is active.\nAlso increases your attack power by 0.1%."
   },
   {
     "name": "Shear",
@@ -1727,7 +2096,9 @@
       "Requires Main-Hand Weapon (106)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Shears an enemy for $s1 Physical damage, and shatters $?a187827[two Lesser Soul Fragments][a Lesser Soul Fragment] from your target.\n|cFFFFFFFFGenerates $m2 Fury.|r"
+    "description": "Shears an enemy for $s1 Physical damage, and shatters $?a187827[two Lesser Soul Fragments][a Lesser Soul Fragment] from your target.\n|cFFFFFFFFGenerates $m2 Fury.|r",
+    "schoolMask": 1,
+    "resolvedDescription": "Shears an enemy for 0 Physical damage, and shatters two Lesser Soul Fragments from your target.\n|cFFFFFFFFGenerates $m2 Fury.|r"
   },
   {
     "name": "Demon Spikes",
@@ -1803,7 +2174,9 @@
     ],
     "auraInterrupt": "Enter World (22)",
     "description": "$@spelldesc203720",
-    "tooltip": "Armor increased by ${$W2*$AGI/100}.$?s321028[\nParry chance increased by $w1%.][]"
+    "tooltip": "Armor increased by ${$W2*$AGI/100}.$?s321028[\nParry chance increased by $w1%.][]",
+    "schoolMask": 1,
+    "resolvedDescription": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}."
   },
   {
     "name": "Soul Fragments",
@@ -1903,7 +2276,9 @@
     ],
     "auraInterrupt": "Leave World (19), Enter World (22), Login (29), Change Specialization (38)",
     "description": "Consuming a nearby Soul Fragment heals you.",
-    "tooltip": "Soul Fragments are nearby."
+    "tooltip": "Soul Fragments are nearby.",
+    "schoolMask": 1,
+    "resolvedDescription": "Consuming a nearby Soul Fragment heals you."
   },
   {
     "name": "Fiery Brand",
@@ -2141,7 +2516,105 @@
     ],
     "auraInterrupt": "Raid Encounter End or M+ Start (41)",
     "description": "Brand an enemy with a demonic symbol, instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][]. The enemy's damage done to you is reduced by $s1% for $207744d.",
-    "tooltip": "Dealing $s1% less damage to the branding Demon Hunter."
+    "tooltip": "Dealing $s1% less damage to the branding Demon Hunter.",
+    "schoolMask": 4,
+    "resolvedDescription": "Brand an enemy with a demonic symbol, instantly dealing 0 Fire damage. The enemy's damage done to you is reduced by 40% for 12 sec."
+  },
+  {
+    "name": "Sigil of Silence",
+    "id": 204490,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 301807,
+        "type": "Apply Aura (6) | Silence (27)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "miscValue": "127",
+          "radius": "8 yards",
+          "Mechanic": "Silence",
+          "target": "At Enemy in Area (16)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Magic",
+    "range": 100,
+    "duration": 2,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Concentrated Sigils",
+        "id": 207666,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Chains of Anger",
+        "id": 389715,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Precise Sigils",
+        "id": 389799,
+        "effects": [
+          5
+        ]
+      }
+    ],
+    "familyFlags": [
+      "33"
+    ],
+    "attributes": [
+      "Allow While Mounted (24)",
+      "Allow While Sitting (27)",
+      "Allow While Stealthed (37)",
+      "Ignore Line of Sight (66)",
+      "Allow While Invisible (78)",
+      "Not an Action (92)",
+      "Do Not Display Range (126)",
+      "Allow Cast While Casting (135)",
+      "Allow While Stunned (163)",
+      "Allow While Fleeing (177)",
+      "Allow While Confused (178)",
+      "Always AOE Line of Sight (186)",
+      "Can Cause Interrupt (235)",
+      "Allow While Charmed (261)",
+      "Allow Cast While Channeling (308)",
+      "Allow While Stunned By Horror Mechanic (342)",
+      "Allow While Stunned by Stun Mechanic (378)",
+      "Allow Class Ability Procs (416)",
+      "Allow While Feared By Fear Mechanic (417)",
+      "Nameplate Enemy Debuffs (426)"
+    ],
+    "description": "Silence affected enemies for $d.",
+    "tooltip": "Silenced.",
+    "schoolMask": 1,
+    "resolvedDescription": "Silence affected enemies for 2 sec."
   },
   {
     "name": "Sigil of Flame",
@@ -2176,7 +2649,7 @@
       }
     ],
     "class": "Havoc Demon Hunter, Vengeance Demon Hunter",
-    "school": "Physical",
+    "school": "Fire",
     "spellType": null,
     "spellLevel": 10,
     "range": 30,
@@ -2240,7 +2713,434 @@
       "Allow Class Ability Procs (416)"
     ],
     "description": "Place a Sigil of Flame at the target location that activates after $d.\nDeals $204598s1 $@spelldesc395020 damage, and an additional $204598o3 $@spelldesc395020 damage over $204598d, to all enemies affected by the sigil.\n|CFFffffffGenerates $389787s1 Fury.|R",
-    "tooltip": "Sigil of Flame is active."
+    "tooltip": "Sigil of Flame is active.",
+    "schoolMask": 4,
+    "resolvedDescription": "Place a Sigil of Flame at the target location that activates after 2 sec.\nDeals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil.\n|CFFffffffGenerates 30 Fury.|R"
+  },
+  {
+    "name": "Sigil of Flame",
+    "id": 204598,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 301971,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.532827,
+          "radius": "8 yards",
+          "target": "At Enemy in Area (16)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 301972,
+        "type": "Apply Aura (6) | Periodic Damage (3): fire every 2 seconds | Attributes: Compute Points Only At Cast Time (15)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 0.333462,
+          "radius": "8 yards",
+          "target": "At Enemy in Area (16)"
+        }
+      },
+      {
+        "index": 3,
+        "effectId": 738599,
+        "type": "Apply Aura (6) | Periodic Damage (3): fire every 2 seconds | Attributes: Compute Points Only At Cast Time (15)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 0.333462
+        }
+      },
+      {
+        "index": 4,
+        "effectId": 1113254,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "radius": "8 yards",
+          "target": "At Enemy in Area (16)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Magic",
+    "range": 100,
+    "duration": 8,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2381: Ascending Flame (428603 effect#1), Ascending Flame (428603 effect#2)",
+      "3036: Illuminated Sigils (428557 effect#2)"
+    ],
+    "maxStacks": 1,
+    "procChance": 101,
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Concentrated Sigils",
+        "id": 207666,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Flames of Fury",
+        "id": 389694,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Chains of Anger",
+        "id": 389715,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Precise Sigils",
+        "id": 389799,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demonsurge",
+        "id": 452489,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "16",
+      "33",
+      "65",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Allow While Mounted (24)",
+      "Allow While Sitting (27)",
+      "Allow While Stealthed (37)",
+      "No Reflection (39)",
+      "Ignore Line of Sight (66)",
+      "Allow While Invisible (78)",
+      "Not an Action (92)",
+      "Active Threat (94)",
+      "DoT Stacking Rule (103)",
+      "Do Not Display Range (126)",
+      "Allow Cast While Casting (135)",
+      "Allow While Stunned (163)",
+      "Allow While Fleeing (177)",
+      "Allow While Confused (178)",
+      "Always AOE Line of Sight (186)",
+      "Taps immediately (215)",
+      "Allow While Charmed (261)",
+      "Periodic Can Crit (265)",
+      "Aura Points On Client (268)",
+      "Allow Cast While Channeling (308)",
+      "Allow While Stunned By Horror Mechanic (342)",
+      "Allow While Stunned by Stun Mechanic (378)",
+      "Allow Class Ability Procs (416)",
+      "Allow While Feared By Fear Mechanic (417)"
+    ],
+    "description": "$@spelldesc204596",
+    "tooltip": "Suffering $w2 $@spelldesc395020 damage every $t2 sec.$?$w4>0[ $@auracaster has $w4% increased chance to parry your attacks.][]",
+    "variables": "$pord=$@switch<$s5>[ $@auracaster has $s4% increased chance to parry your attacks.][ $@auracaster has $s4% increased chance to dodge your attacks.]",
+    "schoolMask": 4,
+    "resolvedDescription": "Place a Sigil of Flame at the target location that activates after 8 sec.\nDeals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil.\n|CFFffffffGenerates 30 Fury.|R"
+  },
+  {
+    "name": "Sigil of Chains",
+    "id": 204843,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 302367,
+        "type": "Apply Aura (6) | Decrease Movement Speed% (33)",
+        "details": {
+          "baseValue": -70,
+          "scaledValue": -70,
+          "Mechanic": "Snare",
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Magic",
+    "range": 100,
+    "duration": 6,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Concentrated Sigils",
+        "id": 207666,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Chains of Anger",
+        "id": 389715,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Precise Sigils",
+        "id": 389799,
+        "effects": [
+          5
+        ]
+      }
+    ],
+    "familyFlags": [
+      "33"
+    ],
+    "attributes": [
+      "Allow While Mounted (24)",
+      "Allow While Sitting (27)",
+      "Allow While Stealthed (37)",
+      "No Reflection (39)",
+      "Ignore Line of Sight (66)",
+      "Allow While Invisible (78)",
+      "Not an Action (92)",
+      "Do Not Display Range (126)",
+      "Allow Cast While Casting (135)",
+      "Allow While Stunned (163)",
+      "Allow While Fleeing (177)",
+      "Allow While Confused (178)",
+      "Always AOE Line of Sight (186)",
+      "Allow While Charmed (261)",
+      "Aura Points On Client (268)",
+      "Allow Cast While Channeling (308)",
+      "Allow While Stunned By Horror Mechanic (342)",
+      "Allow While Stunned by Stun Mechanic (378)",
+      "Allow Class Ability Procs (416)",
+      "Allow While Feared By Fear Mechanic (417)"
+    ],
+    "description": "Slows enemies by $s1% for $d.",
+    "tooltip": "Movement slowed by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Slows enemies by -70% for 6 sec."
   },
   {
     "name": "Soul Rending",
@@ -2303,7 +3203,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Leech increased by $s1%.\nGain an additional $s2% leech while Metamorphosis is active."
+    "description": "Leech increased by $s1%.\nGain an additional $s2% leech while Metamorphosis is active.",
+    "schoolMask": 1,
+    "resolvedDescription": "Leech increased by 6%.\nGain an additional 6% leech while Metamorphosis is active."
   },
   {
     "name": "Aura of Pain",
@@ -2354,7 +3256,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases the critical strike chance of Immolation Aura by $s1%."
+    "description": "Increases the critical strike chance of Immolation Aura by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases the critical strike chance of Immolation Aura by 6%."
   },
   {
     "name": "Painbringer",
@@ -2412,7 +3316,9 @@
       "Aura Points On Client (268)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Consuming a Soul Fragment reduces all damage you take by $s1% for $212988d.\nMultiple applications may overlap."
+    "description": "Consuming a Soul Fragment reduces all damage you take by $s1% for $212988d.\nMultiple applications may overlap.",
+    "schoolMask": 4,
+    "resolvedDescription": "Consuming a Soul Fragment reduces all damage you take by -1% for 6 sec.\nMultiple applications may overlap."
   },
   {
     "name": "Soul Carver",
@@ -2632,7 +3538,9 @@
       "Allow Class Ability Procs (416)"
     ],
     "description": "Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional $o1 Fire damage over $d.  Immediately shatters $s3 Lesser Soul Fragments from the target and $s4 additional Lesser Soul Fragment every $t1 sec.",
-    "tooltip": "Suffering $s1 Fire damage every $t1 sec."
+    "tooltip": "Suffering $s1 Fire damage every $t1 sec.",
+    "schoolMask": 4,
+    "resolvedDescription": "Carve into the soul of your target, dealing 0 Fire damage and an additional 0 Fire damage over 3 sec.  Immediately shatters 3 Lesser Soul Fragments from the target and 1 additional Lesser Soul Fragment every $t1 sec."
   },
   {
     "name": "Agonizing Flames",
@@ -2694,7 +3602,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Immolation Aura increases your movement speed by $s1% and its duration is increased by $s2%."
+    "description": "Immolation Aura increases your movement speed by $s1% and its duration is increased by $s2%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura increases your movement speed by 10% and its duration is increased by 50%."
   },
   {
     "name": "Sigil of Misery",
@@ -2793,7 +3703,152 @@
       "Not In Spellbook Until Learned (269)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Place a Sigil of Misery at the target location that activates after $d.\nCauses all enemies affected by the sigil to cower in fear, disorienting them for $207685d."
+    "description": "Place a Sigil of Misery at the target location that activates after $d.\nCauses all enemies affected by the sigil to cower in fear, disorienting them for $207685d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Place a Sigil of Misery at the target location that activates after 2 sec.\nCauses all enemies affected by the sigil to cower in fear, disorienting them for 15 sec."
+  },
+  {
+    "name": "Sigil of Misery",
+    "id": 207685,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 2,
+        "effectId": 307162,
+        "type": "Apply Aura (6) | Root (455)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "radius": "8 yards",
+          "target": "At Enemy in Area (16)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Magic",
+    "range": 100,
+    "duration": 15,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "procChance": 100,
+    "procFlags": "White Melee Taken, Yellow Melee Taken, White Ranged Taken, Yellow Ranged Taken, Generic Hostile Spell Taken, Magic Hostile Spell Taken, Periodic Taken, Helpful Periodic Taken",
+    "affectingSpells": [
+      {
+        "name": "Concentrated Sigils",
+        "id": 207666,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Chains of Anger",
+        "id": 389715,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Precise Sigils",
+        "id": 389799,
+        "effects": [
+          5
+        ]
+      }
+    ],
+    "familyFlags": [
+      "33"
+    ],
+    "attributes": [
+      "Allow While Mounted (24)",
+      "Allow While Sitting (27)",
+      "No Redirection (35)",
+      "Allow While Stealthed (37)",
+      "No Reflection (39)",
+      "Ignore Line of Sight (66)",
+      "Allow While Invisible (78)",
+      "Not an Action (92)",
+      "Do Not Display Range (126)",
+      "Allow Cast While Casting (135)",
+      "Allow While Stunned (163)",
+      "Allow While Fleeing (177)",
+      "Allow While Confused (178)",
+      "Always AOE Line of Sight (186)",
+      "Taps immediately (215)",
+      "Allow While Charmed (261)",
+      "Allow Cast While Channeling (308)",
+      "Allow While Stunned By Horror Mechanic (342)",
+      "Allow While Stunned by Stun Mechanic (378)",
+      "Allow Class Ability Procs (416)",
+      "Allow While Feared By Fear Mechanic (417)",
+      "Nameplate Enemy Debuffs (426)"
+    ],
+    "auraInterrupt": "Leave World (19), Enter World (22), Damage (Script) (27)",
+    "description": "Disorient affected enemies for $d.",
+    "tooltip": "Disoriented.",
+    "schoolMask": 1,
+    "resolvedDescription": "Disorient affected enemies for 15 sec."
+  },
+  {
+    "name": "Feast of Souls",
+    "id": 207693,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 307173,
+        "type": "Apply Aura (6) | Periodic Heal (8): every 2 seconds | Attributes: Compute Points Only At Cast Time (15)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 0.45,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Shadow",
+    "spellType": "Magic",
+    "range": 100,
+    "duration": 6,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2794"
+    ],
+    "attributes": [
+      "Do Not Sheath (18)",
+      "No Threat (42)",
+      "Extra Initial Period (169)",
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc207697",
+    "tooltip": "Healing $w1 health every $t1 sec.",
+    "schoolMask": 32,
+    "resolvedDescription": "Soul Cleave heals you for an additional 0 over 6 sec."
   },
   {
     "name": "Feast of Souls",
@@ -2843,7 +3898,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Soul Cleave heals you for an additional $207693o1 over $207693d."
+    "description": "Soul Cleave heals you for an additional $207693o1 over $207693d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Soul Cleave heals you for an additional 0 over 6 sec."
   },
   {
     "name": "Burning Alive",
@@ -2890,7 +3947,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Every $207771t3 sec, Fiery Brand spreads to one nearby enemy."
+    "description": "Every $207771t3 sec, Fiery Brand spreads to one nearby enemy.",
+    "schoolMask": 4,
+    "resolvedDescription": "Every $207771t3 sec, Fiery Brand spreads to one nearby enemy."
   },
   {
     "name": "Fiery Brand",
@@ -2941,7 +4000,17 @@
           "scaledValue": -40,
           "miscValue": "0x7f",
           "target": "Enemy (6)",
-          "Affected School(s)": "All"
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
         }
       },
       {
@@ -3011,7 +4080,9 @@
       "Nameplate Personal Buffs/Debuffs (423)"
     ],
     "description": "$@spelldesc204021",
-    "tooltip": "Branded, dealing $204021s1% less damage to $@auracaster$?s389220[ and taking $w2% more Fire damage from them][]."
+    "tooltip": "Branded, dealing $204021s1% less damage to $@auracaster$?s389220[ and taking $w2% more Fire damage from them][].",
+    "schoolMask": 4,
+    "resolvedDescription": "Brand an enemy with a demonic symbol, instantly dealing 0 Fire damage. The enemy's damage done to you is reduced by 0% for 12 sec."
   },
   {
     "name": "Fiery Brand",
@@ -3031,7 +4102,17 @@
           "scaledValue": -40,
           "miscValue": "0x7f",
           "target": "Enemy (6)",
-          "Affected School(s)": "All"
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
         }
       },
       {
@@ -3252,7 +4333,9 @@
       "Nameplate Personal Buffs/Debuffs (423)"
     ],
     "description": "$@spelldesc204021",
-    "tooltip": "Branded, taking $w5 Fire damage every $t5 sec, and dealing $204021s1% less damage to $@auracaster$?s389220[ and taking $w2% more Fire damage from them][]."
+    "tooltip": "Branded, taking $w5 Fire damage every $t5 sec, and dealing $204021s1% less damage to $@auracaster$?s389220[ and taking $w2% more Fire damage from them][].",
+    "schoolMask": 4,
+    "resolvedDescription": "Brand an enemy with a demonic symbol, instantly dealing 0 Fire damage. The enemy's damage done to you is reduced by -40% for 12 sec."
   },
   {
     "name": "Last Resort",
@@ -3311,7 +4394,57 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Sustaining fatal damage instead transforms you to Metamorphosis form.\nThis may occur once every $209261d."
+    "description": "Sustaining fatal damage instead transforms you to Metamorphosis form.\nThis may occur once every $209261d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Sustaining fatal damage instead transforms you to Metamorphosis form.\nThis may occur once every 480 sec."
+  },
+  {
+    "name": "Uncontained Fel",
+    "id": 209261,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 309719,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "range": 50000,
+    "duration": 480,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Aura Is Debuff (26)",
+      "Allow While Sitting (27)",
+      "No Immunities (29)",
+      "No Threat (42)",
+      "Ignore Line of Sight (66)",
+      "Allow Aura While Dead (116)",
+      "Ignore Caster & Target Restrictions (124)",
+      "Do Not Display Range (126)",
+      "Remove Entering Arena (162)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "auraInterrupt": "Raid Encounter End or M+ Start (41)",
+    "description": "You cannot benefit from Last Resort again for $d.",
+    "tooltip": "You have recently benefited from Last Resort and cannot benefit from it again.",
+    "schoolMask": 1,
+    "resolvedDescription": "You cannot benefit from Last Resort again for 480 sec."
   },
   {
     "name": "Quickened Sigils",
@@ -3410,7 +4543,86 @@
       "Not In Spellbook (143)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "All Sigils activate ${$s1/-1000} second faster."
+    "description": "All Sigils activate ${$s1/-1000} second faster.",
+    "schoolMask": 1,
+    "resolvedDescription": "All Sigils activate 1 second faster."
+  },
+  {
+    "name": "Darkness",
+    "id": 209426,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 309959,
+        "type": "Apply Aura (6) | Absorb Damage (69)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "miscValue": "0x7f",
+          "miscValue2": "-40",
+          "target": "Any Target (25)",
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 727831,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 15,
+          "scaledValue": 15,
+          "PvP Coefficient": "1.66667",
+          "miscValue": "127",
+          "target": "Any Target (25)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "range": 100,
+    "duration": 8,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "familyFlags": [
+      "51"
+    ],
+    "attributes": [
+      "Do Not Log (8)",
+      "No Aura Cancel (31)",
+      "Allow While Stealthed (37)",
+      "No Threat (42)",
+      "No School Immunities (90)",
+      "Suppress Caster Procs (112)",
+      "Suppress Target Procs (113)",
+      "Do Not Display Range (126)",
+      "Aura Points On Client (268)",
+      "Bypass Visibility Check (320)",
+      "Ignore Caster Absorb Modifiers (370)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc196718",
+    "tooltip": "Attacks against you have a $w2% chance to inflict no damage.",
+    "schoolMask": 1,
+    "resolvedDescription": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec.\nChance to avoid damage increased by $s3% when not in a raid."
   },
   {
     "name": "Fel Devastation",
@@ -3531,7 +4743,378 @@
       "Allow Defense While Channeling (338)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d.$?s320639[ Causing damage also heals you for up to ${$212106s1*(2/$t1)} health.][]"
+    "description": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d.$?s320639[ Causing damage also heals you for up to ${$212106s1*(2/$t1)} health.][]",
+    "schoolMask": 4,
+    "resolvedDescription": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over 2 sec."
+  },
+  {
+    "name": "Fel Devastation",
+    "id": 212105,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 314431,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.238,
+          "radius": "13 yards",
+          "target": "Cone to Enemy (104)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Magic",
+    "range": 50000,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Stoke the Flames",
+        "id": 393827,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demonsurge",
+        "id": 452489,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Soulfuse",
+        "id": 454774,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Fel Devastation",
+        "id": 212084
+      },
+      {
+        "name": "Fel Desolation",
+        "id": 452486
+      }
+    ],
+    "familyFlags": [
+      "16",
+      "67",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Do Not Display Range (126)",
+      "Always AOE Line of Sight (186)",
+      "Reflection Only Defends (253)",
+      "Periodic Can Crit (265)",
+      "Aura Points On Client (268)",
+      "Allow Cast While Channeling (308)",
+      "Area Effects Use Target Radius (328)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc212084",
+    "schoolMask": 4,
+    "resolvedDescription": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d."
+  },
+  {
+    "name": "Fel Devastation",
+    "id": 212106,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 314433,
+        "type": "Direct Heal (10)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.511875,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Ruinous Bulwark",
+        "id": 326853,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Roaring Fire",
+        "id": 339644,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Roaring Fire",
+        "id": 391178,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Soulfuse",
+        "id": 454774,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "80"
+    ],
+    "attributes": [
+      "No Threat (42)",
+      "Do Not Display Range (126)",
+      "Aura Points On Client (268)",
+      "Allow Cast While Channeling (308)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc212084",
+    "schoolMask": 4,
+    "resolvedDescription": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d."
   },
   {
     "name": "Vengeance Demon Hunter",
@@ -3776,7 +5359,8 @@
       "Combat Log) (7)",
       "Do Not Log (8)",
       "Allow Class Ability Procs (416)"
-    ]
+    ],
+    "schoolMask": 1
   },
   {
     "name": "Fiery Demise",
@@ -3829,7 +5413,74 @@
       "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc389220",
-    "tooltip": "Fire damage taken from $@auracaster increased by $w1%."
+    "tooltip": "Fire damage taken from $@auracaster increased by $w1%.",
+    "schoolMask": 4,
+    "resolvedDescription": "Fiery Brand also increases Fire damage you deal to the target by 0%."
+  },
+  {
+    "name": "Painbringer",
+    "id": 212988,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 315936,
+        "type": "Apply Aura (6) | Modify Damage Taken% (87)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "miscValue": "0x7f",
+          "target": "Self (1)",
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 315937,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 2,
+          "scaledValue": 2,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Melee",
+    "duration": 6,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2406: Painbringer (207387 effect#1)"
+    ],
+    "maxStacks": 30,
+    "procChance": 101,
+    "attributes": [
+      "Allow Cast While Casting (135)",
+      "Aura Points On Client (268)",
+      "Allow Cast While Channeling (308)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc207387",
+    "tooltip": "Damage taken reduced by $w1%.",
+    "schoolMask": 4,
+    "resolvedDescription": "Consuming a Soul Fragment reduces all damage you take by 0% for 6 sec.\nMultiple applications may overlap."
   },
   {
     "name": "Charred Warblades",
@@ -3881,7 +5532,490 @@
       "Only Proc From Class Abilities (415)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "You heal for $s1% of all Fire damage you deal."
+    "description": "You heal for $s1% of all Fire damage you deal.",
+    "schoolMask": 1,
+    "resolvedDescription": "You heal for 3% of all Fire damage you deal."
+  },
+  {
+    "name": "Felblade",
+    "id": 213243,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 316324,
+        "type": "Dummy (3)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Enemy (6)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 316325,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 1.2294,
+          "PvP Coefficient": "1.2",
+          "target": "Enemy (6)"
+        }
+      },
+      {
+        "index": 3,
+        "effectId": 316326,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 40,
+          "scaledValue": 40,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Melee",
+    "spellLevel": 16,
+    "range": 15,
+    "requiresWeapon": "One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "117",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2,
+          7
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "16",
+      "30",
+      "42",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Do Not Sheath (18)",
+      "Initiates Combat (Enables Auto-Attack) (41)",
+      "Requires Main-Hand Weapon (106)",
+      "Always Line of Sight (185)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc232893",
+    "schoolMask": 4,
+    "resolvedDescription": "Charge to your target and deal $213243sw2 Fire damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]"
+  },
+  {
+    "name": "Master of the Glaive",
+    "id": 213405,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 316551,
+        "type": "Apply Aura (6) | Decrease Movement Speed% (33)",
+        "details": {
+          "baseValue": -50,
+          "scaledValue": -50,
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "range": 100,
+    "duration": 6,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "triggeredBy": [
+      {
+        "name": "Master of the Glaive",
+        "id": 389763
+      }
+    ],
+    "attributes": [
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc389763",
+    "tooltip": "Movement speed reduced by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by -50% for 6 sec."
+  },
+  {
+    "name": "Soul Carver",
+    "id": 214743,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 318967,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 2.06,
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Melee",
+    "range": 5,
+    "gcd": 1.5,
+    "cooldown": 60,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Soul Carver",
+        "id": 207407
+      }
+    ],
+    "familyFlags": [
+      "46",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Do Not Sheath (18)",
+      "No Aura Cancel (31)",
+      "Requires Off-Hand Weapon (120)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc207407",
+    "schoolMask": 4,
+    "resolvedDescription": "Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional 0 Fire damage over $d.  Immediately shatters $s3 Lesser Soul Fragments from the target and $s4 additional Lesser Soul Fragment every $t1 sec."
   },
   {
     "name": "Imprison",
@@ -3970,7 +6104,9 @@
     ],
     "auraInterrupt": "Leave World (19), Enter World (22), Damage (Script) (27)",
     "description": "Imprisons a demon, beast, or humanoid, incapacitating them for $d. Damage may cancel the effect. Limit 1.",
-    "tooltip": "Incapacitated."
+    "tooltip": "Incapacitated.",
+    "schoolMask": 32,
+    "resolvedDescription": "Imprisons a demon, beast, or humanoid, incapacitating them for 60 sec. Damage may cancel the effect. Limit 1."
   },
   {
     "name": "Soul Rending",
@@ -4021,7 +6157,9 @@
       "Not In Spellbook (143)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Leech increased by $s1%.\nGain an additional $s2% Leech while Metamorphosis is active."
+    "description": "Leech increased by $s1%.\nGain an additional $s2% Leech while Metamorphosis is active.",
+    "schoolMask": 1,
+    "resolvedDescription": "Leech increased by 10%.\nGain an additional 20% Leech while Metamorphosis is active."
   },
   {
     "name": "Feed the Demon",
@@ -4071,7 +6209,444 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Consuming a Soul Fragment reduces the remaining cooldown of Demon Spikes by ${$s1/100}.2 sec."
+    "description": "Consuming a Soul Fragment reduces the remaining cooldown of Demon Spikes by ${$s1/100}.2 sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Consuming a Soul Fragment reduces the remaining cooldown of Demon Spikes by 0.35.2 sec."
+  },
+  {
+    "name": "Disrupt",
+    "id": 218903,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 326008,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 30,
+          "scaledValue": 30,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 326009,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 300,
+          "scaledValue": 300,
+          "Resource": "pain",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Chaos",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "triggeredBy": [
+      {
+        "name": "Disrupting Fury",
+        "id": 183782
+      }
+    ],
+    "familyFlags": [
+      "64"
+    ],
+    "attributes": [
+      "Do Not Sheath (18)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc183752",
+    "schoolMask": 127,
+    "resolvedDescription": "$@spelldesc183752"
+  },
+  {
+    "name": "Fracture",
+    "id": 225919,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 338878,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.627,
+          "target": "Enemy (6)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 338879,
+        "type": "Dummy (3)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 20,
+    "requiresWeapon": "One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2618: Fiery Brand (207744 effect#5), Fiery Brand (207771 effect#4)"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2,
+          9
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Mark of the Ogre",
+        "id": 326486,
+        "effects": [
+          3
+        ]
+      },
+      {
+        "name": "Half-Giant Empowerment",
+        "id": 345871,
+        "effects": [
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Vengeance Class Set 2pc",
+        "id": 393630,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Demon Hunter Vengeance 10.1 Class Set 4pc",
+        "id": 405509,
+        "effects": [
+          3
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc",
+        "id": 1236358,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Fracture",
+        "id": 263642
+      }
+    ],
+    "familyFlags": [
+      "58",
+      "69",
+      "70"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Initiates Combat (Enables Auto-Attack) (41)",
+      "Not a Proc (105)",
+      "Requires Main-Hand Weapon (106)",
+      "Always Hit (114)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc263642",
+    "schoolMask": 1,
+    "resolvedDescription": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 0 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates $s4 Fury.|r"
+  },
+  {
+    "name": "Fracture",
+    "id": 225921,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 338881,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 1.26,
+          "target": "Enemy (6)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 338882,
+        "type": "Dummy (3)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 20,
+    "requiresWeapon": "One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2618: Fiery Brand (207744 effect#5), Fiery Brand (207771 effect#4)"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2,
+          9
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Mark of the Ogre",
+        "id": 326486,
+        "effects": [
+          3
+        ]
+      },
+      {
+        "name": "Half-Giant Empowerment",
+        "id": 345871,
+        "effects": [
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Vengeance Class Set 2pc",
+        "id": 393630,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Demon Hunter Vengeance 10.1 Class Set 4pc",
+        "id": 405509,
+        "effects": [
+          3
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc",
+        "id": 1236358,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Fracture",
+        "id": 263642
+      }
+    ],
+    "familyFlags": [
+      "58",
+      "69",
+      "70"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Initiates Combat (Enables Auto-Attack) (41)",
+      "Not a Proc (105)",
+      "Always Hit (114)",
+      "Requires Off-Hand Weapon (120)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc263642",
+    "schoolMask": 1,
+    "resolvedDescription": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 0 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates $s4 Fury.|r"
   },
   {
     "name": "Fallout",
@@ -4120,7 +6695,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Immolation Aura's initial burst has a chance to shatter Lesser Soul Fragments from enemies."
+    "description": "Immolation Aura's initial burst has a chance to shatter Lesser Soul Fragments from enemies.",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura's initial burst has a chance to shatter Lesser Soul Fragments from enemies."
   },
   {
     "name": "Soul Cleave",
@@ -4293,7 +6870,9 @@
       "Allow Class Ability Procs (416)"
     ],
     "description": "Viciously strike up to $228478s2 enemies in front of you for $228478s1 Physical damage and heal yourself for $s4.\nConsumes up to $s3 available Soul Fragments$?s321021[ and heals you for an additional $s5 for each Soul Fragment consumed][].",
-    "variables": "$cleaveDamage=${2.0*$228478sw1}\n$cleaveHeal=${2.0*$AP*5.8*$s4/1000}"
+    "variables": "$cleaveDamage=${2.0*$228478sw1}\n$cleaveHeal=${2.0*$AP*5.8*$s4/1000}",
+    "schoolMask": 1,
+    "resolvedDescription": "Viciously strike up to 5 enemies in front of you for 0 Physical damage and heal yourself for 0.\nConsumes up to 2 available Soul Fragments."
   },
   {
     "name": "Soul Cleave",
@@ -4514,7 +7093,9 @@
       "No Attack Miss (249)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "$@spelldesc228477"
+    "description": "$@spelldesc228477",
+    "schoolMask": 1,
+    "resolvedDescription": "Viciously strike up to 5 enemies in front of you for 0 Physical damage and heal yourself for $s4.\nConsumes up to $s3 available Soul Fragments."
   },
   {
     "name": "Felblade",
@@ -4597,7 +7178,9 @@
       "Attack on Charge to Unit (242)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Charge to your target and deal $213243sw2 $@spelldesc395020 damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]"
+    "description": "Charge to your target and deal $213243sw2 $@spelldesc395020 damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]",
+    "schoolMask": 1,
+    "resolvedDescription": "Charge to your target and deal $213243sw2 Fire damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates 40 Fury.|r]"
   },
   {
     "name": "Spirit Bomb",
@@ -4698,7 +7281,9 @@
       "No Aura Log (202)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for $247456s1% of damage you deal to them. Deals reduced damage beyond $s3 targets."
+    "description": "Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for $247456s1% of damage you deal to them. Deals reduced damage beyond $s3 targets.",
+    "schoolMask": 4,
+    "resolvedDescription": "Consume up to 5 available Soul Fragments then explode, damaging nearby enemies for 0 Fire damage per fragment consumed, and afflicting them with Frailty for 6 sec, causing you to heal for 8% of damage you deal to them. Deals reduced damage beyond 8 targets."
   },
   {
     "name": "Spirit Bomb",
@@ -4891,7 +7476,9 @@
       "Allow Class Ability Procs (416)",
       "Allow While Feared By Fear Mechanic (417)"
     ],
-    "description": "$@spelldesc247454"
+    "description": "$@spelldesc247454",
+    "schoolMask": 4,
+    "resolvedDescription": "Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for 0 Fire damage per fragment consumed, and afflicting them with Frailty for 6 sec, causing you to heal for 8% of damage you deal to them. Deals reduced damage beyond $s3 targets."
   },
   {
     "name": "Frailty",
@@ -4932,7 +7519,17 @@
           "scaledValue": -3,
           "miscValue": "0x7f",
           "target": "Enemy (6)",
-          "Affected School(s)": "All"
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
         }
       },
       {
@@ -5012,7 +7609,9 @@
       "Periodic Refresh Extends Duration (436)"
     ],
     "description": "$@spelldesc247454",
-    "tooltip": "$@auracaster is healed for $w1% of all damage they deal to you.$?$w3!=0[\nDealing $w3% reduced damage to $@auracaster.][]$?$w4!=0[\nSuffering $w4% increased damage from $@auracaster.][]"
+    "tooltip": "$@auracaster is healed for $w1% of all damage they deal to you.$?$w3!=0[\nDealing $w3% reduced damage to $@auracaster.][]$?$w4!=0[\nSuffering $w4% increased damage from $@auracaster.][]",
+    "schoolMask": 4,
+    "resolvedDescription": "Consume up to 0 available Soul Fragments then explode, damaging nearby enemies for 0 Fire damage per fragment consumed, and afflicting them with Frailty for 6 sec, causing you to heal for 8% of damage you deal to them. Deals reduced damage beyond -3 targets."
   },
   {
     "name": "Immolation Aura",
@@ -5220,7 +7819,738 @@
     ],
     "auraInterrupt": "Leave World (19)",
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc1224451 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc1224451 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
-    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}"
+    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
+    "schoolMask": 4,
+    "resolvedDescription": "Engulf yourself in flames, radiating 0 Chaos damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
+  },
+  {
+    "name": "Immolation Aura",
+    "id": 258921,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 483170,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.33,
+          "radius": "0 - 8 yards",
+          "target": "At Self (22) -> Enemy in Area (15)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1042623,
+        "type": "Dummy (3)",
+        "details": {
+          "baseValue": 8,
+          "scaledValue": 8,
+          "radius": "0 - 8 yards",
+          "target": "At Self (22) -> Enemy in Area (15)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Magic",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Aura of Pain",
+        "id": 207347,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Agonizing Flames",
+        "id": 207548,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          10,
+          12,
+          13,
+          14,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Infernal Armor",
+        "id": 320331,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 320377,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Burning Wound",
+        "id": 346278,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Burning Wound",
+        "id": 391191,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "A Fire Inside",
+        "id": 427775,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 433721,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 433724,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 433737,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Flamebound",
+        "id": 452413,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demonsurge",
+        "id": 452489,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "A Fire Inside",
+        "id": 1224451,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Fel-Scarred 11.2 Class Set 2pc",
+        "id": 1236361,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "11",
+      "16",
+      "49",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Do Not Sheath (18)",
+      "No Redirection (35)",
+      "No Reflection (39)",
+      "Initiates Combat (Enables Auto-Attack) (41)",
+      "Allow Cast While Casting (135)",
+      "Always AOE Line of Sight (186)",
+      "Allow Cast While Channeling (308)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc258920",
+    "schoolMask": 4,
+    "resolvedDescription": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r"
+  },
+  {
+    "name": "Immolation Aura",
+    "id": 258922,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 483172,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.12317,
+          "radius": "0 - 8 yards",
+          "target": "At Self (22) -> Enemy in Area (15)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 483173,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 4,
+          "scaledValue": 4,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 3,
+        "effectId": 807415,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 2,
+          "scaledValue": 2,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 4,
+        "effectId": 1042693,
+        "type": "Dummy (3)",
+        "details": {
+          "baseValue": 8,
+          "scaledValue": 8,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Magic",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Aura of Pain",
+        "id": 207347,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Agonizing Flames",
+        "id": 207548,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          10,
+          12,
+          13,
+          14,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Infernal Armor",
+        "id": 320331,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 320377,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Burning Wound",
+        "id": 346278,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Burning Wound",
+        "id": 391191,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "A Fire Inside",
+        "id": 427775,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 433721,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 433724,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Immolation Aura",
+        "id": 433737,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Flamebound",
+        "id": 452413,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demonsurge",
+        "id": 452489,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "A Fire Inside",
+        "id": 1224451,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Fel-Scarred 11.2 Class Set 2pc",
+        "id": 1236361,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Immolation Aura",
+        "id": 258920
+      }
+    ],
+    "familyFlags": [
+      "11",
+      "16",
+      "61",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Do Not Sheath (18)",
+      "No Redirection (35)",
+      "No Reflection (39)",
+      "Not In Spellbook (143)",
+      "Always AOE Line of Sight (186)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc258920",
+    "schoolMask": 4,
+    "resolvedDescription": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r"
   },
   {
     "name": "Fracture",
@@ -5369,7 +8699,9 @@
       "Requires Off-Hand Weapon (120)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter $s1 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates $s4 Fury.|r"
+    "description": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter $s1 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates $s4 Fury.|r",
+    "schoolMask": 1,
+    "resolvedDescription": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 2 Lesser Soul Fragments from them.\n|cFFFFFFFFGenerates 25 Fury.|r"
   },
   {
     "name": "Void Reaver",
@@ -5428,7 +8760,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Frailty now also reduces all damage you take from afflicted targets by $s2%.\nEnemies struck by Soul Cleave are afflicted with Frailty for $247456d."
+    "description": "Frailty now also reduces all damage you take from afflicted targets by $s2%.\nEnemies struck by Soul Cleave are afflicted with Frailty for $247456d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Frailty now also reduces all damage you take from afflicted targets by -3%.\nEnemies struck by Soul Cleave are afflicted with Frailty for 6 sec."
   },
   {
     "name": "Consume Magic",
@@ -5504,7 +8838,9 @@
       "Taps immediately (215)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][]."
+    "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][].",
+    "schoolMask": 124,
+    "resolvedDescription": "Consume 1 beneficial Magic effect removing it from the target and granting you 20 Fury."
   },
   {
     "name": "Swallowed Anger",
@@ -5549,7 +8885,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Consume Magic generates $278326s2 Fury when a beneficial Magic effect is successfully removed from the target."
+    "description": "Consume Magic generates $278326s2 Fury when a beneficial Magic effect is successfully removed from the target.",
+    "schoolMask": 1,
+    "resolvedDescription": "Consume Magic generates 20 Fury when a beneficial Magic effect is successfully removed from the target."
   },
   {
     "name": "Infernal Armor",
@@ -5623,7 +8961,238 @@
       "Allow Class Ability Procs (416)"
     ],
     "description": "Immolation Aura increases your armor by $s1% and causes melee attackers to suffer ${$320334s1/$s3} $@spelldesc395020 damage.",
-    "variables": "$dmg=${$320334s1*(1+$320331s2/100)}"
+    "variables": "$dmg=${$320334s1*(1+$320331s2/100)}",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura increases your armor by 20% and causes melee attackers to suffer 0 Fire damage."
+  },
+  {
+    "name": "Infernal Armor",
+    "id": 320334,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 807352,
+        "type": "School Damage (2): fire",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 0.06,
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": "Magic",
+    "range": 100,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2432: Infernal Armor (320331 effect#2)"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Demise",
+        "id": 212818,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fires of Fel",
+        "id": 409645,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "16",
+      "70",
+      "72"
+    ],
+    "attributes": [
+      "Do Not Display Range (126)",
+      "Reactive Damage Proc (142)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc320331",
+    "schoolMask": 4,
+    "resolvedDescription": "Immolation Aura increases your armor by 0% and causes melee attackers to suffer ${$320334s1/$s3} Fire damage."
   },
   {
     "name": "Improved Disrupt",
@@ -5680,7 +9249,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Increases the range of Disrupt to ${$s2+$s1} yds."
+    "description": "Increases the range of Disrupt to ${$s2+$s1} yds.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases the range of Disrupt to 10 yds."
   },
   {
     "name": "Immolation Aura",
@@ -5730,7 +9301,9 @@
       "Only In Spellbook Until Learned (240)",
       "Cooldown Shared With AI Group (418)"
     ],
-    "description": "Reduces the cooldown of Immolation Aura by ${$abs($s0/1000)} sec."
+    "description": "Reduces the cooldown of Immolation Aura by ${$abs($s0/1000)} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reduces the cooldown of Immolation Aura by ${$abs($s0/1000)} sec."
   },
   {
     "name": "Bouncing Glaives",
@@ -5777,7 +9350,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Throw Glaive ricochets to $s1 additional $ltarget:targets;."
+    "description": "Throw Glaive ricochets to $s1 additional $ltarget:targets;.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw Glaive ricochets to 1 additional $ltarget:targets;."
   },
   {
     "name": "Perfectly Balanced Glaive",
@@ -5823,7 +9398,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Reduces the cooldown of Throw Glaive by ${$abs($s0/1000)} sec."
+    "description": "Reduces the cooldown of Throw Glaive by ${$abs($s0/1000)} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reduces the cooldown of Throw Glaive by ${$abs($s0/1000)} sec."
   },
   {
     "name": "Blazing Path",
@@ -5882,7 +9459,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "$?a212613[Infernal Strike][Fel Rush] gains an additional charge."
+    "description": "$?a212613[Infernal Strike][Fel Rush] gains an additional charge.",
+    "schoolMask": 1,
+    "resolvedDescription": "Infernal Strike gains an additional charge."
   },
   {
     "name": "Improved Sigil of Misery",
@@ -5928,7 +9507,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Reduces the cooldown of Sigil of Misery by ${$s1/-1000} sec."
+    "description": "Reduces the cooldown of Sigil of Misery by ${$s1/-1000} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reduces the cooldown of Sigil of Misery by 30 sec."
   },
   {
     "name": "Rush of Chaos",
@@ -5976,7 +9557,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Reduces the cooldown of Metamorphosis by ${$m1/-1000} sec."
+    "description": "Reduces the cooldown of Metamorphosis by ${$m1/-1000} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reduces the cooldown of Metamorphosis by -0.01 sec."
   },
   {
     "name": "Vengeful Bonds",
@@ -6021,7 +9604,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Vengeful Retreat reduces the movement speed of all nearby enemies by $198813s1% for $198813d."
+    "description": "Vengeful Retreat reduces the movement speed of all nearby enemies by $198813s1% for $198813d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Vengeful Retreat reduces the movement speed of all nearby enemies by -70% for 3 sec."
   },
   {
     "name": "Pursuit",
@@ -6067,7 +9652,9 @@
       "Mastery Affects Points (285)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Mastery increases your movement speed."
+    "description": "Mastery increases your movement speed.",
+    "schoolMask": 1,
+    "resolvedDescription": "Mastery increases your movement speed."
   },
   {
     "name": "Unrestrained Fury",
@@ -6112,7 +9699,51 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Increases maximum Fury by $s1."
+    "description": "Increases maximum Fury by $s1.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases maximum Fury by 20."
+  },
+  {
+    "name": "Mastery: Fel Blood (desc=Rank 2)",
+    "id": 321299,
+    "flags": [
+      "Spell Family (107)",
+      "Passive"
+    ],
+    "passive": true,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 808887,
+        "type": "Apply Aura (6) | Modify Melee Attack Power% (166)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "spCoefficient": 1,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Vengeance Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "spellLevel": 44,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Do Not Log (8)",
+      "Only In Spellbook Until Learned (240)",
+      "Mastery Affects Points (285)",
+      "Cooldown Shared With AI Group (418)"
+    ],
+    "description": "Mastery increases your Attack Power.",
+    "schoolMask": 1,
+    "resolvedDescription": "Mastery increases your Attack Power."
   },
   {
     "name": "Ruinous Bulwark",
@@ -6174,7 +9805,56 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Fel Devastation heals for an additional $s1%, and $s2% of its healing is converted into an absorb shield for $326863d."
+    "description": "Fel Devastation heals for an additional $s1%, and $s2% of its healing is converted into an absorb shield for $326863d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Fel Devastation heals for an additional 10%, and 100% of its healing is converted into an absorb shield for 10 sec."
+  },
+  {
+    "name": "Ruinous Bulwark",
+    "id": 326863,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 818077,
+        "type": "Apply Aura (6) | Absorb Damage (69)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "miscValue": "0x7f",
+          "target": "Self (1)",
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Shadow",
+    "spellType": "Magic",
+    "duration": 10,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Aura Points On Client (268)"
+    ],
+    "tooltip": "Absorbs $w1 damage.",
+    "schoolMask": 32
   },
   {
     "name": "Charred Flesh",
@@ -6221,7 +9901,216 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Immolation Aura damage increases the duration of your Fiery Brand and Sigil of Flame by ${$s1/1000}.2 sec."
+    "description": "Immolation Aura damage increases the duration of your Fiery Brand and Sigil of Flame by ${$s1/1000}.2 sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura damage increases the duration of your Fiery Brand and Sigil of Flame by 0.25.2 sec."
+  },
+  {
+    "name": "Throw Glaive",
+    "id": 337819,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 836037,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 0.492352,
+          "Chain Multiplier": "1",
+          "Chain Targets": "2",
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 30,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "4215"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Mo'arg Bionic Stabilizers",
+        "id": 208826,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          3,
+          4,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Bouncing Glaives",
+        "id": 320386,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Serrated Glaive",
+        "id": 390155,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Accelerated Blade",
+        "id": 391275,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Champion of the Glaive",
+        "id": 429211,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc",
+        "id": 1236358,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Throw Glaive",
+        "id": 185123
+      }
+    ],
+    "familyFlags": [
+      "5",
+      "16",
+      "32",
+      "42",
+      "58",
+      "85"
+    ],
+    "attributes": [
+      "Do Not Sheath (18)",
+      "No Active Defense (21)",
+      "Initiates Combat (Enables Auto-Attack) (41)",
+      "Active Threat (94)",
+      "Allow Cast While Casting (135)",
+      "Bouncy Chain Missiles (146)",
+      "Treat as Area Effect (175)",
+      "Do Not Chain To Crowd-Controlled Targets (200)",
+      "Show Mechanic as Combat Text (213)",
+      "Do Not Auto Select Target with Initiates Combat (220)",
+      "Allow Cast While Channeling (308)",
+      "Enforce Facing on Primary Target Only (351)",
+      "Active Passive (393)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "Throw a demonic glaive at the target, dealing $s1 Physical damage. The glaive can ricochet to $?$s320386[${$x1-1} additional enemies][an additional enemy] within 10 yards.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
   },
   {
     "name": "Fiery Brand",
@@ -6267,7 +10156,61 @@
       "No Aura Log (202)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "The duration of Fiery Brand is increased by ${$s1/1000} sec."
+    "description": "The duration of Fiery Brand is increased by ${$s1/1000} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "The duration of Fiery Brand is increased by 2 sec."
+  },
+  {
+    "name": "Revel in Pain",
+    "id": 343013,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 844533,
+        "type": "Apply Aura (6) | Absorb Damage (69)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "miscValue": "0x7f",
+          "target": "Self (1)",
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Fire",
+    "spellType": null,
+    "duration": 15,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Suppress Caster Procs (112)",
+      "Suppress Weapon Procs (151)",
+      "Aura Points On Client (268)",
+      "Recompute Aura On Level Scale (446)"
+    ],
+    "description": "$@spelldesc343010",
+    "tooltip": "Absorbs $w1 damage.",
+    "schoolMask": 4,
+    "resolvedDescription": "The duration of Fiery Brand is increased by 0 sec."
   },
   {
     "name": "Revel in Pain",
@@ -6326,7 +10269,9 @@
       "Aura Points On Client (268)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "When Fiery Brand expires on your primary target, you gain a shield that absorbs up ${$AP*($s2/100)*(1+$@versadmg)} damage for $343013d, based on your damage dealt to them while Fiery Brand was active."
+    "description": "When Fiery Brand expires on your primary target, you gain a shield that absorbs up ${$AP*($s2/100)*(1+$@versadmg)} damage for $343013d, based on your damage dealt to them while Fiery Brand was active.",
+    "schoolMask": 1,
+    "resolvedDescription": "When Fiery Brand expires on your primary target, you gain a shield that absorbs up ${$AP*($s2/100)*(1+$@versadmg)} damage for 15 sec, based on your damage dealt to them while Fiery Brand was active."
   },
   {
     "name": "Focused Cleave",
@@ -6371,7 +10316,9 @@
       "Aura Points On Client (268)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Soul Cleave deals $s1% increased damage to your primary target."
+    "description": "Soul Cleave deals $s1% increased damage to your primary target.",
+    "schoolMask": 1,
+    "resolvedDescription": "Soul Cleave deals 50% increased damage to your primary target."
   },
   {
     "name": "Fiery Demise",
@@ -6425,7 +10372,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Fiery Brand also increases Fire damage you deal to the target by $s1%."
+    "description": "Fiery Brand also increases Fire damage you deal to the target by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Fiery Brand also increases Fire damage you deal to the target by 15%."
   },
   {
     "name": "Tactical Retreat",
@@ -6473,7 +10422,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Vengeful Retreat has a ${$s1/-1000} sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over $389890d."
+    "description": "Vengeful Retreat has a ${$s1/-1000} sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over $389890d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Vengeful Retreat has a 5 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
   },
   {
     "name": "Will of the Illidari",
@@ -6521,7 +10472,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases maximum health by $s1%."
+    "description": "Increases maximum health by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases maximum health by 5%."
   },
   {
     "name": "Illidari Knowledge",
@@ -6543,7 +10496,16 @@
           "PvP Coefficient": "0.6",
           "miscValue": "0x7e",
           "target": "Self (1)",
-          "Affected School(s)": "Arcane, Fire, Frost, Holy, Nature, Shadow"
+          "Affected School(s)": "Arcane, Fire, Frost, Holy, Nature, Shadow",
+          "schoolMask": 126,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
         }
       }
     ],
@@ -6572,7 +10534,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Reduces magic damage taken by $s1%."
+    "description": "Reduces magic damage taken by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reduces magic damage taken by -5%."
   },
   {
     "name": "Fel Flame Fortification",
@@ -6616,7 +10580,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "You take $393009s1% reduced magic damage while Immolation Aura is active."
+    "description": "You take $393009s1% reduced magic damage while Immolation Aura is active.",
+    "schoolMask": 1,
+    "resolvedDescription": "You take -10% reduced magic damage while Immolation Aura is active."
   },
   {
     "name": "Darkglare Boon",
@@ -6691,7 +10657,9 @@
       "Aura Points On Client (268)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "When Fel Devastation finishes fully channeling, it refreshes $s1-$s2% of its cooldown and refunds $s3-$s4 Fury."
+    "description": "When Fel Devastation finishes fully channeling, it refreshes $s1-$s2% of its cooldown and refunds $s3-$s4 Fury.",
+    "schoolMask": 1,
+    "resolvedDescription": "When Fel Devastation finishes fully channeling, it refreshes 15-30% of its cooldown and refunds 15-30 Fury."
   },
   {
     "name": "Soulmonger",
@@ -6739,7 +10707,9 @@
       "Aura Points On Client (268)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}."
+    "description": "When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}.",
+    "schoolMask": 1,
+    "resolvedDescription": "When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}."
   },
   {
     "name": "Chains of Anger",
@@ -6801,7 +10771,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases the duration of your Sigils by ${$s2/1000} sec and radius by $s1 yds."
+    "description": "Increases the duration of your Sigils by ${$s2/1000} sec and radius by $s1 yds.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases the duration of your Sigils by 2 sec and radius by 2 yds."
   },
   {
     "name": "Cycle of Binding",
@@ -6849,7 +10821,9 @@
       "Aura Points On Client (268)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Sigil of Flame reduces the cooldown of your Sigils by $s1 sec."
+    "description": "Sigil of Flame reduces the cooldown of your Sigils by $s1 sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Sigil of Flame reduces the cooldown of your Sigils by 5 sec."
   },
   {
     "name": "Calcified Spikes",
@@ -6893,7 +10867,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "You take $391171s2% reduced damage after Demon Spikes ends, fading by 1% per second."
+    "description": "You take $391171s2% reduced damage after Demon Spikes ends, fading by 1% per second.",
+    "schoolMask": 1,
+    "resolvedDescription": "You take -12% reduced damage after Demon Spikes ends, fading by 1% per second."
   },
   {
     "name": "Extended Spikes",
@@ -6940,7 +10916,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Increases the duration of Demon Spikes by ${$s1/1000} sec."
+    "description": "Increases the duration of Demon Spikes by ${$s1/1000} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases the duration of Demon Spikes by 2 sec."
   },
   {
     "name": "Meteoric Strikes",
@@ -6987,7 +10965,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Reduce the cooldown of Infernal Strike by ${$s1/-1000} sec."
+    "description": "Reduce the cooldown of Infernal Strike by ${$s1/-1000} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reduce the cooldown of Infernal Strike by 10 sec."
   },
   {
     "name": "Retaliation",
@@ -7037,7 +11017,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "While Demon Spikes is active, melee attacks against you cause the attacker to take $391159s1 Physical damage. Generates high threat."
+    "description": "While Demon Spikes is active, melee attacks against you cause the attacker to take $391159s1 Physical damage. Generates high threat.",
+    "schoolMask": 1,
+    "resolvedDescription": "While Demon Spikes is active, melee attacks against you cause the attacker to take 0 Physical damage. Generates high threat."
   },
   {
     "name": "Down in Flames",
@@ -7090,7 +11072,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Fiery Brand has ${$s1/-1000} sec reduced cooldown and $s2 additional $lcharge:charges;."
+    "description": "Fiery Brand has ${$s1/-1000} sec reduced cooldown and $s2 additional $lcharge:charges;.",
+    "schoolMask": 1,
+    "resolvedDescription": "Fiery Brand has 12 sec reduced cooldown and 1 additional $lcharge:charges;."
   },
   {
     "name": "Master of the Glaive",
@@ -7144,7 +11128,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by $213405s1% for $213405d."
+    "description": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by $213405s1% for $213405d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw Glaive has 2 charges and snares all enemies hit by -50% for 6 sec."
   },
   {
     "name": "Long Night",
@@ -7184,7 +11170,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases the duration of Darkness by ${$s1/1000} sec."
+    "description": "Increases the duration of Darkness by ${$s1/1000} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases the duration of Darkness by 3 sec."
   },
   {
     "name": "Pitch Black",
@@ -7224,7 +11212,43 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Reduces the cooldown of Darkness by ${$s1/-1000} sec."
+    "description": "Reduces the cooldown of Darkness by ${$s1/-1000} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reduces the cooldown of Darkness by 120 sec."
+  },
+  {
+    "name": "Sigil of Flame",
+    "id": 389787,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1026256,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 30,
+          "scaledValue": 30,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "spellLevel": 1,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "description": "$@spelldesc204596",
+    "schoolMask": 1,
+    "resolvedDescription": "Place a Sigil of Flame at the target location that activates after $d.\nDeals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil.\n|CFFffffffGenerates 30 Fury.|R"
   },
   {
     "name": "Shattered Restoration",
@@ -7269,7 +11293,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "The healing of Shattered Souls is increased by $s1%."
+    "description": "The healing of Shattered Souls is increased by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "The healing of Shattered Souls is increased by 10%."
   },
   {
     "name": "Felfire Haste",
@@ -7317,7 +11343,56 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "$?c1[Fel Rush][Infernal Strike] increases your movement speed by $389847s1% for $389847d."
+    "description": "$?c1[Fel Rush][Infernal Strike] increases your movement speed by $389847s1% for $389847d.",
+    "schoolMask": 1,
+    "resolvedDescription": "$?c1[Fel Rush][Infernal Strike] increases your movement speed by 10% for 8 sec."
+  },
+  {
+    "name": "Felfire Haste",
+    "id": 389847,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1026354,
+        "type": "Apply Aura (6) | Increase Speed% (31)",
+        "details": {
+          "baseValue": 10,
+          "scaledValue": 10,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Magic",
+    "spellType": null,
+    "spellLevel": 1,
+    "duration": 8,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "triggeredBy": [
+      {
+        "name": "Felfire Haste",
+        "id": 389846
+      }
+    ],
+    "attributes": [
+      "Do Not Display Range (126)",
+      "Aura Points On Client (268)",
+      "Not In Spellbook Until Learned (269)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc389846",
+    "tooltip": "Movement speed increased by $w1%.",
+    "schoolMask": 126,
+    "resolvedDescription": "$?c1[Fel Rush][Infernal Strike] increases your movement speed by 10% for 8 sec."
   },
   {
     "name": "Lost in Darkness",
@@ -7378,7 +11453,328 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Spectral Sight has ${$s1/-1000} sec reduced cooldown and no longer reduces movement speed."
+    "description": "Spectral Sight has ${$s1/-1000} sec reduced cooldown and no longer reduces movement speed.",
+    "schoolMask": 1,
+    "resolvedDescription": "Spectral Sight has 5 sec reduced cooldown and no longer reduces movement speed."
+  },
+  {
+    "name": "Sigil of Spite",
+    "id": 389860,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1026374,
+        "type": "School Damage (2): chromatic",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "delta": 0.05,
+          "apCoefficient": 4.613,
+          "radius": "8 yards",
+          "target": "At Enemy in Area (16)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1026375,
+        "type": "Trigger Spell (64): Elysian Decree",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "triggerSpell": 339893,
+          "target": "Unknown(87)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Chromatic",
+    "spellType": "Magic",
+    "spellLevel": 48,
+    "range": 100,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Mastery: Demonic Presence",
+        "id": 185164,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Concentrated Sigils",
+        "id": 207666,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207744,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Fiery Brand",
+        "id": 207771,
+        "effects": [
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Any Means Necessary",
+        "id": 388114,
+        "effects": [
+          1,
+          3,
+          4
+        ]
+      },
+      {
+        "name": "Chains of Anger",
+        "id": 389715,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Precise Sigils",
+        "id": 389799,
+        "effects": [
+          5
+        ]
+      },
+      {
+        "name": "Burning Blood",
+        "id": 390213,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hide",
+        "id": 428241,
+        "effects": [
+          1,
+          3
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "16",
+      "33",
+      "43",
+      "70",
+      "92"
+    ],
+    "attributes": [
+      "Allow While Mounted (24)",
+      "Allow While Sitting (27)",
+      "Allow While Stealthed (37)",
+      "Ignore Line of Sight (66)",
+      "Allow While Invisible (78)",
+      "Not an Action (92)",
+      "Active Threat (94)",
+      "Do Not Display Range (126)",
+      "Allow Cast While Casting (135)",
+      "Allow While Stunned (163)",
+      "Allow While Fleeing (177)",
+      "Allow While Confused (178)",
+      "Always AOE Line of Sight (186)",
+      "Taps immediately (215)",
+      "Allow While Charmed (261)",
+      "Aura Points On Client (268)",
+      "Not In Spellbook Until Learned (269)",
+      "Allow Cast While Channeling (308)",
+      "Allow While Stunned By Horror Mechanic (342)",
+      "Allow While Stunned by Stun Mechanic (378)",
+      "Allow Class Ability Procs (416)",
+      "Allow While Feared By Fear Mechanic (417)"
+    ],
+    "description": "$@spelldesc306830",
+    "schoolMask": 124,
+    "resolvedDescription": "$@spelldesc306830"
+  },
+  {
+    "name": "Tactical Retreat",
+    "id": 389890,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1026431,
+        "type": "Apply Aura (6) | Periodic Energize Power (24): every 1 seconds",
+        "details": {
+          "baseValue": 8,
+          "scaledValue": 8,
+          "miscValue": "17",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "duration": 10,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc389688",
+    "tooltip": "Generating $s1 Fury every $t sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Vengeful Retreat has a -0.01 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
   },
   {
     "name": "Frailty",
@@ -7423,7 +11819,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Enemies struck by Sigil of Flame are afflicted with Frailty for $247456d.\nYou heal for $247456s1% of all damage you deal to targets with Frailty."
+    "description": "Enemies struck by Sigil of Flame are afflicted with Frailty for $247456d.\nYou heal for $247456s1% of all damage you deal to targets with Frailty.",
+    "schoolMask": 1,
+    "resolvedDescription": "Enemies struck by Sigil of Flame are afflicted with Frailty for 6 sec.\nYou heal for 8% of all damage you deal to targets with Frailty."
   },
   {
     "name": "Vulnerability",
@@ -7468,7 +11866,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Frailty now also increases all damage you deal to afflicted targets by $s1%."
+    "description": "Frailty now also increases all damage you deal to afflicted targets by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Frailty now also increases all damage you deal to afflicted targets by 2%."
   },
   {
     "name": "Soulcrush",
@@ -7526,7 +11926,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Multiple applications of Frailty may overlap.\nSoul Cleave applies Frailty to your primary target for $s2 sec."
+    "description": "Multiple applications of Frailty may overlap.\nSoul Cleave applies Frailty to your primary target for $s2 sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Multiple applications of Frailty may overlap.\nSoul Cleave applies Frailty to your primary target for 8 sec."
   },
   {
     "name": "Sigil of Spite",
@@ -7643,7 +12045,9 @@
       "Not In Spellbook Until Learned (269)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Place a demonic sigil at the target location that activates after $d.\nDetonates to deal $389860s1 Chaos damage and shatter up to $s3 Lesser Soul Fragments from enemies affected by the sigil. Deals reduced damage beyond $s1 targets."
+    "description": "Place a demonic sigil at the target location that activates after $d.\nDetonates to deal $389860s1 Chaos damage and shatter up to $s3 Lesser Soul Fragments from enemies affected by the sigil. Deals reduced damage beyond $s1 targets.",
+    "schoolMask": 124,
+    "resolvedDescription": "Place a demonic sigil at the target location that activates after 2 sec.\nDetonates to deal 0 Chaos damage and shatter up to 3 Lesser Soul Fragments from enemies affected by the sigil. Deals reduced damage beyond 5 targets."
   },
   {
     "name": "Burning Blood",
@@ -7706,7 +12110,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Fire damage increased by $s1%."
+    "description": "Fire damage increased by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Fire damage increased by 8%."
   },
   {
     "name": "Volatile Flameblood",
@@ -7775,7 +12181,193 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Immolation Aura generates $m-$M Fury when it deals critical damage.\nThis effect may only occur once per ${$proccooldown+0.1} sec."
+    "description": "Immolation Aura generates $m-$M Fury when it deals critical damage.\nThis effect may only occur once per ${$proccooldown+0.1} sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura generates $m-$M Fury when it deals critical damage.\nThis effect may only occur once per ${$proccooldown+0.1} sec."
+  },
+  {
+    "name": "Demon Spikes",
+    "id": 391159,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1028481,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 0.156,
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 100,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "70"
+    ],
+    "attributes": [
+      "Do Not Display Range (126)",
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc389729",
+    "tooltip": "Deals $w1 Physical damage back to attackers.",
+    "schoolMask": 1,
+    "resolvedDescription": "While Demon Spikes is active, melee attacks against you cause the attacker to take 0 Physical damage. Generates high threat."
+  },
+  {
+    "name": "Calcified Spikes",
+    "id": 391171,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1028499,
+        "type": "Apply Aura (6) | Modify Damage Taken% (87)",
+        "details": {
+          "baseValue": -12,
+          "scaledValue": -12,
+          "miscValue": "0x7f",
+          "target": "Self (1)",
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1028500,
+        "type": "Apply Aura (6) | Periodic Trigger Spell (23): Unknown(0) every 1 seconds",
+        "details": {
+          "baseValue": -12,
+          "scaledValue": -12,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "duration": 12,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Do Not Sheath (18)",
+      "Allow While Mounted (24)",
+      "Allow While Sitting (27)",
+      "No Threat (42)",
+      "Include In Advanced Combat Log (72)",
+      "Do Not Display Range (126)",
+      "Allow Cast While Casting (135)",
+      "Not In Spellbook (143)",
+      "Aura Never Bounces (148)",
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$@spelldesc389720",
+    "tooltip": "Damage taken reduced by $w1%, fading over $d.",
+    "schoolMask": 1,
+    "resolvedDescription": "You take -12% reduced damage after Demon Spikes ends, fading by 1% per second."
   },
   {
     "name": "Roaring Fire",
@@ -7814,7 +12406,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Fel Devastation heals you for up to $s1% more, based on your missing health."
+    "description": "Fel Devastation heals you for up to $s1% more, based on your missing health.",
+    "schoolMask": 1,
+    "resolvedDescription": "Fel Devastation heals you for up to 50% more, based on your missing health."
   },
   {
     "name": "Accelerated Blade",
@@ -7875,7 +12469,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Throw Glaive deals $s2% increased damage, reduced by ${$s2/2}% for each previous enemy hit."
+    "description": "Throw Glaive deals $s2% increased damage, reduced by ${$s2/2}% for each previous enemy hit.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw Glaive deals 60% increased damage, reduced by 30% for each previous enemy hit."
   },
   {
     "name": "Erratic Felheart",
@@ -7934,7 +12530,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "The cooldown of $?a212613[Infernal Strike ][Fel Rush ]is reduced by ${-1*$s1}%."
+    "description": "The cooldown of $?a212613[Infernal Strike ][Fel Rush ]is reduced by ${-1*$s1}%.",
+    "schoolMask": 1,
+    "resolvedDescription": "The cooldown of Infernal Strike is reduced by 10%."
   },
   {
     "name": "Aldrachi Design",
@@ -7982,7 +12580,56 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases your chance to parry by $s1%."
+    "description": "Increases your chance to parry by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases your chance to parry by 3%."
+  },
+  {
+    "name": "Fel Flame Fortification",
+    "id": 393009,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1031649,
+        "type": "Apply Aura (6) | Modify Damage Taken% (87)",
+        "details": {
+          "baseValue": -10,
+          "scaledValue": -10,
+          "miscValue": "0x7e",
+          "target": "Self (1)",
+          "Affected School(s)": "Arcane, Fire, Frost, Holy, Nature, Shadow",
+          "schoolMask": 126,
+          "schoolNames": [
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Include In Advanced Combat Log (72)"
+    ],
+    "description": "$@spelldesc337546",
+    "tooltip": "Magic damage taken reduced by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "$@spelldesc337546"
   },
   {
     "name": "Internal Struggle",
@@ -8032,7 +12679,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Increases your mastery by ${$s1*$mas}.1%."
+    "description": "Increases your mastery by ${$s1*$mas}.1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Increases your mastery by ${$s1*$mas}.1%."
   },
   {
     "name": "Stoke the Flames",
@@ -8091,7 +12740,52 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Fel Devastation damage increased by $s1%."
+    "description": "Fel Devastation damage increased by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Fel Devastation damage increased by 35%."
+  },
+  {
+    "name": "Any Means Necessary",
+    "id": 395020,
+    "flags": [
+      "Spell Family (107)",
+      "Passive",
+      "Hidden"
+    ],
+    "passive": true,
+    "hidden": true,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1035157,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2356: Any Means Necessary (394486 effect#1), Any Means Necessary (394486 effect#2), Any Means Necessary (394486 effect#3), Any Means Necessary (394486 effect#4)"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Do Not Display (Spellbook",
+      "Aura Icon",
+      "Combat Log) (7)",
+      "Do Not Log (8)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$?a388114[Chaos][Fire]",
+    "schoolMask": 1,
+    "resolvedDescription": "Fire"
   },
   {
     "name": "Soul Sigils",
@@ -8139,7 +12833,113 @@
       "Aura Points On Client (268)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Afflicting an enemy with a Sigil generates $m1 Lesser Soul $LFragment:Fragments;."
+    "description": "Afflicting an enemy with a Sigil generates $m1 Lesser Soul $LFragment:Fragments;.",
+    "schoolMask": 1,
+    "resolvedDescription": "Afflicting an enemy with a Sigil generates $m1 Lesser Soul $LFragment:Fragments;."
+  },
+  {
+    "name": "A Fire Inside",
+    "id": 427775,
+    "flags": [
+      "Spell Family (107)",
+      "Passive"
+    ],
+    "passive": true,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1107525,
+        "type": "Apply Aura (6) | Modify Cooldown Charge (Category) (411)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "miscValue": "1676 (Category)",
+          "target": "Self (1)",
+          "Affected Spells (Category)": "Immolation Aura (258920), Immolation Aura (427917), Consuming Fire (452487), Consuming Fire (456640)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1107526,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 3,
+        "effectId": 1107803,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 30,
+          "scaledValue": 30,
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 4,
+        "effectId": 1157661,
+        "type": "Apply Aura (6) | Modify Cooldown Charge (Category) (411)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "miscValue": "2298 (Category)",
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 5,
+        "effectId": 1213094,
+        "type": "Apply Aura (6) | Modify Spell School (220)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "miscValue": "127",
+          "target": "Self (1)",
+          "Affected Spells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
+          "Family Flags": "49, 61"
+        }
+      },
+      {
+        "index": 6,
+        "effectId": 1213095,
+        "type": "Apply Aura (6) | Unknown(285)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "triggerSpell": 1224451,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "talentEntry": {
+      "spec": "Havoc",
+      "tree": "spec",
+      "row": 10,
+      "col": 1,
+      "maxRank": 1,
+      "reqPoints": 20
+    },
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Not In Spellbook (143)",
+      "Do Not Log on Learn (355)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, $s3% chance to refund a charge when used, and deals Chaos damage instead of Fire.\nYou can have multiple Immolation Auras active at a time.",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura has 1676 (Category) additional $Lcharge:charges;, 30% chance to refund a charge when used, and deals Chaos damage instead of Fire.\nYou can have multiple Immolation Auras active at a time."
   },
   {
     "name": "Immolation Aura",
@@ -8324,7 +13124,9 @@
     ],
     "auraInterrupt": "Leave World (19)",
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc395020 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc395020 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
-    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}"
+    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
+    "schoolMask": 4,
+    "resolvedDescription": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
   },
   {
     "name": "Immolation Aura",
@@ -8509,7 +13311,9 @@
     ],
     "auraInterrupt": "Leave World (19)",
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc395020 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc395020 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
-    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}"
+    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
+    "schoolMask": 4,
+    "resolvedDescription": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
   },
   {
     "name": "Immolation Aura",
@@ -8694,7 +13498,9 @@
     ],
     "auraInterrupt": "Leave World (19)",
     "description": "Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc395020 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc395020 damage over $d.$?s320374[\n|cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[\n|cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]",
-    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}"
+    "tooltip": "Burning nearby enemies for $258922s1 $@spelldesc395020 damage every $t1 sec.$?a207548[\nMovement speed increased by $w4%.][]$?a320331[\nArmor increased by $w5%. Attackers suffer $@spelldesc395020 damage.][]\nVariables        : $havocFury=${$s2}\n$vengeFury=${$s3+($258922s3*$d)}\n$havocTalentFury=${$s2+($258922s2*$d)}",
+    "schoolMask": 4,
+    "resolvedDescription": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[\n|cFFFFFFFFGenerates $<havocFury> Fury.|r][]\n|cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
   },
   {
     "name": "Demon Hide",
@@ -8729,7 +13535,11 @@
           "PvP Coefficient": "0.6",
           "miscValue": "0x1",
           "target": "Self (1)",
-          "Affected School(s)": "Physical"
+          "Affected School(s)": "Physical",
+          "schoolMask": 1,
+          "schoolNames": [
+            "Physical"
+          ]
         }
       },
       {
@@ -8770,7 +13580,9 @@
       "Combat Log) (7)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Magical damage increased by $s1%, and Physical damage taken reduced by $s2%."
+    "description": "Magical damage increased by $s1%, and Physical damage taken reduced by $s2%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Magical damage increased by 3%, and Physical damage taken reduced by -5%."
   },
   {
     "name": "Ascending Flame",
@@ -8831,7 +13643,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Sigil of Flame's initial damage is increased by $s2%.\nMultiple applications of Sigil of Flame may overlap."
+    "description": "Sigil of Flame's initial damage is increased by $s2%.\nMultiple applications of Sigil of Flame may overlap.",
+    "schoolMask": 1,
+    "resolvedDescription": "Sigil of Flame's initial damage is increased by 50%.\nMultiple applications of Sigil of Flame may overlap."
   },
   {
     "name": "Live by the Glaive",
@@ -8879,7 +13693,66 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "When you parry an attack or have one of your attacks parried, restore $428608s2% of max health and $428608s1 Fury.\nThis effect may only occur once every $s1 sec."
+    "description": "When you parry an attack or have one of your attacks parried, restore $428608s2% of max health and $428608s1 Fury.\nThis effect may only occur once every $s1 sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury.\nThis effect may only occur once every 5 sec."
+  },
+  {
+    "name": "Live by the Glaive",
+    "id": 428608,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1109570,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 10,
+          "scaledValue": 10,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1109571,
+        "type": "Direct Heal% (136)",
+        "details": {
+          "baseValue": 2,
+          "scaledValue": 2,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "triggeredBy": [
+      {
+        "name": "Live by the Glaive",
+        "id": 428607
+      }
+    ],
+    "attributes": [
+      "Can't Crit (93)",
+      "Not In Spellbook (143)",
+      "Ignore Healing Modifiers (219)",
+      "Do Not Log on Learn (355)",
+      "Allow Class Ability Procs (416)",
+      "Always Allow Negative Healing Percent Modifiers (442)"
+    ],
+    "description": "$@spelldesc428607",
+    "schoolMask": 1,
+    "resolvedDescription": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury.\nThis effect may only occur once every 10 sec."
   },
   {
     "name": "Champion of the Glaive",
@@ -8933,7 +13806,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Throw Glaive has ${$s2+1} charges and $s1 yard increased range."
+    "description": "Throw Glaive has ${$s2+1} charges and $s1 yard increased range.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw Glaive has 2 charges and 10 yard increased range."
   },
   {
     "name": "Immolation Aura",
@@ -8976,7 +13851,9 @@
       "Allow Class Ability Procs (416)"
     ],
     "auraInterrupt": "Leave World (19), Change Specialization (38), Change Talent (46)",
-    "description": "$@spelldesc427775"
+    "description": "$@spelldesc427775",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura has $m1 additional $Lcharge:charges;, $s3% chance to refund a charge when used, and deals Chaos damage instead of Fire.\nYou can have multiple Immolation Auras active at a time."
   },
   {
     "name": "Immolation Aura",
@@ -9020,7 +13897,9 @@
       "Allow Class Ability Procs (416)"
     ],
     "auraInterrupt": "Leave World (19), Change Specialization (38), Change Talent (46)",
-    "description": "$@spelldesc427775"
+    "description": "$@spelldesc427775",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura has $m1 additional $Lcharge:charges;, $s3% chance to refund a charge when used, and deals Chaos damage instead of Fire.\nYou can have multiple Immolation Auras active at a time."
   },
   {
     "name": "Immolation Aura",
@@ -9064,7 +13943,9 @@
       "Allow Class Ability Procs (416)"
     ],
     "auraInterrupt": "Leave World (19), Change Specialization (38), Change Talent (46)",
-    "description": "$@spelldesc427775"
+    "description": "$@spelldesc427775",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura has $m1 additional $Lcharge:charges;, $s3% chance to refund a charge when used, and deals Chaos damage instead of Fire.\nYou can have multiple Immolation Auras active at a time."
   },
   {
     "name": "Immolation Aura",
@@ -9108,7 +13989,9 @@
       "Allow Class Ability Procs (416)"
     ],
     "auraInterrupt": "Leave World (19), Change Specialization (38), Change Talent (46)",
-    "description": "$@spelldesc427775"
+    "description": "$@spelldesc427775",
+    "schoolMask": 1,
+    "resolvedDescription": "Immolation Aura has $m1 additional $Lcharge:charges;, $s3% chance to refund a charge when used, and deals Chaos damage instead of Fire.\nYou can have multiple Immolation Auras active at a time."
   },
   {
     "name": "Art of the Glaive",
@@ -9181,7 +14064,261 @@
       "Do Not Log on Learn (355)"
     ],
     "description": "Consuming $?a212612[$s1][$s2] Soul Fragments or casting The Hunt converts your next Throw Glaive into Reaver's Glaive.\n$@spellicon442294 $@spellname442294:\n$@spelldesc442294",
-    "variables": "$frags = $?a212612[$s1][$s2]"
+    "variables": "$frags = $?a212612[$s1][$s2]",
+    "schoolMask": 1,
+    "resolvedDescription": "Consuming 20 Soul Fragments or casting The Hunt converts your next Throw Glaive into Reaver's Glaive.\n$@spellicon442294 $@spellname442294:\nThrow a glaive enhanced with the essence of consumed souls at your target, dealing 6 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;.\nBegins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave.\nThe enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage.\n|CFFffffffGenerates 20 Fury.|R"
+  },
+  {
+    "name": "Reaver's Glaive",
+    "id": 442294,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1137380,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 3.45,
+          "Chain Multiplier": "1",
+          "Chain Targets": "3",
+          "target": "Enemy (6)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1137756,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 40,
+    "gcd": 1.5,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "3349: Keen Engagement (442497 effect#1), Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc (1236358 effect#5)",
+      "3367: Havoc Demon Hunter (212612 effect#16), Havoc Demon Hunter (212612 effect#17), Havoc Demon Hunter (212612 effect#20), Havoc Demon Hunter (212612 effect#21), Thrill of the Fight (442688 effect#3), Thrill of the Fight (442688 effect#4), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "4215"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Soul",
+        "id": 163073,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Exergy",
+        "id": 208628,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Mo'arg Bionic Stabilizers",
+        "id": 208826,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Havoc Demon Hunter",
+        "id": 212612,
+        "effects": [
+          1,
+          2,
+          3,
+          12,
+          13,
+          18,
+          19
+        ]
+      },
+      {
+        "name": "Vengeance Demon Hunter",
+        "id": 212613,
+        "effects": [
+          1,
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Frailty",
+        "id": 247456,
+        "effects": [
+          4
+        ]
+      },
+      {
+        "name": "Chaos Blades",
+        "id": 247938,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Bouncing Glaives",
+        "id": 320386,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 347765,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Serrated Glaive",
+        "id": 390155,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Accelerated Blade",
+        "id": 391275,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Seething Chaos",
+        "id": 394934,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Fiery Resolve",
+        "id": 425653,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Inertia",
+        "id": 427641,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Champion of the Glaive",
+        "id": 429211,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Reaver's Mark",
+        "id": 442624,
+        "effects": [
+          1
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 442688,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Luck of the Draw!",
+        "id": 1219012,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Thrill of the Fight",
+        "id": 1227062,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc",
+        "id": 1236358,
+        "effects": [
+          2,
+          3
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238675,
+        "effects": [
+          1,
+          2
+        ]
+      },
+      {
+        "name": "Demon Soul",
+        "id": 1238676,
+        "effects": [
+          1,
+          2
+        ]
+      }
+    ],
+    "familyFlags": [
+      "5",
+      "16",
+      "32",
+      "58",
+      "70"
+    ],
+    "attributes": [
+      "Is Ability (4)",
+      "Not Shapeshifted (16)",
+      "Do Not Sheath (18)",
+      "No Active Defense (21)",
+      "Initiates Combat (Enables Auto-Attack) (41)",
+      "Bouncy Chain Missiles (146)",
+      "Treat as Area Effect (175)",
+      "Do Not Chain To Crowd-Controlled Targets (200)",
+      "Show Mechanic as Combat Text (213)",
+      "Do Not Auto Select Target with Initiates Combat (220)",
+      "Enforce Facing on Primary Target Only (351)",
+      "Allow Class Ability Procs (416)",
+      "Interrupts Current Cast (419)"
+    ],
+    "description": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing $s1 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;.\nBegins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and $?a212612[Blade Dance][Soul Cleave].\nThe enhanced ability you cast first deals $442290s3% increased damage, and the second deals $442290s4% increased damage.$?a442497[\n|CFFffffffGenerates $s2 Fury.|R][]",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to 2 additional $Lenemy:enemies;.\nBegins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave.\nThe enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage.\n|CFFffffffGenerates 0 Fury.|R"
   },
   {
     "name": "Incisive Blade",
@@ -9219,7 +14356,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "$?a212612[Chaos Strike][Soul Cleave] deals $s1% increased damage."
+    "description": "$?a212612[Chaos Strike][Soul Cleave] deals $s1% increased damage.",
+    "schoolMask": 1,
+    "resolvedDescription": "Soul Cleave deals 10% increased damage."
   },
   {
     "name": "Keen Engagement",
@@ -9259,7 +14398,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Reaver's Glaive generates $s1 Fury."
+    "description": "Reaver's Glaive generates $s1 Fury.",
+    "schoolMask": 1,
+    "resolvedDescription": "Reaver's Glaive generates 20 Fury."
   },
   {
     "name": "Warblade's Hunger",
@@ -9309,7 +14450,62 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal $442507s1 additional Physical damage.$?a212612[\nFelblade consumes up to $s2 nearby Soul Fragments.][]"
+    "description": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal $442507s1 additional Physical damage.$?a212612[\nFelblade consumes up to $s2 nearby Soul Fragments.][]",
+    "schoolMask": 1,
+    "resolvedDescription": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal 0 additional Physical damage."
+  },
+  {
+    "name": "Warblade's Hunger",
+    "id": 442507,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1137775,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 0.4,
+          "target": "Enemy (6)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 5,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "3351: Warblade's Hunger (442503 effect#1)",
+      "3367: Havoc Demon Hunter (212612 effect#16), Havoc Demon Hunter (212612 effect#17), Havoc Demon Hunter (212612 effect#20), Havoc Demon Hunter (212612 effect#21), Thrill of the Fight (442688 effect#3), Thrill of the Fight (442688 effect#4), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "4215"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc",
+        "id": 1236358,
+        "effects": [
+          2,
+          3
+        ]
+      }
+    ],
+    "familyFlags": [
+      "58"
+    ],
+    "attributes": [
+      "Aura Points On Client (268)"
+    ],
+    "description": "$@spelldesc442502",
+    "schoolMask": 1,
+    "resolvedDescription": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal 0 additional Physical damage."
   },
   {
     "name": "Reaver's Mark",
@@ -9365,7 +14561,9 @@
       "Do Not Consume Aura Stack On Proc (428)"
     ],
     "description": "$@spelldesc442679",
-    "tooltip": "Taking $w1% increased damage from $@auracaster."
+    "tooltip": "Taking $w1% increased damage from $@auracaster.",
+    "schoolMask": 1,
+    "resolvedDescription": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take 7% increased damage for 20 sec. Max $442624u stacks.\nApplies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after Soul Cleave."
   },
   {
     "name": "Reaver's Mark",
@@ -9413,7 +14611,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take $442624s1% increased damage for $442624d. Max $442624u stacks.\nApplies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after $?a212612[Blade Dance][Soul Cleave]."
+    "description": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take $442624s1% increased damage for $442624d. Max $442624u stacks.\nApplies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after $?a212612[Blade Dance][Soul Cleave].",
+    "schoolMask": 1,
+    "resolvedDescription": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take 7% increased damage for 20 sec. Max $442624u stacks.\nApplies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after Soul Cleave."
   },
   {
     "name": "Aldrachi Tactics",
@@ -9450,7 +14650,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "The second enhanced ability in a pattern shatters an additional Soul Fragment."
+    "description": "The second enhanced ability in a pattern shatters an additional Soul Fragment.",
+    "schoolMask": 1,
+    "resolvedDescription": "The second enhanced ability in a pattern shatters an additional Soul Fragment."
   },
   {
     "name": "Thrill of the Fight",
@@ -9487,7 +14689,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by $442695s1% for $442695d and your damage and healing by $442688s1% for $442688d."
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by $442695s1% for $442695d and your damage and healing by $442688s1% for $442688d.",
+    "schoolMask": 1,
+    "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by 15% for 20 sec and your damage and healing by 15% for 10 sec."
   },
   {
     "name": "Thrill of the Fight",
@@ -9565,7 +14769,47 @@
     ],
     "auraInterrupt": "Change Specialization (38), Raid Encounter Start or M+ Start (40), Change Talent (46)",
     "description": "$@spelldesc442686",
-    "tooltip": "Damage and healing increased by $w1%."
+    "tooltip": "Damage and healing increased by $w1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by 15% for 20 sec and your damage and healing by 15% for 10 sec."
+  },
+  {
+    "name": "Thrill of the Fight",
+    "id": 442695,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1138082,
+        "type": "Apply Aura (6) | Modify Ranged and Melee Auto Attack Speed% (342)",
+        "details": {
+          "baseValue": 15,
+          "scaledValue": 15,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "duration": 20,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "3367: Havoc Demon Hunter (212612 effect#16), Havoc Demon Hunter (212612 effect#17), Havoc Demon Hunter (212612 effect#20), Havoc Demon Hunter (212612 effect#21), Thrill of the Fight (442688 effect#3), Thrill of the Fight (442688 effect#4), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+    ],
+    "attributes": [
+      "Aura Points On Client (268)"
+    ],
+    "description": "$@spelldesc442686",
+    "tooltip": "Attack Speed increased by $w1%",
+    "schoolMask": 1,
+    "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by 15% for 20 sec and your damage and healing by 15% for 10 sec."
   },
   {
     "name": "Army Unto Oneself",
@@ -9602,7 +14846,56 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Felblade surrounds you with a Blade Ward, reducing damage taken by $442715s1% for $442715d."
+    "description": "Felblade surrounds you with a Blade Ward, reducing damage taken by $442715s1% for $442715d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Felblade surrounds you with a Blade Ward, reducing damage taken by -10% for 5 sec."
+  },
+  {
+    "name": "Blade Ward",
+    "id": 442715,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1138116,
+        "type": "Apply Aura (6) | Modify Damage Taken% (87)",
+        "details": {
+          "baseValue": -10,
+          "scaledValue": -10,
+          "miscValue": "0x7f",
+          "target": "Self (1)",
+          "Affected School(s)": "All",
+          "schoolMask": 127,
+          "schoolNames": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Nature",
+            "Frost",
+            "Shadow",
+            "Arcane"
+          ]
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "duration": 5,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "3367: Havoc Demon Hunter (212612 effect#16), Havoc Demon Hunter (212612 effect#17), Havoc Demon Hunter (212612 effect#20), Havoc Demon Hunter (212612 effect#21), Thrill of the Fight (442688 effect#3), Thrill of the Fight (442688 effect#4), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+    ],
+    "description": "$@spelldesc442714",
+    "tooltip": "Damage taken reduced by $s1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "Felblade surrounds you with a Blade Ward, reducing damage taken by -10% for 5 sec."
   },
   {
     "name": "Fury of the Aldrachi",
@@ -9650,7 +14943,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "When enhanced by Reaver's Glaive, $?a212612[Blade Dance][Soul Cleave] casts $s2 additional glaive slashes to nearby targets.\nIf cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast $?a1236360[${($s2*($s1/100+1))+$1236360s1}][${$s2*($s1/100+1)}] slashes instead."
+    "description": "When enhanced by Reaver's Glaive, $?a212612[Blade Dance][Soul Cleave] casts $s2 additional glaive slashes to nearby targets.\nIf cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast $?a1236360[${($s2*($s1/100+1))+$1236360s1}][${$s2*($s1/100+1)}] slashes instead.",
+    "schoolMask": 1,
+    "resolvedDescription": "When enhanced by Reaver's Glaive, Soul Cleave casts 3 additional glaive slashes to nearby targets.\nIf cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast 12 slashes instead."
   },
   {
     "name": "Incorruptible Spirit",
@@ -9691,7 +14986,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Each Soul Fragment you consume shields you for an additional $s1% of the amount healed."
+    "description": "Each Soul Fragment you consume shields you for an additional $s1% of the amount healed.",
+    "schoolMask": 1,
+    "resolvedDescription": "Each Soul Fragment you consume shields you for an additional 15% of the amount healed."
   },
   {
     "name": "Wounded Quarry",
@@ -9731,7 +15028,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal $s1% of the damage dealt to your marked target as Chaos, and sometimes shatter a Lesser Soul Fragment."
+    "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal $s1% of the damage dealt to your marked target as Chaos, and sometimes shatter a Lesser Soul Fragment.",
+    "schoolMask": 1,
+    "resolvedDescription": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal 20% of the damage dealt to your marked target as Chaos, and sometimes shatter a Lesser Soul Fragment."
   },
   {
     "name": "Evasive Action",
@@ -9771,7 +15070,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Vengeful Retreat can be cast a second time within $444929d."
+    "description": "Vengeful Retreat can be cast a second time within $444929d.",
+    "schoolMask": 1,
+    "resolvedDescription": "Vengeful Retreat can be cast a second time within 3 sec."
   },
   {
     "name": "Evasive Action",
@@ -9814,7 +15115,9 @@
       }
     ],
     "description": "$@spelldesc444926",
-    "tooltip": "Vengeful Retreat may be cast again."
+    "tooltip": "Vengeful Retreat may be cast again.",
+    "schoolMask": 1,
+    "resolvedDescription": "Vengeful Retreat can be cast a second time within 3 sec."
   },
   {
     "name": "Unhindered Assault",
@@ -9853,7 +15156,71 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Vengeful Retreat resets the cooldown of Felblade."
+    "description": "Vengeful Retreat resets the cooldown of Felblade.",
+    "schoolMask": 1,
+    "resolvedDescription": "Vengeful Retreat resets the cooldown of Felblade."
+  },
+  {
+    "name": "Preemptive Strike",
+    "id": 444979,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1141685,
+        "type": "School Damage (2): physical",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "apCoefficient": 0.2,
+          "radius": "0 - 5 yards",
+          "target": "At Enemy (53) -> At Enemy in Area (16)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": "Melee",
+    "range": 40,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "3367: Havoc Demon Hunter (212612 effect#16), Havoc Demon Hunter (212612 effect#17), Havoc Demon Hunter (212612 effect#20), Havoc Demon Hunter (212612 effect#21), Thrill of the Fight (442688 effect#3), Thrill of the Fight (442688 effect#4), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "4215"
+    ],
+    "affectingSpells": [
+      {
+        "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 2pc",
+        "id": 1236358,
+        "effects": [
+          2,
+          3
+        ]
+      }
+    ],
+    "triggeredBy": [
+      {
+        "name": "Preemptive Strike",
+        "id": 444997
+      }
+    ],
+    "familyFlags": [
+      "58"
+    ],
+    "attributes": [
+      "Do Not Log Immune Misses (3)",
+      "Always Line of Sight (185)",
+      "Always AOE Line of Sight (186)",
+      "Do Not Log Spell Miss (397)"
+    ],
+    "description": "$@spelldesc444997",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw Glaive deals 0 Physical damage to enemies near its initial target."
   },
   {
     "name": "Preemptive Strike",
@@ -9891,7 +15258,88 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Throw Glaive deals $444979s1 Physical damage to enemies near its initial target."
+    "description": "Throw Glaive deals $444979s1 Physical damage to enemies near its initial target.",
+    "schoolMask": 1,
+    "resolvedDescription": "Throw Glaive deals 0 Physical damage to enemies near its initial target."
+  },
+  {
+    "name": "A Fire Inside",
+    "id": 1224451,
+    "flags": [
+      "Spell Family (107)",
+      "Passive",
+      "Hidden"
+    ],
+    "passive": true,
+    "hidden": true,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1213098,
+        "type": "Apply Aura (6) | Periodic Dummy (226): every 1 seconds",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1213116,
+        "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "spCoefficient": 2.25,
+          "target": "Self (1)",
+          "Affected Spells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
+          "Family Flags": "49, 61"
+        }
+      },
+      {
+        "index": 3,
+        "effectId": 1213117,
+        "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "spCoefficient": 2.25,
+          "miscValue": "22",
+          "target": "Self (1)",
+          "Affected Spells": "Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)",
+          "Family Flags": "49, 61"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "2356: Any Means Necessary (394486 effect#1), Any Means Necessary (394486 effect#2), Any Means Necessary (394486 effect#3), Any Means Necessary (394486 effect#4)"
+    ],
+    "triggeredBy": [
+      {
+        "name": "A Fire Inside",
+        "id": 427775
+      }
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Do Not Display (Spellbook",
+      "Aura Icon",
+      "Combat Log) (7)",
+      "Do Not Log (8)",
+      "No Aura Cancel (31)",
+      "Aura Points On Client (268)",
+      "Mastery Affects Points (285)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "description": "$?a427775[Chaos][Fire]",
+    "schoolMask": 1,
+    "resolvedDescription": "Chaos"
   },
   {
     "name": "Thrill of the Fight",
@@ -9969,6 +15417,91 @@
     ],
     "auraInterrupt": "Change Specialization (38), Raid Encounter Start or M+ Start (40), Change Talent (46)",
     "description": "$@spelldesc442686",
-    "tooltip": "Damage and healing increased by $w1%."
+    "tooltip": "Damage and healing increased by $w1%.",
+    "schoolMask": 1,
+    "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by 15% for 20 sec and your damage and healing by 15% for 10 sec."
+  },
+  {
+    "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc",
+    "id": 1236360,
+    "flags": [
+      "Spell Family (107)",
+      "Passive",
+      "Hidden"
+    ],
+    "passive": true,
+    "hidden": true,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1232278,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 6,
+          "scaledValue": 6,
+          "PvP Coefficient": "0.5",
+          "target": "Self (1)"
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1238311,
+        "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Max Stacks (37)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "miscValue": "37",
+          "miscValue2": "4821 (Label)",
+          "target": "Self (1)",
+          "Affected Spells (Label)": "Reaver's Mark (442624)"
+        }
+      },
+      {
+        "index": 3,
+        "effectId": 1238312,
+        "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 2 (12)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "miscValue": "12",
+          "miscValue2": "5190 (Label)",
+          "target": "Self (1)",
+          "Affected Spells (Label)": "Reaver's Mark (442679)"
+        }
+      },
+      {
+        "index": 4,
+        "effectId": 1238348,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 100,
+          "scaledValue": 100,
+          "PvP Coefficient": "0.33",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "295",
+      "5061"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Do Not Display (Spellbook",
+      "Aura Icon",
+      "Combat Log) (7)",
+      "Allow Aura While Dead (116)",
+      "Allow Entering Arena (149)",
+      "Disable Aura While Dead (226)"
+    ],
+    "description": "Fury of the Aldrachi further empowers $?a212613[Soul Cleave][Blade Dance] when cast after $?s263642[Fracture]?a212613[Shear][Chaos Strike], increasing slashes to ${$442718s2*($442718s1/100+1)+$s1}.\nReaver's Mark now stacks up to $442624u times and further empowers $?s263642[Fracture]?a212613[Shear][Chaos Strike] when cast after $?a212613[Soul Cleave][Blade Dance], applying an additional stack for $s4% of normal duration.",
+    "schoolMask": 1,
+    "resolvedDescription": "Fury of the Aldrachi further empowers Soul Cleave when cast after $?s263642[Fracture]?a212613[Shear][Chaos Strike], increasing slashes to 12.\nReaver's Mark now stacks up to $442624u times and further empowers $?s263642[Fracture]?a212613[Shear][Chaos Strike] when cast after Soul Cleave, applying an additional stack for 100% of normal duration."
   }
 ]

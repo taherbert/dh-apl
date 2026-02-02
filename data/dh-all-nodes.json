@@ -1,0 +1,3261 @@
+[
+  {
+    "id": 90912,
+    "name": "",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {}
+    ]
+  },
+  {
+    "id": 90914,
+    "name": "Scars of Suffering",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Scars of Suffering",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90915,
+    "name": "Trail of Ruin",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Trail of Ruin",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90916,
+    "name": "Growing Inferno",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Growing Inferno",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90917,
+    "name": "Burning Wound",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Burning Wound",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90918,
+    "name": "Ragefire",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Ragefire",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90919,
+    "name": "Screaming Brutality",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Screaming Brutality",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90921,
+    "name": "The Hunt",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "The Hunt",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90922,
+    "name": "Demonic",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Demonic",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90923,
+    "name": "Burning Hatred",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Burning Hatred",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90925,
+    "name": "First Blood",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "First Blood",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90927,
+    "name": "Burn It Out / Soul Cleanse",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Burn It Out",
+        "index": 100
+      },
+      {
+        "name": "Soul Cleanse",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90928,
+    "name": "Demon Muzzle",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Demon Muzzle",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90929,
+    "name": "Remorseless",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Remorseless",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90930,
+    "name": "Vengeful Bonds",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Vengeful Bonds",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90931,
+    "name": "Bouncing Glaives",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Bouncing Glaives",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90933,
+    "name": "Aura of Pain",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Aura of Pain",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90934,
+    "name": "Internal Struggle",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Internal Struggle",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90935,
+    "name": "Illidari Knowledge",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Illidari Knowledge",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90936,
+    "name": "Soul Rending",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soul Rending",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90937,
+    "name": "Disrupting Fury",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Disrupting Fury",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90938,
+    "name": "Improved Disrupt",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Improved Disrupt",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90939,
+    "name": "Felfire Haste",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Felfire Haste",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90940,
+    "name": "Pursuit",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Pursuit",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90941,
+    "name": "Unrestrained Fury",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Unrestrained Fury",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90942,
+    "name": "Vengeful Retreat",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Vengeful Retreat",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90945,
+    "name": "Improved Sigil of Misery",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Improved Sigil of Misery",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90946,
+    "name": "Sigil of Misery",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Sigil of Misery",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90947,
+    "name": "Lost in Darkness",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Lost in Darkness",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90948,
+    "name": "Charred Warblades",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Charred Warblades",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90949,
+    "name": "Soul Splitter",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soul Splitter",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90950,
+    "name": "Shattered Restoration",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Shattered Restoration",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90951,
+    "name": "Fiery Brand",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Fiery Brand",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90952,
+    "name": "Retaliation",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Retaliation",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90953,
+    "name": "Felfire Fist",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Felfire Fist",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90954,
+    "name": "Sigil of Chains",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Sigil of Chains",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90955,
+    "name": "Fel Flame Fortification",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Fel Flame Fortification",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90956,
+    "name": "Soul Barrier / Soul Sigils",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soul Barrier",
+        "index": 100
+      },
+      {
+        "name": "Soul Sigils",
+        "index": 300
+      }
+    ]
+  },
+  {
+    "id": 90957,
+    "name": "Revel in Pain",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Revel in Pain",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90958,
+    "name": "Fiery Demise",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Fiery Demise",
+        "index": 300
+      }
+    ]
+  },
+  {
+    "id": 90959,
+    "name": "Burning Alive",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Burning Alive",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90960,
+    "name": "Ascending Flame",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Ascending Flame",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90961,
+    "name": "Down in Flames",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Down in Flames",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90962,
+    "name": "Charred Flesh",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Charred Flesh",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90963,
+    "name": "Cycle of Binding",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Cycle of Binding",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90964,
+    "name": "Chains of Anger",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Chains of Anger",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90965,
+    "name": "Ruinous Bulwark",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Ruinous Bulwark",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90966,
+    "name": "Feed the Demon",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Feed the Demon",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90967,
+    "name": "Calcified Spikes",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Calcified Spikes",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90968,
+    "name": "Tempered Steel",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Tempered Steel",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90969,
+    "name": "Feast of Souls",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Feast of Souls",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90970,
+    "name": "Perfectly Balanced Glaive",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Perfectly Balanced Glaive",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90971,
+    "name": "Agonizing Flames",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Agonizing Flames",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90972,
+    "name": "Fallout",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Fallout",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90973,
+    "name": "Soulmonger",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soulmonger",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90974,
+    "name": "Void Reaver",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Void Reaver",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90975,
+    "name": "Focused Cleave",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Focused Cleave",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90976,
+    "name": "Painbringer",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Painbringer",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90977,
+    "name": "Frailty",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Frailty",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90978,
+    "name": "Sigil of Spite",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Sigil of Spite",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90979,
+    "name": "Last Resort",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Last Resort",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90980,
+    "name": "Soulcrush",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soulcrush",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90981,
+    "name": "Vulnerability",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Vulnerability",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90982,
+    "name": "Soul Carver",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soul Carver",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90983,
+    "name": "Vengeful Beast",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Vengeful Beast",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90984,
+    "name": "Stoke the Flames",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Stoke the Flames",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90985,
+    "name": "Darkglare Boon",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Darkglare Boon",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90986,
+    "name": "Volatile Flameblood",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Volatile Flameblood",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90987,
+    "name": "Burning Blood",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Burning Blood",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90988,
+    "name": "Roaring Fire / Sigil of Silence",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Roaring Fire",
+        "index": 100
+      },
+      {
+        "name": "Sigil of Silence",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90989,
+    "name": "Quickened Sigils",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Quickened Sigils",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90990,
+    "name": "Spirit Bomb",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Spirit Bomb",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90991,
+    "name": "Fel Devastation",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Fel Devastation",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90993,
+    "name": "Chaos Nova",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Chaos Nova",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90994,
+    "name": "Master of the Glaive / Champion of the Glaive",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Master of the Glaive",
+        "index": 100
+      },
+      {
+        "name": "Champion of the Glaive",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90996,
+    "name": "Erratic Felheart",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Erratic Felheart",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 90997,
+    "name": "Demonic Resilience",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Demonic Resilience",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 90999,
+    "name": "Aldrachi Design",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Aldrachi Design",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91000,
+    "name": "Will of the Illidari",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Will of the Illidari",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91001,
+    "name": "Long Night / Pitch Black",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Long Night",
+        "index": 100
+      },
+      {
+        "name": "Pitch Black",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 91002,
+    "name": "Darkness",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Darkness",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91003,
+    "name": "Felbound",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Felbound",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91004,
+    "name": "Infernal Armor",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Infernal Armor",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91005,
+    "name": "Swallowed Anger",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Swallowed Anger",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91006,
+    "name": "Consume Magic",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Consume Magic",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91007,
+    "name": "Imprison",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Imprison",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91008,
+    "name": "Felblade",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Felblade",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91011,
+    "name": "Accelerated Blade",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Accelerated Blade",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91012,
+    "name": "Relentless Onslaught / Soulscar",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Relentless Onslaught",
+        "index": 100
+      },
+      {
+        "name": "Soulscar",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 91013,
+    "name": "Serrated Glaive",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Serrated Glaive",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91015,
+    "name": "Dancing with Fate",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Dancing with Fate",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91017,
+    "name": "Demon Hide",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Demon Hide",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91018,
+    "name": "Eye Beam",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Eye Beam",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91020,
+    "name": "Unbound Chaos",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Unbound Chaos",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91021,
+    "name": "Exergy / Inertia",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Exergy",
+        "index": 100
+      },
+      {
+        "name": "Inertia",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 91022,
+    "name": "Tactical Retreat",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Tactical Retreat",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91024,
+    "name": "Inner Demon / Chaotic Transformation",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Inner Demon",
+        "index": 100
+      },
+      {
+        "name": "Chaotic Transformation",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 91025,
+    "name": "Furious Gaze",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Furious Gaze",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91026,
+    "name": "Blind Fury",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Blind Fury",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91027,
+    "name": "Initiative",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Initiative",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91028,
+    "name": "Critical Chaos",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Critical Chaos",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91030,
+    "name": "Improved Chaos Strike",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Improved Chaos Strike",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91031,
+    "name": "Shattered Destiny / Collective Anguish",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Shattered Destiny",
+        "index": 100
+      },
+      {
+        "name": "Collective Anguish",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 91032,
+    "name": "Cycle of Hatred",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Cycle of Hatred",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91033,
+    "name": "Essence Break",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Essence Break",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91034,
+    "name": "Know Your Enemy",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Know Your Enemy",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91035,
+    "name": "Chaos Theory",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Chaos Theory",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 91036,
+    "name": "Isolated Prey",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Isolated Prey",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 93013,
+    "name": "Furious Throws",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Furious Throws",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 93014,
+    "name": "Dash of Chaos",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Dash of Chaos",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 93015,
+    "name": "Deflecting Dance / Mortal Dance",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Deflecting Dance",
+        "index": 100
+      },
+      {
+        "name": "Mortal Dance",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 93016,
+    "name": "Desperate Instincts",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Desperate Instincts",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94895,
+    "name": "Incisive Blade",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Incisive Blade",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94896,
+    "name": "Army Unto Oneself / Incorruptible Spirit",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Army Unto Oneself",
+        "index": 100
+      },
+      {
+        "name": "Incorruptible Spirit",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 94897,
+    "name": "Wounded Quarry",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Wounded Quarry",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94898,
+    "name": "Fury of the Aldrachi",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Fury of the Aldrachi",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94899,
+    "name": "Set Fire to the Pain / Improved Soul Rending",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Set Fire to the Pain",
+        "index": 100
+      },
+      {
+        "name": "Improved Soul Rending",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 94901,
+    "name": "Demonic Intensity",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Demonic Intensity",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94902,
+    "name": "Student of Suffering / Flamebound",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Student of Suffering",
+        "index": 100
+      },
+      {
+        "name": "Flamebound",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 94903,
+    "name": "Reaver's Mark",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Reaver's Mark",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94904,
+    "name": "Untethered Fury",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Untethered Fury",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94905,
+    "name": "Burning Blades",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Burning Blades",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94906,
+    "name": "Bladecraft",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Bladecraft",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94909,
+    "name": "Monster Rising",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Monster Rising",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94910,
+    "name": "Keen Engagement / Preemptive Strike",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Keen Engagement",
+        "index": 100
+      },
+      {
+        "name": "Preemptive Strike",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 94911,
+    "name": "Evasive Action / Unhindered Assault",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Evasive Action",
+        "index": 100
+      },
+      {
+        "name": "Unhindered Assault",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 94912,
+    "name": "Violent Transformation",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Violent Transformation",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94913,
+    "name": "Wave of Debilitation / Pursuit of Angriness",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Wave of Debilitation",
+        "index": 100
+      },
+      {
+        "name": "Pursuit of Angriness",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 94914,
+    "name": "Aldrachi Tactics",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Aldrachi Tactics",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94915,
+    "name": "Art of the Glaive",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": true,
+    "entries": [
+      {
+        "name": "Art of the Glaive",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94916,
+    "name": "Enduring Torment",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Enduring Torment",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94917,
+    "name": "Demonsurge",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": true,
+    "entries": [
+      {
+        "name": "Demonsurge",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94918,
+    "name": "Focused Hatred",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Focused Hatred",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 94919,
+    "name": "Thrill of the Fight",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Thrill of the Fight",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 95143,
+    "name": "A Fire Inside",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "A Fire Inside",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 95147,
+    "name": "Chaotic Disposition",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Chaotic Disposition",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 95149,
+    "name": "First In, Last Out",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "First In, Last Out",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 95150,
+    "name": "Blazing Path",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Blazing Path",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 95151,
+    "name": "Live by the Glaive",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Live by the Glaive",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 95152,
+    "name": "Furious",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Furious",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 95154,
+    "name": "Focused Ire",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Focused Ire",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 99823,
+    "name": "Aldrachi Reaver / Annihilator",
+    "type": "subtree",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Aldrachi Reaver"
+      },
+      {
+        "name": "Annihilator"
+      }
+    ]
+  },
+  {
+    "id": 99824,
+    "name": "Aldrachi Reaver / Fel-Scarred",
+    "type": "subtree",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Aldrachi Reaver"
+      },
+      {
+        "name": "Fel-Scarred"
+      }
+    ]
+  },
+  {
+    "id": 107336,
+    "name": "Void Ray",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Void Ray",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107338,
+    "name": "Sweet Suffering",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Sweet Suffering",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107339,
+    "name": "Collapsing Star",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Collapsing Star",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107340,
+    "name": "Void Metamorphosis",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Void Metamorphosis",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107341,
+    "name": "Impending Apocalypse",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Impending Apocalypse",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107342,
+    "name": "Soulshaper",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soulshaper",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107343,
+    "name": "Feast of Souls",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Feast of Souls",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107344,
+    "name": "Soul Immolation",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soul Immolation",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107345,
+    "name": "Eradicate",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Eradicate",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107346,
+    "name": "Guile",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Guile",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107347,
+    "name": "Void Nova",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Void Nova",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107770,
+    "name": "Moment of Craving",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Moment of Craving",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107771,
+    "name": "Predator's Thirst",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Predator's Thirst",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107774,
+    "name": "Focused Ray",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Focused Ray",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107775,
+    "name": "Gift of the Void",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Gift of the Void",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107997,
+    "name": "Umbral Blade",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Umbral Blade",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 107999,
+    "name": "Waste Not",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Waste Not",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108122,
+    "name": "Entropy",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Entropy",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108123,
+    "name": "Emptiness / Soul Glutton",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Emptiness",
+        "index": 100
+      },
+      {
+        "name": "Soul Glutton",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 108136,
+    "name": "Hungering Slash",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Hungering Slash",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108143,
+    "name": "Devourer's Edge",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Devourer's Edge",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108144,
+    "name": "Improved Consume",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Improved Consume",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 108627,
+    "name": "Singed Spirit",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Singed Spirit",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108628,
+    "name": "Sweet Release",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Sweet Release",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108669,
+    "name": "Glaive Tempest",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Glaive Tempest",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108704,
+    "name": "Annihilator / Void-Scarred",
+    "type": "subtree",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Annihilator"
+      },
+      {
+        "name": "Void-Scarred"
+      }
+    ]
+  },
+  {
+    "id": 108722,
+    "name": "Felblade",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Felblade",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108723,
+    "name": "Voidblade",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": true,
+    "entries": [
+      {
+        "name": "Voidblade",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108726,
+    "name": "Scythe's Embrace / Duty Eternal",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Scythe's Embrace",
+        "index": 100
+      },
+      {
+        "name": "Duty Eternal",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 108727,
+    "name": "Tempered Soul / Spontaneous Immolation",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Tempered Soul",
+        "index": 100
+      },
+      {
+        "name": "Spontaneous Immolation",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 108728,
+    "name": "Felbound",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Felbound",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 108729,
+    "name": "Chaos Nova",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Chaos Nova",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109442,
+    "name": "World Killer",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "World Killer",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109443,
+    "name": "Otherworldly Focus",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Otherworldly Focus",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109444,
+    "name": "Dark Matter",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Dark Matter",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109445,
+    "name": "Final Hour",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Final Hour",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109446,
+    "name": "Meteoric Fall",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Meteoric Fall",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109447,
+    "name": "Mass Acceleration",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Mass Acceleration",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109448,
+    "name": "Path to Oblivion / State of Matter",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Path to Oblivion",
+        "index": 100
+      },
+      {
+        "name": "State of Matter",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 109449,
+    "name": "Voidfall",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": true,
+    "entries": [
+      {
+        "name": "Voidfall",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109450,
+    "name": "Doomsayer / Harness the Cosmos",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Doomsayer",
+        "index": 100
+      },
+      {
+        "name": "Harness the Cosmos",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 109451,
+    "name": "Celestial Echoes",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Celestial Echoes",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109452,
+    "name": "Phase Shift",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Phase Shift",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109453,
+    "name": "Catastrophe",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Catastrophe",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109454,
+    "name": "Swift Erasure",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Swift Erasure",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109455,
+    "name": "Meteoric Rise",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Meteoric Rise",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109503,
+    "name": "The Hunt",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "The Hunt",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109769,
+    "name": "Warblade's Hunger",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Warblade's Hunger",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109770,
+    "name": "Keen Edge",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Keen Edge",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109771,
+    "name": "Broken Spirit",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Broken Spirit",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109772,
+    "name": "Volatile Instinct",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Volatile Instinct",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109773,
+    "name": "Blind Focus",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Blind Focus",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109774,
+    "name": "Undying Embers",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Undying Embers",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 109871,
+    "name": "Voidrage",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Voidrage",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110009,
+    "name": "Second Helping",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Second Helping",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110010,
+    "name": "Wings of Wrath",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Wings of Wrath",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110011,
+    "name": "Final Breath",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Final Breath",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 110104,
+    "name": "Monster Rising",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Monster Rising",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110105,
+    "name": "Blind Focus",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Blind Focus",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110106,
+    "name": "Enduring Torment",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Enduring Torment",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110107,
+    "name": "Student of Suffering / Flamebound",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Student of Suffering",
+        "index": 100
+      },
+      {
+        "name": "Flamebound",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 110108,
+    "name": "Undying Embers",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Undying Embers",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110109,
+    "name": "Untethered Fury",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Untethered Fury",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110110,
+    "name": "Volatile Instinct",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Volatile Instinct",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110111,
+    "name": "Burning Blades",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Burning Blades",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110112,
+    "name": "Voidsurge",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": true,
+    "freeNode": true,
+    "entries": [
+      {
+        "name": "Voidsurge",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110113,
+    "name": "Focused Hatred",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Focused Hatred",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110114,
+    "name": "Wave of Debilitation / Pursuit of Angriness",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Wave of Debilitation",
+        "index": 100
+      },
+      {
+        "name": "Pursuit of Angriness",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 110115,
+    "name": "Violent Transformation",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Violent Transformation",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110116,
+    "name": "Demonic Intensity",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Demonic Intensity",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110117,
+    "name": "Set Fire to the Pain / Improved Soul Rending",
+    "type": "choice",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Set Fire to the Pain",
+        "index": 100
+      },
+      {
+        "name": "Improved Soul Rending",
+        "index": 200
+      }
+    ]
+  },
+  {
+    "id": 110165,
+    "name": "Demonic Instinct",
+    "type": "single",
+    "maxRanks": 2,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Demonic Instinct",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110166,
+    "name": "Calamitous",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Calamitous",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110167,
+    "name": "Devourer's Bite",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Devourer's Bite",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110168,
+    "name": "Rolling Torment",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Rolling Torment",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110169,
+    "name": "Voidglare Boon",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Voidglare Boon",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110170,
+    "name": "Singular Strikes",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Singular Strikes",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110171,
+    "name": "Soulforged Blades",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Soulforged Blades",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110172,
+    "name": "Star Fragments",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Star Fragments",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110173,
+    "name": "Voidrush",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Voidrush",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110174,
+    "name": "Voidpurge",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Voidpurge",
+        "index": 100
+      }
+    ]
+  },
+  {
+    "id": 110416,
+    "name": "Midnight / Midnight / Midnight",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false
+  },
+  {
+    "id": 110425,
+    "name": "Untethered Rage / Untethered Rage / Untethered Rage",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false
+  },
+  {
+    "id": 110427,
+    "name": "Eternal Hunt / Eternal Hunt / Eternal Hunt",
+    "type": "single",
+    "maxRanks": 1,
+    "entryNode": false,
+    "freeNode": false
+  }
+]

@@ -502,6 +502,55 @@ for (const [m, c] of Object.entries(methodCounts).sort((a, b) => b[1] - a[1])) {
   console.log(`    ${m}: ${c}`);
 }
 
+// === Enrichment Quality ===
+
+console.log("\n=== Enrichment Quality ===\n");
+
+const withMagnitude = interactions.interactions.filter(
+  (i) => i.magnitude,
+).length;
+const withApplication = interactions.interactions.filter(
+  (i) => i.application,
+).length;
+const withEffectDetails = interactions.interactions.filter(
+  (i) => i.effectDetails,
+).length;
+const withCategories = interactions.interactions.filter(
+  (i) => i.categories,
+).length;
+
+console.log(`  magnitude: ${withMagnitude}/${total}`);
+console.log(`  application: ${withApplication}/${total}`);
+console.log(`  effectDetails: ${withEffectDetails}/${total}`);
+console.log(`  categories: ${withCategories}/${total}`);
+
+if (withApplication === total) {
+  pass("All interactions have application method");
+} else {
+  warn(`${total - withApplication} interactions missing application method`);
+}
+
+if (withCategories === total) {
+  pass("All interactions have categories");
+} else {
+  warn(`${total - withCategories} interactions missing categories`);
+}
+
+const magnitudePct = total > 0 ? (withMagnitude / total) * 100 : 0;
+if (magnitudePct >= 50) {
+  pass(`Magnitude coverage: ${magnitudePct.toFixed(1)}% (>= 50%)`);
+} else {
+  warn(`Magnitude coverage: ${magnitudePct.toFixed(1)}% (< 50%)`);
+}
+
+// Spot check: spells.json should have schoolMask
+const spellsWithSchoolMask = spells.filter((s) => s.schoolMask != null).length;
+if (spellsWithSchoolMask > 0) {
+  pass(`${spellsWithSchoolMask}/${spells.length} spells have schoolMask`);
+} else {
+  warn("No spells have schoolMask field");
+}
+
 // === simc Version ===
 
 console.log("\n=== simc Version ===\n");

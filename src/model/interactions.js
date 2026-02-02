@@ -7,7 +7,15 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { classifyEffect, classifyByName } from "./interaction-types.js";
+import {
+  classifyEffect,
+  classifyByName,
+  resolveEffectMagnitude,
+  resolveApplicationMethod,
+  resolveSchoolTarget,
+  extractEffectDetails,
+  inferCategories,
+} from "./interaction-types.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -54,6 +62,13 @@ function buildInteractions() {
     }
   }
 
+  // Name→spell[] lookup for talent indirection in magnitude resolution
+  const spellsByName = new Map();
+  for (const sp of spells) {
+    if (!spellsByName.has(sp.name)) spellsByName.set(sp.name, []);
+    spellsByName.get(sp.name).push(sp);
+  }
+
   const interactions = [];
   const spellToModifiers = new Map();
   const talentToTargets = new Map();
@@ -73,6 +88,16 @@ function buildInteractions() {
       // legacy references (old runecarving powers, covenant abilities, etc.)
       // retained in simc's spell data but not part of any current talent tree.
       if (!isTalent && !modifierSpell) continue;
+
+      // Skip Havoc-specific talents that leak into Vengeance spell data.
+      // Check both talent entry and name-based lookup for non-talent variants.
+      if (modifierSpell?.talentEntry?.spec === "Havoc") continue;
+      const refNameSpells = spellsByName.get(ref.name);
+      if (
+        refNameSpells?.some((s) => s.talentEntry?.spec === "Havoc") &&
+        !refNameSpells?.some((s) => s.talentEntry?.spec === "Vengeance")
+      )
+        continue;
 
       const interactionType =
         modifierSpell && ref.effects?.length
@@ -347,6 +372,41 @@ function buildInteractions() {
   }
 
   function addInteraction(interaction) {
+    // Enrich with magnitude, application, school target, effect details, categories
+    const sourceSpell = spellMap.get(interaction.source.id);
+    const effectIndices = interaction.effects || [];
+
+    const magnitude = resolveEffectMagnitude(
+      sourceSpell,
+      effectIndices,
+      spellsByName,
+    );
+    if (magnitude) interaction.magnitude = magnitude;
+
+    const application = resolveApplicationMethod(sourceSpell, effectIndices);
+    if (application) interaction.application = application;
+
+    const schoolTarget = resolveSchoolTarget(sourceSpell, effectIndices);
+    if (schoolTarget) interaction.schoolTarget = schoolTarget;
+
+    const effectDetails = extractEffectDetails(sourceSpell, effectIndices);
+    if (effectDetails) interaction.effectDetails = effectDetails;
+
+    interaction.categories = inferCategories(
+      interaction.type,
+      sourceSpell,
+      effectIndices,
+    );
+
+    // Drop DR interactions — negative percent on damage_modifier is always damage
+    // reduction, not relevant for APL damage reasoning
+    if (
+      interaction.type === "damage_modifier" &&
+      interaction.magnitude?.unit === "percent" &&
+      interaction.magnitude?.value < 0
+    )
+      return;
+
     interactions.push(interaction);
 
     const targetId = interaction.target.id;

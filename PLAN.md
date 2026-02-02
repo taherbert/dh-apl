@@ -135,15 +135,84 @@ npm run verify          →  validates data against Raidbots + simc C++
 - [x] Updated `package.json` with `extract-simc` script
 - [x] Updated `CLAUDE.md` with reference directory documentation
 
-## Future Sessions
+## Phase 2: APL Tooling Pipeline
 
-- ~~Classify remaining unknown interactions~~ — DONE: zero unknowns achieved
-- APL parser/generator (AST-based) — reference APL conversion tools in `reference/apl-conversion/`
-- Talent combination generator
-- Optimization loop (isolated variable testing)
-- Hero tree comparison (Aldrachi Reaver vs Annihilator)
-- Resolve spell description template variables to actual values
-- Create Midnight-era baseline profiles
+Build all tooling needed to programmatically create, test, and iterate on VDH APLs, then establish a workflow where Claude can autonomously run simulation loops and reason about improvements.
+
+### Step 10: Resolve Spell Template Variables
+
+- [x] Add `resolvedDescription` field to each spell in `data/spells.json`
+- [x] Substitute `$s1`/`$s2`/`$s3` → effect N's `scaledValue` or `baseValue`
+- [x] Substitute `$d` → spell duration, `$t1`/`$t2` → tick period, `$a1` → radius
+- [x] Handle `$SpellIds1` cross-references, `$?sSpellId[yes][no]` conditionals
+- [x] Handle `${expr}` arithmetic (e.g., `$s1*2`, `$s1/1000`)
+- [x] Target ~85-90% resolution; leave unresolvable as raw template
+- Note: `src/extract/template-resolver.js` — standalone module, integrated into spells.js
+- Note: 110/167 spells fully resolved (65.9%), 22 partial, 35 unresolved
+- Note: 65.4% variable-level resolution; remaining are stat-dependent ($AGI, $sw), compound conditionals, and sub-spells missing from binary
+- Note: Also fetches 43 sub-spells referenced in descriptions for better resolution
+
+### Step 11: APL Parser/Generator
+
+- [x] `src/apl/parser.js` — Parse `.simc` APL text into AST, serialize back
+- [x] AST nodes: ActionList, RawSection, Action, Variable, RunActionList, Comment
+- [x] Operations: `parse()`, `serialize()`, `getActionLists()`, `findAction()`, `insertAction()`, `removeAction()`, `replaceCondition()`, `createAction()`, `createVariable()`
+- [x] Round-trip fidelity: `serialize(parse(text))` produces PERFECT output
+- Note: Preserves document order — non-APL lines (gear, profile) stay in position
+- Note: baseline.simc: 10 action lists, 166 actions, perfect round-trip
+- Note: reference/vengeance-apl.simc: 5 action lists, 67 actions, perfect round-trip
+
+### Step 12: Talent Combination Generator
+
+- [x] `src/model/talent-combos.js` — Generate valid talent sets from tree graph
+- [x] Validation: entry nodes, `prev` connectivity, `reqPoints` gates, choice node exclusivity
+- [x] Hero tree simplification: enumerate choice node combinations only
+- [x] **Reworked to DoE fractional factorial design** (replaces anchor-based generation)
+- [x] Node classification: locked (entry/free) vs factor (decision points)
+- [x] Factor identification: binary, multi-rank (2 factors), choice nodes
+- [x] Resolution IV fractional factorial: 512 rows for 44 factors (9 base + 35 generators)
+- [x] Build mapping: design rows → valid builds with connectivity repair + budget reconciliation
+- [x] Cross-product with hero tree choice combos (8 AR + 4 Annihilator = 12)
+- [x] Design quality metrics: balance, orthogonality, pair coverage
+- [x] `src/analyze/doe-analysis.js` — OLS regression with main effects + 2-way interactions
+- [x] Optimal build prediction, confirmation builds, diagnostic output
+- Note: 5856 valid builds (488 unique spec designs × 12 hero combos), 98% feasibility rate
+- Note: 44 binary factors from 40 spec tree factor nodes (2 locked entry, 40 flex)
+- Note: Budget reconciliation degrades orthogonality (max corr 0.79, pair coverage 81%)
+- Note: 10 infeasible design rows due to reqPoints gate edge cases (7 of 8 required points)
+
+### Step 13: Batch Testing via Profilesets
+
+- [x] `src/sim/profilesets.js` — Generate and run SimC profileset files
+- [x] Support talent, APL, and action line overrides per variant
+- [x] Parse ranked JSON results with delta comparison
+- [x] Regression testing: golden results, flag >1% regressions
+- Note: Uses SimC native profileset mode for memory-efficient batch comparison
+- Note: Golden results stored in `results/golden/`, >1% warn, >3% error thresholds
+
+### Step 14: Autonomous Simulation Workflow
+
+- [x] `src/sim/workflow.js` — Single entry point for full sim→analyze cycle
+- [x] Parse APL, run across scenarios, return structured JSON analysis
+- [x] No user interaction required; designed for Claude to call
+- Note: Outputs structured JSON with per-scenario DPS/HPS/DTPS, ability breakdowns, buff uptimes, GCD efficiency, and cross-scenario AoE scaling analysis
+
+### Step 15: APL Reasoning Framework
+
+- [x] `src/analyze/reasoning.js` — Generate improvement hypotheses from sim results
+- [x] Analysis: underused abilities, buff uptime gaps, cooldown alignment, conditional tightness
+- [x] Output ranked hypotheses with category, confidence, suggested tests
+- Note: 6 analysis dimensions: underused abilities, modifier alignment, buff uptime gaps, cooldown alignment, conditional tightness, AoE mismatch
+- Note: Uses interaction graph data to correlate talent modifiers with ability DPS share
+
+### Dependency Order
+
+```
+Step 10 (template vars) ──────────────────────────────────┐
+Step 11 (APL parser) ──────┬──────────────────────────────┤
+Step 12 (talent combos) ───┤                              │
+                           ├─→ Step 13 (profilesets) ──→ Step 14 (workflow) ──→ Step 15 (reasoning)
+```
 
 ## Findings & Notes
 

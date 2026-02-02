@@ -1,0 +1,32 @@
+{
+  "$schema": "./profiles.schema.json",
+  "profiles": [
+    {
+      "name": "max_defensive",
+      "description": "Maximally defensive build — all survivability talents required",
+      "require": [
+        "Calcified Spikes",
+        "Revel in Pain",
+        "Feast of Souls",
+        "Ruinous Bulwark",
+        "Fel Flame Fortification",
+        "Last Resort",
+        "Soulmonger",
+        "Feed the Demon"
+      ],
+      "exclude": []
+    },
+    {
+      "name": "pure_dps",
+      "description": "Skip every non-DPS talent — uses default exclusions with no overrides",
+      "require": [],
+      "exclude": []
+    },
+    {
+      "name": "soul_sigils_focus",
+      "description": "Force Soul Sigils + Sigil of Chains for maximum soul fragment generation",
+      "require": ["Sigil of Chains", "Chains of Anger", "Cycle of Binding"],
+      "include": ["Sigil of Chains", "Chains of Anger"]
+    }
+  ]
+}
