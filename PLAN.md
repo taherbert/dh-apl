@@ -164,11 +164,13 @@ Build all tooling needed to programmatically create, test, and iterate on VDH AP
 
 ### Step 12: Talent Combination Generator
 
-- [ ] `src/model/talent-combos.js` — Generate valid talent sets from tree graph
-- [ ] Validation: entry nodes, `prev` connectivity, `reqPoints` gates, choice node exclusivity
-- [ ] Hero tree simplification: enumerate choice node combinations only
-- [ ] Anchor-based generation: key build-defining picks + BFS/greedy fill
-- [ ] Output ~20-50 curated builds with SimC talent strings
+- [x] `src/model/talent-combos.js` — Generate valid talent sets from tree graph
+- [x] Validation: entry nodes, `prev` connectivity, `reqPoints` gates, choice node exclusivity
+- [x] Hero tree simplification: enumerate choice node combinations only
+- [x] Anchor-based generation: key build-defining picks + BFS/greedy fill
+- [x] Output ~20-50 curated builds with SimC talent strings
+- Note: 48 valid builds (32 Aldrachi Reaver, 16 Annihilator), 4 anchor sets × hero choice combos
+- Note: BFS backwards path-finding for anchor connectivity, greedy fill for remaining budget
 
 ### Step 13: Batch Testing via Profilesets
 
