@@ -183,9 +183,10 @@ Build all tooling needed to programmatically create, test, and iterate on VDH AP
 
 ### Step 14: Autonomous Simulation Workflow
 
-- [ ] `src/sim/workflow.js` — Single entry point for full sim→analyze cycle
-- [ ] Parse APL, run across scenarios, return structured JSON analysis
-- [ ] No user interaction required; designed for Claude to call
+- [x] `src/sim/workflow.js` — Single entry point for full sim→analyze cycle
+- [x] Parse APL, run across scenarios, return structured JSON analysis
+- [x] No user interaction required; designed for Claude to call
+- Note: Outputs structured JSON with per-scenario DPS/HPS/DTPS, ability breakdowns, buff uptimes, GCD efficiency, and cross-scenario AoE scaling analysis
 
 ### Step 15: APL Reasoning Framework
 
