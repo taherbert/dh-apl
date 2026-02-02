@@ -174,10 +174,12 @@ Build all tooling needed to programmatically create, test, and iterate on VDH AP
 
 ### Step 13: Batch Testing via Profilesets
 
-- [ ] `src/sim/profilesets.js` — Generate and run SimC profileset files
-- [ ] Support talent, APL, and action line overrides per variant
-- [ ] Parse ranked JSON results with delta comparison
-- [ ] Regression testing: golden results, flag >1% regressions
+- [x] `src/sim/profilesets.js` — Generate and run SimC profileset files
+- [x] Support talent, APL, and action line overrides per variant
+- [x] Parse ranked JSON results with delta comparison
+- [x] Regression testing: golden results, flag >1% regressions
+- Note: Uses SimC native profileset mode for memory-efficient batch comparison
+- Note: Golden results stored in `results/golden/`, >1% warn, >3% error thresholds
 
 ### Step 14: Autonomous Simulation Workflow
 
