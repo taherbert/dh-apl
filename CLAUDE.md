@@ -40,6 +40,10 @@ Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spike
 - **simc spell_query**: Runtime spell data (effects, coefficients). Limited by binary age.
 - **SpellDataDump**: Full spell effect data, updated more frequently than the binary.
 
+### Spell Data Interpretation
+
+When effect data is ambiguous (e.g., unclear whether a value is a damage amp or DR, or what school a spell targets), read the spell's description/tooltip text. The `description` field in `spells.json` often clarifies the intended effect better than raw effect subtypes.
+
 ### Environment Toggle
 
 Change `DATA_ENV` in `src/config.js` to switch between `"live"` and `"ptr"`. Then run `npm run build-data` to regenerate from the new environment.

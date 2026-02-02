@@ -398,6 +398,15 @@ function buildInteractions() {
       effectIndices,
     );
 
+    // Drop DR interactions — negative percent on damage_modifier is always damage
+    // reduction, not relevant for APL damage reasoning
+    if (
+      interaction.type === "damage_modifier" &&
+      interaction.magnitude?.unit === "percent" &&
+      interaction.magnitude?.value < 0
+    )
+      return;
+
     interactions.push(interaction);
 
     const targetId = interaction.target.id;
