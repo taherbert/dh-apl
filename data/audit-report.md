@@ -1,32 +1,32 @@
 # Interaction Audit Report
 
-Generated: 2026-02-02T02:01:28.899Z
+Generated: 2026-02-02T03:41:56.640Z
 
 ## Summary
 
-- **Total interactions:** 266
-- **Talents with interactions:** 114
+- **Total interactions:** 192
+- **Talents with interactions:** 82
 - **Total talents:** 121
 
 ### By Type
 
 | Type | Count |
 |------|-------|
-| damage_modifier | 110 |
-| buff_grant | 46 |
-| proc_trigger | 38 |
-| resource_modifier | 18 |
+| damage_modifier | 80 |
+| proc_trigger | 31 |
+| buff_grant | 29 |
 | duration_modifier | 17 |
-| mechanic_change | 16 |
-| cooldown_modifier | 14 |
+| resource_modifier | 14 |
+| cooldown_modifier | 13 |
 | range_modifier | 6 |
 | stacking_modifier | 1 |
+| mechanic_change | 1 |
 
 ### By Discovery Method
 
 | Method | Count |
 |--------|-------|
-| spell_data | 190 |
+| spell_data | 116 |
 | cpp_scanner | 59 |
 | effect_scan | 17 |
 
@@ -34,17 +34,17 @@ Generated: 2026-02-02T02:01:28.899Z
 
 | Confidence | Count |
 |------------|-------|
-| high | 190 |
+| high | 116 |
 | medium | 76 |
 
 ### By Source Tree
 
 | Tree | Count |
 |------|-------|
-| non-talent | 166 |
-| spec | 53 |
+| non-talent | 85 |
+| spec | 57 |
 | hero | 33 |
-| class | 14 |
+| class | 17 |
 
 ## Talent Triage
 
@@ -64,9 +64,8 @@ Generated: 2026-02-02T02:01:28.899Z
 _No outgoing interactions_
 
 **Incoming:**
-- Prepared [resource_modifier, spell_data]
-- Tactical Retreat [resource_modifier, spell_data]
-- Evasive Action [mechanic_change, spell_data]
+- Tactical Retreat [cooldown_modifier, spell_data]
+- Evasive Action [buff_grant, spell_data]
 
 #### Felblade (232893) — has_interactions
 
@@ -75,7 +74,6 @@ _No outgoing interactions_
 | Warblade's Hunger | damage_modifier | cpp_scanner |
 
 **Incoming:**
-- Any Means Necessary [damage_modifier, spell_data]
 - Warblade's Hunger [damage_modifier, cpp_scanner]
 
 #### Sigil of Misery (207684) — has_interactions
@@ -84,7 +82,6 @@ _No outgoing interactions_
 
 **Incoming:**
 - Quickened Sigils [duration_modifier, spell_data]
-- Any Means Necessary [damage_modifier, spell_data]
 - Chains of Anger [range_modifier, spell_data]
 
 #### Vengeful Bonds (320635) — cpp_only
@@ -124,26 +121,15 @@ _No outgoing interactions_
 _No outgoing interactions_
 
 **Incoming:**
-- Demon Soul [damage_modifier, spell_data]
 - Mastery: Demonic Presence [damage_modifier, spell_data]
-- Unleashed Power [resource_modifier, spell_data]
 - Fiery Brand [damage_modifier, spell_data]
-- Fiery Brand [buff_grant, spell_data]
-- Exergy [damage_modifier, spell_data]
+- Fiery Brand [damage_modifier, spell_data]
 - Frailty [damage_modifier, spell_data]
-- Chaos Blades [damage_modifier, spell_data]
-- Demon Soul [damage_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
-- Seething Chaos [damage_modifier, spell_data]
-- Fiery Resolve [buff_grant, spell_data]
-- Inertia [damage_modifier, spell_data]
-- Demon Hide [buff_grant, spell_data]
-- Reaver's Mark [buff_grant, spell_data]
-- Thrill of the Fight [mechanic_change, spell_data]
-- Luck of the Draw! [proc_trigger, spell_data]
-- Thrill of the Fight [mechanic_change, spell_data]
-- Demon Soul [damage_modifier, spell_data]
-- Demon Soul [damage_modifier, spell_data]
+- Demon Hide [damage_modifier, spell_data]
+- Reaver's Mark [damage_modifier, spell_data]
+- Thrill of the Fight [damage_modifier, spell_data]
+- Thrill of the Fight [damage_modifier, spell_data]
 
 #### Improved Disrupt (320361) — cpp_only
 
@@ -228,6 +214,9 @@ _No outgoing interactions_
 | Target | Type | Method |
 |--------|------|--------|
 | Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
 
 **Incoming:**
 - Fallout [resource_modifier, cpp_scanner]
@@ -288,7 +277,6 @@ _No outgoing interactions_
 _No outgoing interactions_
 
 **Incoming:**
-- Cover of Darkness [duration_modifier, spell_data]
 - Long Night [duration_modifier, spell_data]
 - Pitch Black [cooldown_modifier, spell_data]
 
@@ -330,8 +318,6 @@ _No outgoing interactions_
 | Darkglare Boon | cooldown_modifier | cpp_scanner |
 
 **Incoming:**
-- Fel Defender [cooldown_modifier, spell_data]
-- Demonsurge [mechanic_change, spell_data]
 - Meteoric Rise [cooldown_modifier, cpp_scanner]
 - Darkglare Boon [cooldown_modifier, cpp_scanner]
 
@@ -350,25 +336,15 @@ _No outgoing interactions_
 _No outgoing interactions_
 
 **Incoming:**
-- Demon Soul [damage_modifier, spell_data]
 - Fiery Brand [damage_modifier, spell_data]
-- Fiery Brand [buff_grant, spell_data]
+- Fiery Brand [damage_modifier, spell_data]
 - Fiery Demise [damage_modifier, spell_data]
-- Spirit of the Darkness Flame [buff_grant, spell_data]
 - Frailty [damage_modifier, spell_data]
-- Revel in Pain [buff_grant, spell_data]
-- Spirit of the Darkness Flame [buff_grant, spell_data]
 - Fiery Brand [duration_modifier, spell_data]
-- Demon Soul [damage_modifier, spell_data]
-- Any Means Necessary [damage_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
-- Fires of Fel [damage_modifier, spell_data]
-- Fiery Resolve [buff_grant, spell_data]
-- Demon Hide [buff_grant, spell_data]
-- Reaver's Mark [buff_grant, spell_data]
-- Luck of the Draw! [proc_trigger, spell_data]
-- Thrill of the Fight [mechanic_change, spell_data]
-- Demon Soul [damage_modifier, spell_data]
+- Demon Hide [damage_modifier, spell_data]
+- Reaver's Mark [damage_modifier, spell_data]
+- Thrill of the Fight [damage_modifier, spell_data]
 - Burning Alive [duration_modifier, cpp_scanner]
 - Burning Alive [duration_modifier, cpp_scanner]
 
@@ -414,7 +390,6 @@ _No outgoing interactions_
 
 **Incoming:**
 - Quickened Sigils [duration_modifier, spell_data]
-- Any Means Necessary [damage_modifier, spell_data]
 - Chains of Anger [range_modifier, spell_data]
 
 #### Retaliation (389729) — cpp_only
@@ -435,13 +410,15 @@ _No outgoing interactions_
 
 **Incoming:**
 - Quickened Sigils [duration_modifier, spell_data]
-- Any Means Necessary [damage_modifier, spell_data]
 - Chains of Anger [range_modifier, spell_data]
 
 #### Agonizing Flames (207548) — has_interactions
 
 | Target | Type | Method |
 |--------|------|--------|
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
 | Infernal Armor | cooldown_modifier | cpp_scanner |
 
@@ -457,6 +434,7 @@ _No outgoing interactions_
 | Infernal Strike | damage_modifier | spell_data |
 | Fiery Brand | damage_modifier | spell_data |
 | Soul Carver | damage_modifier | spell_data |
+| Fiery Brand | damage_modifier | spell_data |
 | Spirit Bomb | damage_modifier | spell_data |
 
 #### Revel in Pain (343014) — has_interactions
@@ -543,7 +521,6 @@ _No outgoing interactions_
 
 **Incoming:**
 - Quickened Sigils [duration_modifier, spell_data]
-- Any Means Necessary [damage_modifier, spell_data]
 - Chains of Anger [range_modifier, spell_data]
 
 #### Fiery Demise (389220) — has_interactions
@@ -625,21 +602,14 @@ _No outgoing interactions_
 _No outgoing interactions_
 
 **Incoming:**
-- Demon Soul [damage_modifier, spell_data]
 - Fiery Brand [damage_modifier, spell_data]
-- Fiery Brand [buff_grant, spell_data]
+- Fiery Brand [damage_modifier, spell_data]
 - Fiery Demise [damage_modifier, spell_data]
 - Frailty [damage_modifier, spell_data]
-- Demon Soul [damage_modifier, spell_data]
-- Any Means Necessary [damage_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
-- Fires of Fel [damage_modifier, spell_data]
-- Fiery Resolve [buff_grant, spell_data]
-- Demon Hide [buff_grant, spell_data]
-- Reaver's Mark [buff_grant, spell_data]
-- Luck of the Draw! [proc_trigger, spell_data]
-- Thrill of the Fight [mechanic_change, spell_data]
-- Demon Soul [damage_modifier, spell_data]
+- Demon Hide [damage_modifier, spell_data]
+- Reaver's Mark [damage_modifier, spell_data]
+- Thrill of the Fight [damage_modifier, spell_data]
 
 #### Last Resort (209258) — cpp_only
 
@@ -793,6 +763,9 @@ _No outgoing interactions_
 |--------|------|--------|
 | World Killer | proc_trigger | cpp_scanner |
 
+**Incoming:**
+- World Killer [mechanic_change, cpp_scanner]
+
 #### Swift Erasure (1253668) — cpp_only
 
 _No outgoing interactions_
@@ -893,7 +866,6 @@ Hero talents that interact with spec/class abilities:
 - **Meteoric Rise** (Annihilator) → Fel Devastation [cooldown_modifier]
 - **Dark Matter** (Annihilator) → Spirit Bomb [proc_trigger]
 - **Dark Matter** (Annihilator) → Soul Cleave [cooldown_modifier]
-- **World Killer** (Annihilator) → Voidfall [mechanic_change]
 - **Warblade's Hunger** (Aldrachi Reaver) → Felblade [damage_modifier]
 - **Warblade's Hunger** (Aldrachi Reaver) → Fracture [proc_trigger]
 - **Keen Engagement** (Aldrachi Reaver) → Throw Glaive [resource_modifier]
@@ -909,10 +881,6 @@ Hero talents that interact with spec/class abilities:
 
 Interactions involving resource generation/spending:
 
-- Unleashed Power → Chaos Nova [resource_modifier]
-- Prepared → Vengeful Retreat [resource_modifier]
-- Tactical Retreat → Vengeful Retreat [resource_modifier]
-- Shear Fury → Shear [resource_modifier]
 - Shattered Restoration → Consume Soul [resource_modifier] (on_soul_consume)
 - Feast of Souls → Soul Cleave [resource_modifier] (conditional)
 - Swallowed Anger → Consume Magic [resource_modifier] (conditional)

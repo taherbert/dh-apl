@@ -68,6 +68,8 @@ function buildTalentTrees() {
         if (spell.gcd) talent.gcd = spell.gcd;
         if (spell.duration) talent.duration = spell.duration;
         if (spell.affectingSpells) talent.affectedBy = spell.affectingSpells;
+      } else {
+        talent.type = entry.type === "passive" ? "passive" : "active_ability";
       }
 
       if (treeName === "class") {

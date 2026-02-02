@@ -37,6 +37,8 @@ function buildInteractions() {
   for (const [id, sp] of spellMap) {
     if (!nameToSpellId.has(sp.name)) nameToSpellId.set(sp.name, id);
   }
+  // Internal simc action names that map to known spells
+  nameToSpellId.set("Consume Soul", 203981); // Soul Fragments
 
   // Build alias groups: spells sharing the same name (e.g. Soul Cleave 228477/228478)
   const spellAliases = new Map();
@@ -129,7 +131,9 @@ function buildInteractions() {
         target: {
           id: ref.target.startsWith("buff:")
             ? null
-            : nameToSpellId.get(ref.target) || null,
+            : nameToSpellId.get(ref.target) ||
+              talentByName.get(ref.target)?.spellId ||
+              null,
           name: ref.target,
         },
         type: ref.type,
