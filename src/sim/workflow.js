@@ -8,6 +8,12 @@ import { fileURLToPath } from "node:url";
 import { runSimAsync, SCENARIOS } from "./runner.js";
 import { cpus } from "node:os";
 
+const SCENARIO_FIGHT_LENGTHS = {
+  st: 300,
+  small_aoe: 75,
+  big_aoe: 60,
+};
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const RESULTS_DIR = join(ROOT, "results");
@@ -100,6 +106,19 @@ function analyzeScenario(result) {
     if (buff) buffUptimes[name] = +buff.uptime.toFixed(1);
   }
 
+  // GCD efficiency: count on-GCD ability executes vs theoretical max GCDs
+  const OFF_GCD = ["auto_attack", "melee", "immolation_aura"];
+  const gcdAbilities = damage.filter(
+    (a) => !OFF_GCD.some((name) => a.name.toLowerCase().includes(name)),
+  );
+  const totalExecutes = gcdAbilities.reduce((sum, a) => sum + a.executes, 0);
+  const fightLength = SCENARIO_FIGHT_LENGTHS[result.scenario] || 300;
+  const theoreticalGcds = fightLength / 1.5;
+  const gcdEfficiency = +Math.min(
+    100,
+    (totalExecutes / theoreticalGcds) * 100,
+  ).toFixed(1);
+
   return {
     scenario: result.scenario,
     scenarioName: result.scenarioName,
@@ -109,6 +128,7 @@ function analyzeScenario(result) {
     majorDamage,
     lowContrib,
     buffUptimes,
+    gcdEfficiency,
   };
 }
 

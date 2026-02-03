@@ -121,3 +121,76 @@ Keep iterations lean to maximize the number of iterations per session:
 - **Save analysis to iteration log** — put reasoning in the accept/reject reason string so future sessions can read state
 - **Minimize file reads** — only read `apls/current.simc` when you need to edit it, not every iteration
 - **Use short reasons** — iteration log reasons should be one sentence summarizing the change and result
+
+## 6. Resilience Patterns
+
+### State Recovery
+
+The iteration state uses atomic writes with rotating backups (5 kept). If the primary state file is corrupted:
+
+1. `loadState()` catches JSON parse errors automatically
+2. Scans `results/iteration-state.backup.*.json` in reverse chronological order
+3. Restores the most recent valid backup as the primary state
+4. Resumes operation transparently
+
+If backups are also corrupted, re-initialize from `apls/current.simc` — the APL itself is the most important artifact, and git history preserves all accepted changes.
+
+### Git Integration
+
+Each accepted change should be committed immediately. This provides:
+
+- **Recovery**: If state is lost, reconstruct iteration history from git log
+- **Bisection**: If a later change causes issues, `git bisect` can find the culprit
+- **Rollback**: Revert to any previous accepted state with `git checkout`
+
+Commit message format: `iterate: <hypothesis summary> (<+/-X.XX%> weighted)`
+
+### SimC Failure Taxonomy
+
+| Failure Type     | Symptoms                                | Action                                       |
+| ---------------- | --------------------------------------- | -------------------------------------------- |
+| APL syntax error | SimC exits immediately with parse error | Fix candidate APL, retry                     |
+| Missing ability  | "action not found" in SimC output       | Check talent requirements, reject hypothesis |
+| Timeout          | No output after 10+ minutes             | Kill process, reject hypothesis              |
+| Segfault/crash   | SimC exits with signal                  | Retry once; if repeated, stop loop           |
+| JSON parse error | SimC output isn't valid JSON            | Check SimC binary version, retry             |
+
+### Resource Constraints
+
+- **Disk**: Each comparison produces ~1MB of JSON. Clean old comparison files periodically.
+- **CPU**: Comparisons run scenarios in parallel using all cores. One comparison at a time.
+- **Memory**: SimC profileset mode is memory-efficient. No special handling needed.
+
+## 7. Parallelism Techniques
+
+### Quick-Screen Batching
+
+When multiple hypotheses exist in the same category (e.g., 5 threshold sweeps):
+
+1. Generate 2-3 candidate APLs, each testing a different variant
+2. Launch subagents to run `--quick` comparisons in parallel
+3. Collect results, discard clear losers (any scenario regresses >1%)
+4. Promote the best candidate to standard-fidelity testing
+5. Accept or reject based on standard results
+
+This is 2-3x faster than testing sequentially when hypotheses are independent.
+
+### Hypothesis Grouping
+
+Group hypotheses by independence:
+
+- **Independent**: Different abilities, different action lists → safe to batch
+- **Dependent**: Same ability, same conditions → must test sequentially (results interact)
+- **Conflicting**: Opposite mutations (e.g., "move X higher" vs "remove X") → pick one
+
+### Subagent Delegation
+
+For quick-screen batching, delegate to subagents with clear instructions:
+
+1. Read `apls/current.simc`
+2. Make the specified modification
+3. Save as `apls/candidate_N.simc`
+4. Run `node src/sim/iterate.js compare apls/candidate_N.simc --quick`
+5. Report: hypothesis, weighted delta, any significant results
+
+The main agent then decides which candidate (if any) to promote.
