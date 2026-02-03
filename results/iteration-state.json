@@ -1,0 +1,118 @@
+{
+  "version": 2,
+  "startedAt": "2026-02-03T03:46:25.129Z",
+  "lastUpdated": "2026-02-03T03:46:25.129Z",
+  "originalBaseline": {
+    "apl": "baseline.simc",
+    "dps": {
+      "st": 936176,
+      "small_aoe": 2424963,
+      "big_aoe": 4166370
+    }
+  },
+  "current": {
+    "apl": "apls/current.simc",
+    "dps": {
+      "st": 936176,
+      "small_aoe": 2424963,
+      "big_aoe": 4166370
+    },
+    "workflowResults": "results/workflow_current.json"
+  },
+  "iterations": [],
+  "pendingHypotheses": [
+    {
+      "category": "buff_uptime_gap",
+      "description": "rending_strike uptime only 7.4% in 1T — prioritize refresh higher",
+      "priority": 27.779999999999998,
+      "scenario": "st"
+    },
+    {
+      "category": "buff_uptime_gap",
+      "description": "rending_strike uptime only 8.5% in 5T — prioritize refresh higher",
+      "priority": 27.45,
+      "scenario": "small_aoe"
+    },
+    {
+      "category": "buff_uptime_gap",
+      "description": "rending_strike uptime only 10.5% in 10T — prioritize refresh higher",
+      "priority": 26.849999999999998,
+      "scenario": "big_aoe"
+    },
+    {
+      "category": "buff_uptime_gap",
+      "description": "glaive_flurry uptime only 13.3% in 1T — prioritize refresh higher",
+      "priority": 26.01,
+      "scenario": "st"
+    },
+    {
+      "category": "buff_uptime_gap",
+      "description": "glaive_flurry uptime only 15.5% in 5T — prioritize refresh higher",
+      "priority": 25.349999999999998,
+      "scenario": "small_aoe"
+    },
+    {
+      "category": "buff_uptime_gap",
+      "description": "glaive_flurry uptime only 19.5% in 10T — prioritize refresh higher",
+      "priority": 24.15,
+      "scenario": "big_aoe"
+    },
+    {
+      "category": "underused_ability",
+      "description": "Fel Devastation contributes 17.6% damage in 10T but only 2.3 casts — could cast more",
+      "priority": 17.6,
+      "scenario": "big_aoe"
+    },
+    {
+      "category": "underused_ability",
+      "description": "Fel Devastation contributes 15.7% damage in 5T but only 2.8 casts — could cast more",
+      "priority": 15.7,
+      "scenario": "small_aoe"
+    },
+    {
+      "category": "cooldown_alignment",
+      "description": "Align high-damage abilities with metamorphosis windows (19.9% uptime in ST)",
+      "priority": 15
+    },
+    {
+      "category": "wasted_gcds",
+      "description": "Demon Spikes contributes only 0.07% damage in 1T with 9 casts — remove or add conditions",
+      "priority": 4.5,
+      "scenario": "st"
+    },
+    {
+      "category": "aoe_mismatch",
+      "description": "Fel Devastation fraction shifts from 7.8% (ST) to 15.7% (AoE), delta +7.9pp — adjust active_enemies conditions",
+      "priority": 3.16
+    },
+    {
+      "category": "wasted_gcds",
+      "description": "Fiery Brand contributes only 0.95% damage in 1T with 6 casts — remove or add conditions",
+      "priority": 3,
+      "scenario": "st"
+    },
+    {
+      "category": "threshold_sweep",
+      "description": "Sweep resource thresholds for Wounded Quarry (9.3% of ST damage) — try varying fury/soul_fragment conditions",
+      "priority": 1.8600000000000003
+    },
+    {
+      "category": "threshold_sweep",
+      "description": "Sweep resource thresholds for auto_attack_mh (9.2% of ST damage) — try varying fury/soul_fragment conditions",
+      "priority": 1.8399999999999999
+    },
+    {
+      "category": "threshold_sweep",
+      "description": "Sweep resource thresholds for Fel Devastation (7.8% of ST damage) — try varying fury/soul_fragment conditions",
+      "priority": 1.56
+    },
+    {
+      "category": "threshold_sweep",
+      "description": "Sweep resource thresholds for Reaver's Glaive (5.9% of ST damage) — try varying fury/soul_fragment conditions",
+      "priority": 1.1800000000000002
+    }
+  ],
+  "exhaustedHypotheses": [],
+  "consecutiveRejections": 0,
+  "findings": []
+}
