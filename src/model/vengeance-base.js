@@ -20,3 +20,11 @@ export const BASE_SPELL_IDS = new Set([
   207744, // Fiery Brand debuff
   343010, // Fiery Brand modifier
 ]);
+
+// Set bonus spells — separate from base abilities since these come from gear,
+// not the spec itself. Included in spell extraction so they appear in spells.json.
+export const SET_BONUS_SPELL_IDS = new Set([
+  1264808, // Vengeance 12.0 Class Set 2pc
+  1264809, // Vengeance 12.0 Class Set 4pc
+  1276488, // Explosion of the Soul (4pc proc) — 1.8x AP Fire AoE, 12yd radius
+]);

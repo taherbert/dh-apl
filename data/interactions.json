@@ -12820,6 +12820,69 @@
       "categories": [
         "offensive"
       ]
+    },
+    {
+      "source": {
+        "id": 1264808,
+        "name": "Vengeance 12.0 Class Set 2pc",
+        "isTalent": false,
+        "isSetBonus": true,
+        "setBonus": {
+          "name": "vengeance_12.0",
+          "pieceCount": 2
+        },
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 225919,
+        "name": "Fracture"
+      },
+      "type": "damage_modifier",
+      "discoveryMethod": "manual",
+      "confidence": "high",
+      "magnitude": {
+        "value": 35,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "passive_always",
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 1264809,
+        "name": "Vengeance 12.0 Class Set 4pc",
+        "isTalent": false,
+        "isSetBonus": true,
+        "setBonus": {
+          "name": "vengeance_12.0",
+          "pieceCount": 4
+        },
+        "tree": null,
+        "heroSpec": null
+      },
+      "target": {
+        "id": 1276488,
+        "name": "Explosion of the Soul"
+      },
+      "type": "proc_trigger",
+      "discoveryMethod": "manual",
+      "confidence": "high",
+      "procInfo": {
+        "procChance": 0.3,
+        "internalCooldown": 0.5
+      },
+      "triggerSpell": {
+        "id": 263642,
+        "name": "Fracture"
+      },
+      "application": "passive_always",
+      "categories": [
+        "offensive"
+      ]
     }
   ],
   "talentCategories": {
@@ -18296,6 +18359,23 @@
           "procInfo": {
             "procChance": 101
           }
+        },
+        {
+          "source": "Vengeance 12.0 Class Set 2pc",
+          "sourceId": 1264808,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null,
+          "discoveryMethod": "manual",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ]
         }
       ]
     },
@@ -18533,6 +18613,23 @@
           "procInfo": {
             "procChance": 101
           }
+        },
+        {
+          "source": "Vengeance 12.0 Class Set 2pc",
+          "sourceId": 1264808,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null,
+          "discoveryMethod": "manual",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ]
         }
       ]
     },
@@ -22551,6 +22648,23 @@
           "procInfo": {
             "procChance": 101
           }
+        },
+        {
+          "source": "Vengeance 12.0 Class Set 2pc",
+          "sourceId": 1264808,
+          "type": "damage_modifier",
+          "tree": null,
+          "heroSpec": null,
+          "discoveryMethod": "manual",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ]
         }
       ]
     },
@@ -32838,6 +32952,80 @@
           ]
         }
       ]
+    },
+    "1276488": {
+      "name": "Spell 1276488",
+      "modifiers": [
+        {
+          "source": "Vengeance 12.0 Class Set 4pc",
+          "sourceId": 1264809,
+          "type": "proc_trigger",
+          "tree": null,
+          "heroSpec": null,
+          "discoveryMethod": "manual",
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ],
+          "procInfo": {
+            "procChance": 0.3,
+            "internalCooldown": 0.5
+          }
+        }
+      ]
+    }
+  },
+  "bySetBonus": {
+    "1264808": {
+      "name": "Vengeance 12.0 Class Set 2pc",
+      "setBonus": {
+        "name": "vengeance_12.0",
+        "pieceCount": 2
+      },
+      "targets": [
+        {
+          "spell": "Fracture",
+          "spellId": 225919,
+          "type": "damage_modifier",
+          "discoveryMethod": "manual",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ]
+        }
+      ]
+    },
+    "1264809": {
+      "name": "Vengeance 12.0 Class Set 4pc",
+      "setBonus": {
+        "name": "vengeance_12.0",
+        "pieceCount": 4
+      },
+      "targets": [
+        {
+          "spell": "Explosion of the Soul",
+          "spellId": 1276488,
+          "type": "proc_trigger",
+          "discoveryMethod": "manual",
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ],
+          "procInfo": {
+            "procChance": 0.3,
+            "internalCooldown": 0.5
+          },
+          "triggerSpell": {
+            "id": 263642,
+            "name": "Fracture"
+          }
+        }
+      ]
     }
   },
   "byTalent": {
@@ -38260,6 +38448,49 @@
             "offensive"
           ],
           "mechanism": "conditional"
+        }
+      ]
+    },
+    "1264808": {
+      "name": "Vengeance 12.0 Class Set 2pc",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Fracture",
+          "spellId": 225919,
+          "type": "damage_modifier",
+          "discoveryMethod": "manual",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ]
+        }
+      ]
+    },
+    "1264809": {
+      "name": "Vengeance 12.0 Class Set 4pc",
+      "tree": null,
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Explosion of the Soul",
+          "spellId": 1276488,
+          "type": "proc_trigger",
+          "discoveryMethod": "manual",
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ],
+          "procInfo": {
+            "procChance": 0.3,
+            "internalCooldown": 0.5
+          }
         }
       ]
     },

@@ -20,6 +20,25 @@ import {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
 
+const SET_BONUS_SPELLS = new Map([
+  [
+    1264808,
+    {
+      name: "vengeance_12.0",
+      pieceCount: 2,
+      displayName: "Vengeance 12.0 Class Set 2pc",
+    },
+  ],
+  [
+    1264809,
+    {
+      name: "vengeance_12.0",
+      pieceCount: 4,
+      displayName: "Vengeance 12.0 Class Set 4pc",
+    },
+  ],
+]);
+
 function buildInteractions() {
   const spells = JSON.parse(
     readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
@@ -83,13 +102,14 @@ function buildInteractions() {
       const modifierSpell = spellMap.get(ref.id);
       const talent = talentBySpellId.get(ref.id);
       const isTalent = !!talent;
+      const setBonus = SET_BONUS_SPELLS.get(ref.id);
 
-      if (ref.name.includes("Demon Hunter") && !isTalent) continue;
+      if (ref.name.includes("Demon Hunter") && !isTalent && !setBonus) continue;
 
       // Skip non-talent modifiers that aren't current DH spells — these are
       // legacy references (old runecarving powers, covenant abilities, etc.)
       // retained in simc's spell data but not part of any current talent tree.
-      if (!isTalent && !modifierSpell) continue;
+      if (!isTalent && !setBonus && !modifierSpell) continue;
 
       // Skip Havoc-specific talents that leak into Vengeance spell data.
       // Check both talent entry and name-based lookup for non-talent variants.
@@ -101,21 +121,38 @@ function buildInteractions() {
       )
         continue;
 
-      const interactionType =
-        modifierSpell && ref.effects?.length
-          ? classifyFromEffects(modifierSpell, ref.effects)
-          : modifierSpell
-            ? classifyFromSpell(modifierSpell)
-            : classifyByName(ref.name) || "unknown";
+      let interactionType;
+      if (modifierSpell && ref.effects?.length) {
+        interactionType = classifyFromEffects(modifierSpell, ref.effects);
+      } else if (modifierSpell) {
+        interactionType = classifyFromSpell(modifierSpell);
+      } else {
+        interactionType = classifyByName(ref.name) || "unknown";
+      }
+
+      const source = setBonus
+        ? {
+            id: ref.id,
+            name: setBonus.displayName,
+            isTalent: false,
+            isSetBonus: true,
+            setBonus: {
+              name: setBonus.name,
+              pieceCount: setBonus.pieceCount,
+            },
+            tree: null,
+            heroSpec: null,
+          }
+        : {
+            id: ref.id,
+            name: ref.name,
+            isTalent,
+            tree: talent?.treeName || null,
+            heroSpec: talent?.heroSpec || null,
+          };
 
       addInteraction({
-        source: {
-          id: ref.id,
-          name: ref.name,
-          isTalent,
-          tree: talent?.treeName || null,
-          heroSpec: talent?.heroSpec || null,
-        },
+        source,
         target: {
           id: spell.id,
           name: spell.name,
@@ -256,6 +293,51 @@ function buildInteractions() {
     }
   }
 
+  // === Phase 4: Manual set bonus interactions (C++ hardcoded, not in spell data) ===
+  // TODO: Remove when SimC midnight binary includes set bonus spell data —
+  // Phase 1 will discover these automatically via affectingSpells.
+  // 2pc: Fracture damage +35% (affects 225919/225921 — aliased, so target one)
+  addInteraction({
+    source: {
+      id: 1264808,
+      name: "Vengeance 12.0 Class Set 2pc",
+      isTalent: false,
+      isSetBonus: true,
+      setBonus: { name: "vengeance_12.0", pieceCount: 2 },
+      tree: null,
+      heroSpec: null,
+    },
+    target: {
+      id: 225919,
+      name: spellMap.get(225919)?.name || "Fracture",
+    },
+    type: "damage_modifier",
+    discoveryMethod: "manual",
+    confidence: "high",
+    magnitude: { value: 35, unit: "percent", stacking: "multiplicative" },
+  });
+  // 4pc: Fracture has 30% chance to proc Explosion of the Soul
+  addInteraction({
+    source: {
+      id: 1264809,
+      name: "Vengeance 12.0 Class Set 4pc",
+      isTalent: false,
+      isSetBonus: true,
+      setBonus: { name: "vengeance_12.0", pieceCount: 4 },
+      tree: null,
+      heroSpec: null,
+    },
+    target: {
+      id: 1276488,
+      name: "Explosion of the Soul",
+    },
+    type: "proc_trigger",
+    discoveryMethod: "manual",
+    confidence: "high",
+    procInfo: { procChance: 0.3, internalCooldown: 0.5 },
+    triggerSpell: { id: 263642, name: "Fracture" },
+  });
+
   // === 1G: Compute modified uptimes accounting for CD/duration modifiers ===
   for (const interaction of interactions) {
     if (interaction.theoreticalUptime == null) continue;
@@ -316,6 +398,25 @@ function buildInteractions() {
           })),
         },
       ]),
+    ),
+    bySetBonus: Object.fromEntries(
+      [...talentToTargets.entries()]
+        .filter(([, ints]) => ints[0]?.source.isSetBonus)
+        .map(([id, ints]) => [
+          id,
+          {
+            name: ints[0]?.source.name,
+            setBonus: ints[0]?.source.setBonus,
+            targets: ints.map((i) => ({
+              spell: i.target.name,
+              spellId: i.target.id,
+              type: i.type,
+              discoveryMethod: i.discoveryMethod,
+              ...enrichedFields(i),
+              ...(i.triggerSpell && { triggerSpell: i.triggerSpell }),
+            })),
+          },
+        ]),
     ),
     byTalent: Object.fromEntries(
       [...talentToTargets.entries()].map(([id, ints]) => [
@@ -589,9 +690,7 @@ function classifyFromSpell(spell) {
     if (classified) return classified;
   }
   if (spell.passive) return "buff_grant";
-  const byName = classifyByName(spell.name);
-  if (byName) return byName;
-  return "unknown";
+  return classifyByName(spell.name) || "unknown";
 }
 
 function countBy(items, keyFn) {

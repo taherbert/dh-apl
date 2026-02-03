@@ -1,6 +1,6 @@
 # Vengeance Demon Hunter — Ability & Talent Report
 
-Generated from SimC midnight branch. 169 spells, 82 modifier sources.
+Generated from SimC midnight branch. 169 spells, 84 modifier sources.
 
 ## Active Abilities
 
@@ -146,6 +146,7 @@ Haste scales: gcd
 - Metamorphosis (damage_modifier)
 - Fiery Demise (damage_modifier)
 - Warblade's Hunger (proc_trigger) [hero:Aldrachi Reaver]
+- Vengeance 12.0 Class Set 2pc (damage_modifier)
 
 ### Immolation Aura (258920)
 
@@ -790,6 +791,16 @@ School: Physical | GCD: off-GCD | CD: 25s | Duration: 1s
 **Row 4:**
 - (2) **World Killer** (1256353) [passive]
   → Voidfall (mechanic_change)
+
+## Set Bonuses
+
+### Vengeance 12.0 Class Set 2pc (1264808)
+
+- → Fracture (damage_modifier) 35%
+
+### Vengeance 12.0 Class Set 4pc (1264809)
+
+- → Explosion of the Soul (proc_trigger) [30% chance, 0.5s ICD] on Fracture
 
 ## Resource Flow
 

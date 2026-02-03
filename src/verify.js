@@ -6,7 +6,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BASE_SPELL_IDS } from "./model/vengeance-base.js";
+import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "./model/vengeance-base.js";
 import { SIMC_DIR, SIMC_DH_CPP, HERO_SUBTREES } from "./config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -224,6 +224,19 @@ if (baseMissing.length > 0) {
   );
 }
 
+const setBonusMissing = [...SET_BONUS_SPELL_IDS].filter(
+  (id) => !spellMap.has(id),
+);
+if (setBonusMissing.length === 0) {
+  pass(
+    `${SET_BONUS_SPELL_IDS.size}/${SET_BONUS_SPELL_IDS.size} set bonus spell IDs found in spell data`,
+  );
+} else {
+  warn(
+    `${setBonusMissing.length} set bonus spell IDs not in spell data: ${setBonusMissing.join(", ")}`,
+  );
+}
+
 // === Interaction Quality ===
 
 console.log("\n=== Interaction Quality ===\n");
@@ -365,6 +378,7 @@ const staleSpells = spells.filter(
   (s) =>
     !allTalentSpellIds.has(s.id) &&
     !BASE_SPELL_IDS.has(s.id) &&
+    !SET_BONUS_SPELL_IDS.has(s.id) &&
     !interactionRefIds.has(s.id),
 );
 
