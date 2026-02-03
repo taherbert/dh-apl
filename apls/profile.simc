@@ -1,15 +1,16 @@
-# Vengeance DH TWW3 Profile — Gear and Talents only
+# Vengeance DH Midnight Profile — Gear and Talents
 # Use with: simc apls/profile.simc <apl_file>
+# Talent hash generated from data/talents.json (all class+spec+AR hero talents)
 
-demonhunter="VDH_TWW3"
+demonhunter="VDH_Midnight"
 source=default
 spec=vengeance
-level=80
+level=90
 race=night_elf
 timeofday=night
 role=tank
 position=front
-talents=CUkAVVFIvriGAPx6R1rEiLo2cCAGjZmZMmZkZmxYYMbzMYsNjZMjZGmZWmZsMzMMDGAAAAmlZWmlZmZW2mtppZwMzgN
+talents=CUkAAAAAAAAAAAAAAAAAAAAAAAAWmZmZmZmZmZamZmZmZZmZmZmZmZmZmZmZmZmZmZWmZsMzMLjZmBAAAgZZGMMWWYCDzMzAAAAADmBAAzMgZAAAAA
 
 # Default consumables
 potion=tempered_potion_3

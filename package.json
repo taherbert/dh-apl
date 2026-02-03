@@ -23,6 +23,7 @@
     "iterate:status": "node src/sim/iterate.js status",
     "iterate:hypotheses": "node src/sim/iterate.js hypotheses",
     "iterate:summary": "node src/sim/iterate.js summary",
-    "dashboard": "cat results/dashboard.md"
+    "dashboard": "cat results/dashboard.md",
+    "refresh": "bash scripts/refresh.sh"
   }
 }
