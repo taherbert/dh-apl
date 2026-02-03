@@ -77,7 +77,8 @@ actions.ar+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
 actions.ar+=/soul_cleave,if=!buff.rending_strike.up&buff.glaive_flurry.up
 # Spend Rending Strike or generate Fury for empowered Soul Cleave
 actions.ar+=/fracture,if=buff.glaive_flurry.up
-actions.ar+=/reavers_glaive,if=!buff.rending_strike.up&!buff.glaive_flurry.up
+# Test: Prioritize rending_strike uptime by allowing reavers_glaive even during glaive_flurry
+actions.ar+=/reavers_glaive,if=!buff.rending_strike.up
 actions.ar+=/sigil_of_spite,if=!buff.reavers_glaive.up&(buff.art_of_the_glaive.stack+soul_fragments.total)<20
 actions.ar+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
 actions.ar+=/soul_carver,if=!talent.fiery_demise|(talent.fiery_demise&dot.fiery_brand.ticking)
