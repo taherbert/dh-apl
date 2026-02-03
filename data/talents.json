@@ -18,7 +18,7 @@
         "posY": 1500,
         "entryNode": true,
         "type": "off_gcd_ability",
-        "cooldown": 25,
+        "cooldown": 0.5,
         "duration": 1,
         "affectedBy": [
           {
@@ -41,6 +41,21 @@
             "effects": [
               1
             ]
+          },
+          {
+            "name": "Voidstep",
+            "id": 1223157,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Demonsurge",
+            "id": 1245496,
+            "effects": [
+              3,
+              6
+            ]
           }
         ]
       },
@@ -54,28 +69,28 @@
         "spellName": "Felblade",
         "school": "Physical",
         "passive": false,
-        "description": "Charge to your target and deal $213243sw2 $@spelldesc395020 damage.\n$?s263642[Fracture has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[Shear has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[Demon Blades has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r][Demon's Bite has a chance to reset the cooldown of Felblade.\n|cFFFFFFFFGenerates $213243s3 Fury.|r]",
+        "description": "Charge to your target and deal $213243sw2 $@spelldesc395020 damage.\n$?s263642[|cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[|cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[|cFFFFFFFFGenerates $213243s3 Fury.|r][|cFFFFFFFFGenerates $213243s3 Fury.|r]",
         "entryType": "active",
         "posX": 3900,
         "posY": 1500,
         "entryNode": true,
         "type": "active_ability",
-        "cooldown": 15,
+        "cooldown": 12,
         "gcd": 0.5,
         "affectedBy": [
           {
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              4
+              7
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              4,
-              7
+              7,
+              14
             ]
           },
           {
@@ -84,6 +99,71 @@
             "effects": [
               3,
               4
+            ]
+          },
+          {
+            "name": "Demonsurge",
+            "id": 452435,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Guile",
+            "id": 1223171,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Demonsurge",
+            "id": 1245496,
+            "effects": [
+              5
+            ]
+          },
+          {
+            "name": "Reaper's Toll",
+            "id": 1245523,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Duty Eternal",
+            "id": 1246562,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Furious",
+            "id": 1266326,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Soulforged Blades",
+            "id": 1272432,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Singular Strikes",
+            "id": 1272770,
+            "effects": [
+              1
             ]
           }
         ]
@@ -123,14 +203,14 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              3
+              6
             ]
           },
           {
@@ -145,6 +225,13 @@
             "id": 389715,
             "effects": [
               1
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
             ]
           }
         ]
@@ -207,7 +294,7 @@
         "spellName": "Improved Sigil of Misery",
         "school": "Physical",
         "passive": true,
-        "description": "Reduces the cooldown of Sigil of Misery by ${$s1/-1000} sec.",
+        "description": "Reduces the cooldown of Sigil of $?s202138[Chains][Misery] by $?s202138[${$s2/-1000}][${$s1/-1000}] sec.",
         "entryType": "passive",
         "posX": 5100,
         "posY": 2100,
@@ -252,14 +339,21 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              3
+              6
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
             ]
           }
         ]
@@ -303,7 +397,7 @@
         },
         "cooldown": 45,
         "gcd": 1.5,
-        "duration": 2,
+        "duration": 3,
         "affectedBy": [
           {
             "name": "Demon Soul",
@@ -316,14 +410,6 @@
           {
             "name": "Mastery: Demonic Presence",
             "id": 185164,
-            "effects": [
-              1,
-              2
-            ]
-          },
-          {
-            "name": "Unleashed Power",
-            "id": 206477,
             "effects": [
               1,
               2
@@ -357,11 +443,7 @@
             "effects": [
               1,
               2,
-              3,
-              12,
-              13,
-              18,
-              19
+              6
             ]
           },
           {
@@ -370,7 +452,7 @@
             "effects": [
               1,
               2,
-              3
+              6
             ]
           },
           {
@@ -444,11 +526,17 @@
             ]
           },
           {
-            "name": "Thrill of the Fight",
-            "id": 442688,
+            "name": "Void Metamorphosis",
+            "id": 471306,
             "effects": [
-              1,
-              2
+              3
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
             ]
           },
           {
@@ -468,16 +556,40 @@
             ]
           },
           {
-            "name": "Demon Soul",
-            "id": 1238675,
+            "name": "Havoc Demon Hunter",
+            "id": 1256955,
             "effects": [
               1,
               2
             ]
           },
           {
-            "name": "Demon Soul",
-            "id": 1238676,
+            "name": "Vengeance Demon Hunter",
+            "id": 1256959,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Blind Focus",
+            "id": 1272364,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc",
+            "id": 1283625,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc",
+            "id": 1283628,
             "effects": [
               1,
               2
@@ -517,7 +629,16 @@
         "posY": 3300,
         "type": "active_ability",
         "cooldown": 10,
-        "gcd": 1.5
+        "gcd": 1.5,
+        "affectedBy": [
+          {
+            "name": "Guile",
+            "id": 1223171,
+            "effects": [
+              1
+            ]
+          }
+        ]
       },
       {
         "name": "Aldrachi Design",
@@ -543,14 +664,14 @@
         "maxRank": 1,
         "spellId": 1266296,
         "spellName": "Focused Ire",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "The primary target of $?c3[Void Nova][Chaos Nova] is stunned for an additional ${$s1/1000} sec.",
         "entryType": "passive",
         "posX": 2100,
         "posY": 3900,
         "reqPoints": 8,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Master of the Glaive",
@@ -617,7 +738,7 @@
         "spellName": "Blazing Path",
         "school": "Physical",
         "passive": true,
-        "description": "$?a212613[Infernal Strike][Fel Rush] gains an additional charge.",
+        "description": "$?a212613[Infernal Strike]?s195072[Fel Rush][Shift] gains an additional charge.",
         "entryType": "passive",
         "posX": 3900,
         "posY": 3900,
@@ -651,7 +772,7 @@
         "spellName": "Aura of Pain",
         "school": "Physical",
         "passive": true,
-        "description": "Increases the critical strike chance of Immolation Aura by $s1%.",
+        "description": "$?c3[Soul Immolation grants ${$s2*$1241937d} additional Fury over its duration.][Increases the critical strike chance of Immolation Aura by $s1%.]",
         "entryType": "passive",
         "posX": 5100,
         "posY": 3900,
@@ -719,7 +840,7 @@
         "spellName": "Felfire Haste",
         "school": "Physical",
         "passive": true,
-        "description": "$?c1[Fel Rush][Infernal Strike] increases your movement speed by $389847s1% for $389847d.",
+        "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by $389847s1% for $389847d.",
         "entryType": "passive",
         "posX": 3900,
         "posY": 4500,
@@ -751,16 +872,16 @@
         "maxRank": 1,
         "spellId": 1266316,
         "spellName": "Burn It Out",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "$?c3[Soul Immolation][Immolation Aura] removes $s1 Disease $Leffect:effects;.",
         "entryType": "passive",
         "posX": 5100,
         "posY": 4500,
         "choiceNode": true,
         "choiceIndex": 100,
         "reqPoints": 8,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Soul Cleanse",
@@ -770,16 +891,16 @@
         "maxRank": 1,
         "spellId": 1266496,
         "spellName": "Soul Cleanse",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "$?c3[Soul Immolation][Immolation Aura] removes $s1 Curse $Leffect:effects;.",
         "entryType": "passive",
         "posX": 5100,
         "posY": 4500,
         "choiceNode": true,
         "choiceIndex": 200,
         "reqPoints": 8,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Lost in Darkness",
@@ -823,9 +944,9 @@
         "maxRank": 1,
         "spellId": 1266762,
         "spellName": "Felbound",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Your movement speed is increased by $s1%.",
         "entryType": "passive",
         "posX": 3900,
         "posY": 5100,
@@ -874,14 +995,14 @@
         "maxRank": 1,
         "spellId": 1266326,
         "spellName": "Furious",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Attacks and abilities that generate Fury deal $s1% increased damage.",
         "entryType": "passive",
         "posX": 3300,
         "posY": 5700,
         "reqPoints": 23,
-        "type": "passive"
+        "type": "spell_modifier"
       },
       {
         "name": "Remorseless",
@@ -891,14 +1012,14 @@
         "maxRank": 1,
         "spellId": 1266328,
         "spellName": "Remorseless",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Attacks and abilities that spend Fury deal $s1% increased damage.",
         "entryType": "passive",
         "posX": 4500,
         "posY": 5700,
         "reqPoints": 23,
-        "type": "passive"
+        "type": "spell_modifier"
       },
       {
         "name": "First In, Last Out",
@@ -908,14 +1029,14 @@
         "maxRank": 1,
         "spellId": 1266497,
         "spellName": "First In, Last Out",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "$?a212612[Fel Rush]?a212613[Infernal Strike][Shift] grants you a rapidly decaying shield equal to $s1% of your maximum health.",
         "entryType": "passive",
         "posX": 5100,
         "posY": 5700,
         "reqPoints": 23,
-        "type": "passive"
+        "type": "proc_trigger"
       },
       {
         "name": "Erratic Felheart",
@@ -927,7 +1048,7 @@
         "spellName": "Erratic Felheart",
         "school": "Physical",
         "passive": true,
-        "description": "The cooldown of $?a212613[Infernal Strike ][Fel Rush ]is reduced by ${-1*$s1}%.",
+        "description": "The cooldown of $?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] is reduced by ${-$s1/1000}.1 sec.",
         "entryType": "passive",
         "posX": 2700,
         "posY": 6300,
@@ -942,14 +1063,14 @@
         "maxRank": 1,
         "spellId": 1266500,
         "spellName": "Final Breath",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Fully channeling $?a212612[Eye Beam]?a212613[Fel Devastation][Void Ray] increases the damage of its final tick by $s1%.",
         "entryType": "passive",
         "posX": 3300,
         "posY": 6300,
         "reqPoints": 23,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Darkness",
@@ -975,14 +1096,14 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              3
+              6
             ]
           },
           {
@@ -1005,6 +1126,13 @@
             "effects": [
               1
             ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
           }
         ]
       },
@@ -1016,14 +1144,14 @@
         "maxRank": 1,
         "spellId": 1266329,
         "spellName": "Demon Muzzle",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Interrupting a spell with Disrupt decreases your magic damage taken by $1266616s1% for $1266616d.",
         "entryType": "passive",
         "posX": 4500,
         "posY": 6300,
         "reqPoints": 23,
-        "type": "passive"
+        "type": "proc_trigger"
       },
       {
         "name": "Soul Splitter",
@@ -1033,9 +1161,9 @@
         "maxRank": 2,
         "spellId": 1266330,
         "spellName": "Soul Splitter",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Any time you would generate one or more soul fragments, you have a $s1% chance to generate an additional Soul Fragment.",
         "entryType": "passive",
         "posX": 5100,
         "posY": 6300,
@@ -1050,14 +1178,14 @@
         "maxRank": 1,
         "spellId": 1266493,
         "spellName": "Wings of Wrath",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Glide speed increased by $s1%.",
         "entryType": "passive",
         "posX": 2700,
         "posY": 6900,
         "reqPoints": 23,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Long Night",
@@ -1105,9 +1233,9 @@
         "maxRank": 1,
         "spellId": 1266307,
         "spellName": "Demonic Resilience",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "$?c2[Demon Spikes][Blur] gains $s1 additional $Lcharge:charges;.",
         "entryType": "passive",
         "posX": 5100,
         "posY": 6900,
@@ -1146,13 +1274,6 @@
         "duration": 2,
         "affectedBy": [
           {
-            "name": "Fel Defender",
-            "id": 338671,
-            "effects": [
-              1
-            ]
-          },
-          {
             "name": "Demonsurge",
             "id": 452489,
             "effects": [
@@ -1171,7 +1292,7 @@
         "spellName": "Spirit Bomb",
         "school": "Fire",
         "passive": false,
-        "description": "Consume up to $s2 available Soul Fragments then explode, damaging nearby enemies for $247455s1 Fire damage per fragment consumed, and afflicting them with Frailty for $247456d, causing you to heal for $247456s1% of damage you deal to them. Deals reduced damage beyond $s3 targets.",
+        "description": "Consume up to $s2 Soul Fragments then explode, dealing $247455s1 Fire damage to nearby enemies, increased by $s1% per fragment consumed. Deals reduced damage beyond $s3 targets.",
         "entryType": "active",
         "posX": 11700,
         "posY": 2100,
@@ -1182,6 +1303,7 @@
           "typeId": 17,
           "spellId": 191871
         },
+        "cooldown": 25,
         "gcd": 1.5,
         "duration": 1.5,
         "affectedBy": [
@@ -1189,14 +1311,24 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6,
+              7
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              3
+              6,
+              7
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5,
+              6
             ]
           }
         ]
@@ -1211,7 +1343,7 @@
         "spellName": "Fiery Brand",
         "school": "Fire",
         "passive": false,
-        "description": "Brand an enemy with a demonic symbol, instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][]. The enemy's damage done to you is reduced by $s1% for $207744d.",
+        "description": "Brand yourself and an enemy target with demonic symbols, reducing the damage you take by $S1% and instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][] to the enemy.",
         "entryType": "active",
         "posX": 12900,
         "posY": 2100,
@@ -1248,7 +1380,7 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
@@ -1257,7 +1389,7 @@
             "effects": [
               1,
               2,
-              3
+              6
             ]
           },
           {
@@ -1291,13 +1423,6 @@
           {
             "name": "Spirit of the Darkness Flame",
             "id": 337542,
-            "effects": [
-              1
-            ]
-          },
-          {
-            "name": "Fiery Brand",
-            "id": 343010,
             "effects": [
               1
             ]
@@ -1356,6 +1481,20 @@
             ]
           },
           {
+            "name": "Void Metamorphosis",
+            "id": 471306,
+            "effects": [
+              3
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          },
+          {
             "name": "Luck of the Draw!",
             "id": 1219012,
             "effects": [
@@ -1372,8 +1511,32 @@
             ]
           },
           {
-            "name": "Demon Soul",
-            "id": 1238675,
+            "name": "Vengeance Demon Hunter",
+            "id": 1256959,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Blind Focus",
+            "id": 1272364,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc",
+            "id": 1283625,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc",
+            "id": 1283628,
             "effects": [
               1,
               2
@@ -1391,7 +1554,7 @@
         "spellName": "Perfectly Balanced Glaive",
         "school": "Physical",
         "passive": true,
-        "description": "Reduces the cooldown of Throw Glaive by ${$abs($s0/1000)} sec.",
+        "description": "Reduces the cooldown of Fracture by ${$s2/-1000} sec and Throw Glaive by ${$s1/-1000} sec.",
         "entryType": "passive",
         "posX": 11100,
         "posY": 2700,
@@ -1407,7 +1570,7 @@
         "spellName": "Quickened Sigils",
         "school": "Physical",
         "passive": true,
-        "description": "All Sigils activate ${$s1/-1000} second faster.",
+        "description": "Your Sigils activate ${$s1/-1000} second faster.",
         "entryType": "passive",
         "posX": 12300,
         "posY": 2700,
@@ -1423,11 +1586,11 @@
         "spellName": "Ascending Flame",
         "school": "Physical",
         "passive": true,
-        "description": "Sigil of Flame's initial damage is increased by $s2%.\nMultiple applications of Sigil of Flame may overlap.",
+        "description": "Sigil of Flame damage increased by $s2%.",
         "entryType": "passive",
         "posX": 13500,
         "posY": 2700,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Tempered Steel",
@@ -1437,13 +1600,13 @@
         "maxRank": 1,
         "spellId": 1265800,
         "spellName": "Tempered Steel",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Physical damage increased by $s1%.",
         "entryType": "passive",
         "posX": 10500,
         "posY": 3300,
-        "type": "passive"
+        "type": "spell_modifier"
       },
       {
         "name": "Calcified Spikes",
@@ -1455,11 +1618,11 @@
         "spellName": "Calcified Spikes",
         "school": "Physical",
         "passive": true,
-        "description": "You take $391171s2% reduced damage after Demon Spikes ends, fading by 1% per second.",
+        "description": "Demon Spikes reduces damage taken by $S1% while active.",
         "entryType": "passive",
         "posX": 11100,
         "posY": 3300,
-        "type": "passive_buff"
+        "type": "spell_modifier"
       },
       {
         "name": "Roaring Fire",
@@ -1514,14 +1677,14 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              3
+              6
             ]
           },
           {
@@ -1536,6 +1699,13 @@
             "id": 389715,
             "effects": [
               1
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
             ]
           }
         ]
@@ -1563,14 +1733,14 @@
         "definitionId": 117871,
         "maxRank": 1,
         "spellId": 389724,
-        "spellName": "Meteoric Strikes",
+        "spellName": "Felfire Fist",
         "school": "Physical",
         "passive": true,
-        "description": "Reduce the cooldown of Infernal Strike by ${$s1/-1000} sec.",
+        "description": "Activating Infernal Strike out of combat or within $1265759d of entering combat places a Sigil of Flame at the target location.",
         "entryType": "passive",
         "posX": 14100,
         "posY": 3300,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Sigil of Spite",
@@ -1582,7 +1752,7 @@
         "spellName": "Sigil of Spite",
         "school": "Chromatic",
         "passive": false,
-        "description": "Place a demonic sigil at the target location that activates after $d.\nDetonates to deal $389860s1 Chaos damage and shatter up to $s3 Lesser Soul Fragments from enemies affected by the sigil. Deals reduced damage beyond $s1 targets.",
+        "description": "Place a demonic sigil at the target location that activates after $d.\nDetonates to deal $389860s1 Chaos damage and shatter up to $s3 Soul $LFragment:Fragments; from enemies affected by the sigil. Deals reduced damage beyond $s1 targets.",
         "entryType": "active",
         "posX": 9900,
         "posY": 3900,
@@ -1606,14 +1776,14 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              3
+              6
             ]
           },
           {
@@ -1628,6 +1798,13 @@
             "id": 389715,
             "effects": [
               1
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
             ]
           }
         ]
@@ -1659,7 +1836,7 @@
         "spellName": "Feed the Demon",
         "school": "Physical",
         "passive": true,
-        "description": "Consuming a Soul Fragment reduces the remaining cooldown of Demon Spikes by ${$s1/100}.2 sec.",
+        "description": "Every $s1 Fury spent reduces the remaining cooldown of Demon Spikes by ${$s2/1000}.2 sec.",
         "entryType": "passive",
         "posX": 12300,
         "posY": 3900,
@@ -1693,12 +1870,12 @@
         "spellName": "Revel in Pain",
         "school": "Physical",
         "passive": true,
-        "description": "When Fiery Brand expires on your primary target, you gain a shield that absorbs up ${$AP*($s2/100)*(1+$@versadmg)} damage for $343013d, based on your damage dealt to them while Fiery Brand was active.",
+        "description": "${$s1/10}.1% of your Fire damage shields you, up to a maximum of ${$MHP*$s2/100}.\nShield and maximum values are doubled while Fiery Brand is active.",
         "entryType": "passive",
         "posX": 14700,
         "posY": 3900,
         "reqPoints": 8,
-        "type": "proc_trigger"
+        "type": "passive_buff"
       },
       {
         "name": "Frailty",
@@ -1710,7 +1887,7 @@
         "spellName": "Frailty",
         "school": "Physical",
         "passive": true,
-        "description": "Enemies struck by Sigil of Flame are afflicted with Frailty for $247456d.\nYou heal for $247456s1% of all damage you deal to targets with Frailty.",
+        "description": "Enemies struck by Sigil of Flame, Soul Cleave, and Spirit Bomb are afflicted with Frailty for $247456d.\nYou heal for $247456s1% of all damage you deal to targets with Frailty.",
         "entryType": "passive",
         "posX": 10500,
         "posY": 4500,
@@ -1744,7 +1921,7 @@
         "spellName": "Fallout",
         "school": "Physical",
         "passive": true,
-        "description": "Immolation Aura's initial burst has a chance to shatter Lesser Soul Fragments from enemies.",
+        "description": "Immolation Aura's initial burst has a chance to shatter Soul Fragments from enemies.",
         "entryType": "passive",
         "posX": 11700,
         "posY": 4500,
@@ -1778,7 +1955,7 @@
         "spellName": "Volatile Flameblood",
         "school": "Physical",
         "passive": true,
-        "description": "Immolation Aura generates $m-$M Fury when it deals critical damage.\nThis effect may only occur once per ${$proccooldown+0.1} sec.",
+        "description": "Immolation Aura has $s4% increased critical strike chance and generates $m1-$M1 Fury when it deals critical damage.\nThis effect may only occur once per ${$proccooldown+0.1} sec.",
         "entryType": "passive",
         "posX": 12900,
         "posY": 4500,
@@ -1793,16 +1970,16 @@
         "maxRank": 1,
         "spellId": 1265924,
         "spellName": "Soul Barrier",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Spirit Bomb shields you for $263648d, absorbing ${$MHP*$s1/100} damage plus ${$MHP*$s2/100} for each Soul Fragment consumed.",
         "entryType": "passive",
         "posX": 13500,
         "posY": 4500,
         "choiceNode": true,
         "choiceIndex": 100,
         "reqPoints": 8,
-        "type": "passive"
+        "type": "passive_buff"
       },
       {
         "name": "Soul Sigils",
@@ -1814,7 +1991,7 @@
         "spellName": "Soul Sigils",
         "school": "Physical",
         "passive": true,
-        "description": "Afflicting an enemy with a Sigil generates $m1 Lesser Soul $LFragment:Fragments;.",
+        "description": "Afflicting an enemy with a Sigil generates $m1 Soul $LFragment:Fragments;.",
         "entryType": "passive",
         "posX": 13500,
         "posY": 4500,
@@ -1850,12 +2027,12 @@
         "spellName": "Void Reaver",
         "school": "Physical",
         "passive": true,
-        "description": "Frailty now also reduces all damage you take from afflicted targets by $s2%.\nEnemies struck by Soul Cleave are afflicted with Frailty for $247456d.",
+        "description": "Frailty now also reduces all damage you take from afflicted targets by $s2%.",
         "entryType": "passive",
         "posX": 9900,
         "posY": 5100,
         "reqPoints": 8,
-        "type": "proc_trigger"
+        "type": "passive_buff"
       },
       {
         "name": "Painbringer",
@@ -1867,7 +2044,7 @@
         "spellName": "Painbringer",
         "school": "Fire",
         "passive": true,
-        "description": "Consuming a Soul Fragment reduces all damage you take by $s1% for $212988d.\nMultiple applications may overlap.",
+        "description": "Consuming a Soul Fragment reduces all damage you take by $s1% for $212988d.",
         "entryType": "passive",
         "posX": 11100,
         "posY": 5100,
@@ -1892,7 +2069,7 @@
         "type": "active_ability",
         "charges": {
           "count": 1,
-          "cooldown": 60
+          "cooldown": 90
         },
         "gcd": 1.5,
         "duration": 2,
@@ -1908,14 +2085,14 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
             "name": "Vengeance Demon Hunter",
             "id": 212613,
             "effects": [
-              3
+              6
             ]
           },
           {
@@ -1930,6 +2107,13 @@
             "id": 389715,
             "effects": [
               1
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
             ]
           }
         ]
@@ -2046,12 +2230,12 @@
         "spellName": "Cycle of Binding",
         "school": "Physical",
         "passive": true,
-        "description": "Sigil of Flame reduces the cooldown of your Sigils by $s1 sec.",
+        "description": "Your Sigils have $S2% reduced cooldowns.",
         "entryType": "passive",
         "posX": 14100,
         "posY": 5700,
         "reqPoints": 20,
-        "type": "passive_buff"
+        "type": "passive"
       },
       {
         "name": "Vulnerability",
@@ -2078,14 +2262,14 @@
         "maxRank": 1,
         "spellId": 1265818,
         "spellName": "Vengeful Beast",
-        "school": null,
+        "school": "Physical",
         "passive": true,
-        "description": null,
+        "description": "Metamorphosis has ${$s1/1000} sec increased duration and increases the damage of Fracture, Soul Cleave, and Spirit Bomb by $s2%.",
         "entryType": "passive",
         "posX": 12300,
         "posY": 6300,
         "reqPoints": 20,
-        "type": "passive"
+        "type": "spell_modifier"
       },
       {
         "name": "Charred Flesh",
@@ -2114,7 +2298,7 @@
         "spellName": "Soulcrush",
         "school": "Physical",
         "passive": true,
-        "description": "Multiple applications of Frailty may overlap.\nSoul Cleave applies Frailty to your primary target for $s2 sec.",
+        "description": "The effects of Frailty are doubled.",
         "entryType": "passive",
         "posX": 11100,
         "posY": 6900,
@@ -2131,7 +2315,7 @@
         "spellName": "Soul Carver",
         "school": "Fire",
         "passive": false,
-        "description": "Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional $o1 Fire damage over $d.  Immediately shatters $s3 Lesser Soul Fragments from the target and $s4 additional Lesser Soul Fragment every $t1 sec.",
+        "description": "Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional $o1 Fire damage over $d.  Immediately shatters $s3 Soul Fragments from the target and $s4 additional Soul $LFragment :Fragments; every $t1 sec.",
         "entryType": "active",
         "posX": 11700,
         "posY": 6900,
@@ -2167,7 +2351,7 @@
             "name": "Havoc Demon Hunter",
             "id": 212612,
             "effects": [
-              3
+              6
             ]
           },
           {
@@ -2176,7 +2360,7 @@
             "effects": [
               1,
               2,
-              3
+              6
             ]
           },
           {
@@ -2247,6 +2431,20 @@
             ]
           },
           {
+            "name": "Void Metamorphosis",
+            "id": 471306,
+            "effects": [
+              3
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          },
+          {
             "name": "Luck of the Draw!",
             "id": 1219012,
             "effects": [
@@ -2263,8 +2461,32 @@
             ]
           },
           {
-            "name": "Demon Soul",
-            "id": 1238675,
+            "name": "Vengeance Demon Hunter",
+            "id": 1256959,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Blind Focus",
+            "id": 1272364,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc",
+            "id": 1283625,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc",
+            "id": 1283628,
             "effects": [
               1,
               2
@@ -2392,7 +2614,7 @@
           "spellName": "Art of the Glaive",
           "school": "Physical",
           "passive": true,
-          "description": "Consuming $?a212612[$s1][$s2] Soul Fragments or casting The Hunt converts your next Throw Glaive into Reaver's Glaive.\n$@spellicon442294 $@spellname442294:\n$@spelldesc442294",
+          "description": "Consuming $?a212612[$s1][$s2] Soul Fragments or casting $?a212612[The Hunt][Sigil of Spite] converts your next Throw Glaive into Reaver's Glaive.\n$@spellicon442294 $@spellname442294:\n$@spelldesc442294",
           "entryType": "passive",
           "posX": 8100,
           "posY": 1200,
@@ -2410,7 +2632,7 @@
           "spellName": "Fury of the Aldrachi",
           "school": "Physical",
           "passive": true,
-          "description": "When enhanced by Reaver's Glaive, $?a212612[Blade Dance][Soul Cleave] casts $s2 additional glaive slashes to nearby targets.\nIf cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast $?a1236360[${($s2*($s1/100+1))+$1236360s1}][${$s2*($s1/100+1)}] slashes instead.",
+          "description": "When enhanced by Reaver's Glaive, $?a212612[Blade Dance][Soul Cleave] casts $s2 additional glaive slashes to nearby targets. Deals reduced damage beyond $444806s2 targets.\nIf cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast $?a1236360[${($s2*($s1/100+1))+$1236360s1}][${$s2*($s1/100+1)}] slashes instead.",
           "entryType": "passive",
           "posX": 7200,
           "posY": 1800,
@@ -2476,13 +2698,13 @@
           "maxRank": 1,
           "spellId": 1272143,
           "spellName": "Broken Spirit",
-          "school": null,
+          "school": "Physical",
           "passive": true,
-          "description": null,
+          "description": "$?a212613[Sigil of Spite][The Hunt] shatters $?a212613[$s1 additional][$s2] Soul $LFragment:Fragments;. $?a212613[Soul Cleave has][Blade Dance and Chaos Strike have] a $?a212613[$s3][$s4]% chance to shatter a Soul Fragment.",
           "entryType": "passive",
           "posX": 9000,
           "posY": 1800,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Aldrachi Tactics",
@@ -2546,7 +2768,7 @@
           "spellName": "Wounded Quarry",
           "school": "Physical",
           "passive": true,
-          "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal $s1% of the damage dealt to your marked target as Chaos, and sometimes shatter a Lesser Soul Fragment.",
+          "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal $s1% of the damage dealt to your marked target as Chaos, and sometimes shatter a Soul Fragment.",
           "entryType": "passive",
           "posX": 8400,
           "posY": 2400,
@@ -2560,13 +2782,13 @@
           "maxRank": 1,
           "spellId": 1272138,
           "spellName": "Keen Edge",
-          "school": null,
+          "school": "Physical",
           "passive": true,
-          "description": null,
+          "description": "Reaver's Glaive damage is increased by $s1% and other Physical-only damage is increased by $s2%.",
           "entryType": "passive",
           "posX": 9000,
           "posY": 2400,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Incisive Blade",
@@ -2628,13 +2850,13 @@
           "maxRank": 1,
           "spellId": 1272153,
           "spellName": "Bladecraft",
-          "school": null,
+          "school": "Physical",
           "passive": true,
-          "description": null,
+          "description": "Fury of the Aldrachi further empowers $?a212613[Soul Cleave][Blade Dance] when cast after $?a212613[Fracture][Chaos Strike], increasing slashes to ${$442718s2*($442718s1/100+1)+$s1}.\nReaver's Mark now stacks up to $442624u times and further empowers $?a212613[Fracture][Chaos Strike] when cast after $?a212613[Soul Cleave][Blade Dance], applying an additional stack.",
           "entryType": "passive",
           "posX": 8400,
           "posY": 3000,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Warblade's Hunger",
@@ -2662,7 +2884,7 @@
           "spellName": "Thrill of the Fight",
           "school": "Physical",
           "passive": true,
-          "description": "After consuming both enhancements, gain Thrill of the Fight, increasing your attack speed by $442695s1% for $442695d and your damage and healing by $442688s1% for $442688d.",
+          "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by $442695s1% and increasing Haste by $442688s1% for $442688d.",
           "entryType": "passive",
           "posX": 8100,
           "posY": 3600,
@@ -2680,15 +2902,15 @@
           "maxRank": 1,
           "spellId": 1253304,
           "spellName": "Voidfall",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "$?a212613[Fracture][Consume] has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall.\nUpon reaching $1256301u stacks of Voidfall, $?a212613[Soul Cleave][Reap] consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing $?a212613[$1256306s1 Shadowflame][$1256305s1 Cosmic] damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets.",
           "entryType": "passive",
           "posX": 7800,
           "posY": 4200,
           "freeNode": true,
           "entryNode": true,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Swift Erasure",
@@ -2698,9 +2920,9 @@
           "maxRank": 1,
           "spellId": 1253668,
           "spellName": "Swift Erasure",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Each stack of Voidfall grants $s1% Haste.",
           "entryType": "passive",
           "posX": 6900,
           "posY": 4800,
@@ -2714,13 +2936,13 @@
           "maxRank": 1,
           "spellId": 1253377,
           "spellName": "Meteoric Rise",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "$?c2[Fel Devastation][Void Ray] damage increased by $s1%.\n$?c2[Fel Devastation][Fully channeling Void Ray] generates $?c2[$s4 Soul Fragments over its duration][$s3 $Lstack:stacks; of Voidfall].",
           "entryType": "passive",
           "posX": 7500,
           "posY": 4800,
-          "type": "passive"
+          "type": "spell_modifier"
         },
         {
           "name": "Catastrophe",
@@ -2730,13 +2952,13 @@
           "maxRank": 1,
           "spellId": 1253769,
           "spellName": "Catastrophe",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Enemies struck by a Voidfall Meteor take an additional $?a212613[$s1%][$s2%] damage over $1256667d.",
           "entryType": "passive",
           "posX": 8100,
           "posY": 4800,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Phase Shift",
@@ -2746,9 +2968,9 @@
           "maxRank": 1,
           "spellId": 1256245,
           "spellName": "Phase Shift",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Each stack of Voidfall grants $s1% reduced damage taken.",
           "entryType": "passive",
           "posX": 8700,
           "posY": 4800,
@@ -2762,9 +2984,9 @@
           "maxRank": 1,
           "spellId": 1253399,
           "spellName": "Path to Oblivion",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Each stack of Voidfall grants $s1% increased movement speed.",
           "entryType": "passive",
           "posX": 6900,
           "posY": 5400,
@@ -2780,9 +3002,9 @@
           "maxRank": 1,
           "spellId": 1253402,
           "spellName": "State of Matter",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "$?a212613[Torment][Shift] has $m1 additional $Lcharge:charges;.",
           "entryType": "passive",
           "posX": 6900,
           "posY": 5400,
@@ -2798,13 +3020,13 @@
           "maxRank": 1,
           "spellId": 1256295,
           "spellName": "Mass Acceleration",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Gain $m1 $Lstack:stacks; of Voidfall $?a212613[and reset the cooldown of Spirit Bomb][and reset the cooldown of Reap] upon activating $?a212613[Metamorphosis][Void Metamorphosis].",
           "entryType": "passive",
           "posX": 7500,
           "posY": 5400,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Doomsayer",
@@ -2814,15 +3036,15 @@
           "maxRank": 1,
           "spellId": 1253676,
           "spellName": "Doomsayer",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Activating $?a212613[Infernal Strike][Void Ray] out of combat or within $?a1213636[${$1265768d*$s2} sec][$1265768d] of entering combat calls down $?a212613[$s3][$s1] Voidfall $LMeteor:Meteors;$?a212613[][ over its duration].",
           "entryType": "passive",
           "posX": 8100,
           "posY": 5400,
           "choiceNode": true,
           "choiceIndex": 100,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Harness the Cosmos",
@@ -2832,15 +3054,15 @@
           "maxRank": 1,
           "spellId": 1279247,
           "spellName": "Harness the Cosmos",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Voidfall Meteor damage increased by $s1%.",
           "entryType": "passive",
           "posX": 8100,
           "posY": 5400,
           "choiceNode": true,
           "choiceIndex": 200,
-          "type": "passive"
+          "type": "spell_modifier"
         },
         {
           "name": "Celestial Echoes",
@@ -2850,13 +3072,13 @@
           "maxRank": 1,
           "spellId": 1253415,
           "spellName": "Celestial Echoes",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "$?s263642[Fracture]?a212613[Shear][Consume] generates $?a212613[$s1][$s2] additional Fury and deals $?a212613[$s3%][$s4%] increased damage.",
           "entryType": "passive",
           "posX": 8700,
           "posY": 5400,
-          "type": "passive"
+          "type": "spell_modifier"
         },
         {
           "name": "Final Hour",
@@ -2866,13 +3088,13 @@
           "maxRank": 1,
           "spellId": 1253805,
           "spellName": "Final Hour",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Passive bonuses granted by each stack of Voidfall persist for $1256322d after being consumed.",
           "entryType": "passive",
           "posX": 6900,
           "posY": 6000,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Meteoric Fall",
@@ -2882,13 +3104,13 @@
           "maxRank": 1,
           "spellId": 1253391,
           "spellName": "Meteoric Fall",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "While at $s1 stacks of Voidfall, $?c2[Spirit Bomb and Soul Cleave][Reap] consumes all $s1 to rapidly call down that many meteor strikes.",
           "entryType": "passive",
           "posX": 7500,
           "posY": 6000,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Dark Matter",
@@ -2898,13 +3120,13 @@
           "maxRank": 1,
           "spellId": 1256307,
           "spellName": "Dark Matter",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $?a212613[${$1264130s1*($s1/2)} Shadowflame][${$1264129s1*($s1/2)} Cosmic] damage over ${$s1/2} sec.",
           "entryType": "passive",
           "posX": 8100,
           "posY": 6000,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "Otherworldly Focus",
@@ -2914,13 +3136,13 @@
           "maxRank": 1,
           "spellId": 1253817,
           "spellName": "Otherworldly Focus",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "$?a212613[Spirit Bomb][Collapsing Star] and Voidfall meteors deal $s1% increased damage when striking a single target.\nEach additional target reduces this bonus by $s2%.",
           "entryType": "passive",
           "posX": 8700,
           "posY": 6000,
-          "type": "passive"
+          "type": "passive_buff"
         },
         {
           "name": "World Killer",
@@ -2930,13 +3152,13 @@
           "maxRank": 1,
           "spellId": 1256353,
           "spellName": "World Killer",
-          "school": null,
+          "school": "None",
           "passive": true,
-          "description": null,
+          "description": "The third Voidfall meteor strike called down in sequence is larger, has $s1% increased area, deals $s2% increased damage, and $?a212613[reduces the remaining cooldown of Metamorphosis by $s3 sec][generates $s4 Soul $LFragment:Fragments;].",
           "entryType": "passive",
           "posX": 7800,
           "posY": 6600,
-          "type": "passive"
+          "type": "passive_buff"
         }
       ]
     }

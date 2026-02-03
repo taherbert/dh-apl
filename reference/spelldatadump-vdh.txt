@@ -1,4 +1,4 @@
-SimulationCraft 1200-01 for World of Warcraft 12.0.0.65655 midnight-BETA (hotfix 2026-01-30/65655, git build fix/vdh-untethered-rage-expression c15d270e84)
+SimulationCraft 1200-01 for World of Warcraft 12.0.0.65699 midnight-BETA (hotfix 2026-02-03/65699, git build midnight 092fc18e39)
 Name             : Demon Soul (id=163073) [Spell Family (107)] 
 Class            : Demon Hunter
 School           : Shadow
@@ -266,7 +266,7 @@ Labels           : 16: Class Spells
                  : 219
                  : 292
 Category Cooldown: 25 seconds
-Affecting Spells : Prepared (203551 effect#2), Tactical Retreat (389688 effect#1), Evasive Action (444929 effect#1), Voidstep (1223157 effect#2), Demonsurge (1245496 effect#3)
+Affecting Spells : Prepared (203551 effect#2), Tactical Retreat (389688 effect#1), Evasive Action (444929 effect#1), Voidstep (1223157 effect#2), Demonsurge (1245496 effects: #3, #6)
 Triggered By     : Vengeful Retreat (344866)
 Family Flags     : 3
 Attributes       : Is Ability (4), No Aura Cancel (31), Initiates Combat (Enables Auto-Attack) (41), No Threat (42), No Aura Icon (60), No Casting Bar Text (98), No Aura Log (202), Aura Points On Client (268), Allow Class Ability Procs (416)
@@ -292,7 +292,7 @@ Duration         : 3 seconds
 Labels           : 16: Class Spells
                  : 66: Demon Hunter Spells
                  : 292
-Affecting Spells : Demon Soul (163073 effects: #1, #2), Prepared (203551 effect#2), Exergy (208628 effects: #1, #2), Havoc Demon Hunter (212612 effects: #1, #2), Vengeance Demon Hunter (212613 effects: #1, #2), Frailty (247456 effect#4), Chaos Blades (247938 effects: #2, #3), Demon Soul (347765 effects: #1, #2), Tactical Retreat (389688 effect#1), Seething Chaos (394934 effects: #1, #2), Fiery Resolve (425653 effects: #1, #2), Inertia (427641 effects: #1, #2), Reaver's Mark (442624 effect#1), Evasive Action (444929 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Voidstep (1223157 effect#2), Thrill of the Fight (1227062 effects: #1, #2), Demonsurge (1245496 effect#3), Havoc Demon Hunter (1256955 effects: #1, #2), Vengeance Demon Hunter (1256959 effects: #1, #2), Tempered Steel (1265800 effects: #1, #2), Keen Edge (1272138 effects: #2, #3), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Prepared (203551 effect#2), Exergy (208628 effects: #1, #2), Havoc Demon Hunter (212612 effects: #1, #2), Vengeance Demon Hunter (212613 effects: #1, #2), Frailty (247456 effect#4), Chaos Blades (247938 effects: #2, #3), Demon Soul (347765 effects: #1, #2), Tactical Retreat (389688 effect#1), Seething Chaos (394934 effects: #1, #2), Fiery Resolve (425653 effects: #1, #2), Inertia (427641 effects: #1, #2), Reaver's Mark (442624 effect#1), Evasive Action (444929 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Voidstep (1223157 effect#2), Thrill of the Fight (1227062 effects: #1, #2), Demonsurge (1245496 effects: #3, #6), Havoc Demon Hunter (1256955 effects: #1, #2), Vengeance Demon Hunter (1256959 effects: #1, #2), Tempered Steel (1265800 effects: #1, #2), Keen Edge (1272138 effects: #2, #3), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
 Triggered By     : Vengeful Retreat (198793)
 Family Flags     : 3, 16, 42, 58, 70
 Attributes       : Is Ability (4), Not Shapeshifted (16), Do Not Sheath (18), Initiates Combat (Enables Auto-Attack) (41), Aura Points On Client (268), Allow Class Ability Procs (416)
@@ -435,6 +435,31 @@ Effects          :
 Description      : Increases Armor by ${$s1}.1% of your Agility. Armor bonus is doubled while Demon Spikes is active.$?s321299[
 
 Also increases your attack power by ${$321299s1}.1%.][]
+
+
+Name             : Shear (id=203782) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Range            : 5 yards
+GCD              : 1.5 seconds
+Requires weapon  : One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 2618: Fiery Brand (207744 effect#5), Fiery Brand (207771 effect#4)
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Havoc Demon Hunter (212612 effects: #6, #7), Vengeance Demon Hunter (212613 effects: #1, #2, #6, #7), Fiery Demise (212818 effect#2), Frailty (247456 effect#4), Mark of the Ogre (326486 effect#3), Half-Giant Empowerment (345871 effect#3), Demon Soul (347765 effects: #1, #2), Demon Hunter Vengeance Class Set 2pc (393630 effects: #1, #2), Demon Hunter Vengeance 10.1 Class Set 4pc (405509 effect#3), Fires of Fel (409645 effect#2), Fiery Resolve (425653 effects: #1, #2), Reaver's Mark (442624 effect#1), Void Metamorphosis (471306 effect#3), Devourer Demon Hunter (1213636 effects: #5, #6), Luck of the Draw! (1219012 effects: #1, #2), Thrill of the Fight (1227062 effects: #1, #2), Celestial Echoes (1253415 effects: #1, #3), Celestial Echoes (1256312 effects: #1, #3), Vengeance Demon Hunter (1256959 effects: #1, #2), Tempered Steel (1265800 effects: #1, #2), Keen Edge (1272138 effects: #2, #3), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Family Flags     : 22, 32, 58, 70, 85
+Attributes       : Is Ability (4), Not Shapeshifted (16), Do Not Sheath (18), Initiates Combat (Enables Auto-Attack) (41), Requires Main-Hand Weapon (106), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=300625)   : School Damage (2): physical
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 0.633 | Target: Targeted Enemy (6)
+#2 (id=300626)   : Energize Power (30)
+                   Base Value: 10 | Scaled Value: 10 | Resource: fury | Target: Self (1)
+                   Modified By: Demon Hunter Vengeance Class Set 2pc (393630 effect#2), Celestial Echoes (1253415 effect#1), Celestial Echoes (1256312 effect#1)
+Description      : Shears an enemy for $s1 Physical damage, and shatters $?a187827[two Lesser Soul Fragments][a Lesser Soul Fragment] from your target.
+
+|cFFFFFFFFGenerates $m2 Fury.|r
 
 
 Name             : Demon Spikes (id=203819) [Spell Family (107)] 
@@ -1305,6 +1330,31 @@ Effects          :
 Description      : You heal for $s1% of all Fire damage you deal.
 
 
+Name             : Felblade (id=213243) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Fire
+Spell Type       : Melee
+Spell Level      : 16
+Range            : 15 yards
+Requires weapon  : One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 117
+                 : 292
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Fiery Brand (207744 effect#2), Fiery Brand (207771 effect#2), Exergy (208628 effects: #1, #2), Havoc Demon Hunter (212612 effects: #1, #2), Vengeance Demon Hunter (212613 effects: #1, #2, #14), Fiery Demise (212818 effect#1), Frailty (247456 effect#4), Chaos Blades (247938 effects: #2, #3), Demon Soul (347765 effects: #1, #2), Any Means Necessary (388114 effects: #1, #3, #4), Burning Blood (390213 effects: #1, #2), Seething Chaos (394934 effects: #1, #2), Fires of Fel (409645 effect#1), Fiery Resolve (425653 effects: #1, #2), Inertia (427641 effects: #1, #2), Demon Hide (428241 effects: #1, #3), Reaver's Mark (442624 effect#1), Demonsurge (452435 effect#2), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Guile (1223171 effect#1), Thrill of the Fight (1227062 effects: #1, #2), Demonsurge (1245496 effect#5), Reaper's Toll (1245523 effect#2), Duty Eternal (1246562 effects: #1, #2), Havoc Demon Hunter (1256955 effects: #1, #2), Vengeance Demon Hunter (1256959 effects: #1, #2), Furious (1266326 effects: #1, #2), Blind Focus (1272364 effects: #1, #2), Soulforged Blades (1272432 effect#1), Singular Strikes (1272770 effect#1), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Family Flags     : 16, 30, 42, 70, 72
+Attributes       : Is Ability (4), Do Not Sheath (18), Initiates Combat (Enables Auto-Attack) (41), Requires Main-Hand Weapon (106), Always Line of Sight (185), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=316324)   : Dummy (3)
+                   Base Value: 1 | Scaled Value: 1 | Target: Targeted Enemy (6)
+#2 (id=316325)   : School Damage (2): fire
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 1.2294 | PvP Coefficient: 1.2 | Target: Targeted Enemy (6)
+#3 (id=316326)   : Energize Power (30)
+                   Base Value: 15 | Scaled Value: 15 | Resource: fury | Target: Self (1)
+                   Modified By: Duty Eternal (1246562 effect#2)
+Description      : $@spelldesc232893
+
+
 Name             : Master of the Glaive (id=213405) [Spell Family (107)] 
 Class            : Demon Hunter
 School           : Physical
@@ -1412,6 +1462,50 @@ Effects          :
 Description      : $@spelldesc183752
 
 
+Name             : Fracture (id=225919) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Range            : 20 yards
+Requires weapon  : One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 2618: Fiery Brand (207744 effect#5), Fiery Brand (207771 effect#4)
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Metamorphosis (187827 effect#14), Vengeance Demon Hunter (212613 effects: #1, #2), Fiery Demise (212818 effect#2), Frailty (247456 effect#4), Mark of the Ogre (326486 effect#3), Half-Giant Empowerment (345871 effect#3), Demon Soul (347765 effects: #1, #2), Demon Hunter Vengeance Class Set 2pc (393630 effect#1), Demon Hunter Vengeance 10.1 Class Set 4pc (405509 effect#3), Fires of Fel (409645 effect#2), Fiery Resolve (425653 effects: #1, #2), Reaver's Mark (442624 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Thrill of the Fight (1227062 effects: #1, #2), Celestial Echoes (1253415 effect#3), Celestial Echoes (1256312 effect#3), Vengeance Demon Hunter (1256959 effects: #1, #2), Demon Hunter Vengeance 12.0 Class Set 2pc (1264808 effect#1), Tempered Steel (1265800 effects: #1, #2), Furious (1266326 effects: #1, #2), Keen Edge (1272138 effects: #2, #3), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Fracture (263642)
+Family Flags     : 58, 69, 70
+Attributes       : Is Ability (4), Initiates Combat (Enables Auto-Attack) (41), Not a Proc (105), Requires Main-Hand Weapon (106), Always Hit (114), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=338878)   : School Damage (2): physical
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 1.035 | Target: Targeted Enemy (6)
+#2 (id=338879)   : Dummy (3)
+                   Base Value: 0 | Scaled Value: 0 | Target: Targeted Enemy (6)
+Description      : $@spelldesc263642
+
+
+Name             : Fracture (id=225921) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Range            : 20 yards
+Requires weapon  : One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 2618: Fiery Brand (207744 effect#5), Fiery Brand (207771 effect#4)
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Metamorphosis (187827 effect#14), Vengeance Demon Hunter (212613 effects: #1, #2), Fiery Demise (212818 effect#2), Frailty (247456 effect#4), Mark of the Ogre (326486 effect#3), Half-Giant Empowerment (345871 effect#3), Demon Soul (347765 effects: #1, #2), Demon Hunter Vengeance Class Set 2pc (393630 effect#1), Demon Hunter Vengeance 10.1 Class Set 4pc (405509 effect#3), Fires of Fel (409645 effect#2), Fiery Resolve (425653 effects: #1, #2), Reaver's Mark (442624 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Thrill of the Fight (1227062 effects: #1, #2), Celestial Echoes (1253415 effect#3), Celestial Echoes (1256312 effect#3), Vengeance Demon Hunter (1256959 effects: #1, #2), Demon Hunter Vengeance 12.0 Class Set 2pc (1264808 effect#1), Tempered Steel (1265800 effects: #1, #2), Furious (1266326 effects: #1, #2), Keen Edge (1272138 effects: #2, #3), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Fracture (263642)
+Family Flags     : 58, 69, 70
+Attributes       : Is Ability (4), Initiates Combat (Enables Auto-Attack) (41), Not a Proc (105), Always Hit (114), Requires Off-Hand Weapon (120), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=338881)   : School Damage (2): physical
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 2.07 | Target: Targeted Enemy (6)
+#2 (id=338882)   : Dummy (3)
+                   Base Value: 0 | Scaled Value: 0 | Target: Targeted Enemy (6)
+Description      : $@spelldesc263642
+
+
 Name             : Fallout (id=227174) [Spell Family (107), Passive, Hidden] 
 Talent Entry     : Vengeance [tree=spec, row=6, col=4, max_rank=1, req_points=8]
 Class            : Demon Hunter
@@ -1425,6 +1519,86 @@ Effects          :
 #1 (id=341324)   : Apply Aura (6) | Dummy (4)
                    Base Value: 0 | Scaled Value: 0 | Target: Self (1)
 Description      : Immolation Aura's initial burst has a chance to shatter Soul Fragments from enemies.
+
+
+Name             : Soul Cleave (id=228477) [Spell Family (107)] 
+Replaces         : Chaos Strike (id=344862)
+Class            : Vengeance Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Resource         : 35 Fury (17) (id=11545)
+Spell Level      : 1
+Range            : 5 yards
+GCD              : 1.5 seconds
+Requires weapon  : One-handed Axe, One-handed Mace, One-handed Sword, War Glaive, Fist Weapon
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Affecting Spells : Havoc Demon Hunter (212612 effect#6), Vengeance Demon Hunter (212613 effect#6), Immolation Aura (258920 effect#6), Mark of the Ogre (326486 effect#3), Half-Giant Empowerment (345871 effect#3), Immolation Aura (427913 effect#6), Immolation Aura (427914 effect#6), Immolation Aura (427915 effect#6), Devourer Demon Hunter (1213636 effect#5)
+Triggered By     : Soul Fragments (203981)
+Family Flags     : 32, 34, 60
+Attributes       : Is Ability (4), Not Shapeshifted (16), Do Not Sheath (18), Initiates Combat (Enables Auto-Attack) (41), No Threat (42), Requires Main-Hand Weapon (106), Missile Speed is Delay (in sec) (292), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=344028)   : Dummy (3)
+                   Base Value: 25 | Scaled Value: 25 | Target: Targeted Enemy (6)
+#2 (id=344029)   : Trigger Spell (64): Soul Cleave
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 300 | Trigger Spell: 228478 | Target: Self (1)
+#3 (id=344030)   : Dummy (3)
+                   Base Value: 2 | Scaled Value: 2 | Target: Targeted Enemy (6)
+#4 (id=344031)   : Direct Heal (10)
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 2.4 | Target: Self (1)
+Description      : Viciously strike an enemy and all other enemies in front of you for $228478s1 Physical damage and heal yourself for $s4. Deals reduced damage beyond $228478s2 targets.
+
+Consumes up to $s3 Soul Fragments, increasing damage by $228478s3% per fragment consumed.
+Variables        : $cleaveDamage=${2.0*$228478sw1}
+$cleaveHeal=${2.0*$AP*5.8*$s4/1000}
+
+
+Name             : Soul Cleave (id=228478) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Range            : 5 yards
+Requires weapon  : One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Metamorphosis (187827 effect#14), Vengeance Demon Hunter (212613 effects: #1, #2), Frailty (247456 effect#4), Immolation Aura (258920 effect#6), Mark of the Ogre (326486 effect#3), Half-Giant Empowerment (345871 effect#3), Demon Soul (347765 effects: #1, #2), Fiery Resolve (425653 effects: #1, #2), Immolation Aura (427913 effect#6), Immolation Aura (427914 effect#6), Immolation Aura (427915 effect#6), Incisive Blade (442492 effect#1), Reaver's Mark (442624 effect#1), Demon Hunter Vengeance 11.0 Class Set 2pc (453707 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Thrill of the Fight (1227062 effects: #1, #2), Vengeance Demon Hunter (1256959 effects: #1, #2), Tempered Steel (1265800 effects: #1, #2), Remorseless (1266328 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Soul Cleave (228477), Soul Sunder (452436)
+Family Flags     : 31, 34, 70
+Attributes       : Is Ability (4), Not Shapeshifted (16), Do Not Sheath (18), Initiates Combat (Enables Auto-Attack) (41), Discount Power On Miss (59), Active Threat (94), Not a Proc (105), No Cast Log (128), No Attack Miss (249), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=344032)   : School Damage (2): physical | Attributes: Add Target (Dest) Combat Reach to AOE (11), Area Effects Use Target Radius (17)
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 2.08 | Radius: 8 yards | Target: Enemies in Cone to Targeted Enemy (104)
+#2 (id=819792)   : Dummy (3)
+                   Base Value: 5 | Scaled Value: 5
+#3 (id=1278619)  : Dummy (3)
+                   Base Value: 20 | Scaled Value: 20
+Description      : $@spelldesc228477
+
+
+Name             : Felblade (id=232893) [Spell Family (107)] 
+Talent Entry     : Havoc [tree=class, row=1, col=4, max_rank=1, req_points=0]
+                 : Vengeance [tree=class, row=1, col=4, max_rank=1, req_points=0]
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Range            : 15 yards
+GCD              : 0.5 seconds
+Requires weapon  : One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear
+Cooldown         : 12 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Affecting Spells : Havoc Demon Hunter (212612 effect#7), Vengeance Demon Hunter (212613 effects: #7, #14), Any Means Necessary (388114 effects: #3, #4), Demonsurge (452435 effect#2), Devourer Demon Hunter (1213636 effect#6), Guile (1223171 effect#1), Demonsurge (1245496 effect#5), Reaper's Toll (1245523 effect#2), Duty Eternal (1246562 effects: #1, #2), Furious (1266326 effects: #1, #2), Soulforged Blades (1272432 effect#1), Singular Strikes (1272770 effect#1)
+Family Flags     : 30, 85
+Attributes       : Is Ability (4), Not Shapeshifted (16), Do Not Sheath (18), No Immunities (29), Initiates Combat (Enables Auto-Attack) (41), Not an Action (92), Always Line of Sight (185), Taps immediately (215), Attack on Charge to Unit (242), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=351567)   : Dummy (3)
+                   Base Value: 0 | Scaled Value: 0 | Target: Targeted Enemy (6)
+Description      : Charge to your target and deal $213243sw2 $@spelldesc395020 damage.
+
+$?s263642[|cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[|cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[|cFFFFFFFFGenerates $213243s3 Fury.|r][|cFFFFFFFFGenerates $213243s3 Fury.|r]
 
 
 Name             : Spirit of the Darkness Flame (id=235543) [Spell Family (107)] 
@@ -1679,6 +1853,61 @@ Effects          :
                    Base Value: 8 | Scaled Value: 8 | Target: Self (1)
                    Modified By: Agonizing Flames (207548 effect#1)
 Description      : $@spelldesc258920
+
+
+Name             : Fracture (id=263642) [Spell Family (107)] 
+Replaces         : Demon's Bite (id=344859)
+Class            : Vengeance Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Range            : 5 yards
+GCD              : 1.5 seconds
+Requires weapon  : One-handed Axe, Two-handed Axe, One-handed Mace, Two-handed Mace, Polearm, One-handed Sword, Two-handed Sword, War Glaive, Staff, Fist Weapon, Dagger, Spear
+Charges          : 2 (6 seconds cooldown)
+Category         : 1552 (Type 0x1): Vengeance Demon Hunter (212613 effect#9), Perfectly Balanced Glaive (320387 effect#2)
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 2618: Fiery Brand (207744 effect#5), Fiery Brand (207771 effect#4)
+Affecting Spells : Metamorphosis (187827 effects: #4, #9, #10), Havoc Demon Hunter (212612 effect#6), Vengeance Demon Hunter (212613 effect#6), Fiery Demise (212818 effect#2), Mark of the Ogre (326486 effect#3), Half-Giant Empowerment (345871 effect#3), Demon Hunter Vengeance Class Set 2pc (393630 effect#3), Demon Hunter Vengeance 10.1 Class Set 4pc (405509 effect#3), Fires of Fel (409645 effect#2), Devourer Demon Hunter (1213636 effect#5), Celestial Echoes (1253415 effect#5), Celestial Echoes (1256312 effect#5)
+Family Flags     : 32, 73
+Attributes       : Is Ability (4), Not Shapeshifted (16), Initiates Combat (Enables Auto-Attack) (41), Requires Main-Hand Weapon (106), Requires Off-Hand Weapon (120), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=706536)   : Dummy (3)
+                   Base Value: 2 | Scaled Value: 2 | Target: Targeted Enemy (6)
+                   Modified By: Metamorphosis (187827 effect#9)
+#2 (id=706537)   : Trigger Spell (64): Fracture
+                   Base Value: 0 | Scaled Value: 0 | Trigger Spell: 225919
+#3 (id=706538)   : Trigger Spell (64): Fracture
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 150 | Trigger Spell: 225921
+#4 (id=706539)   : Energize Power (30)
+                   Base Value: 25 | Scaled Value: 25 | Resource: fury | Target: Self (1)
+                   Modified By: Metamorphosis (187827 effect#4), Metamorphosis (187827 effect#10), Demon Hunter Vengeance Class Set 2pc (393630 effect#3), Celestial Echoes (1253415 effect#5), Celestial Echoes (1256312 effect#5)
+Description      : Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter $s1 Lesser Soul Fragments from them.
+
+|cFFFFFFFFGenerates $s4 Fury.|r
+
+
+Name             : Soul Barrier (id=263648) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Shadow
+Spell Type       : None
+GCD              : 1.5 seconds
+Duration         : 10 seconds
+Cooldown         : 30 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Triggered By     : Soul Fragments (203981)
+Attributes       : Not Shapeshifted (16), Do Not Sheath (18), Aura Points On Client (268), Ignore Caster Healing Modifiers (312), Ignore Caster Absorb Modifiers (370), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=706547)   : Apply Aura (6) | Absorb Damage (69) | Attributes: Aura Points Stack (9)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 0x7f | Target: Self (1)
+                   Affected School(s): All
+Description      : $@spelldesc1265924
+Tooltip          : Absorbs $w1 damage.
+Variables        : $baseAbsorb=${15*$AP}
+$fragmentAbsorb=${3*$AP}
 
 
 Name             : Void Reaver (id=268175) [Spell Family (107), Passive] 
@@ -2276,6 +2505,28 @@ Effects          :
                    Affected Spells: Darkness (196718)
                    Family Flags: 77
 Description      : The radius of Darkness is increased by $s1 yds, and its duration by ${$s2/1000} sec.
+
+
+Name             : Deadly Dance (id=363736) [Spell Family (107), Passive, Hidden] 
+Class            : Demon Hunter
+School           : Chaos
+Spell Type       : None
+Labels           : 292
+                 : 295
+                 : 1375
+Proc Chance      : 101%
+Proc Flags       : Yellow Melee, Generic Hostile Spell, Magic Hostile Spell
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Allow Aura While Dead (116), Allow Entering Arena (149), Disable Aura While Dead (226), Only Proc From Class Abilities (415)
+Effects          :
+#1 (id=903316)   : Apply Aura (6) | Dummy (4)
+                   Base Value: 1 | Scaled Value: 1 | Target: Self (1)
+#2 (id=911715)   : Apply Aura (6) | Dummy (4)
+                   Base Value: 60 | Scaled Value: 60 | Target: Self (1)
+#3 (id=911803)   : Apply Aura (6) | Add Flat Modifier (107): Spell Duration (1)
+                   Base Value: 6000 | Scaled Value: 6000 | Misc Value: 1 | Target: Self (1)
+                   Affected Spells: Metamorphosis (162264), Metamorphosis (191427), Void Metamorphosis (1217605)
+                   Family Flags: 15
+Description      : Metamorphosis duration is increased by ${$s3/1000} sec. Every $s2 Fury you consume reduces the cooldown of Metamorphosis by $s1 sec.
 
 
 Name             : Any Means Necessary (id=388114) [Spell Family (107), Passive] 
@@ -2926,25 +3177,6 @@ Effects          :
                    Base Value: 0 | Scaled Value: 0 | AP Coefficient: 0.312 | Target: Targeted Enemy (6)
 Description      : $@spelldesc389729
 Tooltip          : Deals $w1 Physical damage back to attackers.
-
-
-Name             : Calcified Spikes (id=391171) [Spell Family (107)] 
-Class            : Demon Hunter
-School           : Physical
-Spell Type       : None
-Duration         : 12 seconds
-Labels           : 16: Class Spells
-                 : 66: Demon Hunter Spells
-                 : 292
-Attributes       : Do Not Sheath (18), Allow While Mounted (24), Allow While Sitting (27), No Threat (42), Include In Advanced Combat Log (72), Do Not Display Range (126), Allow Cast While Casting (135), Not In Spellbook (143), Aura Never Bounces (148), Aura Points On Client (268), Allow Class Ability Procs (416)
-Effects          :
-#1 (id=1028499)  : Apply Aura (6) | Modify Damage Taken% (87)
-                   Base Value: -12 | Scaled Value: -12 | Misc Value: 0x7f | Target: Self (1)
-                   Affected School(s): All
-#2 (id=1028500)  : Apply Aura (6) | Periodic Trigger Spell (23): Unknown(0) every 1 seconds
-                   Base Value: -12 | Scaled Value: -12 | Target: Self (1)
-Description      : $@spelldesc389720
-Tooltip          : Damage taken reduced by $w1%, fading over $d.
 
 
 Name             : Roaring Fire (id=391178) [Spell Family (107), Passive] 
@@ -4005,6 +4237,29 @@ Description      : Expose weaknesses in the target of your $@spellname442624, ca
 
 
 
+Name             : Fury of the Aldrachi (id=444806) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)
+                 : 4215
+                 : 6234: Vengeance Demon Hunter (212613 effect#20)
+                 : 6235: Vengeance Demon Hunter (212613 effect#17)
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Exergy (208628 effects: #1, #2), Havoc Demon Hunter (212612 effects: #1, #2), Chaos Blades (247938 effects: #2, #3), Demon Soul (347765 effects: #1, #2), Seething Chaos (394934 effects: #1, #2), Inertia (427641 effects: #1, #2), Reaver's Mark (442624 effect#1), Void Metamorphosis (471306 effect#3), Havoc Demon Hunter (1256955 effects: #1, #2), Tempered Steel (1265800 effects: #1, #2), Keen Edge (1272138 effects: #2, #3), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Art of the Glaive (444810)
+Family Flags     : 16, 58
+Attributes       : Always Line of Sight (185), Always AOE Line of Sight (186)
+Effects          :
+#1 (id=1141407)  : School Damage (2): physical
+                   Base Value: 0 | Scaled Value: 0 | AP Coefficient: 1.15 | Radius: 0 - 8 yards | Target: Source (22) -> Enemy in Area (15)
+#2 (id=1293624)  : Dummy (3)
+                   Base Value: 8 | Scaled Value: 8 | Radius: 0 - 8 yards | Target: Source (22) -> Enemy in Area (15)
+Description      : $@spelldesc442290
+
+
 Name             : Evasive Action (id=444926) [Spell Family (107), Passive] 
 Talent Entry     : Aldrachi Reaver (Havoc, Vengeance) [tree=hero, row=2, col=2, max_rank=1, req_points=1, select_idx=100]
 Class            : Demon Hunter
@@ -4149,9 +4404,10 @@ Effects          :
 #1 (id=1153593)  : Apply Aura (6) | Override Action Spell (Misc w/ Base) (332): Pierce the Veil overrides Voidblade
                    Base Value: 1245483 | Scaled Value: 1245483 | Misc Value: 1245412 | Target: Self (1)
 #2 (id=1153594)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
-                   Base Value: 30 | Scaled Value: 30 | Target: Self (1)
+                   Base Value: 30 | Scaled Value: 30 | PvP Coefficient: 0.334 | Target: Self (1)
                    Affected Spells: Felblade (213241), Felblade (213243), Felblade (232893), Hungering Slash (1239127), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
                    Family Flags: 30, 106
+Hotfixed         : PvP Coefficient (1 -> 0.334)
 #3 (id=1158336)  : Apply Aura (6) | Modify Spell School (220)
                    Base Value: 0 | Scaled Value: 0 | School: cosmic | Trigger Spell: 452416 | Target: Self (1)
 #4 (id=1246861)  : Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Radius (6)
@@ -4246,6 +4502,175 @@ Description      : $@spelldesc453710
 Tooltip          : The damage and healing of your next Fel Devastation is increased by $w1%.
 
 
+Name             : Void Metamorphosis (id=471306) [Spell Family (107), Passive, Hidden] 
+Talent Entry     : Devourer [tree=spec, row=3, col=4, max_rank=1, req_points=0]
+Class            : Demon Hunter
+School           : Spellshadow
+Spell Type       : Ranged
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 5408: Soul Glutton (1247534 effect#2)
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Can Proc From Procs (122), Do Not Log on Learn (355)
+Aura Interrupt   : Change Specialization (38)
+Effects          :
+#1 (id=1187543)  : Apply Aura (6) | Periodic Dummy (226): every 0.12 seconds
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+#2 (id=1198557)  : Apply Aura (6) | Modify Cooldown Recharge Rate% (Label) (143)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 4284 (Label) | Target: Self (1)
+#3 (id=1198558)  : Apply Aura (6) | Add Flat Modifier (107): Spell Global Cooldown (21)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 21 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Void Nova (1234195), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Essence Break (1245759), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264129), Meteor Shower (1264130), Explosion of the Soul (1276488), Eradicate (1279200), Reaver's Glaive (1283344)
+                   Family Flags: 16, 70, 95
+#4 (id=1251936)  : Apply Aura (6) | Dummy (4)
+                   Base Value: 100 | Scaled Value: 100 | Target: Self (1)
+                   Modified By: Soul Glutton (1247534 effect#2)
+Description      : Collecting $1225789u Soul Fragments grants access to Void Metamorphosis.
+
+$@spellicon1217605 $@spellname1217605
+$@spelldesc1217605
+
+
+Name             : Devourer Demon Hunter (id=1213636) [Spell Family (107), Passive, Hidden] 
+Class            : Devourer Demon Hunter
+School           : Physical
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Is Ability (4), Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log (8), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1195342)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+#2 (id=1195343)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+#3 (id=1195344)  : Apply Aura (6) | Modify Pet Damage Done% (429)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+#4 (id=1195345)  : Apply Aura (6) | Modify Guardian Damage Done% (531)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+#5 (id=1195346)  : Apply Aura (6) | Hasted Global Cooldown (417)
+                   Base Value: 100 | Scaled Value: 100 | SP Coefficient: 0.25 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Strike (162794), Chaos Nova (179057), Throw Glaive (185123), Blade Dance (188499), Spectral Sight (188501), Metamorphosis (191427), Darkness (196718), Annihilation (201427), Sigil of Silence (202137), Sigil of Chains (202138), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204596), Soul Carver (207407), Sigil of Misery (207684), Death Sweep (210152), Felblade (213241), Imprison (217832), Soul Cleave (228477), Spirit Bomb (247454), Essence Break (258860), Immolation Aura (258920), Fracture (263642), Elysian Decree (306830), Sinful Brand (317009), The Hunt (323639), Elysian Decree (327839), Fodder to the Flame (329554), Throw Glaive (337819), Glaive Tempest (342817), Demon's Bite (344859), Chaos Strike (344862), Chaos Nova (344867), Throw Glaive (346665), The Hunt (370965), Sigil of Spite (390163), Fodder to the Flame (391430), Throw Glaive (393035), Immolation Aura (427913), Immolation Aura (427914), Immolation Aura (427915), Immolation Aura (427917), Reaver's Glaive (442294), Soul Sunder (452436), Spirit Burst (452437), Consuming Fire (452487), Sigil of Doom (452490), Consuming Fire (456640), Sigil of Doom (469991), Consume (473662), Void Metamorphosis (1217605), Devour (1217610), Eradicate (1225826), Reap (1226019), Void Nova (1234195), Voidblade (1241285), Cull (1245453), The Hunt (1246167), Spectral Sight (1251417), Predator's Wake (1259431), Reaver's Glaive (1283344)
+                   Family Flags: 32
+#6 (id=1195347)  : Apply Aura (6) | Hasted Cooldown Duration (416)
+                   Base Value: 100 | Scaled Value: 100 | SP Coefficient: 0.25 | Target: Self (1)
+                   Affected Spells: Throw Glaive (185123), Blade Dance (188499), Infernal Strike (189110), Shear (203782), Throw Glaive (204157), Death Sweep (210152), Felblade (213241), Felblade (232893), Spirit Bomb (247454), Immolation Aura (258920), Throw Glaive (337819), Glaive Tempest (342817), Throw Glaive (346665), Throw Glaive (393035), Immolation Aura (427913), Immolation Aura (427914), Immolation Aura (427915), Immolation Aura (427917), A Fire Inside (427918), Consuming Fire (452487), Consuming Fire (456640), Consume (473662), Void Ray (473728), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Reap (1226019), Voidblade (1241285), Soul Immolation (1241937), Cull (1245453), Pierce the Veil (1245483)
+                   Family Flags: 85
+#7 (id=1195348)  : Apply Aura (6) | Hasted Cooldown Duration (Category) (457)
+                   Base Value: 100 | Scaled Value: 100 | Misc Value: 1612 (Category) | Target: Self (1)
+                   Affected Spells (Category): Throw Glaive (185123), Throw Glaive (204157)
+#8 (id=1195349)  : Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 1 (3)
+                   Base Value: -1 | Scaled Value: -1 | Misc Value: 3 | Misc Value 2: 5812 (Label) | Target: Self (1)
+                   Affected Spells (Label): Swift Erasure (1253668)
+#9 (id=1291024)  : Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 1 (3)
+                   Base Value: -2 | Scaled Value: -2 | Misc Value: 3 | Misc Value 2: 6049 (Label) | Target: Self (1)
+                   Affected Spells (Label): Student of Suffering (453236)
+
+
+Name             : Void Metamorphosis (id=1217605) [Spell Family (107)] 
+Replaces         : Metamorphosis (id=191427)
+Class            : Devourer Demon Hunter
+School           : Physical
+Spell Type       : Melee
+Spell Level      : 10
+GCD              : 1.5 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 690: Major Cooldowns
+                 : 3595
+Affecting Spells : Soul Rending (204909 effect#2), Havoc Demon Hunter (212612 effect#6), Vengeance Demon Hunter (212613 effect#6), First of the Illidari (235893 effect#1), Deadly Dance (363736 effect#3), Devourer Demon Hunter (1213636 effect#5), Demon Hunter Havoc 12.0 Class Set 4pc (1264807 effect#1)
+Triggered By     : Void Metamorphosis (1225789), Collapsing Star (1227702)
+Family Flags     : 15, 32
+Attributes       : Is Ability (4), Do Not Log (8), Do Not Sheath (18), No Jump Pathing (208), Aura Points On Client (268), Bypass Visibility Check (320), Cheap Missile AOI (374), Allow Class Ability Procs (416), Unknown (491)
+Effects          :
+#1 (id=1201772)  : Trigger Spell (64): Void Metamorphosis
+                   Base Value: 0 | Scaled Value: 0 | Trigger Spell: 1217607 | Target: Self (1)
+#2 (id=1201773)  : Trigger Spell (64): Metamorphosis
+                   Base Value: 0 | Scaled Value: 0 | Trigger Spell: 201453 | Target: Self (1)
+#3 (id=1217332)  : Dummy (3)
+                   Base Value: 2 | Scaled Value: 2 | Target: Self (1)
+                   Modified By: Soul Rending (204909 effect#2)
+Description      : |CFFffffffRequires $1225789u Soul Fragments|R
+
+You ascend to a higher state of being, substantially empowering your abilities.
+
+While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury.
+
+
+Name             : Void Metamorphosis (id=1217607) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Chaos
+Spell Type       : None
+Duration         : Aura (infinite)
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 124
+                 : 292
+                 : 1220
+                 : 2309: First of the Illidari (235893 effect#2)
+                 : 5161: Mastery: Monster Within (1238855 effect#3), Mastery: Monster Within (1238855 effect#4)
+Proc Chance      : 100%
+Proc Flags       : Magic Hostile Spell
+Affecting Spells : Soul Rending (204909 effect#2)
+Triggered By     : Void Metamorphosis (1217605)
+Family Flags     : 84
+Attributes       : No Aura Cancel (31), Aura Expires Offline (130), Aura Points On Client (268), Spellcast Override In Spellbook (310), Allow Class Ability Procs (416), Nameplate Personal Buffs/Debuffs (423), Periodic Refresh Extends Duration (436), Non-secret Aura (506)
+Aura Interrupt   : Leave World (19), Enter World (22), Change Specialization (38), Raid Encounter Start or M+ Start (40), Disconnect (42), Enter Instance (43), Leave Arena or Battleground (45), Change Talent (46)
+Effects          :
+#1 (id=1201777)  : Apply Aura (6) | Modify All Haste% (193)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+#2 (id=1201778)  : Apply Aura (6) | Increase Speed% (31)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+#3 (id=1201779)  : Apply Aura (6) | Modify Leech% (443)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Modified By: Soul Rending (204909 effect#2)
+#4 (id=1201780)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+                   Modified By: Mastery: Monster Within (1238855 effect#3)
+#5 (id=1201781)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+                   Modified By: First of the Illidari (235893 effect#2), Mastery: Monster Within (1238855 effect#4)
+#6 (id=1201782)  : Apply Aura (6) | Override Action Spell (Misc w/ Base) (332): Devour overrides Consume
+                   Base Value: 1217610 | Scaled Value: 1217610 | Misc Value: 473662 | Target: Self (1)
+#7 (id=1201783)  : Apply Aura (6) | Periodic Dummy (226): every 1 seconds
+                   Base Value: 0 | Scaled Value: 0
+#8 (id=1201784)  : Apply Aura (6) | Add Flat Modifier (107): Spell Cooldown (11)
+                   Base Value: 16000 | Scaled Value: 16000 | Misc Value: 11 | Target: Self (1)
+                   Affected Spells: Void Ray (473728)
+                   Family Flags: 104
+#9 (id=1201785)  : Apply Aura (6) | Add Percent Modifier (108): Spell Resource Cost 1 (14)
+                   Base Value: -100 | Scaled Value: -100 | Misc Value: 14 | Target: Self (1)
+                   Affected Spells: Void Ray (473728)
+                   Family Flags: 104
+#10 (id=1235990) : Apply Aura (6) | Add Flat Modifier (107): Spell Effect 2 (12)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 12 | Target: Self (1)
+                   Affected Spells: Shattered Souls (1227619)
+                   Family Flags: 96
+#11 (id=1236102) : Apply Aura (6) | Dummy (4)
+                   Base Value: 25 | Scaled Value: 25 | Target: Self (1)
+#14 (id=1242727) : Apply Aura (6) | Dummy (4)
+                   Base Value: 1000 | Scaled Value: 1000 | Target: Self (1)
+#15 (id=1246506) : Apply Aura (6) | Override Action Spell (Misc w/ Base) (332): Cull overrides Reap
+                   Base Value: 1245453 | Scaled Value: 1245453 | Misc Value: 1226019 | Target: Self (1)
+#16 (id=1285610) : Apply Aura (6) | Apply Percent Modifier w/ Label (218): Spell Effect 4 (32)
+                   Base Value: 100 | Scaled Value: 100 | Misc Value: 32 | Misc Value 2: 6000 (Label) | Target: Self (1)
+                   Affected Spells (Label): Blind Focus (1272364)
+#17 (id=1285611) : Apply Aura (6) | Apply Percent Modifier w/ Label (218): Spell Effect 5 (33)
+                   Base Value: 100 | Scaled Value: 100 | Misc Value: 33 | Misc Value 2: 6000 (Label) | Target: Self (1)
+                   Affected Spells (Label): Blind Focus (1272364)
+Description      : $@spelldesc1217605
+Tooltip          : Your spells are empowered$?a1242956[,][] and your Fury is slowly draining. Effect ends upon reaching 0 Fury.
+
+
 Name             : Luck of the Draw! (id=1219012) [Spell Family (107)] 
 Class            : Demon Hunter
 School           : Physical
@@ -4270,6 +4695,44 @@ Effects          :
                    Base Value: 15 | Scaled Value: 15 | PvP Coefficient: 0.5 | Target: Self (1)
 Description      : $@spelldesc1215990
 Tooltip          : Damage increased by $s1%.
+
+
+Name             : Voidstep (id=1223157) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Spellshadow
+Spell Type       : None
+Duration         : 6 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Proc Chance      : 101%
+Proc Flags       : Yellow Melee, Yellow Ranged, Generic Hostile Spell, Magic Hostile Spell
+Attributes       : Can Proc From Procs (122), Do Not Consume Aura Stack On Proc (428)
+Effects          :
+#1 (id=1210907)  : Apply Aura (6) | Proc Trigger Spell (42): Voidstep
+                   Base Value: 0 | Scaled Value: 0 | Trigger Spell: 1239526 | Target: Self (1)
+#2 (id=1268523)  : Apply Aura (6) | Ignore Spell Cooldown (383)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Affected Spells: Vengeful Retreat (198793), Vengeful Retreat (198813), Vengeful Retreat (344866), Blazing Nova (436899), Blazing Nova (436964)
+                   Family Flags: 3
+Tooltip          : Your next Vengeful Retreat will release a Cosmic explosion at your location.
+
+
+Name             : Guile (id=1223171) [Spell Family (107), Passive, Hidden] 
+Talent Entry     : Devourer [tree=class, row=7, col=4, max_rank=1, req_points=8]
+Class            : Demon Hunter
+School           : Spellshadow
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Can Proc From Procs (122), Do Not Log on Learn (355)
+Effects          :
+#1 (id=1210931)  : Apply Aura (6) | Add Flat Modifier (107): Spell Range (5)
+                   Base Value: 20 | Scaled Value: 20 | Misc Value: 5 | Target: Self (1)
+                   Affected Spells: Disrupt (183752), Felblade (213241), Felblade (213243), Felblade (232893), Consume Magic (278326), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
+                   Family Flags: 19, 30, 89
+Description      : The cast range of Voidblade, Consume Magic, and Disrupt are increased by $s1 yds.
 
 
 Name             : A Fire Inside (id=1224451) [Spell Family (107), Passive, Hidden] 
@@ -4327,6 +4790,31 @@ Description      : $@spelldesc442686
 Tooltip          : Damage and healing increased by $w1%.
 
 
+Name             : Feast of Souls (id=1232310) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Cosmic
+Spell Type       : None
+Duration         : 6 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 5312: Sweet Suffering (1244295 effect#1)
+Stacks           : 20 maximum
+Proc Chance      : 101%
+Attributes       : Can Proc From Procs (122), Unknown (490)
+Effects          :
+#1 (id=1224845)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 1 | Scaled Value: 1 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+#2 (id=1225387)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 1 | Scaled Value: 1 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+Description      : $@spelldesc1237270
+Tooltip          : Damage increased by $s1%.
+
+
 Name             : Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc (id=1236360) [Spell Family (107), Passive, Hidden] 
 Class            : Demon Hunter
 School           : Physical
@@ -4352,6 +4840,214 @@ Effects          :
 Description      : Fury of the Aldrachi further empowers $?a212613[Soul Cleave][Blade Dance] when cast after $?s263642[Fracture]?a212613[Shear][Chaos Strike], increasing slashes to ${$442718s2*($442718s1/100+1)+$s1}.
 
 Reaver's Mark now stacks up to $442624u times and further empowers $?s263642[Fracture]?a212613[Shear][Chaos Strike] when cast after $?a212613[Soul Cleave][Blade Dance], applying an additional stack for $s4% of normal duration.
+
+
+Name             : Mastery: Monster Within (id=1238855) [Spell Family (107), Passive] 
+Class            : Devourer Demon Hunter
+School           : Physical
+Spell Type       : None
+Spell Level      : 10
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 6031: Enduring Torment (453314 effect#3), Enduring Torment (453314 effect#4)
+Attributes       : Passive (6), Do Not Log (8), Mastery Affects Points (285), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1236176)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 0 | Scaled Value: 0 | SP Coefficient: 1 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+                   Modified By: Enduring Torment (453314 effect#3)
+#2 (id=1236177)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 0 | Scaled Value: 0 | SP Coefficient: 1 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+                   Modified By: Enduring Torment (453314 effect#4)
+#3 (id=1236178)  : Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 4 (32)
+                   Base Value: 0 | Scaled Value: 0 | SP Coefficient: 1.2 | Misc Value: 32 | Misc Value 2: 5161 (Label) | Target: Self (1)
+                   Affected Spells (Label): Void Metamorphosis (1217607)
+#4 (id=1236179)  : Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 5 (33)
+                   Base Value: 0 | Scaled Value: 0 | SP Coefficient: 1.2 | Misc Value: 33 | Misc Value 2: 5161 (Label) | Target: Self (1)
+                   Affected Spells (Label): Void Metamorphosis (1217607)
+Description      : All Cosmic damage dealt is increased by $s1%.
+
+While in Void Metamorphosis, this bonus is increased by an additional $s3%.
+
+
+Name             : Devourer's Bite (id=1241532) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Cosmic
+Spell Type       : None
+Range            : 100 yards
+Duration         : 10 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Stacks           : 4 maximum
+Proc Chance      : 101%
+Attributes       : DoT Stacking Rule (103), Can Proc From Procs (122), Nameplate Personal Buffs/Debuffs (423), Unknown (490)
+Effects          :
+#1 (id=1240554)  : Apply Aura (6) | Modify Damage Taken% from Caster's Spells (271)
+                   Base Value: 12 | Scaled Value: 12 | Target: Targeted Enemy (6)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+Description      : $@spelldesc1240201
+Tooltip          : Receiving $s1% increased damage from $@auracaster.
+
+
+Name             : Soul Immolation (id=1241937) [Spell Family (107)] 
+Talent Entry     : Devourer [tree=spec, row=2, col=3, max_rank=1, req_points=0, replace="Immolation Aura" (id=258920)]
+Class            : Demon Hunter
+School           : Fire
+Spell Type       : Magic
+Spell Level      : 10
+GCD              : 1.5 seconds
+Duration         : 5 seconds
+Charges          : 1 (60 seconds cooldown)
+Category         : 2450 (Type 0x1): Tempered Soul (1246555 effect#1), Tempered Soul (1246555 effect#2)
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Internal Cooldown: 0.5 seconds
+Proc Chance      : 100%
+Proc Flags       : White Melee Taken, Yellow Melee Taken
+Affecting Spells : Agonizing Flames (207548 effects: #1, #2), Havoc Demon Hunter (212612 effect#7), Vengeance Demon Hunter (212613 effect#7), Infernal Armor (320331 effect#1), Immolation Aura (320377 effect#1), Burning Wound (346278 effect#2), Any Means Necessary (388114 effect#1), Immolation Aura (433721 effect#1), Immolation Aura (433724 effect#1), Immolation Aura (433737 effect#1), Devourer Demon Hunter (1213636 effect#6)
+Family Flags     : 11, 85
+Attributes       : Extra Initial Period (169), Aura Points On Client (268), Allow Harmful on Friendly (373), Allow Class Ability Procs (416), Nameplate Personal Buffs/Debuffs (423)
+Aura Interrupt   : Leave World (19)
+Effects          :
+#1 (id=1241227)  : Apply Aura (6) | Periodic Dummy (226): every 1 seconds
+                   Base Value: 3 | Scaled Value: 3 | Target: Self (1)
+#2 (id=1241249)  : Apply Aura (6) | Periodic Damage (3): fire every 1 seconds
+                   Base Value: 0 | Scaled Value: 0 | SP Coefficient: 1 | Target: Self (1)
+#3 (id=1242009)  : Apply Aura (6) | Dummy (4)
+                   Base Value: 6 | Scaled Value: 6 | Target: Self (1)
+#4 (id=1279238)  : Apply Aura (6) | Dummy (4)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Modified By: Agonizing Flames (207548 effect#1)
+#5 (id=1279239)  : Apply Aura (6) | Modify Armor% (101)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 1 | Target: Self (1)
+                   Modified By: Infernal Armor (320331 effect#1)
+Description      : Light your soul aflame, dealing $o2 Fire damage to yourself, generating ${$1242475s1*$s3} Fury and shattering $s1 Soul Fragments over $d.
+Tooltip          : Suffering $s2 Fire damage, gaining Fury and Soul Fragments.
+
+
+Name             : Calamitous (id=1242495) [Spell Family (107), Passive, Hidden] 
+Talent Entry     : Devourer [tree=spec, row=9, col=5, max_rank=1, req_points=20]
+Class            : Demon Hunter
+School           : Cosmic
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log on Learn (355)
+Effects          :
+#1 (id=1242029)  : Apply Aura (6) | Add Percent Modifier (108): Spell Critical Bonus Multiplier (15)
+                   Base Value: 40 | Scaled Value: 40 | Misc Value: 15 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+Description      : Your damaging critical strikes deal ${200+$s1}% damage instead of the usual 200%.
+
+
+Name             : Rolling Torment (id=1244235) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Cosmic
+Spell Type       : None
+Range            : 40 yards
+Duration         : 12 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Stacks           : 100 maximum
+Proc Chance      : 101%
+Attributes       : Aura Points On Client (268)
+Effects          :
+#1 (id=1244875)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 0.5 | Scaled Value: 0.5 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+#2 (id=1290171)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 0.5 | Scaled Value: 0.5 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+Description      : $@spelldesc1244237
+Tooltip          : All damage dealt increased by ${$w1}.1%.
+
+
+Name             : Demonsurge (id=1245496) [Spell Family (107), Hidden] 
+Class            : Demon Hunter
+School           : Chaos
+Spell Type       : None
+Duration         : Aura (infinite)
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 3022
+Attributes       : Do Not Display (Spellbook, Aura Icon, Combat Log) (7), No Aura Cancel (31), Aura Expires Offline (130), Aura Points On Client (268), Spellcast Override In Spellbook (310), Allow Class Ability Procs (416), Nameplate Personal Buffs/Debuffs (423), Periodic Refresh Extends Duration (436)
+Aura Interrupt   : Change Specialization (38)
+Effects          :
+#1 (id=1246558)  : Apply Aura (6) | Override Action Spell (Misc w/ Base) (332): Predator's Wake overrides The Hunt
+                   Base Value: 1259431 | Scaled Value: 1259431 | Misc Value: 1246167 | Target: Self (1)
+#2 (id=1246559)  : Apply Aura (6) | Override Action Spell (Misc w/ Base) (332): Pierce the Veil overrides Voidblade
+                   Base Value: 1245483 | Scaled Value: 1245483 | Misc Value: 1245412 | Target: Self (1)
+#3 (id=1246560)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 30 | Scaled Value: 30 | PvP Coefficient: 0.33 | Target: Self (1)
+                   Affected Spells: Vengeful Retreat (198793), Vengeful Retreat (198813), The Hunt (323639), Vengeful Retreat (344866), The Hunt (345335), The Hunt (345396), The Hunt (345422), The Hunt (370965), The Hunt (370966), The Hunt (370967), The Hunt (370968), The Hunt (370969), Blazing Nova (436899), Blazing Nova (436964), The Hunt (1246167), The Hunt (1246168), The Hunt (1246169), Predator's Wake (1259431)
+                   Family Flags: 3, 82, 87
+Hotfixed         : Affects Spells, PvP Coefficient (1 -> 0.33)
+#4 (id=1246791)  : Apply Aura (6) | Modify Spell School (220)
+                   Base Value: 0 | Scaled Value: 0 | School: cosmic | Trigger Spell: 452416 | Target: Self (1)
+#5 (id=1300741)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 30 | Scaled Value: 30 | PvP Coefficient: 0.33 | Target: Self (1)
+                   Affected Spells: Felblade (213241), Felblade (213243), Felblade (232893), Hungering Slash (1239127), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
+                   Family Flags: 30, 106
+Hotfixed         : NEW EFFECT
+#6 (id=1300742)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 30 | Scaled Value: 30 | PvP Coefficient: 0.33 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Vengeful Retreat (198793), Vengeful Retreat (198813), The Hunt (323639), Vengeful Retreat (344866), The Hunt (345335), The Hunt (345396), The Hunt (345422), The Hunt (370965), The Hunt (370966), The Hunt (370967), The Hunt (370968), The Hunt (370969), Blazing Nova (436899), Blazing Nova (436964), The Hunt (1246167), The Hunt (1246168), The Hunt (1246169), Predator's Wake (1259431)
+                   Family Flags: 3, 82, 87
+Hotfixed         : NEW EFFECT
+
+
+Name             : Reaper's Toll (id=1245523) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Spellshadow
+Spell Type       : None
+Range            : 25 yards
+Duration         : 6 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Can Proc From Procs (122), Spellcast Override In Spellbook (310)
+Effects          :
+#1 (id=1246603)  : Apply Aura (6) | Override Action Spell (Misc w/ Base) (332): Reaper's Toll overrides Pierce the Veil
+                   Base Value: 1245470 | Scaled Value: 1245470 | Misc Value: 1245483 | Target: Self (1)
+#2 (id=1246756)  : Apply Aura (6) | Override Action Spell (Misc w/ Base) (332)
+                   Base Value: 1245470 | Scaled Value: 1245470 | Target: Self (1)
+                   Affected Spells: Felblade (213241), Felblade (213243), Felblade (232893), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
+                   Family Flags: 30
+Tooltip          : Your Veilpierce is replaced with Reaper's Toll.
+
+
+Name             : Duty Eternal (id=1246562) [Spell Family (107), Passive, Hidden] 
+Talent Entry     : Devourer [tree=spec, row=4, col=2, max_rank=1, req_points=0, select_idx=200]
+Class            : Demon Hunter
+School           : Cosmic
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log on Learn (355)
+Effects          :
+#1 (id=1248178)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 100 | Scaled Value: 100 | Target: Self (1)
+                   Affected Spells: Felblade (213241), Felblade (213243), Felblade (232893), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
+                   Family Flags: 30
+#2 (id=1248179)  : Apply Aura (6) | Add Flat Modifier (107): Spell Effect 3 (23)
+                   Base Value: 20 | Scaled Value: 20 | Misc Value: 23 | Target: Self (1)
+                   Affected Spells: Felblade (213241), Felblade (213243), Felblade (232893), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
+                   Family Flags: 30
+Description      : Voidblade damage increased by $s1% and Voidblade now generates $s2 Fury.
 
 
 Name             : Voidfall (id=1253304) [Spell Family (107), Passive] 
@@ -4609,6 +5305,42 @@ Effects          :
 Description      : Gain $m1 $Lstack:stacks; of Voidfall $?a212613[and reset the cooldown of Spirit Bomb][and reset the cooldown of Reap] upon activating $?a212613[Metamorphosis][Void Metamorphosis].
 
 
+Name             : Voidfall Meteor (id=1256305) [Spell Family (107)] 
+Class            : Mage, Demon Hunter
+School           : Cosmic
+Spell Type       : Magic
+Range            : 100 yards
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Affecting Spells : Roaring Fire (391178 effect#1), Void Metamorphosis (471306 effect#3), Devourer Demon Hunter (1213636 effects: #1, #2), Void Metamorphosis (1217607 effects: #4, #5), Feast of Souls (1232310 effects: #1, #2), Mastery: Monster Within (1238855 effects: #1, #2), Devourer's Bite (1241532 effect#1), Calamitous (1242495 effect#1), Rolling Torment (1244235 effects: #1, #2), Devourer Demon Hunter (1256964 effects: #1, #2), Blind Focus (1272364 effects: #3, #4), Harness the Cosmos (1279247 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Voidfall Meteor (1256304)
+Family Flags     : 95, 108, 109
+Attributes       : Spell Haste Affects Periodic (173), Always AOE Line of Sight (186), Haste Affects Duration (273), Missile Speed is Delay (in sec) (292), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1263763)  : School Damage (2): cosmic
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | SP Coefficient: 2 | Radius: 0 - 8 yards | Target: at Area (87) -> at Enemy in Area (16)
+Description      : $@spelldesc1253304
+
+
+Name             : Voidfall Meteor (id=1256306) [Spell Family (107)] 
+Class            : Mage, Demon Hunter
+School           : Shadowflame
+Spell Type       : Magic
+Range            : 100 yards
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Fiery Brand (207744 effect#2), Fiery Brand (207771 effect#2), Vengeance Demon Hunter (212613 effects: #1, #2), Fiery Demise (212818 effect#1), Frailty (247456 effect#4), Demon Soul (347765 effects: #1, #2), Any Means Necessary (388114 effect#1), Burning Blood (390213 effects: #1, #2), Fires of Fel (409645 effect#1), Fiery Resolve (425653 effects: #1, #2), Demon Hide (428241 effects: #1, #3), Reaver's Mark (442624 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Thrill of the Fight (1227062 effects: #1, #2), Vengeance Demon Hunter (1256959 effects: #1, #2), Blind Focus (1272364 effects: #1, #2), Harness the Cosmos (1279247 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Voidfall Meteor (1256303), Voidfall Meteor (1266127)
+Family Flags     : 70, 72, 108, 109
+Attributes       : Spell Haste Affects Periodic (173), Always AOE Line of Sight (186), Haste Affects Duration (273), Missile Speed is Delay (in sec) (292), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1263764)  : School Damage (2): shadowflame
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 5.4 | Radius: 0 - 8 yards | Target: at Area (87) -> at Enemy in Area (16)
+Description      : $@spelldesc1253304
+
+
 Name             : Dark Matter (id=1256307) [Spell Family (107), Passive] 
 Talent Entry     : Annihilator (Generic) [tree=hero, row=4, col=4, max_rank=1, req_points=0]
 Class            : Demon Hunter
@@ -4622,6 +5354,74 @@ Effects          :
 #1 (id=1263765)  : Apply Aura (6) | Dummy (4)
                    Base Value: 12 | Scaled Value: 12 | Target: Self (1)
 Description      : Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $?a212613[${$1264130s1*($s1/2)} Shadowflame][${$1264129s1*($s1/2)} Cosmic] damage over ${$s1/2} sec.
+
+
+Name             : Celestial Echoes (id=1256312) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : None
+Spell Type       : None
+Duration         : 8 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : No Aura Cancel (31), Not In Spellbook (143), Do Not Log on Learn (355)
+Aura Interrupt   : Raid Encounter Start or M+ Start (40)
+Effects          :
+#1 (id=1263777)  : Apply Aura (6) | Add Flat Modifier (107): Spell Effect 2 (12)
+                   Base Value: 5 | Scaled Value: 5 | Misc Value: 12 | Target: Self (1)
+                   Affected Spells: Shear (203782)
+                   Family Flags: 22
+#2 (id=1263778)  : Apply Aura (6) | Add Flat Modifier (107): Spell Effect 2 (12)
+                   Base Value: 5 | Scaled Value: 5 | Misc Value: 12 | Target: Self (1)
+                   Affected Spells: Consume (473662), Devour (1217610)
+                   Family Flags: 97
+#3 (id=1263779)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 25 | Scaled Value: 25 | Target: Self (1)
+                   Affected Spells: Shear (203782), Fracture (225919), Fracture (225921)
+                   Family Flags: 22, 69
+#4 (id=1263780)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 25 | Scaled Value: 25 | Target: Self (1)
+                   Affected Spells: Consume (473662), Devour (1217610)
+                   Family Flags: 97
+#5 (id=1263781)  : Apply Aura (6) | Add Flat Modifier (107): Spell Effect 4 (32)
+                   Base Value: 5 | Scaled Value: 5 | Misc Value: 32 | Target: Self (1)
+                   Affected Spells: Fracture (263642)
+                   Family Flags: 73
+Description      : $@spelldesc1253415
+Tooltip          : $?s263642[Fracture]?a212613[Shear][Consume] generates additional Fury and deals increased damage.
+
+
+Name             : Voidfall (id=1256322) [Spell Family (107)] 
+Class            : Mage, Demon Hunter
+School           : None
+Spell Type       : None
+Duration         : 8 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 5652: Path to Oblivion (1253399 effect#1), Swift Erasure (1253668 effect#1), Phase Shift (1256245 effect#1)
+Stacks           : 20 maximum
+Proc Chance      : 101%
+Attributes       : No Aura Cancel (31), Not In Spellbook (143), Do Not Log on Learn (355), Unknown (490)
+Aura Interrupt   : Raid Encounter Start or M+ Start (40)
+Effects          :
+#1 (id=1263799)  : Apply Aura (6) | Dummy (4)
+                   Base Value: 1 | Scaled Value: 1 | Target: Self (1)
+#2 (id=1263800)  : Apply Aura (6) | Modify Damage Taken% (87)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 0x7f | Target: Self (1)
+                   Affected School(s): All
+                   Modified By: Phase Shift (1256245 effect#1)
+#3 (id=1263801)  : Apply Aura (6) | Modify All Haste% (193)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Modified By: Swift Erasure (1253668 effect#1)
+#4 (id=1263802)  : Apply Aura (6) | Increase Movement Speed% (Stacking) (129)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Modified By: Path to Oblivion (1253399 effect#1)
+Description      : $@spelldesc1253304
+Tooltip          : Haste increased by $s3%.$?a1256245[
+Damage taken reduced by $s2%.][]
+$?a1253399[
+Movement speed increased by $s4%.][]
 
 
 Name             : World Killer (id=1256353) [Spell Family (107), Passive] 
@@ -4643,6 +5443,145 @@ Effects          :
 #4 (id=1263859)  : Apply Aura (6) | Dummy (4)
                    Base Value: 1 | Scaled Value: 1 | Target: Self (1)
 Description      : The third Voidfall meteor strike called down in sequence is larger, has $s1% increased area, deals $s2% increased damage, and $?a212613[reduces the remaining cooldown of Metamorphosis by $s3 sec][generates $s4 Soul $LFragment:Fragments;].
+
+
+Name             : Catastrophe (id=1256667) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Shadowflame
+Spell Type       : Magic
+Range            : 100 yards
+Duration         : 8 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 3022
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Fiery Brand (207744 effect#2), Fiery Brand (207771 effect#2), Exergy (208628 effects: #1, #2), Havoc Demon Hunter (212612 effects: #1, #2), Vengeance Demon Hunter (212613 effects: #1, #2), Fiery Demise (212818 effect#1), Frailty (247456 effect#4), Chaos Blades (247938 effects: #2, #3), Demon Soul (347765 effects: #1, #2), Any Means Necessary (388114 effect#1), Burning Blood (390213 effects: #1, #2), Seething Chaos (394934 effects: #1, #2), Fires of Fel (409645 effect#1), Fiery Resolve (425653 effects: #1, #2), Inertia (427641 effects: #1, #2), Demon Hide (428241 effects: #1, #3), Reaver's Mark (442624 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Thrill of the Fight (1227062 effects: #1, #2), Havoc Demon Hunter (1256955 effects: #1, #2), Vengeance Demon Hunter (1256959 effects: #1, #2), Blind Focus (1272364 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Family Flags     : 16, 70, 72
+Attributes       : No Redirection (35), No Reflection (39), Ignore Line of Sight (66), Can't Crit (93), Can Proc From Procs (122), Do Not Display Range (126), Ignore Damage Taken Modifiers (136), Aura Never Bounces (148), Ignore Caster Damage Modifiers (221), Aura Points On Client (268), Rolling Periodic (334), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1264285)  : Apply Aura (6) | Periodic Damage (3): shadowflame every 2 seconds
+                   Base Value: 0 | Scaled Value: 0 | Target: Targeted Enemy (6)
+Description      : $@spelldesc1253769
+Tooltip          : Suffering $w1 Shadowflame damage every $t1 sec.
+
+
+Name             : Havoc Demon Hunter (id=1256955) [Spell Family (107), Passive, Hidden] 
+Class            : Havoc Demon Hunter
+School           : Physical
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Is Ability (4), Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log (8), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1264716)  : Apply Aura (6) | Modify Percent PVP Multiplier (647): Direct Amount (0)
+                   Base Value: -5 | Scaled Value: -5 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Demon Blades (203796), Sigil of Flame (204598), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Chaos Strike (222031), Annihilation (227518), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), Catastrophe (1256667), Catastrophe (1256676), Reaver's Glaive (1283344)
+                   Family Flags: 16
+#2 (id=1266563)  : Apply Aura (6) | Modify Percent PVP Multiplier (647): Periodic Amount (1)
+                   Base Value: -5 | Scaled Value: -5 | Misc Value: 1 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Demon Blades (203796), Sigil of Flame (204598), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Chaos Strike (222031), Annihilation (227518), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), Catastrophe (1256667), Catastrophe (1256676), Reaver's Glaive (1283344)
+                   Family Flags: 16
+#3 (id=1266564)  : Apply Aura (6) | Modify Percent PVP Multiplier (647): Direct Amount (0)
+                   Base Value: 37 | Scaled Value: 37 | Target: Self (1)
+                   Affected Spells: Immolation Aura (258921), Immolation Aura (258922), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916)
+                   Family Flags: 49, 61
+#4 (id=1266565)  : Apply Aura (6) | Modify Percent PVP Multiplier by Label (649): Direct Amount (0)
+                   Base Value: -5 | Scaled Value: -5 | Misc Value 2: 3367 (Label) | Target: Self (1)
+#5 (id=1266566)  : Apply Aura (6) | Modify Percent PVP Multiplier by Label (649): Periodic Amount (1)
+                   Base Value: -5 | Scaled Value: -5 | Misc Value: 1 | Misc Value 2: 3367 (Label) | Target: Self (1)
+
+
+Name             : Vengeance Demon Hunter (id=1256959) [Spell Family (107), Passive, Hidden] 
+Class            : Vengeance Demon Hunter
+School           : Physical
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Is Ability (4), Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log (8), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1264717)  : Apply Aura (6) | Modify Percent PVP Multiplier (647): Direct Amount (0)
+                   Base Value: 0 | Scaled Value: 0 | Target: Self (1)
+                   Affected Spells: Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Explosion of the Soul (1276488), Reaver's Glaive (1283344)
+                   Family Flags: 70
+#2 (id=1266569)  : Apply Aura (6) | Modify Percent PVP Multiplier (647): Periodic Amount (1)
+                   Base Value: 0 | Scaled Value: 0 | Misc Value: 1 | Target: Self (1)
+                   Affected Spells: Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Explosion of the Soul (1276488), Reaver's Glaive (1283344)
+                   Family Flags: 70
+
+
+Name             : Devourer Demon Hunter (id=1256964) [Spell Family (107), Passive, Hidden] 
+Class            : Devourer Demon Hunter
+School           : Physical
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Is Ability (4), Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log (8), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1264720)  : Apply Aura (6) | Modify Percent PVP Multiplier (647): Direct Amount (0)
+                   Base Value: -8 | Scaled Value: -8 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+Hotfixed         : Base Value (0 -> -8)
+#2 (id=1266631)  : Apply Aura (6) | Modify Percent PVP Multiplier (647): Periodic Amount (1)
+                   Base Value: -8 | Scaled Value: -8 | Misc Value: 1 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+Hotfixed         : Base Value (0 -> -8)
+
+
+Name             : Meteor Shower (id=1264129) [Spell Family (107)] 
+Class            : Mage, Demon Hunter
+School           : Cosmic
+Spell Type       : Magic
+Range            : 100 yards
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Affecting Spells : Roaring Fire (391178 effect#1), Void Metamorphosis (471306 effect#3), Devourer Demon Hunter (1213636 effects: #1, #2), Void Metamorphosis (1217607 effects: #4, #5), Feast of Souls (1232310 effects: #1, #2), Mastery: Monster Within (1238855 effects: #1, #2), Devourer's Bite (1241532 effect#1), Calamitous (1242495 effect#1), Rolling Torment (1244235 effects: #1, #2), Devourer Demon Hunter (1256964 effects: #1, #2), Blind Focus (1272364 effects: #3, #4), Harness the Cosmos (1279247 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Meteor Shower (1264126)
+Family Flags     : 95, 108, 109
+Attributes       : Spell Haste Affects Periodic (173), Always AOE Line of Sight (186), Haste Affects Duration (273), Missile Speed is Delay (in sec) (292), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1275252)  : School Damage (2): cosmic
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | SP Coefficient: 0.5 | Radius: 0 - 6 yards | Target: at Area (87) -> at Enemy in Area (16)
+Description      : $@spelldesc1253304
+
+
+Name             : Meteor Shower (id=1264130) [Spell Family (107)] 
+Class            : Mage, Demon Hunter
+School           : Shadowflame
+Spell Type       : Magic
+Range            : 100 yards
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Affecting Spells : Demon Soul (163073 effects: #1, #2), Fiery Brand (207744 effect#2), Fiery Brand (207771 effect#2), Vengeance Demon Hunter (212613 effects: #1, #2), Fiery Demise (212818 effect#1), Frailty (247456 effect#4), Demon Soul (347765 effects: #1, #2), Any Means Necessary (388114 effect#1), Burning Blood (390213 effects: #1, #2), Fires of Fel (409645 effect#1), Fiery Resolve (425653 effects: #1, #2), Demon Hide (428241 effects: #1, #3), Reaver's Mark (442624 effect#1), Void Metamorphosis (471306 effect#3), Luck of the Draw! (1219012 effects: #1, #2), Thrill of the Fight (1227062 effects: #1, #2), Vengeance Demon Hunter (1256959 effects: #1, #2), Blind Focus (1272364 effects: #1, #2), Harness the Cosmos (1279247 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (1283625 effects: #1, #2), Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (1283628 effects: #1, #2)
+Triggered By     : Meteor Shower (1264128)
+Family Flags     : 70, 72, 108, 109
+Attributes       : Spell Haste Affects Periodic (173), Always AOE Line of Sight (186), Haste Affects Duration (273), Missile Speed is Delay (in sec) (292), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1275253)  : School Damage (2): shadowflame
+                   Base Value: 0 | Scaled Value: 0 (delta=0.05) | AP Coefficient: 0.9 | Radius: 0 - 6 yards | Target: at Area (87) -> at Enemy in Area (16)
+Description      : $@spelldesc1253304
+
+
+Name             : Demon Hunter Havoc 12.0 Class Set 4pc (id=1264807) [Spell Family (107), Passive, Hidden] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 292
+                 : 5829
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Allow Aura While Dead (116), Allow Entering Arena (149), Disable Aura While Dead (226)
+Effects          :
+#1 (id=1276406)  : Apply Aura (6) | Add Flat Modifier (107): Spell Effect 4 (32)
+                   Base Value: 6 | Scaled Value: 6 | PvP Coefficient: 0.5 | Misc Value: 32 | Target: Self (1)
+                   Affected Spells: Metamorphosis (162264), Metamorphosis (191427), Void Metamorphosis (1217605)
+                   Family Flags: 15
+Description      : Your haste is increased by an additional $s1% during Metamorphosis.
 
 
 Name             : Demon Hunter Vengeance 12.0 Class Set 2pc (id=1264808) [Spell Family (107), Passive, Hidden] 
@@ -4678,6 +5617,45 @@ Effects          :
 #2 (id=1288256)  : Apply Aura (6) | Dummy (4)
                    Base Value: 5 | Scaled Value: 5 | Target: Self (1)
 Description      : Fracture has a $s1% chance to spark a violent detonation, causing $1276488s1 Fire damage onto nearby enemies. Damage reduced beyond $s2 targets.
+
+
+Name             : Felfire Fist (id=1265759) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : None
+Duration         : 5 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Proc Chance      : 100%
+Proc Flags       : Yellow Melee, Magic Hostile Spell
+Attributes       : No Aura Cancel (31), Not In Spellbook (143), Aura Points On Client (268), Do Not Log on Learn (355)
+Aura Interrupt   : Change Specialization (38), Change Talent (46)
+Effects          :
+#1 (id=1277702)  : Apply Aura (6) | Dummy (4)
+                   Base Value: 1 | Scaled Value: 1 | Target: Self (1)
+Description      : $@spelldesc389724
+Tooltip          : Your next Infernal Leap places a Sigil of Flame.
+
+
+Name             : Doomsayer (id=1265768) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : None
+Spell Type       : None
+Duration         : 5 seconds
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Stacks           : 1 initial, 1 maximum
+Proc Chance      : 100%
+Proc Flags       : Magic Hostile Spell
+Attributes       : No Aura Cancel (31), Not In Spellbook (143)
+Aura Interrupt   : Change Specialization (38), Change Talent (46)
+Effects          :
+#1 (id=1277712)  : Apply Aura (6) | Dummy (4)
+                   Base Value: 1 | Scaled Value: 1 | Target: Self (1)
+Description      : $@spelldesc1253676
+Tooltip          : Your next $?c2[Infernal Leap][Void Ray] calls down Voidfall Meteors.
 
 
 Name             : Tempered Steel (id=1265800) [Spell Family (107), Passive] 
@@ -4930,6 +5908,25 @@ Effects          :
 Description      : Fully channeling $?a212612[Eye Beam]?a212613[Fel Devastation][Void Ray] increases the damage of its final tick by $s1%.
 
 
+Name             : Demon Muzzle (id=1266616) [Spell Family (107)] 
+Class            : Demon Hunter
+School           : Magic
+Spell Type       : None
+Duration         : 12 seconds
+Labels           : 16: Class Spells
+                 : 292
+Stacks           : 2 maximum
+Proc Chance      : 101%
+Triggered By     : Demon Muzzle (1266329)
+Attributes       : Aura Points On Client (268), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1279231)  : Apply Aura (6) | Modify Damage Taken% (87)
+                   Base Value: -15 | Scaled Value: -15 | Misc Value: 0x7e | Target: Self (1)
+                   Affected School(s): Arcane, Fire, Frost, Holy, Nature, Shadow
+Description      : $@spelldesc1266329
+Tooltip          : Magic damage taken reduced by ${-$s1}%
+
+
 Name             : Felbound (id=1266762) [Spell Family (107), Passive] 
 Talent Entry     : Havoc [tree=class, row=7, col=4, max_rank=1, req_points=8]
                  : Vengeance [tree=class, row=7, col=4, max_rank=1, req_points=8]
@@ -5027,6 +6024,81 @@ Description      : Fury of the Aldrachi further empowers $?a212613[Soul Cleave][
 Reaver's Mark now stacks up to $442624u times and further empowers $?a212613[Fracture][Chaos Strike] when cast after $?a212613[Soul Cleave][Blade Dance], applying an additional stack.
 
 
+Name             : Blind Focus (id=1272364) [Spell Family (107), Passive] 
+Talent Entry     : Fel-Scarred (Havoc, Devourer) [tree=hero, row=2, col=5, max_rank=1, req_points=1]
+                 : Void-Scarred (Havoc, Devourer) [tree=hero, row=2, col=5, max_rank=1, req_points=1]
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 3022
+                 : 6000: Metamorphosis (162264 effect#13), Metamorphosis (162264 effect#14), Void Metamorphosis (1217607 effect#16), Void Metamorphosis (1217607 effect#17)
+Attributes       : Passive (6), Can Proc From Procs (122), Not In Spellbook (143), Aura Points On Client (268), Do Not Log on Learn (355), Allow Class Ability Procs (416)
+Effects          :
+#1 (id=1285570)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 5 | Scaled Value: 5 | Target: Self (1)
+                   Affected Spells: Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)
+                   Family Flags: 43, 72
+#2 (id=1285571)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 5 | Scaled Value: 5 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)
+                   Family Flags: 43, 72
+                   Modified By: Metamorphosis (162264 effect#13)
+#3 (id=1285572)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 3 | Scaled Value: 3 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+                   Modified By: Metamorphosis (162264 effect#14)
+#4 (id=1285573)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 3 | Scaled Value: 3 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), World Killer (1256619), Meteor Shower (1264129), Eradicate (1279200)
+                   Family Flags: 95
+                   Modified By: Void Metamorphosis (1217607 effect#16)
+Description      : $?a212612[Fire][Cosmic] damage increased by $?a212612[$s1][$s3]%.
+
+Effect is doubled while in demon form.
+
+
+Name             : Soulforged Blades (id=1272432) [Spell Family (107), Passive, Hidden] 
+Talent Entry     : Devourer [tree=spec, row=8, col=1, max_rank=1, req_points=20]
+Class            : Demon Hunter
+School           : Cosmic
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log on Learn (355)
+Effects          :
+#1 (id=1285665)  : Apply Aura (6) | Add Flat Modifier (107): Spell Critical Chance (7)
+                   Base Value: 15 | Scaled Value: 15 | Misc Value: 7 | Target: Self (1)
+                   Affected Spells: Felblade (213241), Felblade (213243), Felblade (232893), Hungering Slash (1239127), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
+                   Family Flags: 30, 106
+Description      : Hungering Slash and Voidblade's critical strike chance is increased by $s1%.
+
+
+Name             : Singular Strikes (id=1272770) [Spell Family (107), Passive, Hidden] 
+Talent Entry     : Devourer [tree=spec, row=8, col=2, max_rank=1, req_points=20]
+Class            : Demon Hunter
+School           : Cosmic
+Spell Type       : None
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Do Not Log on Learn (355)
+Effects          :
+#1 (id=1286059)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 25 | Scaled Value: 25 | Target: Self (1)
+                   Affected Spells: Felblade (213241), Felblade (213243), Felblade (232893), Voidblade (1241285), Voidblade (1245412), Voidblade (1245414), Pierce the Veil (1245483)
+                   Family Flags: 30
+#2 (id=1286060)  : Apply Aura (6) | Dummy (4)
+                   Base Value: 50 | Scaled Value: 50 | Target: Self (1)
+Description      : Voidblade damage increased by $s1%.
+
+Hungering Slash deals $s2% increased damage to its primary target.
+
+
 Name             : Explosion of the Soul (id=1276488) [Spell Family (107)] 
 Class            : Demon Hunter
 School           : Fire
@@ -5064,4 +6136,59 @@ Effects          :
                    Affected Spells: Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Meteor Shower (1264129), Meteor Shower (1264130)
                    Family Flags: 109
 Description      : Voidfall Meteor damage increased by $s1%.
+
+
+Name             : Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc (id=1283625) [Spell Family (107), Passive, Hidden] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : None
+Max Aura Level   : 80
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 295
+                 : 5061
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Allow Aura While Dead (116), Can Proc From Procs (122), Allow Entering Arena (149), Disable Aura While Dead (226)
+Effects          :
+#1 (id=1298083)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 6 | Scaled Value: 6 | PvP Coefficient: 0.33 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Void Nova (1234195), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Essence Break (1245759), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264129), Meteor Shower (1264130), Explosion of the Soul (1276488), Eradicate (1279200), Reaver's Glaive (1283344)
+                   Family Flags: 16, 70, 95
+#2 (id=1298084)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 6 | Scaled Value: 6 | PvP Coefficient: 0.33 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Void Nova (1234195), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Essence Break (1245759), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264129), Meteor Shower (1264130), Explosion of the Soul (1276488), Eradicate (1279200), Reaver's Glaive (1283344)
+                   Family Flags: 16, 70, 95
+#3 (id=1298085)  : Apply Aura (6) | Modify Pet Damage Done% (429)
+                   Base Value: 6 | Scaled Value: 6 | PvP Coefficient: 0.33 | Target: Self (1)
+#4 (id=1298086)  : Apply Aura (6) | Modify Guardian Damage Done% (531)
+                   Base Value: 6 | Scaled Value: 6 | PvP Coefficient: 0.33 | Target: Self (1)
+Description      : Damage done increased by $s1%.
+
+
+Name             : Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc (id=1283628) [Spell Family (107), Passive, Hidden] 
+Class            : Demon Hunter
+School           : Physical
+Spell Type       : None
+Max Aura Level   : 80
+Labels           : 16: Class Spells
+                 : 66: Demon Hunter Spells
+                 : 292
+                 : 295
+                 : 5061
+Attributes       : Passive (6), Do Not Display (Spellbook, Aura Icon, Combat Log) (7), Allow Aura While Dead (116), Can Proc From Procs (122), Allow Entering Arena (149), Disable Aura While Dead (226)
+Effects          :
+#1 (id=1298089)  : Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)
+                   Base Value: 10 | Scaled Value: 10 | PvP Coefficient: 0.33 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Void Nova (1234195), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Essence Break (1245759), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264129), Meteor Shower (1264130), Explosion of the Soul (1276488), Eradicate (1279200), Reaver's Glaive (1283344)
+                   Family Flags: 16, 70, 95
+#2 (id=1298090)  : Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)
+                   Base Value: 10 | Scaled Value: 10 | PvP Coefficient: 0.33 | Misc Value: 22 | Target: Self (1)
+                   Affected Spells: Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Void Nova (1234195), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Essence Break (1245759), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264129), Meteor Shower (1264130), Explosion of the Soul (1276488), Eradicate (1279200), Reaver's Glaive (1283344)
+                   Family Flags: 16, 70, 95
+#3 (id=1298091)  : Apply Aura (6) | Modify Pet Damage Done% (429)
+                   Base Value: 10 | Scaled Value: 10 | PvP Coefficient: 0.33 | Target: Self (1)
+#4 (id=1298092)  : Apply Aura (6) | Modify Guardian Damage Done% (531)
+                   Base Value: 10 | Scaled Value: 10 | PvP Coefficient: 0.33 | Target: Self (1)
+Description      : Damage done increased by $s1%.
+
 
