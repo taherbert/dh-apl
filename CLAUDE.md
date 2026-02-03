@@ -103,13 +103,13 @@ data/
 apls/             # APL files (.simc)
 results/          # Simulation output (gitignored)
 reference/
-  vengeance-apl.simc           # simc default VDH APL
+  vengeance-apl.simc           # simc default VDH APL (auto-extracted from C++)
   simc-talent-variables.json   # C++ talent variable names mapped to trees
-  spelldatadump-vdh.txt        # Full spell effect data (SpellDataDump)
+  spelldatadump-vdh.txt        # Full spell effect data (auto-generated)
+  .refresh-metadata.json       # Last refresh timestamp and simc commit
   trait-data.md                # Key simc struct definitions
-  tww3-profiles/               # TWW3 VDH profiles from simc
   apl-conversion/              # APL ↔ C++ conversion tools
-  wiki/                        # SimC wiki docs (APL syntax, expressions, options, etc.)
+  wiki/                        # SimC wiki docs (auto-synced from simc wiki)
     action-lists.md            # APL syntax reference
     action-list-expressions.md # Complete expression/condition reference
     demon-hunters.md           # DH-specific SimC options
@@ -118,7 +118,7 @@ reference/
     equipment.md               # Gear, gems, enchants, set bonuses
     output.md                  # Report formats, combat logs
     spell-query.md             # spell_query syntax and data sources
-    spell-data-overrides.md    # Override spell/effect data
+    spell-data.md              # Spell data internals
     statistical-behaviour.md   # Iterations, target_error, RNG
     profile-sets.md            # Batch talent/gear comparison
     coded-flags.md             # Action flags, scaling coefficients
@@ -131,45 +131,48 @@ reference/
     raid-events.md             # Fight styles, adds, movement, DungeonRoute
     characters.md              # Character declaration, talents, consumables
     enemies.md                 # Custom enemies, tank dummies, action lists
-    expansion-options.md       # TWW/DF/SL expansion-specific options
+    expansion-options.md       # Expansion-specific options
+    simc-for-tanks.md          # Tank simulation guide
+    target-options.md          # Target/enemy options
 ```
 
 ## Commands
 
 ```bash
-# Fetch Raidbots talent data
-npm run fetch-raidbots
+# === FULL REFRESH (after simc update) ===
+npm run refresh                              # Rebuild everything from simc
 
-# Extract spell data
-node src/extract/spells.js
+# Environment variables for refresh:
+#   SIMC_DIR=/path/to/simc                   # Override simc path
+#   SIMC_BRANCH=midnight                     # Branch to use (default: midnight)
+#   SKIP_BUILD=1                             # Skip simc binary rebuild
+#   SKIP_WIKI=1                              # Skip wiki sync
 
-# Build talent tree
-node src/model/talents.js
+# === Individual refresh steps ===
+npm run extract-apl                          # Extract APL from C++ to .simc
+npm run sync-wiki                            # Sync wiki docs from simc
+npm run spelldatadump                        # Regenerate SpellDataDump
 
-# Extract C++ talent cross-references
-npm run cpp-interactions
+# === Data pipeline ===
+npm run fetch-raidbots                       # Fetch Raidbots talent data
+npm run extract                              # Extract spell data
+npm run talents                              # Build talent tree
+npm run cpp-interactions                     # Extract C++ talent cross-references
+npm run interactions                         # Build interaction map
+npm run build-data                           # Run full data pipeline
 
-# Build interaction map (merges spell_data + C++ + effect scan)
-node src/model/interactions.js
+# === Reports ===
+npm run report                               # Generate text report
+npm run graph                                # Generate interaction graph
+npm run audit-report                         # Generate interaction audit
 
-# Generate reports
-node src/visualize/text-report.js
-node src/visualize/graph.js
+# === Simulation ===
+node src/sim/runner.js apls/baseline.simc    # Run simulation
+node src/sim/analyze.js                      # Analyze results
 
-# Generate interaction audit report
-npm run audit-report
-
-# Run simulation
-node src/sim/runner.js apls/baseline.simc
-
-# Analyze results
-node src/sim/analyze.js
-
-# Verify data against simc C++ source
-npm run verify
-
-# Extract simc C++ talent variables to reference/
-npm run extract-simc
+# === Verification ===
+npm run verify                               # Verify data against simc C++
+npm run extract-simc                         # Extract simc C++ talent variables
 
 # Analyze APL — load methodology guide and data for analysis session
 /analyze-apl [apls/baseline.simc]
@@ -201,11 +204,10 @@ node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
 
 ## Key Paths
 
-- **SimC binary:** `/Users/tom/Documents/GitHub/simc/engine/simc`
+- **SimC binary:** `/Users/tom/Documents/GitHub/simc/engine/simc` (or `bin/simc` local copy)
 - **SimC source:** `/Users/tom/Documents/GitHub/simc` (branch: `midnight`)
 - **VDH class module:** `engine/class_modules/sc_demon_hunter.cpp`
 - **VDH APL module:** `engine/class_modules/apl/apl_demon_hunter.cpp`
-- **TWW3 profiles:** `profiles/TWW3/TWW3_Demon_Hunter_Vengeance*.simc`
 
 ## Expansion Context
 
