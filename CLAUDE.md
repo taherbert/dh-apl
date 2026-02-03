@@ -28,6 +28,8 @@ Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spike
 
 **Apex talents:** Apex talents (pinnacle talents at the bottom of the tree) use `apex.N` where N is the rank number (e.g., `apex.1`, `apex.2`). Do NOT use `talent.apex_name` — always use the `apex.N` syntax.
 
+**APL variables:** Use `variable,name=X,value=expr` to extract shared logic out of action conditions. Variables keep action statements focused on "what to cast" while variables handle "is the situation right." If a condition or sub-expression appears in more than one action line, it should be a variable. Computed state (target counts, resource thresholds, buff windows, talent-dependent flags) belongs in variables — not duplicated inline across action conditions.
+
 ## Session Protocol
 
 1. Read `PLAN.md` at start to understand current project state

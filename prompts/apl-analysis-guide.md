@@ -1053,6 +1053,29 @@ actions+=/cycling_variable,name=branded_count,op=add,value=dot.fiery_brand.ticki
 
 Full reference: `reference/wiki/action-lists.md` (APL Variables section).
 
+#### When to Use Variables
+
+Variables are the APL's abstraction mechanism. All derived state and decision logic should live in variables, keeping action lines focused on what to cast.
+
+**Always extract to a variable when:**
+
+- A condition or sub-expression appears in more than one action line (DRY).
+- A condition involves multi-step computation (e.g., accumulating `num_spawnable_souls` via sequential `op=max`/`op=add` lines).
+- A talent flag or build-dependent toggle gates multiple actions (e.g., `variable,name=fiery_demise_active`).
+- A threshold depends on context (e.g., fragment target that changes during Fiery Demise windows).
+
+**Keep inline when:**
+
+- The condition is unique to a single action and reads clearly (e.g., `if=fury>=40`).
+- The expression is trivial and adding a variable would obscure intent.
+
+**Design principles:**
+
+- Name variables for the _decision_ they represent, not the mechanic (`spirit_bomb_ready` not `has_enough_fury_and_souls`).
+- Use `op=setif` for binary flags with a fallback: `variable,name=X,op=setif,condition=expr,value=1,value_else=0`.
+- Use sequential `op=reset` → `op=max`/`op=add` lines to build up composite state (see `num_spawnable_souls` in baseline).
+- Variables are evaluated each time the action list reaches them. Place variable definitions at the top of the action list they belong to, before the actions that reference them.
+
 ---
 
 ## 14. Target Count Considerations
