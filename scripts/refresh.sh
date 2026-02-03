@@ -89,6 +89,9 @@ build_simc() {
   git checkout "$SIMC_BRANCH"
   git pull
 
+  # Clean stale objects to avoid linker mismatches (e.g. ASan-compiled artifacts)
+  make -C engine clean
+
   # Build
   CORES=$(get_cores)
   info "Building with $CORES cores..."
