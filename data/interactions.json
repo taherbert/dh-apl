@@ -12883,6 +12883,96 @@
       "categories": [
         "offensive"
       ]
+    },
+    {
+      "source": {
+        "id": 1270444,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 187827,
+        "name": "Metamorphosis"
+      },
+      "type": "proc_trigger",
+      "discoveryMethod": "manual",
+      "confidence": "high",
+      "application": "buff_on_player",
+      "categories": [
+        "offensive"
+      ],
+      "procInfo": {
+        "procChance": 0.1,
+        "perSoul": true
+      },
+      "notes": "Proc chance formula marked as uncertain in simc source (TODO comment)"
+    },
+    {
+      "source": {
+        "id": 1270448,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247454,
+        "name": "Spirit Bomb"
+      },
+      "type": "mechanic_change",
+      "discoveryMethod": "manual",
+      "confidence": "medium",
+      "application": "passive_always",
+      "categories": [
+        "offensive"
+      ],
+      "effect": "Consumes 1 extra soul fragment, max fragments 5→6",
+      "notes": "R2 soul consumption mechanic not yet visible in simc implementation"
+    },
+    {
+      "source": {
+        "id": 1270448,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "mechanic_change",
+      "discoveryMethod": "manual",
+      "confidence": "medium",
+      "application": "passive_always",
+      "categories": [
+        "offensive"
+      ],
+      "effect": "Consumes 1 extra soul fragment, max fragments 2→3",
+      "notes": "R2 soul consumption mechanic not yet visible in simc implementation"
+    },
+    {
+      "source": {
+        "id": 1270449,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 1270547,
+        "name": "Seething Anger"
+      },
+      "type": "buff_grant",
+      "discoveryMethod": "manual",
+      "confidence": "high",
+      "application": "buff_on_player",
+      "categories": [
+        "offensive"
+      ],
+      "condition": "On failed Untethered Rage proc"
     }
   ],
   "talentCategories": {
@@ -38491,6 +38581,77 @@
             "procChance": 0.3,
             "internalCooldown": 0.5
           }
+        }
+      ]
+    },
+    "1270444": {
+      "name": "Untethered Rage",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Metamorphosis",
+          "spellId": 187827,
+          "type": "proc_trigger",
+          "discoveryMethod": "manual",
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "procInfo": {
+            "procChance": 0.1,
+            "perSoul": true,
+            "description": "Base 10% chance per soul consumed to activate Metamorphosis"
+          },
+          "mechanism": "on_soul_consume"
+        }
+      ]
+    },
+    "1270448": {
+      "name": "Untethered Rage",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247454,
+          "type": "mechanic_change",
+          "discoveryMethod": "manual",
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ],
+          "effect": "Consumes 1 extra soul fragment, max fragments 5→6"
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "mechanic_change",
+          "discoveryMethod": "manual",
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ],
+          "effect": "Consumes 1 extra soul fragment, max fragments 2→3"
+        }
+      ]
+    },
+    "1270449": {
+      "name": "Untethered Rage",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Seething Anger",
+          "spellId": 1270547,
+          "type": "buff_grant",
+          "discoveryMethod": "manual",
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "condition": "On failed Untethered Rage proc",
+          "effect": "Grants Seething Anger stack, increasing Agility and future proc chance"
         }
       ]
     },

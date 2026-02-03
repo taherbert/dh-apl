@@ -16212,5 +16212,153 @@
     "description": "Fury of the Aldrachi further empowers $?a212613[Soul Cleave][Blade Dance] when cast after $?s263642[Fracture]?a212613[Shear][Chaos Strike], increasing slashes to ${$442718s2*($442718s1/100+1)+$s1}.\nReaver's Mark now stacks up to $442624u times and further empowers $?s263642[Fracture]?a212613[Shear][Chaos Strike] when cast after $?a212613[Soul Cleave][Blade Dance], applying an additional stack for $s4% of normal duration.",
     "schoolMask": 1,
     "resolvedDescription": "Fury of the Aldrachi further empowers Soul Cleave when cast after $?s263642[Fracture]?a212613[Shear][Chaos Strike], increasing slashes to 12.\nReaver's Mark now stacks up to $442624u times and further empowers $?s263642[Fracture]?a212613[Shear][Chaos Strike] when cast after Soul Cleave, applying an additional stack for 100% of normal duration."
+  },
+  {
+    "name": "Untethered Rage",
+    "id": 1270444,
+    "passive": true,
+    "hidden": false,
+    "effects": [],
+    "talentEntry": {
+      "spec": "Vengeance",
+      "tree": "spec",
+      "maxRank": 1,
+      "reqPoints": 20,
+      "nodeId": 110425,
+      "entryId": 137043,
+      "tierRank": 1
+    },
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "description": "Consuming Soul Fragments with Spirit Bomb or Soul Cleave has a 10% chance per fragment to grant Untethered Rage, activating Metamorphosis for 10 sec.",
+    "resolvedDescription": "Consuming Soul Fragments with Spirit Bomb or Soul Cleave has a 10% chance per fragment to grant Untethered Rage, activating Metamorphosis for 10 sec.",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells"
+    ],
+    "attributes": [
+      "Passive (6)"
+    ]
+  },
+  {
+    "name": "Untethered Rage",
+    "id": 1270448,
+    "passive": true,
+    "hidden": false,
+    "effects": [],
+    "talentEntry": {
+      "spec": "Vengeance",
+      "tree": "spec",
+      "maxRank": 2,
+      "reqPoints": 20,
+      "nodeId": 110425,
+      "entryId": 137042,
+      "tierRank": 2
+    },
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "description": "Spirit Bomb and Soul Cleave consume 1 additional Soul Fragment and deal increased damage per fragment consumed.",
+    "resolvedDescription": "Spirit Bomb and Soul Cleave consume 1 additional Soul Fragment and deal increased damage per fragment consumed.",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells"
+    ],
+    "attributes": [
+      "Passive (6)"
+    ]
+  },
+  {
+    "name": "Untethered Rage",
+    "id": 1270449,
+    "passive": true,
+    "hidden": false,
+    "effects": [],
+    "talentEntry": {
+      "spec": "Vengeance",
+      "tree": "spec",
+      "maxRank": 1,
+      "reqPoints": 20,
+      "nodeId": 110425,
+      "entryId": 137041,
+      "tierRank": 3
+    },
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "description": "If Untethered Rage fails to proc, gain a stack of Seething Anger, increasing Agility and future proc chance.",
+    "resolvedDescription": "If Untethered Rage fails to proc, gain a stack of Seething Anger, increasing Agility and future proc chance.",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells"
+    ],
+    "attributes": [
+      "Passive (6)"
+    ]
+  },
+  {
+    "name": "Untethered Rage",
+    "id": 1270476,
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 0,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 10,
+          "scaledValue": 10,
+          "target": "Self (1)",
+          "note": "Grants Metamorphosis for 10 sec"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "duration": 10,
+    "description": "Metamorphosis is activated for 10 sec.",
+    "resolvedDescription": "Metamorphosis is activated for 10 sec.",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells"
+    ],
+    "attributes": [
+      "Buff"
+    ]
+  },
+  {
+    "name": "Seething Anger",
+    "id": 1270547,
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 0,
+        "type": "Apply Aura (6) | Mod Stat (29): Agility",
+        "details": {
+          "baseValue": 0,
+          "scaledValue": 0,
+          "target": "Self (1)",
+          "note": "Stacking Agility buff, increases proc chance"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "description": "Increases Agility and Untethered Rage proc chance. Stacks.",
+    "resolvedDescription": "Increases Agility and Untethered Rage proc chance. Stacks.",
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells"
+    ],
+    "attributes": [
+      "Buff",
+      "Stackable"
+    ]
   }
 ]

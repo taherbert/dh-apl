@@ -1,26 +1,26 @@
 # Interaction Audit Report
 
-Generated: 2026-02-02T22:15:28.642Z
+Generated: 2026-02-03T18:38:33.320Z
 
 ## Summary
 
-- **Total interactions:** 290
-- **Talents with interactions:** 82
-- **Total talents:** 121
+- **Total interactions:** 296
+- **Talents with interactions:** 87
+- **Total talents:** 124
 
 ### By Type
 
 | Type | Count |
 |------|-------|
-| damage_modifier | 168 |
-| buff_grant | 35 |
-| proc_trigger | 31 |
+| damage_modifier | 169 |
+| buff_grant | 36 |
+| proc_trigger | 33 |
 | duration_modifier | 15 |
 | resource_modifier | 14 |
 | range_modifier | 13 |
 | cooldown_modifier | 12 |
+| mechanic_change | 3 |
 | stacking_modifier | 1 |
-| mechanic_change | 1 |
 
 ### By Discovery Method
 
@@ -29,20 +29,21 @@ Generated: 2026-02-02T22:15:28.642Z
 | spell_data | 219 |
 | cpp_scanner | 57 |
 | effect_scan | 14 |
+| manual | 6 |
 
 ### By Confidence
 
 | Confidence | Count |
 |------------|-------|
-| high | 219 |
+| high | 225 |
 | medium | 71 |
 
 ### By Source Tree
 
 | Tree | Count |
 |------|-------|
-| non-talent | 162 |
-| spec | 71 |
+| non-talent | 164 |
+| spec | 75 |
 | hero | 32 |
 | class | 25 |
 
@@ -335,6 +336,7 @@ _No outgoing interactions_
 
 **Incoming:**
 - Dark Matter [proc_trigger, cpp_scanner]
+- Untethered Rage [mechanic_change, manual]
 
 #### Fiery Brand (204021) — has_interactions
 
@@ -646,6 +648,25 @@ _No outgoing interactions_
 #### Down in Flames (389732) — cpp_only
 
 _No outgoing interactions_
+
+#### Untethered Rage (1270444) — unknown
+
+| Target | Type | Method |
+|--------|------|--------|
+| Metamorphosis | proc_trigger | manual |
+
+#### Untethered Rage (1270448) — unknown
+
+| Target | Type | Method |
+|--------|------|--------|
+| Spirit Bomb | mechanic_change | manual |
+| Soul Cleave | mechanic_change | manual |
+
+#### Untethered Rage (1270449) — unknown
+
+| Target | Type | Method |
+|--------|------|--------|
+| Seething Anger | buff_grant | manual |
 
 ### Hero: Aldrachi Reaver
 
