@@ -5,13 +5,8 @@
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  detectArchetype,
-  describeArchetype,
-  getStrategicBuffs,
-  getCoreAbilities,
-} from "./archetypes.js";
-import { parse, getActionLists, findAction } from "../apl/parser.js";
+import { detectArchetype, describeArchetype } from "./archetypes.js";
+import { parse, getActionLists } from "../apl/parser.js";
 import {
   parseCondition,
   extractSemantics,
@@ -31,7 +26,6 @@ const STRATEGIC_CATEGORIES = {
   PRIORITY_REORDER: "Adjust action priority for better sequencing",
 };
 
-// Mutation operation types
 export const MUTATION_OPS = {
   ADD_CONDITION: "add_condition",
   REMOVE_CONDITION: "remove_condition",
@@ -134,22 +128,16 @@ function normalizeScenarios(workflowResults) {
 }
 
 function detectHeroTreeFromBuffs(workflowResults) {
-  // AR-specific buffs: rending_strike, glaive_flurry, art_of_the_glaive
-  // Anni-specific buffs: voidfall_building, voidfall_spending
   const arBuffs = ["rending_strike", "glaive_flurry", "art_of_the_glaive"];
   const anniBuffs = ["voidfall_building", "voidfall_spending"];
+  const hasAnyBuff = (scenario, buffs) =>
+    buffs.some((b) => getBuffUptime(scenario, b) > 0);
 
   for (const scenario of normalizeScenarios(workflowResults)) {
     if (scenario.error) continue;
 
-    const hasArBuff = arBuffs.some((b) => {
-      const uptime = getBuffUptime(scenario, b);
-      return uptime !== undefined && uptime > 0;
-    });
-    const hasAnniBuff = anniBuffs.some((b) => {
-      const uptime = getBuffUptime(scenario, b);
-      return uptime !== undefined && uptime > 0;
-    });
+    const hasArBuff = hasAnyBuff(scenario, arBuffs);
+    const hasAnniBuff = hasAnyBuff(scenario, anniBuffs);
 
     if (hasArBuff && !hasAnniBuff) return "aldrachi_reaver";
     if (hasAnniBuff && !hasArBuff) return "annihilator";
@@ -160,41 +148,30 @@ function detectHeroTreeFromBuffs(workflowResults) {
 
 function detectHeroTreeFromApl(aplAst) {
   const lists = getActionLists(aplAst);
-
-  // Check which hero-specific action lists exist and have content
   const arList = lists.find((l) => l.name === "ar");
   const anniList = lists.find((l) => l.name === "anni");
+  const hasArContent = arList?.entries.length > 0;
+  const hasAnniContent = anniList?.entries.length > 0;
 
-  const hasArContent = arList && arList.entries.length > 0;
-  const hasAnniContent = anniList && anniList.entries.length > 0;
-
-  // If only one has content, use that
   if (hasArContent && !hasAnniContent) return "aldrachi_reaver";
   if (hasAnniContent && !hasArContent) return "annihilator";
 
-  // Both have content: check the default list for hero_tree conditions
-  // to see which is conditionally called (both may exist for completeness)
+  // Both have content: check default list for hero_tree conditions
   const defaultList = lists.find((l) => l.name === "default");
-  if (defaultList) {
-    for (const entry of defaultList.entries) {
-      if (entry.type === "RunActionList") {
-        const condition = entry.modifiers?.get("if") || "";
-        const targetList = entry.modifiers?.get("name");
+  for (const entry of defaultList?.entries || []) {
+    if (entry.type !== "RunActionList") continue;
 
-        // Match the condition to the list being called
-        if (
-          targetList === "ar" &&
-          condition.includes("hero_tree.aldrachi_reaver")
-        ) {
-          return "aldrachi_reaver";
-        }
-        if (
-          targetList === "anni" &&
-          condition.includes("hero_tree.annihilator")
-        ) {
-          return "annihilator";
-        }
-      }
+    const condition = entry.modifiers?.get("if") || "";
+    const targetList = entry.modifiers?.get("name");
+
+    if (
+      targetList === "ar" &&
+      condition.includes("hero_tree.aldrachi_reaver")
+    ) {
+      return "aldrachi_reaver";
+    }
+    if (targetList === "anni" && condition.includes("hero_tree.annihilator")) {
+      return "annihilator";
     }
   }
 
@@ -241,6 +218,67 @@ function generateBuffUptimeHypotheses(scenario, archetype, aplAst) {
   const hypotheses = [];
   const rendingStrike = getBuffUptime(scenario, "rending_strike");
   const glaiveFlurry = getBuffUptime(scenario, "glaive_flurry");
+  const reaversMark = getBuffUptime(scenario, "reavers_mark");
+
+  // AR buff chain sequencing — critical for DPS
+  if (
+    archetype?.heroTree === "aldrachi_reaver" &&
+    rendingStrike !== undefined &&
+    glaiveFlurry !== undefined
+  ) {
+    // If Rending Strike is up but Glaive Flurry is much lower, sequence is broken
+    if (rendingStrike > 5 && glaiveFlurry < rendingStrike * 0.5) {
+      hypotheses.push({
+        category: STRATEGIC_CATEGORIES.PRIORITY_REORDER,
+        archetype: archetype?.id,
+        archetypeContext:
+          "After Reaver's Glaive, the correct sequence is ALWAYS Fracture (empowered) → Soul Cleave (empowered). Fracture deals +10% damage and applies Reaver's Mark. Soul Cleave deals +20% damage and triggers Aldrachi Tactics for faster regen. Breaking this sequence loses significant DPS.",
+        strategicGoal:
+          "Enforce Fracture→Soul Cleave sequence after Reaver's Glaive",
+        observation: `Rending Strike ${rendingStrike}% but Glaive Flurry only ${glaiveFlurry}% — sequence may be broken`,
+        metric: glaiveFlurry,
+        target: "soul_cleave",
+        hypothesis: `Ensure Soul Cleave follows Fracture during Rending Strike window`,
+        scenario: scenario.scenario,
+        priority: (rendingStrike - glaiveFlurry) * 2,
+        confidence: "high",
+        aplMutation: {
+          type: MUTATION_OPS.MOVE_UP,
+          list: "ar",
+          ability: "soul_cleave",
+          condition: "buff.rending_strike.up&!buff.glaive_flurry.up",
+          reason:
+            "Force Soul Cleave after empowered Fracture to complete the AR chain",
+        },
+      });
+    }
+  }
+
+  // Reaver's Mark uptime — indicates Fracture is landing during Rending Strike
+  if (reaversMark !== undefined && reaversMark < 10 && rendingStrike > 5) {
+    hypotheses.push({
+      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
+      archetype: archetype?.id,
+      archetypeContext:
+        "Reaver's Mark is applied when Fracture hits during Rending Strike. Low uptime means Fracture isn't being used during the window.",
+      strategicGoal: "Ensure Fracture lands during Rending Strike",
+      observation: `Reaver's Mark uptime only ${reaversMark}% (Rending Strike: ${rendingStrike}%)`,
+      metric: reaversMark,
+      target: "fracture",
+      hypothesis: `Prioritize Fracture immediately after Reaver's Glaive`,
+      scenario: scenario.scenario,
+      priority: (10 - reaversMark) * 1.5,
+      confidence: "high",
+      aplMutation: {
+        type: MUTATION_OPS.MOVE_UP,
+        list: "ar",
+        ability: "fracture",
+        condition: "buff.rending_strike.up&!debuff.reavers_mark.up",
+        reason:
+          "Cast Fracture first during Rending Strike to apply Reaver's Mark",
+      },
+    });
+  }
 
   if (rendingStrike !== undefined && rendingStrike < 15) {
     hypotheses.push({
@@ -326,43 +364,204 @@ function generateBuffUptimeHypotheses(scenario, archetype, aplAst) {
 }
 
 function generateCooldownHypotheses(scenario, archetype, aplAst) {
-  const metaUptime = getBuffUptime(scenario, "metamorphosis");
-  if (metaUptime === undefined || metaUptime <= 15 || metaUptime >= 40) {
-    return [];
+  const hypotheses = [];
+
+  // Fiery Brand synergy — align Fire damage abilities during Fiery Brand window
+  const fieryBrandUptime = getBuffUptime(scenario, "fiery_brand");
+  if (fieryBrandUptime !== undefined && fieryBrandUptime > 10) {
+    const felDev = scenario.majorDamage?.find(
+      (a) =>
+        a.name.toLowerCase().includes("fel") &&
+        a.name.toLowerCase().includes("devastation"),
+    );
+
+    if (felDev && felDev.fraction > 3) {
+      hypotheses.push({
+        category: STRATEGIC_CATEGORIES.COOLDOWN_SYNC,
+        archetype: archetype?.id,
+        archetypeContext:
+          "Fiery Brand provides 15% Fire damage amp via Fiery Demise. Fel Devastation deals Fire damage and should be synced with Fiery Brand windows.",
+        strategicGoal: "Align Fel Devastation with Fiery Brand",
+        observation: `Fiery Brand uptime is ${fieryBrandUptime}%, Fel Devastation is ${felDev.fraction}% of damage`,
+        metric: fieryBrandUptime,
+        target: "fel_devastation",
+        hypothesis: `Sync Fel Devastation with Fiery Brand for 15% Fire damage amp`,
+        scenario: scenario.scenario,
+        priority: felDev.fraction * 0.8,
+        confidence: "high",
+        aplMutation: {
+          type: MUTATION_OPS.ADD_CONDITION,
+          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
+          ability: "fel_devastation",
+          condition: "dot.fiery_brand.ticking",
+          operator: "&",
+          allowFallback: true,
+          reason:
+            "Prefer Fel Devastation during Fiery Brand for Fiery Demise amp",
+        },
+      });
+    }
+
+    // Soul Carver + Fiery Brand synergy
+    const soulCarver = scenario.majorDamage?.find((a) =>
+      a.name.toLowerCase().includes("soul_carver"),
+    );
+    if (soulCarver && soulCarver.fraction > 2) {
+      hypotheses.push({
+        category: STRATEGIC_CATEGORIES.COOLDOWN_SYNC,
+        archetype: archetype?.id,
+        archetypeContext:
+          "Soul Carver benefits from Fiery Demise. Use with 3+ seconds of Fiery Brand remaining.",
+        strategicGoal: "Align Soul Carver with Fiery Brand",
+        observation: `Soul Carver is ${soulCarver.fraction}% of damage`,
+        metric: soulCarver.fraction,
+        target: "soul_carver",
+        hypothesis: `Sync Soul Carver with Fiery Brand (3+ sec remaining)`,
+        scenario: scenario.scenario,
+        priority: soulCarver.fraction * 0.6,
+        confidence: "medium",
+        aplMutation: {
+          type: MUTATION_OPS.ADD_CONDITION,
+          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
+          ability: "soul_carver",
+          condition: "dot.fiery_brand.remains>3",
+          operator: "&",
+          allowFallback: true,
+          reason: "Use Soul Carver with 3+ sec Fiery Brand for Fiery Demise",
+        },
+      });
+    }
   }
 
-  const felDev = scenario.majorDamage?.find(
-    (a) =>
-      a.name.toLowerCase().includes("fel") &&
-      a.name.toLowerCase().includes("devastation"),
-  );
+  // Metamorphosis synergy (general)
+  const metaUptime = getBuffUptime(scenario, "metamorphosis");
+  if (metaUptime !== undefined && metaUptime > 15 && metaUptime < 40) {
+    const felDev = scenario.majorDamage?.find(
+      (a) =>
+        a.name.toLowerCase().includes("fel") &&
+        a.name.toLowerCase().includes("devastation"),
+    );
 
-  if (!felDev || felDev.fraction <= 5) return [];
+    if (felDev && felDev.fraction > 5) {
+      hypotheses.push({
+        category: STRATEGIC_CATEGORIES.COOLDOWN_SYNC,
+        archetype: archetype?.id,
+        archetypeContext:
+          "Metamorphosis grants +20% damage. High-value abilities should be used during Meta windows when possible.",
+        strategicGoal: "Align Fel Devastation with Metamorphosis",
+        observation: `Metamorphosis uptime is ${metaUptime}%, Fel Devastation is ${felDev.fraction}% of damage`,
+        metric: metaUptime,
+        target: "fel_devastation",
+        hypothesis: `Prefer Fel Devastation during Metamorphosis windows`,
+        scenario: scenario.scenario,
+        priority: felDev.fraction * 0.5,
+        confidence: "low",
+        aplMutation: {
+          type: MUTATION_OPS.ADD_CONDITION,
+          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
+          ability: "fel_devastation",
+          condition: "buff.metamorphosis.up",
+          operator: "|",
+          reason: "Prefer Fel Devastation during Meta for damage amp",
+        },
+      });
+    }
+  }
 
-  return [
-    {
-      category: STRATEGIC_CATEGORIES.COOLDOWN_SYNC,
+  // Annihilator-specific: Voidfall + Spirit Bomb + Meta cycling
+  if (archetype?.heroTree === "annihilator") {
+    hypotheses.push(...generateAnnihilatorHypotheses(scenario, archetype));
+  }
+
+  return hypotheses;
+}
+
+function generateAnnihilatorHypotheses(scenario, archetype) {
+  const hypotheses = [];
+
+  // Voidfall stack management - SimC uses voidfall_building and voidfall_spending buffs
+  const voidfallBuilding = getBuffUptime(scenario, "voidfall_building");
+  const voidfallSpending = getBuffUptime(scenario, "voidfall_spending");
+  const hasVoidfallData =
+    voidfallBuilding !== undefined || voidfallSpending !== undefined;
+
+  if (hasVoidfallData) {
+    hypotheses.push({
+      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
       archetype: archetype?.id,
       archetypeContext:
-        "Metamorphosis grants +20% damage. High-value abilities should be used during Meta windows when possible.",
-      strategicGoal: "Align Fel Devastation with Metamorphosis",
-      observation: `Metamorphosis uptime is ${metaUptime}%, Fel Devastation is ${felDev.fraction}% of damage`,
-      metric: metaUptime,
-      target: "fel_devastation",
-      hypothesis: `Prefer Fel Devastation during Metamorphosis windows`,
+        "Voidfall stacks to 3 from Fracture (35% chance) and Metamorphosis. At 3 stacks, Soul Cleave or Spirit Bomb triggers fel meteors.",
+      strategicGoal: "Optimize Voidfall stack spending",
+      observation: `Voidfall tracking active in ${scenario.scenarioName}`,
+      metric: voidfallSpending ?? voidfallBuilding,
+      target: "voidfall",
+      hypothesis: `Ensure Spirit Bomb/Soul Cleave fire at 3 Voidfall stacks`,
       scenario: scenario.scenario,
-      priority: felDev.fraction * 0.5,
-      confidence: "low",
+      priority: 8,
+      confidence: "high",
       aplMutation: {
         type: MUTATION_OPS.ADD_CONDITION,
-        list: "ar",
-        ability: "fel_devastation",
-        condition: "buff.metamorphosis.up",
-        operator: "|",
-        reason: "Prefer Fel Devastation during Meta for damage amp",
+        list: "anni",
+        ability: "spirit_bomb",
+        condition: "buff.voidfall_spending.stack=3",
+        operator: "&",
+        reason: "Trigger Spirit Bomb at max Voidfall stacks for meteor burst",
       },
-    },
-  ];
+    });
+
+    // Spend Voidfall before Meta
+    hypotheses.push({
+      category: STRATEGIC_CATEGORIES.RESOURCE_ALIGNMENT,
+      archetype: archetype?.id,
+      archetypeContext:
+        "Metamorphosis grants up to 3 Voidfall stacks. Spending stacks before Meta avoids overcapping and wastes no value.",
+      strategicGoal: "Spend Voidfall before Metamorphosis",
+      observation: `Voidfall stack management in ${scenario.scenarioName}`,
+      metric: voidfallSpending ?? voidfallBuilding,
+      target: "metamorphosis",
+      hypothesis: `Add condition to spend Voidfall before using Meta`,
+      scenario: scenario.scenario,
+      priority: 7,
+      confidence: "medium",
+      aplMutation: {
+        type: MUTATION_OPS.ADD_CONDITION,
+        list: "anni",
+        ability: "metamorphosis",
+        condition: "buff.voidfall_spending.stack<2",
+        operator: "&",
+        reason: "Avoid Meta when Voidfall is high to prevent overcapping",
+      },
+    });
+  }
+
+  // Spirit Bomb threshold during Meta (3+ frags, not 4+)
+  const metaUptime = getBuffUptime(scenario, "metamorphosis");
+  if (metaUptime !== undefined && metaUptime > 10) {
+    hypotheses.push({
+      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
+      archetype: archetype?.id,
+      archetypeContext:
+        "During Metamorphosis, Fracture generates 3 Soul Fragments instead of 2. Spirit Bomb threshold should be lowered to 3+ fragments during Meta.",
+      strategicGoal: "Lower Spirit Bomb threshold during Metamorphosis",
+      observation: `Metamorphosis uptime is ${metaUptime}%`,
+      metric: metaUptime,
+      target: "spirit_bomb",
+      hypothesis: `Use Spirit Bomb at 3+ fragments during Meta (not 4+)`,
+      scenario: scenario.scenario,
+      priority: 6,
+      confidence: "high",
+      aplMutation: {
+        type: MUTATION_OPS.RELAX_THRESHOLD,
+        list: "anni",
+        ability: "spirit_bomb",
+        condition: "soul_fragments>=3",
+        metaCondition: "buff.metamorphosis.up",
+        reason: "Fracture generates 3 fragments during Meta — lower threshold",
+      },
+    });
+  }
+
+  return hypotheses;
 }
 
 function generateConditionHypotheses(scenario, archetype, aplAst) {

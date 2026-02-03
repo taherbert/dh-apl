@@ -863,7 +863,7 @@
         "entryType": "passive",
         "posX": 2700,
         "posY": 5700,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -880,7 +880,7 @@
         "entryType": "passive",
         "posX": 3300,
         "posY": 5700,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -897,7 +897,7 @@
         "entryType": "passive",
         "posX": 4500,
         "posY": 5700,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -914,7 +914,7 @@
         "entryType": "passive",
         "posX": 5100,
         "posY": 5700,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -931,7 +931,7 @@
         "entryType": "passive",
         "posX": 2700,
         "posY": 6300,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -948,7 +948,7 @@
         "entryType": "passive",
         "posX": 3300,
         "posY": 6300,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -965,7 +965,7 @@
         "entryType": "active",
         "posX": 3900,
         "posY": 6300,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "active_ability",
         "cooldown": 300,
         "gcd": 1.5,
@@ -1022,7 +1022,7 @@
         "entryType": "passive",
         "posX": 4500,
         "posY": 6300,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -1039,7 +1039,7 @@
         "entryType": "passive",
         "posX": 5100,
         "posY": 6300,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -1056,7 +1056,7 @@
         "entryType": "passive",
         "posX": 2700,
         "posY": 6900,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       },
       {
@@ -1075,7 +1075,7 @@
         "posY": 6900,
         "choiceNode": true,
         "choiceIndex": 100,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "spell_modifier"
       },
       {
@@ -1094,7 +1094,7 @@
         "posY": 6900,
         "choiceNode": true,
         "choiceIndex": 200,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "spell_modifier"
       },
       {
@@ -1111,7 +1111,7 @@
         "entryType": "passive",
         "posX": 5100,
         "posY": 6900,
-        "reqPoints": 20,
+        "reqPoints": 23,
         "type": "passive"
       }
     ]
@@ -2322,6 +2322,60 @@
         "posY": 6900,
         "reqPoints": 20,
         "type": "passive"
+      },
+      {
+        "name": "Untethered Rage",
+        "nodeId": 110425,
+        "entryId": 137043,
+        "definitionId": 141806,
+        "maxRank": 1,
+        "spellId": 1270444,
+        "spellName": "Untethered Rage",
+        "school": null,
+        "passive": false,
+        "description": null,
+        "entryType": "tierrank",
+        "posX": 12300,
+        "posY": 7650,
+        "entryNode": true,
+        "reqPoints": 20,
+        "type": "active_ability"
+      },
+      {
+        "name": "Untethered Rage",
+        "nodeId": 110425,
+        "entryId": 137042,
+        "definitionId": 141805,
+        "maxRank": 2,
+        "spellId": 1270448,
+        "spellName": "Untethered Rage",
+        "school": null,
+        "passive": false,
+        "description": null,
+        "entryType": "tierrank",
+        "posX": 12300,
+        "posY": 7650,
+        "entryNode": true,
+        "reqPoints": 20,
+        "type": "active_ability"
+      },
+      {
+        "name": "Untethered Rage",
+        "nodeId": 110425,
+        "entryId": 137041,
+        "definitionId": 141804,
+        "maxRank": 1,
+        "spellId": 1270449,
+        "spellName": "Untethered Rage",
+        "school": null,
+        "passive": false,
+        "description": null,
+        "entryType": "tierrank",
+        "posX": 12300,
+        "posY": 7650,
+        "entryNode": true,
+        "reqPoints": 20,
+        "type": "active_ability"
       }
     ]
   },

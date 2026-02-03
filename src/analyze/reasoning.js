@@ -14,10 +14,6 @@ function loadInteractions() {
   return JSON.parse(readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"));
 }
 
-function loadTalents() {
-  return JSON.parse(readFileSync(join(DATA_DIR, "talents.json"), "utf-8"));
-}
-
 // Generate improvement hypotheses from workflow results.
 export function generateHypotheses(workflowResults) {
   const interactions = loadInteractions();
@@ -147,20 +143,6 @@ function analyzeBuffUptimeGaps(scenario, interactions) {
       scenario: scenario.scenario,
       suggestedTest:
         "Try: spirit_bomb,if=soul_fragments>=4&(buff.soul_furnace.stack>=8|!talent.soul_furnace)",
-    });
-  }
-
-  // Demon Spikes uptime
-  const demonSpikes = scenario.buffUptimes?.demon_spikes;
-  if (demonSpikes !== undefined && demonSpikes < 50) {
-    hypotheses.push({
-      hypothesis: `Demon Spikes uptime is ${demonSpikes}% — below 50% threshold for tank survivability`,
-      category: "defensive_uptime",
-      confidence: "high",
-      affectedAbilities: ["demon_spikes"],
-      scenario: scenario.scenario,
-      suggestedTest:
-        "Increase Demon Spikes priority or relax conditions for casting it",
     });
   }
 
