@@ -1,0 +1,156 @@
+{
+  "source": "sc_demon_hunter.cpp (midnight branch)",
+  "extractedFrom": "Manual extraction from C++ source",
+  "mechanics": [
+    {
+      "name": "Fallout",
+      "talentId": 227174,
+      "trigger": "Immolation Aura damage hits",
+      "type": "proc_trigger",
+      "effect": "Spawns 1 lesser soul fragment",
+      "procChance": {
+        "singleTarget": 1.0,
+        "multiTarget": 0.6
+      },
+      "icd": null,
+      "cppRef": "immolation_aura_damage_t::impact (line ~4673)"
+    },
+    {
+      "name": "Volatile Flameblood",
+      "talentId": 390808,
+      "trigger": "Immolation Aura critical hits",
+      "type": "proc_trigger",
+      "effect": "Grants Fury (amount from effectN(1).base_value())",
+      "procChance": {
+        "onCrit": 1.0
+      },
+      "icd": "from spell data (internal_cooldown())",
+      "cppRef": "immolation_aura_damage_t::impact (line ~4709)"
+    },
+    {
+      "name": "Feed the Demon",
+      "talentId": 218612,
+      "trigger": "Casting abilities with Fury cost",
+      "type": "accumulator",
+      "effect": "Reduces Demon Spikes cooldown",
+      "threshold": "effectN(1).base_value() Fury accumulated",
+      "cdReduction": "effectN(2).time_value()",
+      "icd": null,
+      "cppRef": "accumulate_feed_the_demon (line ~2413)"
+    },
+    {
+      "name": "Wounded Quarry",
+      "talentId": 462875,
+      "trigger": "Damaging actions against Reaver's Mark target",
+      "type": "proc_trigger",
+      "effect": "Deals damage (Wounded Quarry damage spell)",
+      "procChance": {
+        "vengeance": 0.3,
+        "havoc": 0.1
+      },
+      "icd": 1.0,
+      "icdNote": "Damage accumulated checked once per second (wounded_quarry_trigger_icd)",
+      "cppRef": "wounded_quarry_t (line ~8540), options (line ~1160)"
+    },
+    {
+      "name": "Art of the Glaive (consumption)",
+      "talentId": 442294,
+      "trigger": "Art of the Glaive stack reaches max",
+      "type": "state_machine",
+      "effect": "Consumes stacks → grants Rending Strike + Glaive Flurry buffs",
+      "icd": 0.1,
+      "icdNote": "100ms consumption ICD prevents double-consumption",
+      "cppRef": "art_of_the_glaive_consumption_icd (line ~981)"
+    },
+    {
+      "name": "Aldrachi Tactics",
+      "talentId": 442520,
+      "trigger": "Glaive Flurry actions (during Art of the Glaive)",
+      "type": "proc_trigger",
+      "effect": "Spawns 1 lesser soul fragment",
+      "procChance": 1.0,
+      "icd": null,
+      "cppRef": "line ~2665"
+    },
+    {
+      "name": "Broken Spirit",
+      "talentId": 442849,
+      "trigger": "Chaos Strike / Death Sweep / Blade Dance",
+      "type": "proc_trigger",
+      "effect": "Spawns 1 lesser soul fragment",
+      "procChance": "effectN(4).percent()",
+      "icd": null,
+      "cppRef": "line ~7365"
+    },
+    {
+      "name": "Voidfall (building)",
+      "talentId": 442726,
+      "trigger": "Fracture, Soul Cleave, Reap, Eradicate",
+      "type": "state_machine",
+      "effect": "Adds stacks to voidfall_building buff",
+      "procChance": "effectN(3).percent()",
+      "maxStacks": "effectN(1).base_value()",
+      "blocker": "Cannot gain stacks while voidfall_spending is active",
+      "cppRef": "voidfall_building_trigger_t (line ~2844)"
+    },
+    {
+      "name": "Voidfall (spending)",
+      "talentId": 442726,
+      "trigger": "Fracture, Soul Cleave (while voidfall_spending active)",
+      "type": "state_machine",
+      "effect": "Decrements voidfall_spending by 1, triggers meteor/world_killer",
+      "procChance": 1.0,
+      "icd": null,
+      "cppRef": "voidfall_spending_trigger_t (line ~2874)"
+    },
+    {
+      "name": "Mid1 Vengeance 4PC (Explosion of the Soul)",
+      "setBonus": "mid1_vengeance_4pc",
+      "trigger": "Spirit Bomb cast",
+      "type": "proc_trigger",
+      "effect": "Triggers Explosion of the Soul damage",
+      "procChance": "effectN(1).percent()",
+      "icd": "internal_cooldown() from spell data",
+      "cppRef": "spirit_bomb_damage_t::impact (line ~7848)"
+    },
+    {
+      "name": "Undying Embers",
+      "talentId": 444064,
+      "trigger": "Immolation Aura buff expiration",
+      "type": "proc_trigger",
+      "effect": "Retriggers Immolation Aura (consumes charge, not a cast)",
+      "procChance": "effectN(1).percent()",
+      "icd": null,
+      "icdNote": "Only procs if Immolation Aura is off cooldown",
+      "cppRef": "line ~8740"
+    },
+    {
+      "name": "Soul Sigils",
+      "talentId": 395446,
+      "trigger": "Sigil activation (Flame, Spite, Misery, Silence, Chains)",
+      "type": "proc_trigger",
+      "effect": "Spawns 1 lesser soul fragment per sigil activation",
+      "procChance": 1.0,
+      "icd": null,
+      "cppRef": "sigil activation handlers"
+    },
+    {
+      "name": "Shattered Souls",
+      "talentId": 204254,
+      "trigger": "Killing an enemy that yields experience/honor",
+      "type": "proc_trigger",
+      "effect": "Spawns lesser soul fragment",
+      "procChance": 0.4,
+      "procChanceNote": "soul_fragment_from_shattered_souls_chance option, default 0.4",
+      "icd": null,
+      "cppRef": "options (line ~1156)"
+    }
+  ],
+  "constants": {
+    "MAX_SOUL_FRAGMENTS": 6,
+    "MAX_SOUL_FRAGMENTS_DEVOURER": 10,
+    "soul_fragment_movement_consume_chance": 0.85,
+    "wounded_quarry_trigger_icd_seconds": 1.0,
+    "art_of_the_glaive_consumption_icd_ms": 100
+  }
+}

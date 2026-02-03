@@ -17892,7 +17892,8 @@
       },
       "application": "buff_on_player",
       "procInfo": {
-        "procChance": 101
+        "procChance": 101,
+        "internalCooldown": 5
       },
       "effectDetails": [
         {
@@ -18218,7 +18219,8 @@
       },
       "application": "buff_on_player",
       "procInfo": {
-        "procChance": 101
+        "procChance": 101,
+        "internalCooldown": 3
       },
       "effectDetails": [
         {
@@ -18413,7 +18415,8 @@
       "discoveryMethod": "manual",
       "confidence": "high",
       "procInfo": {
-        "procChance": 101
+        "procChance": 101,
+        "internalCooldown": 0.5
       },
       "triggerSpell": {
         "id": 263642,
@@ -36161,7 +36164,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 5
           }
         }
       ]
@@ -36186,7 +36190,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 5
           }
         }
       ]
@@ -40928,7 +40933,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 3
           }
         }
       ]
@@ -40953,7 +40959,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 3
           }
         }
       ]
@@ -43065,7 +43072,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 0.5
           }
         }
       ]
@@ -43133,7 +43141,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 0.5
           },
           "triggerSpell": {
             "id": 263642,
@@ -46859,7 +46868,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 5
           }
         }
       ]
@@ -48019,7 +48029,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 3
           }
         }
       ]
@@ -49711,7 +49722,8 @@
             "offensive"
           ],
           "procInfo": {
-            "procChance": 101
+            "procChance": 101,
+            "internalCooldown": 0.5
           }
         }
       ]
