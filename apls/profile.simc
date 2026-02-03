@@ -1,37 +1,34 @@
-# Vengeance DH TWW3 Profile — Gear and Talents only
+# Vengeance DH Midnight Profile — Gear and Talents
 # Use with: simc apls/profile.simc <apl_file>
+# Talent hash generated from data/talents.json (all class+spec+AR hero talents)
 
-demonhunter="VDH_TWW3"
+demonhunter="VDH_Midnight"
 source=default
 spec=vengeance
-level=80
+level=90
 race=night_elf
 timeofday=night
 role=tank
 position=front
-talents=CUkAVVFIvriGAPx6R1rEiLo2cCAGjZmZMmZkZmxYYMbzMYsNjZMjZGmZWmZsMzMMDGAAAAmlZWmlZmZW2mtppZwMzgN
+talents=CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB
 
-# Default consumables
-potion=tempered_potion_3
-flask=flask_of_alchemical_chaos_3
-food=feast_of_the_divine_day
-augmentation=crystallized
-temporary_enchant=main_hand:ironclaw_whetstone_3/off_hand:ironclaw_whetstone_3
+# Consumables disabled — no Midnight consumables in SimC yet
+flask=disabled
 
-# Gear
-head=irradiated_impurity_filter,id=237525,ilevel=723,gem_id=213470
-neck=ornately_engraved_amplifier,id=185842,ilevel=723,gem_id=213485/213743
-shoulders=charhounds_vicious_hornguards,id=237689,ilevel=723
-back=reshii_wraps,id=235499,ilevel=730,gem_id=238045,enchant_id=7409
-chest=charhounds_vicious_bindings,id=237694,ilevel=723,enchant_id=7364
-wrists=runebranded_armbands,id=219334,bonus_id=11109/8790,ilevel=720,gem_id=213485,enchant_id=7391
-hands=charhounds_vicious_felclaws,id=237692,ilevel=723
-waist=venzas_powderbelt,id=185809,ilevel=723,gem_id=213485
-legs=charhounds_vicious_hidecoat,id=237690,ilevel=723,enchant_id=7601
-feet=interlopers_reinforced_sandals,id=243306,ilevel=723
-finger1=band_of_the_shattered_soul,id=242405,ilevel=723,gem_id=213485/213485,enchant_id=7340
-finger2=ring_of_the_panoply,id=246281,ilevel=723,gem_id=213485/213485,enchant_id=7352
-trinket1=arazs_ritual_forge,id=242402,ilevel=723
-trinket2=tome_of_lights_devotion,id=219309,ilevel=723
-main_hand=sonic_kaboomerang,id=234491,ilevel=723,enchant_id=7460
-off_hand=everforged_longsword,id=222440,bonus_id=11300/8790,ilevel=720,enchant_id=7439
+# Generic Midnight gear — no expansion-specific enchants/gems exist yet
+head=,id=153840,ilevel=616
+neck=,id=153861,ilevel=616
+shoulder=,id=153842,ilevel=616
+back=,id=153865,ilevel=616
+chest=,id=153837,ilevel=616
+wrist=,id=153844,ilevel=616
+hands=,id=153839,ilevel=616
+waist=,id=153843,ilevel=616
+legs=,id=153841,ilevel=616
+feet=,id=153838,ilevel=616
+finger1=,id=153863,ilevel=616
+finger2=,id=153862,ilevel=616
+trinket1=,id=153860,ilevel=616
+trinket2=,id=153864,ilevel=616
+main_hand=,id=248072,ilevel=616
+off_hand=,id=248062,ilevel=616

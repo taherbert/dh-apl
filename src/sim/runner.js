@@ -9,9 +9,11 @@ import { cpus } from "node:os";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { SIMC_BIN } from "../config.js";
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
-const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
+const SIMC = SIMC_BIN;
 const RESULTS_DIR = join(ROOT, "results");
 const TOTAL_CORES = cpus().length;
 

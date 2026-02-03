@@ -3246,25 +3246,67 @@
   {
     "id": 110416,
     "name": "Midnight / Midnight / Midnight",
-    "type": "single",
-    "maxRanks": 1,
-    "entryNode": false,
-    "freeNode": false
+    "type": "tiered",
+    "maxRanks": 4,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Midnight",
+        "index": 100
+      },
+      {
+        "name": "Midnight",
+        "index": 200
+      },
+      {
+        "name": "Midnight",
+        "index": 300
+      }
+    ]
   },
   {
     "id": 110425,
     "name": "Untethered Rage / Untethered Rage / Untethered Rage",
-    "type": "single",
-    "maxRanks": 1,
-    "entryNode": false,
-    "freeNode": false
+    "type": "tiered",
+    "maxRanks": 4,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Untethered Rage",
+        "index": 100
+      },
+      {
+        "name": "Untethered Rage",
+        "index": 200
+      },
+      {
+        "name": "Untethered Rage",
+        "index": 300
+      }
+    ]
   },
   {
     "id": 110427,
     "name": "Eternal Hunt / Eternal Hunt / Eternal Hunt",
-    "type": "single",
-    "maxRanks": 1,
-    "entryNode": false,
-    "freeNode": false
+    "type": "tiered",
+    "maxRanks": 4,
+    "entryNode": true,
+    "freeNode": false,
+    "entries": [
+      {
+        "name": "Eternal Hunt",
+        "index": 100
+      },
+      {
+        "name": "Eternal Hunt",
+        "index": 200
+      },
+      {
+        "name": "Eternal Hunt",
+        "index": 300
+      }
+    ]
   }
 ]

@@ -1,6 +1,7 @@
 # Project-specific
 data/raw/
 results/
+bin/
 
 # Logs
 logs
