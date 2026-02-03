@@ -223,4 +223,5 @@ Targeting **Midnight** expansion. The simc `midnight` branch may have new abilit
 - Use action list names that describe purpose (e.g., `defensives`, `cooldowns`, `aoe`, `single_target`).
 - Comment non-obvious conditions with `#` lines explaining the "why."
 - Keep the default action list short — delegate to sub-lists via `run_action_list`.
+- **Theory before simulation.** Before changing any ability's placement, conditions, or priority, read it in context. Understand _why_ it is where it is, what role it plays in the resource/GCD/cooldown economy, and what downstream effects a change would cause. Form a clear theory — "this change should improve X because Y" — before creating a candidate or running a sim. Never shotgun changes to see what sticks.
 - All JS uses ESM (`import`/`export`), Node.js 23+.
