@@ -355,14 +355,176 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   if (!arg) {
     console.log("Usage:");
-    console.log("  node src/util/talent-string.js <loadout-string>   # decode");
     console.log(
-      "  node src/util/talent-string.js --test              # round-trip test",
+      "  node src/util/talent-string.js <loadout-string>      # decode",
+    );
+    console.log(
+      "  node src/util/talent-string.js --generate <heroTree>  # generate hash (all talents at max rank)",
+    );
+    console.log(
+      "  node src/util/talent-string.js --test                 # round-trip test",
     );
     process.exit(0);
   }
 
-  if (arg === "--test") {
+  if (arg === "--modify") {
+    // Modify an existing talent string: add or remove specific talents by name.
+    // Usage: --modify <base-hash> +TalentName:rank -TalentName ...
+    const baseHash = process.argv[3];
+    const ops = process.argv.slice(4);
+    if (!baseHash || ops.length === 0) {
+      console.error(
+        "Usage: --modify <base-hash> [+TalentName:rank] [-TalentName] ...",
+      );
+      console.error(
+        "  +TalentName:rank  — add/set talent to rank (rank optional, defaults to max)",
+      );
+      console.error("  -TalentName       — remove talent");
+      process.exit(1);
+    }
+
+    const { specId, selections: sel } = decode(baseHash, nodes);
+    const nodeByName = new Map();
+    for (const n of nodes) {
+      if (n.name) {
+        // For tiered nodes, use just the first name segment
+        const shortName = n.name.split(" / ")[0].toLowerCase();
+        nodeByName.set(shortName, n);
+      }
+      // Also index by entry names
+      for (const e of n.entries || []) {
+        if (e.name) nodeByName.set(e.name.toLowerCase(), n);
+      }
+    }
+
+    for (const op of ops) {
+      const isAdd = op.startsWith("+");
+      const isRemove = op.startsWith("-");
+      if (!isAdd && !isRemove) {
+        console.error(`Invalid op "${op}" — must start with + or -`);
+        process.exit(1);
+      }
+      const parts = op.slice(1).split(":");
+      const name = parts[0].toLowerCase().replace(/_/g, " ");
+      const node = nodeByName.get(name);
+      if (!node) {
+        console.error(`Unknown talent: "${parts[0]}"`);
+        console.error("Available talents (spec):");
+        for (const n of data.specNodes) {
+          const sn = (n.name || n.entries?.[0]?.name || "").split(" / ")[0];
+          console.error(`  ${sn}`);
+        }
+        process.exit(1);
+      }
+      if (isRemove) {
+        sel.delete(node.id);
+        console.error(`Removed: ${node.name} (node ${node.id})`);
+      } else {
+        const rank = parts[1] ? +parts[1] : node.maxRanks || 1;
+        const entry = { rank };
+        if (node.type === "choice" || node.type === "subtree") {
+          entry.choiceIndex = sel.get(node.id)?.choiceIndex || 0;
+        }
+        sel.set(node.id, entry);
+        console.error(
+          `Set: ${node.name} (node ${node.id}) to rank ${rank}/${node.maxRanks || 1}`,
+        );
+      }
+    }
+
+    // Validate point budgets and gate requirements
+    const BUDGETS = { class: 34, spec: 34, hero: 13 };
+    const classNodeIds = new Set(data.classNodes.map((n) => n.id));
+    const specNodeIds = new Set(data.specNodes.map((n) => n.id));
+    const heroNodeIds = new Map();
+    for (const treeNodes of Object.values(data.heroSubtrees)) {
+      for (const n of treeNodes) heroNodeIds.set(n.id, n);
+    }
+    const subTreeIds = new Set((data.subTreeNodes || []).map((n) => n.id));
+
+    // Determine which nodes are truly free (granted by the game, not purchasable).
+    // DBC id_spec_starter marks granted nodes. Raidbots entryNode is unreliable
+    // for tiered/pinnacle talents. freeNode is reliable.
+    const freeNodeIds = new Set();
+    const allDataNodes = [
+      ...data.classNodes,
+      ...data.specNodes,
+      ...Object.values(data.heroSubtrees).flat(),
+    ];
+    for (const n of allDataNodes) {
+      if (n.freeNode) freeNodeIds.add(n.id);
+    }
+    // Also check grantedForSpecs from DBC supplement in full node list
+    for (const n of nodes) {
+      if (n.grantedForSpecs?.includes(specId)) freeNodeIds.add(n.id);
+    }
+
+    function countPoints(nodeSet, label) {
+      let spent = 0;
+      for (const [id, s] of sel) {
+        if (!nodeSet.has(id)) continue;
+        if (freeNodeIds.has(id)) continue;
+        if (subTreeIds.has(id)) continue;
+        spent += s.rank;
+      }
+      return spent;
+    }
+
+    function checkGates(treeNodes, label) {
+      // Group nodes by gate, count points spent below each gate threshold
+      const gates = [...new Set(treeNodes.map((n) => n.reqPoints || 0))]
+        .filter((g) => g > 0)
+        .sort((a, b) => a - b);
+      for (const gate of gates) {
+        let spentBelow = 0;
+        for (const n of treeNodes) {
+          if ((n.reqPoints || 0) >= gate) continue;
+          const s = sel.get(n.id);
+          if (!s) continue;
+          if (freeNodeIds.has(n.id)) continue;
+          spentBelow += s.rank;
+        }
+        if (spentBelow < gate) {
+          console.error(
+            `ERROR: ${label} gate requires ${gate} points, only ${spentBelow} spent in prior sections`,
+          );
+          process.exit(1);
+        }
+      }
+    }
+
+    const classSpent = countPoints(classNodeIds, "Class");
+    const specSpent = countPoints(specNodeIds, "Spec");
+    const heroSpent = countPoints(new Set(heroNodeIds.keys()), "Hero");
+
+    let errors = false;
+    for (const [label, spent, budget] of [
+      ["Class", classSpent, BUDGETS.class],
+      ["Spec", specSpent, BUDGETS.spec],
+      ["Hero", heroSpent, BUDGETS.hero],
+    ]) {
+      if (spent !== budget) {
+        console.error(
+          `ERROR: ${label} tree has ${spent} points spent, must be exactly ${budget}`,
+        );
+        errors = true;
+      }
+    }
+
+    checkGates(data.classNodes, "Class");
+    checkGates(data.specNodes, "Spec");
+
+    if (errors) {
+      console.error(
+        "\nBuild is INVALID. Fix point allocation before encoding.",
+      );
+      process.exit(1);
+    }
+
+    console.error("\nValidation: PASS");
+    const encoded = encode(specId, nodes, sel);
+    console.log(encoded);
+  } else if (arg === "--test") {
     // Round-trip test: build a mock selection, encode, decode, verify
     const SPEC_ID = 581;
     const sel = new Map();

@@ -866,7 +866,7 @@
       "type": "single",
       "posX": 2700,
       "posY": 5700,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [
         90996
@@ -893,7 +893,7 @@
       "type": "single",
       "posX": 3300,
       "posY": 5700,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [
         110011,
@@ -922,7 +922,7 @@
       "type": "single",
       "posX": 4500,
       "posY": 5700,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [
         91002,
@@ -951,7 +951,7 @@
       "type": "single",
       "posX": 5100,
       "posY": 5700,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [
         90949
@@ -978,7 +978,7 @@
       "type": "single",
       "posX": 2700,
       "posY": 6300,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 2,
       "next": [
         110010
@@ -1005,7 +1005,7 @@
       "type": "single",
       "posX": 3300,
       "posY": 6300,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [],
       "prev": [
@@ -1030,7 +1030,7 @@
       "type": "single",
       "posX": 3900,
       "posY": 6300,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [
         91001
@@ -1058,7 +1058,7 @@
       "type": "single",
       "posX": 4500,
       "posY": 6300,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [],
       "prev": [
@@ -1083,7 +1083,7 @@
       "type": "single",
       "posX": 5100,
       "posY": 6300,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 2,
       "next": [
         90997
@@ -1110,7 +1110,7 @@
       "type": "single",
       "posX": 2700,
       "posY": 6900,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [],
       "prev": [
@@ -1135,7 +1135,7 @@
       "type": "choice",
       "posX": 3900,
       "posY": 6900,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [],
       "prev": [
@@ -1170,7 +1170,7 @@
       "type": "single",
       "posX": 5100,
       "posY": 6900,
-      "reqPoints": 20,
+      "reqPoints": 23,
       "maxRanks": 1,
       "next": [],
       "prev": [
@@ -2360,6 +2360,50 @@
           "spellId": 389732,
           "icon": "ability_demonhunter_fierybrand",
           "index": 200
+        }
+      ]
+    },
+    {
+      "id": 110425,
+      "name": "Untethered Rage / Untethered Rage / Untethered Rage",
+      "type": "tiered",
+      "posX": 12300,
+      "posY": 7650,
+      "reqPoints": 20,
+      "maxRanks": 4,
+      "entryNode": true,
+      "next": [],
+      "prev": [],
+      "entries": [
+        {
+          "id": 137043,
+          "definitionId": 141806,
+          "maxRanks": 1,
+          "type": "tierrank",
+          "name": "Untethered Rage",
+          "spellId": 1270444,
+          "icon": "inv12_apextalent_demonhunter__untetheredrage",
+          "index": 100
+        },
+        {
+          "id": 137042,
+          "definitionId": 141805,
+          "maxRanks": 2,
+          "type": "tierrank",
+          "name": "Untethered Rage",
+          "spellId": 1270448,
+          "icon": "inv12_apextalent_demonhunter__untetheredrage",
+          "index": 200
+        },
+        {
+          "id": 137041,
+          "definitionId": 141804,
+          "maxRanks": 1,
+          "type": "tierrank",
+          "name": "Untethered Rage",
+          "spellId": 1270449,
+          "icon": "inv12_apextalent_demonhunter__untetheredrage",
+          "index": 300
         }
       ]
     }

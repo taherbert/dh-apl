@@ -1,8 +1,10 @@
 // Central configuration. Change DATA_ENV to switch all data sources.
-export const DATA_ENV = "ptr"; // "live" | "ptr"
+export const DATA_ENV = "beta"; // "live" | "ptr" | "beta"
 
-if (DATA_ENV !== "live" && DATA_ENV !== "ptr") {
-  throw new Error(`Invalid DATA_ENV: "${DATA_ENV}". Must be "live" or "ptr".`);
+if (!["live", "ptr", "beta"].includes(DATA_ENV)) {
+  throw new Error(
+    `Invalid DATA_ENV: "${DATA_ENV}". Must be "live", "ptr", or "beta".`,
+  );
 }
 
 export const RAIDBOTS_BASE = `https://www.raidbots.com/static/data/${DATA_ENV}`;

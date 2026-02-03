@@ -46,7 +46,7 @@ When effect data is ambiguous (e.g., unclear whether a value is a damage amp or 
 
 ### Environment Toggle
 
-Change `DATA_ENV` in `src/config.js` to switch between `"live"` and `"ptr"`. Then run `npm run build-data` to regenerate from the new environment.
+Change `DATA_ENV` in `src/config.js` to switch between `"live"`, `"ptr"`, or `"beta"`. Then run `npm run build-data` to regenerate from the new environment. Midnight data uses `"beta"`.
 
 ### Hero Trees
 
@@ -56,6 +56,28 @@ Vengeance has two hero trees (Midnight):
 - **Annihilator** (subtree 124): Voidfall, Catastrophe, Dark Matter, World Killer, etc. APL branch: `actions.anni`
 
 The current baseline uses AR talents. The `anni` branch exists in the APL but won't execute without an Annihilator talent profile.
+
+### Talent Build Rules — MANDATORY
+
+Generated talent builds MUST be valid. SimC and Wowhead accept invalid over-budget builds silently — that does NOT make them valid. Never generate an invalid build.
+
+**Point budgets (Midnight):**
+
+- Class tree: **34 points** spent (not counting free/entry nodes)
+- Spec tree: **34 points** spent (not counting free/entry nodes)
+- Hero tree: **13 points** spent (not counting free/entry nodes)
+- All points MUST be spent — no under-spending
+
+**Gate requirements:**
+
+- Each tree has gate rows that require a minimum number of points spent before unlocking further rows
+- Section 1 (rows 1-4): must spend **8 points** to unlock section 2
+- Section 2 (rows 5-7): must spend **20 points** to unlock section 3
+- Section 3 (rows 8-10): standard rows plus the pinnacle talent at the bottom
+- You can over-spend in a section, but never under-spend
+- The `reqPoints` field on each node indicates the gate threshold
+
+**Validation:** The `--generate` and `--modify` commands in `src/util/talent-string.js` MUST validate point budgets and gate requirements. Refuse to produce an invalid build.
 
 ### Choice Nodes
 

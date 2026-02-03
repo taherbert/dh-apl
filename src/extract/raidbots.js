@@ -30,6 +30,7 @@ function simplifyNode(n) {
 
 // Parse simc DBC trait data to find DH nodes missing from Raidbots.
 // DH is class_id 12 in simc's trait_data.
+// Returns { added, specNodes, classNodes } — new nodes to merge into raidbots output.
 function supplementFromDbc(nodeById) {
   const traitFile =
     DATA_ENV === "ptr" ? "trait_data_ptr.inc" : "trait_data.inc";
@@ -97,12 +98,15 @@ function supplementFromDbc(nodeById) {
     if (nodeById.has(nodeId)) continue;
     // Node types: 0=normal, 1=tiered, 2=choice, 3=selection
     const isChoice = info.nodeType === 2 || info.nodeType === 3;
+    const isTiered = info.nodeType === 1;
     const specs = grantedSpecs.get(nodeId);
+    // Tiered nodes: total ranks = number of entries (each tier is a rank)
+    const maxRanks = isTiered ? info.entries.length : info.maxRanks;
     nodeById.set(nodeId, {
       id: nodeId,
       name: info.entries.map((e) => e.name).join(" / "),
       type: isChoice ? "choice" : "single",
-      maxRanks: info.maxRanks,
+      maxRanks,
       entryNode: false,
       freeNode: false,
       ...(specs ? { grantedForSpecs: [...specs] } : {}),
