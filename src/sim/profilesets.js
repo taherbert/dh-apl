@@ -2,31 +2,18 @@
 // Supports talent, APL, and action line overrides per variant.
 // Usage: node src/sim/profilesets.js <base-profile.simc> [scenario]
 
-import { execSync } from "node:child_process";
+import { execSync, execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
 const RESULTS_DIR = join(ROOT, "results");
 const GOLDEN_DIR = join(RESULTS_DIR, "golden");
-
-const SCENARIOS = {
-  st: {
-    name: "Patchwerk ST",
-    overrides: "max_time=300 desired_targets=1 iterations=1000",
-  },
-  small_aoe: {
-    name: "Small AoE (3 targets)",
-    overrides: "max_time=75 desired_targets=3 iterations=1000",
-  },
-  big_aoe: {
-    name: "Large AoE (10 targets)",
-    overrides: "max_time=60 desired_targets=10 iterations=1000",
-  },
-};
 
 // Generate a .simc profileset file from a base profile and variant list.
 // Each variant: { name, overrides: string[] }
@@ -49,12 +36,10 @@ export function generateProfileset(baseProfilePath, variants) {
   return lines.join("\n");
 }
 
-// Run a profileset .simc file and parse JSON results.
-export function runProfileset(
-  simcContent,
-  scenario = "st",
-  label = "profileset",
-) {
+const execFileAsync = promisify(execFile);
+
+// Prepare simc args and write the input file for a profileset run.
+function prepareProfileset(simcContent, scenario, label, simOverrides) {
   const config = SCENARIOS[scenario];
   if (!config) {
     throw new Error(`Unknown scenario: ${scenario}`);
@@ -64,22 +49,72 @@ export function runProfileset(
 
   const simcPath = join(RESULTS_DIR, `${label}_${scenario}.simc`);
   const jsonPath = join(RESULTS_DIR, `${label}_${scenario}.json`);
-
   writeFileSync(simcPath, simcContent);
 
-  const cmd = [
-    SIMC,
+  const merged = { ...SIM_DEFAULTS, ...simOverrides };
+  const workThreads = Math.max(1, Math.floor(merged.threads / 6));
+
+  const args = [
     simcPath,
-    config.overrides,
+    `max_time=${config.maxTime}`,
+    `desired_targets=${config.desiredTargets}`,
+    `target_error=${merged.target_error}`,
+    `iterations=${merged.iterations}`,
     `json2=${jsonPath}`,
-    "threads=4",
+    `threads=${merged.threads}`,
+    `profileset_work_threads=${workThreads}`,
     "profileset_metric=dps",
-  ].join(" ");
+  ];
 
   console.log(`Running profileset: ${config.name}...`);
+  return { args, jsonPath, scenario };
+}
+
+// Run a profileset .simc file and parse JSON results.
+export function runProfileset(
+  simcContent,
+  scenario = "st",
+  label = "profileset",
+  { simOverrides = {} } = {},
+) {
+  const { args, jsonPath } = prepareProfileset(
+    simcContent,
+    scenario,
+    label,
+    simOverrides,
+  );
+
   try {
-    execSync(cmd, {
+    execSync([SIMC, ...args.slice(1)].join(" "), {
       encoding: "utf-8",
+      maxBuffer: 100 * 1024 * 1024,
+      timeout: 600000,
+    });
+  } catch (e) {
+    if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
+    throw new Error(`SimC profileset failed: ${e.message}`);
+  }
+
+  const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
+  return parseProfilesetResults(data, scenario);
+}
+
+// Async variant of runProfileset for parallel execution.
+export async function runProfilesetAsync(
+  simcContent,
+  scenario = "st",
+  label = "profileset",
+  { simOverrides = {} } = {},
+) {
+  const { args, jsonPath } = prepareProfileset(
+    simcContent,
+    scenario,
+    label,
+    simOverrides,
+  );
+
+  try {
+    await execFileAsync(SIMC, args, {
       maxBuffer: 100 * 1024 * 1024,
       timeout: 600000,
     });
@@ -118,6 +153,8 @@ function parseProfilesetResults(data, scenario) {
       dpsMax: ps.max,
       dpsMedian: ps.median,
       dpsStdDev: ps.stddev || 0,
+      dpsMeanStdDev: ps.mean_stddev || 0,
+      dpsMeanError: ps.mean_error || 0,
       iterations: ps.iterations || 0,
     });
   }
