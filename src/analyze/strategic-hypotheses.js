@@ -45,16 +45,22 @@ export function generateStrategicHypotheses(workflowResults, aplText = null) {
   const hypotheses = [];
   let archetypeContext = null;
   let aplAst = null;
-
-  // Detect hero tree from buff uptimes in workflow results (most reliable)
-  let heroTree = detectHeroTreeFromBuffs(workflowResults);
+  let heroTree = null;
 
   if (aplText) {
+    // 1. Check profile name (most reliable - explicit in APL header)
+    heroTree = detectHeroTreeFromProfileName(aplText);
+
+    // 2. Check APL structure (ar/anni action lists)
     aplAst = parse(aplText);
-    // Fall back to APL analysis if buff detection didn't work
     if (!heroTree) {
       heroTree = detectHeroTreeFromApl(aplAst);
     }
+  }
+
+  // 3. Last resort: infer from buff uptimes (requires sim data)
+  if (!heroTree) {
+    heroTree = detectHeroTreeFromBuffs(workflowResults);
   }
 
   if (heroTree) {
@@ -102,6 +108,21 @@ function getBuffUptime(scenario, buffName) {
     return buff?.uptime;
   }
   return undefined;
+}
+
+function detectHeroTreeFromProfileName(aplText) {
+  // Look for profile name like: demonhunter="VDH_Midnight_Aldrachi_Reaver"
+  const profileMatch = aplText.match(/demonhunter\s*=\s*"([^"]+)"/i);
+  if (profileMatch) {
+    const name = profileMatch[1].toLowerCase();
+    if (name.includes("aldrachi") || name.includes("reaver")) {
+      return "aldrachi_reaver";
+    }
+    if (name.includes("annihilator") || name.includes("anni")) {
+      return "annihilator";
+    }
+  }
+  return null;
 }
 
 function normalizeScenarios(workflowResults) {
