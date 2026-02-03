@@ -47,11 +47,26 @@ function supplementFromDbc(nodeById) {
   //   sub_tree_id, node_type }
   const DH_CLASS_ID = 12;
   const dbcNodes = new Map(); // nodeId → { entries, name, maxRanks, nodeType }
+  const grantedSpecs = new Map(); // nodeId → Set<specId>
   const re =
-    /\{\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*[-\d]+,\s*[-\d]+,\s*(\d+),\s*"([^"]*)",\s*\{[^}]*\},\s*\{[^}]*\},\s*\d+,\s*(\d+)\s*\}/g;
+    /\{\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+),\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*\d+,\s*[-\d]+,\s*[-\d]+,\s*(\d+),\s*"([^"]*)",\s*\{[^}]*\},\s*\{\s*(\d+),\s*(\d+),\s*(\d+),\s*(\d+)\s*\},\s*\d+,\s*(\d+)\s*\}/g;
   let m;
   while ((m = re.exec(traitData)) !== null) {
-    const [, , classId, , nodeId, maxRanks, selIndex, name, nodeType] = m;
+    const [
+      ,
+      ,
+      classId,
+      ,
+      nodeId,
+      maxRanks,
+      selIndex,
+      name,
+      s1,
+      s2,
+      s3,
+      s4,
+      nodeType,
+    ] = m;
     if (+classId !== DH_CLASS_ID) continue;
     if (!dbcNodes.has(+nodeId)) {
       dbcNodes.set(+nodeId, {
@@ -61,6 +76,20 @@ function supplementFromDbc(nodeById) {
       });
     }
     dbcNodes.get(+nodeId).entries.push({ name, index: +selIndex });
+
+    // Track id_spec_starter — specs for which this node is granted free
+    const starters = [+s1, +s2, +s3, +s4].filter((id) => id > 0);
+    if (starters.length > 0) {
+      if (!grantedSpecs.has(+nodeId)) grantedSpecs.set(+nodeId, new Set());
+      for (const id of starters) grantedSpecs.get(+nodeId).add(id);
+    }
+  }
+
+  // Enrich existing nodes with grantedForSpecs from DBC
+  for (const [nodeId, specs] of grantedSpecs) {
+    if (nodeById.has(nodeId)) {
+      nodeById.get(nodeId).grantedForSpecs = [...specs];
+    }
   }
 
   let added = 0;
@@ -68,6 +97,7 @@ function supplementFromDbc(nodeById) {
     if (nodeById.has(nodeId)) continue;
     // Node types: 0=normal, 1=tiered, 2=choice, 3=selection
     const isChoice = info.nodeType === 2 || info.nodeType === 3;
+    const specs = grantedSpecs.get(nodeId);
     nodeById.set(nodeId, {
       id: nodeId,
       name: info.entries.map((e) => e.name).join(" / "),
@@ -75,6 +105,7 @@ function supplementFromDbc(nodeById) {
       maxRanks: info.maxRanks,
       entryNode: false,
       freeNode: false,
+      ...(specs ? { grantedForSpecs: [...specs] } : {}),
       ...(isChoice
         ? { entries: info.entries.sort((a, b) => a.index - b.index) }
         : {}),
