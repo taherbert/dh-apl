@@ -3,7 +3,10 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BASE_SPELL_IDS } from "../model/vengeance-base.js";
+import {
+  BASE_SPELL_IDS,
+  SET_BONUS_SPELL_IDS,
+} from "../model/vengeance-base.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -39,6 +42,7 @@ function generateReport() {
   }
   // Include base spec abilities and Vengeance-tagged spells
   for (const id of BASE_SPELL_IDS) vengSpellIds.add(id);
+  for (const id of SET_BONUS_SPELL_IDS) vengSpellIds.add(id);
   for (const s of spells) {
     if (s.talentEntry?.spec === "Vengeance") vengSpellIds.add(s.id);
   }
@@ -205,21 +209,49 @@ function generateReport() {
     }
   }
 
+  // Set Bonuses section
+  if (interactions.bySetBonus && Object.keys(interactions.bySetBonus).length) {
+    lines.push("## Set Bonuses");
+    lines.push("");
+
+    for (const [id, entry] of Object.entries(interactions.bySetBonus)) {
+      const pc = entry.setBonus?.pieceCount
+        ? `${entry.setBonus.pieceCount}pc`
+        : "";
+      lines.push(`### ${entry.name} (${id})`);
+      lines.push("");
+      if (entry.targets?.length) {
+        for (const t of entry.targets) {
+          const parts = [`→ ${t.spell} (${t.type})`];
+          if (t.magnitude)
+            parts.push(
+              `${t.magnitude.value}${t.magnitude.unit === "percent" ? "%" : ""}`,
+            );
+          if (t.procInfo) {
+            const pp = [];
+            if (t.procInfo.procChance != null)
+              pp.push(`${(t.procInfo.procChance * 100).toFixed(0)}% chance`);
+            if (t.procInfo.internalCooldown != null)
+              pp.push(`${t.procInfo.internalCooldown}s ICD`);
+            if (pp.length) parts.push(`[${pp.join(", ")}]`);
+          }
+          if (t.triggerSpell) parts.push(`on ${t.triggerSpell.name}`);
+          lines.push(`- ${parts.join(" ")}`);
+        }
+      }
+      lines.push("");
+    }
+  }
+
   // Resource flow section
   lines.push("## Resource Flow");
   lines.push("");
 
   lines.push("### Fury Generators");
-  const furyGen = spells.filter(
-    (s) =>
-      s.generates?.some(
-        (g) => g.resourceType === "fury" || g.resourceType === "Fury",
-      ) && !s.passive,
-  );
+  const isFury = (g) => g.resourceType.toLowerCase() === "fury";
+  const furyGen = spells.filter((s) => s.generates?.some(isFury) && !s.passive);
   for (const s of furyGen) {
-    const amounts = s.generates
-      .filter((g) => g.resourceType === "fury" || g.resourceType === "Fury")
-      .map((g) => g.amount);
+    const amounts = s.generates.filter(isFury).map((g) => g.amount);
     lines.push(`- ${s.name} (${s.id}): ${amounts.join("+")} Fury`);
   }
 

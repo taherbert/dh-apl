@@ -7,7 +7,10 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
 import { resolveAllDescriptions } from "./template-resolver.js";
-import { BASE_SPELL_IDS } from "../model/vengeance-base.js";
+import {
+  BASE_SPELL_IDS,
+  SET_BONUS_SPELL_IDS,
+} from "../model/vengeance-base.js";
 import { SIMC_BIN } from "../config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -48,6 +51,7 @@ function extractSpells() {
     }
   }
   for (const id of BASE_SPELL_IDS) talentSpellIds.add(id);
+  for (const id of SET_BONUS_SPELL_IDS) talentSpellIds.add(id);
 
   console.log(
     `Found ${talentSpellIds.size} spell IDs from Raidbots + base abilities`,
@@ -108,7 +112,7 @@ function extractSpells() {
   }
   const baseSpellNames = new Set(
     [...spellMap.values()]
-      .filter((s) => BASE_SPELL_IDS.has(s.id))
+      .filter((s) => BASE_SPELL_IDS.has(s.id) || SET_BONUS_SPELL_IDS.has(s.id))
       .map((s) => s.name),
   );
 
