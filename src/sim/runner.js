@@ -1,6 +1,7 @@
 // Runs simc simulations and parses JSON results.
-// Usage: node src/sim/runner.js <profile.simc> [scenario]
+// Usage: node src/sim/runner.js <profile.simc> [scenario] [--html]
 // Scenarios: st (default), small_aoe, big_aoe, all
+// Options: --html generates HTML report alongside JSON
 
 import { execSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
@@ -55,7 +56,7 @@ function buildOverrides(scenario, extraOverrides = {}) {
 export function prepareSim(
   profilePath,
   scenario = "st",
-  { extraOverrides = "", simOverrides = {} } = {},
+  { extraOverrides = "", simOverrides = {}, html = false } = {},
 ) {
   const config = SCENARIOS[scenario];
   if (!config)
@@ -67,6 +68,9 @@ export function prepareSim(
 
   const profileName = basename(profilePath, ".simc");
   const jsonPath = join(RESULTS_DIR, `${profileName}_${scenario}.json`);
+  const htmlPath = html
+    ? join(RESULTS_DIR, `${profileName}_${scenario}.html`)
+    : null;
 
   const overrides = buildOverrides(scenario, simOverrides);
   const extras = extraOverrides ? extraOverrides.split(" ") : [];
@@ -79,11 +83,19 @@ export function prepareSim(
     `threads=${simOverrides.threads || SIM_DEFAULTS.threads}`,
   ];
 
-  return { config, args, jsonPath, scenario };
+  if (htmlPath) {
+    args.push(`html=${htmlPath}`);
+  }
+
+  return { config, args, jsonPath, htmlPath, scenario };
 }
 
 export function runSim(profilePath, scenario = "st", opts = {}) {
-  const { config, args, jsonPath } = prepareSim(profilePath, scenario, opts);
+  const { config, args, jsonPath, htmlPath } = prepareSim(
+    profilePath,
+    scenario,
+    opts,
+  );
   const cmd = [SIMC, ...args].join(" ");
 
   console.log(`Running ${config.name}...`);
@@ -99,13 +111,19 @@ export function runSim(profilePath, scenario = "st", opts = {}) {
   }
 
   const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
-  return parseResults(data, scenario);
+  const result = parseResults(data, scenario);
+  if (htmlPath) result.htmlPath = htmlPath;
+  return result;
 }
 
 const execFileAsync = promisify(execFile);
 
 export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
-  const { config, args, jsonPath } = prepareSim(profilePath, scenario, opts);
+  const { config, args, jsonPath, htmlPath } = prepareSim(
+    profilePath,
+    scenario,
+    opts,
+  );
 
   console.log(`Running ${config.name}...`);
   try {
@@ -120,7 +138,9 @@ export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
   }
 
   const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
-  return parseResults(data, scenario);
+  const result = parseResults(data, scenario);
+  if (htmlPath) result.htmlPath = htmlPath;
+  return result;
 }
 
 function parseResults(data, scenario) {
@@ -190,13 +210,19 @@ export function printResults(result) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const profilePath = process.argv[2];
-  const scenario = process.argv[3] || "all";
+  const args = process.argv.slice(2);
+  const htmlFlag = args.includes("--html");
+  const positionalArgs = args.filter((a) => !a.startsWith("--"));
+
+  const profilePath = positionalArgs[0];
+  const scenario = positionalArgs[1] || "all";
 
   if (!profilePath) {
     console.log(
-      "Usage: node src/sim/runner.js <profile.simc> [st|small_aoe|big_aoe|all]",
+      "Usage: node src/sim/runner.js <profile.simc> [st|small_aoe|big_aoe|all] [--html]",
     );
+    console.log("Options:");
+    console.log("  --html    Generate HTML report alongside JSON");
     process.exit(1);
   }
 
@@ -204,8 +230,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const results = [];
 
   for (const s of scenarios) {
-    const result = runSim(profilePath, s);
+    const result = runSim(profilePath, s, { html: htmlFlag });
     printResults(result);
+    if (result.htmlPath) {
+      console.log(`HTML report: ${result.htmlPath}`);
+    }
     results.push(result);
   }
 

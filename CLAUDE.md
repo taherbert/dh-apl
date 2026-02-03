@@ -91,8 +91,9 @@ src/
   extract/        # Data extraction (raidbots.js, spells.js, parser.js)
   model/          # Data models (talents.js, interactions.js, interaction-types.js)
   visualize/      # Reports and graphs (text-report.js, graph.js)
-  sim/            # SimC runner and analysis (runner.js, analyze.js)
-  apl/            # APL parser and generator (future)
+  sim/            # SimC runner and analysis (runner.js, analyze.js, iterate.js)
+  analyze/        # Strategic analysis (archetypes.js, strategic-hypotheses.js)
+  apl/            # APL parser, condition-parser, mutator
 data/
   raw/            # Raw simc dumps (gitignored)
   raidbots-talents.json  # Raidbots talent data (filtered to VDH)
@@ -186,7 +187,16 @@ node src/sim/iterate.js compare apls/candidate.simc [--quick|--confirm]
 node src/sim/iterate.js accept "reason" [--hypothesis "fragment"]
 node src/sim/iterate.js reject "reason" [--hypothesis "fragment"]
 node src/sim/iterate.js hypotheses
+node src/sim/iterate.js strategic                    # Generate archetype-aware hypotheses with auto-mutations
+node src/sim/iterate.js generate                     # Auto-generate candidate from top hypothesis
+node src/sim/iterate.js rollback <iteration-id>      # Rollback an accepted iteration
 node src/sim/iterate.js summary
+
+# Analysis tools
+node src/analyze/archetypes.js                       # Show archetype definitions
+node src/analyze/strategic-hypotheses.js <workflow.json> [apl.simc]  # Generate strategic hypotheses
+node src/apl/condition-parser.js "condition"         # Parse APL condition to AST
+node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
 ```
 
 ## Key Paths
