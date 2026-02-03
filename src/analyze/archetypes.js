@@ -15,55 +15,26 @@ function collapseWhitespace(text) {
 }
 
 // Seed archetypes — known strategic build directions within each hero tree.
+// Updated with Midnight 12.0 mechanics from community guides.
 const SEED_ARCHETYPES = {
-  "ar-spirit-bomb-burst": {
-    heroTree: "aldrachi_reaver",
-    description: collapseWhitespace(`
-      Pool soul fragments until Soul Furnace reaches 8+ stacks, then spend with
-      Spirit Bomb for massive AoE burst. The core loop is: generate fragments
-      via Fracture/Fallout → wait for Soul Furnace threshold → Spirit Bomb →
-      repeat. Sacrifices consistent damage for periodic burst windows.
-    `),
-    coreLoop:
-      "fragment generation → Soul Furnace threshold → Spirit Bomb burst",
-    keyTalents: ["Spirit Bomb", "Soul Furnace", "Fracture", "Fallout"],
-    keyBuffs: ["soul_furnace"],
-    keyAbilities: ["spirit_bomb", "fracture"],
-    tradeoffs:
-      "Burst over sustain; weaker in pure ST where fragments come slower",
-    aplFocus: ["ar"],
-  },
-
-  "ar-soul-cleave-sustain": {
-    heroTree: "aldrachi_reaver",
-    description: collapseWhitespace(`
-      Skip Spirit Bomb entirely. Use Soul Cleave as primary spender for consistent
-      damage + self-healing. Stronger in sustained ST/small cleave where fragment
-      income is lower and you can't reliably stack Soul Furnace.
-    `),
-    coreLoop: "Fracture → Soul Cleave → repeat",
-    keyTalents: ["Soul Cleave", "Void Reaver", "Focused Cleave"],
-    excludeTalents: ["Spirit Bomb"],
-    keyBuffs: [],
-    keyAbilities: ["soul_cleave", "fracture"],
-    tradeoffs: "Sustain over burst; weaker in large AoE",
-    aplFocus: ["ar"],
-  },
-
   "ar-reaver-window": {
     heroTree: "aldrachi_reaver",
     description: collapseWhitespace(`
-      Maximize Aldrachi Reaver's unique buff chain: Art of the Glaive stacks →
-      Reaver's Glaive → Rending Strike window → empowered Soul Cleave/Fracture.
-      The core loop is tightly sequenced: build AotG stacks, fire Reaver's Glaive,
-      then execute the Rending Strike rotation before the buff expires.
+      Maximize Aldrachi Reaver's unique buff chain. Consume 20 Soul Fragments or
+      cast Sigil of Spite to convert Throw Glaive into Reaver's Glaive. This
+      enhances your next Fracture (+10% damage) and Soul Cleave (+20% damage).
+      CRITICAL: Always sequence Fracture → Soul Cleave after Reaver's Glaive to
+      apply Reaver's Mark and trigger Aldrachi Tactics for faster regeneration.
     `),
-    coreLoop: "AotG stacks → Reaver's Glaive → Soul Cleave → Fracture",
+    coreLoop:
+      "Sigil of Spite/fragments → Reaver's Glaive → Fracture (empowered) → Soul Cleave (empowered)",
     keyTalents: [
       "Art of the Glaive",
       "Rending Strike",
       "Glaive Flurry",
       "Keen Edge",
+      "Aldrachi Tactics",
+      "Bladecraft",
     ],
     keyBuffs: [
       "art_of_the_glaive",
@@ -71,60 +42,142 @@ const SEED_ARCHETYPES = {
       "glaive_flurry",
       "reavers_mark",
     ],
-    keyAbilities: ["reavers_glaive", "soul_cleave", "fracture"],
-    tradeoffs: "High skill ceiling; DPS loss if chain is broken or mistimed",
+    keyAbilities: [
+      "reavers_glaive",
+      "sigil_of_spite",
+      "fracture",
+      "soul_cleave",
+    ],
+    tradeoffs:
+      "High skill ceiling; DPS loss if Fracture→Soul Cleave sequence is broken",
     aplFocus: ["ar"],
+    sequencingRules: [
+      "After Reaver's Glaive, ALWAYS cast Fracture first, then Soul Cleave",
+      "Fracture with Rending Strike applies Reaver's Mark (7% → 14% damage taken)",
+      "Second empowered ability shatters additional Soul Fragment via Aldrachi Tactics",
+      "Bladecraft allows Reaver's Mark to stack up to 3x",
+    ],
   },
 
   "ar-fiery-demise": {
     heroTree: "aldrachi_reaver",
     description: collapseWhitespace(`
-      Build around Fiery Brand and Fiery Demise for sustained fire damage amp.
-      Maintain Fiery Brand on targets, use Burning Alive to spread, and align
-      high-damage abilities during the debuff window.
+      Build around Fiery Brand and Fiery Demise for fire damage amplification.
+      Fiery Brand provides 15% Fire damage amp on target. Align fire abilities
+      during the debuff window: Fel Devastation, Soul Carver, Sigil of Spite.
+      Use Burning Alive to spread Fiery Brand in AoE.
     `),
-    coreLoop: "Fiery Brand → spread via Burning Alive → damage during debuff",
+    coreLoop:
+      "Fiery Brand → Fel Devastation/Soul Carver/Sigil of Spite during window → spread via Burning Alive",
     keyTalents: [
       "Fiery Brand",
       "Fiery Demise",
       "Burning Alive",
       "Charred Flesh",
+      "Down in Flames",
     ],
     keyBuffs: ["fiery_brand"],
-    keyAbilities: ["fiery_brand", "immolation_aura", "sigil_of_flame"],
+    keyAbilities: [
+      "fiery_brand",
+      "fel_devastation",
+      "soul_carver",
+      "sigil_of_spite",
+    ],
     tradeoffs:
-      "Strong multi-target sustain; requires Fiery Brand uptime management",
+      "Strong burst windows; requires tracking Fiery Brand uptime for ability alignment",
     aplFocus: ["ar"],
+    synergies: [
+      "Fel Devastation deals Fire damage — sync with Fiery Brand",
+      "Soul Carver benefits from Fiery Demise — use with 3+ sec Fiery Brand remaining",
+      "Sigil of Spite syncs with Fiery Brand for damage amp",
+    ],
+  },
+
+  "ar-spirit-bomb-cooldown": {
+    heroTree: "aldrachi_reaver",
+    description: collapseWhitespace(`
+      In Midnight, Spirit Bomb is a 45-second cooldown (affected by Haste), not a
+      regular spender. Use it as a burst damage window, ideally with 5 Soul
+      Fragments and Soul Furnace stacks if talented. Soul Cleave is now the
+      primary spender for routine damage.
+    `),
+    coreLoop:
+      "Soul Cleave as primary spender → Spirit Bomb on cooldown with max fragments",
+    keyTalents: ["Spirit Bomb", "Soul Furnace", "Fracture", "Fallout"],
+    keyBuffs: ["soul_furnace"],
+    keyAbilities: ["spirit_bomb", "soul_cleave", "fracture"],
+    tradeoffs:
+      "Spirit Bomb is burst, not sustain; don't hold it too long waiting for perfect conditions",
+    aplFocus: ["ar"],
+    mechanicChanges: [
+      "Spirit Bomb is now 45s cooldown baseline (reduced by Haste)",
+      "Soul Cleave is primary spender in Midnight",
+      "Soul Furnace still amplifies Spirit Bomb at 8+ stacks",
+    ],
   },
 
   "anni-voidfall-burst": {
     heroTree: "annihilator",
     description: collapseWhitespace(`
-      Execute the Voidfall cycle: build Voidfall stacks via Fracture, then spend
-      at 3 stacks for massive burst. The APL must track building vs spending phases
-      and not interrupt the cycle prematurely.
+      Execute the Voidfall cycle: Fracture has 35% chance to grant Voidfall stacks
+      (max 3). At 3 stacks, Soul Cleave or Spirit Bomb triggers fel meteors for
+      massive Shadowflame burst. Key synergy: Metamorphosis grants up to 3 stacks
+      and resets Spirit Bomb via Mass Acceleration. Spend stacks BEFORE using
+      Meta to avoid waste.
     `),
     coreLoop:
-      "Fracture (building) → Soul Cleave (spending) → Spirit Bomb at 3 stacks",
-    keyTalents: ["Voidfall", "Catastrophe", "Dark Matter"],
+      "Fracture (build Voidfall) → spend at 3 stacks → Spirit Bomb before Meta → Meta resets Spirit Bomb",
+    keyTalents: [
+      "Voidfall",
+      "Catastrophe",
+      "Dark Matter",
+      "Mass Acceleration",
+      "World Killer",
+      "Swift Erasure",
+      "Phase Shift",
+    ],
     keyBuffs: ["voidfall_building", "voidfall_spending"],
-    keyAbilities: ["fracture", "soul_cleave", "spirit_bomb"],
-    tradeoffs: "High burst potential; punished by interrupting the cycle",
+    keyAbilities: ["fracture", "soul_cleave", "spirit_bomb", "metamorphosis"],
+    tradeoffs:
+      "High burst potential; requires tracking Voidfall stacks and Meta timing",
     aplFocus: ["anni"],
+    voidfallRules: [
+      "Fracture has 35% chance to grant 1 Voidfall stack",
+      "Max 3 stacks — Soul Cleave or Spirit Bomb at 3 triggers meteors",
+      "Swift Erasure: +2% Haste per stack",
+      "Metamorphosis grants up to 3 stacks — spend before Meta to avoid overcapping",
+      "Mass Acceleration resets Spirit Bomb cooldown when Meta activates",
+      "World Killer reduces Meta cooldown when meteors are called",
+    ],
   },
 
-  "anni-sustained": {
+  "anni-meta-cycling": {
     heroTree: "annihilator",
     description: collapseWhitespace(`
-      Less reliant on Voidfall cycle timing. Use Annihilator's passive damage
-      bonuses without strict phase tracking. More forgiving but lower ceiling.
+      Focus on Metamorphosis uptime through World Killer cooldown reduction.
+      Each meteor set reduces Meta cooldown. Spam Fracture during Meta (3 fragments
+      per cast) to rapidly generate fragments and Voidfall stacks. Spirit Bomb
+      at 3+ fragments during Meta (not 4+) due to increased fragment generation.
     `),
-    coreLoop: "Standard priority with Annihilator passives",
-    keyTalents: ["Annihilator", "World Killer"],
-    keyBuffs: [],
-    keyAbilities: ["soul_cleave", "fracture", "fel_devastation"],
-    tradeoffs: "Lower ceiling but more forgiving",
+    coreLoop:
+      "Spirit Bomb at 3 Voidfall → Meta → Fracture spam → quick Spirit Bomb at 3+ frags",
+    keyTalents: [
+      "World Killer",
+      "Mass Acceleration",
+      "Untethered Rage",
+      "Voidfall",
+    ],
+    keyBuffs: ["metamorphosis", "voidfall_building", "voidfall_spending"],
+    keyAbilities: ["metamorphosis", "spirit_bomb", "fracture", "soul_cleave"],
+    tradeoffs:
+      "Requires tight cooldown tracking; Spirit Bomb threshold changes during Meta",
     aplFocus: ["anni"],
+    metaRules: [
+      "During Meta, Fracture generates 3 Soul Fragments (not 2)",
+      "Spirit Bomb at 3+ fragments during Meta (threshold lowered)",
+      "World Killer: each meteor set reduces Meta cooldown",
+      "Chain: Voidfall spend → Meta → Mass Acceleration Spirit Bomb reset → burst",
+    ],
   },
 };
 
@@ -194,18 +247,18 @@ export function getPrimaryArchetype(talents, heroTree = null) {
 }
 
 export function describeArchetype(archetypeId) {
-  const archetype = SEED_ARCHETYPES[archetypeId];
-  if (!archetype) return null;
+  const arch = SEED_ARCHETYPES[archetypeId];
+  if (!arch) return null;
 
   return {
     id: archetypeId,
-    heroTree: archetype.heroTree,
-    description: archetype.description,
-    coreLoop: archetype.coreLoop,
-    keyBuffs: archetype.keyBuffs || [],
-    keyAbilities: archetype.keyAbilities || [],
-    tradeoffs: archetype.tradeoffs,
-    aplFocus: archetype.aplFocus || [],
+    heroTree: arch.heroTree,
+    description: arch.description,
+    coreLoop: arch.coreLoop,
+    keyBuffs: arch.keyBuffs || [],
+    keyAbilities: arch.keyAbilities || [],
+    tradeoffs: arch.tradeoffs,
+    aplFocus: arch.aplFocus || [],
   };
 }
 
