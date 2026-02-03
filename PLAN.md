@@ -213,6 +213,53 @@ Step 12 (talent combos) ───┤                              │
                            ├─→ Step 13 (profilesets) ──→ Step 14 (workflow) ──→ Step 15 (reasoning)
 ```
 
+## Phase: Build VDH APL from Scratch (Midnight)
+
+### Phase 0: Merge main — [x] Complete
+
+- Merged origin/main (fast-forward to 7453f26)
+- Rebuilt data pipeline (skipping fetch-raidbots due to sandbox)
+
+### Phase 1A: Fill data gaps — [x] Complete
+
+- Fixed FIELD_REGEX bug in parser.js (`\s+` → `\s*`) — "Internal Cooldown" field was being silently dropped
+- Added "Category Cooldown" parser case
+- Created `data/proc-mechanics.json` with C++ hardcoded proc rates
+- Result: 15 spells now have internalCooldown, 4 have categoryCooldown
+
+### Phase 1B: Exhaustive data analysis — [x] Complete
+
+- Extracted AP coefficients for all VDH damage spells
+- Built DPGCD ranking table (Sigil of Spite 6.92 > Voidfall Meteor 5.4 > Fiery Brand 4.16 > Reaver's Glaive 3.45 > Fracture 3.105)
+- Mapped all damage modifiers with percentages
+- Modeled AR state machine (Build → Convert → Spend) and Voidfall cycle (Build → Spend)
+- Analyzed resource budget: ~431 Fury/min generation, ~270 Fury/min spending
+
+### Phase 2: APL construction — [x] Complete
+
+- Created `apls/vengeance.simc` from first principles
+- Both hero tree branches (AR + Anni) in one file
+- Profile header from baseline
+- Extensive inline documentation with coefficient references
+
+### Phase 3: Simulation & diagnostics — [x] Complete
+
+| Scenario | Baseline | New APL | Delta |
+| -------- | -------- | ------- | ----- |
+| 1T       | 22,801   | 21,002  | -7.9% |
+| 5T       | 66,547   | 70,821  | +6.4% |
+| 10T      | 114,713  | 125,923 | +9.8% |
+
+Key findings:
+
+- All abilities casting (Fracture 66, Soul Cleave 72, Spirit Bomb 13, Reaver's Glaive 12)
+- Thrill of Fight Haste uptime: 88% (excellent AR cycle throughput)
+- Demon Spikes: 99% uptime
+- ST slightly behind baseline (-7.9%) — expected for untuned from-scratch build
+- AoE ahead (+6-10%) — Spirit Bomb fragment threshold and AoE conditions working
+
+### Phase 4: Iteration handoff — pending
+
 ## Findings & Notes
 
 - SimC `midnight` branch version string still shows "thewarwithin" — the version identifier hasn't been updated
@@ -221,3 +268,5 @@ Step 12 (talent combos) ───┤                              │
 - simc binary built Sep 5 2025; some newer spells (e.g., Demonsurge) not in binary's spell data
 - Buff uptimes from simc JSON are percentages (0-100), not fractions (0-1)
 - GCD efficiency metric needs refinement for AoE scenarios (currently counts per-target hits)
+- FIELD_REGEX bug: "Internal Cooldown" (17 chars) fills the spell_query column exactly, leaving zero padding before `:`. Fixed by `\s*`
+- C++ hardcoded proc rates (Fallout 100%/60%, Wounded Quarry 30%) are NOT in spell data — need manual extraction or automated C++ scanner
