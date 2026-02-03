@@ -44,7 +44,7 @@ Rules:
 - One change per iteration (isolate variables)
 - Preserve round-trip fidelity (use parser when possible)
 - Don't modify profile/gear lines — APL only
-- Both hero tree branches (anni/ar) should be updated if the change applies to both
+- The current baseline uses AR talents — only `actions.ar` is active. Changes to shared lists (precombat, default, externals) affect both hero trees. To optimize Annihilator, a separate baseline with Annihilator talents is needed.
 
 ### Step 4: Test (Tiered)
 
