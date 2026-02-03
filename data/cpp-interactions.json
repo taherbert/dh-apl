@@ -687,7 +687,7 @@
   ],
   "effectScans": [
     {
-      "talent": "untethered_rage_1",
+      "talent": "Untethered Rage",
       "talentVar": "vengeance.untethered_rage_1",
       "target": "buff:untethered_rage",
       "type": "buff_grant",
@@ -696,7 +696,7 @@
       "confidence": "medium"
     },
     {
-      "talent": "untethered_rage_3",
+      "talent": "Untethered Rage",
       "talentVar": "vengeance.untethered_rage_3",
       "target": "buff:seething_anger",
       "type": "buff_grant",

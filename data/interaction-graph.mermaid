@@ -143,7 +143,8 @@ graph LR
   s442502(("Warblade's Hunger"))
   s343207(("Focused Cleave"))
   s1272153(("Bladecraft"))
-  snull(("buff:thrill_of_the_fight_haste"))
+  t1270449["Untethered Rage"]
+  snull(("buff:untethered_rage"))
   t1256295[/"Mass Acceleration"/]
   t389763["Master of the Glaive"]
   s389763(("Master of the Glaive"))
@@ -396,6 +397,7 @@ graph LR
   t389958 -->|damage modifier| s343207
   t442718 -->|proc trigger| s1272153
   t207548 -->|cooldown modifier| s320331
+  t1270449 -->|buff grant| snull
   t442686 -->|buff grant| snull
   t1256295 -->|buff grant| snull
   t1253377 -->|buff grant| snull
