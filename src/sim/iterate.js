@@ -31,6 +31,17 @@ import {
   runProfileset,
   runProfilesetAsync,
 } from "./profilesets.js";
+import {
+  generateStrategicHypotheses,
+  loadApl,
+  MUTATION_OPS,
+} from "../analyze/strategic-hypotheses.js";
+import {
+  generateCandidate,
+  describeMutation,
+  validateMutation,
+} from "../apl/mutator.js";
+import { parse } from "../apl/parser.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -79,7 +90,8 @@ function recoverFromBackup() {
       console.error(`Recovered from backup: ${f}`);
       writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
       return migrateState(state);
-    } catch {
+    } catch (err) {
+      console.error(`Backup ${f} corrupt: ${err.message}`);
       // corrupt backup, try next
     }
   }
@@ -112,7 +124,7 @@ function migrateState(state) {
   // Ensure new fields exist on old states
   if (state.consecutiveRejections === undefined)
     state.consecutiveRejections = 0;
-  if (!state.findings) state.findings = [];
+  if (!Array.isArray(state.findings)) state.findings = [];
 
   return state;
 }
@@ -283,7 +295,7 @@ function popHypothesis(state, descriptionFragment) {
   if (descriptionFragment) {
     const frag = descriptionFragment.toLowerCase();
     const idx = state.pendingHypotheses.findIndex((h) =>
-      h.description.toLowerCase().includes(frag),
+      (h.description || h.hypothesis || "").toLowerCase().includes(frag),
     );
     if (idx !== -1) return state.pendingHypotheses.splice(idx, 1)[0];
   }
@@ -739,6 +751,12 @@ function cmdReject(reason, hypothesisHint) {
     console.log(
       "\nSTOPPING: 10+ consecutive rejections. Run `summary` to see results or `hypotheses` to regenerate ideas.",
     );
+  } else if (state.consecutiveRejections >= 5) {
+    console.log("\nESCAPE STRATEGIES suggested:");
+    const strategies = suggestEscapeStrategies(state);
+    for (const s of strategies) {
+      console.log(`  - ${s}`);
+    }
   } else if (state.consecutiveRejections >= 3) {
     console.log(
       "\nWARNING: 3+ consecutive rejections. Consider escape strategies (compound mutations, reversals, radical reorder).",
@@ -764,11 +782,17 @@ async function cmdHypotheses() {
   const hypotheses = generateHypotheses(workflowResults);
 
   // Filter out exhausted ones (normalized to ignore metric changes)
+  // Handle both .description (metric hypotheses) and .hypothesis (strategic hypotheses)
   const exhaustedKeys = new Set(
-    state.exhaustedHypotheses.map((h) => normalizeHypothesisKey(h.description)),
+    state.exhaustedHypotheses.map((h) =>
+      normalizeHypothesisKey(h.hypothesis || h.description || ""),
+    ),
   );
   const fresh = hypotheses.filter(
-    (h) => !exhaustedKeys.has(normalizeHypothesisKey(h.description)),
+    (h) =>
+      !exhaustedKeys.has(
+        normalizeHypothesisKey(h.hypothesis || h.description || ""),
+      ),
   );
 
   state.pendingHypotheses = fresh;
@@ -885,6 +909,233 @@ function cmdSummary() {
   writeDashboard(state);
   writeChangelog(state);
   writeFindings(state);
+}
+
+// --- Rollback ---
+
+async function cmdRollback(iterationId) {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  const targetId = parseInt(iterationId, 10);
+  const targetIdx = state.iterations.findIndex((i) => i.id === targetId);
+
+  if (targetIdx === -1) {
+    console.error(`Iteration #${targetId} not found.`);
+    process.exit(1);
+  }
+
+  const target = state.iterations[targetIdx];
+  if (target.decision !== "accepted") {
+    console.error(
+      `Iteration #${targetId} was not accepted — nothing to rollback.`,
+    );
+    process.exit(1);
+  }
+
+  // Find the last accepted iteration before this one
+  let previousDps = { ...state.originalBaseline.dps };
+  for (let i = 0; i < targetIdx; i++) {
+    const iter = state.iterations[i];
+    if (iter.decision === "accepted" && iter.results) {
+      for (const [scenario, r] of Object.entries(iter.results)) {
+        previousDps[scenario] = r.candidate;
+      }
+    }
+  }
+
+  // Mark this iteration as rolled back
+  target.decision = "rolled_back";
+  target.rollbackTimestamp = new Date().toISOString();
+
+  // Revert DPS to previous state
+  state.current.dps = previousDps;
+
+  // Note: We can't easily restore the APL file without snapshots.
+  // Log warning that manual APL restoration may be needed.
+  console.log(
+    `\nWARNING: DPS tracking reverted, but apls/current.simc was not restored.`,
+  );
+  console.log(`You may need to manually restore the APL from git or a backup.`);
+
+  saveState(state);
+  writeDashboard(state);
+  writeChangelog(state);
+
+  console.log(`\nIteration #${targetId} marked as rolled back.`);
+  console.log(`DPS reverted to pre-iteration state.`);
+}
+
+// --- Auto-Generate Candidate ---
+
+async function cmdAutoGenerate() {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  if (state.pendingHypotheses.length === 0) {
+    console.error("No pending hypotheses. Run `hypotheses` to regenerate.");
+    process.exit(1);
+  }
+
+  // Find hypotheses with mutations
+  const withMutations = state.pendingHypotheses.filter((h) => h.aplMutation);
+  if (withMutations.length === 0) {
+    console.error("No hypotheses with auto-mutation available.");
+    console.log("Top hypotheses without mutations:");
+    for (const h of state.pendingHypotheses.slice(0, 3)) {
+      console.log(`  - ${h.description || h.hypothesis}`);
+    }
+    process.exit(1);
+  }
+
+  const aplText = readFileSync(CURRENT_APL, "utf-8");
+  const ast = parse(aplText);
+
+  // Try each hypothesis until one succeeds
+  for (const hypothesis of withMutations) {
+    const mutation = hypothesis.aplMutation;
+    console.log(`\nTrying hypothesis:`);
+    console.log(
+      `  ${hypothesis.strategicGoal || hypothesis.description || hypothesis.hypothesis}`,
+    );
+    console.log(`  Mutation: ${describeMutation(mutation)}`);
+
+    try {
+      // Validate mutation first
+      const validation = validateMutation(ast, mutation);
+
+      if (!validation.valid) {
+        console.log(`  Skipping — validation failed: ${validation.errors[0]}`);
+        // Mark as exhausted so we don't retry
+        state.exhaustedHypotheses.push(hypothesis);
+        const idx = state.pendingHypotheses.indexOf(hypothesis);
+        if (idx !== -1) state.pendingHypotheses.splice(idx, 1);
+        continue;
+      }
+
+      // Generate candidate
+      const candidatePath = join(ROOT, "apls", "candidate.simc");
+      const result = generateCandidate(CURRENT_APL, mutation, candidatePath);
+
+      console.log(`\nGenerated: ${result.outputPath}`);
+      console.log(`Description: ${result.description}`);
+      console.log(
+        `\nRun: node src/sim/iterate.js compare apls/candidate.simc --quick`,
+      );
+
+      saveState(state);
+      return;
+    } catch (e) {
+      console.log(`  Skipping — generation failed: ${e.message}`);
+      // Mark as exhausted
+      state.exhaustedHypotheses.push(hypothesis);
+      const idx = state.pendingHypotheses.indexOf(hypothesis);
+      if (idx !== -1) state.pendingHypotheses.splice(idx, 1);
+      continue;
+    }
+  }
+
+  saveState(state);
+  console.error(
+    "\nAll hypothesis mutations failed. Run `strategic` to regenerate.",
+  );
+  process.exit(1);
+}
+
+// --- Strategic Hypotheses Generation ---
+
+async function cmdStrategicHypotheses() {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  const workflowPath = join(ROOT, state.current.workflowResults);
+  if (!existsSync(workflowPath)) {
+    console.error("No workflow results found. Run init or accept first.");
+    process.exit(1);
+  }
+
+  const workflowResults = JSON.parse(readFileSync(workflowPath, "utf-8"));
+  const aplText = readFileSync(CURRENT_APL, "utf-8");
+
+  const hypotheses = generateStrategicHypotheses(workflowResults, aplText);
+
+  // Filter out exhausted ones
+  const exhaustedKeys = new Set(
+    state.exhaustedHypotheses.map((h) => normalizeHypothesisKey(h.description)),
+  );
+  const fresh = hypotheses.filter(
+    (h) =>
+      !exhaustedKeys.has(
+        normalizeHypothesisKey(h.hypothesis || h.description || ""),
+      ),
+  );
+
+  // Update state with strategic hypotheses
+  state.pendingHypotheses = fresh.map((h) => ({
+    category: h.category,
+    description: h.hypothesis || h.observation,
+    strategicGoal: h.strategicGoal,
+    priority: h.priority || 0,
+    scenario: h.scenario,
+    aplMutation: h.aplMutation,
+  }));
+
+  saveState(state);
+
+  console.log(
+    `\n${fresh.length} strategic hypotheses generated (${state.exhaustedHypotheses.length} exhausted):\n`,
+  );
+
+  for (const h of fresh.slice(0, 10)) {
+    console.log(
+      `[${h.confidence || "medium"}] ${h.strategicGoal || h.hypothesis}`,
+    );
+    if (h.archetypeContext) {
+      console.log(`  Context: ${h.archetypeContext.slice(0, 80)}...`);
+    }
+    if (h.aplMutation) {
+      console.log(`  Mutation: ${describeMutation(h.aplMutation)}`);
+    }
+    console.log(`  Priority: ${(h.priority || 0).toFixed(1)}\n`);
+  }
+
+  if (fresh.length > 10) {
+    console.log(`...and ${fresh.length - 10} more\n`);
+  }
+}
+
+// --- Escape Strategies ---
+
+function suggestEscapeStrategies(state) {
+  const suggestions = [];
+  const consecRej = state.consecutiveRejections || 0;
+
+  if (consecRej >= 5) {
+    suggestions.push("Try compound mutations (combine 2-3 related changes)");
+    suggestions.push(
+      "Try reversing a previous accepted change that may have downstream effects",
+    );
+    suggestions.push(
+      "Focus on a different scenario (if ST is stuck, try optimizing AoE)",
+    );
+    suggestions.push("Try radical reorder of action priority");
+  }
+
+  if (consecRej >= 8) {
+    suggestions.push("Consider re-evaluating the archetype strategy");
+    suggestions.push("Run full workflow analysis to find new angles");
+  }
+
+  return suggestions;
 }
 
 // --- Output Generators ---
@@ -1103,6 +1354,22 @@ switch (cmd) {
     cmdSummary();
     break;
 
+  case "rollback":
+    if (!rawArgs[0]) {
+      console.error("Usage: node src/sim/iterate.js rollback <iteration-id>");
+      process.exit(1);
+    }
+    await cmdRollback(rawArgs[0]);
+    break;
+
+  case "generate":
+    await cmdAutoGenerate();
+    break;
+
+  case "strategic":
+    await cmdStrategicHypotheses();
+    break;
+
   default:
     console.log(`APL Iteration Manager
 
@@ -1113,6 +1380,9 @@ Usage:
   node src/sim/iterate.js accept "reason"            Accept candidate [--hypothesis "fragment"]
   node src/sim/iterate.js reject "reason"            Reject candidate [--hypothesis "fragment"]
   node src/sim/iterate.js hypotheses                 List improvement hypotheses
+  node src/sim/iterate.js strategic                  Generate strategic hypotheses with auto-mutations
+  node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
+  node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report`);
     break;
 }
