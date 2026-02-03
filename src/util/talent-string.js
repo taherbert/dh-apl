@@ -93,7 +93,7 @@ export function encode(specId, nodes, selections) {
   for (const node of nodes) {
     const sel = selections.get(node.id);
     const rank = sel?.rank || 0;
-    const isGranted = node.freeNode || node.entryNode;
+    const isGranted = node.freeNode || node.grantedForSpecs?.includes(specId);
     const maxRank = node.maxRanks || 1;
 
     if (rank === 0) {
@@ -121,7 +121,7 @@ export function encode(specId, nodes, selections) {
     }
 
     // Choice node
-    if (node.type === "choice") {
+    if (node.type === "choice" || node.type === "subtree") {
       w.write(1, 1);
       w.write(CHOICE_BITS, sel.choiceIndex || 0);
     } else {
@@ -172,7 +172,7 @@ export function decode(str, nodes) {
     const selected = r.read(1);
     if (!selected) continue;
 
-    const isGranted = node.freeNode || node.entryNode;
+    const isGranted = node.freeNode || node.grantedForSpecs?.includes(specId);
     const maxRank = node.maxRanks || 1;
     let rank = maxRank;
     let choiceIndex;

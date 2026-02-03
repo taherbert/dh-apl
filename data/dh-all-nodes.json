@@ -362,6 +362,9 @@
         "name": "Vengeful Retreat",
         "index": 100
       }
+    ],
+    "grantedForSpecs": [
+      577
     ]
   },
   {
@@ -390,6 +393,9 @@
         "name": "Sigil of Misery",
         "index": 100
       }
+    ],
+    "grantedForSpecs": [
+      581
     ]
   },
   {
@@ -2462,6 +2468,9 @@
         "name": "Voidblade",
         "index": 100
       }
+    ],
+    "grantedForSpecs": [
+      1480
     ]
   },
   {
