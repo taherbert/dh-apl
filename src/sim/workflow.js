@@ -5,8 +5,8 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { runSim, SCENARIOS } from "./runner.js";
-import { parse, getActionLists, findAction } from "../apl/parser.js";
+import { runSimAsync, SCENARIOS } from "./runner.js";
+import { cpus } from "node:os";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -32,33 +32,29 @@ const KEY_BUFFS = [
 // Run full sim→analyze workflow for an APL file.
 // Returns structured JSON with results across all scenarios.
 export async function runWorkflow(aplPath, scenarios = ALL_SCENARIOS) {
-  const aplText = readFileSync(aplPath, "utf-8");
-
-  // Parse APL for structure info
-  const sections = parse(aplText);
-  const actionLists = getActionLists(sections);
   const aplInfo = {
     file: basename(aplPath),
-    actionLists: actionLists.map((l) => ({
-      name: l.name,
-      actionCount: l.entries.length,
-    })),
-    totalActions: actionLists.reduce((sum, l) => sum + l.entries.length, 0),
   };
 
-  // Run each scenario
-  const scenarioResults = [];
-  for (const scenario of scenarios) {
-    try {
-      const result = runSim(aplPath, scenario);
-      scenarioResults.push(analyzeScenario(result));
-    } catch (e) {
-      scenarioResults.push({
-        scenario,
-        error: e.message,
-      });
-    }
-  }
+  // Run scenarios in parallel, splitting threads across them
+  const totalCores = cpus().length;
+  const threadsPerScenario = Math.max(
+    1,
+    Math.floor(totalCores / scenarios.length),
+  );
+
+  const scenarioResults = await Promise.all(
+    scenarios.map(async (scenario) => {
+      try {
+        const result = await runSimAsync(aplPath, scenario, {
+          simOverrides: { threads: threadsPerScenario },
+        });
+        return analyzeScenario(result);
+      } catch (e) {
+        return { scenario, error: e.message };
+      }
+    }),
+  );
 
   // Cross-scenario analysis
   const crossAnalysis = analyzeCrossScenario(
@@ -104,12 +100,6 @@ function analyzeScenario(result) {
     if (buff) buffUptimes[name] = +buff.uptime.toFixed(1);
   }
 
-  // GCD efficiency estimate
-  const fightLength = SCENARIOS[result.scenario]?.maxTime || 300;
-  const estimatedGCDs = fightLength / 1.5;
-  const totalCasts = damage.reduce((sum, a) => sum + a.executes, 0);
-  const gcdEfficiency = +((totalCasts / estimatedGCDs) * 100).toFixed(1);
-
   return {
     scenario: result.scenario,
     scenarioName: result.scenarioName,
@@ -119,8 +109,6 @@ function analyzeScenario(result) {
     majorDamage,
     lowContrib,
     buffUptimes,
-    gcdEfficiency,
-    totalCasts: Math.round(totalCasts),
   };
 }
 
@@ -176,10 +164,7 @@ function analyzeCrossScenario(results) {
       (a, b) => Math.abs(b.delta) - Math.abs(a.delta),
     ),
     buffDiffs,
-    dpsScaling:
-      aoeResult.dps && stResult.dps
-        ? +(aoeResult.dps / stResult.dps).toFixed(2)
-        : null,
+    dpsScaling: +(aoeResult.dps / stResult.dps).toFixed(2),
   };
 }
 

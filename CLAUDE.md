@@ -50,10 +50,12 @@ Change `DATA_ENV` in `src/config.js` to switch between `"live"` and `"ptr"`. The
 
 ### Hero Trees
 
-Vengeance has two hero trees:
+Vengeance has two hero trees (Midnight):
 
-- **Aldrachi Reaver** (subtree 35): Art of the Glaive, Reaver's Mark, Keen Edge, etc.
-- **Annihilator** (subtree 124): Voidfall, Catastrophe, Dark Matter, World Killer, etc.
+- **Aldrachi Reaver** (subtree 35): Art of the Glaive, Reaver's Mark, Keen Edge, Rending Strike, Glaive Flurry, etc. APL branch: `actions.ar`
+- **Annihilator** (subtree 124): Voidfall, Catastrophe, Dark Matter, World Killer, etc. APL branch: `actions.anni`
+
+The current baseline uses AR talents. The `anni` branch exists in the APL but won't execute without an Annihilator talent profile.
 
 ### Choice Nodes
 

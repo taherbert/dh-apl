@@ -46,7 +46,7 @@ How to translate hypothesis categories from `iterate.js` into specific APL edits
 1. Identify the ability from the hypothesis
 2. Find it in `apls/current.simc` — note which action list it's in and its position
 3. Read surrounding actions to understand priority context
-4. Check both hero tree branches (actions.ar._ and actions.anni._) if the ability appears in both
+4. Check both hero tree branches (`actions.ar` and `actions.anni`) — the current baseline uses AR talents, so `actions.ar` is the active branch. The `actions.anni` list exists but won't execute without an Annihilator talent profile. Changes to shared lists (precombat, default, externals) affect both.
 
 ## 3. Avoiding Local Optima
 

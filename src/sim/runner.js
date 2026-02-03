@@ -2,7 +2,8 @@
 // Usage: node src/sim/runner.js <profile.simc> [scenario]
 // Scenarios: st (default), small_aoe, big_aoe, all
 
-import { execSync } from "node:child_process";
+import { execSync, execFile } from "node:child_process";
+import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { cpus } from "node:os";
 import { join, dirname, basename } from "node:path";
@@ -46,10 +47,10 @@ function buildOverrides(scenario, extraOverrides = {}) {
     `desired_targets=${config.desiredTargets}`,
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
-  ].join(" ");
+  ];
 }
 
-export function runSim(
+export function prepareSim(
   profilePath,
   scenario = "st",
   { extraOverrides = "", simOverrides = {} } = {},
@@ -65,20 +66,48 @@ export function runSim(
   const profileName = basename(profilePath, ".simc");
   const jsonPath = join(RESULTS_DIR, `${profileName}_${scenario}.json`);
 
-  const cmd = [
-    SIMC,
+  const overrides = buildOverrides(scenario, simOverrides);
+  const extras = extraOverrides ? extraOverrides.split(" ") : [];
+
+  const args = [
     profilePath,
-    buildOverrides(scenario, simOverrides),
-    extraOverrides,
+    ...overrides,
+    ...extras,
     `json2=${jsonPath}`,
     `threads=${simOverrides.threads || SIM_DEFAULTS.threads}`,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ];
+
+  return { config, args, jsonPath, scenario };
+}
+
+export function runSim(profilePath, scenario = "st", opts = {}) {
+  const { config, args, jsonPath } = prepareSim(profilePath, scenario, opts);
+  const cmd = [SIMC, ...args].join(" ");
 
   console.log(`Running ${config.name}...`);
   try {
     execSync(cmd, {
+      encoding: "utf-8",
+      maxBuffer: 50 * 1024 * 1024,
+      timeout: 300000,
+    });
+  } catch (e) {
+    if (e.stdout) console.log(e.stdout.split("\n").slice(-5).join("\n"));
+    throw new Error(`SimC failed: ${e.message}`);
+  }
+
+  const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
+  return parseResults(data, scenario);
+}
+
+const execFileAsync = promisify(execFile);
+
+export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
+  const { config, args, jsonPath } = prepareSim(profilePath, scenario, opts);
+
+  console.log(`Running ${config.name}...`);
+  try {
+    await execFileAsync(SIMC, args, {
       encoding: "utf-8",
       maxBuffer: 50 * 1024 * 1024,
       timeout: 300000,
