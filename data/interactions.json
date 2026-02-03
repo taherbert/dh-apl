@@ -17507,27 +17507,6 @@
     },
     {
       "source": {
-        "id": 1270449,
-        "name": "Untethered Rage",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": null,
-        "name": "buff:untethered_rage"
-      },
-      "type": "buff_grant",
-      "mechanism": "talent_gates_buff",
-      "discoveryMethod": "effect_scan",
-      "confidence": "medium",
-      "application": "passive_always",
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 442686,
         "name": "Thrill of the Fight",
         "isTalent": true,
@@ -18541,7 +18520,7 @@
     "Last Resort": "cpp_only",
     "Darkglare Boon": "has_interactions",
     "Down in Flames": "cpp_only",
-    "Untethered Rage": "has_interactions",
+    "Untethered Rage": "cpp_only",
     "Art of the Glaive": "has_interactions",
     "Fury of the Aldrachi": "has_interactions",
     "Evasive Action": "has_interactions",
@@ -50237,24 +50216,6 @@
           "procInfo": {
             "procChance": 100
           }
-        }
-      ]
-    },
-    "1270449": {
-      "name": "Untethered Rage",
-      "tree": "spec",
-      "heroSpec": null,
-      "targets": [
-        {
-          "spell": "buff:untethered_rage",
-          "spellId": null,
-          "type": "buff_grant",
-          "discoveryMethod": "effect_scan",
-          "application": "passive_always",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "talent_gates_buff"
         }
       ]
     },

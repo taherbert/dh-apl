@@ -892,17 +892,17 @@
       "spellName": "Tempered Steel"
     },
     {
-      "variable": "untethered_rage1",
+      "variable": "untethered_rage_1",
       "treeType": "SPECIALIZATION",
       "spellName": "Untethered Rage"
     },
     {
-      "variable": "untethered_rage2",
+      "variable": "untethered_rage_2",
       "treeType": "SPECIALIZATION",
       "spellName": "Untethered Rage"
     },
     {
-      "variable": "untethered_rage3",
+      "variable": "untethered_rage_3",
       "treeType": "SPECIALIZATION",
       "spellName": "Untethered Rage"
     },

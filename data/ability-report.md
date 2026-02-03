@@ -1,6 +1,6 @@
 # Vengeance Demon Hunter — Ability & Talent Report
 
-Generated from SimC midnight branch. 219 spells, 96 modifier sources.
+Generated from SimC midnight branch. 219 spells, 95 modifier sources.
 
 ## Active Abilities
 
@@ -796,7 +796,6 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - (4) **Untethered Rage** (1270444) [active_ability]
 - (4) **Untethered Rage** (1270448) [active_ability]
 - (4) **Untethered Rage** (1270449) [active_ability]
-  → buff:untethered_rage (buff_grant)
 
 ### Hero: Aldrachi Reaver (17 talents)
 
