@@ -1022,6 +1022,7 @@ From `reference/wiki/demon-hunters.md`:
 - **`greater_soul_fragments`**: Active consumable Greater soul fragments only.
 - **`lesser_soul_fragments`**: Active consumable Lesser soul fragments only.
 - **`demon_soul_fragments`**: Active consumable Demon soul fragments only.
+- **`apex.N`**: Apex talent rank check where N is the rank number (e.g., `apex.1`, `apex.2`). Use this syntax instead of `talent.apex_name` for apex (pinnacle) talents.
 
 VDH-specific options that affect sim behavior:
 
