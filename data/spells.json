@@ -1411,6 +1411,7 @@
       "219",
       "292"
     ],
+    "categoryCooldown": 25,
     "affectingSpells": [
       {
         "name": "Prepared",
@@ -5221,6 +5222,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "categoryCooldown": 40,
     "affectingSpells": [
       {
         "name": "Demonsurge",
@@ -8234,6 +8236,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "categoryCooldown": 25,
     "affectingSpells": [
       {
         "name": "Havoc Demon Hunter",
@@ -8759,6 +8762,8 @@
       "292",
       "3038"
     ],
+    "categoryCooldown": 1.5,
+    "internalCooldown": 0.5,
     "procChance": 100,
     "procFlags": "White Melee Taken, Yellow Melee Taken",
     "affectingSpells": [
@@ -11204,6 +11209,7 @@
       "292",
       "2799"
     ],
+    "internalCooldown": 0.9,
     "procChance": 100,
     "procFlags": "Generic Hostile Spell",
     "attributes": [
@@ -12123,6 +12129,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "internalCooldown": 0.1,
     "procFlags": "Magic Hostile Spell",
     "attributes": [
       "Passive (6)",
@@ -13621,6 +13628,7 @@
       "292",
       "4740"
     ],
+    "internalCooldown": 0.9,
     "procChance": 100,
     "procFlags": "Generic Hostile Spell",
     "attributes": [
@@ -14243,6 +14251,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "internalCooldown": 0.1,
     "procChance": 100,
     "procFlags": "Magic Hostile Spell",
     "attributes": [
@@ -14462,6 +14471,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "internalCooldown": 0.5,
     "procChance": 100,
     "procFlags": "White Melee Taken, Yellow Melee Taken",
     "affectingSpells": [
@@ -14682,6 +14692,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "internalCooldown": 0.5,
     "procChance": 100,
     "procFlags": "White Melee Taken, Yellow Melee Taken",
     "affectingSpells": [
@@ -14902,6 +14913,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "internalCooldown": 0.5,
     "procChance": 100,
     "procFlags": "White Melee Taken, Yellow Melee Taken",
     "affectingSpells": [
@@ -15238,6 +15250,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "internalCooldown": 5,
     "procChance": 101,
     "procFlags": "White Melee, White Melee Taken, Yellow Melee, Yellow Melee Taken",
     "attributes": [
@@ -16267,6 +16280,7 @@
       "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
       "4821: Havoc Demon Hunter (212612 effect#11), Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc (1236360 effect#2), Bladecraft (1272153 effect#2)"
     ],
+    "internalCooldown": 0.1,
     "maxStacks": 2,
     "procChance": 101,
     "attributes": [
@@ -16930,6 +16944,7 @@
       "292",
       "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
     ],
+    "internalCooldown": 3,
     "procChance": 101,
     "procFlags": "Cast Successful",
     "attributes": [
@@ -17881,6 +17896,7 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "internalCooldown": 0.5,
     "procChance": 100,
     "procFlags": "White Melee Taken, Yellow Melee Taken",
     "affectingSpells": [
@@ -20174,6 +20190,7 @@
       "292",
       "5829"
     ],
+    "internalCooldown": 0.5,
     "procChance": 101,
     "procFlags": "Yellow Melee, Generic Hostile Spell, Magic Hostile Spell",
     "attributes": [
@@ -20874,6 +20891,7 @@
       "66: Demon Hunter Spells",
       "5883: Soul Splitter (1266330 effect#1)"
     ],
+    "internalCooldown": 0.5,
     "procFlags": "Cast Successful",
     "attributes": [
       "Passive (6)",
@@ -21347,6 +21365,7 @@
       "292",
       "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
     ],
+    "internalCooldown": 0.1,
     "procChance": 100,
     "procFlags": "Cast Successful",
     "attributes": [

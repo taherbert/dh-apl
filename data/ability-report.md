@@ -178,6 +178,7 @@ School: Fire | GCD: 1.5s | CD: 1.5s | Charges: 1 (30s) | Duration: 6s
 Generates: 20 fury, 8 fury
 Haste scales: gcd
 Proc: 100% chance
+ICD: 0.5s
 
 > Engulf yourself in flames, $?a320364 [instantly causing $258921s1 $@spelldesc1224451 damage to enemies within $258921A1 yards and ][]radiating ${$258922s1*$d} $@spelldesc1224451 damage over $d.$?s320374[ |cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r][]$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][]$?s212613[ |cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r][]
 
@@ -949,7 +950,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 
 ### Vengeance 12.0 Class Set 4pc (1264809)
 
-- → Explosion of the Soul (proc_trigger) 30% [10100% chance] on Fracture
+- → Explosion of the Soul (proc_trigger) 30% [10100% chance, 0.5s ICD] on Fracture
 
 ## Resource Flow
 

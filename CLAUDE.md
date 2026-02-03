@@ -101,9 +101,10 @@ src/
 data/
   raw/            # Raw simc dumps (gitignored)
   raidbots-talents.json  # Raidbots talent data (filtered to VDH)
-  spells.json     # Parsed VDH spell catalog
-  talents.json    # Full talent tree
-  interactions.json  # Talent → spell interaction map
+  spells.json            # Parsed VDH spell catalog
+  talents.json           # Full talent tree
+  interactions.json      # Talent → spell interaction map
+  cpp-proc-mechanics.json  # Auto-extracted C++ proc rates, ICDs, constants
 apls/             # APL files (.simc)
 results/          # Simulation output (gitignored)
 reference/
@@ -162,6 +163,7 @@ npm run fetch-raidbots                       # Fetch Raidbots talent data
 npm run extract                              # Extract spell data
 npm run talents                              # Build talent tree
 npm run cpp-interactions                     # Extract C++ talent cross-references
+npm run cpp-procs                            # Extract C++ proc rates, ICDs, constants
 npm run interactions                         # Build interaction map
 npm run build-data                           # Run full data pipeline
 

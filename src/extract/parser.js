@@ -6,7 +6,8 @@ import {
   maskToSchoolNames,
 } from "../model/schools.js";
 
-const FIELD_REGEX = /^(\w[\w ]*\w)\s+: (.+)$/;
+// \s* not \s+ — fields like "Internal Cooldown" fill the 17-char column exactly
+const FIELD_REGEX = /^(\w[\w ]*\w)\s*: (.+)$/;
 const EFFECT_HEADER_REGEX = /^#(\d+)\s+\(id=(\d+)\)\s+: (.+)$/;
 const EFFECT_DETAIL_REGEX = /^\s{19}(.+)$/;
 const SPELL_HEADER_REGEX = /^Name\s{2,}: (.+)$/;
@@ -316,6 +317,11 @@ function parseField(spell, key, value) {
     case "Internal Cooldown": {
       const m = value.match(/^([\d.]+)\s+seconds/);
       if (m) spell.internalCooldown = parseFloat(m[1]);
+      break;
+    }
+    case "Category Cooldown": {
+      const m = value.match(/^([\d.]+)\s+seconds/);
+      if (m) spell.categoryCooldown = parseFloat(m[1]);
       break;
     }
     case "Labels":
