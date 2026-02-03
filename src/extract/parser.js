@@ -439,6 +439,7 @@ export function cleanSpell(spell) {
         type.includes("damage done") ||
         type.includes("damage taken") ||
         type.includes("school damage") ||
+        type.includes("modifier") ||
         effect.details["Affected School(s)"]
       ) {
         const mask = parseMiscValueMask(effect.details.miscValue);
@@ -447,6 +448,140 @@ export function cleanSpell(spell) {
           effect.details.schoolNames = maskToSchoolNames(mask);
         }
       }
+    }
+  }
+
+  // 1A: Extract resource generation from energize effects and descriptions
+  const generates = [];
+  if (cleaned.effects) {
+    for (const effect of cleaned.effects) {
+      const type = (effect.type || "").toLowerCase();
+      if (type.includes("energize") && effect.details?.baseValue) {
+        const resourceType =
+          effect.details.Resource || (type.includes("fury") ? "Fury" : null);
+        generates.push({
+          amount: effect.details.baseValue,
+          resourceType: resourceType || "unknown",
+        });
+      }
+    }
+  }
+  // Parse soul fragment generation from resolved descriptions
+  if (cleaned.description) {
+    // Match patterns like "shatter 2 Lesser Soul Fragments", "shatters $s1 Lesser Soul"
+    // where $s1 has been resolved, or literal numbers
+    const fragPatterns = [
+      /shatters?\s+(\d+)\s+(?:lesser\s+)?soul\s+fragments?/i,
+      /generates?\s+(\d+)\s+(?:lesser\s+)?soul\s+fragments?/i,
+      /creates?\s+(\d+)\s+(?:lesser\s+)?soul\s+fragments?/i,
+    ];
+    for (const pat of fragPatterns) {
+      const m = cleaned.description.match(pat);
+      if (m) {
+        generates.push({
+          amount: parseInt(m[1]),
+          resourceType: "Soul Fragments",
+        });
+        break;
+      }
+    }
+    // Also check for unresolved $sN references in fragment context
+    // and resolve from effect data
+    if (
+      !generates.some((g) => g.resourceType === "Soul Fragments") &&
+      /soul\s+fragment/i.test(cleaned.description)
+    ) {
+      const unresolved = cleaned.description.match(
+        /shatters?\s+\$s(\d+)\s+(?:lesser\s+)?soul/i,
+      );
+      if (unresolved) {
+        const effectIdx = parseInt(unresolved[1]);
+        const effect = cleaned.effects?.find((e) => e.index === effectIdx);
+        if (effect?.details?.baseValue) {
+          generates.push({
+            amount: effect.details.baseValue,
+            resourceType: "Soul Fragments",
+          });
+        }
+      }
+    }
+  }
+  // Build resourceFlow combining costs and generates
+  const costs = [];
+  if (cleaned.resource) {
+    costs.push({
+      amount: cleaned.resource.cost,
+      resourceType: cleaned.resource.type,
+    });
+  }
+  if (costs.length > 0 || generates.length > 0) {
+    cleaned.resourceFlow = {
+      costs: costs.length > 0 ? costs : undefined,
+      generates: generates.length > 0 ? generates : undefined,
+    };
+  }
+  if (generates.length > 0) {
+    cleaned.generates = generates;
+  }
+
+  // 1D: Haste scaling flags from attributes
+  if (cleaned.attributes?.length) {
+    const attrs = cleaned.attributes.map((a) => a.toLowerCase());
+    const hasteScaling = {};
+    let hasAny = false;
+    if (attrs.some((a) => a.includes("haste affects period"))) {
+      hasteScaling.ticks = true;
+      hasAny = true;
+    }
+    if (attrs.some((a) => a.includes("haste affects duration"))) {
+      hasteScaling.duration = true;
+      hasAny = true;
+    }
+    if (attrs.some((a) => a.includes("haste affects cooldown"))) {
+      hasteScaling.cooldown = true;
+      hasAny = true;
+    }
+    // GCD is haste-scaled by default for most spells unless "not affected by gcd"
+    if (cleaned.gcd && cleaned.gcd > 0) {
+      hasteScaling.gcd = true;
+      hasAny = true;
+    }
+    if (hasAny) cleaned.hasteScaling = hasteScaling;
+  }
+
+  // 1E: Explicit GCD=0 for off-GCD spells
+  // Active spells without a GCD field from spell_query are off-GCD
+  if (cleaned.gcd == null && !cleaned.passive && !cleaned.hidden) {
+    cleaned.gcd = 0;
+  }
+
+  // 1F: AoE data extraction from effect details
+  if (cleaned.effects) {
+    let radius = null;
+    let maxTargets = null;
+    for (const effect of cleaned.effects) {
+      if (effect.details?.radius && !radius) {
+        // Parse "0 - 8 yards" or "8 yards" → numeric
+        const rMatch = effect.details.radius.match(
+          /(?:\d+\s*-\s*)?(\d+(?:\.\d+)?)\s*yards?/i,
+        );
+        if (rMatch) radius = parseFloat(rMatch[1]);
+      }
+      if (effect.details?.target) {
+        const tgtMatch = effect.details.target.match(
+          /max[_\s]*(\d+)\s*targets?/i,
+        );
+        if (tgtMatch) maxTargets = parseInt(tgtMatch[1]);
+      }
+    }
+    const reducedAoe = cleaned.attributes?.some((a) =>
+      /reduced\s*aoe/i.test(a),
+    );
+    if (radius || maxTargets || reducedAoe) {
+      cleaned.aoe = {};
+      if (radius) cleaned.aoe.radius = radius;
+      if (maxTargets) cleaned.aoe.maxTargets = maxTargets;
+      if (reducedAoe) cleaned.aoe.reducedAoe = true;
     }
   }
 

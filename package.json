@@ -18,6 +18,7 @@
     "build-data": "npm run fetch-raidbots && npm run extract && npm run talents && npm run cpp-interactions && npm run cpp-effects && npm run interactions && npm run report && npm run graph && npm run effects-gap",
     "verify": "node src/verify.js",
     "extract-simc": "node src/extract/simc-talents.js",
-    "audit-report": "node src/visualize/audit-report.js"
+    "audit-report": "node src/visualize/audit-report.js",
+    "iterate": "node src/sim/iterate.js"
   }
 }

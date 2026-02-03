@@ -5,14 +5,14 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
-import { runSim } from "./runner.js";
+import { runSim, SCENARIOS } from "./runner.js";
 import { parse, getActionLists, findAction } from "../apl/parser.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const RESULTS_DIR = join(ROOT, "results");
 
-const ALL_SCENARIOS = ["st", "small_aoe", "big_aoe"];
+const ALL_SCENARIOS = Object.keys(SCENARIOS);
 
 // Key VDH buffs to track for optimization signals
 const KEY_BUFFS = [
@@ -65,14 +65,12 @@ export async function runWorkflow(aplPath, scenarios = ALL_SCENARIOS) {
     scenarioResults.filter((r) => !r.error),
   );
 
-  const output = {
+  return {
     apl: aplInfo,
     scenarios: scenarioResults,
     crossAnalysis,
     timestamp: new Date().toISOString(),
   };
-
-  return output;
 }
 
 // Analyze a single scenario result for optimization signals.
@@ -107,8 +105,7 @@ function analyzeScenario(result) {
   }
 
   // GCD efficiency estimate
-  const fightLength =
-    result.scenario === "st" ? 300 : result.scenario === "small_aoe" ? 75 : 60;
+  const fightLength = SCENARIOS[result.scenario]?.maxTime || 300;
   const estimatedGCDs = fightLength / 1.5;
   const totalCasts = damage.reduce((sum, a) => sum + a.executes, 0);
   const gcdEfficiency = +((totalCasts / estimatedGCDs) * 100).toFixed(1);

@@ -11,9 +11,8 @@ graph LR
   t389781["Long Night"]
   s196718(("Darkness"))
   t389783["Pitch Black"]
-  t389688{{"Tactical Retreat"}}
-  s198793(("Vengeful Retreat"))
   t444929{{"Evasive Action"}}
+  s198793(("Vengeful Retreat"))
   s198813(("Vengeful Retreat"))
   t209281["Quickened Sigils"]
   s202137(("Sigil of Silence"))
@@ -58,7 +57,6 @@ graph LR
   t433737{{"Immolation Aura"}}
   t207347["Aura of Pain"]
   s258921(("Immolation Aura"))
-  t427775{{"A Fire Inside"}}
   s258922(("Immolation Aura"))
   s320334(("Infernal Armor"))
   s337819(("Throw Glaive"))
@@ -140,8 +138,6 @@ graph LR
   s343014(("Revel in Pain"))
   t268175["Void Reaver"]
   s268175(("Void Reaver"))
-  t207387["Painbringer"]
-  s207387(("Painbringer"))
   t389220["Fiery Demise"]
   s389220(("Fiery Demise"))
   t442290[/"Art of the Glaive"/]
@@ -155,9 +151,7 @@ graph LR
   t390213 -->|damage modifier| s189112
   t389781 -->|duration modifier| s196718
   t389783 -->|cooldown modifier| s196718
-  t389688 -->|cooldown modifier| s198793
   t444929 -->|buff grant| s198793
-  t389688 -->|cooldown modifier| s198813
   t444929 -->|buff grant| s198813
   t209281 -->|duration modifier| s202137
   t389715 -->|range modifier| s202137
@@ -206,7 +200,6 @@ graph LR
   t207548 -->|damage modifier| s258921
   t320331 -->|damage modifier| s258921
   t390213 -->|damage modifier| s258921
-  t427775 -->|buff grant| s258921
   t433721 -->|buff grant| s258921
   t433724 -->|buff grant| s258921
   t433737 -->|buff grant| s258921
@@ -214,7 +207,6 @@ graph LR
   t207548 -->|damage modifier| s258922
   t320331 -->|damage modifier| s258922
   t390213 -->|damage modifier| s258922
-  t427775 -->|buff grant| s258922
   t433721 -->|buff grant| s258922
   t433724 -->|buff grant| s258922
   t433737 -->|buff grant| s258922
@@ -283,7 +275,6 @@ graph LR
   t212084 -->|cooldown modifier| s1253377
   t212084 -->|cooldown modifier| s389708
   t1253377 -->|cooldown modifier| s389708
-  t207739 -->|duration modifier| s204021
   t389718 -->|duration modifier| s389958
   t389718 -->|duration modifier| s428603
   t389958 -->|duration modifier| s428603
@@ -305,19 +296,16 @@ graph LR
   t1253377 -->|buff grant| snull
   t389724 -->|buff grant| snull
   t1253676 -->|buff grant| snull
-  t389724 -->|buff grant| snull
-  t1253676 -->|buff grant| snull
   t389763 -->|proc trigger| s389763
   t183782 -->|proc trigger| s183782
   t428607 -->|proc trigger| s428607
   t389846 -->|proc trigger| s389846
   t343014 -->|proc trigger| s343014
   t268175 -->|proc trigger| s268175
-  t207387 -->|damage modifier| s207387
   t389220 -->|damage modifier| s389220
   t442290 -->|proc trigger| s442290
   t444926 -->|proc trigger| s444926
   classDef hero fill:#f9d,stroke:#333
   class t442492,t442718,t442679,t442686,t442683,t1253769,t1253377,t1256307,t1256353,t442502,t442497,t1272153,t444997,t1253304,t1253391,t1253676,t1256295,t442290,t444926 hero
   classDef mechanic fill:#bdf,stroke:#333
-  class t320421,t389688,t444929,t389721,t343010,t258920,t427913,t427914,t427915,t433719,t433721,t433724,t433737,t427775 mechanic
+  class t320421,t444929,t389721,t343010,t258920,t427913,t427914,t427915,t433719,t433721,t433724,t433737 mechanic

@@ -4,6 +4,7 @@
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SCENARIOS } from "./runner.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const RESULTS_DIR = join(__dirname, "..", "..", "results");
@@ -99,8 +100,7 @@ function analyzeGCDUsage(result) {
 
   // Estimate total GCDs available from fight length
   // Assume 1.5s GCD base
-  const fightLength =
-    result.scenario === "st" ? 300 : result.scenario === "small_aoe" ? 75 : 60;
+  const fightLength = SCENARIOS[result.scenario]?.maxTime || 300;
   const estimatedGCDs = fightLength / 1.5;
 
   const totalCasts = result.abilities

@@ -4,6 +4,7 @@
 
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { cpus } from "node:os";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -11,23 +12,48 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
 const RESULTS_DIR = join(ROOT, "results");
+const TOTAL_CORES = cpus().length;
 
-const SCENARIOS = {
+export const SIM_DEFAULTS = {
+  threads: TOTAL_CORES,
+  target_error: 0.5,
+  iterations: 5000000, // cap — target_error stops early
+};
+
+export const SCENARIOS = {
   st: {
-    name: "Patchwerk ST",
-    overrides: "max_time=300 desired_targets=1 iterations=1000",
+    name: "Patchwerk 1T",
+    maxTime: 300,
+    desiredTargets: 1,
   },
   small_aoe: {
-    name: "Small AoE (3 targets)",
-    overrides: "max_time=75 desired_targets=3 iterations=1000",
+    name: "Patchwerk 5T",
+    maxTime: 75,
+    desiredTargets: 5,
   },
   big_aoe: {
-    name: "Large AoE (10 targets)",
-    overrides: "max_time=60 desired_targets=10 iterations=1000",
+    name: "Patchwerk 10T",
+    maxTime: 60,
+    desiredTargets: 10,
   },
 };
 
-export function runSim(profilePath, scenario = "st", extraOverrides = "") {
+function buildOverrides(scenario, extraOverrides = {}) {
+  const config = SCENARIOS[scenario];
+  const merged = { ...SIM_DEFAULTS, ...extraOverrides };
+  return [
+    `max_time=${config.maxTime}`,
+    `desired_targets=${config.desiredTargets}`,
+    `target_error=${merged.target_error}`,
+    `iterations=${merged.iterations}`,
+  ].join(" ");
+}
+
+export function runSim(
+  profilePath,
+  scenario = "st",
+  { extraOverrides = "", simOverrides = {} } = {},
+) {
   const config = SCENARIOS[scenario];
   if (!config)
     throw new Error(
@@ -42,10 +68,10 @@ export function runSim(profilePath, scenario = "st", extraOverrides = "") {
   const cmd = [
     SIMC,
     profilePath,
-    config.overrides,
+    buildOverrides(scenario, simOverrides),
     extraOverrides,
     `json2=${jsonPath}`,
-    "threads=4",
+    `threads=${simOverrides.threads || SIM_DEFAULTS.threads}`,
   ]
     .filter(Boolean)
     .join(" ");

@@ -145,6 +145,24 @@ npm run verify
 
 # Extract simc C++ talent variables to reference/
 npm run extract-simc
+
+# Analyze APL — load methodology guide and data for analysis session
+/analyze-apl [apls/baseline.simc]
+
+# SimC reference — look up SimC syntax, expressions, fight styles
+/simc-reference [topic]
+
+# Iterate APL — autonomous improvement loop
+/iterate-apl
+
+# Iteration state management
+node src/sim/iterate.js init apls/baseline.simc
+node src/sim/iterate.js status
+node src/sim/iterate.js compare apls/candidate.simc [--quick|--confirm]
+node src/sim/iterate.js accept "reason" [--hypothesis "fragment"]
+node src/sim/iterate.js reject "reason" [--hypothesis "fragment"]
+node src/sim/iterate.js hypotheses
+node src/sim/iterate.js summary
 ```
 
 ## Key Paths

@@ -256,6 +256,38 @@ function buildInteractions() {
     }
   }
 
+  // === 1G: Compute modified uptimes accounting for CD/duration modifiers ===
+  for (const interaction of interactions) {
+    if (interaction.theoreticalUptime == null) continue;
+    const targetId = interaction.target.id || interaction.source.id;
+    const targetMods = spellToModifiers.get(targetId) || [];
+    let cdMod = 0;
+    let durMod = 0;
+    for (const mod of targetMods) {
+      if (mod.type === "cooldown_modifier" && mod.magnitude?.value) {
+        cdMod += mod.magnitude.value;
+      }
+      if (mod.type === "duration_modifier" && mod.magnitude?.value) {
+        durMod += mod.magnitude.value;
+      }
+    }
+    if (cdMod !== 0 || durMod !== 0) {
+      const sourceSpell = spellMap.get(interaction.source.id);
+      if (sourceSpell) {
+        const baseDur = sourceSpell.duration || 0;
+        const baseCd =
+          sourceSpell.cooldown || sourceSpell.charges?.cooldown || 0;
+        if (baseDur > 0 && baseCd > 0) {
+          const modDur = baseDur * (1 + durMod / 100);
+          const modCd = baseCd * (1 + cdMod / 100);
+          if (modCd > 0) {
+            interaction.modifiedUptime = Math.min(1, modDur / modCd);
+          }
+        }
+      }
+    }
+  }
+
   // === Talent triage categories ===
   const talentCategories = triageTalents(
     allTalents,
@@ -364,6 +396,11 @@ function buildInteractions() {
     if (i.magnitude) result.magnitude = i.magnitude;
     if (i.application) result.application = i.application;
     if (i.categories) result.categories = i.categories;
+    if (i.schoolTarget) result.schoolTarget = i.schoolTarget;
+    if (i.procInfo) result.procInfo = i.procInfo;
+    if (i.theoreticalUptime != null)
+      result.theoreticalUptime = i.theoreticalUptime;
+    if (i.modifiedUptime != null) result.modifiedUptime = i.modifiedUptime;
     return result;
   }
 
@@ -384,6 +421,26 @@ function buildInteractions() {
 
     const schoolTarget = resolveSchoolTarget(sourceSpell, effectIndices);
     if (schoolTarget) interaction.schoolTarget = schoolTarget;
+
+    // 1B: Propagate proc rates for proc_trigger interactions
+    if (interaction.type === "proc_trigger" && sourceSpell) {
+      const procInfo = {};
+      if (sourceSpell.procChance != null)
+        procInfo.procChance = sourceSpell.procChance;
+      if (sourceSpell.realPPM != null) procInfo.realPPM = sourceSpell.realPPM;
+      if (sourceSpell.internalCooldown != null)
+        procInfo.internalCooldown = sourceSpell.internalCooldown;
+      if (Object.keys(procInfo).length > 0) interaction.procInfo = procInfo;
+    }
+
+    // 1G: Theoretical uptime for buff_grant interactions
+    if (interaction.type === "buff_grant" && sourceSpell) {
+      const dur = sourceSpell.duration;
+      const cd = sourceSpell.cooldown || sourceSpell.charges?.cooldown;
+      if (dur > 0 && cd > 0) {
+        interaction.theoreticalUptime = Math.min(1, dur / cd);
+      }
+    }
 
     const effectDetails = extractEffectDetails(
       sourceSpell,
