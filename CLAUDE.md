@@ -26,6 +26,8 @@ actions+=/run_action_list,name=sub_list,if=condition
 
 Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spikes.up`, `talent.spirit_bomb.enabled`, `cooldown.fiery_brand.ready`, `health.pct<50`, `active_enemies>=3`.
 
+**Apex talents:** Apex talents (pinnacle talents at the bottom of the tree) use `apex.N` where N is the rank number (e.g., `apex.1`, `apex.2`). Do NOT use `talent.apex_name` — always use the `apex.N` syntax.
+
 ## Session Protocol
 
 1. Read `PLAN.md` at start to understand current project state
