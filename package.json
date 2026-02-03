@@ -19,6 +19,10 @@
     "verify": "node src/verify.js",
     "extract-simc": "node src/extract/simc-talents.js",
     "audit-report": "node src/visualize/audit-report.js",
-    "iterate": "node src/sim/iterate.js"
+    "iterate": "node src/sim/iterate.js",
+    "iterate:status": "node src/sim/iterate.js status",
+    "iterate:hypotheses": "node src/sim/iterate.js hypotheses",
+    "iterate:summary": "node src/sim/iterate.js summary",
+    "dashboard": "cat results/dashboard.md"
   }
 }

@@ -17,6 +17,9 @@ import {
   copyFileSync,
   mkdirSync,
   existsSync,
+  renameSync,
+  readdirSync,
+  unlinkSync,
 } from "node:fs";
 import { join, dirname, basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -37,6 +40,7 @@ const CURRENT_APL = join(ROOT, "apls", "current.simc");
 
 const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];
 const SCENARIO_LABELS = { st: "1T", small_aoe: "5T", big_aoe: "10T" };
+// ST weighted highest (hardest to improve, most common), 5T moderate, 10T lowest (rarest encounter type)
 const SCENARIO_WEIGHTS = { st: 0.5, small_aoe: 0.3, big_aoe: 0.2 };
 
 const FIDELITY_TIERS = {
@@ -51,8 +55,36 @@ const STATE_VERSION = 2;
 
 function loadState() {
   if (!existsSync(STATE_PATH)) return null;
-  const state = JSON.parse(readFileSync(STATE_PATH, "utf-8"));
-  return migrateState(state);
+  try {
+    const state = JSON.parse(readFileSync(STATE_PATH, "utf-8"));
+    return migrateState(state);
+  } catch (e) {
+    console.error(
+      `State file corrupted: ${e.message}. Attempting backup recovery...`,
+    );
+    return recoverFromBackup();
+  }
+}
+
+function recoverFromBackup() {
+  const backups = readdirSync(RESULTS_DIR)
+    .filter(
+      (f) => f.startsWith("iteration-state.backup.") && f.endsWith(".json"),
+    )
+    .sort()
+    .reverse();
+  for (const f of backups) {
+    try {
+      const state = JSON.parse(readFileSync(join(RESULTS_DIR, f), "utf-8"));
+      console.error(`Recovered from backup: ${f}`);
+      writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
+      return migrateState(state);
+    } catch {
+      // corrupt backup, try next
+    }
+  }
+  console.error("No valid backups found.");
+  return null;
 }
 
 function migrateState(state) {
@@ -77,6 +109,11 @@ function migrateState(state) {
     state.version = STATE_VERSION;
   }
 
+  // Ensure new fields exist on old states
+  if (state.consecutiveRejections === undefined)
+    state.consecutiveRejections = 0;
+  if (!state.findings) state.findings = [];
+
   return state;
 }
 
@@ -84,7 +121,43 @@ function saveState(state) {
   mkdirSync(RESULTS_DIR, { recursive: true });
   state.version = STATE_VERSION;
   state.lastUpdated = new Date().toISOString();
-  writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
+
+  const content = JSON.stringify(state, null, 2);
+  const tmpPath = STATE_PATH + ".tmp";
+
+  // Atomic write: write to .tmp, rotate backups, rename
+  writeFileSync(tmpPath, content);
+
+  if (existsSync(STATE_PATH)) {
+    // Rotate backups (keep 5)
+    const backups = readdirSync(RESULTS_DIR)
+      .filter(
+        (f) => f.startsWith("iteration-state.backup.") && f.endsWith(".json"),
+      )
+      .sort()
+      .map((f) => join(RESULTS_DIR, f));
+    while (backups.length >= 5) {
+      unlinkSync(backups.shift());
+    }
+    const backupPath = join(
+      RESULTS_DIR,
+      `iteration-state.backup.${Date.now()}.json`,
+    );
+    copyFileSync(STATE_PATH, backupPath);
+  }
+
+  renameSync(tmpPath, STATE_PATH);
+}
+
+// --- Hypothesis Helpers ---
+
+// Strip numbers/percentages so that hypotheses differing only in reported
+// metrics (e.g., "Spirit Bomb contributes 12.3%" vs "11.8%") match as equivalent.
+function normalizeHypothesisKey(description) {
+  return description
+    .replace(/[\d.]+%?/g, "N")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 // --- Hypothesis Generation ---
@@ -144,7 +217,7 @@ function generateHypotheses(workflowResults) {
 
   // 4. GCD efficiency
   for (const s of scenarios) {
-    if (s.gcdEfficiency < 85) {
+    if (s.gcdEfficiency !== undefined && s.gcdEfficiency < 85) {
       hypotheses.push({
         category: "conditional_tightness",
         description: `GCD efficiency only ${s.gcdEfficiency}% in ${SCENARIO_LABELS[s.scenario] || s.scenario} — loosen filler conditions or add fallback actions`,
@@ -375,16 +448,8 @@ function printComparison(results, tier) {
   }
 
   // Weighted total
-  let weightedDelta = 0;
-  let weightedStderr = 0;
-  for (const scenario of SCENARIO_KEYS) {
-    const r = results[scenario];
-    if (!r) continue;
-    const w = SCENARIO_WEIGHTS[scenario];
-    weightedDelta += r.deltaPct * w;
-    weightedStderr += (r.stderrPct * w) ** 2;
-  }
-  weightedStderr = Math.sqrt(weightedStderr);
+  const { delta: weightedDelta, stderr: weightedStderr } =
+    computeWeightedDelta(results);
   const weightedSig = Math.abs(weightedDelta) > 2 * weightedStderr;
   const ws = weightedDelta >= 0 ? "+" : "";
 
@@ -455,9 +520,14 @@ async function cmdInit(aplPath) {
     iterations: [],
     pendingHypotheses: hypotheses,
     exhaustedHypotheses: [],
+    consecutiveRejections: 0,
+    findings: [],
   };
 
   saveState(state);
+  writeDashboard(state);
+  writeChangelog(state);
+  writeFindings(state);
 
   console.log("\nBaseline DPS:");
   for (const [key, value] of Object.entries(dps)) {
@@ -486,10 +556,15 @@ function cmdStatus() {
     (i) => i.decision !== "accepted",
   ).length;
 
+  const consecRej = state.consecutiveRejections || 0;
+
   console.log("=== APL Iteration Progress ===");
   console.log(
     `Started: ${formatElapsed(state.startedAt)} | Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
   );
+  if (consecRej > 0) {
+    console.log(`Consecutive rejections: ${consecRej}`);
+  }
 
   // DPS progress with bars
   console.log("\nDPS Progress:");
@@ -542,6 +617,8 @@ function cmdStatus() {
       );
     }
   }
+
+  writeDashboard(state);
 }
 
 async function cmdCompare(candidatePath, tier) {
@@ -605,8 +682,26 @@ async function cmdAccept(reason, hypothesisHint) {
   state.current.workflowResults = "results/workflow_current.json";
 
   state.pendingHypotheses = generateHypotheses(workflowResults);
+  state.consecutiveRejections = 0;
+
+  // Track significant findings
+  const weighted = computeWeightedDelta(comparison.results);
+  if (Math.abs(weighted.delta) > 0.5) {
+    state.findings.push({
+      iteration: iterNum,
+      timestamp: new Date().toISOString(),
+      hypothesis: reason,
+      weightedDelta: weighted.delta,
+      scenarios: Object.fromEntries(
+        Object.entries(comparison.results).map(([k, v]) => [k, v.deltaPct]),
+      ),
+    });
+  }
 
   saveState(state);
+  writeDashboard(state);
+  writeChangelog(state);
+  writeFindings(state);
   console.log(`\nIteration #${iterNum} accepted: ${reason}`);
   console.log(`${state.pendingHypotheses.length} hypotheses regenerated.`);
 }
@@ -632,10 +727,23 @@ function cmdReject(reason, hypothesisHint) {
   );
 
   state.exhaustedHypotheses.push(hypothesis);
+  state.consecutiveRejections = (state.consecutiveRejections || 0) + 1;
   saveState(state);
+  writeDashboard(state);
 
   console.log(`Iteration #${iterNum} rejected: ${reason}`);
+  console.log(`Consecutive rejections: ${state.consecutiveRejections}`);
   console.log(`${state.pendingHypotheses.length} hypotheses remaining.`);
+
+  if (state.consecutiveRejections >= 10) {
+    console.log(
+      "\nSTOPPING: 10+ consecutive rejections. Run `summary` to see results or `hypotheses` to regenerate ideas.",
+    );
+  } else if (state.consecutiveRejections >= 3) {
+    console.log(
+      "\nWARNING: 3+ consecutive rejections. Consider escape strategies (compound mutations, reversals, radical reorder).",
+    );
+  }
 }
 
 async function cmdHypotheses() {
@@ -655,11 +763,13 @@ async function cmdHypotheses() {
   const workflowResults = JSON.parse(readFileSync(workflowPath, "utf-8"));
   const hypotheses = generateHypotheses(workflowResults);
 
-  // Filter out exhausted ones
-  const exhaustedDescs = new Set(
-    state.exhaustedHypotheses.map((h) => h.description),
+  // Filter out exhausted ones (normalized to ignore metric changes)
+  const exhaustedKeys = new Set(
+    state.exhaustedHypotheses.map((h) => normalizeHypothesisKey(h.description)),
   );
-  const fresh = hypotheses.filter((h) => !exhaustedDescs.has(h.description));
+  const fresh = hypotheses.filter(
+    (h) => !exhaustedKeys.has(normalizeHypothesisKey(h.description)),
+  );
 
   state.pendingHypotheses = fresh;
   saveState(state);
@@ -771,6 +881,146 @@ function cmdSummary() {
   writeFileSync(reportPath, report);
   console.log(report);
   console.log(`\nReport saved to ${reportPath}`);
+
+  writeDashboard(state);
+  writeChangelog(state);
+  writeFindings(state);
+}
+
+// --- Output Generators ---
+
+function computeWeightedDelta(results) {
+  let delta = 0;
+  let stderr = 0;
+  for (const scenario of SCENARIO_KEYS) {
+    const r = results[scenario];
+    if (!r) continue;
+    const w = SCENARIO_WEIGHTS[scenario];
+    delta += (r.deltaPct || r.delta_pct || 0) * w;
+    stderr += ((r.stderrPct || 0) * w) ** 2;
+  }
+  return { delta: +delta.toFixed(3), stderr: +Math.sqrt(stderr).toFixed(3) };
+}
+
+function writeDashboard(state) {
+  const lines = [];
+  lines.push("# APL Iteration Dashboard\n");
+  lines.push(`Updated: ${new Date().toISOString()}\n`);
+
+  const iterCount = state.iterations.length;
+  const accepted = state.iterations.filter(
+    (i) => i.decision === "accepted",
+  ).length;
+  const rejected = iterCount - accepted;
+  const consecRej = state.consecutiveRejections || 0;
+
+  lines.push("## Session Stats\n");
+  lines.push(`| Metric | Value |`);
+  lines.push(`|--------|-------|`);
+  lines.push(`| Iterations | ${iterCount} |`);
+  lines.push(`| Accepted | ${accepted} |`);
+  lines.push(`| Rejected | ${rejected} |`);
+  lines.push(
+    `| Acceptance rate | ${iterCount > 0 ? ((accepted / iterCount) * 100).toFixed(0) : 0}% |`,
+  );
+  lines.push(`| Consecutive rejections | ${consecRej} |`);
+  lines.push(`| Hypotheses pending | ${state.pendingHypotheses.length} |`);
+  lines.push(`| Hypotheses exhausted | ${state.exhaustedHypotheses.length} |`);
+
+  lines.push("\n## DPS Progress\n");
+  lines.push("| Scenario | Baseline | Current | Delta |");
+  lines.push("|----------|----------|---------|-------|");
+  for (const key of SCENARIO_KEYS) {
+    const label = SCENARIO_LABELS[key];
+    const orig = state.originalBaseline.dps[key];
+    const curr = state.current.dps[key];
+    if (orig === undefined) continue;
+    const delta =
+      curr !== undefined
+        ? (((curr - orig) / orig) * 100).toFixed(2) + "%"
+        : "—";
+    lines.push(
+      `| ${label} | ${(orig || 0).toLocaleString()} | ${(curr || 0).toLocaleString()} | ${delta} |`,
+    );
+  }
+
+  if (iterCount > 0) {
+    lines.push("\n## Recent Iterations\n");
+    lines.push("| # | Decision | Hypothesis | Weighted Delta |");
+    lines.push("|---|----------|------------|----------------|");
+    for (const iter of state.iterations.slice(-10)) {
+      const w = computeWeightedDelta(iter.results || {});
+      const sign = w.delta >= 0 ? "+" : "";
+      const hyp =
+        iter.hypothesis.length > 50
+          ? iter.hypothesis.slice(0, 50) + "…"
+          : iter.hypothesis;
+      lines.push(
+        `| ${iter.id} | ${iter.decision} | ${hyp} | ${sign}${w.delta}% |`,
+      );
+    }
+  }
+
+  const dashPath = join(RESULTS_DIR, "dashboard.md");
+  writeFileSync(dashPath, lines.join("\n") + "\n");
+}
+
+function writeFindings(state) {
+  const findings = state.findings || [];
+  const lines = [];
+  lines.push("# Significant Findings\n");
+  lines.push(`Updated: ${new Date().toISOString()}\n`);
+
+  if (findings.length === 0) {
+    lines.push(
+      "No significant findings yet (threshold: >0.5% weighted delta).\n",
+    );
+  } else {
+    lines.push("| Iteration | Weighted Delta | Hypothesis | ST | 5T | 10T |");
+    lines.push("|-----------|----------------|------------|----|----|-----|");
+    for (const f of findings) {
+      const scenarios = f.scenarios || {};
+      const cols = SCENARIO_KEYS.map((k) => {
+        const v = scenarios[k];
+        return v !== undefined ? `${v >= 0 ? "+" : ""}${v.toFixed(2)}%` : "—";
+      });
+      lines.push(
+        `| ${f.iteration} | ${f.weightedDelta >= 0 ? "+" : ""}${f.weightedDelta.toFixed(3)}% | ${f.hypothesis} | ${cols.join(" | ")} |`,
+      );
+    }
+  }
+
+  writeFileSync(join(RESULTS_DIR, "findings.md"), lines.join("\n") + "\n");
+}
+
+function writeChangelog(state) {
+  const accepted = state.iterations.filter((i) => i.decision === "accepted");
+  const lines = [];
+  lines.push("# APL Changelog\n");
+  lines.push(`Updated: ${new Date().toISOString()}\n`);
+
+  if (accepted.length === 0) {
+    lines.push("No accepted changes yet.\n");
+  } else {
+    for (const iter of [...accepted].reverse()) {
+      const w = computeWeightedDelta(iter.results || {});
+      const sign = w.delta >= 0 ? "+" : "";
+      lines.push(`## Iteration #${iter.id} (${sign}${w.delta}% weighted)\n`);
+      lines.push(`**${iter.timestamp}**\n`);
+      lines.push(`${iter.hypothesis}\n`);
+      if (iter.mutation) lines.push(`Change: ${iter.mutation}\n`);
+      const scenarioDetail = SCENARIO_KEYS.map((k) => {
+        const r = iter.results?.[k];
+        if (!r) return null;
+        return `${SCENARIO_LABELS[k]}: ${r.delta_pct >= 0 ? "+" : ""}${r.delta_pct?.toFixed(2) || "?"}%`;
+      })
+        .filter(Boolean)
+        .join(", ");
+      if (scenarioDetail) lines.push(`Scenarios: ${scenarioDetail}\n`);
+    }
+  }
+
+  writeFileSync(join(RESULTS_DIR, "changelog.md"), lines.join("\n") + "\n");
 }
 
 function printHypotheses(hypotheses) {

@@ -117,10 +117,9 @@ npm run verify          →  validates data against Raidbots + simc C++
 
 ## Known Gaps
 
-- 10 unknown-type interactions (~5.3%) — need SpellDataDump effect data to classify
-- Demonsurge (452435) not found in simc spell_query — not yet in compiled binary's spell data
-- Baseline APL uses TWW3 Fel-Scarred profile — needs Midnight/Aldrachi Reaver and Annihilator profiles
-- Spell descriptions contain unresolved template variables ($s1, $s2)
+- GCD efficiency metric uses conservative estimate (total executes / theoretical GCDs) — doesn't account for haste-adjusted GCD or off-GCD abilities
+- Annihilator profile needed — current baseline only exercises Aldrachi Reaver talents
+- Spell template variable resolution at 65.9% — remaining are stat-dependent ($AGI, $sw), compound conditionals, and sub-spells missing from binary
 
 ### Step 9: SimC Reference Data Extraction
 
