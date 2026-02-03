@@ -212,9 +212,9 @@ main() {
   build_simc
   extract_reference_apl
   sync_wiki
-  build_data
-  generate_spelldatadump
   extract_simc_refs
+  generate_spelldatadump
+  build_data
   verify
   record_metadata
   print_summary

@@ -1,9 +1,9 @@
 {
-  "refreshed_at": "2026-02-03T20:06:38Z",
+  "refreshed_at": "2026-02-03T22:14:56Z",
   "data_env": "beta",
   "simc": {
-    "commit": "092fc18e391e46aa8864218af79a27c0f43cdc38",
+    "commit": "d9681d2ccff805b65f7071e3add9a330acfe20bf",
     "branch": "midnight",
-    "commit_date": "2026-02-03 19:00:50 +0000"
+    "commit_date": "2026-02-03 13:40:40 -0800"
   }
 }

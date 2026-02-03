@@ -688,7 +688,7 @@
   "effectScans": [
     {
       "talent": "Untethered Rage",
-      "talentVar": "vengeance.untethered_rage1",
+      "talentVar": "vengeance.untethered_rage_1",
       "target": "buff:untethered_rage",
       "type": "buff_grant",
       "mechanism": "talent_gates_buff",
@@ -697,7 +697,7 @@
     },
     {
       "talent": "Untethered Rage",
-      "talentVar": "vengeance.untethered_rage3",
+      "talentVar": "vengeance.untethered_rage_3",
       "target": "buff:seething_anger",
       "type": "buff_grant",
       "mechanism": "talent_gates_buff",
