@@ -41,12 +41,17 @@ How to translate hypothesis categories from `iterate.js` into specific APL edits
 | `threshold_sweep`       | Create candidate with different numeric values, test each                |
 | `cooldown_alignment`    | Add `buff.X.up` or `cooldown.X.remains<N` conditions to align burst      |
 
-### Reading the APL for Edit Targets
+### Reading the APL for Edit Targets — Theory First
 
-1. Identify the ability from the hypothesis
-2. Find it in `apls/current.simc` — note which action list it's in and its position
-3. Read surrounding actions to understand priority context
-4. Check both hero tree branches (`actions.ar` and `actions.anni`) — the current baseline uses AR talents, so `actions.ar` is the active branch. The `actions.anni` list exists but won't execute without an Annihilator talent profile. Changes to shared lists (precombat, default, externals) affect both.
+Before touching any ability, build a complete mental model of its role. Never skip this.
+
+1. **Locate the ability.** Find it in `apls/current.simc` — note which action list it's in, its priority position, and every condition on the line.
+2. **Understand why it's there.** Read the surrounding actions above and below. What does this ability compete with for GCDs? What fires instead if this condition fails? What would fire _less_ if this condition is loosened?
+3. **Trace the resource/cooldown impact.** Does this ability generate or spend Fury? Produce or consume soul fragments? Interact with a cooldown window (e.g., Fiery Brand/Fiery Demise)? A change here ripples through the resource economy.
+4. **Check cross-references.** Search for `variable,name=` definitions and other action lines that reference the same buff, debuff, or resource threshold. A condition change on one line may conflict with assumptions elsewhere.
+5. **Check both hero tree branches** (`actions.ar` and `actions.anni`). The current baseline uses AR talents, so `actions.ar` is the active branch. The `actions.anni` list exists but won't execute without an Annihilator talent profile. Changes to shared lists (precombat, default, externals) affect both.
+6. **Form a theory.** State explicitly: "This change should improve X because Y, at the cost of Z." If you can't articulate the expected mechanism, you don't understand the change well enough to make it. Do more analysis before simulating.
+7. **Predict the direction.** Before running the sim, predict whether the change will be positive, negative, or neutral — and roughly by how much. After results come back, compare against your prediction. Wrong predictions mean your model of the APL is incomplete; update it before the next iteration.
 
 ## 3. Avoiding Local Optima
 
