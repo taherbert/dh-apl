@@ -2,6 +2,28 @@
 
 Reference for the autonomous APL optimization loop (`/iterate-apl`). Complements `prompts/apl-analysis-guide.md` with iteration-specific strategy.
 
+## 0. Error Audit — Before Optimizing, Fix What's Wrong
+
+Before pursuing optimization hypotheses, audit the APL for logic errors. Fixing incorrect assumptions often yields larger gains than tuning correct-but-suboptimal logic, and optimization on top of broken logic is wasted work.
+
+### What to look for
+
+- **Stale hardcoded values.** Variables and conditions that assume fixed caps, thresholds, or counts that talents modify. Example: `num_spawnable_souls` may assume a soul fragment cap of 5, but an apex talent (e.g., Untethered Rage) raises it to 6. Any `soul_fragments>=5` or `soul_fragments<=2+talent.soul_sigils` check is suspect if it doesn't account for the actual cap.
+- **Missing talent interactions.** Conditions that don't gate on a talent that fundamentally changes the mechanic. If a talent doubles a proc chance, extends a duration, or adds a new resource source, the APL logic downstream of that mechanic needs to reflect it.
+- **Incorrect operator or comparison.** Off-by-one errors (`>=4` vs `>=5`), wrong boolean logic (`&` vs `|`), or inverted checks (`!buff.X.up` when `buff.X.up` was intended).
+- **Dead or unreachable lines.** Actions whose conditions can never be true given the talent build, or that are shadowed by an earlier unconditional action that always fires first.
+
+### Tracing downstream effects
+
+A single corrected assumption can cascade. When you fix an error, trace outward:
+
+1. **What variables reference the corrected value?** Update them. If `num_spawnable_souls` now accounts for 6 fragments, every condition using `variable.num_spawnable_souls` may need revisiting.
+2. **What thresholds change?** A higher fragment cap means Spirit Bomb at 5 fragments is no longer "full" — does 6 change the DPGCD breakpoint? Does the `spb_1t_souls` variable need a new branch?
+3. **What target-count breakpoints shift?** More fragments per cycle means more Spirit Bomb damage in AoE, which may lower the `active_enemies>=N` threshold where Spirit Bomb overtakes other spenders.
+4. **What resource flows change?** Extra fragments may mean more healing (Charred Flesh, Soul Barrier) or more Fury-free damage, shifting the Fury economy.
+
+Document each error and its downstream trace as a finding before making the fix. The fix itself may be one line, but the theory behind it should be thorough.
+
 ## 1. Mutation Taxonomy
 
 Types of APL changes, ordered by risk/impact:
