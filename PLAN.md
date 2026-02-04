@@ -337,14 +337,50 @@ Known gaps:
 - Annihilator branch untested (no Anni talent profile exists)
 - Brand-first CD ordering (+0.6%) tested at `target_error=1.0` — below noise floor, should be re-tested at higher fidelity
 
+### Phase 5: Untethered Rage Implementation — [x] Complete
+
+**Root cause investigation:** Untethered Rage (apex talent, 4 ranks) was in the talent build string but not loading in SimC. Investigation revealed two issues:
+
+1. **Missing `ptr=1` in profile** — SimC defaults `dbc->ptr=false`. PTR data tables (gated by `SC_USE_PTR` + `maybe_ptr()`) contain tiered apex nodes (110416, 110425, 110427) that don't exist in live data tables. Without `ptr=1`, `generate_tree_nodes()` loads 224 nodes instead of 227, and `find_talent_spell("Untethered Rage")` fails silently.
+2. **Partial SimC implementation** — UR proc formula was a placeholder (`0.0075 * pow(1.35, up())`), and the free Metamorphosis mechanic was not implemented.
+
+**Fixes applied:**
+
+| File                       | Change                                                            |
+| -------------------------- | ----------------------------------------------------------------- |
+| `apls/profile.simc`        | Added `ptr=1` (enables PTR data tables for Midnight beta)         |
+| `src/sim/runner.js`        | Auto-adds `ptr=1` when `DATA_ENV` is "ptr" or "beta"              |
+| `apls/vengeance.simc`      | Meta condition: `!buff.metamorphosis.up\|buff.untethered_rage.up` |
+| SimC `sc_demon_hunter.cpp` | Full UR implementation (see below)                                |
+
+**SimC implementation (on fork `taherbert/simc`, branch `feature/untethered-rage-meta`):**
+
+1. Expire Seething Anger on UR proc + proc tracking
+2. UR buff grants temporary Meta charge via `adjust_max_charges(cur - old)` stack callback
+3. Meta execute: UR-consumed Meta uses max(remaining, 10s) duration — `extend_duration()` when Meta is active with <10s remaining, `trigger(10s)` when Meta is down. Avoids both `extend_duration_or_trigger()` (extends BY 10s, too generous) and `trigger()` (assertion failure from TICK refresh_behavior on Meta buff).
+4. Removed "Partial implementation" comment
+5. Preserves upstream proc rate formula: `0.0075 * pow(1.35, SA_up)` per soul consumed
+
+**Note on upstream proc formula:** Upstream uses `buff.seething_anger->up()` (boolean 0/1) but SA has 99 max stacks. This means the formula treats SA as binary (35% boost when active) rather than scaling with stack count. Likely an upstream bug — `check()` (returns stack count) would give exponential scaling. Not fixed in our PR; separate upstream concern.
+
+**Results (target_error=0.3, 1532 iterations):**
+
+| Metric                | Value       |
+| --------------------- | ----------- |
+| DPS                   | 29,086 ± 44 |
+| Meta uptime           | 26.8%       |
+| UR procs/fight        | 2.7         |
+| Meta casts/fight      | 5.7         |
+| Seething Anger uptime | 95.3%       |
+
 ### Future Work
 
 - [ ] Create Annihilator talent profile and validate `actions.anni` / `actions.anni_voidfall`
 - [ ] Re-test Brand-first CD ordering at `target_error=0.5` to confirm it's above noise
 - [ ] Phase 5: Iteration handoff (`node src/sim/iterate.js init apls/vengeance.simc`)
 - [ ] Test with DungeonRoute / movement scenarios
-- [ ] Implement `/theorycraft` skill (see `plans/theorycraft-skill.md`)
 - [ ] Update gear profile when Midnight-specific consumables, gems, enchants become available in SimC
+- [ ] Submit UR implementation as PR to simc/simc (branch: midnight)
 
 ## Findings & Notes
 
@@ -359,3 +395,6 @@ Known gaps:
 - `input=` resolver added to `profilesets.js` (`resolveInputDirectives`) — inlines referenced files so profileset content written to `results/` is self-contained. Used by `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`.
 - SimC APL expressions have NO runtime spell data introspection — no `action.X.ap_coefficient`, no `spell.X.base_damage`. The `multiplier` expression returns the composite multiplier for the _current action's_ schools only. APL variables must use threshold-based conditions, not computed damage-per-fury comparisons.
 - SimC `input=` resolves paths relative to **CWD** (where simc binary is invoked), NOT relative to the including file's directory. Use `input=apls/profile.simc` when running from project root.
+- **`ptr=1` is required for Midnight beta data.** SimC `maybe_ptr()` is a compile-time gate (`#if SC_USE_PTR`), but `dbc->ptr` defaults to `false` at runtime. Set `ptr=1` in the profile or as a sim override. Without it, tiered apex nodes (Untethered Rage, Eternal Hunt, Midnight hero node) are missing from the talent tree.
+- **Untethered Rage mechanic:** Upstream proc formula `0.0075 * pow(1.35, SA_up) * souls_consumed` per consumption event. ~2.7 procs per 300s fight. UR proc grants a free Meta charge (10s duration vs normal 15s). SA stacks expire on UR proc; SA cannot stack while UR is active. SA has 99 max stacks, but upstream formula uses `up()` (binary) not `check()` (stack count).
+- **Meta buff refresh hazard:** Meta buff has `refresh_behavior = TICK` (from spell data periodic dummy effect) but `buff_period = zero()` and `tick_behavior = NONE` (set in constructor). Calling `trigger()` on active Meta hits `assert(tick_event)` in `refresh_duration()`. Calling `extend_duration_or_trigger()` extends BY the duration rather than refreshing TO it. Solution: use `extend_duration()` with delta = max(0, desired - remaining) when Meta is active, `trigger(duration)` when Meta is down.
