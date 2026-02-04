@@ -335,27 +335,16 @@ Diagnostics:
 Known gaps:
 
 - Annihilator branch untested (no Anni talent profile exists)
-- No HPS/DTPS comparison (tank survivability metrics not yet validated)
 - Brand-first CD ordering (+0.6%) tested at `target_error=1.0` — below noise floor, should be re-tested at higher fidelity
 
 ### Future Work
 
 - [ ] Create Annihilator talent profile and validate `actions.anni` / `actions.anni_voidfall`
-- [ ] Add HPS/DTPS to validation metrics (tank APL needs survivability analysis)
 - [ ] Re-test Brand-first CD ordering at `target_error=0.5` to confirm it's above noise
 - [ ] Phase 5: Iteration handoff (`node src/sim/iterate.js init apls/vengeance.simc`)
-- [ ] Test with DungeonRoute / movement scenarios (Patchwerk-only validation is limited for tanks)
+- [ ] Test with DungeonRoute / movement scenarios
 - [ ] Implement `/theorycraft` skill (see `plans/theorycraft-skill.md`)
 - [ ] Update gear profile when Midnight-specific consumables, gems, enchants become available in SimC
-
-### Cleanup (pre-v2)
-
-- [x] Deleted `apls/current.simc` (stale derivative APL)
-- [x] Deleted all stale iteration results (`results/*.json`, `results/*.md`)
-- [x] Fixed Spirit Bomb cooldown in `archetypes.js`: was 45s, actual is 25s (from `data/spells.json` spell 247454)
-- [x] Documented `run_action_list` vs `call_action_list` semantics in CLAUDE.md, plan, iterate-apl skill
-- [x] Documented multi-file `input=profile.simc` structure in CLAUDE.md, plan, iterate-apl skill
-- [x] `apls/profile.simc` already exists with shared character profile (gear, talents, race)
 
 ## Findings & Notes
 

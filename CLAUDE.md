@@ -13,6 +13,7 @@ SimulationCraft APLs are text-based priority lists that define ability usage, co
 - **SimulationCraft (SimC):** Open-source WoW combat simulator. APLs drive the decision engine.
 - **APL syntax:** Each line is an action entry with optional conditions. Lines are evaluated top-to-bottom; first matching action fires.
 - **Vengeance DH resources:** Fury (builder/spender), Soul Fragments (healing/damage), health/defensives.
+- **DPS only.** This project optimizes exclusively for damage output. Survivability, HPS, DTPS, and defensive metrics are not goals. Demon Spikes and other defensives are maintained for SimC realism but never at the expense of DPS.
 - **Key abilities:** Fracture, Spirit Bomb, Soul Cleave, Immolation Aura, Sigil of Flame, Fiery Brand, Demon Spikes, Fel Devastation, The Hunt, Elysian Decree.
 - **Talent builds** affect which abilities are available and how the APL branches.
 
