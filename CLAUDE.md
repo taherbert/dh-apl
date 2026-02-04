@@ -235,6 +235,9 @@ npm run extract-simc                         # Extract simc C++ talent variables
 # Full analysis — deep theorycraft + iteration loop
 /full-analysis [apls/baseline.simc]
 
+# Optimize — co-optimize build + APL together
+/optimize [apls/vengeance.simc]
+
 # Iteration state management
 node src/sim/iterate.js init apls/baseline.simc
 node src/sim/iterate.js status
