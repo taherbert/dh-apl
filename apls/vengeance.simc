@@ -1,9 +1,5 @@
 input=apls/profile.simc
 
-# Vengeance DH APL — Midnight (from scratch)
-# Phase 2 tested: cooldown ordering, fragment thresholds, Felblade value,
-# Fracture overflow, core rotation priority, Meta-priority Fracture
-
 # === Precombat ===
 actions.precombat=/snapshot_stats
 # Trinket buff detection — standard SimC plumbing
@@ -23,7 +19,8 @@ actions+=/disrupt,if=target.debuff.casting.react
 # Off-GCD weaving
 actions+=/infernal_strike,use_off_gcd=1
 actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&!cooldown.pause_action.remains
-actions+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up
+# Cast Meta on CD or use free charge from Untethered Rage (refreshes/extends Meta)
+actions+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up|buff.untethered_rage.up
 # Hero tree routing — mutually exclusive branches
 actions+=/run_action_list,name=ar,if=hero_tree.aldrachi_reaver
 actions+=/run_action_list,name=anni,if=hero_tree.annihilator

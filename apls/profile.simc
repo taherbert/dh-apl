@@ -2,6 +2,7 @@
 # Use with: simc apls/profile.simc <apl_file>
 # Talent hash generated from data/talents.json (all class+spec+AR hero talents)
 
+ptr=1
 demonhunter="VDH_Midnight"
 source=default
 spec=vengeance

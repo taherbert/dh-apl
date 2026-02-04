@@ -10,7 +10,7 @@ import { cpus } from "node:os";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { SIMC_BIN } from "../config.js";
+import { SIMC_BIN, DATA_ENV } from "../config.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -45,12 +45,17 @@ export const SCENARIOS = {
 function buildOverrides(scenario, extraOverrides = {}) {
   const config = SCENARIOS[scenario];
   const merged = { ...SIM_DEFAULTS, ...extraOverrides };
-  return [
+  const overrides = [
     `max_time=${config.maxTime}`,
     `desired_targets=${config.desiredTargets}`,
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
   ];
+  // PTR/beta data environments require ptr=1 for SimC to use ptr data tables
+  if (DATA_ENV === "ptr" || DATA_ENV === "beta") {
+    overrides.unshift("ptr=1");
+  }
+  return overrides;
 }
 
 export function prepareSim(
