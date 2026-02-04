@@ -241,6 +241,41 @@ The derivative APL built in these phases was deleted. It was structurally a copy
 
 **See `plans/apl-from-scratch-v2.md` for the current plan.** Start there.
 
+### Phase 3.1: APL Skeleton — [x] Complete
+
+- Created `apls/vengeance.simc` with 8 action lists: precombat, default, externals, ar, ar_empowered, ar_cooldowns, anni, anni_voidfall
+- Sub-list design: `call_action_list` for empowered/cooldowns/voidfall (optional, falls through), `run_action_list` for hero tree routing (mutually exclusive)
+- Uses `input=apls/profile.simc` (CWD-relative, not file-relative — SimC resolves from where binary is invoked)
+- All abilities cast across all scenarios, no 0-cast issues
+- Demon Spikes uptime 99%+, AotG cycle functioning correctly
+- ST DPS -3.9% vs baseline (expected for untuned skeleton), AoE +14-17% (Spirit Bomb threshold + sub-list structure)
+- Parser round-trips cleanly (only normalizes `actions.X=/` to `actions.X=`, cosmetic)
+
+### Phase 2: Simulation-Driven Priority Discovery — [x] Complete
+
+Ran 5 profileset tests (24 total variants) in ST to discover optimal AR priority ordering:
+
+| Test                  | Best Variant                    | DPS Impact | Key Finding                                                 |
+| --------------------- | ------------------------------- | ---------- | ----------------------------------------------------------- |
+| Fracture guard        | No overflow guard               | +10.4%     | Fracture DPGCD high enough that overflow waste < lost casts |
+| Core rotation         | Meta-priority Fracture          | +5.2%      | +1 frag/cast in Meta justifies top priority                 |
+| Felblade position     | After Fracture                  | +2.1%      | Fury gen is critical; removing costs -13.8%                 |
+| Cooldown order        | Brand > Spite > Carver > FelDev | +0.6%      | Brand first enables Fiery Demise window                     |
+| Spirit Bomb threshold | 4-5 frags within noise          | +0.3%      | Keep at 4 for Frailty uptime                                |
+
+AoE test confirmed Spirit Bomb threshold has negligible AoE impact (0.3% spread).
+
+Applied all findings to `apls/vengeance.simc`. Results vs baseline:
+
+- ST: +6.5% (22,885 → 24,370)
+- 5T AoE: +25.1% (66,143 → 82,772)
+- 10T AoE: +27.4% (115,025 → 146,491)
+
+Bug fixes during Phase 2:
+
+- Fixed `resolveInputDirectives` to try CWD-relative paths as fallback (profileset system couldn't resolve `input=apls/profile.simc`)
+- Fixed `runProfileset` sync variant dropping input file path (`args.slice(1)` → `args`)
+
 ### Cleanup (pre-v2)
 
 - [x] Deleted `apls/current.simc` (stale derivative APL)
@@ -262,3 +297,4 @@ The derivative APL built in these phases was deleted. It was structurally a copy
 - C++ hardcoded proc rates (Fallout 100%/60%, Wounded Quarry 30%) are NOT in spell data — need manual extraction or automated C++ scanner
 - `input=` resolver added to `profilesets.js` (`resolveInputDirectives`) — inlines referenced files so profileset content written to `results/` is self-contained. Used by `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`.
 - SimC APL expressions have NO runtime spell data introspection — no `action.X.ap_coefficient`, no `spell.X.base_damage`. The `multiplier` expression returns the composite multiplier for the _current action's_ schools only. APL variables must use threshold-based conditions, not computed damage-per-fury comparisons.
+- SimC `input=` resolves paths relative to **CWD** (where simc binary is invoked), NOT relative to the including file's directory. Use `input=apls/profile.simc` when running from project root.

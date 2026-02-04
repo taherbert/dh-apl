@@ -38,11 +38,11 @@ Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spike
 
 Choose `run_action_list` when branches are mutually exclusive (only one should ever execute). Choose `call_action_list` when the sub-list is optional or shared — it tries the sub-list and continues if nothing fires.
 
-**Multi-file structure:** SimC supports `input=<filename>` to include one file from another. Paths resolve first relative to the including file's directory, then relative to CWD. Our APL files use this to avoid duplicating the character profile:
+**Multi-file structure:** SimC supports `input=<filename>` to include one file from another. Paths resolve relative to **CWD** (where simc binary is invoked). Our APL files use this to avoid duplicating the character profile:
 
 ```
-# apls/vengeance.simc
-input=profile.simc        # includes apls/profile.simc (same directory)
+# apls/vengeance.simc — run from project root
+input=apls/profile.simc   # CWD-relative path
 actions=auto_attack
 actions+=/...
 ```

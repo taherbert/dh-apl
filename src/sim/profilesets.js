@@ -16,9 +16,10 @@ const RESULTS_DIR = join(ROOT, "results");
 const GOLDEN_DIR = join(RESULTS_DIR, "golden");
 
 // Resolve `input=<filename>` directives by inlining referenced file contents.
-// SimC resolves input= relative to the including file's directory first, then CWD.
+// SimC resolves input= relative to CWD (verified experimentally).
 // When we write profileset content to results/, those relative paths break.
 // This function inlines them so the output is self-contained.
+// Tries: sourceDir-relative first, then CWD-relative as fallback.
 export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
   return content
     .split("\n")
@@ -27,7 +28,12 @@ export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
       if (!match) return [line];
 
       const ref = match[1].trim();
-      const refPath = resolve(sourceDir, ref);
+      let refPath = resolve(sourceDir, ref);
+
+      if (!existsSync(refPath)) {
+        const cwdPath = resolve(process.cwd(), ref);
+        if (existsSync(cwdPath)) refPath = cwdPath;
+      }
 
       if (seen.has(refPath)) return [`# [circular input= skipped: ${ref}]`];
       if (!existsSync(refPath)) return [`# [input= not found: ${ref}]`];
@@ -112,7 +118,7 @@ export function runProfileset(
   );
 
   try {
-    execSync([SIMC, ...args.slice(1)].join(" "), {
+    execSync([SIMC, ...args].join(" "), {
       encoding: "utf-8",
       maxBuffer: 100 * 1024 * 1024,
       timeout: 600000,

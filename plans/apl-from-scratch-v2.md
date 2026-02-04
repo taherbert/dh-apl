@@ -233,7 +233,9 @@ At 0% haste, 1.5s GCD = 40 GCDs per minute.
 
 ---
 
-## Phase 2: Simulation-Driven Priority Discovery
+## Phase 2: Simulation-Driven Priority Discovery — [x] Complete
+
+Test script: `src/sim/phase2-tests.js` (5 tests, 24 variants)
 
 ### 2.1 Baseline Permutation Testing
 
@@ -290,9 +292,9 @@ Test Voidfall interaction:
 
 Build the APL section by section, validating each addition with a sim run.
 
-### 3.1 Skeleton (syntax/structure only)
+### 3.1 Skeleton (syntax/structure only) — [x] Complete
 
-Create `apls/vengeance.simc` with:
+Created `apls/vengeance.simc` with:
 
 1. `input=profile.simc` — includes shared character profile (gear, talents, race)
 2. `actions.precombat` — snapshot_stats, pre-pull abilities
