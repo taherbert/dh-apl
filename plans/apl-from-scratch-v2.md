@@ -14,7 +14,7 @@ The first attempt produced an APL that was structurally a copy of the existing b
 - **Output:** `apls/vengeance.simc` (action lines only, uses `input=profile.simc`)
 - **Profile:** `apls/profile.simc` (shared character setup — gear, talents, race). Already exists.
 - **Multi-file:** APL files start with `input=profile.simc` to include the shared profile. SimC resolves `input=` paths relative to the including file's directory first, then CWD.
-- **Pipeline note:** `resolveInputDirectives()` in `profilesets.js` inlines `input=` directives so profileset content is self-contained. Used by both `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`. ✅ Done.
+- **Pipeline note:** `resolveInputDirectives()` in `profilesets.js` inlines `input=` directives so profileset content is self-contained. Used by both `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`.
 - **Previous APL deleted** — start fresh
 
 ## Available Data Files
@@ -446,4 +446,4 @@ use_off_gcd=1 (action modifier, not expression)
 ## Known Gaps
 
 - **`archetypes.js` is hardcoded seed data** — descriptions, cooldowns, and mechanic details are hand-curated with no automated import from `spells.json`. The Spirit Bomb CD error (45s vs actual 25s) was an example. Future: consider validating archetype data against spell data, or importing key values programmatically.
-- ~~**`iterate.js` needs `input=` resolver**~~ — ✅ Done. `resolveInputDirectives()` added to `profilesets.js`, used by both `buildProfilesetContent()` and `generateProfileset()`.
+- ~~**`iterate.js` needs `input=` resolver**~~ — Done. `resolveInputDirectives()` added to `profilesets.js`, used by both `buildProfilesetContent()` and `generateProfileset()`.
