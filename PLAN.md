@@ -322,6 +322,8 @@ Ran both APLs (`vengeance.simc` vs `baseline.simc`) across all 3 scenarios with 
 | 5T AoE   | 82,816  | 66,350   | +24.8% |
 | 10T AoE  | 146,193 | 114,764  | +27.4% |
 
+**AoE gain decomposition:** The bulk of the AoE delta comes from Spirit Bomb being freely available in our AR branch (fired at 4+ fragments), while the baseline gates Spirit Bomb behind `spell_targets>=12` in its AR branch — effectively disabling it for 5T and 10T scenarios. The remaining gain from rotation optimization (Meta-priority Fracture, cooldown ordering, etc.) is likely 3-5% in AoE.
+
 Diagnostics:
 
 - All abilities casting (no 0-cast issues)
@@ -329,6 +331,22 @@ Diagnostics:
 - Fragment overflow lower than baseline (78.8 vs 118.0)
 - AotG cycle functioning correctly
 - Frailty uptime healthy
+
+Known gaps:
+
+- Annihilator branch untested (no Anni talent profile exists)
+- No HPS/DTPS comparison (tank survivability metrics not yet validated)
+- Brand-first CD ordering (+0.6%) tested at `target_error=1.0` — below noise floor, should be re-tested at higher fidelity
+
+### Future Work
+
+- [ ] Create Annihilator talent profile and validate `actions.anni` / `actions.anni_voidfall`
+- [ ] Add HPS/DTPS to validation metrics (tank APL needs survivability analysis)
+- [ ] Re-test Brand-first CD ordering at `target_error=0.5` to confirm it's above noise
+- [ ] Phase 5: Iteration handoff (`node src/sim/iterate.js init apls/vengeance.simc`)
+- [ ] Test with DungeonRoute / movement scenarios (Patchwerk-only validation is limited for tanks)
+- [ ] Implement `/theorycraft` skill (see `plans/theorycraft-skill.md`)
+- [ ] Update gear profile when Midnight-specific consumables, gems, enchants become available in SimC
 
 ### Cleanup (pre-v2)
 

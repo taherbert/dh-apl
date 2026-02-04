@@ -5,7 +5,7 @@
 import { execSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { join, dirname, basename, resolve } from "node:path";
+import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
 

@@ -8,7 +8,7 @@ import {
   runProfileset,
   printProfilesetResults,
 } from "./profilesets.js";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -34,21 +34,21 @@ const AR_FILLERS = [
   "throw_glaive",
 ];
 
+// Format an array of action lines as SimC action list overrides.
+function buildActionList(listName, actions) {
+  return actions.map((action, i) =>
+    i === 0
+      ? `actions.${listName}=${action}`
+      : `actions.${listName}+=/${action}`,
+  );
+}
+
 function buildArList(coreRotation) {
-  const all = [...AR_PREFIX, ...coreRotation, ...AR_FILLERS];
-  const overrides = [`actions.ar=${all[0]}`];
-  for (let i = 1; i < all.length; i++) {
-    overrides.push(`actions.ar+=/${all[i]}`);
-  }
-  return overrides;
+  return buildActionList("ar", [...AR_PREFIX, ...coreRotation, ...AR_FILLERS]);
 }
 
 function buildCooldownList(cooldowns) {
-  const overrides = [`actions.ar_cooldowns=${cooldowns[0]}`];
-  for (let i = 1; i < cooldowns.length; i++) {
-    overrides.push(`actions.ar_cooldowns+=/${cooldowns[i]}`);
-  }
-  return overrides;
+  return buildActionList("ar_cooldowns", cooldowns);
 }
 
 // === TEST 1: Spirit Bomb fragment threshold ===
@@ -334,8 +334,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log("PHASE 2 RESULTS SUMMARY");
   console.log("=".repeat(60));
 
-  for (const [testName, results] of Object.entries(allResults)) {
-    console.log(`\n${testName}:`);
+  for (const [name, results] of Object.entries(allResults)) {
+    console.log(`\n${name}:`);
     const best = results.variants[0];
     const worst = results.variants[results.variants.length - 1];
     if (best && worst) {
