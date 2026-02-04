@@ -47,7 +47,7 @@ actions=auto_attack
 actions+=/...
 ```
 
-`apls/profile.simc` contains the shared character setup (race, talents, gear). APL files contain only action lines. The `iterate.js` pipeline needs to resolve `input=` directives when building profileset files — see `buildProfilesetContent()` in `src/sim/iterate.js`.
+`apls/profile.simc` contains the shared character setup (race, talents, gear). APL files contain only action lines. The `resolveInputDirectives()` function in `profilesets.js` inlines `input=` directives so profileset content written to `results/` is self-contained.
 
 ## Session Protocol
 

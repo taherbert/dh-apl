@@ -260,3 +260,5 @@ The derivative APL built in these phases was deleted. It was structurally a copy
 - GCD efficiency metric needs refinement for AoE scenarios (currently counts per-target hits)
 - FIELD_REGEX bug: "Internal Cooldown" (17 chars) fills the spell_query column exactly, leaving zero padding before `:`. Fixed by `\s*`
 - C++ hardcoded proc rates (Fallout 100%/60%, Wounded Quarry 30%) are NOT in spell data — need manual extraction or automated C++ scanner
+- `input=` resolver added to `profilesets.js` (`resolveInputDirectives`) — inlines referenced files so profileset content written to `results/` is self-contained. Used by `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`.
+- SimC APL expressions have NO runtime spell data introspection — no `action.X.ap_coefficient`, no `spell.X.base_damage`. The `multiplier` expression returns the composite multiplier for the _current action's_ schools only. APL variables must use threshold-based conditions, not computed damage-per-fury comparisons.

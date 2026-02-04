@@ -14,7 +14,7 @@ The first attempt produced an APL that was structurally a copy of the existing b
 - **Output:** `apls/vengeance.simc` (action lines only, uses `input=profile.simc`)
 - **Profile:** `apls/profile.simc` (shared character setup — gear, talents, race). Already exists.
 - **Multi-file:** APL files start with `input=profile.simc` to include the shared profile. SimC resolves `input=` paths relative to the including file's directory first, then CWD.
-- **Pipeline note:** `iterate.js`'s `buildProfilesetContent()` needs to resolve `input=` directives by inlining the referenced content, since relative paths won't resolve from `results/`. Add this resolver in Phase 3.
+- **Pipeline note:** `resolveInputDirectives()` in `profilesets.js` inlines `input=` directives so profileset content is self-contained. Used by both `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`. ✅ Done.
 - **Previous APL deleted** — start fresh
 
 ## Available Data Files
@@ -301,8 +301,6 @@ Create `apls/vengeance.simc` with:
 5. `actions.ar` — empty, to be filled
 6. `actions.anni` — empty, to be filled
 
-Also add `input=` resolver to `iterate.js`'s `buildProfilesetContent()` so profileset runs inline the profile content correctly.
-
 **Syntax patterns to use** (learned from reference, NOT priority):
 
 - `variable,name=X,value=expr` for computed state
@@ -442,4 +440,4 @@ use_off_gcd=1 (action modifier, not expression)
 ## Known Gaps
 
 - **`archetypes.js` is hardcoded seed data** — descriptions, cooldowns, and mechanic details are hand-curated with no automated import from `spells.json`. The Spirit Bomb CD error (45s vs actual 25s) was an example. Future: consider validating archetype data against spell data, or importing key values programmatically.
-- **`iterate.js` needs `input=` resolver** — `buildProfilesetContent()` reads APL files as text and writes intermediate files to `results/`. Relative `input=profile.simc` paths won't resolve from there. Add a resolver that inlines `input=` content before writing. (Phase 3 task.)
+- ~~**`iterate.js` needs `input=` resolver**~~ — ✅ Done. `resolveInputDirectives()` added to `profilesets.js`, used by both `buildProfilesetContent()` and `generateProfileset()`.

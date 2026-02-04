@@ -30,6 +30,7 @@ import {
   generateProfileset,
   runProfileset,
   runProfilesetAsync,
+  resolveInputDirectives,
 } from "./profilesets.js";
 import {
   generateStrategicHypotheses,
@@ -48,7 +49,6 @@ const ROOT = join(__dirname, "..", "..");
 const RESULTS_DIR = join(ROOT, "results");
 const STATE_PATH = join(RESULTS_DIR, "iteration-state.json");
 // Iteration working copy — created by `init`, updated by `accept`.
-// Phase 3 TODO: add input= resolver so profile.simc inlines correctly in profilesets.
 const CURRENT_APL = join(ROOT, "apls", "current.simc");
 
 const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];
@@ -339,8 +339,13 @@ function recordIteration(state, comparison, reason, hypothesisHint, decision) {
 // --- Comparison ---
 
 function buildProfilesetContent(candidatePath) {
-  const baseContent = readFileSync(CURRENT_APL, "utf-8");
-  const candidateContent = readFileSync(candidatePath, "utf-8");
+  const rawBase = readFileSync(CURRENT_APL, "utf-8");
+  const baseContent = resolveInputDirectives(rawBase, dirname(CURRENT_APL));
+  const rawCandidate = readFileSync(candidatePath, "utf-8");
+  const candidateContent = resolveInputDirectives(
+    rawCandidate,
+    dirname(resolve(candidatePath)),
+  );
 
   // Extract action lines from candidate, filtering empty lines
   const actionLines = candidateContent
