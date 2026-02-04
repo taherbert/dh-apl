@@ -161,6 +161,56 @@
       "aplVersion": "vengeance-v7-coopt",
       "status": "validated",
       "tags": ["build-optimization", "tree-constraints", "gate-requirements"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "IA priority during Brand window (Charred Flesh extension) is noise",
+      "evidence": "+0.08% weighted at standard fidelity, not significant. Charred Flesh Brand extension doesn't translate to measurable DPS gain — Brand duration already sufficient without IA priority boost.",
+      "confidence": "high",
+      "build": "ar-cooptimized-v1",
+      "aplVersion": "vengeance-v8-iterate",
+      "status": "rejected",
+      "tags": ["charred-flesh", "fiery-brand", "immolation-aura"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "FelDev empowered-window gate is load-bearing",
+      "evidence": "Removing !buff.rending_strike.up&!buff.glaive_flurry.up from FelDev: -0.21% weighted at quick. Channeling during empowered window costs more than the gate's delayed casts.",
+      "confidence": "high",
+      "build": "ar-cooptimized-v1",
+      "aplVersion": "vengeance-v8-iterate",
+      "status": "rejected",
+      "tags": ["fel-devastation", "ar-empowered-cycle", "condition-gating"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "DoE factor impacts are population averages, not swap-equivalent values",
+      "evidence": "Fallout shows -3.17% DoE impact but removing it causes -4.37% weighted regression. DoE measures average effect across all test builds (some without SBomb). In a SBomb build, Fallout is critical for AoE fragment economy.",
+      "confidence": "high",
+      "build": "ar-cooptimized-v1",
+      "aplVersion": "vengeance-v8-iterate",
+      "status": "validated",
+      "tags": ["build-optimization", "doe-methodology", "fragment-economy"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Retaliation + Felfire Fist add minimal value when dropping Darkglare Boon + Vuln r2",
+      "evidence": "+0.12% weighted at quick fidelity, not significant. Despite DoE showing +12%/+10% for Retal/FF, these factor impacts include other correlated talent differences. Net swap is roughly neutral.",
+      "confidence": "medium",
+      "build": "ar-cooptimized-v1",
+      "aplVersion": "vengeance-v8-iterate",
+      "status": "rejected",
+      "tags": ["build-optimization", "talent-swaps", "retaliation", "felfire-fist"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Current APL is near local optimum for the co-optimized build",
+      "evidence": "9 consecutive rejections across APL changes (IA priority, SoF priority, FelDev ungating) and build swaps (Retal+FF). No significant improvement found. The co-optimized build + APL from the prior session left very little optimization surface.",
+      "confidence": "high",
+      "build": "ar-cooptimized-v1",
+      "aplVersion": "vengeance-v8-iterate",
+      "status": "validated",
+      "tags": ["local-optimum", "optimization-plateau"]
     }
   ]
 }
