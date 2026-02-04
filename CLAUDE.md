@@ -126,7 +126,7 @@ src/
   model/          # Data models (talents.js, interactions.js, interaction-types.js)
   visualize/      # Reports and graphs (text-report.js, graph.js)
   sim/            # SimC runner and analysis (runner.js, analyze.js, iterate.js)
-  analyze/        # Strategic analysis (archetypes.js, strategic-hypotheses.js)
+  analyze/        # Strategic analysis (archetypes.js, strategic-hypotheses.js, theorycraft.js)
   apl/            # APL parser, condition-parser, mutator
 data/
   raw/            # Raw simc dumps (gitignored)
@@ -226,6 +226,9 @@ npm run extract-simc                         # Extract simc C++ talent variables
 # Iterate APL — autonomous improvement loop
 /iterate-apl
 
+# Theorycraft — temporal resource flow analysis and hypotheses
+/theorycraft [apls/vengeance.simc]
+
 # Iteration state management
 node src/sim/iterate.js init apls/baseline.simc
 node src/sim/iterate.js status
@@ -234,6 +237,7 @@ node src/sim/iterate.js accept "reason" [--hypothesis "fragment"]
 node src/sim/iterate.js reject "reason" [--hypothesis "fragment"]
 node src/sim/iterate.js hypotheses
 node src/sim/iterate.js strategic                    # Generate archetype-aware hypotheses with auto-mutations
+node src/sim/iterate.js theorycraft                  # Generate temporal resource flow hypotheses
 node src/sim/iterate.js generate                     # Auto-generate candidate from top hypothesis
 node src/sim/iterate.js rollback <iteration-id>      # Rollback an accepted iteration
 node src/sim/iterate.js summary
@@ -241,6 +245,7 @@ node src/sim/iterate.js summary
 # Analysis tools
 node src/analyze/archetypes.js                       # Show archetype definitions
 node src/analyze/strategic-hypotheses.js <workflow.json> [apl.simc]  # Generate strategic hypotheses
+node src/analyze/theorycraft.js [workflow.json] [apl.simc]           # Temporal resource flow analysis
 node src/apl/condition-parser.js "condition"         # Parse APL condition to AST
 node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
 ```
