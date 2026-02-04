@@ -12,8 +12,8 @@ actions.precombat+=/immolation_aura
 # === Default (runs every cycle) ===
 # Fiery Demise window flag — used in both hero trees
 actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
-# Spirit Bomb fragment threshold — 3/4/5 within noise in both ST and AoE (Phase 3.2 tested)
-actions+=/variable,name=spb_threshold,value=4
+# Spirit Bomb fragment threshold — 5 confirmed optimal: +0.21% over 4 (ST +0.36%, 10T +0.44%)
+actions+=/variable,name=spb_threshold,value=5
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react
 # Off-GCD weaving
@@ -41,7 +41,7 @@ actions.ar+=/call_action_list,name=ar_empowered
 # Long cooldowns — fires one if ready, falls through otherwise
 actions.ar+=/call_action_list,name=ar_cooldowns
 # Core rotation
-# Spirit Bomb — threshold 3/4/5 within noise; 4 balances cast frequency vs Frailty uptime
+# Spirit Bomb — threshold 5 confirmed optimal (+0.21% weighted vs threshold 4)
 actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 # Fracture in Meta — +1 frag/cast makes aggressive use a +5.2% DPS gain
 actions.ar+=/fracture,if=buff.metamorphosis.up

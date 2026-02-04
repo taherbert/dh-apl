@@ -373,11 +373,44 @@ Known gaps:
 | Meta casts/fight      | 5.7         |
 | Seething Anger uptime | 95.3%       |
 
+### Phase 6: Optimization Pass — [x] Complete
+
+- [x] Baseline established: ST 29,032 / 5T 91,888 / 10T 162,484
+- [x] 15 hypotheses tested, 1 accepted (SBomb threshold 5 → +0.21% weighted)
+- [x] 14 hypotheses rejected — APL at local optimum
+- [x] Key findings recorded in `results/findings.json`
+
+**Accepted change:**
+
+- Spirit Bomb threshold 4→5: +0.36% ST, -0.20% 5T, +0.44% 10T (+0.21% weighted, p<0.05)
+
+**Key rejected hypotheses (with reason):**
+
+- Meta `use_while_casting=1`: -0.29% (SimC already handles off-GCD properly)
+- Spite AotG-aware: -0.04% (overcomplicated, no gain)
+- Hold Spite/FelDev for Brand window: -0.32% (delayed casts > FD bonus)
+- SBomb threshold 3: -0.51% (esp. -1.50% at 5T)
+- SBomb threshold 6: -0.95% (overcaps fragments)
+- IA priority above Fracture: -0.10% (Fracture's immediate fragments > passive ticks)
+- FelDev interrupt_if for SBomb: -0.03% (no gain at confirm)
+- SC Fury dump at 100: -0.30% (catastrophic -2.70% at 10T — consumes SBomb fragments)
+- FelDev before cooldowns: -0.58% (channels delay Brand→FD window)
+- Brand-Meta alignment: -0.45% (delaying FD window > overlap bonus)
+- Tighter CD fragment guards: -0.23% (delays valuable CD casts)
+- Target-dependent threshold: -0.46% (threshold 5 optimal everywhere)
+- Flat AR list: -0.01% (`call_action_list` has zero overhead)
+- Dynamic FD threshold: -0.23% (5th fragment always worth waiting for)
+
+**Current baseline (post Phase 6):**
+
+| Metric | ST     | 5T     | 10T     |
+| ------ | ------ | ------ | ------- |
+| DPS    | 29,214 | 91,712 | 163,436 |
+
 ### Future Work
 
 - [ ] Create Annihilator talent profile and validate `actions.anni` / `actions.anni_voidfall`
-- [ ] Re-test Brand-first CD ordering at `target_error=0.5` to confirm it's above noise
-- [ ] Phase 5: Iteration handoff (`node src/sim/iterate.js init apls/vengeance.simc`)
+- [ ] Talent build optimization (coupled build+APL hypotheses, e.g. Down in Flames extra Brand charge)
 - [ ] Test with DungeonRoute / movement scenarios
 - [ ] Update gear profile when Midnight-specific consumables, gems, enchants become available in SimC
 - [ ] Submit UR implementation as PR to simc/simc (branch: midnight)
