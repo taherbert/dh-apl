@@ -7,8 +7,11 @@ The goal is systemic insight: understanding the resource economy, identifying co
 1. Read the analysis methodology: `prompts/apl-analysis-guide.md`
 2. Read the APL to analyze. Use `$ARGUMENTS` if provided, else `apls/vengeance.simc`, else `apls/baseline.simc`.
 3. Read spell data: `data/spells-summary.json`, `data/interactions-summary.json`, `data/cpp-proc-mechanics.json`
-4. Read from-scratch modeling work: `plans/apl-from-scratch-v2.md` (sections 1.1–1.5 contain the resource value analysis, state machine models, GCD budget, and burst window math)
-5. Check for sim results: `ls results/`. If none exist, run `node src/sim/runner.js <apl-file>` to establish a baseline.
+4. Read accumulated findings and build history:
+   - `results/findings.json` — filter to `status: "validated"` to calibrate. These are known truths — your analysis should be consistent with them, or explain why they no longer hold.
+   - `results/build-registry.json` — check for stale build warnings and existing test results.
+5. Read from-scratch modeling work: `plans/apl-from-scratch-v2.md` (sections 1.1–1.5 contain the resource value analysis, state machine models, GCD budget, and burst window math)
+6. Check for sim results: `ls results/`. If none exist, run `node src/sim/runner.js <apl-file>` to establish a baseline.
 
 ## Phase 1: Model the Economy
 
@@ -147,6 +150,17 @@ After testing, step back and look at what was learned:
 - What questions remain unanswered that future analysis should investigate?
 
 Run `node src/sim/iterate.js summary` and commit final state.
+
+### Record Findings
+
+Append insights discovered during this session to `results/findings.json`:
+
+- Each systemic tension identified gets a finding entry (even if untested — use `status: "untested"`)
+- Each tested hypothesis gets a finding entry (use `status: "validated"` or `status: "rejected"`)
+- If any finding contradicts an existing validated finding, mark the old one `status: "superseded"` with a `supersededBy` reference
+- Use the tag taxonomy from `results/SCHEMA.md` — especially `fragment-economy`, `fury-economy`, `cooldown-sequencing`, `burst-window`, `state-machine`
+
+If builds were tested, update `results/build-registry.json` with the results.
 
 ## Anti-Patterns to Avoid
 

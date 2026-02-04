@@ -1,0 +1,56 @@
+{
+  "_schema": "findings-v1",
+  "_doc": "Accumulated analytical insights across sessions. Skills read at startup and append new findings at completion. Replaces hardcoded known-result tables in skill prompts.",
+  "findings": [
+    {
+      "date": "2026-01-15",
+      "insight": "Fracture overflow guard costs DPS",
+      "evidence": "+10.4% DPS without fragment overflow guard on Fracture in ST",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": ["fragment-economy", "resource-gating"]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Sigil of Spite fragment guard too restrictive at <=3",
+      "evidence": "+0.3% DPS with soul_fragments<=5 vs soul_fragments<=3",
+      "confidence": "medium",
+      "build": "ar-baseline",
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": ["fragment-economy", "resource-gating"]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Spirit Bomb pooling (guarding Soul Cleave to save fragments) hurts DPS",
+      "evidence": "-1.3% to -2.8% DPS when restricting Soul Cleave to preserve fragments for Spirit Bomb",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "baseline.simc",
+      "status": "rejected",
+      "tags": ["fragment-economy", "resource-competition"]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Meta-priority Fracture (extra fragment generation during Metamorphosis) gains DPS",
+      "evidence": "+5.2% DPS when prioritizing Fracture during Meta for the extra fragment",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": ["burst-window", "fragment-economy", "metamorphosis"]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Fiery Brand-first cooldown ordering gains DPS",
+      "evidence": "+0.6% DPS when Fiery Brand fires before other cooldowns to establish the damage amp window",
+      "confidence": "medium",
+      "build": "ar-baseline",
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": ["cooldown-sequencing", "fiery-demise"]
+    }
+  ]
+}

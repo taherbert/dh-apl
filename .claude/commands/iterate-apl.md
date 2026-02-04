@@ -19,7 +19,9 @@ If resuming from a crash or new session:
 4. Check `git log --oneline -10` for recent commits (each accept should have a commit)
 5. Read `apls/current.simc` as the working APL
 6. Read `prompts/apl-iteration-guide.md` for methodology (only on first startup, not every iteration)
-7. Resume the iteration loop from Step 1
+7. Read `results/findings.json` — filter to `status: "validated"` to calibrate against known results
+8. Check `results/build-registry.json` for stale build warnings — report if any builds need re-testing
+9. Resume the iteration loop from Step 1
 
 ## Startup (Fresh Session)
 
@@ -27,6 +29,8 @@ If resuming from a crash or new session:
 2. If no state exists: `node src/sim/iterate.js init apls/baseline.simc`
 3. Read `prompts/apl-iteration-guide.md` for methodology
 4. Read `apls/current.simc` as the working APL
+5. Read `results/findings.json` — validated findings from prior sessions inform hypothesis ranking
+6. Check `results/build-registry.json` — if there are stale build warnings, report them before iterating
 
 ## Iteration Loop
 
@@ -43,16 +47,18 @@ Repeat until no hypotheses remain or improvements plateau:
 
 Pick the highest-value hypothesis to test. Prioritize:
 
-1. High-confidence hypotheses first
-2. Hypotheses affecting abilities with large DPS share
+1. **Theory-grounded hypotheses** — backed by a causal model of WHY the change should help. Cross-reference `results/findings.json` validated insights.
+2. High-confidence hypotheses affecting abilities with large DPS share
 3. Novel approaches not yet tried (check exhausted list)
+4. Multi-part hypotheses — a coherent set of interdependent APL changes that implement one conceptual idea. These test as a single iteration if the components can't be evaluated independently.
 
 If all hypotheses are exhausted, generate new ones:
 
-- Threshold sweeps on key conditions
-- Priority reordering experiments
+- Run the analytical engines: `node src/sim/iterate.js strategic` and `node src/sim/iterate.js theorycraft`
+- Resource economy rebalancing (fury/fragment equilibrium shifts)
+- Cooldown alignment changes (stagger vs group)
+- Burst window utilization improvements
 - Cross-scenario condition additions
-- Variable-based hold pattern experiments
 
 ### Step 3: Modify
 
@@ -124,12 +130,17 @@ Run: `node src/sim/iterate.js accept "reason" --hypothesis "description fragment
 
 The `--hypothesis` flag matches the hypothesis being tested by description substring. This ensures correct attribution instead of blindly popping the first pending hypothesis.
 
-### Step 5b: Git Commit After Accept
+### Step 5b: Record Findings and Commit
 
-After every successful `accept`, commit the updated APL:
+After every accept or reject, record findings:
+
+1. **Append to `results/findings.json`:** Add a new finding entry with the insight, evidence (DPS delta numbers), confidence, tags, and `status: "validated"` (if accepted) or `status: "rejected"` (if rejected). Use the tag taxonomy from `results/SCHEMA.md`.
+2. **Update `results/build-registry.json`:** If the APL changed (accept), record the new APL version hash and mark all builds tested under the old hash as potentially stale.
+
+After every successful `accept`, commit:
 
 ```bash
-git add apls/current.simc results/iteration-state.json results/dashboard.md results/changelog.md results/findings.md
+git add apls/current.simc results/iteration-state.json results/dashboard.md results/changelog.md results/findings.json results/build-registry.json
 git commit -m "iterate: <hypothesis summary> (<+/-X.XX%> weighted)"
 ```
 

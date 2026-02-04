@@ -2,11 +2,13 @@ Perform temporal resource flow analysis on the VDH APL and generate testable hyp
 
 ## Setup
 
-1. Read spell data and proc mechanics:
+1. Read spell data, proc mechanics, and accumulated findings:
 
 ```
-data/spells.json
+data/spells-summary.json
 data/cpp-proc-mechanics.json
+results/findings.json
+results/build-registry.json
 ```
 
 2. Read the APL to analyze. If `$ARGUMENTS` was provided, use that file. Otherwise default:
@@ -102,17 +104,21 @@ Ranked list with:
 - How to test (profileset variant description)
 - Counter-argument
 
-### Known Validated Results
+### Cross-Reference Findings
 
-Cross-reference against known test results:
+Read `results/findings.json` and filter to `status: "validated"`. Cross-reference your hypotheses against known results:
 
-| Insight                                     | Manual Result        | Status             |
-| ------------------------------------------- | -------------------- | ------------------ |
-| Fracture overflow guard costs DPS           | +10.4% without guard | High confidence    |
-| Spite fragment guard too restrictive        | +0.3% at <=5 vs <=3  | Medium confidence  |
-| SBomb pooling (guard SC to save frags)      | -1.3% to -2.8%       | Correctly rejected |
-| Meta-priority Fracture (extra frag in Meta) | +5.2%                | High confidence    |
-| Brand-first cooldown ordering               | +0.6%                | Medium confidence  |
+- If a hypothesis matches a validated finding, note it and calibrate your expected impact accordingly
+- If a hypothesis contradicts a validated finding, investigate the discrepancy before testing
+- If your analysis uncovers something the findings don't address, that's a higher-priority hypothesis
+
+### Record New Findings
+
+After analysis, append new insights to `results/findings.json`:
+
+- Each distinct insight gets its own entry with evidence, confidence, tags
+- If your analysis contradicts an existing finding, mark the old one `status: "superseded"` and add a `supersededBy` reference
+- Use the tag taxonomy from `results/SCHEMA.md`
 
 ## Optional: Auto-Test
 

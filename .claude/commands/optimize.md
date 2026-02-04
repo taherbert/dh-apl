@@ -4,24 +4,51 @@ This is the master loop. It uses the analytical frameworks from `/talent-analysi
 
 ## Setup
 
-1. Read methodology and data:
+### Context Budget Tiers
+
+Load data incrementally to preserve context window. Don't front-load everything — pull in detail as needed.
+
+**Tier 1 — Always load (startup):**
 
 ```
 prompts/apl-analysis-guide.md
-prompts/apl-iteration-guide.md
 data/spells-summary.json
-data/interactions-summary.json
 data/cpp-proc-mechanics.json
+results/findings.json
+results/build-registry.json
+```
+
+**Tier 2 — Load when analyzing talents:**
+
+```
 data/talents.json
-plans/apl-from-scratch-v2.md (sections 1.1–1.5)
+data/interactions-summary.json
 src/analyze/archetypes.js (SEED_ARCHETYPES)
 ```
 
+**Tier 3 — Load when deep-diving mechanics:**
+
+```
+prompts/apl-iteration-guide.md
+plans/apl-from-scratch-v2.md (sections 1.1–1.5)
+```
+
+**Tier 4 — Only when needed for specific spell effects:**
+
+```
+Grep data/spells.json for specific spell IDs
+Grep data/interactions.json for specific talent effects
+```
+
+### Startup
+
+1. Load Tier 1 data
 2. Read the current build + APL:
    - `apls/profile.simc` — extract the `talents=` string
    - Use `$ARGUMENTS` for APL file if provided, else `apls/vengeance.simc`, else `apls/baseline.simc`
-
-3. Establish baseline:
+3. Read `results/build-registry.json` — check for stale build warnings. Report: "N builds have stale results — APL changed since last test"
+4. Read `results/findings.json` — filter to `status: "validated"` for calibration
+5. Establish baseline:
    - `node src/sim/runner.js <apl-file>` — record ST, 3T, 10T DPS
    - `node src/sim/iterate.js init <apl-file>` — initialize iteration state
 
@@ -47,7 +74,7 @@ Each pass through the loop produces a (build, APL) pair that is strictly tested 
 
 ### Pass 1: Understand the Current State
 
-Before changing anything, understand what you have. Do this work ONCE at the start — don't repeat it every loop iteration.
+Before changing anything, understand what you have. Do this work ONCE at the start — don't repeat it every loop iteration. Load Tier 2 data for this pass.
 
 **1a. Talent Landscape** (`/talent-analysis` framework)
 
@@ -78,6 +105,25 @@ Quick audit of the APL for systemic issues:
 - Resource competition arbitration (is the SC vs SBomb decision optimal?)
 - Burst window resource pooling (does the APL pre-stock for windows?)
 - State machine coherence (does the APL respect hero tree rhythms?)
+
+**1d. Hero Tree Coverage**
+
+Determine which hero trees the current build exercises:
+
+- **Aldrachi Reaver:** If the build has AR talents, the `actions.ar` branch is active. This is the current primary path.
+- **Annihilator:** If the build has Anni talents, the `actions.anni` branch is active. Anni has a fundamentally different rotation rhythm (Voidfall cycle, Catastrophe windows) that requires its own analysis.
+
+If optimizing for BOTH hero trees, each needs its own (build, APL) pair. Don't try to optimize both simultaneously — optimize one, checkpoint, then the other.
+
+**1e. Fight-Style Awareness**
+
+The default Patchwerk sim models pure stand-and-deliver fights. Real encounters involve:
+
+- Movement phases (DPS loss from dropped GCDs)
+- Add spawns (AoE breakpoint shifts)
+- Intermissions (cooldown alignment disruption)
+
+After establishing Patchwerk baselines, note which hypotheses might behave differently with movement or adds. Flag these for DungeonRoute or custom fight profile testing later.
 
 ### Pass 2: Generate Hypotheses Across Both Dimensions
 
@@ -139,6 +185,15 @@ Follow the `/iterate-apl` methodology for accept/reject:
 - Quick screen first, escalate if promising
 - One conceptual change per iteration (a coupled build+APL change counts as ONE if the components are interdependent)
 - Git commit after each accept
+
+**After each test, update the build registry:**
+
+1. Record the build in `results/build-registry.json` with talent string, hero tree, archetype, and per-scenario DPS
+2. Record the APL version (file + hash) that produced the results
+3. If an APL change was accepted, mark all builds tested under the old APL hash as potentially stale
+4. Add findings to `results/findings.json` — each tested hypothesis produces at least one finding (validated, rejected, or inconclusive)
+
+**Watch for ranking shifts:** After accepting a change, check if builds that previously ranked lower now look more promising. A build that was 3% behind before might benefit disproportionately from the APL change. The stale build warnings flag this.
 
 ### Pass 4: Evaluate & Pivot
 
