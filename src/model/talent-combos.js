@@ -6,12 +6,17 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  encode,
+  buildToSelections,
+  buildNodeList,
+} from "../util/talent-string.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
 
-const CLASS_POINTS = 31;
-const SPEC_POINTS = 30;
+const CLASS_POINTS = 34;
+const SPEC_POINTS = 34;
 
 function loadData() {
   return JSON.parse(
@@ -700,6 +705,20 @@ export function toTalentString(build, data) {
     .join("/");
 
   return { classStr, specStr, heroStr };
+}
+
+// Encode a DoE build into a base64 talent hash string.
+// Uses the shared encoder from talent-string.js.
+export function buildToHash(build, data, specId = 581) {
+  const selections = buildToSelections(build, data);
+  const nodes = buildNodeList(data);
+  return encode(specId, nodes, selections);
+}
+
+// Return a profileset variant object for a DoE build.
+export function buildToVariant(build, data, specId = 581) {
+  const hash = buildToHash(build, data, specId);
+  return { name: build.name, overrides: [`talents=${hash}`] };
 }
 
 // --- Design quality metrics ---

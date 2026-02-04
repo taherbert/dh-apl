@@ -2,13 +2,14 @@
 // Archetypes are strategic build directions that inform hypothesis generation.
 // Usage: node src/analyze/archetypes.js [talents.json]
 
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const DATA_DIR = join(ROOT, "data");
+const RESULTS_DIR = join(ROOT, "results");
 
 function collapseWhitespace(text) {
   return text.trim().replace(/\s+/g, " ");
@@ -280,6 +281,57 @@ export function getAllArchetypes() {
   return { ...SEED_ARCHETYPES };
 }
 
+// --- Discovered archetypes from build discovery pipeline ---
+
+let _discoveredCache = null;
+
+function loadBuildsJson() {
+  if (_discoveredCache) return _discoveredCache;
+  const path = join(RESULTS_DIR, "builds.json");
+  if (!existsSync(path)) return null;
+  try {
+    _discoveredCache = JSON.parse(readFileSync(path, "utf8"));
+    return _discoveredCache;
+  } catch {
+    return null;
+  }
+}
+
+// Load discovered archetypes from results/builds.json.
+// Returns array of { name, heroTree, definingTalents, bestBuild, ... } or null if unavailable.
+export function loadDiscoveredArchetypes() {
+  const data = loadBuildsJson();
+  return data?.archetypes || null;
+}
+
+// Load all discovered builds ranked by weighted DPS.
+// Returns array of { name, hash, heroTree, dps, weighted, rank } or null.
+export function getDiscoveredBuilds() {
+  const data = loadBuildsJson();
+  return data?.allBuilds || null;
+}
+
+// Get factor impacts from discovery.
+export function getFactorImpacts() {
+  const data = loadBuildsJson();
+  return data?.factorImpacts || null;
+}
+
+// Get synergy pairs from discovery.
+export function getSynergyPairs() {
+  const data = loadBuildsJson();
+  return data?.synergyPairs || null;
+}
+
+// Get the best build hash for a specific hero tree.
+export function getBestBuildHash(heroTree) {
+  const archetypes = loadDiscoveredArchetypes();
+  if (!archetypes) return null;
+  const normalizedTree = heroTree.toLowerCase().replace(/\s+/g, "_");
+  const match = archetypes.find((a) => a.heroTree === normalizedTree);
+  return match?.bestBuild?.hash || null;
+}
+
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
   const talentsPath = process.argv[2] || join(DATA_DIR, "talents.json");
@@ -288,7 +340,36 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   console.log("VDH Archetype System");
   console.log("=".repeat(60));
 
-  console.log("\n--- Available Archetypes ---\n");
+  // Show discovered archetypes first (from builds.json)
+  const discovered = loadDiscoveredArchetypes();
+  if (discovered) {
+    console.log("\n--- Discovered Archetypes (from builds.json) ---\n");
+    for (const arch of discovered) {
+      console.log(`${arch.name} (${arch.heroTree})`);
+      console.log(
+        `  Defining talents: ${arch.definingTalents.join(", ") || "none"}`,
+      );
+      console.log(
+        `  Best build: ${arch.bestBuild.name} — ${arch.bestBuild.weighted.toLocaleString()} weighted DPS`,
+      );
+      console.log(`  Hash: ${arch.bestBuild.hash?.slice(0, 40)}...`);
+      console.log(`  Builds: ${arch.buildCount}`);
+      console.log();
+    }
+
+    const impacts = getFactorImpacts();
+    if (impacts) {
+      console.log("--- Top Factor Impacts ---\n");
+      for (const fi of impacts.slice(0, 10)) {
+        const sign = fi.mainEffect >= 0 ? "+" : "";
+        console.log(
+          `  ${fi.talent.padEnd(25)} ${sign}${fi.mainEffect} (${sign}${fi.pct}%)`,
+        );
+      }
+    }
+  }
+
+  console.log("\n--- Seed Archetypes (strategic context) ---\n");
 
   for (const [id, arch] of Object.entries(SEED_ARCHETYPES)) {
     console.log(`${id} (${arch.heroTree})`);

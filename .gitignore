@@ -4,6 +4,7 @@ results/
 apls/candidate.simc
 apls/current.simc
 !results/build-registry.json
+!results/builds.json
 !results/findings.json
 !results/SCHEMA.md
 bin/

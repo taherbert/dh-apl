@@ -28,6 +28,7 @@
     "iterate:status": "node src/sim/iterate.js status",
     "iterate:hypotheses": "node src/sim/iterate.js hypotheses",
     "iterate:summary": "node src/sim/iterate.js summary",
+    "discover": "node src/discover/build-discovery.js",
     "dashboard": "cat results/dashboard.md",
     "refresh": "bash scripts/refresh.sh"
   }
