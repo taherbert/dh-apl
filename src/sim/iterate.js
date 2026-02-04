@@ -37,6 +37,10 @@ import {
   MUTATION_OPS,
 } from "../analyze/strategic-hypotheses.js";
 import {
+  analyzeResourceFlow,
+  generateTemporalHypotheses,
+} from "../analyze/theorycraft.js";
+import {
   generateCandidate,
   describeMutation,
   validateMutation,
@@ -1115,6 +1119,89 @@ async function cmdStrategicHypotheses() {
   }
 }
 
+// --- Temporal Hypothesis Generation ---
+
+async function cmdTheorycraft() {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  const workflowPath = join(ROOT, state.current.workflowResults);
+  if (!existsSync(workflowPath)) {
+    console.error("No workflow results found. Run init or accept first.");
+    process.exit(1);
+  }
+
+  const workflowResults = JSON.parse(readFileSync(workflowPath, "utf-8"));
+  const aplText = readFileSync(CURRENT_APL, "utf-8");
+
+  // Load spell data
+  const spellDataPath = join(ROOT, "data", "spells.json");
+  const spellData = existsSync(spellDataPath)
+    ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
+    : [];
+
+  // Run temporal analysis
+  const resourceFlow = analyzeResourceFlow(spellData, aplText, workflowResults);
+  const hypotheses = generateTemporalHypotheses(resourceFlow, aplText);
+
+  // Filter out exhausted ones
+  const exhaustedKeys = new Set(
+    state.exhaustedHypotheses.map((h) =>
+      normalizeHypothesisKey(h.hypothesis || h.description || ""),
+    ),
+  );
+  const fresh = hypotheses.filter(
+    (h) =>
+      !exhaustedKeys.has(
+        normalizeHypothesisKey(h.hypothesis || h.description || ""),
+      ),
+  );
+
+  // Update state with temporal hypotheses
+  state.pendingHypotheses = fresh.map((h) => ({
+    category: h.category,
+    description: h.hypothesis,
+    hypothesis: h.hypothesis,
+    strategicGoal: h.hypothesis,
+    observation: h.observation,
+    priority: h.priority || 0,
+    confidence: h.confidence,
+    scenario: h.scenario,
+    aplMutation: h.aplMutation,
+    temporalAnalysis: h.temporalAnalysis,
+    prediction: h.prediction,
+    counterArgument: h.counterArgument,
+  }));
+
+  saveState(state);
+
+  console.log(
+    `\n${fresh.length} temporal hypotheses generated (${state.exhaustedHypotheses.length} exhausted):\n`,
+  );
+
+  for (const h of fresh.slice(0, 10)) {
+    console.log(`[${h.confidence || "medium"}] ${h.hypothesis}`);
+    console.log(`  Category: ${h.category}`);
+    if (h.temporalAnalysis?.timingWindow) {
+      console.log(`  Window: ${h.temporalAnalysis.timingWindow}`);
+    }
+    if (h.prediction) {
+      console.log(`  Prediction: ${h.prediction}`);
+    }
+    if (h.aplMutation) {
+      console.log(`  Mutation: ${describeMutation(h.aplMutation)}`);
+    }
+    console.log(`  Priority: ${(h.priority || 0).toFixed(1)}\n`);
+  }
+
+  if (fresh.length > 10) {
+    console.log(`...and ${fresh.length - 10} more\n`);
+  }
+}
+
 // --- Escape Strategies ---
 
 function suggestEscapeStrategies(state) {
@@ -1372,6 +1459,10 @@ switch (cmd) {
     await cmdStrategicHypotheses();
     break;
 
+  case "theorycraft":
+    await cmdTheorycraft();
+    break;
+
   default:
     console.log(`APL Iteration Manager
 
@@ -1383,6 +1474,7 @@ Usage:
   node src/sim/iterate.js reject "reason"            Reject candidate [--hypothesis "fragment"]
   node src/sim/iterate.js hypotheses                 List improvement hypotheses
   node src/sim/iterate.js strategic                  Generate strategic hypotheses with auto-mutations
+  node src/sim/iterate.js theorycraft                Generate temporal resource flow hypotheses
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report`);
