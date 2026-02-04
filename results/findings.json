@@ -29,7 +29,7 @@
       "confidence": "high",
       "build": "ar-baseline",
       "aplVersion": "baseline.simc",
-      "status": "rejected",
+      "status": "validated",
       "tags": ["fragment-economy", "resource-competition"]
     },
     {
@@ -51,6 +51,66 @@
       "aplVersion": "baseline.simc",
       "status": "validated",
       "tags": ["cooldown-sequencing", "fiery-demise"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Spirit Bomb threshold 5 optimal, supersedes 3/4/5 noise claim",
+      "evidence": "+0.21% weighted at confirm fidelity (ST +0.36%, 10T +0.44%, 5T -0.20%). Threshold 3 is -0.51% (5T: -1.50%), threshold 6 is -0.95%. Sweet spot confirmed at 5.",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": ["fragment-economy", "threshold-tuning", "spirit-bomb"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "call_action_list has zero overhead vs inline actions",
+      "evidence": "Flat AR list (all actions inline) vs sub-list structure: -0.01% weighted at confirm fidelity. No performance difference.",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": ["apl-structure", "simc-internals"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "FelDev before Brand is a loss — Brand-first CD ordering critical",
+      "evidence": "FelDev above cooldowns: -0.58% weighted, -1.18% ST. 2s channel delays FD window opening.",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": ["cooldown-sequencing", "fiery-demise", "fel-devastation"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Holding CDs for Fiery Demise window costs more than it gains",
+      "evidence": "Adding Brand-alignment conditions (hold <=15s) to Spite/FelDev: -0.32% weighted. Delayed casts outweigh the +30% FD bonus.",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": ["cooldown-sequencing", "fiery-demise"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Brand-Meta alignment (holding Brand for Meta) is a loss",
+      "evidence": "Brand hold <=5s for Meta: -0.45% weighted, -0.96% ST. FD window value exceeds Meta overlap bonus.",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": ["cooldown-sequencing", "fiery-demise", "metamorphosis"]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "SC consuming fragments before SBomb threshold catastrophic in AoE",
+      "evidence": "SC Fury dump at fury>=100 before Fracture: -2.70% at 10T. Fragment consumption prevents SBomb pooling.",
+      "confidence": "high",
+      "build": "ar-baseline",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": ["fragment-economy", "soul-cleave", "aoe"]
     }
   ]
 }
