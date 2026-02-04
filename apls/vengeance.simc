@@ -66,8 +66,9 @@ actions.ar_empowered+=/soul_cleave,if=!buff.rending_strike.up&buff.glaive_flurry
 # Empowered Fracture — spend Rending Strike buff (generates empowered frags)
 actions.ar_empowered+=/fracture,if=buff.glaive_flurry.up
 
-# === AR Cooldowns — Brand first enables Fiery Demise window (+0.6% over Spite first) ===
-actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
+# === AR Cooldowns — Brand first enables Fiery Demise window ===
+# Down in Flames: 2 charges, 48s CD — use 2nd charge aggressively for higher FD uptime
+actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|!dot.fiery_brand.ticking)
 actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=5
 actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
 # Don't channel during empowered window

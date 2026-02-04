@@ -1,7 +1,53 @@
 {
   "_schema": "build-registry-v1",
   "_doc": "Tracks every build tested, its DPS results, which APL version was used, and whether results are stale. Skills read this at startup and update after testing.",
-  "builds": [],
-  "aplVersions": [],
+  "builds": [
+    {
+      "id": "ar-baseline-v1",
+      "label": "AR Baseline (pre-optimization)",
+      "talentHash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "specPointsSpent": 34,
+      "results": {
+        "1T": { "dps": 29218, "aplVersion": "vengeance-v6" },
+        "5T": { "dps": 91978, "aplVersion": "vengeance-v6" },
+        "10T": { "dps": 163116, "aplVersion": "vengeance-v6" }
+      },
+      "stale": true,
+      "staleReason": "Build replaced by ar-cooptimized-v1 with 5 talent swaps",
+      "date": "2026-02-04"
+    },
+    {
+      "id": "ar-cooptimized-v1",
+      "label": "AR Co-Optimized (+DiF, +SC, +DB, +Soulcrush, +AF, -LR, -CS, -FtD, -StF, CF 2→1)",
+      "talentHash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMzMPAYMzYmZGzMjZmtZGbjZWGjZAAAAYWmBDjlFmwwMzYBAAAADMAAYmBYAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "specPointsSpent": 34,
+      "talentChanges": {
+        "added": ["Down in Flames", "Soul Carver", "Darkglare Boon", "Soulcrush", "Ascending Flame"],
+        "removed": ["Last Resort", "Calcified Spikes", "Feed the Demon", "Stoke the Flames"],
+        "reduced": { "Charred Flesh": "2→1" }
+      },
+      "results": {
+        "1T": { "dps": 31555, "aplVersion": "vengeance-v7-coopt" },
+        "5T": { "dps": 101451, "aplVersion": "vengeance-v7-coopt" },
+        "10T": { "dps": 179395, "aplVersion": "vengeance-v7-coopt" }
+      },
+      "stale": false,
+      "date": "2026-02-04"
+    }
+  ],
+  "aplVersions": [
+    {
+      "id": "vengeance-v6",
+      "description": "Phase 6 optimized APL (SBomb threshold 5)",
+      "date": "2026-02-04"
+    },
+    {
+      "id": "vengeance-v7-coopt",
+      "description": "Co-optimized APL for new build (2-charge Brand condition)",
+      "date": "2026-02-04"
+    }
+  ],
   "staleBuildWarnings": []
 }

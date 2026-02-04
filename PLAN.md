@@ -407,10 +407,56 @@ Known gaps:
 | ------ | ------ | ------ | ------- |
 | DPS    | 29,214 | 91,712 | 163,436 |
 
+### Phase 7: Build + APL Co-Optimization — [x] Complete
+
+Swapped 5 spec talents to fill previously suboptimal choices. The original plan assumed 5 unspent points, but the build was already at 34/34 — required dropping 5 points.
+
+**Talent changes:**
+
+| Action | Talent                                   | Section | DPS Impact                             |
+| ------ | ---------------------------------------- | ------- | -------------------------------------- |
+| +Add   | Down in Flames (2 Brand charges, 48s CD) | S3      | High — Fiery Demise uptime ~doubled    |
+| +Add   | Soul Carver (60s CD, frag shattering)    | S3      | Medium — new damage CD + fragments     |
+| +Add   | Darkglare Boon (Fel Dev CDR refund)      | S3      | Low-Medium — more Fel Dev casts        |
+| +Add   | Soulcrush (double Frailty effects)       | S3      | Medium — Vulnerability 3%→6% per stack |
+| +Add   | Ascending Flame (Sigil +50%)             | S1      | Low                                    |
+| -Drop  | Last Resort                              | S3      | Zero (cheat death)                     |
+| -Drop  | Calcified Spikes                         | S1      | Zero (defensive)                       |
+| -Drop  | Feed the Demon                           | S2      | Zero (DS CDR, already 99% uptime)      |
+| -Drop  | Stoke the Flames                         | S3      | Moderate (Fel Dev damage %)            |
+| Reduce | Charred Flesh 2→1                        | S3      | Moderate (less FB extension/tick)      |
+
+**Gate constraint:** S1+S2 must total ≥ 20 points. With Ascending Flame in S1 and 4 adds in S3, only 1 S1 drop + 1 S2 drop was feasible, forcing 3 drops from S3 (where only Last Resort had zero DPS value).
+
+**APL adaptation:** Only one change had statistically significant impact — the Fiery Brand condition for 2 charges:
+
+```
+# Old: fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
+# New: fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|!dot.fiery_brand.ticking)
+```
+
++0.22% at 10T, +0.067% weighted.
+
+**Rejected APL changes (4 tested, 0 accepted beyond Brand condition):**
+
+- Soul Carver FD gate removal: +0.02% weighted (noise — gate is free with 2 Brand charges)
+- Fel Dev priority above Spite/SC: +0.09% weighted (mixed — gains 5T, loses ST/10T)
+- Rending Strike gate removal on Reaver's Glaive: -0.005% weighted (noise)
+- Spirit Bomb threshold 4 with Soulcrush: -0.01% weighted (threshold 5 still optimal)
+
+**Final results (co-optimized build + APL):**
+
+| Scenario | Pre-Optimization | Post-Optimization | Delta  |
+| -------- | ---------------- | ----------------- | ------ |
+| ST       | 29,218           | 31,555            | +8.0%  |
+| 5T       | 91,978           | 101,451           | +10.3% |
+| 10T      | 163,116          | 179,395           | +10.0% |
+
+**Key insight:** Nearly all of the gain comes from the talent build itself (+8.4-10.4%), not APL adaptation (+0.07%). The existing APL conditions were already well-suited to the new talents because: (a) Soul Carver was already in the APL but wasn't in the build, (b) Fiery Brand naturally adapts to 2 charges since the `!dot.ticking` condition fires whenever Brand falls off, (c) Soulcrush/Ascending Flame/Darkglare Boon are passives requiring no APL support.
+
 ### Future Work
 
 - [ ] Create Annihilator talent profile and validate `actions.anni` / `actions.anni_voidfall`
-- [ ] Talent build optimization (coupled build+APL hypotheses, e.g. Down in Flames extra Brand charge)
 - [ ] Test with DungeonRoute / movement scenarios
 - [ ] Update gear profile when Midnight-specific consumables, gems, enchants become available in SimC
 - [ ] Submit UR implementation as PR to simc/simc (branch: midnight)
