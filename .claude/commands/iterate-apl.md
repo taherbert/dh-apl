@@ -20,8 +20,7 @@ If resuming from a crash or new session:
 5. Read `apls/current.simc` as the working APL
 6. Read `prompts/apl-iteration-guide.md` for methodology (only on first startup, not every iteration)
 7. Read `results/findings.json` — filter to `status: "validated"` to calibrate against known results
-8. Check `results/build-registry.json` for stale build warnings — report if any builds need re-testing
-9. Resume the iteration loop from Step 1
+8. Resume the iteration loop from Step 1
 
 ## Startup (Fresh Session)
 
@@ -30,7 +29,7 @@ If resuming from a crash or new session:
 3. Read `prompts/apl-iteration-guide.md` for methodology
 4. Read `apls/current.simc` as the working APL
 5. Read `results/findings.json` — validated findings from prior sessions inform hypothesis ranking
-6. Check `results/build-registry.json` — if there are stale build warnings, report them before iterating
+6. Read `data/build-theory.json` — archetype and cluster context for hypothesis generation
 
 ## Iteration Loop
 
@@ -135,12 +134,11 @@ The `--hypothesis` flag matches the hypothesis being tested by description subst
 After every accept or reject, record findings:
 
 1. **Append to `results/findings.json`:** Add a new finding entry with the insight, evidence (DPS delta numbers), confidence, tags, and `status: "validated"` (if accepted) or `status: "rejected"` (if rejected). Use the tag taxonomy from `results/SCHEMA.md`.
-2. **Update `results/build-registry.json`:** If the APL changed (accept), record the new APL version hash and mark all builds tested under the old hash as potentially stale.
 
 After every successful `accept`, commit:
 
 ```bash
-git add apls/current.simc results/iteration-state.json results/dashboard.md results/changelog.md results/findings.json results/build-registry.json
+git add apls/current.simc results/iteration-state.json results/dashboard.md results/changelog.md results/findings.json
 git commit -m "iterate: <hypothesis summary> (<+/-X.XX%> weighted)"
 ```
 

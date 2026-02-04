@@ -15,7 +15,7 @@ prompts/apl-analysis-guide.md
 data/spells-summary.json
 data/cpp-proc-mechanics.json
 results/findings.json
-results/build-registry.json
+results/builds.json
 ```
 
 **Tier 2 — Load when analyzing talents:**
@@ -23,7 +23,7 @@ results/build-registry.json
 ```
 data/talents.json
 data/interactions-summary.json
-src/analyze/archetypes.js (SEED_ARCHETYPES)
+data/build-theory.json (clusters, hero trees, archetype theory)
 ```
 
 **Tier 3 — Load when deep-diving mechanics:**
@@ -46,7 +46,7 @@ Grep data/interactions.json for specific talent effects
 2. Read the current build + APL:
    - `apls/profile.simc` — extract the `talents=` string
    - Use `$ARGUMENTS` for APL file if provided, else `apls/vengeance.simc`, else `apls/baseline.simc`
-3. Read `results/build-registry.json` — check for stale build warnings. Report: "N builds have stale results — APL changed since last test"
+3. Read `results/builds.json` — check factor impacts and archetype rankings for optimization opportunities
 4. Read `results/findings.json` — filter to `status: "validated"` for calibration
 5. Establish baseline:
    - `node src/sim/runner.js <apl-file>` — record ST, 3T, 10T DPS
@@ -186,14 +186,11 @@ Follow the `/iterate-apl` methodology for accept/reject:
 - One conceptual change per iteration (a coupled build+APL change counts as ONE if the components are interdependent)
 - Git commit after each accept
 
-**After each test, update the build registry:**
+**After each test, update findings and re-rank builds:**
 
-1. Record the build in `results/build-registry.json` with talent string, hero tree, archetype, and per-scenario DPS
-2. Record the APL version (file + hash) that produced the results
-3. If an APL change was accepted, mark all builds tested under the old APL hash as potentially stale
-4. Add findings to `results/findings.json` — each tested hypothesis produces at least one finding (validated, rejected, or inconclusive)
-
-**Watch for ranking shifts:** After accepting a change, check if builds that previously ranked lower now look more promising. A build that was 3% behind before might benefit disproportionately from the APL change. The stale build warnings flag this.
+1. Add findings to `results/findings.json` — each tested hypothesis produces at least one finding (validated, rejected, or inconclusive)
+2. If an APL change was accepted, re-run `npm run discover -- --quick` to re-rank builds under the new APL
+3. Check `results/builds.json` for ranking shifts — builds that previously ranked lower may benefit disproportionately from the APL change
 
 ### Pass 4: Evaluate & Pivot
 

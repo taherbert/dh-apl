@@ -23,85 +23,108 @@ const TEMPORAL_CATEGORIES = {
 
 // --- Spell data constants ---
 
-// Abilities with their resource/timing properties, extracted from spell data.
-// These are VDH-specific — keyed by simc action name.
-const ABILITY_DATA = {
-  fracture: {
-    furyGen: 25,
-    furyGenMeta: 40,
-    fragGen: 2,
-    fragGenMeta: 3,
-    cooldown: 0,
-    charges: 2,
-    rechargeCd: 5.4,
-    gcd: true,
-    apCoeff: 1.035,
-  },
-  spirit_bomb: {
-    furyCost: 40,
-    fragConsume: "up_to_5",
-    cooldown: 25,
-    gcd: true,
-    apCoeff: 0.4, // per fragment
-  },
-  soul_cleave: {
-    furyCost: 35,
-    fragConsume: "up_to_2",
-    cooldown: 0,
-    gcd: true,
-    apCoeff: 1.29,
-  },
+// Spell IDs — stable game identifiers for each ability
+const SPELL_IDS = {
+  fracture: 263642,
+  spirit_bomb: 247454,
+  soul_cleave: 228477,
+  immolation_aura: 258920,
+  sigil_of_flame: 204596,
+  fiery_brand: 204021,
+  soul_carver: 207407,
+  fel_devastation: 212084,
+  sigil_of_spite: 390163,
+  metamorphosis: 187827,
+  reavers_glaive: 442294,
+};
+
+// Domain-specific values not derivable from spell data.
+// Includes: Meta-enhanced values, AP coefficients, talent modifications,
+// fragment consumption semantics, tick mechanics.
+const DOMAIN_OVERRIDES = {
+  fracture: { furyGenMeta: 40, fragGenMeta: 3, apCoeff: 1.035 },
+  spirit_bomb: { fragConsume: "up_to_5", apCoeff: 0.4 },
+  soul_cleave: { fragConsume: "up_to_2", apCoeff: 1.29 },
   immolation_aura: {
-    cooldown: 30,
     charges: 2,
     rechargeCd: 30,
-    gcd: true,
     furyPerTick: 3,
-    duration: 6,
     tickInterval: 1,
   },
-  sigil_of_flame: {
-    cooldown: 30,
-    gcd: true,
-    apCoeff: 0.792,
-  },
-  fiery_brand: {
-    cooldown: 60,
-    gcd: true,
-    duration: 10,
-    damageAmp: 0.15, // Fiery Demise
-  },
-  soul_carver: {
-    cooldown: 60,
-    gcd: true,
-    fragGen: 3,
-    apCoeff: 2.08,
-    duration: 3,
-  },
-  fel_devastation: {
-    cooldown: 40,
-    gcd: false,
-    furyCost: 50,
-    duration: 2,
-    apCoeff: 1.54,
-  },
-  sigil_of_spite: {
-    cooldown: 60,
-    gcd: true,
-    fragGen: "variable", // spawns fragments over time
-    apCoeff: 6.92,
-  },
-  metamorphosis: {
-    cooldown: 120,
-    duration: 15,
-    gcd: false,
-  },
-  reavers_glaive: {
-    cooldown: 0, // replaces throw_glaive
-    gcd: true,
-    apCoeff: 3.45,
-  },
+  sigil_of_flame: { apCoeff: 0.792 },
+  fiery_brand: { duration: 10, damageAmp: 0.15 },
+  soul_carver: { apCoeff: 2.08 },
+  fel_devastation: { gcd: false, apCoeff: 1.54 },
+  sigil_of_spite: { fragGen: "variable", apCoeff: 6.92 },
+  reavers_glaive: { apCoeff: 3.45 },
 };
+
+let _abilityDataCache = null;
+
+function loadAbilityData() {
+  if (_abilityDataCache) return _abilityDataCache;
+
+  const spellsPath = join(DATA_DIR, "spells-summary.json");
+  const spells = JSON.parse(readFileSync(spellsPath, "utf-8"));
+  const byId = new Map(spells.map((s) => [s.id, s]));
+
+  const result = {};
+
+  for (const [name, spellId] of Object.entries(SPELL_IDS)) {
+    const spell = byId.get(spellId);
+    if (!spell) {
+      result[name] = { ...(DOMAIN_OVERRIDES[name] || {}) };
+      continue;
+    }
+
+    const entry = {};
+
+    // Cooldown: single-charge abilities use charges.cooldown as the real CD.
+    // Multi-charge abilities have rechargeCd for per-charge and cooldown=0.
+    if (spell.charges) {
+      if (spell.charges.count > 1) {
+        entry.charges = spell.charges.count;
+        entry.rechargeCd = spell.charges.cooldown;
+        entry.cooldown = 0;
+      } else {
+        entry.cooldown = spell.charges.cooldown;
+      }
+    } else if (spell.cooldown) {
+      entry.cooldown = spell.cooldown;
+    } else {
+      entry.cooldown = 0;
+    }
+
+    if (spell.duration) entry.duration = spell.duration;
+    if (spell.gcd !== undefined) entry.gcd = spell.gcd > 0;
+
+    // Fury cost from resource field
+    if (spell.resource) {
+      const furyMatch = spell.resource.match(/(\d+)\s*fury/i);
+      if (furyMatch) entry.furyCost = parseInt(furyMatch[1], 10);
+    }
+
+    // Fury/fragment generation from generates[]
+    if (spell.generates) {
+      for (const gen of spell.generates) {
+        const furyMatch = gen.match(/(\d+)\s*fury/i);
+        if (furyMatch) entry.furyGen = parseInt(furyMatch[1], 10);
+        const fragMatch = gen.match(/(\d+)\s*soul\s*fragment/i);
+        if (fragMatch) entry.fragGen = parseInt(fragMatch[1], 10);
+      }
+    }
+
+    // Domain overrides take precedence for values not in spell data
+    Object.assign(entry, DOMAIN_OVERRIDES[name] || {});
+
+    result[name] = entry;
+  }
+
+  _abilityDataCache = Object.freeze(result);
+  return _abilityDataCache;
+}
+
+const ABILITY_DATA = loadAbilityData();
 
 // --- Resource Flow Modeling ---
 

@@ -138,6 +138,7 @@ data/
   interactions.json      # Talent → spell interaction map (full — 1.4MB)
   interactions-summary.json  # Context-efficient interactions (234KB) — use this for analysis
   cpp-proc-mechanics.json  # Auto-extracted C++ proc rates, ICDs, constants
+  build-theory.json        # Curated: talent clusters, hero trees, archetype theory
 apls/             # APL files (.simc)
   profile.simc           # Shared character profile (gear, talents, race)
   baseline.simc          # SimC default APL (reference only)
@@ -145,7 +146,6 @@ apls/             # APL files (.simc)
   current.simc           # Iteration working copy (managed by iterate.js, not hand-edited)
 results/          # Simulation output and persistent state
   builds.json            # Discovered archetypes + ranked builds (from npm run discover)
-  build-registry.json    # Legacy build tracking (superseded by builds.json)
   findings.json          # Accumulated analytical insights across sessions
   SCHEMA.md              # Schema documentation for persistence files
 reference/
@@ -264,7 +264,7 @@ node src/sim/iterate.js rollback <iteration-id>      # Rollback an accepted iter
 node src/sim/iterate.js summary
 
 # Analysis tools
-node src/analyze/archetypes.js                       # Show archetype definitions
+node src/analyze/archetypes.js                       # Show archetypes, clusters, synergies, tensions
 node src/analyze/strategic-hypotheses.js <workflow.json> [apl.simc]  # Generate strategic hypotheses
 node src/analyze/theorycraft.js [workflow.json] [apl.simc]           # Temporal resource flow analysis
 node src/apl/condition-parser.js "condition"         # Parse APL condition to AST
@@ -282,15 +282,15 @@ node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
 
 Targeting **Midnight** expansion. The simc `midnight` branch may have new abilities, talent changes, or mechanic reworks compared to TWW (The War Within). Always check the midnight branch for current spell data.
 
-## Persistence — Build Discovery & Findings
+## Persistence — Build Knowledge & Findings
 
-Three JSON files in `results/` track state across sessions. See `results/SCHEMA.md` for full schema documentation.
+Three JSON files track state across sessions:
 
+- **`data/build-theory.json`** — Curated mechanical knowledge: talent clusters, hero tree interactions, cluster×hero synergies, build archetypes, and tension points. Not auto-generated — edited by hand when analysis reveals new structural insights. Used by `archetypes.js` and skill prompts.
 - **`results/builds.json`** — Discovered archetypes and ranked talent builds from `npm run discover`. Contains factor impacts, synergy pairs, archetype groupings, and per-build DPS across all scenarios. Re-run after APL changes to update rankings.
-- **`results/build-registry.json`** — Legacy manual build tracking (superseded by `builds.json`).
-- **`results/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags. Replaces hardcoded known-result tables in skill prompts.
+- **`results/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags.
 
-**Session startup protocol:** Read `builds.json` and `findings.json`. Check factor impacts for talent optimization opportunities. Filter findings to `status: "validated"` for calibration context.
+**Session startup protocol:** Read `build-theory.json` for structural context, `builds.json` for quantitative rankings, and `findings.json` (filtered to `status: "validated"`) for calibration.
 
 **After accepting APL changes:** Re-run `npm run discover -- --quick` to re-rank builds under the new APL.
 
