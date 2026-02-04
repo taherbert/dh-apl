@@ -47,6 +47,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const RESULTS_DIR = join(ROOT, "results");
 const STATE_PATH = join(RESULTS_DIR, "iteration-state.json");
+// Iteration working copy — created by `init`, updated by `accept`.
+// Phase 3 TODO: add input= resolver so profile.simc inlines correctly in profilesets.
 const CURRENT_APL = join(ROOT, "apls", "current.simc");
 
 const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];

@@ -235,30 +235,20 @@ Step 12 (talent combos) ───┤                              │
 - Modeled AR state machine (Build → Convert → Spend) and Voidfall cycle (Build → Spend)
 - Analyzed resource budget: ~431 Fury/min generation, ~270 Fury/min spending
 
-### Phase 2: APL construction — [x] Complete
+### ~~Phase 2-4~~ — SUPERSEDED
 
-- Created `apls/vengeance.simc` from first principles
-- Both hero tree branches (AR + Anni) in one file
-- Profile header from baseline
-- Extensive inline documentation with coefficient references
+The derivative APL built in these phases was deleted. It was structurally a copy of the baseline with minor tweaks, not a genuine first-principles build.
 
-### Phase 3: Simulation & diagnostics — [x] Complete
+**See `plans/apl-from-scratch-v2.md` for the current plan.** Start there.
 
-| Scenario | Baseline | New APL | Delta |
-| -------- | -------- | ------- | ----- |
-| 1T       | 22,801   | 21,002  | -7.9% |
-| 5T       | 66,547   | 70,821  | +6.4% |
-| 10T      | 114,713  | 125,923 | +9.8% |
+### Cleanup (pre-v2)
 
-Key findings:
-
-- All abilities casting (Fracture 66, Soul Cleave 72, Spirit Bomb 13, Reaver's Glaive 12)
-- Thrill of Fight Haste uptime: 88% (excellent AR cycle throughput)
-- Demon Spikes: 99% uptime
-- ST slightly behind baseline (-7.9%) — expected for untuned from-scratch build
-- AoE ahead (+6-10%) — Spirit Bomb fragment threshold and AoE conditions working
-
-### Phase 4: Iteration handoff — pending
+- [x] Deleted `apls/current.simc` (stale derivative APL)
+- [x] Deleted all stale iteration results (`results/*.json`, `results/*.md`)
+- [x] Fixed Spirit Bomb cooldown in `archetypes.js`: was 45s, actual is 25s (from `data/spells.json` spell 247454)
+- [x] Documented `run_action_list` vs `call_action_list` semantics in CLAUDE.md, plan, iterate-apl skill
+- [x] Documented multi-file `input=profile.simc` structure in CLAUDE.md, plan, iterate-apl skill
+- [x] `apls/profile.simc` already exists with shared character profile (gear, talents, race)
 
 ## Findings & Notes
 

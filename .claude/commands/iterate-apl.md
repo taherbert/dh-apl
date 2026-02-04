@@ -65,8 +65,16 @@ Rules:
 
 - One change per iteration (isolate variables)
 - Preserve round-trip fidelity (use parser when possible)
-- Don't modify profile/gear lines — APL only
+- Don't modify profile/gear lines — APL only. The profile lives in `apls/profile.simc` (included via `input=profile.simc`). Only edit action lines.
 - The current baseline uses AR talents — only `actions.ar` is active. Changes to shared lists (precombat, default, externals) affect both hero trees. To optimize Annihilator, a separate baseline with Annihilator talents is needed.
+
+Structural mutations (beyond condition tweaks) are valid:
+
+- **Extract sub-list with `call_action_list`:** Factor shared logic into a sub-list (e.g., `actions.cooldowns`, `actions.ar_aoe`). Use `call_action_list` — it evaluates inline and falls through if nothing fires, so the caller continues normally.
+- **AoE/ST split:** Add `call_action_list,name=ar_aoe,if=spell_targets.spirit_bomb>=3` before ST priority. This is a structural change but still one logical mutation.
+- **Reordering:** Moving an action line up/down is a valid single mutation.
+- **Adding action lines:** New lines (e.g., a conditional Soul Cleave during Rending Strike windows) count as one mutation if they serve one hypothesis.
+- Do NOT use `run_action_list` for sub-routines that should fall through — use `call_action_list`. Reserve `run_action_list` for mutually exclusive branches only.
 
 ### Step 4: Test (Tiered)
 
