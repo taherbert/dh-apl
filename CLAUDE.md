@@ -22,6 +22,7 @@ SimulationCraft APLs are text-based priority lists that define ability usage, co
 actions=auto_attack
 actions+=/ability_name,if=condition1&condition2
 actions+=/run_action_list,name=sub_list,if=condition
+actions+=/call_action_list,name=sub_list,if=condition
 ```
 
 Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spikes.up`, `talent.spirit_bomb.enabled`, `cooldown.fiery_brand.ready`, `health.pct<50`, `active_enemies>=3`.
@@ -29,6 +30,24 @@ Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spike
 **Apex talents:** Apex talents (pinnacle talents at the bottom of the tree) use `apex.N` where N is the rank number (e.g., `apex.1`, `apex.2`). Do NOT use `talent.apex_name` — always use the `apex.N` syntax.
 
 **APL variables:** Use `variable,name=X,value=expr` to extract shared logic out of action conditions. Variables keep action statements focused on "what to cast" while variables handle "is the situation right." If a condition or sub-expression appears in more than one action line, it should be a variable. Computed state (target counts, resource thresholds, buff windows, talent-dependent flags) belongs in variables — not duplicated inline across action conditions.
+
+**Action list delegation:** Two mechanisms for sub-lists with different control flow (source: `engine/action/action.cpp`):
+
+- **`run_action_list,name=X`** — Swaps the active list to `X`. Remaining actions in the caller are skipped for this evaluation cycle. Use for mutually exclusive branches (e.g., hero tree routing: `run_action_list,name=ar,if=hero_tree.aldrachi_reaver`).
+- **`call_action_list,name=X`** — Evaluates `X` inline. If an action fires, the cycle ends normally. If nothing in `X` is ready, control falls through to the next line in the caller. Use for optional sub-routines (externals, defensives, burst windows) and shared logic across branches. Zero GCD/overhead — `use_off_gcd=true`, `use_while_casting=true`.
+
+Choose `run_action_list` when branches are mutually exclusive (only one should ever execute). Choose `call_action_list` when the sub-list is optional or shared — it tries the sub-list and continues if nothing fires.
+
+**Multi-file structure:** SimC supports `input=<filename>` to include one file from another. Paths resolve first relative to the including file's directory, then relative to CWD. Our APL files use this to avoid duplicating the character profile:
+
+```
+# apls/vengeance.simc
+input=profile.simc        # includes apls/profile.simc (same directory)
+actions=auto_attack
+actions+=/...
+```
+
+`apls/profile.simc` contains the shared character setup (race, talents, gear). APL files contain only action lines. The `iterate.js` pipeline needs to resolve `input=` directives when building profileset files — see `buildProfilesetContent()` in `src/sim/iterate.js`.
 
 ## Session Protocol
 
@@ -106,6 +125,10 @@ data/
   interactions.json      # Talent → spell interaction map
   cpp-proc-mechanics.json  # Auto-extracted C++ proc rates, ICDs, constants
 apls/             # APL files (.simc)
+  profile.simc           # Shared character profile (gear, talents, race)
+  baseline.simc          # SimC default APL (reference only)
+  vengeance.simc         # Our from-scratch APL (uses input=profile.simc)
+  current.simc           # Iteration working copy (managed by iterate.js, not hand-edited)
 results/          # Simulation output (gitignored)
 reference/
   vengeance-apl.simc           # simc default VDH APL (auto-extracted from C++)
@@ -224,7 +247,7 @@ Targeting **Midnight** expansion. The simc `midnight` branch may have new abilit
 - APL files use `.simc` extension.
 - Use action list names that describe purpose (e.g., `defensives`, `cooldowns`, `aoe`, `single_target`).
 - Comment non-obvious conditions with `#` lines explaining the "why."
-- Keep the default action list short — delegate to sub-lists via `run_action_list`.
+- Keep the default action list short — delegate to sub-lists via `run_action_list` (mutually exclusive branches) or `call_action_list` (optional sub-routines that fall through).
 - **Theory before simulation.** Before changing any ability's placement, conditions, or priority, read it in context. Understand _why_ it is where it is, what role it plays in the resource/GCD/cooldown economy, and what downstream effects a change would cause. Form a clear theory — "this change should improve X because Y" — before creating a candidate or running a sim. Never shotgun changes to see what sticks.
 - **Audit existing logic for errors.** APL variables and conditions encode assumptions about game mechanics — caps, thresholds, talent interactions. These assumptions can become wrong when talents change the rules (e.g., an apex talent raising the soul fragment cap from 5 to 6). Actively look for hardcoded values or implicit assumptions that don't account for the current talent build. When you find one, trace the downstream effects: a corrected cap may change fragment thresholds, spender conditions, and target-count breakpoints.
 - All JS uses ESM (`import`/`export`), Node.js 23+.

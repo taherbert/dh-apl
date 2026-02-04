@@ -11,8 +11,10 @@ The first attempt produced an APL that was structurally a copy of the existing b
 ## Branch & Files
 
 - **Branch:** `feature/apl-from-scratch`
-- **Output:** `apls/vengeance.simc`
-- **Profile header + gear:** Copy from `apls/baseline.simc` lines 1-12 and gear block at bottom (these are character setup, not APL logic)
+- **Output:** `apls/vengeance.simc` (action lines only, uses `input=profile.simc`)
+- **Profile:** `apls/profile.simc` (shared character setup — gear, talents, race). Already exists.
+- **Multi-file:** APL files start with `input=profile.simc` to include the shared profile. SimC resolves `input=` paths relative to the including file's directory first, then CWD.
+- **Pipeline note:** `iterate.js`'s `buildProfilesetContent()` needs to resolve `input=` directives by inlining the referenced content, since relative paths won't resolve from `results/`. Add this resolver in Phase 3.
 - **Previous APL deleted** — start fresh
 
 ## Available Data Files
@@ -290,23 +292,27 @@ Build the APL section by section, validating each addition with a sim run.
 
 ### 3.1 Skeleton (syntax/structure only)
 
-Create the file with:
+Create `apls/vengeance.simc` with:
 
-1. Profile header (from baseline)
+1. `input=profile.simc` — includes shared character profile (gear, talents, race)
 2. `actions.precombat` — snapshot_stats, pre-pull abilities
 3. `actions` (default) — variables, auto_attack, disrupt, off-GCD weaving, hero tree routing
 4. `actions.externals` — power_infusion
 5. `actions.ar` — empty, to be filled
 6. `actions.anni` — empty, to be filled
-7. Gear block (from baseline)
+
+Also add `input=` resolver to `iterate.js`'s `buildProfilesetContent()` so profileset runs inline the profile content correctly.
 
 **Syntax patterns to use** (learned from reference, NOT priority):
 
 - `variable,name=X,value=expr` for computed state
 - `use_off_gcd=1` for Infernal Strike, Demon Spikes, Meta, Potion
-- `run_action_list,name=ar,if=hero_tree.aldrachi_reaver`
+- `run_action_list,name=ar,if=hero_tree.aldrachi_reaver` (mutually exclusive branches)
+- `call_action_list,name=externals,if=condition` (optional sub-routines that fall through)
 - `buff.X.up`, `dot.X.ticking`, `soul_fragments>=N`, `cooldown.X.ready`
 - `trinket.1.has_use_buff`, `trinket.1.has_buff.agility`, etc.
+
+See CLAUDE.md "Action list delegation" for full `run_action_list` vs `call_action_list` semantics.
 
 ### 3.2 Variable Design
 
@@ -432,3 +438,8 @@ use_off_gcd=1 (action modifier, not expression)
 - Phase 4 validation: 3 runs (1000 iterations each)
 - Phase 5 iteration: ~5-10 runs
 - **Total: ~20-30 sim runs**
+
+## Known Gaps
+
+- **`archetypes.js` is hardcoded seed data** — descriptions, cooldowns, and mechanic details are hand-curated with no automated import from `spells.json`. The Spirit Bomb CD error (45s vs actual 25s) was an example. Future: consider validating archetype data against spell data, or importing key values programmatically.
+- **`iterate.js` needs `input=` resolver** — `buildProfilesetContent()` reads APL files as text and writes intermediate files to `results/`. Relative `input=profile.simc` paths won't resolve from there. Add a resolver that inlines `input=` content before writing. (Phase 3 task.)

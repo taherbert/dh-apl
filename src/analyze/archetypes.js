@@ -96,7 +96,7 @@ const SEED_ARCHETYPES = {
   "ar-spirit-bomb-cooldown": {
     heroTree: "aldrachi_reaver",
     description: collapseWhitespace(`
-      In Midnight, Spirit Bomb is a 45-second cooldown (affected by Haste), not a
+      In Midnight, Spirit Bomb is a 25-second cooldown (affected by Haste), not a
       regular spender. Use it as a burst damage window, ideally with 5 Soul
       Fragments and Soul Furnace stacks if talented. Soul Cleave is now the
       primary spender for routine damage.
@@ -110,7 +110,7 @@ const SEED_ARCHETYPES = {
       "Spirit Bomb is burst, not sustain; don't hold it too long waiting for perfect conditions",
     aplFocus: ["ar"],
     mechanicChanges: [
-      "Spirit Bomb is now 45s cooldown baseline (reduced by Haste)",
+      "Spirit Bomb is now 25s cooldown baseline (reduced by Haste)",
       "Soul Cleave is primary spender in Midnight",
       "Soul Furnace still amplifies Spirit Bomb at 8+ stacks",
     ],
