@@ -142,7 +142,10 @@ apls/             # APL files (.simc)
   baseline.simc          # SimC default APL (reference only)
   vengeance.simc         # Our from-scratch APL (uses input=profile.simc)
   current.simc           # Iteration working copy (managed by iterate.js, not hand-edited)
-results/          # Simulation output (gitignored)
+results/          # Simulation output and persistent state
+  build-registry.json    # Build tracking: talent builds, DPS results, APL version, staleness
+  findings.json          # Accumulated analytical insights across sessions
+  SCHEMA.md              # Schema documentation for persistence files
 reference/
   vengeance-apl.simc           # simc default VDH APL (auto-extracted from C++)
   simc-talent-variables.json   # C++ talent variable names mapped to trees
@@ -217,7 +220,7 @@ node src/sim/analyze.js                      # Analyze results
 npm run verify                               # Verify data against simc C++
 npm run extract-simc                         # Extract simc C++ talent variables
 
-# Analyze APL — load methodology guide and data for analysis session
+# Analyze APL — walk through APL explaining what each line does and why
 /analyze-apl [apls/baseline.simc]
 
 # SimC reference — look up SimC syntax, expressions, fight styles
@@ -269,6 +272,30 @@ node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
 ## Expansion Context
 
 Targeting **Midnight** expansion. The simc `midnight` branch may have new abilities, talent changes, or mechanic reworks compared to TWW (The War Within). Always check the midnight branch for current spell data.
+
+## Persistence — Build Registry & Findings
+
+Two JSON files in `results/` track state across sessions. See `results/SCHEMA.md` for full schema documentation.
+
+- **`results/build-registry.json`** — Tracks every talent build tested, its DPS results per scenario, which APL version produced those results, and staleness detection. When an APL changes, builds tested under the old APL become "stale" — their rankings may no longer be accurate.
+- **`results/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags. Replaces hardcoded known-result tables in skill prompts.
+
+**Session startup protocol:** Read both files. Check for unresolved stale warnings in the build registry. Filter findings to `status: "validated"` for calibration context.
+
+**After accepting changes:** Record new APL version, mark affected builds stale, append findings for each insight discovered.
+
+### Skill Hierarchy
+
+```
+/optimize          ← Master loop: co-optimizes build + APL together
+  ├── /talent-analysis  ← Talent interaction graph, synergy clusters
+  ├── /theorycraft      ← Temporal resource flow, timing conflicts
+  └── /full-analysis    ← Deep APL theorycraft, systemic tensions
+        └── /iterate-apl  ← Autonomous iteration (test, accept/reject)
+
+/analyze-apl       ← Comprehension: walk through APL explaining it
+/simc-reference    ← Look up SimC syntax and expressions
+```
 
 ## Conventions
 

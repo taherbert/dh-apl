@@ -1,6 +1,9 @@
 # Project-specific
 data/raw/
 results/
+!results/build-registry.json
+!results/findings.json
+!results/SCHEMA.md
 bin/
 
 # Logs

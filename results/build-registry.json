@@ -1,0 +1,7 @@
+{
+  "_schema": "build-registry-v1",
+  "_doc": "Tracks every build tested, its DPS results, which APL version was used, and whether results are stale. Skills read this at startup and update after testing.",
+  "builds": [],
+  "aplVersions": [],
+  "staleBuildWarnings": []
+}

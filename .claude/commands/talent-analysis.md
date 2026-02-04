@@ -13,13 +13,22 @@ data/cpp-proc-mechanics.json
 data/spells-summary.json
 ```
 
-2. Read the current build from the profile. Use `$ARGUMENTS` if provided, else check `apls/profile.simc` for the `talents=` line.
+2. Read accumulated findings and build history:
 
-3. Read archetype definitions: `src/analyze/archetypes.js` (SEED_ARCHETYPES object)
+```
+results/findings.json
+results/build-registry.json
+```
 
-4. Read the from-scratch modeling: `plans/apl-from-scratch-v2.md` (sections 1.1–1.5 for DPGCD tables, resource value analysis, state machine models)
+Filter findings to `status: "validated"` — these calibrate your analysis. If builds have been tested before, their results inform which talent directions have already been explored.
 
-5. Check for existing sim results (`ls results/`) to ground analysis in actual DPS contributions.
+3. Read the current build from the profile. Use `$ARGUMENTS` if provided, else check `apls/profile.simc` for the `talents=` line.
+
+4. Read archetype definitions: `src/analyze/archetypes.js` (SEED_ARCHETYPES object)
+
+5. Read the from-scratch modeling: `plans/apl-from-scratch-v2.md` (sections 1.1–1.5 for DPGCD tables, resource value analysis, state machine models)
+
+6. Check for existing sim results (`ls results/`) to ground analysis in actual DPS contributions.
 
 ## Phase 1: Map the Interaction Graph
 
@@ -193,3 +202,11 @@ For each:
 
 - Which interactions can only be resolved by simulation (too many variables for pure theory)?
 - What profileset comparisons would be most informative?
+
+## On Completion
+
+Record findings from this analysis:
+
+1. Append new insights to `results/findings.json` — each synergy, anti-synergy, or talent evaluation is a finding with evidence, confidence, and tags (use `talent-synergy`, `build-apl-coupling`, `state-machine` tags from `results/SCHEMA.md`)
+2. If any finding contradicts an existing one, mark the old one `status: "superseded"`
+3. If specific builds were evaluated, add or update entries in `results/build-registry.json`
