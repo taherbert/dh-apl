@@ -229,6 +229,9 @@ npm run extract-simc                         # Extract simc C++ talent variables
 # Theorycraft — temporal resource flow analysis and hypotheses
 /theorycraft [apls/vengeance.simc]
 
+# Full analysis — error audit + all hypotheses + iteration loop
+/full-analysis [apls/baseline.simc]
+
 # Iteration state management
 node src/sim/iterate.js init apls/baseline.simc
 node src/sim/iterate.js status
