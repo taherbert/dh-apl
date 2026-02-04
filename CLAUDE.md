@@ -127,6 +127,7 @@ src/
   visualize/      # Reports and graphs (text-report.js, graph.js)
   sim/            # SimC runner and analysis (runner.js, analyze.js, iterate.js)
   analyze/        # Strategic analysis (archetypes.js, strategic-hypotheses.js, theorycraft.js)
+  discover/       # Build discovery pipeline (build-discovery.js)
   apl/            # APL parser, condition-parser, mutator
 data/
   raw/            # Raw simc dumps (gitignored)
@@ -137,13 +138,14 @@ data/
   interactions.json      # Talent → spell interaction map (full — 1.4MB)
   interactions-summary.json  # Context-efficient interactions (234KB) — use this for analysis
   cpp-proc-mechanics.json  # Auto-extracted C++ proc rates, ICDs, constants
+  build-theory.json        # Curated: talent clusters, hero trees, archetype theory
 apls/             # APL files (.simc)
   profile.simc           # Shared character profile (gear, talents, race)
   baseline.simc          # SimC default APL (reference only)
   vengeance.simc         # Our from-scratch APL (uses input=profile.simc)
   current.simc           # Iteration working copy (managed by iterate.js, not hand-edited)
 results/          # Simulation output and persistent state
-  build-registry.json    # Build tracking: talent builds, DPS results, APL version, staleness
+  builds.json            # Discovered archetypes + ranked builds (from npm run discover)
   findings.json          # Accumulated analytical insights across sessions
   SCHEMA.md              # Schema documentation for persistence files
 reference/
@@ -212,6 +214,13 @@ npm run graph                                # Generate interaction graph
 npm run audit-report                         # Generate interaction audit
 npm run context-summary                      # Generate context-efficient summaries
 
+# === Build Discovery ===
+npm run discover                             # Standard fidelity (~10-20 min)
+npm run discover -- --quick                  # Quick screening (~2-5 min)
+npm run discover -- --confirm                # High fidelity (~30-60 min)
+npm run discover -- --ar-only                # Aldrachi Reaver builds only
+npm run discover -- --anni-only              # Annihilator builds only
+
 # === Simulation ===
 node src/sim/runner.js apls/baseline.simc    # Run simulation
 node src/sim/analyze.js                      # Analyze results
@@ -255,7 +264,7 @@ node src/sim/iterate.js rollback <iteration-id>      # Rollback an accepted iter
 node src/sim/iterate.js summary
 
 # Analysis tools
-node src/analyze/archetypes.js                       # Show archetype definitions
+node src/analyze/archetypes.js                       # Show archetypes, clusters, synergies, tensions
 node src/analyze/strategic-hypotheses.js <workflow.json> [apl.simc]  # Generate strategic hypotheses
 node src/analyze/theorycraft.js [workflow.json] [apl.simc]           # Temporal resource flow analysis
 node src/apl/condition-parser.js "condition"         # Parse APL condition to AST
@@ -273,21 +282,23 @@ node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
 
 Targeting **Midnight** expansion. The simc `midnight` branch may have new abilities, talent changes, or mechanic reworks compared to TWW (The War Within). Always check the midnight branch for current spell data.
 
-## Persistence — Build Registry & Findings
+## Persistence — Build Knowledge & Findings
 
-Two JSON files in `results/` track state across sessions. See `results/SCHEMA.md` for full schema documentation.
+Three JSON files track state across sessions:
 
-- **`results/build-registry.json`** — Tracks every talent build tested, its DPS results per scenario, which APL version produced those results, and staleness detection. When an APL changes, builds tested under the old APL become "stale" — their rankings may no longer be accurate.
-- **`results/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags. Replaces hardcoded known-result tables in skill prompts.
+- **`data/build-theory.json`** — Curated mechanical knowledge: talent clusters, hero tree interactions, cluster×hero synergies, build archetypes, and tension points. Not auto-generated — edited by hand when analysis reveals new structural insights. Used by `archetypes.js` and skill prompts.
+- **`results/builds.json`** — Discovered archetypes and ranked talent builds from `npm run discover`. Contains factor impacts, synergy pairs, archetype groupings, and per-build DPS across all scenarios. Re-run after APL changes to update rankings.
+- **`results/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags.
 
-**Session startup protocol:** Read both files. Check for unresolved stale warnings in the build registry. Filter findings to `status: "validated"` for calibration context.
+**Session startup protocol:** Read `build-theory.json` for structural context, `builds.json` for quantitative rankings, and `findings.json` (filtered to `status: "validated"`) for calibration.
 
-**After accepting changes:** Record new APL version, mark affected builds stale, append findings for each insight discovered.
+**After accepting APL changes:** Re-run `npm run discover -- --quick` to re-rank builds under the new APL.
 
 ### Skill Hierarchy
 
 ```
 /optimize          ← Master loop: co-optimizes build + APL together
+  ├── npm run discover  ← Automated build discovery (DoE → sim → archetypes)
   ├── /talent-analysis  ← Talent interaction graph, synergy clusters
   ├── /theorycraft      ← Temporal resource flow, timing conflicts
   └── /full-analysis    ← Deep APL theorycraft, systemic tensions

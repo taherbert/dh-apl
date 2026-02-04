@@ -7,8 +7,9 @@ Perform temporal resource flow analysis on the VDH APL and generate testable hyp
 ```
 data/spells-summary.json
 data/cpp-proc-mechanics.json
+data/build-theory.json
 results/findings.json
-results/build-registry.json
+results/builds.json
 ```
 
 2. Read the APL to analyze. If `$ARGUMENTS` was provided, use that file. Otherwise default:

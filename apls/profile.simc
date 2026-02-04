@@ -11,7 +11,7 @@ race=night_elf
 timeofday=night
 role=tank
 position=front
-talents=CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB
+talents=CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMzMPAYMzYmZGzMjZmtZGbjZWGjZAAAAYWmBDjlFmwwMzYBAAAADMAAYmBYAAAAMA
 
 # Consumables disabled — no Midnight consumables in SimC yet
 flask=disabled

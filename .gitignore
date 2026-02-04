@@ -1,7 +1,9 @@
 # Project-specific
 data/raw/
 results/
-!results/build-registry.json
+apls/candidate.simc
+apls/current.simc
+!results/builds.json
 !results/findings.json
 !results/SCHEMA.md
 bin/

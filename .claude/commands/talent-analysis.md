@@ -13,18 +13,19 @@ data/cpp-proc-mechanics.json
 data/spells-summary.json
 ```
 
-2. Read accumulated findings and build history:
+2. Read accumulated findings and build data:
 
 ```
 results/findings.json
-results/build-registry.json
+results/builds.json
+data/build-theory.json
 ```
 
-Filter findings to `status: "validated"` — these calibrate your analysis. If builds have been tested before, their results inform which talent directions have already been explored.
+Filter findings to `status: "validated"` — these calibrate your analysis. Read `builds.json` for factor impacts and archetype rankings. Read `build-theory.json` for cluster synergies and tension points.
 
 3. Read the current build from the profile. Use `$ARGUMENTS` if provided, else check `apls/profile.simc` for the `talents=` line.
 
-4. Read archetype definitions: `src/analyze/archetypes.js` (SEED_ARCHETYPES object)
+4. Read archetype definitions: `data/build-theory.json` (buildArchetypes, specClusters, heroTrees)
 
 5. Read the from-scratch modeling: `plans/apl-from-scratch-v2.md` (sections 1.1–1.5 for DPGCD tables, resource value analysis, state machine models)
 
@@ -209,4 +210,4 @@ Record findings from this analysis:
 
 1. Append new insights to `results/findings.json` — each synergy, anti-synergy, or talent evaluation is a finding with evidence, confidence, and tags (use `talent-synergy`, `build-apl-coupling`, `state-machine` tags from `results/SCHEMA.md`)
 2. If any finding contradicts an existing one, mark the old one `status: "superseded"`
-3. If specific builds were evaluated, add or update entries in `results/build-registry.json`
+3. If specific builds were evaluated, re-run `npm run discover -- --quick` to update `results/builds.json`
