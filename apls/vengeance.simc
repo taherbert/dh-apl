@@ -6,10 +6,6 @@ input=apls/profile.simc
 
 # === Precombat ===
 actions.precombat=/snapshot_stats
-# Target count tiers for branching logic
-actions.precombat+=/variable,name=single_target,value=spell_targets.spirit_bomb=1
-actions.precombat+=/variable,name=small_aoe,value=spell_targets.spirit_bomb>=2&spell_targets.spirit_bomb<=5
-actions.precombat+=/variable,name=big_aoe,value=spell_targets.spirit_bomb>=6
 # Trinket buff detection — standard SimC plumbing
 actions.precombat+=/variable,name=trinket_1_buffs,value=trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery|trinket.1.has_buff.versatility|trinket.1.has_buff.haste|trinket.1.has_buff.crit)
 actions.precombat+=/variable,name=trinket_2_buffs,value=trinket.2.has_use_buff|(trinket.2.has_buff.agility|trinket.2.has_buff.mastery|trinket.2.has_buff.versatility|trinket.2.has_buff.haste|trinket.2.has_buff.crit)
@@ -18,14 +14,10 @@ actions.precombat+=/sigil_of_flame
 actions.precombat+=/immolation_aura
 
 # === Default (runs every cycle) ===
-# Projected fragment generation for spending decisions
-actions=/variable,name=num_spawnable_souls,op=reset,default=0
-actions+=/variable,name=num_spawnable_souls,op=max,value=1,if=talent.soul_sigils&cooldown.sigil_of_flame.up
-actions+=/variable,name=num_spawnable_souls,op=max,value=2,if=cooldown.fracture.charges_fractional>=1&!buff.metamorphosis.up
-actions+=/variable,name=num_spawnable_souls,op=max,value=3,if=cooldown.fracture.charges_fractional>=1&buff.metamorphosis.up
-actions+=/variable,name=num_spawnable_souls,op=add,value=1,if=talent.soul_carver&(cooldown.soul_carver.remains>(cooldown.soul_carver.duration-3))
 # Fiery Demise window flag — used in both hero trees
-actions+=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
+actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
+# Spirit Bomb fragment threshold — 3/4/5 within noise in both ST and AoE (Phase 3.2 tested)
+actions+=/variable,name=spb_threshold,value=4
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react
 # Off-GCD weaving
@@ -52,8 +44,8 @@ actions.ar+=/call_action_list,name=ar_empowered
 # Long cooldowns — fires one if ready, falls through otherwise
 actions.ar+=/call_action_list,name=ar_cooldowns
 # Core rotation
-# Spirit Bomb at 4+ fragments — threshold 4/5 within noise, 4 for Frailty uptime
-actions.ar+=/spirit_bomb,if=soul_fragments>=4
+# Spirit Bomb — threshold 3/4/5 within noise; 4 balances cast frequency vs Frailty uptime
+actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 # Fracture in Meta — +1 frag/cast makes aggressive use a +5.2% DPS gain
 actions.ar+=/fracture,if=buff.metamorphosis.up
 # Fracture — no overflow guard; uncapped Fracture +10.4% over guard<=4
@@ -79,8 +71,8 @@ actions.ar_empowered+=/fracture,if=buff.glaive_flurry.up
 
 # === AR Cooldowns — Brand first enables Fiery Demise window (+0.6% over Spite first) ===
 actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
-actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=3
-actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|(talent.fiery_demise&dot.fiery_brand.ticking)
+actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=5
+actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
 # Don't channel during empowered window
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
 

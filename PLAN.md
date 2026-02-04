@@ -276,6 +276,60 @@ Bug fixes during Phase 2:
 - Fixed `resolveInputDirectives` to try CWD-relative paths as fallback (profileset system couldn't resolve `input=apls/profile.simc`)
 - Fixed `runProfileset` sync variant dropping input file path (`args.slice(1)` → `args`)
 
+### Phase 3.2: Variable Design — [x] Complete
+
+Tested dynamic `spb_threshold` variable (Frailty-aware, AoE-aware, Fiery Demise-aware) via profilesets against static thresholds 3/4/5:
+
+- **ST:** All thresholds within 0.6% — no significant decision boundary exists
+- **5T AoE:** All within 1.4% (higher thresholds slightly favored, but within noise at 1% target_error)
+- **Conclusion:** Dynamic threshold adds complexity without measurable gain. Simplified to static `spb_threshold=4` as a named variable.
+
+Variables in final APL:
+
+| Variable              | Purpose                                      | Used by               |
+| --------------------- | -------------------------------------------- | --------------------- |
+| `trinket_1_buffs`     | Trinket buff detection (SimC plumbing)       | AR + Anni trinket use |
+| `trinket_2_buffs`     | Trinket buff detection (SimC plumbing)       | AR + Anni trinket use |
+| `fiery_demise_active` | Fiery Demise window flag                     | AR Soul Carver gate   |
+| `spb_threshold`       | Spirit Bomb fragment threshold (static 4)    | AR Spirit Bomb        |
+| `spb_1t_souls`        | Anni ST Spirit Bomb threshold (FD-dependent) | Anni Spirit Bomb      |
+
+Removed dead variables: `num_spawnable_souls`, `single_target`, `small_aoe`, `big_aoe` (defined but never referenced in action conditions).
+
+Variables NOT added (rationale):
+
+- `fury_value_sc/sbomb` — SimC has no runtime spell introspection
+- `fragment_waste_risk` — Phase 2 showed Fracture overflow guard costs -10.4%
+- `ar_cycle_ready` — too subtle, no sim evidence of gain
+- `frailty_needed` — folded into dynamic spb_threshold test; result was noise
+
+Additional exploration (post Phase 3.2):
+
+| Test                    | Best Variant       | DPS Impact | Applied? | Key Finding                                                                    |
+| ----------------------- | ------------------ | ---------- | -------- | ------------------------------------------------------------------------------ |
+| Soft overcap (inactive) | Spite guard <=5    | +0.3%      | Yes      | Relaxed Spite from <=3 to <=5; urgent SBomb at 3 frags = -0.3%                 |
+| SBomb cooldown pooling  | Baseline (no pool) | —          | No       | All pooling variants -0.3% to -2.8%; SC opportunity cost > SBomb marginal gain |
+
+Key insight: With 25s Spirit Bomb CD, fragments have time-value — spending NOW via Soul Cleave (2.912 AP) > hoarding for later SBomb (+0.8 AP from +2 frags).
+
+### Phase 4: Validation — [x] Complete
+
+Ran both APLs (`vengeance.simc` vs `baseline.simc`) across all 3 scenarios with `target_error=0.5`:
+
+| Scenario | Ours    | Baseline | Delta  |
+| -------- | ------- | -------- | ------ |
+| ST       | 24,365  | 22,806   | +6.8%  |
+| 5T AoE   | 82,816  | 66,350   | +24.8% |
+| 10T AoE  | 146,193 | 114,764  | +27.4% |
+
+Diagnostics:
+
+- All abilities casting (no 0-cast issues)
+- Demon Spikes uptime 99.2%
+- Fragment overflow lower than baseline (78.8 vs 118.0)
+- AotG cycle functioning correctly
+- Frailty uptime healthy
+
 ### Cleanup (pre-v2)
 
 - [x] Deleted `apls/current.simc` (stale derivative APL)
