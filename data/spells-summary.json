@@ -1,0 +1,1729 @@
+[
+  {
+    "id": 179057,
+    "name": "Chaos Nova",
+    "school": "Chromatic",
+    "resource": "25 Fury",
+    "gcd": 1.5,
+    "cooldown": 45,
+    "duration": 3,
+    "aoeRadius": 8,
+    "description": "Unleash an eruption of fel energy, dealing 0 Chaos damage and stunning all nearby enemies for 3 sec."
+  },
+  {
+    "id": 183782,
+    "name": "Disrupting Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Disrupt generates 30 Fury on a successful interrupt."
+  },
+  {
+    "id": 185123,
+    "name": "Throw Glaive",
+    "school": "Physical",
+    "resource": "25 Fury",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 9
+    },
+    "description": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
+  },
+  {
+    "id": 185164,
+    "name": "Mastery: Demonic Presence",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your Chaos damage by 0.1% and your movement speed by 0.1%."
+  },
+  {
+    "id": 187827,
+    "name": "Metamorphosis",
+    "school": "Chaos",
+    "gcd": 0,
+    "cooldown": 1,
+    "charges": {
+      "count": 1,
+      "cooldown": 120
+    },
+    "duration": 15,
+    "description": "Transform to demon form for 15 sec, increasing current health by 40%, healing for that amount, and increasing Armor by 200%."
+  },
+  {
+    "id": 189110,
+    "name": "Infernal Strike",
+    "school": "Physical",
+    "gcd": 0,
+    "cooldown": 1,
+    "charges": {
+      "count": 1,
+      "cooldown": 15
+    },
+    "aoeRadius": 8,
+    "description": "Leap through the air toward a targeted location, dealing 0 Fire damage to all enemies within 6 yards."
+  },
+  {
+    "id": 189112,
+    "name": "Infernal Strike",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 6,
+    "description": "Leap through the air toward a targeted location, dealing 0 Fire damage to all enemies within 6 yards."
+  },
+  {
+    "id": 196718,
+    "name": "Darkness",
+    "school": "Physical",
+    "gcd": 1.5,
+    "cooldown": 300,
+    "duration": 8,
+    "description": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec. Chance to avoid damage increased by 100% when not in a raid."
+  },
+  {
+    "id": 198793,
+    "name": "Vengeful Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "cooldown": 0.5,
+    "duration": 1,
+    "categoryCooldown": 25,
+    "description": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
+  },
+  {
+    "id": 198813,
+    "name": "Vengeful Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 3,
+    "aoeRadius": 5,
+    "description": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
+  },
+  {
+    "id": 202137,
+    "name": "Sigil of Silence",
+    "school": "Physical",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 90
+    },
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Place a Sigil of Silence at the target location that activates after 2 sec. Silences all enemies affected by the sigil for 2 sec."
+  },
+  {
+    "id": 202138,
+    "name": "Sigil of Chains",
+    "school": "Physical",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 90
+    },
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Place a Sigil of Chains at the target location that activates after 2 sec. All enemies affected by the sigil are pulled to its center and are snared, reducing movement speed by -70% for 6 sec."
+  },
+  {
+    "id": 203650,
+    "name": "Prepared",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 10,
+    "description": "$@spelldesc203551"
+  },
+  {
+    "id": 203720,
+    "name": "Demon Spikes",
+    "school": "Physical",
+    "gcd": 0,
+    "cooldown": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 20
+    },
+    "description": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}."
+  },
+  {
+    "id": 203747,
+    "name": "Mastery: Fel Blood",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases Armor by 0.1% of your Agility. Armor bonus is doubled while Demon Spikes is active. Also increases your attack power by 0.1%."
+  },
+  {
+    "id": 203782,
+    "name": "Shear",
+    "school": "Physical",
+    "gcd": 1.5,
+    "generates": [
+      "10 fury"
+    ],
+    "description": "Shears an enemy for 0 Physical damage, and shatters two Lesser Soul Fragments from your target. |cFFFFFFFFGenerates $m2 Fury.|r"
+  },
+  {
+    "id": 203819,
+    "name": "Demon Spikes",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 12,
+    "description": "Surge with fel power, increasing your Armor by ${$203819s2*$AGI/100}."
+  },
+  {
+    "id": 203981,
+    "name": "Soul Fragments",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Consuming a nearby Soul Fragment heals you."
+  },
+  {
+    "id": 204021,
+    "name": "Fiery Brand",
+    "school": "Fire",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 60
+    },
+    "description": "Brand yourself and an enemy target with demonic symbols, reducing the damage you take by $S1% and instantly dealing 0 Fire damage to the enemy."
+  },
+  {
+    "id": 204490,
+    "name": "Sigil of Silence",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Silence affected enemies for 2 sec."
+  },
+  {
+    "id": 204596,
+    "name": "Sigil of Flame",
+    "school": "Fire",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 30
+    },
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Place a Sigil of Flame at the target location that activates after 2 sec. Deals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil. |CFFffffffGenerates 25 Fury.|R"
+  },
+  {
+    "id": 204598,
+    "name": "Sigil of Flame",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 8,
+    "aoeRadius": 8,
+    "description": "Place a Sigil of Flame at the target location that activates after 8 sec. Deals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil. |CFFffffffGenerates 25 Fury.|R"
+  },
+  {
+    "id": 204843,
+    "name": "Sigil of Chains",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Slows enemies by -70% for 6 sec."
+  },
+  {
+    "id": 204909,
+    "name": "Soul Rending",
+    "school": "Physical",
+    "passive": true,
+    "description": "Leech increased by 6%. Gain an additional 6% leech while Metamorphosis is active."
+  },
+  {
+    "id": 207347,
+    "name": "Aura of Pain",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation grants 5 additional Fury over its duration.][Increases the critical strike chance of Immolation Aura by 6%.]"
+  },
+  {
+    "id": 207387,
+    "name": "Painbringer",
+    "school": "Fire",
+    "passive": true,
+    "description": "Consuming a Soul Fragment reduces all damage you take by -3% for 8 sec."
+  },
+  {
+    "id": 207407,
+    "name": "Soul Carver",
+    "school": "Fire",
+    "gcd": 1.5,
+    "cooldown": 60,
+    "duration": 3,
+    "generates": [
+      "3 Soul Fragments"
+    ],
+    "description": "Carve into the soul of your target, dealing 0 Fire damage and an additional 0 Fire damage over 3 sec.  Immediately shatters 3 Soul Fragments from the target and 1 additional Soul $LFragment :Fragments; every $t1 sec."
+  },
+  {
+    "id": 207548,
+    "name": "Agonizing Flames",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura increases your movement speed by 10% and its duration is increased by 50%."
+  },
+  {
+    "id": 207684,
+    "name": "Sigil of Misery",
+    "school": "Physical",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 120
+    },
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Place a Sigil of Misery at the target location that activates after 2 sec. Causes all enemies affected by the sigil to cower in fear, disorienting them for 15 sec."
+  },
+  {
+    "id": 207685,
+    "name": "Sigil of Misery",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 15,
+    "aoeRadius": 8,
+    "description": "Disorient affected enemies for 15 sec."
+  },
+  {
+    "id": 207693,
+    "name": "Feast of Souls",
+    "school": "Shadow",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Soul Cleave heals you for an additional 0 over 6 sec."
+  },
+  {
+    "id": 207697,
+    "name": "Feast of Souls",
+    "school": "Physical",
+    "passive": true,
+    "description": "Soul Cleave heals you for an additional 0 over 6 sec."
+  },
+  {
+    "id": 207739,
+    "name": "Burning Alive",
+    "school": "Fire",
+    "passive": true,
+    "description": "Every $207771t3 sec, Fiery Brand spreads to one nearby enemy."
+  },
+  {
+    "id": 207744,
+    "name": "Fiery Brand",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 12,
+    "description": "Brand yourself and an enemy target with demonic symbols, reducing the damage you take by $S1% and instantly dealing 0 Fire damage to the enemy."
+  },
+  {
+    "id": 207771,
+    "name": "Fiery Brand",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 12,
+    "description": "Brand yourself and an enemy target with demonic symbols, reducing the damage you take by $S1% and instantly dealing 0 Fire damage to the enemy."
+  },
+  {
+    "id": 209258,
+    "name": "Last Resort",
+    "school": "Physical",
+    "passive": true,
+    "description": "Sustaining fatal damage instead transforms you to Metamorphosis form. This may occur once every 480 sec."
+  },
+  {
+    "id": 209261,
+    "name": "Uncontained Fel",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 480,
+    "description": "You cannot benefit from Last Resort again for 480 sec."
+  },
+  {
+    "id": 209281,
+    "name": "Quickened Sigils",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your Sigils activate 1 second faster."
+  },
+  {
+    "id": 209426,
+    "name": "Darkness",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec. Chance to avoid damage increased by $s3% when not in a raid."
+  },
+  {
+    "id": 212084,
+    "name": "Fel Devastation",
+    "school": "Fire",
+    "resource": "50 Fury",
+    "gcd": 1.5,
+    "cooldown": 40,
+    "duration": 2,
+    "categoryCooldown": 40,
+    "description": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over 2 sec."
+  },
+  {
+    "id": 212105,
+    "name": "Fel Devastation",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 13,
+    "description": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d."
+  },
+  {
+    "id": 212106,
+    "name": "Fel Devastation",
+    "school": "Fire",
+    "gcd": 0,
+    "description": "Unleash the fel within you, damaging enemies directly in front of you for ${$212105s1*(2/$t1)} Fire damage over $d."
+  },
+  {
+    "id": 212613,
+    "name": "Vengeance Demon Hunter",
+    "school": "Physical",
+    "passive": true
+  },
+  {
+    "id": 212818,
+    "name": "Fiery Demise",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Fiery Brand also increases Fire damage you deal to the target by 0%."
+  },
+  {
+    "id": 212988,
+    "name": "Painbringer",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Consuming a Soul Fragment reduces all damage you take by 0% for 8 sec."
+  },
+  {
+    "id": 213010,
+    "name": "Charred Warblades",
+    "school": "Physical",
+    "passive": true,
+    "description": "You heal for 3% of all Fire damage you deal."
+  },
+  {
+    "id": 213243,
+    "name": "Felblade",
+    "school": "Fire",
+    "gcd": 0,
+    "generates": [
+      "15 fury"
+    ],
+    "description": "Charge to your target and deal $213243sw2 Fire damage. $?s263642[|cFFFFFFFFGenerates 15 Fury.|r]?s203513[|cFFFFFFFFGenerates 15 Fury.|r]?a203555[|cFFFFFFFFGenerates 15 Fury.|r][|cFFFFFFFFGenerates 15 Fury.|r]"
+  },
+  {
+    "id": 213405,
+    "name": "Master of the Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by -50% for 6 sec."
+  },
+  {
+    "id": 214743,
+    "name": "Soul Carver",
+    "school": "Fire",
+    "gcd": 1.5,
+    "cooldown": 60,
+    "description": "Carve into the soul of your target, dealing ${$s2+$214743s1} Fire damage and an additional 0 Fire damage over $d.  Immediately shatters $s3 Soul Fragments from the target and $s4 additional Soul $LFragment :Fragments; every $t1 sec."
+  },
+  {
+    "id": 217832,
+    "name": "Imprison",
+    "school": "Shadow",
+    "gcd": 1.5,
+    "cooldown": 45,
+    "duration": 60,
+    "description": "Imprisons a demon, beast, or humanoid, incapacitating them for 60 sec. Damage may cancel the effect. Limit 1."
+  },
+  {
+    "id": 218612,
+    "name": "Feed the Demon",
+    "school": "Physical",
+    "passive": true,
+    "description": "Every 20 Fury spent reduces the remaining cooldown of Demon Spikes by 1.2 sec."
+  },
+  {
+    "id": 218903,
+    "name": "Disrupt",
+    "school": "Chaos",
+    "gcd": 0,
+    "generates": [
+      "30 fury",
+      "300 none"
+    ],
+    "description": "$@spelldesc183752"
+  },
+  {
+    "id": 225919,
+    "name": "Fracture",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 0 Lesser Soul Fragments from them. |cFFFFFFFFGenerates $s4 Fury.|r"
+  },
+  {
+    "id": 225921,
+    "name": "Fracture",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 0 Lesser Soul Fragments from them. |cFFFFFFFFGenerates $s4 Fury.|r"
+  },
+  {
+    "id": 227174,
+    "name": "Fallout",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura's initial burst has a chance to shatter Soul Fragments from enemies."
+  },
+  {
+    "id": 228477,
+    "name": "Soul Cleave",
+    "school": "Physical",
+    "resource": "35 Fury",
+    "gcd": 1.5,
+    "description": "Viciously strike an enemy and all other enemies in front of you for 0 Physical damage and heal yourself for 0. Deals reduced damage beyond 5 targets. Consumes up to 2 Soul Fragments, increasing damage by 20% per fragment consumed."
+  },
+  {
+    "id": 228478,
+    "name": "Soul Cleave",
+    "school": "Physical",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Viciously strike an enemy and all other enemies in front of you for 0 Physical damage and heal yourself for $s4. Deals reduced damage beyond 5 targets. Consumes up to 20 Soul Fragments, increasing damage by 20% per fragment consumed."
+  },
+  {
+    "id": 232893,
+    "name": "Felblade",
+    "school": "Physical",
+    "gcd": 0.5,
+    "cooldown": 12,
+    "description": "Charge to your target and deal $213243sw2 Fire damage. $?s263642[|cFFFFFFFFGenerates 15 Fury.|r]?s203513[|cFFFFFFFFGenerates 15 Fury.|r]?a203555[|cFFFFFFFFGenerates 15 Fury.|r][|cFFFFFFFFGenerates 15 Fury.|r]"
+  },
+  {
+    "id": 247454,
+    "name": "Spirit Bomb",
+    "school": "Fire",
+    "resource": "40 Fury",
+    "gcd": 1.5,
+    "cooldown": 25,
+    "duration": 1.5,
+    "categoryCooldown": 25,
+    "description": "Consume up to 5 Soul Fragments then explode, dealing 0 Fire damage to nearby enemies, increased by 20% per fragment consumed. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 247455,
+    "name": "Spirit Bomb",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Consume up to $s2 Soul Fragments then explode, dealing 0 Fire damage to nearby enemies, increased by 0% per fragment consumed. Deals reduced damage beyond $s3 targets."
+  },
+  {
+    "id": 247456,
+    "name": "Frailty",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Consume up to 0 Soul Fragments then explode, dealing 0 Fire damage to nearby enemies, increased by 8% per fragment consumed. Deals reduced damage beyond -4 targets."
+  },
+  {
+    "id": 258920,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 1.5,
+    "cooldown": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 30
+    },
+    "duration": 6,
+    "generates": [
+      "20 fury",
+      "8 fury"
+    ],
+    "categoryCooldown": 1.5,
+    "description": "Engulf yourself in flames, radiating 0 Chaos damage over 6 sec.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][] |cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
+  },
+  {
+    "id": 258921,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][] |cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r"
+  },
+  {
+    "id": 258922,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "generates": [
+      "4 fury",
+      "2 fury"
+    ],
+    "description": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][] |cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r"
+  },
+  {
+    "id": 263642,
+    "name": "Fracture",
+    "school": "Physical",
+    "gcd": 1.5,
+    "charges": {
+      "count": 2,
+      "cooldown": 6
+    },
+    "generates": [
+      "25 fury",
+      "2 Soul Fragments"
+    ],
+    "description": "Rapidly slash your target for ${$225919sw1+$225921sw1} Physical damage, and shatter 2 Lesser Soul Fragments from them. |cFFFFFFFFGenerates 25 Fury.|r"
+  },
+  {
+    "id": 263648,
+    "name": "Soul Barrier",
+    "school": "Shadow",
+    "gcd": 1.5,
+    "cooldown": 30,
+    "duration": 10,
+    "description": "Spirit Bomb shields you for 10 sec, absorbing ${$MHP*$s1/100} damage plus ${$MHP*$s2/100} for each Soul Fragment consumed."
+  },
+  {
+    "id": 268175,
+    "name": "Void Reaver",
+    "school": "Physical",
+    "passive": true,
+    "description": "Frailty now also reduces all damage you take from afflicted targets by -4%."
+  },
+  {
+    "id": 278326,
+    "name": "Consume Magic",
+    "school": "Chromatic",
+    "gcd": 1.5,
+    "cooldown": 10,
+    "aoeRadius": 8,
+    "description": "Consume 1 beneficial Magic effect removing it from the target and granting you 1 Fury."
+  },
+  {
+    "id": 320313,
+    "name": "Swallowed Anger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Consume Magic generates 1 Fury when a beneficial Magic effect is successfully removed from the target."
+  },
+  {
+    "id": 320331,
+    "name": "Infernal Armor",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura increases your armor by 20% and causes melee attackers to suffer 0 Fire damage."
+  },
+  {
+    "id": 320334,
+    "name": "Infernal Armor",
+    "school": "Fire",
+    "gcd": 0,
+    "description": "Immolation Aura increases your armor by 0% and causes melee attackers to suffer ${$320334s1/$s3} Fire damage."
+  },
+  {
+    "id": 320361,
+    "name": "Improved Disrupt",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the range of Disrupt to 10 yds."
+  },
+  {
+    "id": 320378,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Immolation Aura by ${$abs($s0/1000)} sec."
+  },
+  {
+    "id": 320386,
+    "name": "Bouncing Glaives",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive ricochets to 1 additional $ltarget:targets;."
+  },
+  {
+    "id": 320387,
+    "name": "Perfectly Balanced Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Fracture by 1 sec and Throw Glaive by 6 sec."
+  },
+  {
+    "id": 320416,
+    "name": "Blazing Path",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212613[Infernal Strike]?s195072[Fel Rush][Shift] gains an additional charge."
+  },
+  {
+    "id": 320418,
+    "name": "Improved Sigil of Misery",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Sigil of Chains by 30 sec."
+  },
+  {
+    "id": 320635,
+    "name": "Vengeful Bonds",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat reduces the movement speed of all nearby enemies by -70% for 3 sec."
+  },
+  {
+    "id": 320654,
+    "name": "Pursuit",
+    "school": "Physical",
+    "passive": true,
+    "description": "Mastery increases your movement speed."
+  },
+  {
+    "id": 320770,
+    "name": "Unrestrained Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases maximum Fury by 20."
+  },
+  {
+    "id": 321299,
+    "name": "Mastery: Fel Blood (desc=Rank 2)",
+    "school": "Physical",
+    "passive": true,
+    "description": "Mastery increases your Attack Power."
+  },
+  {
+    "id": 326853,
+    "name": "Ruinous Bulwark",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fel Devastation heals for an additional 10%, and 50% of its healing is converted into an absorb shield for 10 sec."
+  },
+  {
+    "id": 326863,
+    "name": "Ruinous Bulwark",
+    "school": "Shadow",
+    "gcd": 0,
+    "duration": 10
+  },
+  {
+    "id": 336639,
+    "name": "Charred Flesh",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura damage increases the duration of your Fiery Brand and Sigil of Flame by 0.25.2 sec."
+  },
+  {
+    "id": 337819,
+    "name": "Throw Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
+  },
+  {
+    "id": 343014,
+    "name": "Revel in Pain",
+    "school": "Physical",
+    "passive": true,
+    "description": "2.1% of your Fire damage shields you, up to a maximum of ${$MHP*$s2/100}. Shield and maximum values are doubled while Fiery Brand is active."
+  },
+  {
+    "id": 343207,
+    "name": "Focused Cleave",
+    "school": "Physical",
+    "passive": true,
+    "description": "Soul Cleave deals 50% increased damage to your primary target."
+  },
+  {
+    "id": 389220,
+    "name": "Fiery Demise",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fiery Brand also increases Fire damage you deal to the target by 15%."
+  },
+  {
+    "id": 389688,
+    "name": "Tactical Retreat",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat has a 5 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
+  },
+  {
+    "id": 389695,
+    "name": "Will of the Illidari",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases maximum health by 3%."
+  },
+  {
+    "id": 389696,
+    "name": "Illidari Knowledge",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces magic damage taken by -3%."
+  },
+  {
+    "id": 389705,
+    "name": "Fel Flame Fortification",
+    "school": "Physical",
+    "passive": true,
+    "description": "You take -10% reduced magic damage while Immolation Aura is active."
+  },
+  {
+    "id": 389708,
+    "name": "Darkglare Boon",
+    "school": "Physical",
+    "passive": true,
+    "description": "When Fel Devastation finishes fully channeling, it refreshes 15-30% of its cooldown and refunds 15-30 Fury."
+  },
+  {
+    "id": 389711,
+    "name": "Soulmonger",
+    "school": "Physical",
+    "passive": true,
+    "description": "When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}."
+  },
+  {
+    "id": 389715,
+    "name": "Chains of Anger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the duration of your Sigils by 2 sec and radius by 2 yds."
+  },
+  {
+    "id": 389718,
+    "name": "Cycle of Binding",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your Sigils have $S2% reduced cooldowns."
+  },
+  {
+    "id": 389720,
+    "name": "Calcified Spikes",
+    "school": "Physical",
+    "passive": true,
+    "description": "Demon Spikes reduces damage taken by $S1% while active."
+  },
+  {
+    "id": 389724,
+    "name": "Felfire Fist",
+    "school": "Physical",
+    "passive": true,
+    "description": "Activating Infernal Strike out of combat or within 5 sec of entering combat places a Sigil of Flame at the target location."
+  },
+  {
+    "id": 389729,
+    "name": "Retaliation",
+    "school": "Physical",
+    "passive": true,
+    "description": "While Demon Spikes is active, melee attacks against you cause the attacker to take 0 Physical damage. Generates high threat."
+  },
+  {
+    "id": 389732,
+    "name": "Down in Flames",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fiery Brand has 12 sec reduced cooldown and 1 additional $lcharge:charges;."
+  },
+  {
+    "id": 389763,
+    "name": "Master of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive has 2 charges and snares all enemies hit by -50% for 6 sec."
+  },
+  {
+    "id": 389781,
+    "name": "Long Night",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the duration of Darkness by 3 sec."
+  },
+  {
+    "id": 389783,
+    "name": "Pitch Black",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Darkness by 120 sec."
+  },
+  {
+    "id": 389787,
+    "name": "Sigil of Flame",
+    "school": "Physical",
+    "gcd": 0,
+    "generates": [
+      "25 fury"
+    ],
+    "description": "Place a Sigil of Flame at the target location that activates after $d. Deals 0 Fire damage, and an additional 0 Fire damage over 8 sec, to all enemies affected by the sigil. |CFFffffffGenerates 25 Fury.|R"
+  },
+  {
+    "id": 389824,
+    "name": "Shattered Restoration",
+    "school": "Physical",
+    "passive": true,
+    "description": "The healing of Shattered Souls is increased by 10%."
+  },
+  {
+    "id": 389846,
+    "name": "Felfire Haste",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by 10% for 8 sec."
+  },
+  {
+    "id": 389847,
+    "name": "Felfire Haste",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 8,
+    "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by 10% for 8 sec."
+  },
+  {
+    "id": 389849,
+    "name": "Lost in Darkness",
+    "school": "Physical",
+    "passive": true,
+    "description": "Spectral Sight has 5 sec reduced cooldown and no longer reduces movement speed."
+  },
+  {
+    "id": 389860,
+    "name": "Sigil of Spite",
+    "school": "Chromatic",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "$@spelldesc306830"
+  },
+  {
+    "id": 389890,
+    "name": "Tactical Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 10,
+    "generates": [
+      "8 unknown"
+    ],
+    "description": "Vengeful Retreat has a -0.01 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
+  },
+  {
+    "id": 389958,
+    "name": "Frailty",
+    "school": "Physical",
+    "passive": true,
+    "description": "Enemies struck by Sigil of Flame, Soul Cleave, and Spirit Bomb are afflicted with Frailty for 8 sec. You heal for 8% of all damage you deal to targets with Frailty."
+  },
+  {
+    "id": 389976,
+    "name": "Vulnerability",
+    "school": "Physical",
+    "passive": true,
+    "description": "Frailty now also increases all damage you deal to afflicted targets by 3%."
+  },
+  {
+    "id": 389985,
+    "name": "Soulcrush",
+    "school": "Physical",
+    "passive": true,
+    "description": "The effects of Frailty are doubled."
+  },
+  {
+    "id": 390163,
+    "name": "Sigil of Spite",
+    "school": "Chromatic",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 60
+    },
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Place a demonic sigil at the target location that activates after 2 sec. Detonates to deal 0 Chaos damage and shatter up to 3 Soul $LFragment:Fragments; from enemies affected by the sigil. Deals reduced damage beyond 5 targets."
+  },
+  {
+    "id": 390213,
+    "name": "Burning Blood",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fire damage increased by 8%."
+  },
+  {
+    "id": 390808,
+    "name": "Volatile Flameblood",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura has 10% increased critical strike chance and generates $m1-$M1 Fury when it deals critical damage. This effect may only occur once per ${$proccooldown+0.1} sec."
+  },
+  {
+    "id": 391159,
+    "name": "Demon Spikes",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "While Demon Spikes is active, melee attacks against you cause the attacker to take 0 Physical damage. Generates high threat."
+  },
+  {
+    "id": 391178,
+    "name": "Roaring Fire",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fel Devastation heals you for up to 50% more, based on your missing health."
+  },
+  {
+    "id": 391275,
+    "name": "Accelerated Blade",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive deals 60% increased damage, reduced by 30% for each previous enemy hit."
+  },
+  {
+    "id": 391397,
+    "name": "Erratic Felheart",
+    "school": "Physical",
+    "passive": true,
+    "description": "The cooldown of $?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] is reduced by ${-$s1/1000}.1 sec."
+  },
+  {
+    "id": 391409,
+    "name": "Aldrachi Design",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your chance to parry by 3%."
+  },
+  {
+    "id": 393009,
+    "name": "Fel Flame Fortification",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "$@spelldesc337546"
+  },
+  {
+    "id": 393822,
+    "name": "Internal Struggle",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your mastery by ${$s1*$mas}.1%."
+  },
+  {
+    "id": 393827,
+    "name": "Stoke the Flames",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fel Devastation damage increased by 30%."
+  },
+  {
+    "id": 395020,
+    "name": "Any Means Necessary",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fire"
+  },
+  {
+    "id": 395446,
+    "name": "Soul Sigils",
+    "school": "Physical",
+    "passive": true,
+    "description": "Afflicting an enemy with a Sigil generates $m1 Soul $LFragment:Fragments;."
+  },
+  {
+    "id": 427775,
+    "name": "A Fire Inside",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura has 1676 (Category) additional $Lcharge:charges;, has 6 sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 427913,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 6,
+    "generates": [
+      "20 fury",
+      "8 fury"
+    ],
+    "description": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][] |cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
+  },
+  {
+    "id": 427914,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 6,
+    "generates": [
+      "20 fury",
+      "8 fury"
+    ],
+    "description": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][] |cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
+  },
+  {
+    "id": 427915,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 6,
+    "generates": [
+      "20 fury",
+      "8 fury"
+    ],
+    "description": "Engulf yourself in flames, radiating 0 Fire damage over 6 sec.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][] |cFFFFFFFFGenerates $<vengeFury> Fury over 6 sec.|r"
+  },
+  {
+    "id": 428241,
+    "name": "Demon Hide",
+    "school": "Physical",
+    "passive": true,
+    "description": "Magical damage increased by 3%, and Physical damage taken reduced by -5%."
+  },
+  {
+    "id": 428603,
+    "name": "Ascending Flame",
+    "school": "Physical",
+    "passive": true,
+    "description": "Sigil of Flame damage increased by 50%."
+  },
+  {
+    "id": 428607,
+    "name": "Live by the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury. This effect may only occur once every 5 sec."
+  },
+  {
+    "id": 428608,
+    "name": "Live by the Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "generates": [
+      "10 fury"
+    ],
+    "description": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury. This effect may only occur once every 10 sec."
+  },
+  {
+    "id": 429211,
+    "name": "Champion of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive has 2 charges and 10 yard increased range."
+  },
+  {
+    "id": 433719,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433721,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433724,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433737,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 442290,
+    "name": "Art of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Consuming 20 Soul Fragments or casting Sigil of Spite converts your next Throw Glaive into Reaver's Glaive. $@spellicon442294 $@spellname442294: Throw a glaive enhanced with the essence of consumed souls at your target, dealing 6 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 20 Fury.|R"
+  },
+  {
+    "id": 442294,
+    "name": "Reaver's Glaive",
+    "school": "Physical",
+    "gcd": 1.5,
+    "description": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to 2 additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 0 Fury.|R"
+  },
+  {
+    "id": 442492,
+    "name": "Incisive Blade",
+    "school": "Physical",
+    "passive": true,
+    "description": "Soul Cleave deals 10% increased damage."
+  },
+  {
+    "id": 442497,
+    "name": "Keen Engagement",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reaver's Glaive generates 20 Fury."
+  },
+  {
+    "id": 442502,
+    "name": "Warblade's Hunger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal 0 additional Physical damage."
+  },
+  {
+    "id": 442507,
+    "name": "Warblade's Hunger",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal 0 additional Physical damage."
+  },
+  {
+    "id": 442624,
+    "name": "Reaver's Mark",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 20,
+    "description": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take 7% increased damage for 20 sec. Max $442624u stacks. Applies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after Soul Cleave."
+  },
+  {
+    "id": 442679,
+    "name": "Reaver's Mark",
+    "school": "Physical",
+    "passive": true,
+    "description": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take 7% increased damage for 20 sec. Max $442624u stacks. Applies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after Soul Cleave."
+  },
+  {
+    "id": 442683,
+    "name": "Aldrachi Tactics",
+    "school": "Physical",
+    "passive": true,
+    "description": "The second enhanced ability in a pattern shatters an additional Soul Fragment."
+  },
+  {
+    "id": 442686,
+    "name": "Thrill of the Fight",
+    "school": "Physical",
+    "passive": true,
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+  },
+  {
+    "id": 442688,
+    "name": "Thrill of the Fight",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 30,
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+  },
+  {
+    "id": 442695,
+    "name": "Thrill of the Fight",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 30,
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+  },
+  {
+    "id": 442714,
+    "name": "Army Unto Oneself",
+    "school": "Physical",
+    "passive": true,
+    "description": "Felblade surrounds you with a Blade Ward, reducing damage taken by -10% for 5 sec."
+  },
+  {
+    "id": 442715,
+    "name": "Blade Ward",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 5,
+    "description": "Felblade surrounds you with a Blade Ward, reducing damage taken by -10% for 5 sec."
+  },
+  {
+    "id": 442718,
+    "name": "Fury of the Aldrachi",
+    "school": "Physical",
+    "passive": true,
+    "description": "When enhanced by Reaver's Glaive, Soul Cleave casts 3 additional glaive slashes to nearby targets. Deals reduced damage beyond 8 targets. If cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast 12 slashes instead."
+  },
+  {
+    "id": 442736,
+    "name": "Incorruptible Spirit",
+    "school": "Physical",
+    "passive": true,
+    "description": "Each Soul Fragment you consume shields you for an additional 15% of the amount healed."
+  },
+  {
+    "id": 442806,
+    "name": "Wounded Quarry",
+    "school": "Physical",
+    "passive": true,
+    "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal 20% of the damage dealt to your marked target as Chaos, and sometimes shatter a Soul Fragment."
+  },
+  {
+    "id": 444806,
+    "name": "Fury of the Aldrachi",
+    "school": "Physical",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Consuming 8 Soul Fragments or casting Sigil of Spite converts your next Throw Glaive into Reaver's Glaive. $@spellicon442294 $@spellname442294: Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 8 Fury.|R"
+  },
+  {
+    "id": 444926,
+    "name": "Evasive Action",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat can be cast a second time within 3 sec."
+  },
+  {
+    "id": 444929,
+    "name": "Evasive Action",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 3,
+    "description": "Vengeful Retreat can be cast a second time within 3 sec."
+  },
+  {
+    "id": 444931,
+    "name": "Unhindered Assault",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat resets the cooldown of Felblade."
+  },
+  {
+    "id": 444979,
+    "name": "Preemptive Strike",
+    "school": "Physical",
+    "gcd": 0,
+    "aoeRadius": 5,
+    "description": "Throw Glaive deals 0 Physical damage to enemies near its initial target."
+  },
+  {
+    "id": 444997,
+    "name": "Preemptive Strike",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive deals 0 Physical damage to enemies near its initial target."
+  },
+  {
+    "id": 471306,
+    "name": "Void Metamorphosis",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "Collecting $1225789u Soul Fragments grants access to Void Metamorphosis. $@spellicon1217605 $@spellname1217605 |CFFffffffRequires $1225789u Soul Fragments|R You ascend to a higher state of being, substantially empowering your abilities. While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury."
+  },
+  {
+    "id": 1217605,
+    "name": "Void Metamorphosis",
+    "school": "Physical",
+    "gcd": 1.5,
+    "description": "|CFFffffffRequires $1225789u Soul Fragments|R You ascend to a higher state of being, substantially empowering your abilities. While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury."
+  },
+  {
+    "id": 1223171,
+    "name": "Guile",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "The cast range of Voidblade, Consume Magic, and Disrupt are increased by 20 yds."
+  },
+  {
+    "id": 1224451,
+    "name": "A Fire Inside",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos"
+  },
+  {
+    "id": 1227062,
+    "name": "Thrill of the Fight",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 10,
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+  },
+  {
+    "id": 1236360,
+    "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fury of the Aldrachi further empowers Soul Cleave when cast after $?s263642[Fracture]?a212613[Shear][Chaos Strike], increasing slashes to 12. Reaver's Mark now stacks up to $442624u times and further empowers $?s263642[Fracture]?a212613[Shear][Chaos Strike] when cast after Soul Cleave, applying an additional stack for 100% of normal duration."
+  },
+  {
+    "id": 1241937,
+    "name": "Soul Immolation",
+    "school": "Fire",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 60
+    },
+    "duration": 5,
+    "description": "Light your soul aflame, dealing 0 Fire damage to yourself, generating ${$1242475s1*$s3} Fury and shattering 3 Soul Fragments over 5 sec."
+  },
+  {
+    "id": 1253304,
+    "name": "Voidfall",
+    "school": "None",
+    "passive": true,
+    "description": "Fracture has a 35% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond 8 targets."
+  },
+  {
+    "id": 1253377,
+    "name": "Meteoric Rise",
+    "school": "None",
+    "passive": true,
+    "description": "$?c2[Fel Devastation][Void Ray] damage increased by 15%. $?c2[Fel Devastation][Fully channeling Void Ray] generates $?c2[3 Soul Fragments over its duration][1 $Lstack:stacks; of Voidfall]."
+  },
+  {
+    "id": 1253391,
+    "name": "Meteoric Fall",
+    "school": "None",
+    "passive": true,
+    "description": "While at 3 stacks of Voidfall, $?c2[Spirit Bomb and Soul Cleave][Reap] consumes all 3 to rapidly call down that many meteor strikes."
+  },
+  {
+    "id": 1253399,
+    "name": "Path to Oblivion",
+    "school": "None",
+    "passive": true,
+    "description": "Each stack of Voidfall grants 3% increased movement speed."
+  },
+  {
+    "id": 1253402,
+    "name": "State of Matter",
+    "school": "None",
+    "passive": true,
+    "description": "Torment has 2447 (Category) additional $Lcharge:charges;."
+  },
+  {
+    "id": 1253415,
+    "name": "Celestial Echoes",
+    "school": "None",
+    "passive": true,
+    "description": "$?s263642[Fracture]?a212613[Shear][Consume] generates 5 additional Fury and deals 30% increased damage."
+  },
+  {
+    "id": 1253668,
+    "name": "Swift Erasure",
+    "school": "None",
+    "passive": true,
+    "description": "Each stack of Voidfall grants 2% Haste."
+  },
+  {
+    "id": 1253676,
+    "name": "Doomsayer",
+    "school": "None",
+    "passive": true,
+    "description": "Activating Infernal Strike out of combat or within 5 sec of entering combat calls down 1 Voidfall $LMeteor:Meteors;."
+  },
+  {
+    "id": 1253769,
+    "name": "Catastrophe",
+    "school": "None",
+    "passive": true,
+    "description": "Enemies struck by a Voidfall Meteor take an additional 25% damage over 8 sec."
+  },
+  {
+    "id": 1253805,
+    "name": "Final Hour",
+    "school": "None",
+    "passive": true,
+    "description": "Passive bonuses granted by each stack of Voidfall persist for 8 sec after being consumed."
+  },
+  {
+    "id": 1253817,
+    "name": "Otherworldly Focus",
+    "school": "None",
+    "passive": true,
+    "description": "Spirit Bomb and Voidfall meteors deal 35% increased damage when striking a single target. Each additional target reduces this bonus by 5%."
+  },
+  {
+    "id": 1256245,
+    "name": "Phase Shift",
+    "school": "None",
+    "passive": true,
+    "description": "Each stack of Voidfall grants -2% reduced damage taken."
+  },
+  {
+    "id": 1256295,
+    "name": "Mass Acceleration",
+    "school": "None",
+    "passive": true,
+    "description": "Gain $m1 $Lstack:stacks; of Voidfall and reset the cooldown of Spirit Bomb upon activating Metamorphosis."
+  },
+  {
+    "id": 1256305,
+    "name": "Voidfall Meteor",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1256306,
+    "name": "Voidfall Meteor",
+    "school": "Shadowflame",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1256307,
+    "name": "Dark Matter",
+    "school": "None",
+    "passive": true,
+    "description": "Your first Spirit Bomb after entering demon form causes a Shadowflame meteor shower to assault the area, dealing 0 Shadowflame damage over 6 sec."
+  },
+  {
+    "id": 1256312,
+    "name": "Celestial Echoes",
+    "school": "None",
+    "gcd": 0,
+    "duration": 8,
+    "description": "$?s263642[Fracture]?a212613[Shear][Consume] generates 5 additional Fury and deals 25% increased damage."
+  },
+  {
+    "id": 1256322,
+    "name": "Voidfall",
+    "school": "None",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Fracture has a 0% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond 0 targets."
+  },
+  {
+    "id": 1256353,
+    "name": "World Killer",
+    "school": "None",
+    "passive": true,
+    "description": "The third Voidfall meteor strike called down in sequence is larger, has 50% increased area, deals 50% increased damage, and reduces the remaining cooldown of Metamorphosis by 10 sec."
+  },
+  {
+    "id": 1256667,
+    "name": "Catastrophe",
+    "school": "Shadowflame",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Enemies struck by a Voidfall Meteor take an additional 0% damage over 8 sec."
+  },
+  {
+    "id": 1256959,
+    "name": "Vengeance Demon Hunter",
+    "school": "Physical",
+    "passive": true
+  },
+  {
+    "id": 1264129,
+    "name": "Meteor Shower",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 6,
+    "description": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1264130,
+    "name": "Meteor Shower",
+    "school": "Shadowflame",
+    "gcd": 0,
+    "aoeRadius": 6,
+    "description": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1264808,
+    "name": "Demon Hunter Vengeance 12.0 Class Set 2pc",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fracture damage increased by 35%."
+  },
+  {
+    "id": 1264809,
+    "name": "Demon Hunter Vengeance 12.0 Class Set 4pc",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fracture has a 30% chance to spark a violent detonation, causing 0 Fire damage onto nearby enemies. Damage reduced beyond 5 targets."
+  },
+  {
+    "id": 1265759,
+    "name": "Felfire Fist",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 5,
+    "description": "Activating Infernal Strike out of combat or within 5 sec of entering combat places a Sigil of Flame at the target location."
+  },
+  {
+    "id": 1265768,
+    "name": "Doomsayer",
+    "school": "None",
+    "gcd": 0,
+    "duration": 5,
+    "description": "Activating Infernal Strike out of combat or within 5 sec of entering combat calls down $s3 Voidfall $LMeteor:Meteors;."
+  },
+  {
+    "id": 1265800,
+    "name": "Tempered Steel",
+    "school": "Physical",
+    "passive": true,
+    "description": "Physical damage increased by 12%."
+  },
+  {
+    "id": 1265818,
+    "name": "Vengeful Beast",
+    "school": "Physical",
+    "passive": true,
+    "description": "Metamorphosis has 5 sec increased duration and increases the damage of Fracture, Soul Cleave, and Spirit Bomb by 20%."
+  },
+  {
+    "id": 1265924,
+    "name": "Soul Barrier",
+    "school": "Physical",
+    "passive": true,
+    "description": "Spirit Bomb shields you for 10 sec, absorbing ${$MHP*$s1/100} damage plus ${$MHP*$s2/100} for each Soul Fragment consumed."
+  },
+  {
+    "id": 1266296,
+    "name": "Focused Ire",
+    "school": "Physical",
+    "passive": true,
+    "description": "The primary target of $?c3[Void Nova][Chaos Nova] is stunned for an additional 2 sec."
+  },
+  {
+    "id": 1266307,
+    "name": "Demonic Resilience",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c2[Demon Spikes][Blur] gains 1 additional $Lcharge:charges;."
+  },
+  {
+    "id": 1266316,
+    "name": "Burn It Out",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation][Immolation Aura] removes 1 Disease $Leffect:effects;."
+  },
+  {
+    "id": 1266326,
+    "name": "Furious",
+    "school": "Physical",
+    "passive": true,
+    "description": "Attacks and abilities that generate Fury deal 3% increased damage."
+  },
+  {
+    "id": 1266328,
+    "name": "Remorseless",
+    "school": "Physical",
+    "passive": true,
+    "description": "Attacks and abilities that spend Fury deal 3% increased damage."
+  },
+  {
+    "id": 1266329,
+    "name": "Demon Muzzle",
+    "school": "Physical",
+    "passive": true,
+    "description": "Interrupting a spell with Disrupt decreases your magic damage taken by -15% for 12 sec."
+  },
+  {
+    "id": 1266330,
+    "name": "Soul Splitter",
+    "school": "Physical",
+    "passive": true,
+    "description": "Any time you would generate one or more soul fragments, you have a 2% chance to generate an additional Soul Fragment."
+  },
+  {
+    "id": 1266493,
+    "name": "Wings of Wrath",
+    "school": "Physical",
+    "passive": true,
+    "description": "Glide speed increased by 10%."
+  },
+  {
+    "id": 1266496,
+    "name": "Soul Cleanse",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation][Immolation Aura] removes 1 Curse $Leffect:effects;."
+  },
+  {
+    "id": 1266497,
+    "name": "First In, Last Out",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212612[Fel Rush]?a212613[Infernal Strike][Shift] grants you a rapidly decaying shield equal to 6% of your maximum health."
+  },
+  {
+    "id": 1266500,
+    "name": "Final Breath",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fully channeling $?a212612[Eye Beam]?a212613[Fel Devastation][Void Ray] increases the damage of its final tick by 300%."
+  },
+  {
+    "id": 1266616,
+    "name": "Demon Muzzle",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 12,
+    "description": "Interrupting a spell with Disrupt decreases your magic damage taken by -15% for 12 sec."
+  },
+  {
+    "id": 1266762,
+    "name": "Felbound",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your movement speed is increased by 3%."
+  },
+  {
+    "id": 1272138,
+    "name": "Keen Edge",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reaver's Glaive damage is increased by 20% and other Physical-only damage is increased by 10%."
+  },
+  {
+    "id": 1272143,
+    "name": "Broken Spirit",
+    "school": "Physical",
+    "passive": true,
+    "description": "Sigil of Spite shatters 1 additional Soul $LFragment:Fragments;. Soul Cleave has a 20% chance to shatter a Soul Fragment."
+  },
+  {
+    "id": 1272153,
+    "name": "Bladecraft",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fury of the Aldrachi further empowers Soul Cleave when cast after Fracture, increasing slashes to 12. Reaver's Mark now stacks up to $442624u times and further empowers Fracture when cast after Soul Cleave, applying an additional stack."
+  },
+  {
+    "id": 1272432,
+    "name": "Soulforged Blades",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Hungering Slash and Voidblade's critical strike chance is increased by 15%."
+  },
+  {
+    "id": 1272770,
+    "name": "Singular Strikes",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Voidblade damage increased by 25%. Hungering Slash deals 50% increased damage to its primary target."
+  },
+  {
+    "id": 1276488,
+    "name": "Explosion of the Soul",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 12,
+    "description": "Fracture has a 0% chance to spark a violent detonation, causing 0 Fire damage onto nearby enemies. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1279247,
+    "name": "Harness the Cosmos",
+    "school": "None",
+    "passive": true,
+    "description": "Voidfall Meteor damage increased by 15%."
+  }
+]

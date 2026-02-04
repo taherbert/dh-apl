@@ -106,6 +106,16 @@ Generated talent builds MUST be valid. SimC and Wowhead accept invalid over-budg
 
 Raidbots nodes with `type: "choice"` have multiple `entries` (index 100/200/300). Each entry is a separate talent option — all are included in `talents.json`.
 
+### Data File Selection
+
+The full data files (`spells.json` at 548KB, `interactions.json` at 1.4MB) are too large to read into context efficiently. Use the summary files instead:
+
+- **`spells-summary.json`** (46KB): Use for APL analysis. Has id, name, school, resource, cooldown, charges, duration, GCD, AoE radius, generates, and resolved descriptions. Omits raw effects, family flags, attributes, labels.
+- **`interactions-summary.json`** (234KB): Use for APL analysis. Has `bySpell`, `byTalent`, `talentCategories`, `bySetBonus` views with magnitude, proc info, and application type. Omits the flat `interactions[]` array and `effectDetails`.
+- **`talents.json`** (89KB): Small enough to read directly — no summary needed.
+
+Only read the full files when you need raw spell effect data (coefficients, effect subtypes) or effect-level detail on interactions. For a specific spell, use `Grep` on the full file rather than reading it entirely.
+
 ## Architecture
 
 ```
@@ -120,9 +130,11 @@ src/
 data/
   raw/            # Raw simc dumps (gitignored)
   raidbots-talents.json  # Raidbots talent data (filtered to VDH)
-  spells.json            # Parsed VDH spell catalog
-  talents.json           # Full talent tree
-  interactions.json      # Talent → spell interaction map
+  spells.json            # Parsed VDH spell catalog (full — 548KB)
+  spells-summary.json    # Context-efficient spell data (46KB) — use this for analysis
+  talents.json           # Full talent tree (89KB — small enough to read directly)
+  interactions.json      # Talent → spell interaction map (full — 1.4MB)
+  interactions-summary.json  # Context-efficient interactions (234KB) — use this for analysis
   cpp-proc-mechanics.json  # Auto-extracted C++ proc rates, ICDs, constants
 apls/             # APL files (.simc)
   profile.simc           # Shared character profile (gear, talents, race)
@@ -194,6 +206,7 @@ npm run build-data                           # Run full data pipeline
 npm run report                               # Generate text report
 npm run graph                                # Generate interaction graph
 npm run audit-report                         # Generate interaction audit
+npm run context-summary                      # Generate context-efficient summaries
 
 # === Simulation ===
 node src/sim/runner.js apls/baseline.simc    # Run simulation
