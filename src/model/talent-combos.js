@@ -125,6 +125,8 @@ const EXCLUDED_SPEC_NAMES = new Set([
   "Chains of Anger", // Sigil of Chains extra functionality (utility)
   "Feed the Demon", // Demon Spikes CDR from soul fragments (defensive)
   "Roaring Fire", // Fel Dev healing increase (healing-only)
+  "Painbringer", // DR per soul fragment consumed (defensive)
+  "Void Reaver", // Frailty = damage taken reduction (defensive)
 ]);
 
 // For choice nodes where one entry is excluded and the other isn't,
