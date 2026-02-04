@@ -241,14 +241,110 @@ The derivative APL built in these phases was deleted. It was structurally a copy
 
 **See `plans/apl-from-scratch-v2.md` for the current plan.** Start there.
 
-### Cleanup (pre-v2)
+### Phase 3.1: APL Skeleton — [x] Complete
 
-- [x] Deleted `apls/current.simc` (stale derivative APL)
-- [x] Deleted all stale iteration results (`results/*.json`, `results/*.md`)
-- [x] Fixed Spirit Bomb cooldown in `archetypes.js`: was 45s, actual is 25s (from `data/spells.json` spell 247454)
-- [x] Documented `run_action_list` vs `call_action_list` semantics in CLAUDE.md, plan, iterate-apl skill
-- [x] Documented multi-file `input=profile.simc` structure in CLAUDE.md, plan, iterate-apl skill
-- [x] `apls/profile.simc` already exists with shared character profile (gear, talents, race)
+- Created `apls/vengeance.simc` with 8 action lists: precombat, default, externals, ar, ar_empowered, ar_cooldowns, anni, anni_voidfall
+- Sub-list design: `call_action_list` for empowered/cooldowns/voidfall (optional, falls through), `run_action_list` for hero tree routing (mutually exclusive)
+- Uses `input=apls/profile.simc` (CWD-relative, not file-relative — SimC resolves from where binary is invoked)
+- All abilities cast across all scenarios, no 0-cast issues
+- Demon Spikes uptime 99%+, AotG cycle functioning correctly
+- ST DPS -3.9% vs baseline (expected for untuned skeleton), AoE +14-17% (Spirit Bomb threshold + sub-list structure)
+- Parser round-trips cleanly (only normalizes `actions.X=/` to `actions.X=`, cosmetic)
+
+### Phase 2: Simulation-Driven Priority Discovery — [x] Complete
+
+Ran 5 profileset tests (24 total variants) in ST to discover optimal AR priority ordering:
+
+| Test                  | Best Variant                    | DPS Impact | Key Finding                                                 |
+| --------------------- | ------------------------------- | ---------- | ----------------------------------------------------------- |
+| Fracture guard        | No overflow guard               | +10.4%     | Fracture DPGCD high enough that overflow waste < lost casts |
+| Core rotation         | Meta-priority Fracture          | +5.2%      | +1 frag/cast in Meta justifies top priority                 |
+| Felblade position     | After Fracture                  | +2.1%      | Fury gen is critical; removing costs -13.8%                 |
+| Cooldown order        | Brand > Spite > Carver > FelDev | +0.6%      | Brand first enables Fiery Demise window                     |
+| Spirit Bomb threshold | 4-5 frags within noise          | +0.3%      | Keep at 4 for Frailty uptime                                |
+
+AoE test confirmed Spirit Bomb threshold has negligible AoE impact (0.3% spread).
+
+Applied all findings to `apls/vengeance.simc`. Results vs baseline:
+
+- ST: +6.5% (22,885 → 24,370)
+- 5T AoE: +25.1% (66,143 → 82,772)
+- 10T AoE: +27.4% (115,025 → 146,491)
+
+Bug fixes during Phase 2:
+
+- Fixed `resolveInputDirectives` to try CWD-relative paths as fallback (profileset system couldn't resolve `input=apls/profile.simc`)
+- Fixed `runProfileset` sync variant dropping input file path (`args.slice(1)` → `args`)
+
+### Phase 3.2: Variable Design — [x] Complete
+
+Tested dynamic `spb_threshold` variable (Frailty-aware, AoE-aware, Fiery Demise-aware) via profilesets against static thresholds 3/4/5:
+
+- **ST:** All thresholds within 0.6% — no significant decision boundary exists
+- **5T AoE:** All within 1.4% (higher thresholds slightly favored, but within noise at 1% target_error)
+- **Conclusion:** Dynamic threshold adds complexity without measurable gain. Simplified to static `spb_threshold=4` as a named variable.
+
+Variables in final APL:
+
+| Variable              | Purpose                                      | Used by               |
+| --------------------- | -------------------------------------------- | --------------------- |
+| `trinket_1_buffs`     | Trinket buff detection (SimC plumbing)       | AR + Anni trinket use |
+| `trinket_2_buffs`     | Trinket buff detection (SimC plumbing)       | AR + Anni trinket use |
+| `fiery_demise_active` | Fiery Demise window flag                     | AR Soul Carver gate   |
+| `spb_threshold`       | Spirit Bomb fragment threshold (static 4)    | AR Spirit Bomb        |
+| `spb_1t_souls`        | Anni ST Spirit Bomb threshold (FD-dependent) | Anni Spirit Bomb      |
+
+Removed dead variables: `num_spawnable_souls`, `single_target`, `small_aoe`, `big_aoe` (defined but never referenced in action conditions).
+
+Variables NOT added (rationale):
+
+- `fury_value_sc/sbomb` — SimC has no runtime spell introspection
+- `fragment_waste_risk` — Phase 2 showed Fracture overflow guard costs -10.4%
+- `ar_cycle_ready` — too subtle, no sim evidence of gain
+- `frailty_needed` — folded into dynamic spb_threshold test; result was noise
+
+Additional exploration (post Phase 3.2):
+
+| Test                    | Best Variant       | DPS Impact | Applied? | Key Finding                                                                    |
+| ----------------------- | ------------------ | ---------- | -------- | ------------------------------------------------------------------------------ |
+| Soft overcap (inactive) | Spite guard <=5    | +0.3%      | Yes      | Relaxed Spite from <=3 to <=5; urgent SBomb at 3 frags = -0.3%                 |
+| SBomb cooldown pooling  | Baseline (no pool) | —          | No       | All pooling variants -0.3% to -2.8%; SC opportunity cost > SBomb marginal gain |
+
+Key insight: With 25s Spirit Bomb CD, fragments have time-value — spending NOW via Soul Cleave (2.912 AP) > hoarding for later SBomb (+0.8 AP from +2 frags).
+
+### Phase 4: Validation — [x] Complete
+
+Ran both APLs (`vengeance.simc` vs `baseline.simc`) across all 3 scenarios with `target_error=0.5`:
+
+| Scenario | Ours    | Baseline | Delta  |
+| -------- | ------- | -------- | ------ |
+| ST       | 24,365  | 22,806   | +6.8%  |
+| 5T AoE   | 82,816  | 66,350   | +24.8% |
+| 10T AoE  | 146,193 | 114,764  | +27.4% |
+
+**AoE gain decomposition:** The bulk of the AoE delta comes from Spirit Bomb being freely available in our AR branch (fired at 4+ fragments), while the baseline gates Spirit Bomb behind `spell_targets>=12` in its AR branch — effectively disabling it for 5T and 10T scenarios. The remaining gain from rotation optimization (Meta-priority Fracture, cooldown ordering, etc.) is likely 3-5% in AoE.
+
+Diagnostics:
+
+- All abilities casting (no 0-cast issues)
+- Demon Spikes uptime 99.2%
+- Fragment overflow lower than baseline (78.8 vs 118.0)
+- AotG cycle functioning correctly
+- Frailty uptime healthy
+
+Known gaps:
+
+- Annihilator branch untested (no Anni talent profile exists)
+- Brand-first CD ordering (+0.6%) tested at `target_error=1.0` — below noise floor, should be re-tested at higher fidelity
+
+### Future Work
+
+- [ ] Create Annihilator talent profile and validate `actions.anni` / `actions.anni_voidfall`
+- [ ] Re-test Brand-first CD ordering at `target_error=0.5` to confirm it's above noise
+- [ ] Phase 5: Iteration handoff (`node src/sim/iterate.js init apls/vengeance.simc`)
+- [ ] Test with DungeonRoute / movement scenarios
+- [ ] Implement `/theorycraft` skill (see `plans/theorycraft-skill.md`)
+- [ ] Update gear profile when Midnight-specific consumables, gems, enchants become available in SimC
 
 ## Findings & Notes
 
@@ -260,3 +356,6 @@ The derivative APL built in these phases was deleted. It was structurally a copy
 - GCD efficiency metric needs refinement for AoE scenarios (currently counts per-target hits)
 - FIELD_REGEX bug: "Internal Cooldown" (17 chars) fills the spell_query column exactly, leaving zero padding before `:`. Fixed by `\s*`
 - C++ hardcoded proc rates (Fallout 100%/60%, Wounded Quarry 30%) are NOT in spell data — need manual extraction or automated C++ scanner
+- `input=` resolver added to `profilesets.js` (`resolveInputDirectives`) — inlines referenced files so profileset content written to `results/` is self-contained. Used by `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`.
+- SimC APL expressions have NO runtime spell data introspection — no `action.X.ap_coefficient`, no `spell.X.base_damage`. The `multiplier` expression returns the composite multiplier for the _current action's_ schools only. APL variables must use threshold-based conditions, not computed damage-per-fury comparisons.
+- SimC `input=` resolves paths relative to **CWD** (where simc binary is invoked), NOT relative to the including file's directory. Use `input=apls/profile.simc` when running from project root.

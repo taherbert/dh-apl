@@ -13,6 +13,7 @@ SimulationCraft APLs are text-based priority lists that define ability usage, co
 - **SimulationCraft (SimC):** Open-source WoW combat simulator. APLs drive the decision engine.
 - **APL syntax:** Each line is an action entry with optional conditions. Lines are evaluated top-to-bottom; first matching action fires.
 - **Vengeance DH resources:** Fury (builder/spender), Soul Fragments (healing/damage), health/defensives.
+- **DPS only.** This project optimizes exclusively for damage output. Survivability, HPS, DTPS, and defensive metrics are not goals. Demon Spikes and other defensives are maintained for SimC realism but never at the expense of DPS.
 - **Key abilities:** Fracture, Spirit Bomb, Soul Cleave, Immolation Aura, Sigil of Flame, Fiery Brand, Demon Spikes, Fel Devastation, The Hunt, Elysian Decree.
 - **Talent builds** affect which abilities are available and how the APL branches.
 
@@ -38,16 +39,16 @@ Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spike
 
 Choose `run_action_list` when branches are mutually exclusive (only one should ever execute). Choose `call_action_list` when the sub-list is optional or shared — it tries the sub-list and continues if nothing fires.
 
-**Multi-file structure:** SimC supports `input=<filename>` to include one file from another. Paths resolve first relative to the including file's directory, then relative to CWD. Our APL files use this to avoid duplicating the character profile:
+**Multi-file structure:** SimC supports `input=<filename>` to include one file from another. Paths resolve relative to **CWD** (where simc binary is invoked). Our APL files use this to avoid duplicating the character profile:
 
 ```
-# apls/vengeance.simc
-input=profile.simc        # includes apls/profile.simc (same directory)
+# apls/vengeance.simc — run from project root
+input=apls/profile.simc   # CWD-relative path
 actions=auto_attack
 actions+=/...
 ```
 
-`apls/profile.simc` contains the shared character setup (race, talents, gear). APL files contain only action lines. The `iterate.js` pipeline needs to resolve `input=` directives when building profileset files — see `buildProfilesetContent()` in `src/sim/iterate.js`.
+`apls/profile.simc` contains the shared character setup (race, talents, gear). APL files contain only action lines. The `resolveInputDirectives()` function in `profilesets.js` inlines `input=` directives so profileset content written to `results/` is self-contained.
 
 ## Session Protocol
 

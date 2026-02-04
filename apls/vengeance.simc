@@ -1,0 +1,116 @@
+input=apls/profile.simc
+
+# Vengeance DH APL — Midnight (from scratch)
+# Phase 2 tested: cooldown ordering, fragment thresholds, Felblade value,
+# Fracture overflow, core rotation priority, Meta-priority Fracture
+
+# === Precombat ===
+actions.precombat=/snapshot_stats
+# Trinket buff detection — standard SimC plumbing
+actions.precombat+=/variable,name=trinket_1_buffs,value=trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery|trinket.1.has_buff.versatility|trinket.1.has_buff.haste|trinket.1.has_buff.crit)
+actions.precombat+=/variable,name=trinket_2_buffs,value=trinket.2.has_use_buff|(trinket.2.has_buff.agility|trinket.2.has_buff.mastery|trinket.2.has_buff.versatility|trinket.2.has_buff.haste|trinket.2.has_buff.crit)
+# Pre-pull setup
+actions.precombat+=/sigil_of_flame
+actions.precombat+=/immolation_aura
+
+# === Default (runs every cycle) ===
+# Fiery Demise window flag — used in both hero trees
+actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
+# Spirit Bomb fragment threshold — 3/4/5 within noise in both ST and AoE (Phase 3.2 tested)
+actions+=/variable,name=spb_threshold,value=4
+actions+=/auto_attack
+actions+=/disrupt,if=target.debuff.casting.react
+# Off-GCD weaving
+actions+=/infernal_strike,use_off_gcd=1
+actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&!cooldown.pause_action.remains
+actions+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up
+# Hero tree routing — mutually exclusive branches
+actions+=/run_action_list,name=ar,if=hero_tree.aldrachi_reaver
+actions+=/run_action_list,name=anni,if=hero_tree.annihilator
+
+# === Externals ===
+actions.externals=/invoke_external_buff,name=power_infusion
+
+# === Aldrachi Reaver ===
+# Trinkets — non-buffed fire immediately, buffed sync to Meta
+actions.ar=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&(!variable.trinket_1_buffs|(variable.trinket_1_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.1.cooldown.duration)|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains))))
+actions.ar+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!variable.trinket_2_buffs|(variable.trinket_2_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.2.cooldown.duration)|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains))))
+actions.ar+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
+# Potion and externals during empowered burst window
+actions.ar+=/potion,use_off_gcd=1,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
+actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
+# AR cycle spending — fires if empowered buffs active, falls through otherwise
+actions.ar+=/call_action_list,name=ar_empowered
+# Long cooldowns — fires one if ready, falls through otherwise
+actions.ar+=/call_action_list,name=ar_cooldowns
+# Core rotation
+# Spirit Bomb — threshold 3/4/5 within noise; 4 balances cast frequency vs Frailty uptime
+actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
+# Fracture in Meta — +1 frag/cast makes aggressive use a +5.2% DPS gain
+actions.ar+=/fracture,if=buff.metamorphosis.up
+# Fracture — no overflow guard; uncapped Fracture +10.4% over guard<=4
+actions.ar+=/fracture
+# Felblade — removing costs -13.8%; after Fracture is +2.1% over low priority
+actions.ar+=/felblade
+# Immolation Aura — Fallout generates fragments (100% ST, 60% AoE per tick)
+actions.ar+=/immolation_aura,if=talent.fallout
+actions.ar+=/sigil_of_flame
+actions.ar+=/soul_cleave
+# Fillers
+actions.ar+=/immolation_aura
+actions.ar+=/vengeful_retreat,if=talent.unhindered_assault
+actions.ar+=/throw_glaive
+
+# === AR Empowered — Art of the Glaive cycle spending ===
+# Cast Reaver's Glaive when available — grants both Glaive Flurry + Rending Strike
+actions.ar_empowered=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up
+# Empowered Soul Cleave — spend Glaive Flurry buff
+actions.ar_empowered+=/soul_cleave,if=!buff.rending_strike.up&buff.glaive_flurry.up
+# Empowered Fracture — spend Rending Strike buff (generates empowered frags)
+actions.ar_empowered+=/fracture,if=buff.glaive_flurry.up
+
+# === AR Cooldowns — Brand first enables Fiery Demise window (+0.6% over Spite first) ===
+actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
+actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=5
+actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
+# Don't channel during empowered window
+actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
+
+# === Annihilator ===
+# NOTE: Untested — no Annihilator talent profile exists yet. Needs validation.
+# Voidfall cycle variable — Spirit Bomb fragment threshold depends on Fiery Demise window
+actions.anni=/variable,name=spb_1t_souls,op=setif,condition=talent.fiery_demise&dot.fiery_brand.ticking,value=3,value_else=5
+# Trinkets — non-buffed fire immediately, buffed sync to Meta
+actions.anni+=/use_item,slot=trinket1,if=!variable.trinket_1_buffs|(variable.trinket_1_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.1.cooldown.duration)|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains)))
+actions.anni+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs|(variable.trinket_2_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.2.cooldown.duration)|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains)))
+# Potion and externals during Voidfall spending burst
+actions.anni+=/potion,use_off_gcd=1,if=buff.voidfall_spending.stack=3
+actions.anni+=/call_action_list,name=externals,if=buff.voidfall_spending.stack=3
+# Voidfall cycle — fires if building/spending is active, falls through otherwise
+actions.anni+=/call_action_list,name=anni_voidfall
+# Metamorphosis — don't cast during Voidfall cycle (wastes stacks)
+actions.anni+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&!buff.voidfall_building.up&!buff.voidfall_spending.up
+# Cooldowns outside Voidfall cycle
+actions.anni+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
+actions.anni+=/immolation_aura,if=talent.charred_flesh&dot.fiery_brand.ticking
+actions.anni+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
+actions.anni+=/soul_carver,if=soul_fragments<=3
+actions.anni+=/fel_devastation
+# Core rotation
+actions.anni+=/spirit_bomb,if=spell_targets=1&souls_consumed>=variable.spb_1t_souls
+actions.anni+=/spirit_bomb,if=spell_targets>1&souls_consumed>=3
+actions.anni+=/fracture,if=!buff.voidfall_spending.up
+actions.anni+=/sigil_of_flame
+actions.anni+=/soul_cleave
+actions.anni+=/fracture
+actions.anni+=/throw_glaive
+
+# === Anni Voidfall — Voidfall cycle state machine ===
+# Fiery Brand alignment — cast before spending peak for Fiery Demise value
+actions.anni_voidfall=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&(buff.voidfall_building.stack=2|buff.voidfall_spending.stack=3)
+# Spirit Bomb at max spending stacks — consumes 5 frags + meteor (World Killer bonus)
+actions.anni_voidfall+=/spirit_bomb,if=buff.voidfall_spending.stack=3
+# Soul Cleave to consume spending stacks (each triggers meteor)
+actions.anni_voidfall+=/soul_cleave,if=buff.voidfall_spending.up&buff.voidfall_spending.stack<3
+# Fracture at max building stacks — triggers transition to spending phase
+actions.anni_voidfall+=/fracture,if=buff.voidfall_building.stack=2

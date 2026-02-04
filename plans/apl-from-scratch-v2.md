@@ -14,7 +14,7 @@ The first attempt produced an APL that was structurally a copy of the existing b
 - **Output:** `apls/vengeance.simc` (action lines only, uses `input=profile.simc`)
 - **Profile:** `apls/profile.simc` (shared character setup — gear, talents, race). Already exists.
 - **Multi-file:** APL files start with `input=profile.simc` to include the shared profile. SimC resolves `input=` paths relative to the including file's directory first, then CWD.
-- **Pipeline note:** `iterate.js`'s `buildProfilesetContent()` needs to resolve `input=` directives by inlining the referenced content, since relative paths won't resolve from `results/`. Add this resolver in Phase 3.
+- **Pipeline note:** `resolveInputDirectives()` in `profilesets.js` inlines `input=` directives so profileset content is self-contained. Used by both `iterate.js:buildProfilesetContent()` and `profilesets.js:generateProfileset()`.
 - **Previous APL deleted** — start fresh
 
 ## Available Data Files
@@ -233,7 +233,9 @@ At 0% haste, 1.5s GCD = 40 GCDs per minute.
 
 ---
 
-## Phase 2: Simulation-Driven Priority Discovery
+## Phase 2: Simulation-Driven Priority Discovery — [x] Complete
+
+Test script: `src/sim/phase2-tests.js` (5 tests, 24 variants)
 
 ### 2.1 Baseline Permutation Testing
 
@@ -290,9 +292,9 @@ Test Voidfall interaction:
 
 Build the APL section by section, validating each addition with a sim run.
 
-### 3.1 Skeleton (syntax/structure only)
+### 3.1 Skeleton (syntax/structure only) — [x] Complete
 
-Create `apls/vengeance.simc` with:
+Created `apls/vengeance.simc` with:
 
 1. `input=profile.simc` — includes shared character profile (gear, talents, race)
 2. `actions.precombat` — snapshot_stats, pre-pull abilities
@@ -300,8 +302,6 @@ Create `apls/vengeance.simc` with:
 4. `actions.externals` — power_infusion
 5. `actions.ar` — empty, to be filled
 6. `actions.anni` — empty, to be filled
-
-Also add `input=` resolver to `iterate.js`'s `buildProfilesetContent()` so profileset runs inline the profile content correctly.
 
 **Syntax patterns to use** (learned from reference, NOT priority):
 
@@ -314,15 +314,16 @@ Also add `input=` resolver to `iterate.js`'s `buildProfilesetContent()` so profi
 
 See CLAUDE.md "Action list delegation" for full `run_action_list` vs `call_action_list` semantics.
 
-### 3.2 Variable Design
+### 3.2 Variable Design — [x] Complete
 
-Design variables based on Phase 1 analysis. These should encode **decision boundaries** identified by the math, not copy-paste from baseline. Examples of genuinely derived variables:
+Tested all candidate variables against profileset baselines. Key finding: most proposed decision boundaries don't produce measurable DPS gains.
 
-- `fury_value_sc` — effective damage of next Soul Cleave per fury
-- `fury_value_sbomb` — effective damage of next Spirit Bomb per fury (accounting for fragment count)
-- `frailty_needed` — whether Frailty is down or expiring soon (justifies lower-threshold SBomb)
-- `ar_cycle_ready` — whether we should be building toward or spending AR empowerments
-- `fragment_waste_risk` — whether next Fracture would overflow fragments
+- `fury_value_sc/sbomb` — Not implementable (SimC has no runtime spell introspection)
+- `frailty_needed` / dynamic `spb_threshold` — Tested Frailty-aware, AoE-aware, FD-aware lowering; all within noise (0.6% ST, 1.4% AoE). Simplified to static `spb_threshold=4`.
+- `ar_cycle_ready` — Too subtle, no sim evidence
+- `fragment_waste_risk` — Phase 2 showed overflow guard costs -10.4%
+- Removed dead variables: `num_spawnable_souls`, `single_target`, `small_aoe`, `big_aoe`
+- Wired `fiery_demise_active` into Soul Carver condition (was defined but unused)
 
 ### 3.3 Priority Lists
 
@@ -334,29 +335,32 @@ For trinkets, the standard detection pattern IS the right approach (it's SimC in
 
 ---
 
-## Phase 4: Validation
+## Phase 4: Validation — [x] Complete
 
 ### 4.1 Sim Comparison
 
-Run against baseline across all 3 scenarios. Record:
+Ran against baseline across all 3 scenarios with `target_error=0.5`:
 
-- DPS delta
-- Ability cast counts (every ability should cast if talented)
-- Buff uptimes (Demon Spikes, Fiery Brand, Metamorphosis, Thrill of Fight)
-- Fragment waste (soul_fragment_expire, soul_fragment_overflow)
-- Fury overcap rate
-- GCD efficiency
+| Scenario | Ours    | Baseline | Delta  |
+| -------- | ------- | -------- | ------ |
+| ST       | 24,365  | 22,806   | +6.8%  |
+| 5T AoE   | 82,816  | 66,350   | +24.8% |
+| 10T AoE  | 146,193 | 114,764  | +27.4% |
 
-### 4.2 Diagnostic Checks
+### 4.2 Diagnostic Checks — All passed
 
-- Any ability with 0 casts that should be casting → syntax error
-- Demon Spikes uptime <80% → defensive gap
-- Fragment waste >5% → pooling logic issue
-- Fury overcap >10% → spending logic issue
+- All abilities casting (no 0-cast issues)
+- Demon Spikes uptime 99.2% (threshold: >80%)
+- Fragment overflow 78.8 vs baseline 118.0 (lower = better)
+- AotG cycle functioning correctly
+- Frailty uptime healthy
 
 ### 4.3 A/B Variant Testing
 
-For any decision that was close in Phase 2 testing, create A/B variants and run with higher iteration counts to confirm the winner.
+Done as part of Phase 3.2 additional exploration:
+
+- Soft overcap (inactive fragments): Spite guard <=5 applied (+0.3%)
+- SBomb cooldown pooling: all variants worse (-0.3% to -2.8%), not applied
 
 ---
 
@@ -442,4 +446,4 @@ use_off_gcd=1 (action modifier, not expression)
 ## Known Gaps
 
 - **`archetypes.js` is hardcoded seed data** — descriptions, cooldowns, and mechanic details are hand-curated with no automated import from `spells.json`. The Spirit Bomb CD error (45s vs actual 25s) was an example. Future: consider validating archetype data against spell data, or importing key values programmatically.
-- **`iterate.js` needs `input=` resolver** — `buildProfilesetContent()` reads APL files as text and writes intermediate files to `results/`. Relative `input=profile.simc` paths won't resolve from there. Add a resolver that inlines `input=` content before writing. (Phase 3 task.)
+- ~~**`iterate.js` needs `input=` resolver**~~ — Done. `resolveInputDirectives()` added to `profilesets.js`, used by both `buildProfilesetContent()` and `generateProfileset()`.

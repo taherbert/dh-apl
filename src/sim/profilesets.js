@@ -5,7 +5,7 @@
 import { execSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { join, dirname, basename } from "node:path";
+import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
 
@@ -15,11 +15,44 @@ const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
 const RESULTS_DIR = join(ROOT, "results");
 const GOLDEN_DIR = join(RESULTS_DIR, "golden");
 
+// Resolve `input=<filename>` directives by inlining referenced file contents.
+// SimC resolves input= relative to CWD (verified experimentally).
+// When we write profileset content to results/, those relative paths break.
+// This function inlines them so the output is self-contained.
+// Tries: sourceDir-relative first, then CWD-relative as fallback.
+export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
+  return content
+    .split("\n")
+    .flatMap((line) => {
+      const match = line.match(/^\s*input\s*=\s*(.+)\s*$/);
+      if (!match) return [line];
+
+      const ref = match[1].trim();
+      let refPath = resolve(sourceDir, ref);
+
+      if (!existsSync(refPath)) {
+        const cwdPath = resolve(process.cwd(), ref);
+        if (existsSync(cwdPath)) refPath = cwdPath;
+      }
+
+      if (seen.has(refPath)) return [`# [circular input= skipped: ${ref}]`];
+      if (!existsSync(refPath)) return [`# [input= not found: ${ref}]`];
+
+      seen.add(refPath);
+      const included = readFileSync(refPath, "utf-8");
+      return resolveInputDirectives(included, dirname(refPath), seen).split(
+        "\n",
+      );
+    })
+    .join("\n");
+}
+
 // Generate a .simc profileset file from a base profile and variant list.
 // Each variant: { name, overrides: string[] }
 // overrides are SimC option lines (talents=..., actions=..., etc.)
 export function generateProfileset(baseProfilePath, variants) {
-  const base = readFileSync(baseProfilePath, "utf-8");
+  const raw = readFileSync(baseProfilePath, "utf-8");
+  const base = resolveInputDirectives(raw, dirname(resolve(baseProfilePath)));
   const lines = [base, ""];
 
   for (const variant of variants) {
@@ -85,7 +118,7 @@ export function runProfileset(
   );
 
   try {
-    execSync([SIMC, ...args.slice(1)].join(" "), {
+    execSync([SIMC, ...args].join(" "), {
       encoding: "utf-8",
       maxBuffer: 100 * 1024 * 1024,
       timeout: 600000,
