@@ -454,9 +454,53 @@ Swapped 5 spec talents to fill previously suboptimal choices. The original plan 
 
 **Key insight:** Nearly all of the gain comes from the talent build itself (+8.4-10.4%), not APL adaptation (+0.07%). The existing APL conditions were already well-suited to the new talents because: (a) Soul Carver was already in the APL but wasn't in the build, (b) Fiery Brand naturally adapts to 2 charges since the `!dot.ticking` condition fires whenever Brand falls off, (c) Soulcrush/Ascending Flame/Darkglare Boon are passives requiring no APL support.
 
+### Phase 8: Build Discovery Pipeline — [x] Complete
+
+Automated talent build discovery replaces manual archetype tracking with a DoE-powered pipeline.
+
+**Implementation:**
+
+| File                              | Role                                                                                     |
+| --------------------------------- | ---------------------------------------------------------------------------------------- |
+| `src/discover/build-discovery.js` | Full pipeline: generate → sim → analyze → output                                         |
+| `src/model/talent-combos.js`      | Fixed point budget (31→34 class, 30→34 spec), added `buildToHash()` + `buildToVariant()` |
+| `src/analyze/archetypes.js`       | Added `loadDiscoveredArchetypes()` reader from `results/builds.json`                     |
+| `results/builds.json`             | Output: discovered archetypes, ranked builds, factor impacts, synergy pairs              |
+| `results/SCHEMA.md`               | Added `builds-v1` schema documentation                                                   |
+
+**Key bugs fixed during E2E testing:**
+
+1. **Point budget bug:** `CLASS_POINTS=31, SPEC_POINTS=30` should be 34/34. DoE builds were under-budget, producing invalid hashes.
+2. **Hash encoding bit-alignment bug:** `buildToHash()` used VDH-only node list (113 nodes) instead of full DH node list (227 nodes). The game client encodes against all C_Traits.GetTreeNodes() sorted by ID — using a subset causes bit misalignment, producing hashes that reference Havoc talents.
+
+**Archetype discovery quality iterations:**
+
+- Initial: 58 archetypes (24 forming factors, 8 unique names) — way too many
+- Added top-half adoption filter (15-85%) to exclude universally taken/skipped talents
+- Added multi-rank talent deduplication (Painbringer r1/r2 → one factor)
+- Capped forming factors at 4, increased merge threshold to 1%, require sig distance ≤ 1
+- Final: 7 archetypes with unique, meaningful names
+
+**Quick fidelity results (193 AR builds, target_error=1.0):**
+
+| Archetype                                 | Best Weighted DPS | Builds |
+| ----------------------------------------- | ----------------- | ------ |
+| Soulcrush + Fiery Demise + Painbringer    | 5,413             | 38     |
+| Soulcrush + Painbringer + Vengeful Beast  | 5,411             | 40     |
+| Soulcrush + Fiery Demise + Vengeful Beast | 5,374             | 12     |
+| Fiery Demise + Painbringer                | 5,310             | 80     |
+| Vengeful Beast                            | 5,303             | 4      |
+| Painbringer                               | 5,276             | 7      |
+| Fiery Demise                              | 5,150             | 12     |
+
+**Top factor impacts:** Ascending Flame (+19%), Felfire Fist (+11%), Retaliation (+9.3%), Agonizing Flames (+5.4%), Charred Flesh (+4.1%), Soulcrush (+4.0%)
+
+**Round-trip validation:** Best build hash run standalone → 2,426 ST DPS; discovery reported 2,437 — within 0.4% (target_error=1.0 noise).
+
 ### Future Work
 
 - [ ] Create Annihilator talent profile and validate `actions.anni` / `actions.anni_voidfall`
+- [ ] Run discovery at higher fidelity (`--confirm`) to refine archetype rankings
 - [ ] Test with DungeonRoute / movement scenarios
 - [ ] Update gear profile when Midnight-specific consumables, gems, enchants become available in SimC
 - [ ] Submit UR implementation as PR to simc/simc (branch: midnight)
