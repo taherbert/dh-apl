@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import {
   encode,
   buildToSelections,
-  buildNodeList,
+  loadFullNodeList,
 } from "../util/talent-string.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -708,10 +708,11 @@ export function toTalentString(build, data) {
 }
 
 // Encode a DoE build into a base64 talent hash string.
-// Uses the shared encoder from talent-string.js.
+// Must use the full DH node list (all specs, all hero trees) for correct
+// bit alignment — the game client encodes against C_Traits.GetTreeNodes().
 export function buildToHash(build, data, specId = 581) {
   const selections = buildToSelections(build, data);
-  const nodes = buildNodeList(data);
+  const nodes = loadFullNodeList();
   return encode(specId, nodes, selections);
 }
 
