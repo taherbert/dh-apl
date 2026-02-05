@@ -198,8 +198,7 @@ function loadBuildsJson() {
 
 export function loadDiscoveredArchetypes() {
   const data = loadBuildsJson();
-  // Support both old field name (archetypes) and new (discoveredArchetypes)
-  return data?.discoveredArchetypes || data?.archetypes || null;
+  return data?.discoveredArchetypes || null;
 }
 
 export function getDiscoveredBuilds() {

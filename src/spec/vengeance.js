@@ -1,53 +1,48 @@
 // Vengeance Demon Hunter spec adapter.
-// Combines base spell data, ability config, resource flow, and hero tree info.
-// This is the single source of truth for all VDH-specific knowledge.
+// Single source of truth for all VDH-specific domain knowledge.
+//
+// Structure:
+//   Section 1 — Human domain knowledge (edit when game mechanics change)
+//   Section 2 — Machine-validated data (cross-checked by validate-spec-data.js)
+//   Section 3 — Auto-derived functions (generated from SPEC_CONFIG by common.js)
 
-import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildAbilityData,
+  matchHeroTreeFromText,
+  matchHeroTreeFromBuffs,
+  createCache,
+  deriveClassSpellQuery,
+  deriveCppStructPatterns,
+  deriveSpecSpellFilter,
+  deriveTalentTreePattern,
+  deriveKeySpellIds,
+} from "./common.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const DATA_DIR = join(ROOT, "data");
 
-// --- Base spell IDs (granted by spec, not talents) ---
-
-export const BASE_SPELL_IDS = new Set([
-  228477, // Soul Cleave
-  228478, // Soul Cleave (damage component)
-  258920, // Immolation Aura
-  204596, // Sigil of Flame
-  203720, // Demon Spikes
-  203819, // Demon Spikes (buff)
-  187827, // Metamorphosis (Vengeance)
-  198793, // Vengeful Retreat
-  185123, // Throw Glaive
-  203782, // Shear
-  263642, // Fracture
-  189112, // Infernal Strike (impact)
-  320378, // Immolation Aura CDR
-  247455, // Spirit Bomb damage
-  247456, // Frailty debuff
-  203981, // Soul Fragments
-  207744, // Fiery Brand debuff
-  343010, // Fiery Brand modifier
-]);
-
-export const SET_BONUS_SPELL_IDS = new Set([
-  1264808, // Vengeance 12.0 Class Set 2pc
-  1264809, // Vengeance 12.0 Class Set 4pc
-  1276488, // Explosion of the Soul (4pc proc) — 1.8x AP Fire AoE, 12yd radius
-]);
-
-// --- Spec configuration ---
+// ================================================================
+// SECTION 1: HUMAN DOMAIN KNOWLEDGE
+// Edit this section when game mechanics, abilities, or set bonuses
+// change. This is the only section that requires manual curation.
+// ================================================================
 
 export const SPEC_CONFIG = {
   specId: "vengeance",
   className: "demonhunter",
+  cppClassName: "demon_hunter", // C++ snake_case form (not derivable from className)
   role: "tank",
 
+  displayNames: {
+    class: "Demon Hunter",
+    spec: "Vengeance",
+  },
+
   resources: {
-    primary: { name: "fury", cap: 120 },
+    primary: { name: "fury", cap: 100 },
     secondary: { name: "soul_fragments", cap: 6 },
   },
 
@@ -162,78 +157,251 @@ export const SPEC_CONFIG = {
       reason: "Fracture generates +1 frag during Meta",
     },
   ],
+
+  // Buffs to track in workflow/analyze for optimization signals
+  keyBuffs: [
+    "demon_spikes",
+    "fiery_brand",
+    "metamorphosis",
+    "immolation_aura",
+    "frailty",
+    "soul_furnace",
+    "art_of_the_glaive",
+    "reavers_mark",
+    "thrill_of_the_fight",
+    "rending_strike",
+    "glaive_flurry",
+  ],
+
+  // Abilities that don't consume GCDs (excluded from GCD efficiency calc)
+  offGcdAbilities: ["auto_attack", "melee", "immolation_aura"],
+
+  // Buffs that are major cooldowns (excluded from "low uptime" warnings)
+  cooldownBuffs: ["fiery_brand", "metamorphosis", "fel_devastation"],
+
+  // Fallback name→category hints for interaction classification
+  classificationHints: {
+    damage_modifier: [
+      "empowerment",
+      "any means necessary",
+      "chaos blades",
+      "seething chaos",
+      "exergy",
+      "inertia",
+      "demon soul",
+      "burning blades",
+      "fires of fel",
+      "fiery demise",
+      "mastery:",
+      "immolation aura",
+      "soul furnace",
+      "bionic stabilizer",
+      "serrated glaive",
+      "burning wound",
+      "scarred strikes",
+      "soul flame",
+      "accelerated blade",
+    ],
+    buff_grant: [
+      "mark",
+      "brand",
+      "reaver",
+      "revel in pain",
+      "spirit of the darkness flame",
+      "fiery resolve",
+      "soul rending",
+      "metamorphosis",
+      "demon hide",
+    ],
+    mechanic_change: ["thrill of the fight", "demonsurge", "evasive action"],
+    cooldown_modifier: [
+      "first of the illidari",
+      "fel defender",
+      "rush of chaos",
+    ],
+    resource_modifier: [
+      "unleashed power",
+      "prepared",
+      "shear fury",
+      "tactical retreat",
+    ],
+    duration_modifier: ["cover of darkness", "extended spikes"],
+    proc_trigger: ["luck of the draw"],
+  },
+
+  // Known resource identifiers for APL condition parsing
+  resourceNames: [
+    "fury",
+    "soul_fragments",
+    "health",
+    "soul_fragments.total",
+    "souls_consumed",
+  ],
 };
 
-// --- Loading functions ---
+export const SET_BONUS_SPELL_IDS = new Set([
+  1264808, // Vengeance 12.0 Class Set 2pc
+  1264809, // Vengeance 12.0 Class Set 4pc
+  1276488, // Explosion of the Soul (4pc proc) — 1.8x AP Fire AoE, 12yd radius
+]);
 
-let _cachedAbilityData = null;
+// C++ struct → display ability name mapping
+export const STRUCT_TO_ABILITY_MAP = {
+  soul_cleave: "Soul Cleave",
+  spirit_bomb: "Spirit Bomb",
+  fiery_brand: "Fiery Brand",
+  fracture: "Fracture",
+  fel_devastation: "Fel Devastation",
+  immolation_aura: "Immolation Aura",
+  sigil_of_flame: "Sigil of Flame",
+  demon_spikes: "Demon Spikes",
+  metamorphosis: "Metamorphosis",
+  throw_glaive: "Throw Glaive",
+  vengeful_retreat: "Vengeful Retreat",
+  infernal_strike: "Infernal Strike",
+  shear: "Shear",
+  the_hunt: "The Hunt",
+  elysian_decree: "Elysian Decree",
+  sigil_of_misery: "Sigil of Misery",
+  sigil_of_silence: "Sigil of Silence",
+  sigil_of_spite: "Sigil of Spite",
+  felblade: "Felblade",
+  soul_carver: "Soul Carver",
+  darkness: "Darkness",
+  chaos_nova: "Chaos Nova",
+  consume_magic: "Consume Magic",
+  bulk_extraction: "Bulk Extraction",
+  consume_soul: "Consume Soul",
+  soul_cleave_heal: "Soul Cleave",
+  feast_of_souls_heal: "Soul Cleave",
+  frailty_heal: "Frailty",
+  soul_barrier: "Soul Barrier",
+  demon_hunter_sigil: "Sigil of Flame",
+  sigil_of_flame_damage_base: "Sigil of Flame",
+  sigil_of_flame_damage: "Sigil of Flame",
+  sigil_of_flame_base: "Sigil of Flame",
+  sigil_of_doom_damage: "Sigil of Flame",
+  sigil_of_doom: "Sigil of Flame",
+  retaliation: "Demon Spikes",
+  eye_beam_base: "Eye Beam",
+  eye_beam: "Eye Beam",
+  blade_dance_base: "Blade Dance",
+  blade_dance: "Blade Dance",
+  death_sweep: "Blade Dance",
+  chaos_strike_base: "Chaos Strike",
+  chaos_strike: "Chaos Strike",
+  annihilation: "Chaos Strike",
+  auto_attack_damage: "Auto Attack",
+  auto_attack: "Auto Attack",
+  pick_up_fragment: "Consume Soul",
+  reap_base: "Soul Cleave",
+  eradicate: "Soul Cleave",
+  cull: "Soul Cleave",
+  reap: "Soul Cleave",
+  voidfall_meteor_base: "Voidfall",
+  voidfall_meteor: "Voidfall",
+  world_killer: "Voidfall",
+  catastrophe: "Soul Cleave",
+  collapsing_star: "Soul Cleave",
+  art_of_the_glaive: "Art of the Glaive",
+  preemptive_strike: "Throw Glaive",
+  warblades_hunger: "Fracture",
+  wounded_quarry: "Throw Glaive",
+  reavers_glaive: "Throw Glaive",
+};
+
+// C++ scanner seed list: [talentName, expectedAbility] pairs for validation
+export const CPP_SCANNER_SEEDS = [
+  ["Charred Flesh", "Immolation Aura"],
+  ["Feed the Demon", "Consume Soul"],
+  ["Burning Alive", "Fiery Brand"],
+  ["Cycle of Binding", "Sigil of Flame"],
+  ["Soul Sigils", "Sigil of Flame"],
+  ["Feast of Souls", "Soul Cleave"],
+  ["Darkglare Boon", "Fel Devastation"],
+  ["Focused Cleave", "Soul Cleave"],
+  ["Fallout", "Immolation Aura"],
+  ["Volatile Flameblood", "Immolation Aura"],
+  ["Frailty", "Soul Cleave"],
+  ["Frailty", "Spirit Bomb"],
+  ["Ascending Flame", "Sigil of Flame"],
+  ["Meteoric Rise", "Fel Devastation"],
+];
+
+// Set bonus interaction data literals (referenced by getManualSetBonusInteractions)
+const SET_BONUS_INTERACTION_DATA = {
+  twoPiece: {
+    sourceId: 1264808,
+    sourceName: "Vengeance 12.0 Class Set 2pc",
+    targetId: 225919,
+    targetFallbackName: "Fracture",
+    magnitude: { value: 35, unit: "percent", stacking: "multiplicative" },
+  },
+  fourPiece: {
+    sourceId: 1264809,
+    sourceName: "Vengeance 12.0 Class Set 4pc",
+    targetId: 1276488,
+    targetName: "Explosion of the Soul",
+    procInfo: { procChance: 0.3, internalCooldown: 0.5 },
+    triggerSpell: { id: 263642, name: "Fracture" },
+  },
+};
+
+// Sibling spec/hero tree names (for contamination detection in verify.js)
+const SIBLING_SPECS = {
+  siblingSpec: "havoc",
+  siblingHeroTrees: ["devourer", "scarred"],
+};
+
+// ================================================================
+// SECTION 2: MACHINE-VALIDATED DATA
+// Sourced from SimC DBC but maintained here for bootstrap ordering.
+// validate-spec-data.js cross-checks these against the DBC source.
+// If validation fails, update these values from the DBC output.
+// ================================================================
+
+export const BASE_SPELL_IDS = new Set([
+  228477, // Soul Cleave
+  228478, // Soul Cleave (damage component)
+  258920, // Immolation Aura
+  204596, // Sigil of Flame
+  203720, // Demon Spikes
+  203819, // Demon Spikes (buff)
+  187827, // Metamorphosis (Vengeance)
+  198793, // Vengeful Retreat
+  185123, // Throw Glaive
+  203782, // Shear
+  263642, // Fracture
+  189112, // Infernal Strike (impact)
+  320378, // Immolation Aura CDR
+  247455, // Spirit Bomb damage
+  247456, // Frailty debuff
+  203981, // Soul Fragments
+  207744, // Fiery Brand debuff
+  343010, // Fiery Brand modifier
+]);
+
+// ================================================================
+// SECTION 3: AUTO-DERIVED (do not edit)
+// Generated by common.js from SPEC_CONFIG. Changing Section 1
+// automatically updates these.
+// ================================================================
+
+const _cache = createCache();
 
 export function getSpecConfig() {
   return SPEC_CONFIG;
 }
 
-export function loadAbilityData() {
-  if (_cachedAbilityData) return _cachedAbilityData;
-
-  const spellsPath = join(DATA_DIR, "spells-summary.json");
-
-  if (!existsSync(spellsPath)) {
-    _cachedAbilityData = Object.freeze({ ...SPEC_CONFIG.domainOverrides });
-    return _cachedAbilityData;
-  }
-
-  const spells = JSON.parse(readFileSync(spellsPath, "utf-8"));
-  const byId = new Map(spells.map((s) => [s.id, s]));
-
-  const result = {};
-
-  for (const [name, spellId] of Object.entries(SPEC_CONFIG.spellIds)) {
-    const spell = byId.get(spellId);
-    if (!spell) {
-      result[name] = { ...(SPEC_CONFIG.domainOverrides[name] || {}) };
-      continue;
-    }
-
-    const entry = {};
-
-    if (spell.charges) {
-      if (spell.charges.count > 1) {
-        entry.charges = spell.charges.count;
-        entry.rechargeCd = spell.charges.cooldown;
-        entry.cooldown = 0;
-      } else {
-        entry.cooldown = spell.charges.cooldown;
-      }
-    } else if (spell.cooldown) {
-      entry.cooldown = spell.cooldown;
-    } else {
-      entry.cooldown = 0;
-    }
-
-    if (spell.duration) entry.duration = spell.duration;
-    if (spell.gcd !== undefined) entry.gcd = spell.gcd > 0;
-
-    if (spell.resource) {
-      const furyMatch = spell.resource.match(/(\d+)\s*fury/i);
-      if (furyMatch) entry.furyCost = parseInt(furyMatch[1], 10);
-    }
-
-    if (spell.generates) {
-      for (const gen of spell.generates) {
-        const furyMatch = gen.match(/(\d+)\s*fury/i);
-        if (furyMatch) entry.furyGen = parseInt(furyMatch[1], 10);
-        const fragMatch = gen.match(/(\d+)\s*soul\s*fragment/i);
-        if (fragMatch) entry.fragGen = parseInt(fragMatch[1], 10);
-      }
-    }
-
-    Object.assign(entry, SPEC_CONFIG.domainOverrides[name] || {});
-    result[name] = entry;
-  }
-
-  _cachedAbilityData = Object.freeze(result);
-  return _cachedAbilityData;
-}
+export const loadAbilityData = () =>
+  _cache.get(() =>
+    buildAbilityData(
+      SPEC_CONFIG.spellIds,
+      SPEC_CONFIG.domainOverrides,
+      SPEC_CONFIG.resources,
+      DATA_DIR,
+    ),
+  );
 
 export function getHeroTrees() {
   return SPEC_CONFIG.heroTrees;
@@ -243,39 +411,11 @@ export function getResourceFlow() {
   return SPEC_CONFIG.resourceFlow;
 }
 
-export function detectHeroTreeFromProfileName(aplText) {
-  for (const [treeId, treeConfig] of Object.entries(SPEC_CONFIG.heroTrees)) {
-    for (const keyword of treeConfig.profileKeywords) {
-      if (aplText.toLowerCase().includes(keyword)) {
-        return treeId;
-      }
-    }
-  }
-  return null;
-}
+export const detectHeroTreeFromProfileName = (text) =>
+  matchHeroTreeFromText(SPEC_CONFIG.heroTrees, text);
 
-export function detectHeroTreeFromBuffs(workflowResults) {
-  const scenarios = Array.isArray(workflowResults)
-    ? workflowResults
-    : workflowResults.scenarios || [];
-
-  for (const scenario of scenarios) {
-    if (scenario.error) continue;
-
-    for (const [treeId, treeConfig] of Object.entries(SPEC_CONFIG.heroTrees)) {
-      const hasTreeBuff = treeConfig.keyBuffs.some((buff) => {
-        const uptime =
-          scenario.buffUptimes?.[buff] ??
-          scenario.buffs?.find((b) => b.name === buff)?.uptime;
-        return uptime !== undefined && uptime > 0;
-      });
-
-      if (hasTreeBuff) return treeId;
-    }
-  }
-
-  return null;
-}
+export const detectHeroTreeFromBuffs = (results) =>
+  matchHeroTreeFromBuffs(SPEC_CONFIG.heroTrees, results);
 
 export function getSpellIds() {
   return SPEC_CONFIG.spellIds;
@@ -285,6 +425,104 @@ export function getDomainOverrides() {
   return SPEC_CONFIG.domainOverrides;
 }
 
-export function clearCache() {
-  _cachedAbilityData = null;
+export const clearCache = () => _cache.clear();
+
+export function getStructToAbilityMap() {
+  return STRUCT_TO_ABILITY_MAP;
+}
+
+export function getTalentTreePattern() {
+  return deriveTalentTreePattern(SPEC_CONFIG);
+}
+
+export function getSetBonusSpells() {
+  return new Map([
+    [
+      1264808,
+      {
+        name: "vengeance_12.0",
+        pieceCount: 2,
+        displayName: "Vengeance 12.0 Class Set 2pc",
+      },
+    ],
+    [
+      1264809,
+      {
+        name: "vengeance_12.0",
+        pieceCount: 4,
+        displayName: "Vengeance 12.0 Class Set 4pc",
+      },
+    ],
+  ]);
+}
+
+export function getClassSpellQuery() {
+  return deriveClassSpellQuery(SPEC_CONFIG);
+}
+
+export function getSpecSpellFilter() {
+  return deriveSpecSpellFilter(SPEC_CONFIG);
+}
+
+export function getCppStructPatterns() {
+  return deriveCppStructPatterns(SPEC_CONFIG);
+}
+
+export function getKeySpellIds() {
+  return deriveKeySpellIds(SPEC_CONFIG);
+}
+
+export function getManualSetBonusInteractions(spellMap) {
+  const d = SET_BONUS_INTERACTION_DATA;
+  return [
+    {
+      source: {
+        id: d.twoPiece.sourceId,
+        name: d.twoPiece.sourceName,
+        isTalent: false,
+        isSetBonus: true,
+        setBonus: { name: "vengeance_12.0", pieceCount: 2 },
+        tree: null,
+        heroSpec: null,
+      },
+      target: {
+        id: d.twoPiece.targetId,
+        name:
+          spellMap?.get(d.twoPiece.targetId)?.name ||
+          d.twoPiece.targetFallbackName,
+      },
+      type: "damage_modifier",
+      discoveryMethod: "manual",
+      confidence: "high",
+      magnitude: d.twoPiece.magnitude,
+    },
+    {
+      source: {
+        id: d.fourPiece.sourceId,
+        name: d.fourPiece.sourceName,
+        isTalent: false,
+        isSetBonus: true,
+        setBonus: { name: "vengeance_12.0", pieceCount: 4 },
+        tree: null,
+        heroSpec: null,
+      },
+      target: {
+        id: d.fourPiece.targetId,
+        name: d.fourPiece.targetName,
+      },
+      type: "proc_trigger",
+      discoveryMethod: "manual",
+      confidence: "high",
+      procInfo: d.fourPiece.procInfo,
+      triggerSpell: d.fourPiece.triggerSpell,
+    },
+  ];
+}
+
+export function getCppScannerSeedList() {
+  return CPP_SCANNER_SEEDS;
+}
+
+export function getSiblingSpecs() {
+  return SIBLING_SPECS;
 }

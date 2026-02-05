@@ -5,6 +5,7 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { config } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -288,7 +289,8 @@ export function printCouplingReport(report) {
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
   const talentsPath = process.argv[2] || join(DATA_DIR, "talents.json");
-  const aplPath = process.argv[3] || join(APL_DIR, "vengeance.simc");
+  const aplPath =
+    process.argv[3] || join(APL_DIR, `${config.spec.specName}.simc`);
 
   if (!existsSync(talentsPath)) {
     console.error(`Talents file not found: ${talentsPath}`);

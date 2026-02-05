@@ -27,6 +27,7 @@ import { fileURLToPath } from "node:url";
 import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
 import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
+import { getSpecAdapter } from "../engine/startup.js";
 import { loadRoster } from "./build-roster.js";
 import { generateMultiActorContent } from "./multi-actor.js";
 import {
@@ -131,38 +132,10 @@ function recoverFromBackup() {
 
 function migrateState(state) {
   if (state.version >= STATE_VERSION) return state;
-
-  // v1 → v2: DPS keys changed from labels ("1T") to scenario keys ("st")
-  if (state.version === 1 || !state.version) {
-    const labelToKey = { "1T": "st", "5T": "small_aoe", "10T": "big_aoe" };
-    const migrateDps = (dps) => {
-      const migrated = {};
-      for (const [k, v] of Object.entries(dps)) {
-        migrated[labelToKey[k] || k] = v;
-      }
-      return migrated;
-    };
-    if (state.originalBaseline?.dps) {
-      state.originalBaseline.dps = migrateDps(state.originalBaseline.dps);
-    }
-    if (state.current?.dps) {
-      state.current.dps = migrateDps(state.current.dps);
-    }
-    state.version = 2;
-  }
-
-  // v2 → v3: multi-build support (backward compat: single-build states just get multiBuild: false)
-  if (state.version === 2) {
-    state.multiBuild = false;
-    state.version = 3;
-  }
-
-  // Ensure new fields exist on old states
-  if (state.consecutiveRejections === undefined)
-    state.consecutiveRejections = 0;
-  if (!Array.isArray(state.findings)) state.findings = [];
-
-  return state;
+  throw new Error(
+    `Iteration state version ${state.version || "unknown"} is too old. ` +
+      `Expected version ${STATE_VERSION}. Delete results/iteration-state.json and re-init.`,
+  );
 }
 
 function saveState(state) {
@@ -252,7 +225,8 @@ function generateHypotheses(workflowResults) {
   // 3. Low buff uptimes
   for (const s of scenarios) {
     for (const [name, uptime] of Object.entries(s.buffUptimes || {})) {
-      if (uptime < 40 && name !== "metamorphosis" && name !== "fiery_brand") {
+      const { cooldownBuffs: cdBuffs } = getSpecAdapter().getSpecConfig();
+      if (uptime < 40 && !cdBuffs.includes(name)) {
         hypotheses.push({
           category: "buff_uptime_gap",
           description: `${name} uptime only ${uptime}% in ${SCENARIO_LABELS[s.scenario] || s.scenario} — prioritize refresh higher`,
@@ -301,8 +275,8 @@ function generateHypotheses(workflowResults) {
 
   // 7. Cooldown alignment
   if (st) {
-    const cooldownBuffs = ["fiery_brand", "metamorphosis", "fel_devastation"];
-    for (const name of cooldownBuffs) {
+    const { cooldownBuffs: specCdBuffs } = getSpecAdapter().getSpecConfig();
+    for (const name of specCdBuffs) {
       const uptime = st.buffUptimes?.[name];
       if (uptime !== undefined && uptime > 0) {
         hypotheses.push({
@@ -651,14 +625,19 @@ async function runMultiBuildComparison(
     buildEntries.length;
   const worstWeighted = Math.min(...buildEntries.map((b) => b.weightedDelta));
 
-  const arBuilds = buildEntries.filter((b) => b.heroTree === "aldrachi_reaver");
-  const anniBuilds = buildEntries.filter((b) => b.heroTree === "annihilator");
-  const arAvg = arBuilds.length
-    ? arBuilds.reduce((s, b) => s + b.weightedDelta, 0) / arBuilds.length
-    : 0;
-  const anniAvg = anniBuilds.length
-    ? anniBuilds.reduce((s, b) => s + b.weightedDelta, 0) / anniBuilds.length
-    : 0;
+  // Group by hero tree dynamically
+  const treeAvgs = {};
+  const treeGroups = {};
+  for (const b of buildEntries) {
+    const tree = b.heroTree || "unknown";
+    if (!treeGroups[tree]) treeGroups[tree] = [];
+    treeGroups[tree].push(b);
+  }
+  for (const [tree, builds] of Object.entries(treeGroups)) {
+    treeAvgs[tree] = +(
+      builds.reduce((s, b) => s + b.weightedDelta, 0) / builds.length
+    ).toFixed(3);
+  }
 
   const comparison = {
     multiBuild: true,
@@ -668,8 +647,7 @@ async function runMultiBuildComparison(
     aggregate: {
       meanWeighted: +meanWeighted.toFixed(3),
       worstWeighted: +worstWeighted.toFixed(3),
-      arAvg: +arAvg.toFixed(3),
-      anniAvg: +anniAvg.toFixed(3),
+      treeAvgs,
     },
     timestamp: new Date().toISOString(),
   };
@@ -692,7 +670,7 @@ function printMultiBuildComparison(comparison) {
   console.log("-".repeat(67));
 
   for (const [buildId, br] of Object.entries(buildResults)) {
-    const hero = br.heroTree === "aldrachi_reaver" ? "AR" : "Anni";
+    const hero = (br.heroTree || "?").slice(0, 6);
     const cols = SCENARIO_KEYS.map((s) =>
       signedPct(br.scenarios[s]?.deltaPct || 0, 2),
     );
@@ -702,8 +680,13 @@ function printMultiBuildComparison(comparison) {
   }
 
   console.log("-".repeat(67));
+  const treeAvgStr = aggregate.treeAvgs
+    ? Object.entries(aggregate.treeAvgs)
+        .map(([tree, avg]) => `${tree}: ${signedPct(avg)}`)
+        .join("  ")
+    : "";
   console.log(
-    `Mean: ${signedPct(aggregate.meanWeighted)}  |  Worst: ${signedPct(aggregate.worstWeighted)}  |  AR avg: ${signedPct(aggregate.arAvg)}  Anni avg: ${signedPct(aggregate.anniAvg)}`,
+    `Mean: ${signedPct(aggregate.meanWeighted)}  |  Worst: ${signedPct(aggregate.worstWeighted)}  |  ${treeAvgStr}`,
   );
 
   // Accept criteria check
@@ -803,7 +786,7 @@ async function cmdInit(aplPath) {
 
     console.log("\nBaseline DPS (per build):");
     for (const [buildId, b] of Object.entries(baseline.builds)) {
-      const hero = b.heroTree === "aldrachi_reaver" ? "AR" : "Anni";
+      const hero = (b.heroTree || "?").slice(0, 6);
       const dpsStr = SCENARIO_KEYS.map(
         (s) =>
           `${SCENARIO_LABELS[s]}:${Math.round(b.dps[s] || 0).toLocaleString()}`,

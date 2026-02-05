@@ -1,17 +1,25 @@
-// Generates comprehensive VDH SpellDataDump from simc spell_query.
+// Generates comprehensive SpellDataDump from simc spell_query.
 // Queries all spells referenced by talents, base abilities, and class spells.
 
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SIMC_BIN } from "../engine/startup.js";
-import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "../spec/vengeance.js";
+import {
+  SIMC_BIN,
+  config,
+  loadSpecAdapter,
+  getSpecAdapter,
+  getDisplayNames,
+} from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const DATA_DIR = join(ROOT, "data");
-const OUTPUT = join(ROOT, "reference/spelldatadump-vdh.txt");
+const OUTPUT = join(
+  ROOT,
+  `reference/spelldatadump-${config.spec.specName}.txt`,
+);
 
 function runSpellQuery(query) {
   try {
@@ -28,11 +36,12 @@ function runSpellQuery(query) {
 }
 
 function collectSpellIds() {
+  const adapter = getSpecAdapter();
   const ids = new Set();
 
   // Add base abilities
-  for (const id of BASE_SPELL_IDS) ids.add(id);
-  for (const id of SET_BONUS_SPELL_IDS) ids.add(id);
+  for (const id of adapter.BASE_SPELL_IDS) ids.add(id);
+  for (const id of adapter.SET_BONUS_SPELL_IDS) ids.add(id);
 
   // Add talent spell IDs from raidbots data
   const raidbots = JSON.parse(
@@ -67,8 +76,9 @@ function collectSpellIds() {
     .sort((a, b) => a - b);
 }
 
-function main() {
-  console.log("Collecting VDH spell IDs...");
+async function main() {
+  await loadSpecAdapter();
+  console.log("Collecting spell IDs...");
   const spellIds = collectSpellIds();
   console.log(`Found ${spellIds.length} unique spell IDs`);
 
@@ -101,9 +111,14 @@ function main() {
   writeFileSync(OUTPUT, content);
   console.log(`Written to: ${OUTPUT}`);
 
-  // Count VDH-specific spells
-  const vdhCount = (content.match(/Vengeance Demon Hunter/g) || []).length;
-  console.log(`VDH-specific spells: ${vdhCount}`);
+  // Count spec-specific spells
+  const { spec: specName, class: className } = getDisplayNames();
+  const specLabel = `${specName} ${className}`;
+  const specCount = (content.match(new RegExp(specLabel, "g")) || []).length;
+  console.log(`${specLabel}-specific spells: ${specCount}`);
 }
 
-main();
+main().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

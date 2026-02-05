@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
+import { config, getSpecAdapter } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -36,9 +37,12 @@ function loadARBuilds(tier) {
   const limit = TIER_LIMITS[tier] || 1;
   const builds = [];
 
+  const heroTrees = Object.keys(getSpecAdapter().getSpecConfig().heroTrees);
+  const primaryTree = heroTrees[0]; // First hero tree is primary for hash-based builds
+
   const usedIds = new Set();
   for (const arch of archetypes) {
-    if (arch.heroTree !== "aldrachi_reaver") continue;
+    if (arch.heroTree !== primaryTree) continue;
 
     const candidates = [arch.bestBuild, ...(arch.alternateBuilds || [])];
     let added = 0;
@@ -47,7 +51,11 @@ function loadARBuilds(tier) {
       if (added >= limit) break;
       if (!candidate?.hash) continue;
 
-      let id = `AR_${sanitizeId(arch.name)}_${added + 1}`;
+      const prefix = primaryTree
+        .split("_")
+        .map((w) => w[0].toUpperCase())
+        .join("");
+      let id = `${prefix}_${sanitizeId(arch.name)}_${added + 1}`;
       // Ensure unique IDs across archetypes
       if (usedIds.has(id)) {
         let suffix = 2;
@@ -59,7 +67,7 @@ function loadARBuilds(tier) {
       builds.push({
         id,
         archetype: arch.name,
-        heroTree: "aldrachi_reaver",
+        heroTree: primaryTree,
         hash: candidate.hash,
         overrides: null,
         source: "builds.json",
@@ -76,6 +84,10 @@ function loadARBuilds(tier) {
 function loadAnniBuilds() {
   if (!existsSync(MULTI_BUILD_PATH)) return [];
 
+  const className = config.spec.className;
+  const heroTrees = Object.keys(getSpecAdapter().getSpecConfig().heroTrees);
+  const secondaryTree = heroTrees[1]; // Second hero tree uses multi-build actors
+
   const content = readFileSync(MULTI_BUILD_PATH, "utf8");
   const lines = content.split("\n");
   const actors = [];
@@ -84,10 +96,10 @@ function loadAnniBuilds() {
   for (const line of lines) {
     const trimmed = line.trim();
 
-    // Start of first actor: demonhunter="name"
-    const dhMatch = trimmed.match(/^demonhunter="([^"]+)"/);
-    if (dhMatch) {
-      current = { name: dhMatch[1], overrides: {} };
+    // Start of first actor: className="name"
+    const actorMatch = trimmed.match(new RegExp(`^${className}="([^"]+)"`));
+    if (actorMatch) {
+      current = { name: actorMatch[1], overrides: {} };
       actors.push(current);
       continue;
     }
@@ -128,13 +140,13 @@ function loadAnniBuilds() {
     }
   }
 
-  // Filter to Anni builds only (exclude AR reference)
+  // Filter to secondary hero tree builds only (exclude primary reference)
   return actors
-    .filter((a) => a.overrides.hero_talents === "annihilator")
+    .filter((a) => a.overrides.hero_talents === secondaryTree)
     .map((a) => ({
       id: a.name,
       archetype: inferAnniArchetype(a.name),
-      heroTree: "annihilator",
+      heroTree: secondaryTree,
       hash: null,
       overrides: a.overrides,
       source: "multi-build.simc",
@@ -149,19 +161,26 @@ function inferAnniArchetype(actorName) {
 
 // --- AR reference from profile.simc ---
 
-function loadProfileARReference() {
+function loadProfileReference() {
   if (!existsSync(PROFILE_PATH)) return null;
+
+  const heroTrees = Object.keys(getSpecAdapter().getSpecConfig().heroTrees);
+  const primaryTree = heroTrees[0];
 
   const content = readFileSync(PROFILE_PATH, "utf8");
   const hashMatch = content.match(/^talents=(.+)$/m);
   if (!hashMatch) return null;
 
   const hash = hashMatch[1].trim();
+  const prefix = primaryTree
+    .split("_")
+    .map((w) => w[0].toUpperCase())
+    .join("");
 
   return {
-    id: "AR_Profile_Reference",
+    id: `${prefix}_Profile_Reference`,
     archetype: "Profile Reference",
-    heroTree: "aldrachi_reaver",
+    heroTree: primaryTree,
     hash,
     overrides: null,
     source: "profile.simc",
@@ -173,28 +192,32 @@ function loadProfileARReference() {
 export function generateRoster(tier = "fast") {
   console.log(`Generating build roster (tier: ${tier})...`);
 
-  // Load AR builds from builds.json
-  let arBuilds = loadARBuilds(tier);
-  if (arBuilds.length === 0) {
-    // Fallback: use profile.simc hash as single AR reference
-    const profileRef = loadProfileARReference();
+  const heroTrees = Object.keys(getSpecAdapter().getSpecConfig().heroTrees);
+  const [primaryTree, secondaryTree] = heroTrees;
+
+  // Load primary hero tree builds from builds.json
+  let primaryBuilds = loadARBuilds(tier);
+  if (primaryBuilds.length === 0) {
+    const profileRef = loadProfileReference();
     if (profileRef) {
-      arBuilds = [profileRef];
+      primaryBuilds = [profileRef];
       console.log(
-        "  No AR builds in builds.json — using profile.simc as AR reference",
+        `  No ${primaryTree} builds in builds.json — using profile.simc as reference`,
       );
     }
   } else {
-    console.log(`  Loaded ${arBuilds.length} AR builds from builds.json`);
+    console.log(
+      `  Loaded ${primaryBuilds.length} ${primaryTree} builds from builds.json`,
+    );
   }
 
-  // Load Anni builds from multi-build.simc
-  const anniBuilds = loadAnniBuilds();
+  // Load secondary hero tree builds from multi-build.simc
+  const secondaryBuilds = loadAnniBuilds();
   console.log(
-    `  Loaded ${anniBuilds.length} Anni builds from multi-build.simc`,
+    `  Loaded ${secondaryBuilds.length} ${secondaryTree || "secondary"} builds from multi-build.simc`,
   );
 
-  const allBuilds = [...arBuilds, ...anniBuilds];
+  const allBuilds = [...primaryBuilds, ...secondaryBuilds];
 
   if (allBuilds.length === 0) {
     console.error(
@@ -252,15 +275,15 @@ export function showRoster() {
     );
   }
 
-  const arCount = roster.builds.filter(
-    (b) => b.heroTree === "aldrachi_reaver",
-  ).length;
-  const anniCount = roster.builds.filter(
-    (b) => b.heroTree === "annihilator",
-  ).length;
-  console.log(
-    `\nSummary: ${arCount} AR + ${anniCount} Anni = ${roster.builds.length} total`,
-  );
+  // Group by hero tree dynamically
+  const treeCounts = {};
+  for (const b of roster.builds) {
+    treeCounts[b.heroTree] = (treeCounts[b.heroTree] || 0) + 1;
+  }
+  const summary = Object.entries(treeCounts)
+    .map(([tree, count]) => `${count} ${tree}`)
+    .join(" + ");
+  console.log(`\nSummary: ${summary} = ${roster.builds.length} total`);
 }
 
 // --- Utilities ---

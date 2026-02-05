@@ -6,12 +6,20 @@ import { readFileSync, existsSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "./spec/vengeance.js";
-import { SIMC_DIR, SIMC_DH_CPP, HERO_SUBTREES } from "./engine/startup.js";
+import {
+  SIMC_DIR,
+  SIMC_DH_CPP,
+  HERO_SUBTREES,
+  loadSpecAdapter,
+  getSpecAdapter,
+} from "./engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const DATA_DIR = join(ROOT, "data");
+
+await loadSpecAdapter();
+const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = getSpecAdapter();
 
 const src = readFileSync(SIMC_DH_CPP, "utf-8");
 const talents = JSON.parse(
@@ -177,36 +185,33 @@ function parseCppTalents(prefix) {
   return names;
 }
 
-const cppVengeance = parseCppTalents("vengeance");
-const cppAldrachi = parseCppTalents("aldrachi_reaver");
-const cppHavoc = parseCppTalents("havoc");
-const cppDevourer = parseCppTalents("devourer");
-const cppScarred = parseCppTalents("scarred");
+const specConfig = getSpecAdapter().getSpecConfig();
+const { siblingSpec, siblingHeroTrees } = getSpecAdapter().getSiblingSpecs();
+const heroTreeNames = Object.keys(specConfig.heroTrees);
+
+const cppSpec = parseCppTalents(specConfig.specId);
+const cppHeroTrees = heroTreeNames.map((name) => parseCppTalents(name));
+const cppSibling = parseCppTalents(siblingSpec);
+const cppSiblingHeroes = siblingHeroTrees.map((name) => parseCppTalents(name));
 
 console.log(
-  `C++ talent counts: vengeance=${cppVengeance.size}, aldrachi=${cppAldrachi.size}, scarred=${cppScarred.size}`,
+  `C++ talent counts: ${specConfig.specId}=${cppSpec.size}, ${heroTreeNames.map((n, i) => `${n}=${cppHeroTrees[i].size}`).join(", ")}`,
 );
 
 const allOurTalentNames = allOurTalents.map((t) => t.name);
 
-const havocLeaks = allOurTalentNames.filter(
-  (n) => cppHavoc.has(n) && !cppVengeance.has(n),
-);
-const devourerLeaks = allOurTalentNames.filter(
-  (n) => cppDevourer.has(n) && !cppVengeance.has(n),
-);
-const scarredLeaks = allOurTalentNames.filter(
-  (n) => cppScarred.has(n) && !cppVengeance.has(n) && !cppAldrachi.has(n),
-);
-
-if (havocLeaks.length === 0) pass("No Havoc talent contamination");
-else fail(`Havoc contamination: ${havocLeaks.join(", ")}`);
-
-if (devourerLeaks.length === 0) pass("No Devourer talent contamination");
-else fail(`Devourer contamination: ${devourerLeaks.join(", ")}`);
-
-if (scarredLeaks.length === 0) pass("No Scarred hero tree contamination");
-else fail(`Scarred hero tree contamination: ${scarredLeaks.join(", ")}`);
+// Generic contamination check
+const cppOurs = new Set([...cppSpec, ...cppHeroTrees.flatMap((s) => [...s])]);
+for (const [label, names] of [
+  [siblingSpec, cppSibling],
+  ...siblingHeroTrees.map((name, i) => [name, cppSiblingHeroes[i]]),
+]) {
+  const leaks = allOurTalentNames.filter(
+    (n) => names.has(n) && !cppOurs.has(n),
+  );
+  if (leaks.length === 0) pass(`No ${label} contamination`);
+  else fail(`${label} contamination: ${leaks.join(", ")}`);
+}
 
 // === Base Spell IDs ===
 
@@ -448,9 +453,10 @@ for (const i of shuffled.slice(0, 10)) {
 
 console.log("\n=== C++ Scanner Coverage ===\n");
 
-const cppAllTalents = new Set([...cppVengeance, ...cppAldrachi]);
-const cppAnnihilator = parseCppTalents("annihilator");
-for (const n of cppAnnihilator) cppAllTalents.add(n);
+const cppAllTalents = new Set([
+  ...cppSpec,
+  ...cppHeroTrees.flatMap((s) => [...s]),
+]);
 
 const cppTalentsWithInteractions = new Set();
 for (const name of cppAllTalents) {
@@ -476,15 +482,7 @@ console.log(`  C++ coverage: ${cppCoverage}%`);
 
 console.log("\n=== Key Spells ===\n");
 
-const keySpells = [
-  [247454, "Spirit Bomb"],
-  [228477, "Soul Cleave"],
-  [204021, "Fiery Brand"],
-  [263642, "Fracture"],
-  [212084, "Fel Devastation"],
-  [258920, "Immolation Aura"],
-  [204596, "Sigil of Flame"],
-];
+const keySpells = getSpecAdapter().getKeySpellIds();
 
 for (const [id, name] of keySpells) {
   if (spellMap.has(id)) pass(`Key spell: ${name} (${id})`);

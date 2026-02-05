@@ -56,6 +56,10 @@ const BUILDS_SCHEMA = `
     PRIMARY KEY (talent_a, talent_b)
   );
 
+  CREATE INDEX IF NOT EXISTS idx_builds_weighted ON builds(weighted DESC);
+  CREATE INDEX IF NOT EXISTS idx_builds_hero_tree ON builds(hero_tree);
+  CREATE INDEX IF NOT EXISTS idx_factors_talent ON factors(talent);
+
   CREATE TABLE IF NOT EXISTS runs (
     id TEXT PRIMARY KEY,
     apl TEXT,
@@ -80,6 +84,8 @@ const FINDINGS_SCHEMA = `
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
   );
+
+  CREATE INDEX IF NOT EXISTS idx_findings_status ON findings(status);
 
   CREATE TABLE IF NOT EXISTS hypotheses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

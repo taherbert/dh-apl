@@ -8,10 +8,11 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
+import { SIMC_BIN } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
-const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
+const SIMC = SIMC_BIN;
 const RESULTS_DIR = join(ROOT, "results");
 const GOLDEN_DIR = join(RESULTS_DIR, "golden");
 
@@ -327,10 +328,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 
   const combosData = JSON.parse(readFileSync(combosPath, "utf-8"));
-  // Support both old (array) and new (object with .builds) formats
-  const combos = Array.isArray(combosData)
-    ? combosData
-    : combosData.builds || [];
+  const combos = combosData.builds || [];
   // Pick first 3 builds as demo variants
   const variants = combos.slice(0, 3).map((build) => ({
     name: build.name,

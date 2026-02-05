@@ -2,16 +2,16 @@
   "spec": {
     "className": "demonhunter",
     "specName": "vengeance",
-    "specId": 581,
-    "heroSubtrees": {
-      "35": "aldrachi_reaver",
-      "124": "annihilator"
-    }
+    "specId": 581
   },
   "simc": {
     "dir": "/Users/tom/Documents/GitHub/simc",
     "branch": "midnight",
-    "cppModule": "engine/class_modules/sc_demon_hunter.cpp"
+    "cppModule": "engine/class_modules/sc_demon_hunter.cpp",
+    "aplModule": "engine/class_modules/apl/apl_demon_hunter.cpp",
+    "aplMarkers": {
+      "vengeance": ["//vengeance_apl_start", "//vengeance_apl_end"]
+    }
   },
   "data": {
     "env": "beta",

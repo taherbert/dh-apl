@@ -1,4 +1,4 @@
-// Extracts a structured inventory of all effect applications from sc_demon_hunter.cpp.
+// Extracts a structured inventory of all effect applications from the simc C++ class module.
 // Four scan types:
 // 1. parse_effects() calls → buff/passive effect applications
 // 2. parse_target_effects() calls → debuff effect applications
@@ -8,19 +8,26 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SIMC_DH_CPP } from "../engine/startup.js";
+import {
+  SIMC_DH_CPP,
+  loadSpecAdapter,
+  getSpecAdapter,
+} from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "../..", "data");
 
 export function extractEffectsInventory(preloadedSource) {
+  const adapter = getSpecAdapter();
+  const structPatterns = adapter.getCppStructPatterns();
+
   const src = preloadedSource || readFileSync(SIMC_DH_CPP, "utf-8");
   const lines = src.split("\n");
 
   const parseEffects = scanParseEffects(lines);
-  const parseTargetEffects = scanParseTargetEffects(lines);
+  const parseTargetEffects = scanParseTargetEffects(lines, structPatterns);
   const compositeOverrides = scanCompositeOverrides(lines);
-  const reactiveTriggers = scanReactiveTriggers(lines);
+  const reactiveTriggers = scanReactiveTriggers(lines, structPatterns);
 
   const output = {
     parseEffects,
@@ -76,11 +83,13 @@ function scanParseEffects(lines) {
 }
 
 // Scan 2: parse_target_effects() — debuff applications
-function scanParseTargetEffects(lines) {
+function scanParseTargetEffects(lines, structPatterns) {
   const results = [];
-  // These are more complex with lambda wrappers and effect masks
-  const pattern =
-    /(?:ab::)?parse_target_effects\(\s*(?:d_fn\(\s*&demon_hunter_td_t::(debuffs_t|dots_t)::(\w+)\s*\))\s*,\s*(?:p\(\)->)?([\w.]+(?:->effectN\(\s*\d+\s*\)\.trigger\(\))?)/g;
+  const tdType = structPatterns.targetData;
+  const pattern = new RegExp(
+    `(?:ab::)?parse_target_effects\\(\\s*(?:d_fn\\(\\s*&${tdType}::(debuffs_t|dots_t)::(\\w+)\\s*\\))\\s*,\\s*(?:p\\(\\)->)?([\\w.]+(?:->effectN\\(\\s*\\d+\\s*\\)\\.trigger\\(\\))?)`,
+    "g",
+  );
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
@@ -148,12 +157,13 @@ function scanCompositeOverrides(lines) {
 }
 
 // Scan 4: assess_damage and target_mitigation reactive triggers
-function scanReactiveTriggers(lines) {
+function scanReactiveTriggers(lines, structPatterns) {
   const results = [];
+  const playerType = structPatterns.player;
 
   // Find assess_damage function
   for (let i = 0; i < lines.length; i++) {
-    if (!lines[i].includes("demon_hunter_t::assess_damage")) continue;
+    if (!lines[i].includes(`${playerType}::assess_damage`)) continue;
     if (!lines[i].includes("{") && !lines[i + 1]?.includes("{")) continue;
 
     const body = extractFunctionBody(lines, i);
@@ -164,7 +174,7 @@ function scanReactiveTriggers(lines) {
 
   // Find target_mitigation function
   for (let i = 0; i < lines.length; i++) {
-    if (!lines[i].includes("demon_hunter_t::target_mitigation")) continue;
+    if (!lines[i].includes(`${playerType}::target_mitigation`)) continue;
     if (!lines[i].includes("{") && !lines[i + 1]?.includes("{")) continue;
 
     const body = extractFunctionBody(lines, i);
@@ -230,15 +240,22 @@ function extractReactiveFromBody(body, source) {
   return results;
 }
 
+let _funcPattern = null;
+
 function findEnclosingContext(lines, lineNum) {
   const structPattern = /^struct (\w+)\s*(?:final\s*)?:\s*public/;
-  const funcPattern =
-    /^(?:void|double|bool)\s+(?:demon_hunter_t|demon_hunter_td_t)::(\w+)/;
+  if (!_funcPattern) {
+    const adapter = getSpecAdapter();
+    const { player, targetData } = adapter.getCppStructPatterns();
+    _funcPattern = new RegExp(
+      `^(?:void|double|bool)\\s+(?:${player}|${targetData})::(\\w+)`,
+    );
+  }
 
   for (let i = lineNum; i >= 0; i--) {
     const structMatch = lines[i].match(structPattern);
     if (structMatch) return { name: structMatch[1], type: "struct" };
-    const funcMatch = lines[i].match(funcPattern);
+    const funcMatch = lines[i].match(_funcPattern);
     if (funcMatch) return { name: funcMatch[1], type: "member_function" };
   }
   return { name: "unknown", type: "unknown" };
@@ -315,4 +332,4 @@ function extractBuffChecks(body) {
   return results;
 }
 
-extractEffectsInventory();
+loadSpecAdapter().then(() => extractEffectsInventory());

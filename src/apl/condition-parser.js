@@ -16,6 +16,22 @@
 // Literal: { type: "Literal", value: string }
 // PrevGcd: { type: "PrevGcd", position: number, ability: string }
 
+// Dynamic resource names — loaded from spec adapter when available
+import { getSpecAdapter } from "../engine/startup.js";
+
+let _knownResources = null;
+function getKnownResources() {
+  if (_knownResources) return _knownResources;
+  try {
+    const { resourceNames } = getSpecAdapter().getSpecConfig();
+    _knownResources = [...resourceNames, "active_enemies"];
+  } catch {
+    // Generic fallback when adapter not loaded (standalone CLI usage)
+    _knownResources = ["health", "active_enemies"];
+  }
+  return _knownResources;
+}
+
 const SINGLE_CHAR_TOKENS = {
   "&": "op",
   "|": "op",
@@ -240,14 +256,7 @@ export function parseCondition(condition) {
     }
 
     // Resource checks (fury, soul_fragments, health, etc.)
-    const knownResources = [
-      "fury",
-      "soul_fragments",
-      "health",
-      "soul_fragments.total",
-      "souls_consumed",
-      "active_enemies",
-    ];
+    const knownResources = getKnownResources();
     if (knownResources.includes(ident) || knownResources.includes(parts[0])) {
       return {
         type: "ResourceCheck",

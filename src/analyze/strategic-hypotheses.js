@@ -13,17 +13,13 @@ import {
   findBuffReferences,
 } from "../apl/condition-parser.js";
 import { MUTATION_OPS } from "../apl/mutator.js";
-import {
-  getHeroTrees,
-  detectHeroTreeFromProfileName as detectFromProfile,
-  detectHeroTreeFromBuffs as detectFromBuffs,
-} from "../spec/vengeance.js";
+import { getSpecAdapter, config } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 
 // --- Spec Configuration ---
-let currentSpecId = "vengeance";
+let currentSpecId = config.spec.specName;
 
 export function setSpecId(specId) {
   currentSpecId = specId;
@@ -38,9 +34,6 @@ const STRATEGIC_CATEGORIES = {
   CONDITION_RELAXATION: "Relax overly restrictive conditions",
   PRIORITY_REORDER: "Adjust action priority for better sequencing",
 };
-
-// Re-export for backwards compatibility
-export { MUTATION_OPS };
 
 export function generateStrategicHypotheses(workflowResults, aplText = null) {
   const hypotheses = [];
@@ -112,14 +105,16 @@ function getBuffUptime(scenario, buffName) {
 }
 
 function detectHeroTreeFromProfileName(aplText) {
-  // Use config-based detection which checks profile keywords
-  const result = detectFromProfile(aplText, currentSpecId);
+  const adapter = getSpecAdapter();
+  const result = adapter.detectHeroTreeFromProfileName(aplText, currentSpecId);
   if (result) return result;
 
-  // Fallback: Look for profile name like: demonhunter="VDH_Midnight_Aldrachi_Reaver"
-  const profileMatch = aplText.match(/demonhunter\s*=\s*"([^"]+)"/i);
+  // Fallback: Look for profile name in APL text
+  const trees = adapter.getHeroTrees(currentSpecId);
+  const profileMatch = aplText.match(
+    new RegExp(`${adapter.SPEC_CONFIG.className}\\s*=\\s*"([^"]+)"`, "i"),
+  );
   if (profileMatch) {
-    const trees = getHeroTrees(currentSpecId);
     const name = profileMatch[1].toLowerCase();
     for (const [treeId, treeConfig] of Object.entries(trees)) {
       if (treeConfig.profileKeywords?.some((kw) => name.includes(kw))) {
@@ -156,12 +151,15 @@ function normalizeAbilityName(name) {
 }
 
 function detectHeroTreeFromBuffs(workflowResults) {
-  // Use config-based detection first
-  const result = detectFromBuffs(workflowResults, currentSpecId);
+  const adapter = getSpecAdapter();
+  const result = adapter.detectHeroTreeFromBuffs(
+    workflowResults,
+    currentSpecId,
+  );
   if (result) return result;
 
   // Fallback: manual detection using config-defined buffs
-  const trees = getHeroTrees(currentSpecId);
+  const trees = adapter.getHeroTrees(currentSpecId);
   const hasAnyBuff = (scenario, buffs) =>
     buffs.some((b) => getBuffUptime(scenario, b) > 0);
 
@@ -175,7 +173,6 @@ function detectHeroTreeFromBuffs(workflowResults) {
       }
     }
 
-    // Return if exactly one tree matches
     if (treeMatches.length === 1) return treeMatches[0];
   }
 

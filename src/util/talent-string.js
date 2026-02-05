@@ -207,6 +207,7 @@ export function decode(str, nodes) {
 import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SPEC_ID as CONFIG_SPEC_ID, HERO_SUBTREES } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_DATA_DIR = join(__dirname, "..", "..", "data");
@@ -532,7 +533,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(encoded);
   } else if (arg === "--test") {
     // Round-trip test: build a mock selection, encode, decode, verify
-    const SPEC_ID = 581;
     const sel = new Map();
 
     // Select all class entry/free nodes
@@ -565,14 +565,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       count++;
     }
 
-    // Select all Aldrachi Reaver hero nodes
-    for (const n of data.heroSubtrees["Aldrachi Reaver"]) {
+    // Select all hero nodes from the first hero tree
+    const firstHeroTree = Object.values(HERO_SUBTREES)[0];
+    for (const n of data.heroSubtrees[firstHeroTree]) {
       const entry = { rank: n.maxRanks || 1 };
       if (n.type === "choice") entry.choiceIndex = 1;
       sel.set(n.id, entry);
     }
 
-    const encoded = encode(SPEC_ID, nodes, sel);
+    const encoded = encode(CONFIG_SPEC_ID, nodes, sel);
     console.log(`Encoded: ${encoded}`);
     console.log(`Length: ${encoded.length} chars`);
 

@@ -7,33 +7,13 @@ import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runSimAsync, SCENARIOS } from "./runner.js";
 import { cpus } from "node:os";
-
-const SCENARIO_FIGHT_LENGTHS = {
-  st: 300,
-  small_aoe: 75,
-  big_aoe: 60,
-};
+import { getSpecAdapter } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const RESULTS_DIR = join(ROOT, "results");
 
 const ALL_SCENARIOS = Object.keys(SCENARIOS);
-
-// Key VDH buffs to track for optimization signals
-const KEY_BUFFS = [
-  "demon_spikes",
-  "fiery_brand",
-  "metamorphosis",
-  "immolation_aura",
-  "frailty",
-  "soul_furnace",
-  "art_of_the_glaive",
-  "reavers_mark",
-  "thrill_of_the_fight",
-  "rending_strike",
-  "glaive_flurry",
-];
 
 // Run full sim→analyze workflow for an APL file.
 // Returns structured JSON with results across all scenarios.
@@ -100,19 +80,19 @@ function analyzeScenario(result) {
     }));
 
   // Key buff uptimes
+  const { keyBuffs, offGcdAbilities } = getSpecAdapter().getSpecConfig();
   const buffUptimes = {};
-  for (const name of KEY_BUFFS) {
+  for (const name of keyBuffs) {
     const buff = result.buffs.find((b) => b.name.toLowerCase().includes(name));
     if (buff) buffUptimes[name] = +buff.uptime.toFixed(1);
   }
 
   // GCD efficiency: count on-GCD ability executes vs theoretical max GCDs
-  const OFF_GCD = ["auto_attack", "melee", "immolation_aura"];
   const gcdAbilities = damage.filter(
-    (a) => !OFF_GCD.some((name) => a.name.toLowerCase().includes(name)),
+    (a) => !offGcdAbilities.some((name) => a.name.toLowerCase().includes(name)),
   );
   const totalExecutes = gcdAbilities.reduce((sum, a) => sum + a.executes, 0);
-  const fightLength = SCENARIO_FIGHT_LENGTHS[result.scenario] || 300;
+  const fightLength = SCENARIOS[result.scenario]?.maxTime || 300;
   const theoreticalGcds = fightLength / 1.5;
   const gcdEfficiency = +Math.min(
     100,
@@ -163,7 +143,8 @@ function analyzeCrossScenario(results) {
 
   // Buff uptime differences
   const buffDiffs = {};
-  for (const name of KEY_BUFFS) {
+  const { keyBuffs: crossKeyBuffs } = getSpecAdapter().getSpecConfig();
+  for (const name of crossKeyBuffs) {
     const stUp = stResult.buffUptimes[name];
     const aoeUp = aoeResult.buffUptimes[name];
     if (

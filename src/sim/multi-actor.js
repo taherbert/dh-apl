@@ -8,7 +8,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveInputDirectives } from "./profilesets.js";
-import { DATA_ENV } from "../engine/startup.js";
+import { DATA_ENV, config } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -81,7 +81,7 @@ export function generateMultiActorContent(roster, aplPath) {
     } else if (GEAR_KEYS.includes(key)) {
       gearLines.push(trimmed);
     } else if (
-      key !== "demonhunter" &&
+      key !== config.spec.className &&
       key !== "source" &&
       key !== "talents" &&
       key !== "ptr" &&
@@ -123,7 +123,7 @@ export function generateMultiActorContent(roster, aplPath) {
 
   // First actor — full profile
   const first = builds[0];
-  output.push(`demonhunter="${first.id}"`);
+  output.push(`${config.spec.className}="${first.id}"`);
   output.push("source=default");
   for (const key of CHAR_META_KEYS) {
     if (charMeta[key]) output.push(charMeta[key]);
@@ -155,7 +155,8 @@ export function generateMultiActorContent(roster, aplPath) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const aplPath = process.argv[2] || join(ROOT, "apls", "vengeance.simc");
+  const aplPath =
+    process.argv[2] || join(ROOT, "apls", `${config.spec.specName}.simc`);
   const rosterPath =
     process.argv[3] || join(ROOT, "results", "build-roster.json");
 

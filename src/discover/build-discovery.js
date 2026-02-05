@@ -1,7 +1,7 @@
 // Build discovery pipeline: generate DoE builds, sim via profilesets, analyze
 // factor impacts, discover archetypes from talent impact analysis.
 //
-// Usage: node src/discover/build-discovery.js [--quick|--confirm] [--ar-only|--anni-only]
+// Usage: node src/discover/build-discovery.js [--quick|--confirm] [--{branch}-only]
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
@@ -11,13 +11,21 @@ import { createHash } from "node:crypto";
 import { generateCombos, buildToHash } from "../model/talent-combos.js";
 import { generateProfileset, runProfilesetAsync } from "../sim/profilesets.js";
 import { SCENARIOS } from "../sim/runner.js";
+import {
+  HERO_SUBTREES,
+  config,
+  toTitleCase,
+  loadSpecAdapter,
+  getSpecAdapter,
+  SCENARIO_WEIGHTS,
+} from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const DATA_DIR = join(ROOT, "data");
 const RESULTS_DIR = join(ROOT, "results");
 
-const WEIGHTS = { st: 0.5, small_aoe: 0.3, big_aoe: 0.2 };
+const WEIGHTS = SCENARIO_WEIGHTS;
 
 const FIDELITY = {
   quick: { target_error: 1.0, label: "quick" },
@@ -39,11 +47,11 @@ function generateBuilds(opts = {}) {
     builds.push(...result.pinnedBuilds.filter((b) => b.valid));
   }
 
-  // Filter by hero tree
-  if (opts.arOnly)
-    builds = builds.filter((b) => b.heroTree === "Aldrachi Reaver");
-  if (opts.anniOnly)
-    builds = builds.filter((b) => b.heroTree === "Annihilator");
+  // Filter by hero tree — resolve from aplBranches config
+  if (opts.heroTreeFilter) {
+    const filterName = toTitleCase(opts.heroTreeFilter);
+    builds = builds.filter((b) => b.heroTree === filterName);
+  }
 
   // Encode hashes and deduplicate
   const seen = new Set();
@@ -643,12 +651,11 @@ async function discover(opts = {}) {
       ? FIDELITY.quick
       : FIDELITY.standard;
 
-  const aplPath = opts.aplPath || "apls/vengeance.simc";
+  const aplPath = opts.aplPath || `apls/${config.spec.specName}.simc`;
 
   console.log("Step 1: Generating talent builds...");
   const { builds, factors, design, data } = generateBuilds({
-    arOnly: opts.arOnly,
-    anniOnly: opts.anniOnly,
+    heroTreeFilter: opts.heroTreeFilter,
     comboOpts: opts.comboOpts,
   });
   console.log(`  ${builds.length} unique builds (deduplicated by hash)`);
@@ -709,11 +716,20 @@ async function discover(opts = {}) {
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);
+  // Derive hero tree CLI flags from adapter
+  await loadSpecAdapter();
+  const heroTrees = getSpecAdapter().getSpecConfig().heroTrees;
+  let heroTreeFilter = null;
+  for (const [treeName, treeData] of Object.entries(heroTrees)) {
+    if (args.includes(`--${treeData.aplBranch}-only`)) {
+      heroTreeFilter = treeName;
+      break;
+    }
+  }
   const opts = {
     quick: args.includes("--quick"),
     confirm: args.includes("--confirm"),
-    arOnly: args.includes("--ar-only"),
-    anniOnly: args.includes("--anni-only"),
+    heroTreeFilter,
   };
 
   // Optional APL path as positional arg

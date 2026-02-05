@@ -6,11 +6,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { MUTATION_OPS } from "../apl/mutator.js";
-import {
-  loadAbilityData as loadAbilityDataFromConfig,
-  getSpecConfig,
-  getResourceFlow,
-} from "../spec/vengeance.js";
+import { getSpecAdapter, config } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -28,18 +24,23 @@ const TEMPORAL_CATEGORIES = {
 
 // --- Spec Configuration ---
 // Spec ID can be overridden for multi-spec support
-let currentSpecId = "vengeance";
+let currentSpecId = config.spec.specName;
 
 export function setSpecId(specId) {
   currentSpecId = specId;
 }
 
-// Load ability data from spec config (abstracts hardcoded values)
+// Load ability data from spec adapter
 function loadAbilityData() {
-  return loadAbilityDataFromConfig(currentSpecId);
+  return getSpecAdapter().loadAbilityData(currentSpecId);
 }
 
-const ABILITY_DATA = loadAbilityData();
+let ABILITY_DATA = null;
+
+function getAbilityData() {
+  if (!ABILITY_DATA) ABILITY_DATA = loadAbilityData();
+  return ABILITY_DATA;
+}
 
 // --- Resource Flow Modeling ---
 
@@ -72,18 +73,18 @@ function buildResourceModels(spellData, simResults) {
   furyModel.generators.push(
     {
       ability: "fracture",
-      amount: ABILITY_DATA.fracture.furyGen,
-      amountMeta: ABILITY_DATA.fracture.furyGenMeta,
-      rechargeCd: ABILITY_DATA.fracture.rechargeCd,
-      charges: ABILITY_DATA.fracture.charges,
+      amount: getAbilityData().fracture.furyGen,
+      amountMeta: getAbilityData().fracture.furyGenMeta,
+      rechargeCd: getAbilityData().fracture.rechargeCd,
+      charges: getAbilityData().fracture.charges,
     },
     {
       ability: "immolation_aura",
       amount:
-        ABILITY_DATA.immolation_aura.furyPerTick *
-        ABILITY_DATA.immolation_aura.duration,
-      cooldown: ABILITY_DATA.immolation_aura.rechargeCd,
-      charges: ABILITY_DATA.immolation_aura.charges,
+        getAbilityData().immolation_aura.furyPerTick *
+        getAbilityData().immolation_aura.duration,
+      cooldown: getAbilityData().immolation_aura.rechargeCd,
+      charges: getAbilityData().immolation_aura.charges,
       perTick: true,
     },
   );
@@ -91,18 +92,18 @@ function buildResourceModels(spellData, simResults) {
   furyModel.consumers.push(
     {
       ability: "spirit_bomb",
-      amount: ABILITY_DATA.spirit_bomb.furyCost,
-      cooldown: ABILITY_DATA.spirit_bomb.cooldown,
+      amount: getAbilityData().spirit_bomb.furyCost,
+      cooldown: getAbilityData().spirit_bomb.cooldown,
     },
     {
       ability: "soul_cleave",
-      amount: ABILITY_DATA.soul_cleave.furyCost,
+      amount: getAbilityData().soul_cleave.furyCost,
       cooldown: 0,
     },
     {
       ability: "fel_devastation",
-      amount: ABILITY_DATA.fel_devastation.furyCost,
-      cooldown: ABILITY_DATA.fel_devastation.cooldown,
+      amount: getAbilityData().fel_devastation.furyCost,
+      cooldown: getAbilityData().fel_devastation.cooldown,
     },
   );
 
@@ -128,20 +129,20 @@ function buildResourceModels(spellData, simResults) {
   fragModel.generators.push(
     {
       ability: "fracture",
-      amount: ABILITY_DATA.fracture.fragGen,
-      amountMeta: ABILITY_DATA.fracture.fragGenMeta,
-      rechargeCd: ABILITY_DATA.fracture.rechargeCd,
-      charges: ABILITY_DATA.fracture.charges,
+      amount: getAbilityData().fracture.fragGen,
+      amountMeta: getAbilityData().fracture.fragGenMeta,
+      rechargeCd: getAbilityData().fracture.rechargeCd,
+      charges: getAbilityData().fracture.charges,
     },
     {
       ability: "soul_carver",
-      amount: ABILITY_DATA.soul_carver.fragGen,
-      cooldown: ABILITY_DATA.soul_carver.cooldown,
+      amount: getAbilityData().soul_carver.fragGen,
+      cooldown: getAbilityData().soul_carver.cooldown,
     },
     {
       ability: "sigil_of_spite",
       amount: 3, // approximate average
-      cooldown: ABILITY_DATA.sigil_of_spite.cooldown,
+      cooldown: getAbilityData().sigil_of_spite.cooldown,
     },
     {
       ability: "fallout",
@@ -156,7 +157,7 @@ function buildResourceModels(spellData, simResults) {
       ability: "spirit_bomb",
       amount: "up_to_5",
       maxConsume: 5,
-      cooldown: ABILITY_DATA.spirit_bomb.cooldown,
+      cooldown: getAbilityData().spirit_bomb.cooldown,
       valuePerUnit: "+20% damage per fragment",
     },
     {
@@ -256,7 +257,7 @@ function buildCyclePhases(ability) {
 }
 
 function estimateCycleBudget(ability, gcdsPerCycle) {
-  const { rechargeCd, furyGen, fragGen } = ABILITY_DATA.fracture;
+  const { rechargeCd, furyGen, fragGen } = getAbilityData().fracture;
   const fracturesPerCycle = Math.floor(ability.cooldown / rechargeCd);
 
   return {
@@ -304,8 +305,8 @@ function detectResourceCompetition(resources, cycles, simResults) {
 
     // If SC consumes more frags than are generated between SBombs, SBomb may cast at low frags
     const fragsGenPerInterval =
-      (sbInterval / ABILITY_DATA.fracture.rechargeCd) *
-      ABILITY_DATA.fracture.fragGen;
+      (sbInterval / getAbilityData().fracture.rechargeCd) *
+      getAbilityData().fracture.fragGen;
     const netFrags = fragsGenPerInterval - fragsConsumedBySc;
 
     if (netFrags < 4) {
@@ -334,7 +335,7 @@ function detectResourceCompetition(resources, cycles, simResults) {
       const fracCasts = getCastCount(st, "fracture");
       const furyGen =
         fracCasts > 0
-          ? (fracCasts * ABILITY_DATA.fracture.furyGen) / fightLength
+          ? (fracCasts * getAbilityData().fracture.furyGen) / fightLength
           : 0;
 
       if (furyPerSec > furyGen * 0.9) {
@@ -452,7 +453,7 @@ function detectBurstWindowWaste(cycles, simResults) {
     if (fracCasts > 0 && fightLength > 0) {
       // During Meta, Fracture generates 3 frags instead of 2.
       // High-value: extra frag gen should translate to more spender casts
-      const metaDuration = ABILITY_DATA.metamorphosis.duration;
+      const metaDuration = getAbilityData().metamorphosis.duration;
       const metaFraction = metaUptime / 100;
       const expectedMetaFractures = fracCasts * metaFraction;
       const extraFragsFromMeta = expectedMetaFractures; // +1 frag per Fracture in Meta
@@ -488,8 +489,8 @@ function detectPoolingOpportunities(resources, cycles, simResults) {
   // Evaluate: should we pool fragments for SBomb?
   // Cost: skip 1 Soul Cleave to save 2 frags
   // Benefit: SBomb at 5 frags instead of 3
-  const sbApCoeff = ABILITY_DATA.spirit_bomb.apCoeff; // 0.4 per frag
-  const scApCoeff = ABILITY_DATA.soul_cleave.apCoeff; // 1.29
+  const sbApCoeff = getAbilityData().spirit_bomb.apCoeff; // 0.4 per frag
+  const scApCoeff = getAbilityData().soul_cleave.apCoeff; // 1.29
 
   // Value of 2 extra frags in SBomb vs 1 Soul Cleave
   const poolingGain = 2 * sbApCoeff; // +0.8 AP per SBomb from 2 extra frags
@@ -549,7 +550,7 @@ function detectResourceGatingIssues(cycles, simResults, aplText) {
         const fightLength = getFightLength(st);
         const theoreticalCasts =
           fightLength > 0
-            ? Math.floor(fightLength / ABILITY_DATA.sigil_of_spite.cooldown)
+            ? Math.floor(fightLength / getAbilityData().sigil_of_spite.cooldown)
             : 0;
 
         if (spiteCasts < theoreticalCasts * 0.85) {
@@ -662,7 +663,7 @@ function resourceGatingHypothesis(conflict) {
       },
       temporalAnalysis: {
         resourceFlow: "soul_fragments",
-        cycleLength: ABILITY_DATA.sigil_of_spite.cooldown,
+        cycleLength: getAbilityData().sigil_of_spite.cooldown,
         conflictType: "resource_gating",
         timingWindow: "any time during 60s cycle",
       },
@@ -689,7 +690,7 @@ function resourceGatingHypothesis(conflict) {
       },
       temporalAnalysis: {
         resourceFlow: "soul_fragments",
-        cycleLength: ABILITY_DATA.fracture.rechargeCd,
+        cycleLength: getAbilityData().fracture.rechargeCd,
         conflictType: "resource_gating",
         timingWindow: "continuous — Fracture is charge-based",
       },
@@ -714,7 +715,7 @@ function resourceCompetitionHypothesis(conflict) {
       temporalAnalysis: {
         resourceFlow: "soul_fragments",
         conflictType: "resource_competition",
-        timingWindow: `${ABILITY_DATA.spirit_bomb.cooldown}s Spirit Bomb cycle`,
+        timingWindow: `${getAbilityData().spirit_bomb.cooldown}s Spirit Bomb cycle`,
       },
       prediction:
         "Marginal — pooling analysis typically shows net-negative for SC restriction",
@@ -850,7 +851,7 @@ function burstWindowHypothesis(conflict) {
         resourceFlow: "soul_fragments",
         cycleLength: 120,
         conflictType: "burst_window_utilization",
-        timingWindow: `during Metamorphosis (${ABILITY_DATA.metamorphosis.duration}s window)`,
+        timingWindow: `during Metamorphosis (${getAbilityData().metamorphosis.duration}s window)`,
       },
       prediction:
         "+3-5% DPS from maximizing fragment generation during Meta windows",
@@ -864,7 +865,7 @@ function poolingHypothesis(conflict) {
   const cb = conflict.costBenefit;
   if (!cb) return null;
 
-  const sbCooldown = ABILITY_DATA.spirit_bomb.cooldown;
+  const sbCooldown = getAbilityData().spirit_bomb.cooldown;
   const baseAnalysis = {
     resourceFlow: "soul_fragments",
     cycleLength: sbCooldown,

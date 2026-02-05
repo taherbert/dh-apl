@@ -3,12 +3,20 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "../spec/vengeance.js";
+import {
+  config,
+  loadSpecAdapter,
+  getSpecAdapter,
+  getDisplayNames,
+} from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
 
-function generateReport() {
+async function generateReport() {
+  await loadSpecAdapter();
+  const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = getSpecAdapter();
+
   const spells = JSON.parse(
     readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
   );
@@ -22,7 +30,8 @@ function generateReport() {
   const spellMap = new Map(spells.map((s) => [s.id, s]));
   const lines = [];
 
-  lines.push("# Vengeance Demon Hunter — Ability & Talent Report");
+  const { spec: specName, class: className } = getDisplayNames();
+  lines.push(`# ${specName} ${className} — Ability & Talent Report`);
   lines.push("");
   lines.push(
     `Generated from SimC midnight branch. ${spells.length} spells, ${Object.keys(interactions.byTalent).length} modifier sources.`,
@@ -41,7 +50,7 @@ function generateReport() {
   for (const id of BASE_SPELL_IDS) vengSpellIds.add(id);
   for (const id of SET_BONUS_SPELL_IDS) vengSpellIds.add(id);
   for (const s of spells) {
-    if (s.talentEntry?.spec === "Vengeance") vengSpellIds.add(s.id);
+    if (s.talentEntry?.spec === specName) vengSpellIds.add(s.id);
   }
 
   // Active abilities section
@@ -152,7 +161,7 @@ function generateReport() {
 
   for (const [treeName, treeData] of [
     ["Class", talents.class],
-    ["Spec (Vengeance)", talents.spec],
+    [`Spec (${specName})`, talents.spec],
     ...Object.entries(talents.hero).map(([name, data]) => [
       `Hero: ${name}`,
       data,
@@ -289,4 +298,7 @@ function generateReport() {
   console.log(`Wrote data/ability-report.md (${lines.length} lines)`);
 }
 
-generateReport();
+generateReport().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

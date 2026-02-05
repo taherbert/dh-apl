@@ -5,42 +5,40 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { loadSpecAdapter, getSpecAdapter, config } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
 const DATA_DIR = join(ROOT, "data");
 
-// --- Spec Configuration ---
-
-const SPEC_CONFIG = {
-  vengeance: {
-    specId: "vengeance",
-    className: "demonhunter",
-    role: "tank",
-    primaryResource: "fury",
-    secondaryResource: "soul_fragments",
-    resourceCap: { fury: 120, soul_fragments: 6 },
-    keyMechanics: ["fury", "soul_fragments", "metamorphosis"],
-    // Keywords to identify spec-relevant spells
-    spellKeywords: [
-      "demon_spikes",
-      "soul_cleave",
-      "spirit_bomb",
-      "fracture",
-      "immolation_aura",
-      "sigil_of_flame",
-      "fiery_brand",
-      "fel_devastation",
-      "soul_carver",
+function getScaffoldConfig() {
+  const adapter = getSpecAdapter();
+  const specConfig = adapter.getSpecConfig();
+  return {
+    specId: config.spec.specName,
+    className: config.spec.className,
+    role: specConfig.role || "dps",
+    primaryResource: specConfig.resources.primary.name,
+    secondaryResource: specConfig.resources.secondary?.name || null,
+    resourceCap: {
+      [specConfig.resources.primary.name]: specConfig.resources.primary.cap,
+      ...(specConfig.resources.secondary
+        ? {
+            [specConfig.resources.secondary.name]:
+              specConfig.resources.secondary.cap,
+          }
+        : {}),
+    },
+    keyMechanics: [
+      specConfig.resources.primary.name,
+      ...(specConfig.resources.secondary
+        ? [specConfig.resources.secondary.name]
+        : []),
       "metamorphosis",
-      "felblade",
-      "throw_glaive",
-      "vengeful_retreat",
-      "infernal_strike",
     ],
-  },
-  // Add other specs here
-};
+    spellKeywords: Object.keys(specConfig.spellIds),
+  };
+}
 
 // --- Spell Classification ---
 
@@ -351,12 +349,7 @@ function generateAnalysisReport(specConfig, spells) {
 // --- Main Entry Point ---
 
 export function scaffold(specId, heroTree = null) {
-  const specConfig = SPEC_CONFIG[specId];
-  if (!specConfig) {
-    throw new Error(
-      `Unknown spec: ${specId}. Available: ${Object.keys(SPEC_CONFIG).join(", ")}`,
-    );
-  }
+  const specConfig = getScaffoldConfig();
 
   const spellsPath = join(DATA_DIR, "spells-summary.json");
   const talentsPath = join(DATA_DIR, "talents.json");
@@ -380,34 +373,36 @@ export function scaffold(specId, heroTree = null) {
 
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const specId = process.argv[2] || "vengeance";
+  const specId = process.argv[2] || config.spec.specName;
   const heroTree = process.argv[3] || null;
   const outputPath = process.argv[4] || null;
 
-  console.log(`Generating APL scaffold for ${specId}...`);
+  loadSpecAdapter().then(() => {
+    console.log(`Generating APL scaffold for ${specId}...`);
 
-  try {
-    const { aplContent, analysisReport } = scaffold(specId, heroTree);
+    try {
+      const { aplContent, analysisReport } = scaffold(specId, heroTree);
 
-    if (outputPath) {
-      writeFileSync(outputPath, aplContent);
-      console.log(`APL written to: ${outputPath}`);
+      if (outputPath) {
+        writeFileSync(outputPath, aplContent);
+        console.log(`APL written to: ${outputPath}`);
 
-      const reportPath = outputPath.replace(".simc", "-analysis.md");
-      writeFileSync(reportPath, analysisReport);
-      console.log(`Analysis report written to: ${reportPath}`);
-    } else {
-      console.log("\n" + "=".repeat(70));
-      console.log("Generated APL Scaffold");
-      console.log("=".repeat(70));
-      console.log(aplContent);
-      console.log("\n" + "=".repeat(70));
-      console.log("Analysis Report");
-      console.log("=".repeat(70));
-      console.log(analysisReport);
+        const reportPath = outputPath.replace(".simc", "-analysis.md");
+        writeFileSync(reportPath, analysisReport);
+        console.log(`Analysis report written to: ${reportPath}`);
+      } else {
+        console.log("\n" + "=".repeat(70));
+        console.log("Generated APL Scaffold");
+        console.log("=".repeat(70));
+        console.log(aplContent);
+        console.log("\n" + "=".repeat(70));
+        console.log("Analysis Report");
+        console.log("=".repeat(70));
+        console.log(analysisReport);
+      }
+    } catch (err) {
+      console.error(`Error: ${err.message}`);
+      process.exit(1);
     }
-  } catch (err) {
-    console.error(`Error: ${err.message}`);
-    process.exit(1);
-  }
+  });
 }

@@ -53,7 +53,7 @@ function validate(config) {
 
 const config = loadConfig();
 
-// --- Derived values (backward-compatible exports) ---
+// --- Derived values ---
 
 export const DATA_ENV = config.data.env;
 export const SIMC_DIR = config.simc.dir;
@@ -74,17 +74,15 @@ export const RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
 
 export const SPEC_ID = config.spec.specId;
 
-// HERO_SUBTREES: numeric subtree ID → Title Case name.
-// config.json stores snake_case; consumers expect Title Case (e.g., "Aldrachi Reaver").
-function toTitleCase(s) {
+export function toTitleCase(s) {
   return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
-export const HERO_SUBTREES = Object.fromEntries(
-  Object.entries(config.spec.heroSubtrees || {}).map(([k, v]) => [
-    Number(k),
-    toTitleCase(v),
-  ]),
-);
+
+// HERO_SUBTREES: numeric subtree ID → Title Case name.
+// Derived from spec adapter after loadSpecAdapter() is called.
+// Falls back to empty object before adapter is loaded.
+let HERO_SUBTREES = {};
+export { HERO_SUBTREES };
 
 // Simulation config exports
 export const SCENARIOS = config.simulation.scenarios;
@@ -94,6 +92,12 @@ export const SIM_DEFAULTS = config.simulation.defaults;
 
 // Full config object for advanced use
 export { config };
+
+// --- Display names from adapter ---
+
+export function getDisplayNames() {
+  return getSpecAdapter().getSpecConfig().displayNames;
+}
 
 // --- Dynamic spec adapter loading ---
 
@@ -121,6 +125,16 @@ export async function loadSpecAdapter(specName = config.spec.specName) {
   }
 
   _specAdapter = mod;
+
+  // Derive HERO_SUBTREES from adapter
+  const specConfig = mod.getSpecConfig();
+  HERO_SUBTREES = Object.fromEntries(
+    Object.entries(specConfig.heroTrees).map(([name, data]) => [
+      data.subtree,
+      toTitleCase(name),
+    ]),
+  );
+
   return mod;
 }
 
@@ -137,7 +151,6 @@ const METADATA_PATH = join(ROOT, "reference", ".refresh-metadata.json");
 
 export function checkSync() {
   const simcDir = config.simc.dir;
-  const branch = config.simc.branch;
 
   // Get current simc HEAD
   let currentHead;

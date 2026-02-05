@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { SCENARIOS } from "./runner.js";
+import { getSpecAdapter } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const RESULTS_DIR = join(__dirname, "..", "..", "results");
@@ -53,20 +54,12 @@ function analyzeDPSContribution(result) {
 function analyzeBuffUptime(result) {
   console.log("\n--- Buff Uptime Analysis ---");
 
-  // Key VDH buffs to track
-  const keyBuffs = [
-    "demon_spikes",
-    "fiery_brand",
-    "metamorphosis",
-    "immolation_aura",
-    "frailty",
-    "soul_furnace",
-    "rending_strike",
-    "glaive_flurry",
-    "demonsurge_soul_sunder",
-    "demonsurge_spirit_burst",
-    "student_of_suffering",
-  ];
+  let keyBuffs;
+  try {
+    keyBuffs = getSpecAdapter().getSpecConfig().keyBuffs;
+  } catch {
+    keyBuffs = [];
+  }
 
   const found = result.buffs.filter((b) =>
     keyBuffs.some((kb) => b.name.toLowerCase().includes(kb)),
@@ -81,17 +74,22 @@ function analyzeBuffUptime(result) {
     }
   }
 
-  // Defensive uptime check
-  const demonSpikes = result.buffs.find((b) =>
-    b.name.toLowerCase().includes("demon_spikes"),
-  );
-  if (demonSpikes) {
-    const uptime = demonSpikes.uptime;
-    if (uptime < 50) {
-      console.log(
-        `\n⚠ Demon Spikes uptime is ${uptime.toFixed(1)}% — consider prioritizing it higher`,
+  // Defensive uptime check — flag key buffs with low uptime
+  try {
+    const { keyBuffs, cooldownBuffs } = getSpecAdapter().getSpecConfig();
+    for (const buffName of keyBuffs) {
+      if (cooldownBuffs.includes(buffName)) continue;
+      const buff = result.buffs.find((b) =>
+        b.name.toLowerCase().includes(buffName),
       );
+      if (buff && buff.uptime < 50) {
+        console.log(
+          `\n⚠ ${buff.name} uptime is ${buff.uptime.toFixed(1)}% — consider prioritizing it higher`,
+        );
+      }
     }
+  } catch {
+    // Adapter not loaded — skip defensive check
   }
 }
 

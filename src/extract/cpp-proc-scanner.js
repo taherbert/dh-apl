@@ -1,4 +1,4 @@
-// Extracts proc mechanics from sc_demon_hunter.cpp that are NOT in spell data.
+// Extracts proc mechanics from the simc C++ class module that are NOT in spell data.
 // Targets: rng().roll() proc rates, ICD declarations and durations,
 // accumulator thresholds, and RPPM declarations.
 // Output: data/cpp-proc-mechanics.json (replaces manually maintained proc-mechanics.json)
@@ -6,7 +6,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SIMC_DH_CPP } from "../engine/startup.js";
+import { SIMC_DH_CPP, config } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "../..", "data");
@@ -24,7 +24,7 @@ export function extractProcMechanics(preloadedSource) {
   const constants = scanConstants(lines);
 
   const output = {
-    source: "sc_demon_hunter.cpp (auto-extracted)",
+    source: `${config.simc.cppModule} (auto-extracted)`,
     extractedAt: new Date().toISOString(),
     icds: icdUsages,
     procs: procRolls,
