@@ -213,6 +213,64 @@ export function printResults(result) {
   }
 }
 
+// --- Multi-actor support ---
+
+// Parse multi-actor SimC JSON output. Returns Map<actorName, {dps, hps, dtps}>.
+export function parseMultiActorResults(data) {
+  const results = new Map();
+  for (const player of data.sim.players) {
+    results.set(player.name, {
+      dps: player.collected_data.dps.mean,
+      hps: player.collected_data.hps?.mean || 0,
+      dtps: player.collected_data.dtps?.mean || 0,
+    });
+  }
+  return results;
+}
+
+// Write multi-actor .simc content to a temp file, run SimC, parse results.
+// Returns Map<actorName, {dps, hps, dtps}>.
+export async function runMultiActorAsync(
+  simcContent,
+  scenario = "st",
+  label = "multi-actor",
+  { simOverrides = {} } = {},
+) {
+  const config = SCENARIOS[scenario];
+  if (!config) throw new Error(`Unknown scenario: ${scenario}`);
+
+  mkdirSync(RESULTS_DIR, { recursive: true });
+
+  const simcPath = join(RESULTS_DIR, `${label}_${scenario}.simc`);
+  const jsonPath = join(RESULTS_DIR, `${label}_${scenario}.json`);
+  writeFileSync(simcPath, simcContent);
+
+  const merged = { ...SIM_DEFAULTS, ...simOverrides };
+  const args = [
+    simcPath,
+    `max_time=${config.maxTime}`,
+    `desired_targets=${config.desiredTargets}`,
+    `target_error=${merged.target_error}`,
+    `iterations=${merged.iterations}`,
+    `json2=${jsonPath}`,
+    `threads=${merged.threads || TOTAL_CORES}`,
+  ];
+
+  console.log(`Running multi-actor ${config.name} (${label})...`);
+  try {
+    await execFileAsync(SIMC, args, {
+      maxBuffer: 100 * 1024 * 1024,
+      timeout: 600000,
+    });
+  } catch (e) {
+    if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
+    throw new Error(`SimC multi-actor failed: ${e.message}`);
+  }
+
+  const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
+  return parseMultiActorResults(data);
+}
+
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);

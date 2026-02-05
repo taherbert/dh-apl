@@ -14,6 +14,8 @@ actions.precombat+=/immolation_aura
 actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
 # Spirit Bomb fragment threshold — 5 confirmed optimal: +0.21% over 4 (ST +0.36%, 10T +0.44%)
 actions+=/variable,name=spb_threshold,value=5
+# Fallout AoE mode: at 3+ targets with Fallout, ImmAura generates ~1.8+ frags/tick passively
+actions+=/variable,name=fallout_aoe,value=talent.fallout&active_enemies>=3
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react
 # Off-GCD weaving
@@ -38,8 +40,12 @@ actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.gla
 actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up|buff.untethered_rage.up
 # AR cycle spending — fires if empowered buffs active, falls through otherwise
 actions.ar+=/call_action_list,name=ar_empowered
+# Charred Flesh Brand extension — ImmAura + fire CDs during Brand for Fiery Demise value
+actions.ar+=/call_action_list,name=ar_brand_window,if=talent.charred_flesh&dot.fiery_brand.ticking
 # Long cooldowns — fires one if ready, falls through otherwise
 actions.ar+=/call_action_list,name=ar_cooldowns
+# Fallout AoE: ImmAura top priority to generate fragments passively at 3+ targets
+actions.ar+=/call_action_list,name=ar_aoe,if=variable.fallout_aoe
 # Core rotation
 # Spirit Bomb — threshold 5 confirmed optimal (+0.21% weighted vs threshold 4)
 actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
@@ -73,6 +79,27 @@ actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=5
 actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
 # Don't channel during empowered window
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
+
+# === AR AoE — Fallout-driven priority at 3+ targets ===
+# ImmAura top priority: 60% × N targets per tick generates fragments passively
+actions.ar_aoe=/immolation_aura,if=!buff.immolation_aura.up
+actions.ar_aoe+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
+actions.ar_aoe+=/fracture,if=buff.metamorphosis.up
+actions.ar_aoe+=/sigil_of_flame
+actions.ar_aoe+=/fracture
+actions.ar_aoe+=/felblade
+actions.ar_aoe+=/soul_cleave
+actions.ar_aoe+=/immolation_aura
+actions.ar_aoe+=/vengeful_retreat,if=talent.unhindered_assault
+actions.ar_aoe+=/throw_glaive
+
+# === AR Brand Window — Charred Flesh Brand extension ===
+# Extend Brand via ImmAura fire ticks, sequence fire-school CDs for Fiery Demise value
+actions.ar_brand_window=/immolation_aura,if=!buff.immolation_aura.up
+actions.ar_brand_window+=/soul_carver
+actions.ar_brand_window+=/sigil_of_spite,if=soul_fragments<=5
+# Don't channel during empowered window
+actions.ar_brand_window+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
 
 # === Annihilator ===
 # Trinkets — non-buffed fire immediately, buffed sync to Meta
