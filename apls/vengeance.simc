@@ -28,8 +28,8 @@ actions.externals=/invoke_external_buff,name=power_infusion
 
 # === Aldrachi Reaver ===
 # Trinkets — non-buffed fire immediately, buffed sync to Meta
-actions.ar=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&(!variable.trinket_1_buffs|(variable.trinket_1_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.1.cooldown.duration)|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains))))
-actions.ar+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!variable.trinket_2_buffs|(variable.trinket_2_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.2.cooldown.duration)|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains))))
+actions.ar=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&(!variable.trinket_1_buffs|(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.1.cooldown.duration|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains)))
+actions.ar+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!variable.trinket_2_buffs|(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.2.cooldown.duration|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains)))
 actions.ar+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 # Potion and externals during empowered burst window
 actions.ar+=/potion,use_off_gcd=1,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
@@ -76,8 +76,9 @@ actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_f
 
 # === Annihilator ===
 # Trinkets — non-buffed fire immediately, buffed sync to Meta
-actions.anni=/use_item,slot=trinket1,if=!variable.trinket_1_buffs|(variable.trinket_1_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.1.cooldown.duration)|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains)))
-actions.anni+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs|(variable.trinket_2_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.2.cooldown.duration)|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains)))
+actions.anni=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&(!variable.trinket_1_buffs|(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.1.cooldown.duration|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains)))
+actions.anni+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!variable.trinket_2_buffs|(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.2.cooldown.duration|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains)))
+actions.anni+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 # Potion and externals during Voidfall spending burst
 actions.anni+=/potion,use_off_gcd=1,if=buff.voidfall_spending.stack=3
 actions.anni+=/call_action_list,name=externals,if=buff.voidfall_spending.stack=3
