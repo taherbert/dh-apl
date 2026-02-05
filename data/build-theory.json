@@ -162,7 +162,23 @@
             "Harness the Cosmos (+15% meteor damage)"
           ],
           "dpsRelevant": true
+        },
+        "state-of-matter-vs-path-to-oblivion": {
+          "options": [
+            "State of Matter (all builds prefer)",
+            "Path to Oblivion"
+          ],
+          "dpsRelevant": true
         }
+      },
+      "optimizationNotes": {
+        "metaTiming": "Allow Meta during Voidfall building phase — Mass Acceleration overwrites building stacks, so building stacks are not 'wasted'",
+        "felDevGuard": "Don't channel FelDev during Voidfall spending — wastes meteor triggers from SC/SBomb",
+        "missingAbilities": "Felblade and ImmAura filler were missing from original Anni branch — adding them gives +4-12% depending on build",
+        "spiritBombThreshold": "Static threshold 5 beats dynamic 3/5 for Anni",
+        "fractureInMeta": "Unlike AR, Fracture-in-Meta priority doesn't help — Voidfall cycle dictates Fracture timing",
+        "bestArchetype": "CF+DiF+SC+FO (all 4 differentiating talents) is optimal at 112k weighted",
+        "vsAR": "Anni dominates AoE (146k 5T vs 103k AR), AR slightly better ST (32.2k vs 32.1k)"
       }
     }
   },

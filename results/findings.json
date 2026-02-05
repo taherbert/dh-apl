@@ -10,7 +10,10 @@
       "build": "ar-baseline",
       "aplVersion": "baseline.simc",
       "status": "validated",
-      "tags": ["fragment-economy", "resource-gating"]
+      "tags": [
+        "fragment-economy",
+        "resource-gating"
+      ]
     },
     {
       "date": "2026-01-15",
@@ -20,7 +23,10 @@
       "build": "ar-baseline",
       "aplVersion": "baseline.simc",
       "status": "validated",
-      "tags": ["fragment-economy", "resource-gating"]
+      "tags": [
+        "fragment-economy",
+        "resource-gating"
+      ]
     },
     {
       "date": "2026-01-15",
@@ -30,7 +36,10 @@
       "build": "ar-baseline",
       "aplVersion": "baseline.simc",
       "status": "validated",
-      "tags": ["fragment-economy", "resource-competition"]
+      "tags": [
+        "fragment-economy",
+        "resource-competition"
+      ]
     },
     {
       "date": "2026-01-15",
@@ -40,7 +49,11 @@
       "build": "ar-baseline",
       "aplVersion": "baseline.simc",
       "status": "validated",
-      "tags": ["burst-window", "fragment-economy", "metamorphosis"]
+      "tags": [
+        "burst-window",
+        "fragment-economy",
+        "metamorphosis"
+      ]
     },
     {
       "date": "2026-01-15",
@@ -50,7 +63,10 @@
       "build": "ar-baseline",
       "aplVersion": "baseline.simc",
       "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise"]
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -60,7 +76,11 @@
       "build": "ar-baseline",
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["fragment-economy", "threshold-tuning", "spirit-bomb"]
+      "tags": [
+        "fragment-economy",
+        "threshold-tuning",
+        "spirit-bomb"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -70,7 +90,10 @@
       "build": "ar-baseline",
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["apl-structure", "simc-internals"]
+      "tags": [
+        "apl-structure",
+        "simc-internals"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -80,7 +103,11 @@
       "build": "ar-baseline",
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise", "fel-devastation"]
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise",
+        "fel-devastation"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -90,7 +117,10 @@
       "build": "ar-baseline",
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise"]
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -100,7 +130,11 @@
       "build": "ar-baseline",
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise", "metamorphosis"]
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise",
+        "metamorphosis"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -110,7 +144,11 @@
       "build": "ar-baseline",
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["fragment-economy", "soul-cleave", "aoe"]
+      "tags": [
+        "fragment-economy",
+        "soul-cleave",
+        "aoe"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -120,7 +158,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v7-coopt",
       "status": "validated",
-      "tags": ["build-optimization", "talent-swaps", "co-optimization"]
+      "tags": [
+        "build-optimization",
+        "talent-swaps",
+        "co-optimization"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -130,7 +172,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v7-coopt",
       "status": "validated",
-      "tags": ["fiery-brand", "down-in-flames", "apl-coupling"]
+      "tags": [
+        "fiery-brand",
+        "down-in-flames",
+        "apl-coupling"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -140,7 +186,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v7-coopt",
       "status": "validated",
-      "tags": ["soul-carver", "fiery-demise", "condition-gating"]
+      "tags": [
+        "soul-carver",
+        "fiery-demise",
+        "condition-gating"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -150,7 +200,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v7-coopt",
       "status": "validated",
-      "tags": ["spirit-bomb", "threshold-tuning", "soulcrush"]
+      "tags": [
+        "spirit-bomb",
+        "threshold-tuning",
+        "soulcrush"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -160,7 +214,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v7-coopt",
       "status": "validated",
-      "tags": ["build-optimization", "tree-constraints", "gate-requirements"]
+      "tags": [
+        "build-optimization",
+        "tree-constraints",
+        "gate-requirements"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -170,7 +228,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v8-iterate",
       "status": "rejected",
-      "tags": ["charred-flesh", "fiery-brand", "immolation-aura"]
+      "tags": [
+        "charred-flesh",
+        "fiery-brand",
+        "immolation-aura"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -180,7 +242,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v8-iterate",
       "status": "rejected",
-      "tags": ["fel-devastation", "ar-empowered-cycle", "condition-gating"]
+      "tags": [
+        "fel-devastation",
+        "ar-empowered-cycle",
+        "condition-gating"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -190,7 +256,11 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v8-iterate",
       "status": "validated",
-      "tags": ["build-optimization", "doe-methodology", "fragment-economy"]
+      "tags": [
+        "build-optimization",
+        "doe-methodology",
+        "fragment-economy"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -200,7 +270,12 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v8-iterate",
       "status": "rejected",
-      "tags": ["build-optimization", "talent-swaps", "retaliation", "felfire-fist"]
+      "tags": [
+        "build-optimization",
+        "talent-swaps",
+        "retaliation",
+        "felfire-fist"
+      ]
     },
     {
       "date": "2026-02-04",
@@ -210,7 +285,153 @@
       "build": "ar-cooptimized-v1",
       "aplVersion": "vengeance-v8-iterate",
       "status": "validated",
-      "tags": ["local-optimum", "optimization-plateau"]
+      "tags": [
+        "local-optimum",
+        "optimization-plateau"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni Meta building guard wastes cooldown — allow Meta during building phase",
+      "evidence": "Mass Acceleration overwrites building stacks. Removing building guard contributes to +2.85% weighted (part of combined condition changes)",
+      "confidence": "high",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "voidfall",
+        "metamorphosis",
+        "condition-change"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni FelDev should not channel during Voidfall spending phase",
+      "evidence": "Channeling wastes meteor triggers from Soul Cleave/SBomb. Part of +2.85% weighted combined condition changes",
+      "confidence": "high",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "voidfall",
+        "fel-devastation",
+        "condition-change"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni missing Felblade and ImmAura filler — massive bug",
+      "evidence": "Adding Felblade + ImmAura filler to Anni branch: +4.38% weighted on top build (CF+DiF+SC+FO), +12.30% on FO-only build",
+      "confidence": "high",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "felblade",
+        "immolation-aura",
+        "bug-fix"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni static SBomb threshold 5 better than dynamic 3/5",
+      "evidence": "Part of +2.85% weighted combined condition changes. Dynamic 3 during Brand was too eager — wasting fragments on small SBombs",
+      "confidence": "medium",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "spirit-bomb",
+        "threshold",
+        "condition-change"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Combined Anni APL fixes: +7.35% weighted on top build, +15.82% on FO-only",
+      "evidence": "Multi-build comparison: baseline (28,897 ST) vs optimized (32,098 ST) for CF+DiF+SC+FO build. AR unaffected (+0.15%)",
+      "confidence": "high",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "combined-optimization"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni_CF_DiF_SC_FO is best Anni archetype — all 4 defining talents",
+      "evidence": "Weighted DPS 112,044 vs next best 106,900 (CF+DiF+SC). Tested across 7 archetypes with valid 34/34 builds",
+      "confidence": "high",
+      "build": "anni-cf-dif-sc-fo",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "archetype-ranking",
+        "build-discovery"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Meta bug: Meta in default list fires before hero tree routing",
+      "evidence": "Reference APL has Meta inside each hero branch, not in default. For Anni, premature Meta wastes Voidfall stacks. Fixed by moving to per-branch. AR unchanged after fix.",
+      "confidence": "high",
+      "build": "all",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "metamorphosis",
+        "bug-fix",
+        "hero-tree-routing"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni Fracture-in-Meta priority does not help (unlike AR)",
+      "evidence": "H6: Adding fracture,if=buff.metamorphosis.up before normal Fracture shows -0.34% on top build. Voidfall cycle already dictates Fracture timing.",
+      "confidence": "medium",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "rejected",
+      "tags": [
+        "annihilator",
+        "fracture",
+        "metamorphosis"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni Soul Carver guard <=3 vs <=5 is noise",
+      "evidence": "H7: Relaxing guard from <=3 to <=5 shows no meaningful change across archetypes",
+      "confidence": "medium",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "rejected",
+      "tags": [
+        "annihilator",
+        "soul-carver",
+        "fragment-economy"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni Brand charge management (charges>=2) is noise",
+      "evidence": "H8: Using charges>=2 like AR shows no meaningful change. Anni Brand is less about charge management and more about Voidfall alignment.",
+      "confidence": "medium",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "rejected",
+      "tags": [
+        "annihilator",
+        "fiery-brand",
+        "down-in-flames"
+      ]
     }
   ]
 }
