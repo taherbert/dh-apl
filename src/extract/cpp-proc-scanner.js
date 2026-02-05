@@ -11,8 +11,8 @@ import { SIMC_DH_CPP } from "../engine/startup.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "../..", "data");
 
-function extractProcMechanics() {
-  const src = readFileSync(SIMC_DH_CPP, "utf-8");
+export function extractProcMechanics(preloadedSource) {
+  const src = preloadedSource || readFileSync(SIMC_DH_CPP, "utf-8");
   const lines = src.split("\n");
 
   const icdDeclarations = scanICDDeclarations(lines);

@@ -13,8 +13,8 @@ import { SIMC_DH_CPP } from "../engine/startup.js";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "../..", "data");
 
-function extractEffectsInventory() {
-  const src = readFileSync(SIMC_DH_CPP, "utf-8");
+export function extractEffectsInventory(preloadedSource) {
+  const src = preloadedSource || readFileSync(SIMC_DH_CPP, "utf-8");
   const lines = src.split("\n");
 
   const parseEffects = scanParseEffects(lines);

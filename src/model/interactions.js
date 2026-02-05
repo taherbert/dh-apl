@@ -257,6 +257,84 @@ function buildInteractions() {
     }
   }
 
+  // === Phase 2b: C++ effects inventory (parse_effects/composite overrides) ===
+  const effectsPath = join(DATA_DIR, "cpp-effects-inventory.json");
+  if (existsSync(effectsPath)) {
+    const effectsData = JSON.parse(readFileSync(effectsPath, "utf-8"));
+
+    // Convert snake_case C++ names to Title Case talent names
+    const toTitleCase = (s) =>
+      s?.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+    // parse_effects: buff automatically modifies ability damage
+    for (const entry of effectsData.parseEffects || []) {
+      const buffName = toTitleCase(entry.buff);
+      const talent = buffName && talentByName.get(buffName);
+      if (!talent) continue;
+
+      // Skip if already discovered
+      if (
+        interactions.some(
+          (i) =>
+            i.source.name === talent.name &&
+            i.discoveryMethod !== "cpp_effects",
+        )
+      )
+        continue;
+
+      addInteraction({
+        source: {
+          id: talent.spellId,
+          name: talent.name,
+          isTalent: true,
+          tree: talent.treeName,
+          heroSpec: talent.heroSpec || null,
+        },
+        target: {
+          id: talent.spellId,
+          name: talent.name,
+        },
+        type: "damage_modifier",
+        mechanism: "parse_effects",
+        discoveryMethod: "cpp_effects",
+        confidence: "high",
+      });
+    }
+
+    // composite overrides: manual multiplier gated by talent check
+    for (const entry of effectsData.compositeOverrides || []) {
+      for (const check of entry.talentChecks || []) {
+        const talentName = toTitleCase(check.talent);
+        const talent = talentName && talentByName.get(talentName);
+        if (!talent) continue;
+
+        const fnType = entry.function?.includes("da_multiplier")
+          ? "direct_damage_modifier"
+          : entry.function?.includes("ta_multiplier")
+            ? "periodic_damage_modifier"
+            : "damage_modifier";
+
+        addInteraction({
+          source: {
+            id: talent.spellId,
+            name: talent.name,
+            isTalent: true,
+            tree: talent.treeName,
+            heroSpec: talent.heroSpec || null,
+          },
+          target: {
+            id: null,
+            name: entry.context || "ability",
+          },
+          type: fnType,
+          mechanism: "composite_override",
+          discoveryMethod: "cpp_effects",
+          confidence: "high",
+        });
+      }
+    }
+  }
+
   // === Phase 3: Self-buff talents (proc trigger / labeled modifier effects) ===
   for (const talent of allTalents) {
     const sp = spellMap.get(talent.spellId);

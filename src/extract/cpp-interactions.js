@@ -79,8 +79,8 @@ const STRUCT_TO_ABILITY = {
   reavers_glaive: "Throw Glaive",
 };
 
-function extractCppInteractions() {
-  const src = readFileSync(SIMC_DH_CPP, "utf-8");
+export function extractCppInteractions(preloadedSource) {
+  const src = preloadedSource || readFileSync(SIMC_DH_CPP, "utf-8");
   const lines = src.split("\n");
 
   const talentVars = JSON.parse(

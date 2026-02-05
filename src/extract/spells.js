@@ -29,6 +29,28 @@ function runSpellQuery(query) {
   }
 }
 
+// Batch spell queries: union IDs with | operator to avoid N+1 subprocess spawns.
+// Chunks to avoid command line length limits.
+const BATCH_SIZE = 50;
+
+function runBatchSpellQuery(ids) {
+  const idArray = [...ids].filter((id) => Number.isInteger(id) && id > 0);
+  if (idArray.length === 0) return "";
+
+  const chunks = [];
+  for (let i = 0; i < idArray.length; i += BATCH_SIZE) {
+    chunks.push(idArray.slice(i, i + BATCH_SIZE));
+  }
+
+  const results = [];
+  for (const chunk of chunks) {
+    const query = chunk.map((id) => `spell.id=${id}`).join("|");
+    const raw = runSpellQuery(query);
+    if (raw) results.push(raw);
+  }
+  return results.join("\n");
+}
+
 function extractSpells() {
   mkdirSync(RAW_DIR, { recursive: true });
 
@@ -62,18 +84,11 @@ function extractSpells() {
   const classSpells = parseSpellQueryOutput(classRaw);
   console.log(`Parsed ${classSpells.length} class spells`);
 
-  // Step 3: Query all talent spell IDs for full spell data
-  console.log(`Querying ${talentSpellIds.size} talent spell IDs...`);
-  const talentSpellRaws = [];
-  for (const id of talentSpellIds) {
-    if (!Number.isInteger(id) || id <= 0) {
-      console.warn(`Skipping invalid spell ID: ${id}`);
-      continue;
-    }
-    const raw = runSpellQuery(`spell.id=${id}`);
-    if (raw.includes(`id=${id}`)) talentSpellRaws.push(raw);
-  }
-  const talentSpellRaw = talentSpellRaws.join("\n");
+  // Step 3: Query all talent spell IDs (batched to avoid N+1 subprocess spawns)
+  console.log(
+    `Querying ${talentSpellIds.size} talent spell IDs in batches of ${BATCH_SIZE}...`,
+  );
+  const talentSpellRaw = runBatchSpellQuery(talentSpellIds);
   writeFileSync(join(RAW_DIR, "dh_talent_spells.txt"), talentSpellRaw);
 
   const talentSpells = parseSpellQueryOutput(talentSpellRaw);
@@ -115,35 +130,26 @@ function extractSpells() {
 
   if (missingModifierIds.size > 0) {
     console.log(
-      `Fetching ${missingModifierIds.size} modifier spells from affectingSpells...`,
+      `Fetching ${missingModifierIds.size} modifier spells (batched)...`,
     );
+    const modRaw = runBatchSpellQuery(missingModifierIds);
+    const modSpells = parseSpellQueryOutput(modRaw);
     let kept = 0;
     let skipped = 0;
-    for (const id of missingModifierIds) {
-      const raw = runSpellQuery(`spell.id=${id}`);
-      if (raw.includes(`id=${id}`)) {
-        const parsed = parseSpellQueryOutput(raw);
-        for (const spell of parsed) {
-          if (!spell.id) continue;
-          // Keep modifier if it has a current VDH signal:
-          // - Name matches a Raidbots talent (secondary spell ID for current talent)
-          // - Name matches a base ability (e.g. Immolation Aura rank spells)
-          // - Has a talentEntry (simc maps it to a talent)
-          // - Is a mastery or spec aura spell
-          const name = spell.name || "";
-          const isCurrent =
-            raidbotTalentNames.has(name) ||
-            baseSpellNames.has(name) ||
-            spell.talentEntry ||
-            name.startsWith("Mastery:") ||
-            name === "Vengeance Demon Hunter";
-          if (isCurrent) {
-            spellMap.set(spell.id, spell);
-            kept++;
-          } else {
-            skipped++;
-          }
-        }
+    for (const spell of modSpells) {
+      if (!spell.id) continue;
+      const name = spell.name || "";
+      const isCurrent =
+        raidbotTalentNames.has(name) ||
+        baseSpellNames.has(name) ||
+        spell.talentEntry ||
+        name.startsWith("Mastery:") ||
+        name === "Vengeance Demon Hunter";
+      if (isCurrent) {
+        spellMap.set(spell.id, spell);
+        kept++;
+      } else {
+        skipped++;
       }
     }
     console.log(
@@ -177,19 +183,15 @@ function extractSpells() {
   );
   if (missingDescRefs.length > 0) {
     console.log(
-      `\nFetching ${missingDescRefs.length} sub-spells referenced in descriptions...`,
+      `\nFetching ${missingDescRefs.length} sub-spells referenced in descriptions (batched)...`,
     );
+    const descRaw = runBatchSpellQuery(new Set(missingDescRefs));
+    const descSpells = parseSpellQueryOutput(descRaw);
     let fetched = 0;
-    for (const id of missingDescRefs) {
-      const raw = runSpellQuery(`spell.id=${id}`);
-      if (raw.includes(`id=${id}`)) {
-        const parsed = parseSpellQueryOutput(raw);
-        for (const spell of parsed) {
-          if (spell.id) {
-            output.push(cleanSpell(spell));
-            fetched++;
-          }
-        }
+    for (const spell of descSpells) {
+      if (spell.id) {
+        output.push(cleanSpell(spell));
+        fetched++;
       }
     }
     output.sort((a, b) => a.id - b.id);

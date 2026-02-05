@@ -124,27 +124,18 @@ On every session start:
 
 ---
 
-### Phase 3: Data Pipeline Cleanup
+### Phase 3: Data Pipeline Cleanup ✅
 
 **Goal:** Clean extraction pipeline, proper file separation.
 
-**Tasks:**
+**Completed:**
 
-1. Consolidate extraction into `src/engine/extract.js`:
-   - Batch spell queries (not N+1)
-   - Single pass through C++ source
-   - Output to `data/generated/`
-2. Create `src/engine/model.js`:
-   - Build talent tree from raidbots
-   - Build interactions from spell data + C++ scan
-   - Output structured JSON with schemas
-3. Integrate cpp-effects-inventory into interactions (Phase 4 in old plan)
-
-**Files:**
-
-- CREATE: `src/engine/extract.js` (consolidate raidbots.js, spells.js, cpp-\*.js)
-- CREATE: `src/engine/model.js` (consolidate talents.js, interactions.js)
-- DELETE: Redundant extraction files
+- [x] Batch spell queries in `spells.js` — replaced 3 N+1 loops (~200 subprocesses) with batched `spell.id=X|spell.id=Y` queries (chunks of 50)
+- [x] C++ scanners accept pre-loaded source — `extractCppInteractions()`, `extractEffectsInventory()`, `extractProcMechanics()` all export with optional `preloadedSource` param
+- [x] `src/engine/extract.js` — orchestrator with shared C++ source cache, pipeline status
+- [x] `src/engine/model.js` — orchestrator with input readiness checking
+- [x] Wired `cpp-effects-inventory.json` into `interactions.js` as Phase 2b (parse_effects + composite overrides)
+- [x] 401 interactions total (was 399), 2 new from cpp_effects discovery
 
 ---
 
