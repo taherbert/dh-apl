@@ -22,7 +22,8 @@
       },
       "aplImplications": [
         "Default to Fracture-first for 2x RM maintenance",
-        "SC-first only when RM stacks=2 AND remains > time_to_next_empowerment + 5"
+        "SC-first only when RM stacks=2 AND remains > time_to_next_empowerment + 5",
+        "IMPORTANT: APL fall-through achieves Fracture-first without explicit reordering — a condition that fails on first check (both buffs up) can match on second check (after one buff consumed)"
       ]
     },
     "voidfall_cycle": {

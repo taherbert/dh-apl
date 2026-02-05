@@ -432,6 +432,49 @@
         "fiery-brand",
         "down-in-flames"
       ]
+    },
+    {
+      "date": "2026-02-05",
+      "insight": "AR empowerment 'Fracture-first' fix was a no-op — old APL already correct via fall-through",
+      "evidence": "Plan claimed line 'soul_cleave,if=!rending.up&glaive.up' was impossible, but it correctly fires AFTER Fracture consumes rending_strike. Old APL: SC check FALSE → falls through → Fracture matches → fires. After Fracture: SC check TRUE → fires. Both old and new APL execute Fracture-first. Quick fidelity test: -0.14% weighted (82,148→82,036), within noise.",
+      "confidence": "high",
+      "build": "ar-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "rejected",
+      "tags": [
+        "aldrachi-reaver",
+        "ar-empowered-cycle",
+        "false-positive",
+        "fall-through-logic"
+      ]
+    },
+    {
+      "date": "2026-02-05",
+      "insight": "Voidfall fury pooling (fury>=105 guard) needs confirm-fidelity validation",
+      "evidence": "Added fury>=105 guard before building→spending transition to ensure enough fury for 3 Soul Cleaves (full meteor chain). No before/after comparison available — previous builds.json was AR-only. Theory is sound but unvalidated.",
+      "confidence": "low",
+      "build": "anni-all-archetypes",
+      "aplVersion": "vengeance.simc",
+      "status": "untested",
+      "tags": [
+        "annihilator",
+        "voidfall",
+        "fury-pooling",
+        "needs-validation"
+      ]
+    },
+    {
+      "date": "2026-02-05",
+      "insight": "Knowledge system helps prevent wasted analysis — check mechanics.json first",
+      "evidence": "Session discovered AR empowerment 'fix' was based on incorrect mechanical analysis. Had mechanics.json existed with correct fall-through behavior documentation, the false positive would have been caught before implementation.",
+      "confidence": "high",
+      "build": "all",
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "knowledge-system",
+        "process-improvement"
+      ]
     }
   ]
 }
