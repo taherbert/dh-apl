@@ -87,6 +87,42 @@ export const SIM_DEFAULTS = config.simulation.defaults;
 // Full config object for advanced use
 export { config };
 
+// --- Dynamic spec adapter loading ---
+
+let _specAdapter = null;
+
+export async function loadSpecAdapter(specName = config.spec.specName) {
+  if (_specAdapter) return _specAdapter;
+
+  const adapterPath = join(ROOT, "src", "spec", `${specName}.js`);
+  if (!existsSync(adapterPath)) {
+    throw new Error(
+      `No spec adapter found at src/spec/${specName}.js. ` +
+        `Create one following the contract in src/spec/interface.js.`,
+    );
+  }
+
+  const mod = await import(`../spec/${specName}.js`);
+
+  const { validateAdapter } = await import("../spec/interface.js");
+  const { valid, missing } = validateAdapter(mod, specName);
+  if (!valid) {
+    throw new Error(
+      `Spec adapter "${specName}" missing required exports: ${missing.join(", ")}`,
+    );
+  }
+
+  _specAdapter = mod;
+  return mod;
+}
+
+export function getSpecAdapter() {
+  if (!_specAdapter) {
+    throw new Error("Spec adapter not loaded. Call loadSpecAdapter() first.");
+  }
+  return _specAdapter;
+}
+
 // --- Upstream sync check ---
 
 const METADATA_PATH = join(ROOT, "reference", ".refresh-metadata.json");

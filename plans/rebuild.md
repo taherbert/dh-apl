@@ -110,31 +110,17 @@ On every session start:
 
 ---
 
-### Phase 2: Spec Adapter Pattern
+### Phase 2: Spec Adapter Pattern ✅
 
 **Goal:** Spec-agnostic engine with pluggable spec adapters.
 
-**Tasks:**
+**Completed:**
 
-1. Create spec adapter interface:
-   ```javascript
-   // src/spec/interface.js
-   export interface SpecAdapter {
-     spellIds: Record<string, number>;
-     domainOverrides: Record<string, object>;
-     heroTrees: Record<string, HeroTreeConfig>;
-     resourceFlow: ResourceFlowConfig;
-     validateApl(apl: string): ValidationResult;
-   }
-   ```
-2. Implement `src/spec/vengeance.js` conforming to interface
-3. Engine loads spec adapter from config.json `spec.specName`
-
-**Files:**
-
-- CREATE: `src/spec/interface.js`
-- CREATE: `src/spec/vengeance.js`
-- MODIFY: Engine modules to use adapter
+- [x] `src/spec/interface.js` — adapter contract with JSDoc types + runtime validation
+- [x] `src/spec/vengeance.js` — conforms to interface (12/12 required exports)
+- [x] `src/engine/startup.js` — `loadSpecAdapter()` dynamically loads from config.json `spec.specName`
+- [x] `validateAdapter()` catches missing exports at load time
+- [x] Adding a new spec = create `src/spec/{name}.js` + update config.json
 
 ---
 
