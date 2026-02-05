@@ -71,6 +71,22 @@ const FIDELITY_TIERS = {
 const STATE_VERSION = 3;
 const ROSTER_PATH = join(RESULTS_DIR, "build-roster.json");
 
+// Extract aggregate per-scenario DPS from state, handling both single-build and multi-build.
+// For multi-build: averages across all builds. Returns {st, small_aoe, big_aoe}.
+function getAggregateDps(stateSection) {
+  if (stateSection.dps) return stateSection.dps;
+  if (!stateSection.builds) return {};
+  const builds = Object.values(stateSection.builds);
+  if (builds.length === 0) return {};
+  const agg = {};
+  for (const key of SCENARIO_KEYS) {
+    const vals = builds.map((b) => b.dps?.[key]).filter((v) => v !== undefined);
+    if (vals.length > 0)
+      agg[key] = vals.reduce((a, b) => a + b, 0) / vals.length;
+  }
+  return agg;
+}
+
 // --- State Management ---
 
 function loadState() {
@@ -869,11 +885,15 @@ function cmdStatus() {
   }
 
   // DPS progress with bars
-  console.log("\nDPS Progress:");
+  const origDps = getAggregateDps(state.originalBaseline);
+  const currDps = getAggregateDps(state.current);
+  console.log(
+    `\nDPS Progress${state.multiBuild ? " (mean across builds)" : ""}:`,
+  );
   for (const key of SCENARIO_KEYS) {
     const label = SCENARIO_LABELS[key];
-    const orig = state.originalBaseline.dps[key];
-    const curr = state.current.dps[key];
+    const orig = origDps[key];
+    const curr = currDps[key];
     if (orig === undefined || curr === undefined) continue;
 
     const delta = ((curr - orig) / orig) * 100;
@@ -1158,13 +1178,17 @@ function cmdSummary() {
   lines.push(`Generated: ${new Date().toISOString()}\n`);
 
   // DPS progression
-  lines.push("## DPS Progression\n");
+  const origDpsSummary = getAggregateDps(state.originalBaseline);
+  const currDpsSummary = getAggregateDps(state.current);
+  lines.push(
+    `## DPS Progression${state.multiBuild ? " (mean across builds)" : ""}\n`,
+  );
   lines.push("| Scenario | Baseline | Current | Delta |");
   lines.push("|----------|----------|---------|-------|");
   for (const key of SCENARIO_KEYS) {
     const label = SCENARIO_LABELS[key];
-    const orig = state.originalBaseline.dps[key];
-    const curr = state.current.dps[key];
+    const orig = origDpsSummary[key];
+    const curr = currDpsSummary[key];
     if (orig === undefined) continue;
     const delta =
       curr !== undefined
@@ -1278,23 +1302,43 @@ async function cmdRollback(iterationId) {
     process.exit(1);
   }
 
-  // Find the last accepted iteration before this one
-  let previousDps = { ...state.originalBaseline.dps };
-  for (let i = 0; i < targetIdx; i++) {
-    const iter = state.iterations[i];
-    if (iter.decision === "accepted" && iter.results) {
-      for (const [scenario, r] of Object.entries(iter.results)) {
-        previousDps[scenario] = r.candidate;
-      }
-    }
-  }
-
   // Mark this iteration as rolled back
   target.decision = "rolled_back";
   target.rollbackTimestamp = new Date().toISOString();
 
-  // Revert DPS to previous state
-  state.current.dps = previousDps;
+  if (state.multiBuild) {
+    // Multi-build: deep clone baseline builds, then replay accepted iterations
+    const restoredBuilds = JSON.parse(
+      JSON.stringify(state.originalBaseline.builds),
+    );
+    for (let i = 0; i < targetIdx; i++) {
+      const iter = state.iterations[i];
+      if (iter.decision === "accepted" && iter.comparison?.buildResults) {
+        for (const [buildId, br] of Object.entries(
+          iter.comparison.buildResults,
+        )) {
+          if (restoredBuilds[buildId]) {
+            for (const [scenario, sd] of Object.entries(br.scenarios || {})) {
+              restoredBuilds[buildId].dps[scenario] = sd.candidate;
+            }
+          }
+        }
+      }
+    }
+    state.current.builds = restoredBuilds;
+  } else {
+    // Single-build: replay flat DPS
+    let previousDps = { ...state.originalBaseline.dps };
+    for (let i = 0; i < targetIdx; i++) {
+      const iter = state.iterations[i];
+      if (iter.decision === "accepted" && iter.results) {
+        for (const [scenario, r] of Object.entries(iter.results)) {
+          previousDps[scenario] = r.candidate;
+        }
+      }
+    }
+    state.current.dps = previousDps;
+  }
 
   // Note: We can't easily restore the APL file without snapshots.
   // Log warning that manual APL restoration may be needed.
@@ -1603,13 +1647,17 @@ function writeDashboard(state) {
   lines.push(`| Hypotheses pending | ${state.pendingHypotheses.length} |`);
   lines.push(`| Hypotheses exhausted | ${state.exhaustedHypotheses.length} |`);
 
-  lines.push("\n## DPS Progress\n");
+  const origDpsDash = getAggregateDps(state.originalBaseline);
+  const currDpsDash = getAggregateDps(state.current);
+  lines.push(
+    `\n## DPS Progress${state.multiBuild ? " (mean across builds)" : ""}\n`,
+  );
   lines.push("| Scenario | Baseline | Current | Delta |");
   lines.push("|----------|----------|---------|-------|");
   for (const key of SCENARIO_KEYS) {
     const label = SCENARIO_LABELS[key];
-    const orig = state.originalBaseline.dps[key];
-    const curr = state.current.dps[key];
+    const orig = origDpsDash[key];
+    const curr = currDpsDash[key];
     if (orig === undefined) continue;
     const delta =
       curr !== undefined

@@ -36,6 +36,7 @@ function loadARBuilds(tier) {
   const limit = TIER_LIMITS[tier] || 1;
   const builds = [];
 
+  const usedIds = new Set();
   for (const arch of archetypes) {
     if (arch.heroTree !== "aldrachi_reaver") continue;
 
@@ -46,7 +47,15 @@ function loadARBuilds(tier) {
       if (added >= limit) break;
       if (!candidate?.hash) continue;
 
-      const id = `AR_${sanitizeId(arch.name)}_${added + 1}`;
+      let id = `AR_${sanitizeId(arch.name)}_${added + 1}`;
+      // Ensure unique IDs across archetypes
+      if (usedIds.has(id)) {
+        let suffix = 2;
+        while (usedIds.has(`${id}_${suffix}`)) suffix++;
+        id = `${id}_${suffix}`;
+      }
+      usedIds.add(id);
+
       builds.push({
         id,
         archetype: arch.name,
@@ -270,7 +279,7 @@ export function showRoster() {
 // --- Utilities ---
 
 function sanitizeId(name) {
-  return name.replace(/[^a-zA-Z0-9]+/g, "").slice(0, 20);
+  return name.replace(/[^a-zA-Z0-9]+/g, "").slice(0, 40);
 }
 
 function fileHash(path) {

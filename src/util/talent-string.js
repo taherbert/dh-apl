@@ -286,6 +286,21 @@ export function buildToSelections(build, data) {
     selections.set(id, sel);
   }
 
+  // Hero tree selector node — "subtree" type node in the full node list that
+  // activates the chosen hero tree. Without this, SimC won't enable hero abilities.
+  if (build.heroTree) {
+    const fullNodes = loadFullNodeList();
+    const selectorNode = fullNodes.find((n) => n.type === "subtree");
+    if (selectorNode?.entries) {
+      const choiceIdx = selectorNode.entries.findIndex(
+        (e) => e.name === build.heroTree,
+      );
+      if (choiceIdx >= 0) {
+        selections.set(selectorNode.id, { rank: 1, choiceIndex: choiceIdx });
+      }
+    }
+  }
+
   return selections;
 }
 
