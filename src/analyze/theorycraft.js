@@ -5,7 +5,12 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { MUTATION_OPS } from "./strategic-hypotheses.js";
+import { MUTATION_OPS } from "../apl/mutator.js";
+import {
+  loadAbilityData as loadAbilityDataFromConfig,
+  getSpecConfig,
+  getResourceFlow,
+} from "../config/spec-abilities.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -21,107 +26,17 @@ const TEMPORAL_CATEGORIES = {
   HASTE_BREAKPOINT: "Exploit timing thresholds at specific haste levels",
 };
 
-// --- Spell data constants ---
+// --- Spec Configuration ---
+// Spec ID can be overridden for multi-spec support
+let currentSpecId = "vengeance";
 
-// Spell IDs — stable game identifiers for each ability
-const SPELL_IDS = {
-  fracture: 263642,
-  spirit_bomb: 247454,
-  soul_cleave: 228477,
-  immolation_aura: 258920,
-  sigil_of_flame: 204596,
-  fiery_brand: 204021,
-  soul_carver: 207407,
-  fel_devastation: 212084,
-  sigil_of_spite: 390163,
-  metamorphosis: 187827,
-  reavers_glaive: 442294,
-};
+export function setSpecId(specId) {
+  currentSpecId = specId;
+}
 
-// Domain-specific values not derivable from spell data.
-// Includes: Meta-enhanced values, AP coefficients, talent modifications,
-// fragment consumption semantics, tick mechanics.
-const DOMAIN_OVERRIDES = {
-  fracture: { furyGenMeta: 40, fragGenMeta: 3, apCoeff: 1.035 },
-  spirit_bomb: { fragConsume: "up_to_5", apCoeff: 0.4 },
-  soul_cleave: { fragConsume: "up_to_2", apCoeff: 1.29 },
-  immolation_aura: {
-    charges: 2,
-    rechargeCd: 30,
-    furyPerTick: 3,
-    tickInterval: 1,
-  },
-  sigil_of_flame: { apCoeff: 0.792 },
-  fiery_brand: { duration: 10, damageAmp: 0.15 },
-  soul_carver: { apCoeff: 2.08 },
-  fel_devastation: { gcd: false, apCoeff: 1.54 },
-  sigil_of_spite: { fragGen: "variable", apCoeff: 6.92 },
-  reavers_glaive: { apCoeff: 3.45 },
-};
-
-let _abilityDataCache = null;
-
+// Load ability data from spec config (abstracts hardcoded values)
 function loadAbilityData() {
-  if (_abilityDataCache) return _abilityDataCache;
-
-  const spellsPath = join(DATA_DIR, "spells-summary.json");
-  const spells = JSON.parse(readFileSync(spellsPath, "utf-8"));
-  const byId = new Map(spells.map((s) => [s.id, s]));
-
-  const result = {};
-
-  for (const [name, spellId] of Object.entries(SPELL_IDS)) {
-    const spell = byId.get(spellId);
-    if (!spell) {
-      result[name] = { ...(DOMAIN_OVERRIDES[name] || {}) };
-      continue;
-    }
-
-    const entry = {};
-
-    // Cooldown: single-charge abilities use charges.cooldown as the real CD.
-    // Multi-charge abilities have rechargeCd for per-charge and cooldown=0.
-    if (spell.charges) {
-      if (spell.charges.count > 1) {
-        entry.charges = spell.charges.count;
-        entry.rechargeCd = spell.charges.cooldown;
-        entry.cooldown = 0;
-      } else {
-        entry.cooldown = spell.charges.cooldown;
-      }
-    } else if (spell.cooldown) {
-      entry.cooldown = spell.cooldown;
-    } else {
-      entry.cooldown = 0;
-    }
-
-    if (spell.duration) entry.duration = spell.duration;
-    if (spell.gcd !== undefined) entry.gcd = spell.gcd > 0;
-
-    // Fury cost from resource field
-    if (spell.resource) {
-      const furyMatch = spell.resource.match(/(\d+)\s*fury/i);
-      if (furyMatch) entry.furyCost = parseInt(furyMatch[1], 10);
-    }
-
-    // Fury/fragment generation from generates[]
-    if (spell.generates) {
-      for (const gen of spell.generates) {
-        const furyMatch = gen.match(/(\d+)\s*fury/i);
-        if (furyMatch) entry.furyGen = parseInt(furyMatch[1], 10);
-        const fragMatch = gen.match(/(\d+)\s*soul\s*fragment/i);
-        if (fragMatch) entry.fragGen = parseInt(fragMatch[1], 10);
-      }
-    }
-
-    // Domain overrides take precedence for values not in spell data
-    Object.assign(entry, DOMAIN_OVERRIDES[name] || {});
-
-    result[name] = entry;
-  }
-
-  _abilityDataCache = Object.freeze(result);
-  return _abilityDataCache;
+  return loadAbilityDataFromConfig(currentSpecId);
 }
 
 const ABILITY_DATA = loadAbilityData();
