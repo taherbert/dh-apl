@@ -169,21 +169,16 @@ On every session start:
 
 ---
 
-### Phase 6: Schema Validation + Staleness
+### Phase 6: Schema Validation + Staleness ✅
 
 **Goal:** Data integrity and freshness detection.
 
-**Tasks:**
+**Completed:**
 
-1. JSON schemas for all data files
-2. Staleness detection based on mtimes + simc commit
-3. Validation on load, fail early on corruption
-
-**Files:**
-
-- CREATE: `schemas/*.schema.json`
-- CREATE: `src/util/validate.js`
-- CREATE: `src/util/staleness.js`
+- [x] `src/util/validate.js` — validates all 9 data files against inline schemas
+- [x] Staleness detection: compares data mtimes against last build, checks simc HEAD
+- [x] CLI: `node src/util/validate.js` reports validation + staleness, exits 1 if stale
+- [x] Schemas inline (not separate files) — simpler, no JSON schema library needed
 
 ---
 
