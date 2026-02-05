@@ -69,7 +69,6 @@ const FIDELITY_TIERS = {
 };
 
 const STATE_VERSION = 3;
-const ROSTER_PATH = join(RESULTS_DIR, "build-roster.json");
 
 // Extract aggregate per-scenario DPS from state, handling both single-build and multi-build.
 // For multi-build: averages across all builds. Returns {st, small_aoe, big_aoe}.
@@ -502,14 +501,11 @@ function printComparison(results, tier) {
     if (!r) continue;
     const label = SCENARIO_LABELS[scenario];
     const sign = r.deltaPct >= 0 ? "+" : "";
-    const sigLabel = r.significant
-      ? r.deltaPct > 0
-        ? "YES"
-        : "YES (WORSE)"
-      : "NO (noise)";
+    let sigLabel = "NO (noise)";
+    if (r.significant) sigLabel = r.deltaPct > 0 ? "YES" : "YES (WORSE)";
 
     console.log(
-      `${label.padEnd(12)} ${r.current.toLocaleString().padStart(12)} ${r.candidate.toLocaleString().padStart(12)} ${(sign + r.delta.toLocaleString()).padStart(10)} ${(sign + r.deltaPct.toFixed(2) + "%").padStart(10)} ${("±" + r.stderrPct.toFixed(2) + "%").padStart(10)} ${sigLabel.padStart(14)}`,
+      `${label.padEnd(12)} ${r.current.toLocaleString().padStart(12)} ${r.candidate.toLocaleString().padStart(12)} ${(sign + r.delta.toLocaleString()).padStart(10)} ${signedPct(r.deltaPct, 2).padStart(10)} ${("±" + r.stderrPct.toFixed(2) + "%").padStart(10)} ${sigLabel.padStart(14)}`,
     );
   }
 
@@ -517,11 +513,10 @@ function printComparison(results, tier) {
   const { delta: weightedDelta, stderr: weightedStderr } =
     computeWeightedDelta(results);
   const weightedSig = Math.abs(weightedDelta) > 2 * weightedStderr;
-  const ws = weightedDelta >= 0 ? "+" : "";
 
   console.log("-".repeat(82));
   console.log(
-    `${"Weighted".padEnd(12)} ${"".padStart(12)} ${"".padStart(12)} ${"".padStart(10)} ${(ws + weightedDelta.toFixed(3) + "%").padStart(10)} ${("±" + weightedStderr.toFixed(3) + "%").padStart(10)} ${(weightedSig ? "YES" : "NO").padStart(14)}`,
+    `${"Weighted".padEnd(12)} ${"".padStart(12)} ${"".padStart(12)} ${"".padStart(10)} ${signedPct(weightedDelta).padStart(10)} ${("±" + weightedStderr.toFixed(3) + "%").padStart(10)} ${(weightedSig ? "YES" : "NO").padStart(14)}`,
   );
 }
 
@@ -692,23 +687,17 @@ function printMultiBuildComparison(comparison) {
 
   for (const [buildId, br] of Object.entries(buildResults)) {
     const hero = br.heroTree === "aldrachi_reaver" ? "AR" : "Anni";
-    const cols = SCENARIO_KEYS.map((s) => {
-      const d = br.scenarios[s]?.deltaPct || 0;
-      return (d >= 0 ? "+" : "") + d.toFixed(2) + "%";
-    });
-    const ws = br.weightedDelta >= 0 ? "+" : "";
+    const cols = SCENARIO_KEYS.map((s) =>
+      signedPct(br.scenarios[s]?.deltaPct || 0, 2),
+    );
     console.log(
-      `${buildId.padEnd(25)} ${hero.padEnd(6)} ${cols[0].padStart(8)} ${cols[1].padStart(8)} ${cols[2].padStart(8)} ${(ws + br.weightedDelta.toFixed(2) + "%").padStart(9)}`,
+      `${buildId.padEnd(25)} ${hero.padEnd(6)} ${cols[0].padStart(8)} ${cols[1].padStart(8)} ${cols[2].padStart(8)} ${signedPct(br.weightedDelta, 2).padStart(9)}`,
     );
   }
 
   console.log("-".repeat(67));
-  const ms = aggregate.meanWeighted >= 0 ? "+" : "";
-  const ws = aggregate.worstWeighted >= 0 ? "+" : "";
-  const as = aggregate.arAvg >= 0 ? "+" : "";
-  const ns = aggregate.anniAvg >= 0 ? "+" : "";
   console.log(
-    `Mean: ${ms}${aggregate.meanWeighted.toFixed(3)}%  |  Worst: ${ws}${aggregate.worstWeighted.toFixed(3)}%  |  AR avg: ${as}${aggregate.arAvg.toFixed(3)}%  Anni avg: ${ns}${aggregate.anniAvg.toFixed(3)}%`,
+    `Mean: ${signedPct(aggregate.meanWeighted)}  |  Worst: ${signedPct(aggregate.worstWeighted)}  |  AR avg: ${signedPct(aggregate.arAvg)}  Anni avg: ${signedPct(aggregate.anniAvg)}`,
   );
 
   // Accept criteria check
@@ -915,12 +904,11 @@ function cmdStatus() {
     if (orig === undefined || curr === undefined) continue;
 
     const delta = ((curr - orig) / orig) * 100;
-    const sign = delta >= 0 ? "+" : "";
     // Bar: fraction of a 5% improvement target
     const fraction = Math.min(1, Math.max(0, delta / 5));
     const bar = progressBar(fraction);
     console.log(
-      `  ${label.padEnd(4)} ${orig.toLocaleString().padStart(12)} → ${curr.toLocaleString().padStart(12)}  ${bar}  ${sign}${delta.toFixed(2)}%`,
+      `  ${label.padEnd(4)} ${orig.toLocaleString().padStart(12)} → ${curr.toLocaleString().padStart(12)}  ${bar}  ${signedPct(delta, 2)}`,
     );
   }
 
@@ -945,13 +933,12 @@ function cmdStatus() {
       let summary;
       if (iter.comparison?.aggregates) {
         const a = iter.comparison.aggregates;
-        const s = a.meanWeighted >= 0 ? "+" : "";
-        summary = `mean:${s}${a.meanWeighted.toFixed(2)}%  worst:${a.worstWeighted.toFixed(2)}%`;
+        summary = `mean:${signedPct(a.meanWeighted, 2)}  worst:${a.worstWeighted.toFixed(2)}%`;
       } else {
         summary = Object.entries(iter.results || {})
           .map(([k, v]) => {
             const label = SCENARIO_LABELS[k] || k;
-            return `${label}:${v.delta_pct > 0 ? "+" : ""}${v.delta_pct?.toFixed(1) || "?"}%`;
+            return `${label}:${signedPct(v.delta_pct ?? 0, 1)}`;
           })
           .join("  ");
       }
@@ -1242,18 +1229,17 @@ function cmdSummary() {
     if (iter.comparison?.aggregates) {
       const a = iter.comparison.aggregates;
       cols = [
-        `${a.meanWeighted >= 0 ? "+" : ""}${a.meanWeighted.toFixed(2)}%`,
+        signedPct(a.meanWeighted, 2),
         `${a.worstWeighted.toFixed(2)}%`,
-        `${a.arAvg >= 0 ? "+" : ""}${a.arAvg.toFixed(2)}%`,
-        `${a.anniAvg >= 0 ? "+" : ""}${a.anniAvg.toFixed(2)}%`,
+        signedPct(a.arAvg, 2),
+        signedPct(a.anniAvg, 2),
       ];
     } else {
       const r = iter.results || {};
       cols = SCENARIO_KEYS.map((k) => {
         const v = r[k];
         if (!v) return "—";
-        const sign = v.delta_pct >= 0 ? "+" : "";
-        return `${sign}${v.delta_pct?.toFixed(2) || "?"}%`;
+        return signedPct(v.delta_pct ?? 0, 2);
       });
     }
     const hyp =
@@ -1273,18 +1259,12 @@ function cmdSummary() {
   const accepted = state.iterations.filter((i) => i.decision === "accepted");
   if (accepted.length > 0) {
     lines.push("\n## Most Impactful Changes\n");
-    const scored = accepted.map((iter) => {
-      let weighted = 0;
-      for (const key of SCENARIO_KEYS) {
-        const v = iter.results?.[key];
-        if (v) weighted += (v.delta_pct || 0) * SCENARIO_WEIGHTS[key];
-      }
-      return { ...iter, weightedDelta: weighted };
-    });
-    scored.sort((a, b) => b.weightedDelta - a.weightedDelta);
+    const scored = accepted
+      .map((iter) => ({ ...iter, wd: iterWeightedDelta(iter) }))
+      .sort((a, b) => b.wd - a.wd);
     for (const s of scored.slice(0, 10)) {
       lines.push(
-        `- **#${s.id}** (${s.weightedDelta >= 0 ? "+" : ""}${s.weightedDelta.toFixed(3)}% weighted): ${s.hypothesis}`,
+        `- **#${s.id}** (${signedPct(s.wd)} weighted): ${s.hypothesis}`,
       );
     }
   }
@@ -1652,7 +1632,21 @@ function suggestEscapeStrategies(state) {
   return suggestions;
 }
 
-// --- Output Generators ---
+// --- Output Helpers ---
+
+// Format a number with explicit sign prefix: "+1.234%" or "-0.567%"
+function signedPct(value, decimals = 3) {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(decimals)}%`;
+}
+
+// Get the weighted delta for an iteration record (handles both single/multi-build).
+function iterWeightedDelta(iter) {
+  if (iter.comparison?.aggregates) {
+    return iter.comparison.aggregates.meanWeighted;
+  }
+  return computeWeightedDelta(iter.results || {}).delta;
+}
 
 function computeWeightedDelta(results) {
   let delta = 0;
@@ -1718,19 +1712,13 @@ function writeDashboard(state) {
     lines.push("| # | Decision | Hypothesis | Weighted Delta |");
     lines.push("|---|----------|------------|----------------|");
     for (const iter of state.iterations.slice(-10)) {
-      let wDelta;
-      if (iter.comparison?.aggregates) {
-        wDelta = iter.comparison.aggregates.meanWeighted;
-      } else {
-        wDelta = computeWeightedDelta(iter.results || {}).delta;
-      }
-      const sign = wDelta >= 0 ? "+" : "";
+      const wDelta = iterWeightedDelta(iter);
       const hyp =
         iter.hypothesis.length > 50
           ? iter.hypothesis.slice(0, 50) + "…"
           : iter.hypothesis;
       lines.push(
-        `| ${iter.id} | ${iter.decision} | ${hyp} | ${sign}${(wDelta || 0).toFixed(3)}% |`,
+        `| ${iter.id} | ${iter.decision} | ${hyp} | ${signedPct(wDelta || 0)} |`,
       );
     }
   }
@@ -1777,15 +1765,9 @@ function writeChangelog(state) {
     lines.push("No accepted changes yet.\n");
   } else {
     for (const iter of [...accepted].reverse()) {
-      let wDelta;
-      if (iter.comparison?.aggregates) {
-        wDelta = iter.comparison.aggregates.meanWeighted;
-      } else {
-        wDelta = computeWeightedDelta(iter.results || {}).delta;
-      }
-      const sign = wDelta >= 0 ? "+" : "";
+      const wDelta = iterWeightedDelta(iter);
       lines.push(
-        `## Iteration #${iter.id} (${sign}${(wDelta || 0).toFixed(3)}% weighted)\n`,
+        `## Iteration #${iter.id} (${signedPct(wDelta || 0)} weighted)\n`,
       );
       lines.push(`**${iter.timestamp}**\n`);
       lines.push(`${iter.hypothesis}\n`);
@@ -1793,13 +1775,13 @@ function writeChangelog(state) {
       if (iter.comparison?.aggregates) {
         const a = iter.comparison.aggregates;
         lines.push(
-          `AR avg: ${a.arAvg >= 0 ? "+" : ""}${a.arAvg.toFixed(3)}% | Anni avg: ${a.anniAvg >= 0 ? "+" : ""}${a.anniAvg.toFixed(3)}% | Worst: ${a.worstWeighted.toFixed(3)}%\n`,
+          `AR avg: ${signedPct(a.arAvg)} | Anni avg: ${signedPct(a.anniAvg)} | Worst: ${a.worstWeighted.toFixed(3)}%\n`,
         );
       } else {
         const scenarioDetail = SCENARIO_KEYS.map((k) => {
           const r = iter.results?.[k];
           if (!r) return null;
-          return `${SCENARIO_LABELS[k]}: ${r.delta_pct >= 0 ? "+" : ""}${r.delta_pct?.toFixed(2) || "?"}%`;
+          return `${SCENARIO_LABELS[k]}: ${signedPct(r.delta_pct ?? 0, 2)}`;
         })
           .filter(Boolean)
           .join(", ");

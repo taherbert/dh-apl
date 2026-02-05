@@ -44,6 +44,18 @@ const GEAR_KEYS = [
   "off_hand",
 ];
 
+// Emit talent lines for a build into the output array.
+function emitTalentOverrides(output, build) {
+  if (build.hash) {
+    output.push(`talents=${build.hash}`);
+  }
+  if (build.overrides) {
+    for (const key of ["class_talents", "spec_talents", "hero_talents"]) {
+      if (build.overrides[key]) output.push(`${key}=${build.overrides[key]}`);
+    }
+  }
+}
+
 // Generate multi-actor .simc content from roster + APL.
 // roster: { builds: [{ id, heroTree, hash?, overrides? }] }
 // aplPath: path to APL .simc file
@@ -80,8 +92,9 @@ export function generateMultiActorContent(roster, aplPath) {
   }
 
   // Read and resolve APL file, extract only action lines
-  const rawApl = readFileSync(resolve(aplPath), "utf8");
-  const resolvedApl = resolveInputDirectives(rawApl, dirname(resolve(aplPath)));
+  const resolvedAplPath = resolve(aplPath);
+  const rawApl = readFileSync(resolvedAplPath, "utf8");
+  const resolvedApl = resolveInputDirectives(rawApl, dirname(resolvedAplPath));
   const actionLines = resolvedApl
     .split("\n")
     .filter((l) => l.trim().startsWith("actions"));
@@ -116,33 +129,15 @@ export function generateMultiActorContent(roster, aplPath) {
     if (charMeta[key]) output.push(charMeta[key]);
   }
 
-  // Talent overrides for first actor
-  if (first.hash) {
-    output.push(`talents=${first.hash}`);
-  }
-  if (first.overrides) {
-    if (first.overrides.class_talents)
-      output.push(`class_talents=${first.overrides.class_talents}`);
-    if (first.overrides.spec_talents)
-      output.push(`spec_talents=${first.overrides.spec_talents}`);
-    if (first.overrides.hero_talents)
-      output.push(`hero_talents=${first.overrides.hero_talents}`);
-  }
+  emitTalentOverrides(output, first);
 
-  // Gear + consumables
-  for (const line of otherProfileLines) {
-    output.push(line);
-  }
-  for (const line of gearLines) {
-    output.push(line);
-  }
+  output.push(...otherProfileLines);
+  output.push(...gearLines);
 
   output.push("");
 
   // Inline APL (not via input= to avoid creating extra actor)
-  for (const line of actionLines) {
-    output.push(line);
-  }
+  output.push(...actionLines);
 
   output.push("");
 
@@ -150,18 +145,7 @@ export function generateMultiActorContent(roster, aplPath) {
   for (let i = 1; i < builds.length; i++) {
     const build = builds[i];
     output.push(`copy="${build.id}","${first.id}"`);
-
-    if (build.hash) {
-      output.push(`talents=${build.hash}`);
-    }
-    if (build.overrides) {
-      if (build.overrides.class_talents)
-        output.push(`class_talents=${build.overrides.class_talents}`);
-      if (build.overrides.spec_talents)
-        output.push(`spec_talents=${build.overrides.spec_talents}`);
-      if (build.overrides.hero_talents)
-        output.push(`hero_talents=${build.overrides.hero_talents}`);
-    }
+    emitTalentOverrides(output, build);
 
     output.push("");
   }

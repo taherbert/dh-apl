@@ -216,7 +216,7 @@ export function printResults(result) {
 // --- Multi-actor support ---
 
 // Parse multi-actor SimC JSON output. Returns Map<actorName, {dps, hps, dtps}>.
-export function parseMultiActorResults(data, scenario) {
+export function parseMultiActorResults(data) {
   const results = new Map();
   for (const player of data.sim.players) {
     results.set(player.name, {
@@ -268,7 +268,7 @@ export async function runMultiActorAsync(
   }
 
   const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
-  return parseMultiActorResults(data, scenario);
+  return parseMultiActorResults(data);
 }
 
 // CLI entry point

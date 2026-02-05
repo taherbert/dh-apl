@@ -204,23 +204,19 @@ export function decode(str, nodes) {
 
 // --- Helpers for integration with our data model ---
 
+import { readFileSync } from "node:fs";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const DEFAULT_DATA_DIR = join(__dirname, "..", "..", "data");
+
 // Load the full DH node list from dh-all-nodes.json (all specs, all hero trees).
 // Required for decoding external talent strings (game client, Wowhead, Raidbots).
-import { readFileSync as _readFileSync } from "node:fs";
-import { join as _join, dirname as _dirname } from "node:path";
-import { fileURLToPath as _fileURLToPath } from "node:url";
-
-const _defaultDataDir = _join(
-  _dirname(_fileURLToPath(import.meta.url)),
-  "..",
-  "..",
-  "data",
-);
-
 export function loadFullNodeList(dataDir) {
   return JSON.parse(
-    _readFileSync(
-      _join(dataDir || _defaultDataDir, "dh-all-nodes.json"),
+    readFileSync(
+      join(dataDir || DEFAULT_DATA_DIR, "dh-all-nodes.json"),
       "utf8",
     ),
   );
@@ -354,12 +350,7 @@ export function selectionsToNodeSets(selections, data) {
 // --- CLI ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { readFileSync } = await import("node:fs");
-  const { join, dirname } = await import("node:path");
-  const { fileURLToPath } = await import("node:url");
-
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const DATA_DIR = join(__dirname, "..", "..", "data");
+  const DATA_DIR = DEFAULT_DATA_DIR;
   const data = JSON.parse(
     readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf8"),
   );

@@ -61,7 +61,6 @@ function loadARBuilds(tier) {
         archetype: arch.name,
         heroTree: "aldrachi_reaver",
         hash: candidate.hash,
-        // Hash-based builds use talents=<hash> directly in multi-actor files
         overrides: null,
         source: "builds.json",
       });
@@ -104,39 +103,27 @@ function loadAnniBuilds() {
     if (!current) continue;
 
     // Extract talent override lines
-    const classMatch = trimmed.match(/^class_talents=(.+)/);
-    if (classMatch) {
-      current.overrides.class_talents = classMatch[1];
-      continue;
-    }
-    const specMatch = trimmed.match(/^spec_talents=(.+)/);
-    if (specMatch) {
-      current.overrides.spec_talents = specMatch[1];
-      continue;
-    }
-    const heroMatch = trimmed.match(/^hero_talents=(.+)/);
-    if (heroMatch) {
-      current.overrides.hero_talents = heroMatch[1];
-      continue;
+    for (const key of ["class_talents", "spec_talents", "hero_talents"]) {
+      const m = trimmed.match(new RegExp(`^${key}=(.+)`));
+      if (m) {
+        current.overrides[key] = m[1];
+        break;
+      }
     }
   }
 
-  // Resolve inheritance: copy actors inherit from their source
+  // Resolve inheritance: copy actors inherit missing overrides from their source
   const byName = new Map(actors.map((a) => [a.name, a]));
   for (const actor of actors) {
-    // Find the copy source
     const copyLine = content.match(
       new RegExp(`copy="${actor.name}","([^"]+)"`),
     );
-    if (copyLine) {
-      const source = byName.get(copyLine[1]);
-      if (source) {
-        // Inherit missing overrides from source
-        for (const key of ["class_talents", "spec_talents", "hero_talents"]) {
-          if (!actor.overrides[key] && source.overrides[key]) {
-            actor.overrides[key] = source.overrides[key];
-          }
-        }
+    if (!copyLine) continue;
+    const source = byName.get(copyLine[1]);
+    if (!source) continue;
+    for (const key of ["class_talents", "spec_talents", "hero_talents"]) {
+      if (!actor.overrides[key] && source.overrides[key]) {
+        actor.overrides[key] = source.overrides[key];
       }
     }
   }
