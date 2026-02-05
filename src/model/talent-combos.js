@@ -152,11 +152,20 @@ export function classifyNodes(nodes, nodeMap, budget, overrides = {}) {
   const locked = new Set();
   const lockedRanks = new Map(); // nodeId → rank to take
 
-  // Entry and free nodes are always locked
+  // Entry and free nodes are always locked — except tiered apex talents
+  // (e.g., Untethered Rage) which are optional pinnacle nodes flagged as entry
+  // because they have no prev links. They cost multiple points and should be
+  // DoE factors, not locked.
   for (const node of nodes) {
-    if (node.entryNode || node.freeNode) {
+    if (node.freeNode) {
       locked.add(node.id);
-      if (!node.freeNode) lockedRanks.set(node.id, node.maxRanks || 1);
+    } else if (node.entryNode) {
+      if (node.type === "tiered" && (node.maxRanks || 1) > 1) {
+        // Skip — tiered apex talent will be classified as a factor below
+      } else {
+        locked.add(node.id);
+        lockedRanks.set(node.id, node.maxRanks || 1);
+      }
     }
   }
 
@@ -223,6 +232,13 @@ export function identifyFactors(factorNodes) {
         type: "choice",
         entries: node.entries.map((e) => e.name),
         // level 0 = first entry, level 1 = second entry
+      });
+    } else if (node.type === "tiered" && (node.maxRanks || 1) > 1) {
+      // Tiered apex: all-or-nothing binary factor (e.g., UR is 4 ranks)
+      factors.push({
+        nodeId: node.id,
+        name: node.name.split(" / ")[0],
+        type: "binary",
       });
     } else if ((node.maxRanks || 1) > 1) {
       // Multi-rank: factor for rank 1 (take/skip) and factor for rank 2
@@ -427,7 +443,8 @@ export function designRowToBuild(
     if (factor.type === "binary") {
       if (level === 1) {
         selected.add(factor.nodeId);
-        rankMap.set(factor.nodeId, 1);
+        const node = nodeMap.get(factor.nodeId);
+        rankMap.set(factor.nodeId, node?.maxRanks || 1);
       }
     } else if (factor.type === "choice") {
       // Choice node is always added; level picks which entry
@@ -609,6 +626,72 @@ export function designRowToBuild(
         }
       }
     }
+  }
+
+  // Gate repair: if at budget but a gate is violated (e.g., S1+S2 < 20),
+  // swap a removable post-gate node for a pre-gate node to satisfy the gate.
+  for (let gatePass = 0; gatePass < 10; gatePass++) {
+    // Find a gate violation
+    const violated = [...selected].find((id) => {
+      const n = nodeMap.get(id);
+      return n && n.reqPoints && !passesGate(n, selected, nodeMap, rankMap);
+    });
+    if (!violated) break;
+
+    const violatedNode = nodeMap.get(violated);
+    const gateThreshold = violatedNode.reqPoints;
+
+    // Find a removable post-gate node (not locked, not orphaning others)
+    const removable = [...selected]
+      .filter((id) => {
+        const n = nodeMap.get(id);
+        if (!n || n.entryNode || n.freeNode || lockedNodes.has(id))
+          return false;
+        if (n.reqPoints && n.reqPoints >= gateThreshold) return true;
+        return false;
+      })
+      .map((id) => ({ id, node: nodeMap.get(id) }))
+      .filter(({ id }) => !wouldOrphan(id, selected, nodeMap))
+      .sort((a, b) => (b.node.posY || 0) - (a.node.posY || 0));
+
+    // Find an addable pre-gate node
+    const addable = nodes
+      .filter((n) => {
+        if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+        if (!(!n.reqPoints || n.reqPoints < gateThreshold)) return false;
+        if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
+          return false;
+        return true;
+      })
+      .sort((a, b) => {
+        const exA = excludedNodeIds.has(a.id) ? 1 : 0;
+        const exB = excludedNodeIds.has(b.id) ? 1 : 0;
+        if (exA !== exB) return exA - exB;
+        return (a.posY || 0) - (b.posY || 0);
+      });
+
+    if (removable.length === 0 || addable.length === 0) break;
+
+    // Swap: remove 1 point from post-gate, add 1 point to pre-gate
+    const rem = removable[0];
+    const remRank = rankMap.get(rem.id) || 1;
+    if (remRank > 1) {
+      rankMap.set(rem.id, remRank - 1);
+    } else {
+      selected.delete(rem.id);
+      rankMap.delete(rem.id);
+    }
+
+    const add = addable[0];
+    const addCost = add.maxRanks || 1;
+    if (selected.has(add.id)) {
+      const curRank = rankMap.get(add.id) || 1;
+      rankMap.set(add.id, Math.min(curRank + 1, addCost));
+    } else {
+      selected.add(add.id);
+      rankMap.set(add.id, Math.min(1, addCost));
+    }
+    // pts stays the same (1 removed, 1 added)
   }
 
   return {
