@@ -53,13 +53,14 @@ actions+=/...
 ## Session Protocol
 
 1. Read `PLAN.md` at start to understand current project state
-2. After completing a step, mark it done with `[x]` and add implementation notes
-3. Record surprising findings under "Findings & Notes" in PLAN.md
-4. Update this file if new commands, patterns, or architectural decisions emerge
+2. Run `node src/engine/startup.js` to check config and simc sync status
+3. After completing a step, mark it done with `[x]` and add implementation notes
+4. Record surprising findings under "Findings & Notes" in PLAN.md
+5. Update this file if new commands, patterns, or architectural decisions emerge
 
 ## Data Sources
 
-- **Raidbots** (`raidbots.com/static/data/{env}/talents.json`): Authoritative talent tree source. Provides class/spec/hero nodes with spell IDs, positions, choice variants. Environment: `live` or `ptr` (controlled by `src/config.js` `DATA_ENV`).
+- **Raidbots** (`raidbots.com/static/data/{env}/talents.json`): Authoritative talent tree source. Provides class/spec/hero nodes with spell IDs, positions, choice variants. Environment: `live` or `ptr` (controlled by `config.json` `data.env`).
 - **simc C++** (`sc_demon_hunter.cpp`): Implementation reference. Talent assignments via `talent.{tree}.{var}` patterns.
 - **simc spell_query**: Runtime spell data (effects, coefficients). Limited by binary age.
 - **SpellDataDump**: Full spell effect data, updated more frequently than the binary.
@@ -70,7 +71,7 @@ When effect data is ambiguous (e.g., unclear whether a value is a damage amp or 
 
 ### Environment Toggle
 
-Change `DATA_ENV` in `src/config.js` to switch between `"live"`, `"ptr"`, or `"beta"`. Then run `npm run build-data` to regenerate from the new environment. Midnight data uses `"beta"`.
+Change `data.env` in `config.json` to switch between `"live"`, `"ptr"`, or `"beta"`. Then run `npm run build-data` to regenerate from the new environment. Midnight data uses `"beta"`.
 
 ### Hero Trees
 
@@ -120,15 +121,23 @@ Only read the full files when you need raw spell effect data (coefficients, effe
 ## Architecture
 
 ```
+config.json         # Single human-editable config (spec, simc, scenarios, fidelity)
 src/
-  config.js       # Central config (DATA_ENV, paths, identifiers)
-  extract/        # Data extraction (raidbots.js, spells.js, parser.js)
-  model/          # Data models (talents.js, interactions.js, interaction-types.js)
-  visualize/      # Reports and graphs (text-report.js, graph.js)
-  sim/            # SimC runner and analysis (runner.js, analyze.js, iterate.js)
-  analyze/        # Strategic analysis (archetypes.js, strategic-hypotheses.js, theorycraft.js)
-  discover/       # Build discovery pipeline (build-discovery.js)
-  apl/            # APL parser, condition-parser, mutator
+  engine/           # Core engine (spec-agnostic)
+    startup.js      # Loads config.json, derives paths, checks simc sync
+    extract.js      # Extraction pipeline orchestrator
+    model.js        # Model pipeline orchestrator
+  spec/             # Spec-specific adapters
+    interface.js    # Adapter contract + runtime validation
+    vengeance.js    # VDH: spell IDs, domain overrides, hero trees, resource flow
+  extract/          # Data extraction (raidbots.js, spells.js, parser.js)
+  model/            # Data models (talents.js, interactions.js, interaction-types.js)
+  visualize/        # Reports and graphs (text-report.js, graph.js)
+  sim/              # SimC runner and analysis (runner.js, analyze.js, iterate.js)
+  analyze/          # Strategic analysis (archetypes.js, strategic-hypotheses.js, theorycraft.js, synthesizer.js)
+  discover/         # Build discovery pipeline (build-discovery.js)
+  apl/              # APL parser, condition-parser, mutator
+  util/             # Shared utilities (db.js, validate.js)
 data/
   raw/            # Raw simc dumps (gitignored)
   raidbots-talents.json  # Raidbots talent data (filtered to VDH)
@@ -146,7 +155,9 @@ apls/             # APL files (.simc)
   current.simc           # Iteration working copy (managed by iterate.js, not hand-edited)
 results/          # Simulation output and persistent state
   builds.json            # Discovered archetypes + ranked builds (from npm run discover)
+  builds.db              # SQLite: queryable builds, factors, archetypes (from db migrate)
   findings.json          # Accumulated analytical insights across sessions
+  findings.db            # SQLite: queryable findings and hypotheses (from db migrate)
   SCHEMA.md              # Schema documentation for persistence files
 reference/
   vengeance-apl.simc           # simc default VDH APL (auto-extracted from C++)
@@ -225,6 +236,16 @@ npm run discover -- --anni-only              # Annihilator builds only
 node src/sim/runner.js apls/baseline.simc    # Run simulation
 node src/sim/analyze.js                      # Analyze results
 
+# === Engine ===
+node src/engine/startup.js                   # Check config + simc sync status
+node src/engine/extract.js                   # Check extraction pipeline status
+node src/engine/model.js                     # Check model pipeline status
+node src/util/validate.js                    # Validate all data + staleness check
+npm run db:migrate                           # Import builds.json/findings.json → SQLite
+npm run db:status                            # Show SQLite record counts
+node src/util/db.js top 10                   # Top 10 builds by weighted DPS
+npm run synthesize                           # Run hypothesis synthesizer standalone
+
 # === Verification ===
 npm run verify                               # Verify data against simc C++
 npm run extract-simc                         # Extract simc C++ talent variables
@@ -260,6 +281,7 @@ node src/sim/iterate.js hypotheses
 node src/sim/iterate.js strategic                    # Generate archetype-aware hypotheses with auto-mutations
 node src/sim/iterate.js theorycraft                  # Generate temporal resource flow hypotheses
 node src/sim/iterate.js generate                     # Auto-generate candidate from top hypothesis
+node src/sim/iterate.js synthesize                   # Synthesize hypotheses from all specialist sources
 node src/sim/iterate.js rollback <iteration-id>      # Rollback an accepted iteration
 node src/sim/iterate.js summary
 
@@ -284,13 +306,15 @@ Targeting **Midnight** expansion. The simc `midnight` branch may have new abilit
 
 ## Persistence — Build Knowledge & Findings
 
-Three JSON files track state across sessions:
+Three JSON files + SQLite databases track state across sessions:
 
 - **`data/build-theory.json`** — Curated mechanical knowledge: talent clusters, hero tree interactions, cluster×hero synergies, build archetypes, and tension points. Not auto-generated — edited by hand when analysis reveals new structural insights. Used by `archetypes.js` and skill prompts.
 - **`results/builds.json`** — Discovered archetypes and ranked talent builds from `npm run discover`. Contains factor impacts, synergy pairs, archetype groupings, and per-build DPS across all scenarios. Re-run after APL changes to update rankings.
 - **`results/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags.
+- **`results/builds.db`** — SQLite mirror of builds.json (queryable). Run `npm run db:migrate` to import.
+- **`results/findings.db`** — SQLite for findings + hypothesis tracking. Accepted iterations auto-record here.
 
-**Session startup protocol:** Read `build-theory.json` for structural context, `builds.json` for quantitative rankings, and `findings.json` (filtered to `status: "validated"`) for calibration.
+**Session startup protocol:** Read `build-theory.json` for structural context, `builds.json` (or `builds.db`) for quantitative rankings, and `findings.json` (filtered to `status: "validated"`) for calibration.
 
 **After accepting APL changes:** Re-run `npm run discover -- --quick` to re-rank builds under the new APL.
 
