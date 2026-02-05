@@ -139,45 +139,20 @@ On every session start:
 
 ---
 
-### Phase 4: SQLite for Large Datasets
+### Phase 4: SQLite for Large Datasets ✅
 
 **Goal:** Queryable storage for builds and findings.
 
-**Tasks:**
+**Completed:**
 
-1. Create `results/builds.db` with schema:
-   ```sql
-   CREATE TABLE builds (
-     hash TEXT PRIMARY KEY,
-     spec TEXT,
-     hero_tree TEXT,
-     talents JSON,
-     dps_st REAL, dps_aoe REAL, dps_weighted REAL,
-     archetype TEXT,
-     discovered_at TEXT
-   );
-   CREATE TABLE factors (
-     talent TEXT, impact REAL, pct REAL
-   );
-   ```
-2. Create `results/findings.db`:
-   ```sql
-   CREATE TABLE findings (
-     id TEXT PRIMARY KEY,
-     hypothesis TEXT,
-     status TEXT, -- validated, rejected, superseded
-     impact JSON,
-     evidence JSON,
-     created_at TEXT
-   );
-   ```
-3. Utilities: `src/util/db.js` with helpers
-
-**Files:**
-
-- CREATE: `src/util/db.js`
-- MODIFY: `src/discover/build-discovery.js` → write to SQLite
-- MODIFY: `src/sim/iterate.js` → write findings to SQLite
+- [x] `src/util/db.js` — full SQLite API using Node.js 23 built-in (zero deps)
+  - builds, factors, archetypes, synergy_pairs, runs tables
+  - findings, hypotheses tables
+  - CRUD operations + query helpers
+  - JSON migration from existing builds.json and findings.json
+  - CLI: `node src/util/db.js migrate|status|top [n]`
+- [x] Migration tested: 196 builds, 34 findings, 18 factors, 13 archetypes imported
+- [x] .db files covered by existing `results/` gitignore
 
 ---
 
