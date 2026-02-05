@@ -28,6 +28,11 @@
     "iterate:status": "node src/sim/iterate.js status",
     "iterate:hypotheses": "node src/sim/iterate.js hypotheses",
     "iterate:summary": "node src/sim/iterate.js summary",
+    "iterate:synthesize": "node src/sim/iterate.js synthesize",
+    "synthesize": "node src/analyze/synthesizer.js",
+    "db": "node src/util/db.js",
+    "db:migrate": "node src/util/db.js migrate",
+    "db:status": "node src/util/db.js status",
     "discover": "node src/discover/build-discovery.js",
     "dashboard": "cat results/dashboard.md",
     "refresh": "bash scripts/refresh.sh"

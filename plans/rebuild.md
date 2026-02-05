@@ -156,22 +156,16 @@ On every session start:
 
 ---
 
-### Phase 5: Wire Synthesizer + Analysis Pipeline
+### Phase 5: Wire Synthesizer + Analysis Pipeline ✅
 
 **Goal:** Complete analysis pipeline with synthesis.
 
-**Tasks:**
+**Completed:**
 
-1. Wire `src/analyze/synthesizer.js` into iteration loop
-2. Specialist outputs → synthesis → ranked hypotheses
-3. Auto-test top hypotheses in priority order
-4. Findings auto-recorded to SQLite
-
-**Files:**
-
-- MODIFY: `src/sim/iterate.js`
-- MODIFY: `src/analyze/synthesizer.js`
-- ADD: npm script `synthesize`
+- [x] `iterate.js synthesize` command — generates from all 3 specialist sources, synthesizes by consensus
+- [x] Finding persistence — accepted iterations with >0.5% delta auto-record to SQLite
+- [x] npm scripts: `synthesize`, `iterate:synthesize`, `db`, `db:migrate`, `db:status`
+- [x] Specialist outputs feed into synthesizer: metric → resource_flow, strategic → talent, temporal → state_machine
 
 ---
 

@@ -50,6 +50,14 @@ import {
   validateMutation,
 } from "../apl/mutator.js";
 import { parse } from "../apl/parser.js";
+import {
+  synthesize as synthesizeHypotheses,
+  saveSpecialistOutput,
+} from "../analyze/synthesizer.js";
+import {
+  addFinding as dbAddFinding,
+  closeAll as dbCloseAll,
+} from "../util/db.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -1058,22 +1066,35 @@ async function cmdAccept(reason, hypothesisHint) {
   state.pendingHypotheses = generateHypotheses(workflowResults);
   state.consecutiveRejections = 0;
 
-  // Track significant findings
+  // Track significant findings (state + SQLite)
   if (comparison.multiBuild) {
     if (Math.abs(comparison.aggregate.meanWeighted) > 0.5) {
-      state.findings.push({
+      const finding = {
         iteration: iterNum,
         timestamp: new Date().toISOString(),
         hypothesis: reason,
         weightedDelta: comparison.aggregate.meanWeighted,
         multiBuild: true,
         aggregate: comparison.aggregate,
-      });
+      };
+      state.findings.push(finding);
+      try {
+        dbAddFinding({
+          insight: reason,
+          evidence: `${comparison.aggregate.meanWeighted > 0 ? "+" : ""}${comparison.aggregate.meanWeighted.toFixed(2)}% weighted (multi-build)`,
+          confidence:
+            Math.abs(comparison.aggregate.meanWeighted) > 1 ? "high" : "medium",
+          status: "validated",
+          tags: ["iteration", "accepted"],
+        });
+      } catch {
+        /* SQLite optional */
+      }
     }
   } else {
     const weighted = computeWeightedDelta(comparison.results);
     if (Math.abs(weighted.delta) > 0.5) {
-      state.findings.push({
+      const finding = {
         iteration: iterNum,
         timestamp: new Date().toISOString(),
         hypothesis: reason,
@@ -1081,7 +1102,19 @@ async function cmdAccept(reason, hypothesisHint) {
         scenarios: Object.fromEntries(
           Object.entries(comparison.results).map(([k, v]) => [k, v.deltaPct]),
         ),
-      });
+      };
+      state.findings.push(finding);
+      try {
+        dbAddFinding({
+          insight: reason,
+          evidence: `${weighted.delta > 0 ? "+" : ""}${weighted.delta.toFixed(2)}% weighted`,
+          confidence: Math.abs(weighted.delta) > 1 ? "high" : "medium",
+          status: "validated",
+          tags: ["iteration", "accepted"],
+        });
+      } catch {
+        /* SQLite optional */
+      }
     }
   }
 
@@ -1608,6 +1641,112 @@ async function cmdTheorycraft() {
   }
 }
 
+// --- Synthesis ---
+
+async function cmdSynthesize() {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  const workflowPath = join(ROOT, state.current.workflowResults);
+  if (!existsSync(workflowPath)) {
+    console.error("No workflow results found. Run init or accept first.");
+    process.exit(1);
+  }
+
+  const workflowResults = JSON.parse(readFileSync(workflowPath, "utf-8"));
+
+  // Generate from all specialist sources
+  console.log("Generating metric hypotheses...");
+  const metricHypotheses = generateHypotheses(workflowResults);
+  saveSpecialistOutput("resource_flow", {
+    hypotheses: metricHypotheses.map((h) => ({
+      ...h,
+      id: h.description,
+      hypothesis: h.description,
+      priority: h.priority || 5,
+    })),
+  });
+
+  console.log("Generating strategic hypotheses...");
+  const aplPath = state.current.aplFile;
+  const aplText = existsSync(join(ROOT, aplPath))
+    ? readFileSync(join(ROOT, aplPath), "utf-8")
+    : null;
+  if (aplText) {
+    const strategicHyps = generateStrategicHypotheses(workflowResults, aplText);
+    saveSpecialistOutput("talent", {
+      hypotheses: strategicHyps.map((h) => ({
+        ...h,
+        id: h.hypothesis || h.observation,
+        priority: h.priority || 5,
+      })),
+    });
+  }
+
+  console.log("Generating temporal hypotheses...");
+  if (aplText) {
+    const resourceFlow = analyzeResourceFlow(workflowResults, aplText);
+    const temporalHyps = generateTemporalHypotheses(resourceFlow, aplText);
+    saveSpecialistOutput("state_machine", {
+      hypotheses: temporalHyps.map((h) => ({
+        ...h,
+        id: h.hypothesis,
+        priority: h.priority || 5,
+      })),
+    });
+  }
+
+  // Synthesize all sources
+  console.log("\nSynthesizing across all specialists...");
+  const { loadSpecialistOutputs } = await import("../analyze/synthesizer.js");
+  const outputs = loadSpecialistOutputs();
+  const result = synthesizeHypotheses(outputs);
+
+  // Filter exhausted
+  const exhaustedKeys = new Set(
+    state.exhaustedHypotheses.map((h) =>
+      normalizeHypothesisKey(h.hypothesis || h.description || ""),
+    ),
+  );
+  const fresh = result.hypotheses.filter(
+    (h) =>
+      !exhaustedKeys.has(
+        normalizeHypothesisKey(h.hypothesis || h.systemicIssue || h.id || ""),
+      ),
+  );
+
+  // Map synthesized hypotheses back to iteration format
+  state.pendingHypotheses = fresh.map((h) => ({
+    description: h.systemicIssue || h.hypothesis || h.id,
+    hypothesis: h.systemicIssue || h.hypothesis || h.id,
+    priority: h.aggregatePriority || h.priority || 0,
+    consensusCount: h.consensusCount || 1,
+    specialists: h.specialists || [],
+    aplMutation: h.proposedChanges?.[0]?.aplMutation || h.aplMutation || null,
+  }));
+
+  saveState(state);
+
+  console.log(
+    `\n${fresh.length} synthesized hypotheses (${result.metadata.totalRaw} raw, ${result.conflicts.length} conflicts resolved):`,
+  );
+  console.log(`  Specialists: ${result.metadata.specialists.join(", ")}`);
+
+  for (const h of fresh.slice(0, 10)) {
+    const desc = h.systemicIssue || h.hypothesis || h.id || "unknown";
+    const consensus =
+      h.consensusCount > 1 ? ` [${h.consensusCount}x consensus]` : "";
+    console.log(`\n${consensus} ${desc}`);
+    console.log(`  Priority: ${(h.aggregatePriority || 0).toFixed(1)}`);
+    if (h.specialists?.length > 1) {
+      console.log(`  Sources: ${h.specialists.join(", ")}`);
+    }
+  }
+}
+
 // --- Checkpoint Management ---
 
 const CHECKPOINT_PATH = join(RESULTS_DIR, "checkpoint.md");
@@ -2131,6 +2270,10 @@ switch (cmd) {
     await cmdTheorycraft();
     break;
 
+  case "synthesize":
+    await cmdSynthesize();
+    break;
+
   case "checkpoint": {
     // Parse checkpoint flags
     const checkpointOpts = {};
@@ -2165,6 +2308,7 @@ Usage:
   node src/sim/iterate.js hypotheses                 List improvement hypotheses
   node src/sim/iterate.js strategic                  Generate strategic hypotheses with auto-mutations
   node src/sim/iterate.js theorycraft                Generate temporal resource flow hypotheses
+  node src/sim/iterate.js synthesize                 Synthesize hypotheses from all specialist sources
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report
