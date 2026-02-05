@@ -17,7 +17,7 @@ import {
   getHeroTrees,
   detectHeroTreeFromProfileName as detectFromProfile,
   detectHeroTreeFromBuffs as detectFromBuffs,
-} from "../config/spec-abilities.js";
+} from "../spec/vengeance.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");

@@ -1,0 +1,45 @@
+{
+  "spec": {
+    "className": "demonhunter",
+    "specName": "vengeance",
+    "specId": 581,
+    "heroSubtrees": {
+      "35": "aldrachi_reaver",
+      "124": "annihilator"
+    }
+  },
+  "simc": {
+    "dir": "/Users/tom/Documents/GitHub/simc",
+    "branch": "midnight",
+    "cppModule": "engine/class_modules/sc_demon_hunter.cpp"
+  },
+  "data": {
+    "env": "beta",
+    "raidbots": "https://www.raidbots.com/static/data"
+  },
+  "simulation": {
+    "scenarios": {
+      "st": { "name": "Patchwerk 1T", "maxTime": 300, "desiredTargets": 1 },
+      "small_aoe": {
+        "name": "Patchwerk 5T",
+        "maxTime": 75,
+        "desiredTargets": 5
+      },
+      "big_aoe": {
+        "name": "Patchwerk 10T",
+        "maxTime": 60,
+        "desiredTargets": 10
+      }
+    },
+    "scenarioWeights": { "st": 0.5, "small_aoe": 0.3, "big_aoe": 0.2 },
+    "fidelity": {
+      "quick": { "target_error": 1.0 },
+      "standard": { "target_error": 0.3 },
+      "confirm": { "target_error": 0.1 }
+    },
+    "defaults": {
+      "target_error": 0.5,
+      "iterations": 5000000
+    }
+  }
+}

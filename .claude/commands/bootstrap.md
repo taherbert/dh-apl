@@ -172,6 +172,6 @@ const SPEC_CONFIG = {
 };
 ```
 
-2. Update `src/config.js` with spec identifiers
+2. Update `config.json` with spec identifiers
 3. Run bootstrap workflow
 4. Curate generated files

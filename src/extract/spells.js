@@ -7,11 +7,8 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
 import { resolveAllDescriptions } from "./template-resolver.js";
-import {
-  BASE_SPELL_IDS,
-  SET_BONUS_SPELL_IDS,
-} from "../model/vengeance-base.js";
-import { SIMC_BIN } from "../config.js";
+import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "../spec/vengeance.js";
+import { SIMC_BIN } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");

@@ -8,7 +8,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { resolveInputDirectives } from "./profilesets.js";
-import { DATA_ENV } from "../config.js";
+import { DATA_ENV } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");

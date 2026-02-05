@@ -5,7 +5,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { HERO_SUBTREES } from "../config.js";
+import { HERO_SUBTREES } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");

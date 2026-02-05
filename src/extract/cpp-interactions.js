@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SIMC_DH_CPP } from "../config.js";
+import { SIMC_DH_CPP } from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "../..");

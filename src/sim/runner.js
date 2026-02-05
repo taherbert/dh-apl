@@ -10,7 +10,12 @@ import { cpus } from "node:os";
 import { join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { SIMC_BIN, DATA_ENV } from "../config.js";
+import {
+  SIMC_BIN,
+  DATA_ENV,
+  SCENARIOS,
+  SIM_DEFAULTS as _SIM_DEFAULTS,
+} from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -18,29 +23,9 @@ const SIMC = SIMC_BIN;
 const RESULTS_DIR = join(ROOT, "results");
 const TOTAL_CORES = cpus().length;
 
-export const SIM_DEFAULTS = {
-  threads: TOTAL_CORES,
-  target_error: 0.5,
-  iterations: 5000000, // cap — target_error stops early
-};
-
-export const SCENARIOS = {
-  st: {
-    name: "Patchwerk 1T",
-    maxTime: 300,
-    desiredTargets: 1,
-  },
-  small_aoe: {
-    name: "Patchwerk 5T",
-    maxTime: 75,
-    desiredTargets: 5,
-  },
-  big_aoe: {
-    name: "Patchwerk 10T",
-    maxTime: 60,
-    desiredTargets: 10,
-  },
-};
+// Re-export from config, adding runtime-only `threads` to defaults
+export { SCENARIOS };
+export const SIM_DEFAULTS = { threads: TOTAL_CORES, ..._SIM_DEFAULTS };
 
 function buildOverrides(scenario, extraOverrides = {}) {
   const config = SCENARIOS[scenario];

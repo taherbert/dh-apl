@@ -3,10 +3,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  BASE_SPELL_IDS,
-  SET_BONUS_SPELL_IDS,
-} from "../model/vengeance-base.js";
+import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "../spec/vengeance.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");

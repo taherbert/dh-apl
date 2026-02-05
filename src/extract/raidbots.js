@@ -9,7 +9,7 @@ import {
   SPEC_ID,
   HERO_SUBTREES,
   SIMC_DIR,
-} from "../config.js";
+} from "../engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = join(__dirname, "..", "..", "data");
@@ -154,7 +154,7 @@ async function fetchRaidbotsTalents() {
     const treeName = HERO_SUBTREES[node.subTreeId];
     if (!treeName) {
       throw new Error(
-        `Unknown hero subtree ID: ${node.subTreeId} for node "${node.name}". Update HERO_SUBTREES in config.js.`,
+        `Unknown hero subtree ID: ${node.subTreeId} for node "${node.name}". Update heroSubtrees in config.json.`,
       );
     }
     (output.heroSubtrees[treeName] ||= []).push(node);

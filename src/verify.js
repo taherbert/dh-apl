@@ -6,8 +6,8 @@ import { readFileSync, existsSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "./model/vengeance-base.js";
-import { SIMC_DIR, SIMC_DH_CPP, HERO_SUBTREES } from "./config.js";
+import { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } from "./spec/vengeance.js";
+import { SIMC_DIR, SIMC_DH_CPP, HERO_SUBTREES } from "./engine/startup.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
