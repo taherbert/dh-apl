@@ -31,6 +31,10 @@ function validate(config) {
     ["simc.dir", config.simc?.dir],
     ["simc.branch", config.simc?.branch],
     ["data.env", config.data?.env],
+    ["data.raidbots", config.data?.raidbots],
+    ["simulation.scenarios", config.simulation?.scenarios],
+    ["simulation.scenarioWeights", config.simulation?.scenarioWeights],
+    ["simulation.fidelity", config.simulation?.fidelity],
   ];
   for (const [path, value] of required) {
     if (value === undefined || value === null || value === "") {
@@ -70,11 +74,15 @@ export const RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
 
 export const SPEC_ID = config.spec.specId;
 
-// HERO_SUBTREES: keys are numbers in the original, config.json stores string keys
+// HERO_SUBTREES: numeric subtree ID → Title Case name.
+// config.json stores snake_case; consumers expect Title Case (e.g., "Aldrachi Reaver").
+function toTitleCase(s) {
+  return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
 export const HERO_SUBTREES = Object.fromEntries(
   Object.entries(config.spec.heroSubtrees || {}).map(([k, v]) => [
     Number(k),
-    v,
+    toTitleCase(v),
   ]),
 );
 

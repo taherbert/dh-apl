@@ -54,10 +54,7 @@ import {
   synthesize as synthesizeHypotheses,
   saveSpecialistOutput,
 } from "../analyze/synthesizer.js";
-import {
-  addFinding as dbAddFinding,
-  closeAll as dbCloseAll,
-} from "../util/db.js";
+import { addFinding as dbAddFinding } from "../util/db.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..", "..");
@@ -1671,7 +1668,7 @@ async function cmdSynthesize() {
   });
 
   console.log("Generating strategic hypotheses...");
-  const aplPath = state.current.aplFile;
+  const aplPath = state.current.apl;
   const aplText = existsSync(join(ROOT, aplPath))
     ? readFileSync(join(ROOT, aplPath), "utf-8")
     : null;
@@ -1688,7 +1685,15 @@ async function cmdSynthesize() {
 
   console.log("Generating temporal hypotheses...");
   if (aplText) {
-    const resourceFlow = analyzeResourceFlow(workflowResults, aplText);
+    const spellDataPath = join(ROOT, "data", "spells.json");
+    const spellData = existsSync(spellDataPath)
+      ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
+      : [];
+    const resourceFlow = analyzeResourceFlow(
+      spellData,
+      aplText,
+      workflowResults,
+    );
     const temporalHyps = generateTemporalHypotheses(resourceFlow, aplText);
     saveSpecialistOutput("state_machine", {
       hypotheses: temporalHyps.map((h) => ({

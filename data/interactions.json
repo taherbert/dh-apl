@@ -17787,6 +17787,95 @@
     },
     {
       "source": {
+        "id": 1253817,
+        "name": "Otherworldly Focus",
+        "isTalent": true,
+        "tree": "hero",
+        "heroSpec": "Annihilator"
+      },
+      "target": {
+        "id": null,
+        "name": "otherworldly_focus_benefit_t"
+      },
+      "type": "direct_damage_modifier",
+      "mechanism": "composite_override",
+      "discoveryMethod": "cpp_effects",
+      "confidence": "high",
+      "magnitude": {
+        "value": 35,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "None"
+      ],
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 35,
+          "scaledValue": 35,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 5,
+          "scaledValue": 5,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 343207,
+        "name": "Focused Cleave",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": null,
+        "name": "soul_cleave_t"
+      },
+      "type": "direct_damage_modifier",
+      "mechanism": "composite_override",
+      "discoveryMethod": "cpp_effects",
+      "confidence": "high",
+      "magnitude": {
+        "value": 50,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 50,
+          "scaledValue": 50,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
         "id": 389763,
         "name": "Master of the Glaive",
         "isTalent": true,
@@ -18576,7 +18665,7 @@
     "Final Hour": "cpp_only",
     "Meteoric Fall": "has_interactions",
     "Dark Matter": "has_interactions",
-    "Otherworldly Focus": "cpp_only",
+    "Otherworldly Focus": "has_interactions",
     "World Killer": "has_interactions"
   },
   "bySpell": {
@@ -45653,6 +45742,22 @@
             "offensive"
           ],
           "mechanism": "on_impact"
+        },
+        {
+          "spell": "soul_cleave_t",
+          "spellId": null,
+          "type": "direct_damage_modifier",
+          "discoveryMethod": "cpp_effects",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "mechanism": "composite_override"
         }
       ]
     },
@@ -49485,6 +49590,32 @@
             "procChance": 100
           },
           "mechanism": "on_impact"
+        }
+      ]
+    },
+    "1253817": {
+      "name": "Otherworldly Focus",
+      "tree": "hero",
+      "heroSpec": "Annihilator",
+      "targets": [
+        {
+          "spell": "otherworldly_focus_benefit_t",
+          "spellId": null,
+          "type": "direct_damage_modifier",
+          "discoveryMethod": "cpp_effects",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
+          ],
+          "mechanism": "composite_override"
         }
       ]
     },
