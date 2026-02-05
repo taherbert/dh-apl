@@ -10,6 +10,7 @@
 //   reject "reason"              Log rejection and move on
 //   hypotheses                   Generate improvement hypotheses
 //   summary                      Generate iteration report
+//   checkpoint                   Save checkpoint for session resume
 
 import {
   readFileSync,
@@ -1607,6 +1608,243 @@ async function cmdTheorycraft() {
   }
 }
 
+// --- Checkpoint Management ---
+
+const CHECKPOINT_PATH = join(RESULTS_DIR, "checkpoint.md");
+
+function cmdCheckpoint(options = {}) {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  const {
+    currentArchetype = null,
+    currentBuild = null,
+    currentHypothesis = null,
+    problemStatement = null,
+    rootTheory = null,
+    notes = "",
+  } = options;
+
+  const lines = [];
+  lines.push("# Iteration Checkpoint\n");
+  lines.push(`Saved: ${new Date().toISOString()}\n`);
+
+  // Problem statement section (for context when resuming)
+  if (problemStatement || rootTheory) {
+    lines.push("## Problem Statement\n");
+    if (problemStatement) {
+      lines.push(`- **Focus:** ${problemStatement}`);
+    }
+    if (rootTheory) {
+      lines.push(`- **Root Theory:** ${rootTheory}`);
+    }
+    lines.push("");
+  }
+
+  // Session summary
+  const iterCount = state.iterations.length;
+  const accepted = state.iterations.filter(
+    (i) => i.decision === "accepted",
+  ).length;
+  const rejected = iterCount - accepted;
+
+  lines.push("## Session Summary\n");
+  lines.push(
+    `- Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
+  );
+  lines.push(`- Consecutive rejections: ${state.consecutiveRejections || 0}`);
+  lines.push(`- Pending hypotheses: ${state.pendingHypotheses.length}`);
+  lines.push(`- Exhausted hypotheses: ${state.exhaustedHypotheses.length}`);
+  lines.push("");
+
+  // Current position in deep iteration loop
+  lines.push("## Current Position\n");
+  if (currentArchetype) {
+    lines.push(`- **Archetype:** ${currentArchetype}`);
+  }
+  if (currentBuild) {
+    lines.push(`- **Build:** ${currentBuild}`);
+  }
+  if (currentHypothesis) {
+    lines.push(`- **Hypothesis:** ${currentHypothesis}`);
+  }
+  if (!currentArchetype && !currentBuild && !currentHypothesis) {
+    lines.push(
+      "- No deep iteration position recorded (use --archetype, --build, --hypothesis flags)",
+    );
+  }
+  lines.push("");
+
+  // DPS progress
+  const origDps = getAggregateDps(state.originalBaseline);
+  const currDps = getAggregateDps(state.current);
+  lines.push(
+    `## DPS Progress${state.multiBuild ? " (mean across builds)" : ""}\n`,
+  );
+  lines.push("| Scenario | Baseline | Current | Delta |");
+  lines.push("|----------|----------|---------|-------|");
+  for (const key of SCENARIO_KEYS) {
+    const label = SCENARIO_LABELS[key];
+    const orig = origDps[key];
+    const curr = currDps[key];
+    if (orig === undefined) continue;
+    const delta =
+      curr !== undefined ? signedPct(((curr - orig) / orig) * 100, 2) : "—";
+    lines.push(
+      `| ${label} | ${(orig || 0).toLocaleString()} | ${(curr || 0).toLocaleString()} | ${delta} |`,
+    );
+  }
+  lines.push("");
+
+  // Key findings this session
+  const sessionFindings = (state.findings || []).slice(-10);
+  if (sessionFindings.length > 0) {
+    lines.push("## Key Findings This Session\n");
+    for (const f of sessionFindings) {
+      lines.push(
+        `- **#${f.iteration}** (${signedPct(f.weightedDelta, 2)}): ${f.hypothesis}`,
+      );
+    }
+    lines.push("");
+  }
+
+  // Remaining work
+  lines.push("## Remaining Work\n");
+
+  // Top pending hypotheses
+  if (state.pendingHypotheses.length > 0) {
+    lines.push("### Top Pending Hypotheses\n");
+    for (const h of state.pendingHypotheses.slice(0, 5)) {
+      const desc =
+        h.description || h.hypothesis || h.strategicGoal || "unknown";
+      lines.push(
+        `1. [${h.category || "unknown"}] ${desc.slice(0, 80)}${desc.length > 80 ? "…" : ""}`,
+      );
+      if (h.aplMutation) {
+        lines.push(
+          `   - Has auto-mutation: ${describeMutation(h.aplMutation).slice(0, 60)}`,
+        );
+      }
+    }
+    if (state.pendingHypotheses.length > 5) {
+      lines.push(
+        `\n...and ${state.pendingHypotheses.length - 5} more hypotheses`,
+      );
+    }
+    lines.push("");
+  }
+
+  // Recent iterations for context
+  if (state.iterations.length > 0) {
+    lines.push("### Recent Iterations\n");
+    lines.push("| # | Decision | Hypothesis | Weighted |");
+    lines.push("|---|----------|------------|----------|");
+    for (const iter of state.iterations.slice(-5)) {
+      const wDelta = iterWeightedDelta(iter);
+      const hyp =
+        (iter.hypothesis || "").slice(0, 40) +
+        (iter.hypothesis?.length > 40 ? "…" : "");
+      lines.push(
+        `| ${iter.id} | ${iter.decision} | ${hyp} | ${signedPct(wDelta || 0, 2)} |`,
+      );
+    }
+    lines.push("");
+  }
+
+  // User notes
+  if (notes) {
+    lines.push("## Session Notes\n");
+    lines.push(notes);
+    lines.push("");
+  }
+
+  // Resume instructions
+  lines.push("## Resume Instructions\n");
+  lines.push("To continue from this checkpoint:");
+  lines.push("1. Run `node src/sim/iterate.js status` to verify state");
+  lines.push(
+    "2. If specialist outputs > 24h old, re-run `strategic` or `theorycraft`",
+  );
+  lines.push("3. Continue from the position recorded above");
+  lines.push("");
+
+  const checkpointContent = lines.join("\n");
+  writeFileSync(CHECKPOINT_PATH, checkpointContent);
+
+  // Also save checkpoint metadata to state for programmatic resume
+  state.checkpoint = {
+    timestamp: new Date().toISOString(),
+    archetype: currentArchetype,
+    build: currentBuild,
+    hypothesis: currentHypothesis,
+    notes,
+  };
+  saveState(state);
+
+  console.log("Checkpoint saved to results/checkpoint.md");
+  console.log(`\nSession summary:`);
+  console.log(
+    `  Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
+  );
+  console.log(`  Pending hypotheses: ${state.pendingHypotheses.length}`);
+  if (currentArchetype || currentBuild) {
+    console.log(
+      `  Position: ${currentArchetype || "—"} / ${currentBuild || "—"}`,
+    );
+  }
+}
+
+function loadCheckpoint() {
+  const state = loadState();
+  if (!state?.checkpoint) return null;
+  return state.checkpoint;
+}
+
+function hasRecentCheckpoint(maxAgeHours = 24) {
+  const checkpoint = loadCheckpoint();
+  if (!checkpoint) return false;
+
+  const age = Date.now() - new Date(checkpoint.timestamp).getTime();
+  const maxAgeMs = maxAgeHours * 60 * 60 * 1000;
+  return age < maxAgeMs;
+}
+
+// Check if specialist outputs are fresh enough to reuse
+function areSpecialistOutputsFresh(maxAgeHours = 24) {
+  const specialistFiles = [
+    "analysis_spell_data.json",
+    "analysis_talent.json",
+    "analysis_resource_flow.json",
+    "analysis_state_machine.json",
+  ];
+
+  const maxAgeMs = maxAgeHours * 60 * 60 * 1000;
+  const now = Date.now();
+
+  for (const filename of specialistFiles) {
+    const filepath = join(RESULTS_DIR, filename);
+    if (!existsSync(filepath)) return false;
+
+    try {
+      const content = JSON.parse(readFileSync(filepath, "utf-8"));
+      if (!content.timestamp) return false;
+
+      const age = now - new Date(content.timestamp).getTime();
+      if (age > maxAgeMs) return false;
+    } catch {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Export checkpoint functions for use by orchestrator
+export { loadCheckpoint, hasRecentCheckpoint, areSpecialistOutputsFresh };
+
 // --- Escape Strategies ---
 
 function suggestEscapeStrategies(state) {
@@ -1893,6 +2131,28 @@ switch (cmd) {
     await cmdTheorycraft();
     break;
 
+  case "checkpoint": {
+    // Parse checkpoint flags
+    const checkpointOpts = {};
+    for (let i = 0; i < rawArgs.length; i++) {
+      if (rawArgs[i] === "--archetype" && rawArgs[i + 1]) {
+        checkpointOpts.currentArchetype = rawArgs[++i];
+      } else if (rawArgs[i] === "--build" && rawArgs[i + 1]) {
+        checkpointOpts.currentBuild = rawArgs[++i];
+      } else if (rawArgs[i] === "--hypothesis" && rawArgs[i + 1]) {
+        checkpointOpts.currentHypothesis = rawArgs[++i];
+      } else if (rawArgs[i] === "--problem" && rawArgs[i + 1]) {
+        checkpointOpts.problemStatement = rawArgs[++i];
+      } else if (rawArgs[i] === "--theory" && rawArgs[i + 1]) {
+        checkpointOpts.rootTheory = rawArgs[++i];
+      } else if (rawArgs[i] === "--notes" && rawArgs[i + 1]) {
+        checkpointOpts.notes = rawArgs[++i];
+      }
+    }
+    cmdCheckpoint(checkpointOpts);
+    break;
+  }
+
   default:
     console.log(`APL Iteration Manager
 
@@ -1907,6 +2167,7 @@ Usage:
   node src/sim/iterate.js theorycraft                Generate temporal resource flow hypotheses
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
-  node src/sim/iterate.js summary                    Generate iteration report`);
+  node src/sim/iterate.js summary                    Generate iteration report
+  node src/sim/iterate.js checkpoint                 Save checkpoint for session resume`);
     break;
 }

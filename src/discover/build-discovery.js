@@ -566,7 +566,7 @@ function buildOutput(
     weights: WEIGHTS,
     factorImpacts: factorImpacts.slice(0, 20),
     synergyPairs: synergyPairs.slice(0, 10),
-    archetypes,
+    discoveredArchetypes: archetypes,
     allBuilds: builds.map((b) => ({
       name: b.name,
       hash: b.hash,
@@ -586,7 +586,7 @@ function printSummary(output) {
 
   console.log(`\nFidelity: ${output.fidelity}`);
   console.log(`Builds tested: ${output.allBuilds.length}`);
-  console.log(`Archetypes found: ${output.archetypes.length}`);
+  console.log(`Archetypes found: ${output.discoveredArchetypes.length}`);
 
   // Top factor impacts
   if (output.factorImpacts.length > 0) {
@@ -611,7 +611,7 @@ function printSummary(output) {
   }
 
   // Archetypes
-  for (const arch of output.archetypes) {
+  for (const arch of output.discoveredArchetypes) {
     console.log(`\n--- ${arch.name} (${arch.heroTree}) ---`);
     console.log(
       `  Best: ${arch.bestBuild.name} — ${arch.bestBuild.weighted.toLocaleString()} weighted DPS`,

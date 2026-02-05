@@ -289,7 +289,7 @@
       "pct": -12.7
     }
   ],
-  "archetypes": [
+  "discoveredArchetypes": [
     {
       "name": "Burning Alive + Down in Flames + Charred Flesh",
       "heroTree": "aldrachi_reaver",

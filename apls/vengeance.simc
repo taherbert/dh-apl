@@ -65,12 +65,14 @@ actions.ar+=/vengeful_retreat,if=talent.unhindered_assault
 actions.ar+=/throw_glaive
 
 # === AR Empowered — Art of the Glaive cycle spending ===
-# Cast Reaver's Glaive when available — grants both Glaive Flurry + Rending Strike
+# Cast Reaver's Glaive when available — grants both Glaive Flurry + Rending Strike simultaneously
 actions.ar_empowered=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up
-# Empowered Soul Cleave — spend Glaive Flurry buff
-actions.ar_empowered+=/soul_cleave,if=!buff.rending_strike.up&buff.glaive_flurry.up
-# Empowered Fracture — spend Rending Strike buff (generates empowered frags)
-actions.ar_empowered+=/fracture,if=buff.glaive_flurry.up
+# DEFAULT: Fracture first when both buffs active — applies 2x Reaver's Mark (14% damage amp, 20s)
+actions.ar_empowered+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up
+# Then Soul Cleave after first ability consumed — triggers 12 Glaive Flurry strikes
+actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
+# Consume second ability after 700ms delay (handles Fracture if SC was first)
+actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
 
 # === AR Cooldowns — Brand first enables Fiery Demise window ===
 # Down in Flames: 2 charges, 48s CD — use 2nd charge aggressively for higher FD uptime
@@ -143,4 +145,5 @@ actions.anni_voidfall+=/spirit_bomb,if=buff.voidfall_spending.stack=3
 # Soul Cleave to consume spending stacks (each triggers meteor)
 actions.anni_voidfall+=/soul_cleave,if=buff.voidfall_spending.up&buff.voidfall_spending.stack<3
 # Fracture at max building stacks — triggers transition to spending phase
-actions.anni_voidfall+=/fracture,if=buff.voidfall_building.stack=2
+# Pool fury>=105 before transition: spending phase requires 3 Soul Cleaves (3×35 fury) for full meteor chain
+actions.anni_voidfall+=/fracture,if=buff.voidfall_building.stack=2&fury>=105

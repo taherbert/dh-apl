@@ -198,7 +198,8 @@ function loadBuildsJson() {
 
 export function loadDiscoveredArchetypes() {
   const data = loadBuildsJson();
-  return data?.archetypes || null;
+  // Support both old field name (archetypes) and new (discoveredArchetypes)
+  return data?.discoveredArchetypes || data?.archetypes || null;
 }
 
 export function getDiscoveredBuilds() {
@@ -222,6 +223,57 @@ export function getBestBuildHash(heroTree) {
   const normalizedTree = heroTree.toLowerCase().replace(/\s+/g, "_");
   const match = archetypes.find((a) => a.heroTree === normalizedTree);
   return match?.bestBuild?.hash || null;
+}
+
+// --- Knowledge system helpers ---
+
+const FINDINGS_PATH = join(RESULTS_DIR, "findings.json");
+const MECHANICS_PATH = join(DATA_DIR, "mechanics.json");
+const HYPOTHESES_PATH = join(RESULTS_DIR, "hypotheses.json");
+
+// Load validated findings only
+export function getValidatedFindings() {
+  if (!existsSync(FINDINGS_PATH)) return [];
+  try {
+    const findings = JSON.parse(readFileSync(FINDINGS_PATH, "utf8"));
+    return findings.filter((f) => f.status === "validated");
+  } catch {
+    return [];
+  }
+}
+
+// Load mechanics for a topic
+export function getMechanics(topic) {
+  if (!existsSync(MECHANICS_PATH)) return null;
+  try {
+    const mechanics = JSON.parse(readFileSync(MECHANICS_PATH, "utf8"));
+    return mechanics.mechanics?.[topic] || null;
+  } catch {
+    return null;
+  }
+}
+
+// Check if hypothesis already tested
+export function isHypothesisTested(id) {
+  if (!existsSync(HYPOTHESES_PATH)) return false;
+  try {
+    const hypotheses = JSON.parse(readFileSync(HYPOTHESES_PATH, "utf8"));
+    const h = hypotheses.hypotheses?.find((h) => h.id === id);
+    return h?.tested ?? false;
+  } catch {
+    return false;
+  }
+}
+
+// Load all untested hypotheses
+export function getUntestedHypotheses() {
+  if (!existsSync(HYPOTHESES_PATH)) return [];
+  try {
+    const hypotheses = JSON.parse(readFileSync(HYPOTHESES_PATH, "utf8"));
+    return (hypotheses.hypotheses || []).filter((h) => !h.tested);
+  } catch {
+    return [];
+  }
 }
 
 // --- CLI entry point ---
