@@ -25,7 +25,9 @@ import { join, dirname, basename, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
-import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
+import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
+import { loadRoster } from "./build-roster.js";
+import { generateMultiActorContent } from "./multi-actor.js";
 import {
   generateProfileset,
   runProfileset,
@@ -66,7 +68,8 @@ const FIDELITY_TIERS = {
   confirm: { target_error: 0.1 },
 };
 
-const STATE_VERSION = 2;
+const STATE_VERSION = 3;
+const ROSTER_PATH = join(RESULTS_DIR, "build-roster.json");
 
 // --- State Management ---
 
@@ -124,7 +127,13 @@ function migrateState(state) {
     if (state.current?.dps) {
       state.current.dps = migrateDps(state.current.dps);
     }
-    state.version = STATE_VERSION;
+    state.version = 2;
+  }
+
+  // v2 → v3: multi-build support (backward compat: single-build states just get multiBuild: false)
+  if (state.version === 2) {
+    state.multiBuild = false;
+    state.version = 3;
   }
 
   // Ensure new fields exist on old states
@@ -482,6 +491,199 @@ function printComparison(results, tier) {
   );
 }
 
+// --- Multi-Build Comparison ---
+
+// Run multi-actor sims for an APL file against the roster.
+// Returns { builds: { "<buildId>": { heroTree, dps: {st, small_aoe, big_aoe} } } }
+async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
+  const totalCores = cpus().length;
+  const threadsPerSim = Math.max(
+    1,
+    Math.floor(totalCores / SCENARIO_KEYS.length),
+  );
+
+  const content = generateMultiActorContent(roster, aplPath);
+
+  const scenarioResults = await Promise.all(
+    SCENARIO_KEYS.map(async (scenario) => {
+      const actorDps = await runMultiActorAsync(
+        content,
+        scenario,
+        "multibuild",
+        {
+          simOverrides: { ...tierConfig, threads: threadsPerSim },
+        },
+      );
+      return [scenario, actorDps];
+    }),
+  );
+
+  // Combine into per-build results
+  const builds = {};
+  for (const build of roster.builds) {
+    builds[build.id] = {
+      heroTree: build.heroTree,
+      archetype: build.archetype,
+      dps: {},
+    };
+    for (const [scenario, actorDps] of scenarioResults) {
+      const actorResult = actorDps.get(build.id);
+      builds[build.id].dps[scenario] = actorResult ? actorResult.dps : 0;
+    }
+  }
+
+  return { builds };
+}
+
+// Run multi-build comparison: baseline APL + candidate APL against all roster builds.
+// Returns per-build deltas + aggregate metrics.
+async function runMultiBuildComparison(
+  candidatePath,
+  roster,
+  tier = "standard",
+) {
+  const tierConfig = FIDELITY_TIERS[tier] || FIDELITY_TIERS.standard;
+  const totalCores = cpus().length;
+  const threadsPerSim = Math.max(
+    1,
+    Math.floor(totalCores / (SCENARIO_KEYS.length * 2)),
+  );
+
+  const baseContent = generateMultiActorContent(roster, CURRENT_APL);
+  const candidateContent = generateMultiActorContent(roster, candidatePath);
+
+  // Run all 6 sims (3 scenarios × 2 APLs) in parallel
+  const allPromises = [];
+  for (const scenario of SCENARIO_KEYS) {
+    allPromises.push(
+      runMultiActorAsync(baseContent, scenario, "mb_current", {
+        simOverrides: { ...tierConfig, threads: threadsPerSim },
+      }).then((r) => ({ scenario, type: "current", results: r })),
+    );
+    allPromises.push(
+      runMultiActorAsync(candidateContent, scenario, "mb_candidate", {
+        simOverrides: { ...tierConfig, threads: threadsPerSim },
+      }).then((r) => ({ scenario, type: "candidate", results: r })),
+    );
+  }
+
+  const allResults = await Promise.all(allPromises);
+
+  // Group by scenario and type
+  const byScenario = {};
+  for (const r of allResults) {
+    if (!byScenario[r.scenario]) byScenario[r.scenario] = {};
+    byScenario[r.scenario][r.type] = r.results;
+  }
+
+  // Compute per-build, per-scenario deltas
+  const buildResults = {};
+  for (const build of roster.builds) {
+    buildResults[build.id] = {
+      heroTree: build.heroTree,
+      archetype: build.archetype,
+      scenarios: {},
+    };
+    for (const scenario of SCENARIO_KEYS) {
+      const current = byScenario[scenario]?.current?.get(build.id)?.dps || 0;
+      const candidate =
+        byScenario[scenario]?.candidate?.get(build.id)?.dps || 0;
+      const delta = candidate - current;
+      const deltaPct = current > 0 ? (delta / current) * 100 : 0;
+      buildResults[build.id].scenarios[scenario] = {
+        current: Math.round(current),
+        candidate: Math.round(candidate),
+        delta: Math.round(delta),
+        deltaPct: +deltaPct.toFixed(3),
+      };
+    }
+  }
+
+  // Compute weighted delta per build
+  for (const [buildId, br] of Object.entries(buildResults)) {
+    let weighted = 0;
+    for (const scenario of SCENARIO_KEYS) {
+      weighted +=
+        (br.scenarios[scenario]?.deltaPct || 0) * SCENARIO_WEIGHTS[scenario];
+    }
+    br.weightedDelta = +weighted.toFixed(3);
+  }
+
+  // Aggregate metrics
+  const buildEntries = Object.values(buildResults);
+  const meanWeighted =
+    buildEntries.reduce((sum, b) => sum + b.weightedDelta, 0) /
+    buildEntries.length;
+  const worstWeighted = Math.min(...buildEntries.map((b) => b.weightedDelta));
+
+  const arBuilds = buildEntries.filter((b) => b.heroTree === "aldrachi_reaver");
+  const anniBuilds = buildEntries.filter((b) => b.heroTree === "annihilator");
+  const arAvg = arBuilds.length
+    ? arBuilds.reduce((s, b) => s + b.weightedDelta, 0) / arBuilds.length
+    : 0;
+  const anniAvg = anniBuilds.length
+    ? anniBuilds.reduce((s, b) => s + b.weightedDelta, 0) / anniBuilds.length
+    : 0;
+
+  const comparison = {
+    multiBuild: true,
+    tier,
+    candidatePath: resolve(candidatePath),
+    buildResults,
+    aggregate: {
+      meanWeighted: +meanWeighted.toFixed(3),
+      worstWeighted: +worstWeighted.toFixed(3),
+      arAvg: +arAvg.toFixed(3),
+      anniAvg: +anniAvg.toFixed(3),
+    },
+    timestamp: new Date().toISOString(),
+  };
+
+  // Save comparison
+  const comparisonPath = join(RESULTS_DIR, "comparison_latest.json");
+  writeFileSync(comparisonPath, JSON.stringify(comparison, null, 2));
+
+  return comparison;
+}
+
+function printMultiBuildComparison(comparison) {
+  const { buildResults, aggregate, tier } = comparison;
+  const tierLabel = `${tier}, target_error=${FIDELITY_TIERS[tier]?.target_error ?? "?"}`;
+
+  console.log(`\nMulti-Build Comparison (${tierLabel}):`);
+  console.log(
+    `${"Build".padEnd(25)} ${"Hero".padEnd(6)} ${"1T".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(9)}`,
+  );
+  console.log("-".repeat(67));
+
+  for (const [buildId, br] of Object.entries(buildResults)) {
+    const hero = br.heroTree === "aldrachi_reaver" ? "AR" : "Anni";
+    const cols = SCENARIO_KEYS.map((s) => {
+      const d = br.scenarios[s]?.deltaPct || 0;
+      return (d >= 0 ? "+" : "") + d.toFixed(2) + "%";
+    });
+    const ws = br.weightedDelta >= 0 ? "+" : "";
+    console.log(
+      `${buildId.padEnd(25)} ${hero.padEnd(6)} ${cols[0].padStart(8)} ${cols[1].padStart(8)} ${cols[2].padStart(8)} ${(ws + br.weightedDelta.toFixed(2) + "%").padStart(9)}`,
+    );
+  }
+
+  console.log("-".repeat(67));
+  const ms = aggregate.meanWeighted >= 0 ? "+" : "";
+  const ws = aggregate.worstWeighted >= 0 ? "+" : "";
+  const as = aggregate.arAvg >= 0 ? "+" : "";
+  const ns = aggregate.anniAvg >= 0 ? "+" : "";
+  console.log(
+    `Mean: ${ms}${aggregate.meanWeighted.toFixed(3)}%  |  Worst: ${ws}${aggregate.worstWeighted.toFixed(3)}%  |  AR avg: ${as}${aggregate.arAvg.toFixed(3)}%  Anni avg: ${ns}${aggregate.anniAvg.toFixed(3)}%`,
+  );
+
+  // Accept criteria check
+  const passAccept = aggregate.meanWeighted > 0 && aggregate.worstWeighted > -1;
+  console.log(
+    `\nAccept criteria: mean>0 ${aggregate.meanWeighted > 0 ? "PASS" : "FAIL"}, worst>-1% ${aggregate.worstWeighted > -1 ? "PASS" : "FAIL"} → ${passAccept ? "RECOMMEND ACCEPT" : "RECOMMEND REJECT"}`,
+  );
+}
+
 // --- Dashboard Helpers ---
 
 function progressBar(fraction, width = 20) {
@@ -514,52 +716,129 @@ async function cmdInit(aplPath) {
   mkdirSync(dirname(CURRENT_APL), { recursive: true });
   copyFileSync(resolvedPath, CURRENT_APL);
 
-  console.log("Running baseline workflow across all scenarios...");
-  const workflowResults = await runWorkflow(CURRENT_APL);
+  // Check for multi-build roster
+  const roster = loadRoster();
+  const multiBuild = roster && roster.builds.length > 0;
 
-  const workflowPath = join(RESULTS_DIR, "workflow_current.json");
-  writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
+  if (multiBuild) {
+    console.log(
+      `Multi-build mode: ${roster.builds.length} builds in roster (${roster.tier} tier)`,
+    );
+    console.log("Running multi-actor baseline across all scenarios...");
 
-  const dps = {};
-  for (const s of workflowResults.scenarios.filter((s) => !s.error)) {
-    dps[s.scenario] = s.dps;
+    const tierConfig = FIDELITY_TIERS.standard;
+    const baseline = await runMultiBuildBaseline(
+      CURRENT_APL,
+      roster,
+      tierConfig,
+    );
+
+    // Also run single-actor workflow for hypothesis generation
+    console.log("Running single-actor workflow for hypothesis generation...");
+    const workflowResults = await runWorkflow(CURRENT_APL);
+    const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+    writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
+
+    const hypotheses = generateHypotheses(workflowResults);
+
+    const state = {
+      version: STATE_VERSION,
+      startedAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+      multiBuild: true,
+      roster: {
+        path: "results/build-roster.json",
+        tier: roster.tier,
+        buildCount: roster.builds.length,
+      },
+      originalBaseline: {
+        apl: basename(aplPath),
+        builds: baseline.builds,
+      },
+      current: {
+        apl: "apls/current.simc",
+        builds: baseline.builds,
+        workflowResults: "results/workflow_current.json",
+      },
+      iterations: [],
+      pendingHypotheses: hypotheses,
+      exhaustedHypotheses: [],
+      consecutiveRejections: 0,
+      findings: [],
+    };
+
+    saveState(state);
+    writeDashboard(state);
+    writeChangelog(state);
+    writeFindings(state);
+
+    console.log("\nBaseline DPS (per build):");
+    for (const [buildId, b] of Object.entries(baseline.builds)) {
+      const hero = b.heroTree === "aldrachi_reaver" ? "AR" : "Anni";
+      const dpsStr = SCENARIO_KEYS.map(
+        (s) =>
+          `${SCENARIO_LABELS[s]}:${Math.round(b.dps[s] || 0).toLocaleString()}`,
+      ).join("  ");
+      console.log(`  ${buildId.padEnd(25)} [${hero}]  ${dpsStr}`);
+    }
+
+    console.log(`\nGenerated ${hypotheses.length} hypotheses.`);
+    printHypotheses(hypotheses.slice(0, 5));
+    console.log(
+      "\nMulti-build iteration state initialized. Ready for /iterate-apl.",
+    );
+  } else {
+    // Single-build mode (original behavior)
+    console.log("Running baseline workflow across all scenarios...");
+    const workflowResults = await runWorkflow(CURRENT_APL);
+
+    const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+    writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
+
+    const dps = {};
+    for (const s of workflowResults.scenarios.filter((s) => !s.error)) {
+      dps[s.scenario] = s.dps;
+    }
+
+    const hypotheses = generateHypotheses(workflowResults);
+
+    const state = {
+      version: STATE_VERSION,
+      startedAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+      multiBuild: false,
+      originalBaseline: {
+        apl: basename(aplPath),
+        dps,
+      },
+      current: {
+        apl: "apls/current.simc",
+        dps,
+        workflowResults: "results/workflow_current.json",
+      },
+      iterations: [],
+      pendingHypotheses: hypotheses,
+      exhaustedHypotheses: [],
+      consecutiveRejections: 0,
+      findings: [],
+    };
+
+    saveState(state);
+    writeDashboard(state);
+    writeChangelog(state);
+    writeFindings(state);
+
+    console.log("\nBaseline DPS:");
+    for (const [key, value] of Object.entries(dps)) {
+      console.log(
+        `  ${SCENARIO_LABELS[key] || key}: ${value.toLocaleString()}`,
+      );
+    }
+
+    console.log(`\nGenerated ${hypotheses.length} hypotheses.`);
+    printHypotheses(hypotheses.slice(0, 5));
+    console.log("\nIteration state initialized. Ready for /iterate-apl.");
   }
-
-  const hypotheses = generateHypotheses(workflowResults);
-
-  const state = {
-    version: STATE_VERSION,
-    startedAt: new Date().toISOString(),
-    lastUpdated: new Date().toISOString(),
-    originalBaseline: {
-      apl: basename(aplPath),
-      dps,
-    },
-    current: {
-      apl: "apls/current.simc",
-      dps,
-      workflowResults: "results/workflow_current.json",
-    },
-    iterations: [],
-    pendingHypotheses: hypotheses,
-    exhaustedHypotheses: [],
-    consecutiveRejections: 0,
-    findings: [],
-  };
-
-  saveState(state);
-  writeDashboard(state);
-  writeChangelog(state);
-  writeFindings(state);
-
-  console.log("\nBaseline DPS:");
-  for (const [key, value] of Object.entries(dps)) {
-    console.log(`  ${SCENARIO_LABELS[key] || key}: ${value.toLocaleString()}`);
-  }
-
-  console.log(`\nGenerated ${hypotheses.length} hypotheses.`);
-  printHypotheses(hypotheses.slice(0, 5));
-  console.log("\nIteration state initialized. Ready for /iterate-apl.");
 }
 
 function cmdStatus() {
@@ -657,11 +936,30 @@ async function cmdCompare(candidatePath, tier) {
     process.exit(1);
   }
 
-  console.log(
-    `Comparing candidate against current baseline (${tier} fidelity)...`,
-  );
-  const results = await runComparison(resolvedPath, tier);
-  printComparison(results, tier);
+  if (state.multiBuild) {
+    const roster = loadRoster();
+    if (!roster) {
+      console.error(
+        "Multi-build state but no roster found. Regenerate roster first.",
+      );
+      process.exit(1);
+    }
+    console.log(
+      `Multi-build comparison against ${roster.builds.length} builds (${tier} fidelity)...`,
+    );
+    const comparison = await runMultiBuildComparison(
+      resolvedPath,
+      roster,
+      tier,
+    );
+    printMultiBuildComparison(comparison);
+  } else {
+    console.log(
+      `Comparing candidate against current baseline (${tier} fidelity)...`,
+    );
+    const results = await runComparison(resolvedPath, tier);
+    printComparison(results, tier);
+  }
 }
 
 async function cmdAccept(reason, hypothesisHint) {
@@ -686,16 +984,36 @@ async function cmdAccept(reason, hypothesisHint) {
   }
   copyFileSync(candidatePath, CURRENT_APL);
 
+  // For multi-build comparisons, wrap in the format recordIteration expects
+  const iterComparison = comparison.multiBuild
+    ? { results: {}, multiBuild: true, aggregate: comparison.aggregate }
+    : comparison;
+
   const { iterNum } = recordIteration(
     state,
-    comparison,
+    iterComparison,
     reason,
     hypothesisHint,
     "accepted",
   );
 
-  for (const [scenario, r] of Object.entries(comparison.results)) {
-    state.current.dps[scenario] = r.candidate;
+  if (state.multiBuild && comparison.multiBuild) {
+    // Update per-build DPS from multi-build comparison
+    for (const [buildId, br] of Object.entries(comparison.buildResults)) {
+      if (state.current.builds[buildId]) {
+        for (const scenario of SCENARIO_KEYS) {
+          if (br.scenarios[scenario]) {
+            state.current.builds[buildId].dps[scenario] =
+              br.scenarios[scenario].candidate;
+          }
+        }
+      }
+    }
+  } else {
+    // Single-build: update aggregate DPS
+    for (const [scenario, r] of Object.entries(comparison.results || {})) {
+      if (state.current.dps) state.current.dps[scenario] = r.candidate;
+    }
   }
 
   console.log("Running workflow on new baseline...");
@@ -708,17 +1026,30 @@ async function cmdAccept(reason, hypothesisHint) {
   state.consecutiveRejections = 0;
 
   // Track significant findings
-  const weighted = computeWeightedDelta(comparison.results);
-  if (Math.abs(weighted.delta) > 0.5) {
-    state.findings.push({
-      iteration: iterNum,
-      timestamp: new Date().toISOString(),
-      hypothesis: reason,
-      weightedDelta: weighted.delta,
-      scenarios: Object.fromEntries(
-        Object.entries(comparison.results).map(([k, v]) => [k, v.deltaPct]),
-      ),
-    });
+  if (comparison.multiBuild) {
+    if (Math.abs(comparison.aggregate.meanWeighted) > 0.5) {
+      state.findings.push({
+        iteration: iterNum,
+        timestamp: new Date().toISOString(),
+        hypothesis: reason,
+        weightedDelta: comparison.aggregate.meanWeighted,
+        multiBuild: true,
+        aggregate: comparison.aggregate,
+      });
+    }
+  } else {
+    const weighted = computeWeightedDelta(comparison.results);
+    if (Math.abs(weighted.delta) > 0.5) {
+      state.findings.push({
+        iteration: iterNum,
+        timestamp: new Date().toISOString(),
+        hypothesis: reason,
+        weightedDelta: weighted.delta,
+        scenarios: Object.fromEntries(
+          Object.entries(comparison.results).map(([k, v]) => [k, v.deltaPct]),
+        ),
+      });
+    }
   }
 
   saveState(state);
