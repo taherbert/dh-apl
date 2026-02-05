@@ -340,27 +340,45 @@ function popHypothesis(state, descriptionFragment) {
 
 function recordIteration(state, comparison, reason, hypothesisHint, decision) {
   const iterNum = state.iterations.length + 1;
-  const iterResults = {};
-  for (const [scenario, r] of Object.entries(comparison.results)) {
-    iterResults[scenario] = {
-      current: r.current,
-      candidate: r.candidate,
-      delta_pct: r.deltaPct,
-    };
-  }
 
   const hypothesis = popHypothesis(state, hypothesisHint);
 
-  state.iterations.push({
-    id: iterNum,
-    timestamp: new Date().toISOString(),
-    hypothesis: hypothesis.description,
-    category: hypothesis.category,
-    mutation: reason,
-    results: iterResults,
-    decision,
-    reason,
-  });
+  if (comparison.multiBuild) {
+    // Multi-build: store full comparison object for rollback/reporting
+    state.iterations.push({
+      id: iterNum,
+      timestamp: new Date().toISOString(),
+      hypothesis: hypothesis.description,
+      category: hypothesis.category,
+      mutation: reason,
+      comparison: {
+        aggregates: comparison.aggregate,
+        buildResults: comparison.buildResults,
+      },
+      decision,
+      reason,
+    });
+  } else {
+    // Single-build: flat per-scenario results
+    const iterResults = {};
+    for (const [scenario, r] of Object.entries(comparison.results || {})) {
+      iterResults[scenario] = {
+        current: r.current,
+        candidate: r.candidate,
+        delta_pct: r.deltaPct,
+      };
+    }
+    state.iterations.push({
+      id: iterNum,
+      timestamp: new Date().toISOString(),
+      hypothesis: hypothesis.description,
+      category: hypothesis.category,
+      mutation: reason,
+      results: iterResults,
+      decision,
+      reason,
+    });
+  }
 
   return { iterNum, hypothesis };
 }
@@ -924,12 +942,19 @@ function cmdStatus() {
     console.log("\nRecent:");
     for (const iter of state.iterations.slice(-5)) {
       const emoji = iter.decision === "accepted" ? "✓" : "✗";
-      const summary = Object.entries(iter.results || {})
-        .map(([k, v]) => {
-          const label = SCENARIO_LABELS[k] || k;
-          return `${label}:${v.delta_pct > 0 ? "+" : ""}${v.delta_pct?.toFixed(1) || "?"}%`;
-        })
-        .join("  ");
+      let summary;
+      if (iter.comparison?.aggregates) {
+        const a = iter.comparison.aggregates;
+        const s = a.meanWeighted >= 0 ? "+" : "";
+        summary = `mean:${s}${a.meanWeighted.toFixed(2)}%  worst:${a.worstWeighted.toFixed(2)}%`;
+      } else {
+        summary = Object.entries(iter.results || {})
+          .map(([k, v]) => {
+            const label = SCENARIO_LABELS[k] || k;
+            return `${label}:${v.delta_pct > 0 ? "+" : ""}${v.delta_pct?.toFixed(1) || "?"}%`;
+          })
+          .join("  ");
+      }
       const desc =
         iter.hypothesis.length > 40
           ? iter.hypothesis.slice(0, 40) + "…"
@@ -1201,16 +1226,36 @@ function cmdSummary() {
 
   // Iteration history
   lines.push("\n## Iteration History\n");
-  lines.push("| # | Decision | Hypothesis | Mutation | 1T | 5T | 10T |");
-  lines.push("|---|----------|------------|----------|----|----|-----|");
+  if (state.multiBuild) {
+    lines.push(
+      "| # | Decision | Hypothesis | Mutation | Mean | Worst | AR | Anni |",
+    );
+    lines.push(
+      "|---|----------|------------|----------|------|-------|----|----|",
+    );
+  } else {
+    lines.push("| # | Decision | Hypothesis | Mutation | 1T | 5T | 10T |");
+    lines.push("|---|----------|------------|----------|----|----|-----|");
+  }
   for (const iter of state.iterations) {
-    const r = iter.results || {};
-    const cols = SCENARIO_KEYS.map((k) => {
-      const v = r[k];
-      if (!v) return "—";
-      const sign = v.delta_pct >= 0 ? "+" : "";
-      return `${sign}${v.delta_pct?.toFixed(2) || "?"}%`;
-    });
+    let cols;
+    if (iter.comparison?.aggregates) {
+      const a = iter.comparison.aggregates;
+      cols = [
+        `${a.meanWeighted >= 0 ? "+" : ""}${a.meanWeighted.toFixed(2)}%`,
+        `${a.worstWeighted.toFixed(2)}%`,
+        `${a.arAvg >= 0 ? "+" : ""}${a.arAvg.toFixed(2)}%`,
+        `${a.anniAvg >= 0 ? "+" : ""}${a.anniAvg.toFixed(2)}%`,
+      ];
+    } else {
+      const r = iter.results || {};
+      cols = SCENARIO_KEYS.map((k) => {
+        const v = r[k];
+        if (!v) return "—";
+        const sign = v.delta_pct >= 0 ? "+" : "";
+        return `${sign}${v.delta_pct?.toFixed(2) || "?"}%`;
+      });
+    }
     const hyp =
       iter.hypothesis.length > 50
         ? iter.hypothesis.slice(0, 50) + "…"
@@ -1673,14 +1718,19 @@ function writeDashboard(state) {
     lines.push("| # | Decision | Hypothesis | Weighted Delta |");
     lines.push("|---|----------|------------|----------------|");
     for (const iter of state.iterations.slice(-10)) {
-      const w = computeWeightedDelta(iter.results || {});
-      const sign = w.delta >= 0 ? "+" : "";
+      let wDelta;
+      if (iter.comparison?.aggregates) {
+        wDelta = iter.comparison.aggregates.meanWeighted;
+      } else {
+        wDelta = computeWeightedDelta(iter.results || {}).delta;
+      }
+      const sign = wDelta >= 0 ? "+" : "";
       const hyp =
         iter.hypothesis.length > 50
           ? iter.hypothesis.slice(0, 50) + "…"
           : iter.hypothesis;
       lines.push(
-        `| ${iter.id} | ${iter.decision} | ${hyp} | ${sign}${w.delta}% |`,
+        `| ${iter.id} | ${iter.decision} | ${hyp} | ${sign}${(wDelta || 0).toFixed(3)}% |`,
       );
     }
   }
@@ -1727,20 +1777,34 @@ function writeChangelog(state) {
     lines.push("No accepted changes yet.\n");
   } else {
     for (const iter of [...accepted].reverse()) {
-      const w = computeWeightedDelta(iter.results || {});
-      const sign = w.delta >= 0 ? "+" : "";
-      lines.push(`## Iteration #${iter.id} (${sign}${w.delta}% weighted)\n`);
+      let wDelta;
+      if (iter.comparison?.aggregates) {
+        wDelta = iter.comparison.aggregates.meanWeighted;
+      } else {
+        wDelta = computeWeightedDelta(iter.results || {}).delta;
+      }
+      const sign = wDelta >= 0 ? "+" : "";
+      lines.push(
+        `## Iteration #${iter.id} (${sign}${(wDelta || 0).toFixed(3)}% weighted)\n`,
+      );
       lines.push(`**${iter.timestamp}**\n`);
       lines.push(`${iter.hypothesis}\n`);
       if (iter.mutation) lines.push(`Change: ${iter.mutation}\n`);
-      const scenarioDetail = SCENARIO_KEYS.map((k) => {
-        const r = iter.results?.[k];
-        if (!r) return null;
-        return `${SCENARIO_LABELS[k]}: ${r.delta_pct >= 0 ? "+" : ""}${r.delta_pct?.toFixed(2) || "?"}%`;
-      })
-        .filter(Boolean)
-        .join(", ");
-      if (scenarioDetail) lines.push(`Scenarios: ${scenarioDetail}\n`);
+      if (iter.comparison?.aggregates) {
+        const a = iter.comparison.aggregates;
+        lines.push(
+          `AR avg: ${a.arAvg >= 0 ? "+" : ""}${a.arAvg.toFixed(3)}% | Anni avg: ${a.anniAvg >= 0 ? "+" : ""}${a.anniAvg.toFixed(3)}% | Worst: ${a.worstWeighted.toFixed(3)}%\n`,
+        );
+      } else {
+        const scenarioDetail = SCENARIO_KEYS.map((k) => {
+          const r = iter.results?.[k];
+          if (!r) return null;
+          return `${SCENARIO_LABELS[k]}: ${r.delta_pct >= 0 ? "+" : ""}${r.delta_pct?.toFixed(2) || "?"}%`;
+        })
+          .filter(Boolean)
+          .join(", ");
+        if (scenarioDetail) lines.push(`Scenarios: ${scenarioDetail}\n`);
+      }
     }
   }
 
