@@ -83,8 +83,12 @@ actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
 
 # === AR AoE — Fallout-driven priority at 3+ targets ===
+# Empowered cycle first — AR hero tree mechanic must fire even in AoE
+actions.ar_aoe=/call_action_list,name=ar_empowered
+# Brand window in AoE — extend via ImmAura ticks for Fiery Demise value
+actions.ar_aoe+=/call_action_list,name=ar_brand_window,if=talent.charred_flesh&dot.fiery_brand.ticking
 # ImmAura top priority: 60% × N targets per tick generates fragments passively
-actions.ar_aoe=/immolation_aura,if=!buff.immolation_aura.up
+actions.ar_aoe+=/immolation_aura,if=!buff.immolation_aura.up
 actions.ar_aoe+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 actions.ar_aoe+=/fracture,if=buff.metamorphosis.up
 actions.ar_aoe+=/sigil_of_flame
@@ -141,9 +145,9 @@ actions.anni+=/throw_glaive
 # Fiery Brand alignment — cast before spending peak for Fiery Demise value
 actions.anni_voidfall=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&(buff.voidfall_building.stack=2|buff.voidfall_spending.stack=3)
 # Spirit Bomb at max spending stacks — consumes 5 frags + meteor (World Killer bonus)
-actions.anni_voidfall+=/spirit_bomb,if=buff.voidfall_spending.stack=3
+actions.anni_voidfall+=/spirit_bomb,if=buff.voidfall_spending.stack=3&soul_fragments>=variable.spb_threshold
 # Soul Cleave to consume spending stacks (each triggers meteor)
 actions.anni_voidfall+=/soul_cleave,if=buff.voidfall_spending.up&buff.voidfall_spending.stack<3
 # Fracture at max building stacks — triggers transition to spending phase
-# Pool fury>=105 before transition: spending phase requires 3 Soul Cleaves (3×35 fury) for full meteor chain
-actions.anni_voidfall+=/fracture,if=buff.voidfall_building.stack=2&fury>=105
+# Pool fury>=70 before transition: 2 Soul Cleaves upfront + natural gen covers the 3rd
+actions.anni_voidfall+=/fracture,if=buff.voidfall_building.stack=2&fury>=70
