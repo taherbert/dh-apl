@@ -154,17 +154,30 @@ node src/sim/iterate.js init $ARGUMENTS  # or apls/{spec}/{spec}.simc
 
 ## Phase 0: Deep Reasoning (REQUIRED before specialists)
 
-Before launching any specialists, the orchestrator must form its own understanding. This prevents specialists from operating in a vacuum and ensures their output can be evaluated against a theory.
+Before launching any specialists, the orchestrator must form its own understanding using ALL available data. This prevents specialists from operating in a vacuum and ensures their output can be evaluated against a theory.
+
+**Load the full knowledge base:**
 
 1. Read the current APL (`apls/{spec}/current.simc` or `apls/{spec}/{spec}.simc`)
-2. Read `data/{spec}/spells-summary.json` and `data/{spec}/build-theory.json`
-3. Think through the mechanical system:
-   - What is the resource generation/spending equilibrium? Where is waste?
-   - What cooldown cycles exist and how do they interact?
-   - What talent interactions create the most leverage?
-   - What about the current APL structure seems suboptimal and WHY?
-4. Form 2-3 **root theories** — "The biggest opportunity is X because Y"
-5. These root theories GUIDE what the specialists should focus on and how to evaluate their output
+2. Read the spec adapter (`src/spec/{spec}.js`) — `SPEC_CONFIG` has the mechanical blueprint: resource models, state machines, hero tree rhythms, synergy clusters, buff windows, resource flows
+3. Read `data/{spec}/spells-summary.json` — ability mechanics with numbers
+4. Read `data/{spec}/interactions-summary.json` — talent-to-spell interaction chains, modifier magnitudes, proc triggers
+5. Read `data/{spec}/cpp-proc-mechanics.json` — proc rates, ICDs, RPPM, hidden constants
+6. Read `data/{spec}/build-theory.json` — archetypes, clusters, synergies, tensions
+7. Read `results/{spec}/findings.json` (validated) and `results/{spec}/hypotheses.json` (queued)
+8. If deep analyses exist (`results/{spec}/*_analysis.md`), read them for prior investigations
+9. **External sources (lower priority):** When internal data has gaps — unclear talent interactions, uncertain mechanic behavior — search Wowhead or Icy Veins guides. Treat community sources as hypotheses to verify against C++ data and spell effects, not ground truth.
+
+**Reason about the system:**
+
+- What is the resource generation/spending equilibrium? Where is waste?
+- What cooldown cycles exist and how do they interact?
+- What talent interactions create the most leverage? (Trace chains through `interactions-summary.json`)
+- What proc mechanics create hidden value or hidden waste? (Use `cpp-proc-mechanics.json`)
+- What state machine rhythms does each hero tree impose?
+- What about the current APL structure seems suboptimal and WHY — with specific numbers?
+
+**Form 2-3 root theories** — "The biggest opportunity is X because Y, supported by Z from the data." A theory without numbers from spell data is speculation. These root theories GUIDE what the specialists should focus on and how to evaluate their output.
 
 The specialists below are research assistants, not decision makers. They gather evidence. The orchestrator reasons about that evidence through the lens of its root theories.
 

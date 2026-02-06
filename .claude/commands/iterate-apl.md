@@ -46,18 +46,31 @@ Repeat until no hypotheses remain or improvements plateau:
 
 ### Step 1: Deep Analysis (REQUIRED — do this BEFORE touching hypotheses)
 
-Read the current APL and reason about the mechanical system. This is not optional — every iteration cycle must start from understanding, not from a hypothesis queue.
+Read the current APL and reason about the mechanical system using ALL available data. This is not optional — every iteration cycle must start from understanding, not from a hypothesis queue.
+
+**Load the full knowledge base:**
 
 1. Read `apls/{spec}/current.simc` — understand every action list, condition, and variable
-2. Read `data/{spec}/spells-summary.json` for ability mechanics (cooldowns, resources, durations)
-3. Read `data/{spec}/build-theory.json` for talent cluster context
-4. Think through the resource/GCD/cooldown economy:
-   - Where do resources come from and go? Are any being wasted or over-pooled?
-   - What cooldown cycles exist? Are abilities aligned or fighting for the same windows?
-   - What talent interactions create non-obvious dependencies?
-   - What assumptions in conditions might be wrong for certain builds?
-5. Form 1-3 **causal theories** — "X should improve Y because Z" — grounded in mechanical reasoning
-6. Cross-reference `results/{spec}/findings.json` (validated insights) to avoid re-testing known results
+2. Read the spec adapter (`src/spec/{spec}.js`) — `SPEC_CONFIG` has resource models, state machines, hero tree rhythms, synergy clusters, buff windows, and resource flows. This is the mechanical blueprint.
+3. Read `data/{spec}/spells-summary.json` — ability mechanics (cooldowns, resources, durations, GCD, AoE radius, school)
+4. Read `data/{spec}/interactions-summary.json` — talent-to-spell interaction map: what modifies what, proc chains, magnitude of effects
+5. Read `data/{spec}/cpp-proc-mechanics.json` — proc rates, ICDs, RPPM values, hidden constants from the C++ source
+6. Read `data/{spec}/build-theory.json` — archetype definitions, talent clusters, synergy/tension analysis
+7. Read `results/{spec}/findings.json` — filter to `status: "validated"` for known truths; check `status: "rejected"` to avoid retesting
+8. Read `results/{spec}/hypotheses.json` — queued untested ideas from prior sessions
+9. If deep analyses exist (`results/{spec}/*_analysis.md`), read them for prior C++ investigations
+10. **External references (lower priority):** When internal data has gaps — e.g., unclear how a new talent interacts, or uncertain about a mechanic's exact behavior — search Wowhead or Icy Veins guides for the spec. Treat community sources as hypotheses to verify, not ground truth. Cross-reference against C++ proc data and spell effects.
+
+**Reason about the system:**
+
+- Where do resources come from and go? Are any being wasted or over-pooled?
+- What cooldown cycles exist? Are abilities aligned or fighting for the same windows?
+- What talent interactions create non-obvious dependencies? (Use `interactions-summary.json` to trace chains)
+- What proc mechanics create hidden value? (Use `cpp-proc-mechanics.json` for ICDs and rates)
+- What state machine transitions does the hero tree impose, and does the APL respect them?
+- What assumptions in conditions might be wrong for certain builds or target counts?
+
+**Form 1-3 causal theories** — "X should improve Y because Z" — grounded in mechanical reasoning with specific numbers from the data files. A theory without numbers from spell data is speculation.
 
 Only AFTER forming your own theories, check what the automated screeners found:
 
