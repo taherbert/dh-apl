@@ -35,6 +35,7 @@
     "db:migrate": "node src/util/db.js migrate",
     "db:status": "node src/util/db.js status",
     "discover": "node src/discover/build-discovery.js",
+    "roster": "node src/sim/build-roster.js",
     "dashboard": "cat results/dashboard.md",
     "refresh": "bash scripts/refresh.sh"
   }

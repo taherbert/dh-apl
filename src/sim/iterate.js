@@ -26,7 +26,7 @@ import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
 import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
 import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
-import { loadRoster } from "./build-roster.js";
+import { loadRoster, updateDps, saveRosterDps } from "./build-roster.js";
 import { generateMultiActorContent } from "./multi-actor.js";
 import {
   generateProfileset,
@@ -174,10 +174,7 @@ function saveState(state) {
   renameSync(tmpPath, STATE_PATH);
 }
 
-// --- Hypothesis Helpers ---
-
-// Strip numbers/percentages so that hypotheses differing only in reported
-// metrics (e.g., "Spirit Bomb contributes 12.3%" vs "11.8%") match as equivalent.
+// Strip numbers/percentages for hypothesis deduplication.
 function normalizeHypothesisKey(description) {
   return description
     .replace(/[\d.]+%?/g, "N")
@@ -369,24 +366,21 @@ function recordIteration(state, comparison, reason, hypothesisHint, decision) {
 // --- Comparison ---
 
 function buildProfilesetContent(candidatePath) {
-  const rawBase = readFileSync(CURRENT_APL, "utf-8");
-  const baseContent = resolveInputDirectives(rawBase, dirname(CURRENT_APL));
-  const rawCandidate = readFileSync(candidatePath, "utf-8");
+  const baseContent = resolveInputDirectives(
+    readFileSync(CURRENT_APL, "utf-8"),
+    dirname(CURRENT_APL),
+  );
   const candidateContent = resolveInputDirectives(
-    rawCandidate,
+    readFileSync(candidatePath, "utf-8"),
     dirname(resolve(candidatePath)),
   );
 
-  // Extract action lines from candidate, filtering empty lines
   const actionLines = candidateContent
     .split("\n")
-    .filter((l) => l.startsWith("actions"))
-    .filter(Boolean);
+    .filter((l) => l.startsWith("actions") && l.trim());
 
   if (actionLines.length === 0) {
-    throw new Error(
-      `No action lines found in ${candidatePath}. Candidate must contain lines starting with "actions".`,
-    );
+    throw new Error(`No action lines found in ${candidatePath}`);
   }
 
   return [
@@ -700,15 +694,11 @@ function printMultiBuildComparison(comparison) {
   );
 }
 
-// --- Dashboard Helpers ---
-
 function progressBar(fraction, width = 20) {
-  const filled = Math.round(fraction * width);
-  const partial = fraction * width - Math.floor(fraction * width);
-  let bar = "█".repeat(Math.min(filled, width));
-  if (bar.length < width && partial > 0.5) bar += "▒";
-  bar = bar.padEnd(width, "░");
-  return bar;
+  const filled = Math.min(Math.round(fraction * width), width);
+  let bar = "█".repeat(filled);
+  if (bar.length < width && fraction * width - filled > 0.5) bar += "▒";
+  return bar.padEnd(width, "░");
 }
 
 function formatElapsed(startISO) {
@@ -732,129 +722,88 @@ async function cmdInit(aplPath) {
   ensureSpecDirs();
   copyFileSync(resolvedPath, CURRENT_APL);
 
-  // Check for multi-build roster
+  // Require multi-build roster — single-build mode is not supported
   const roster = loadRoster();
-  const multiBuild = roster && roster.builds.length > 0;
-
-  if (multiBuild) {
-    console.log(
-      `Multi-build mode: ${roster.builds.length} builds in roster (${roster.tier} tier)`,
+  if (!roster || roster.builds.length === 0) {
+    console.error(
+      "No build roster found. The roster is required for multi-build iteration.\n" +
+        "Populate the roster first:\n" +
+        "  node src/sim/build-roster.js migrate            # One-time migration from existing data\n" +
+        "  node src/sim/build-roster.js import-doe          # Import from builds.json\n" +
+        "  node src/sim/build-roster.js import-multi-build  # Import from multi-build.simc\n",
     );
-    console.log("Running multi-actor baseline across all scenarios...");
-
-    const tierConfig = FIDELITY_TIERS.standard;
-    const baseline = await runMultiBuildBaseline(
-      CURRENT_APL,
-      roster,
-      tierConfig,
-    );
-
-    // Also run single-actor workflow for hypothesis generation
-    console.log("Running single-actor workflow for hypothesis generation...");
-    const workflowResults = await runWorkflow(CURRENT_APL);
-    const workflowPath = resultsFile("workflow_current.json");
-    writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
-
-    const hypotheses = generateHypotheses(workflowResults);
-
-    const state = {
-      version: STATE_VERSION,
-      startedAt: new Date().toISOString(),
-      lastUpdated: new Date().toISOString(),
-      multiBuild: true,
-      roster: {
-        path: relative(ROOT, resultsFile("build-roster.json")),
-        tier: roster.tier,
-        buildCount: roster.builds.length,
-      },
-      originalBaseline: {
-        apl: basename(aplPath),
-        builds: baseline.builds,
-      },
-      current: {
-        apl: relative(ROOT, CURRENT_APL),
-        builds: baseline.builds,
-        workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
-      },
-      iterations: [],
-      pendingHypotheses: hypotheses,
-      exhaustedHypotheses: [],
-      consecutiveRejections: 0,
-      findings: [],
-    };
-
-    saveState(state);
-    writeDashboard(state);
-    writeChangelog(state);
-    writeFindings(state);
-
-    console.log("\nBaseline DPS (per build):");
-    for (const [buildId, b] of Object.entries(baseline.builds)) {
-      const hero = (b.heroTree || "?").slice(0, 6);
-      const dpsStr = SCENARIO_KEYS.map(
-        (s) =>
-          `${SCENARIO_LABELS[s]}:${Math.round(b.dps[s] || 0).toLocaleString()}`,
-      ).join("  ");
-      console.log(`  ${buildId.padEnd(25)} [${hero}]  ${dpsStr}`);
-    }
-
-    console.log(`\nGenerated ${hypotheses.length} hypotheses.`);
-    printHypotheses(hypotheses.slice(0, 5));
-    console.log(
-      "\nMulti-build iteration state initialized. Ready for /iterate-apl.",
-    );
-  } else {
-    // Single-build mode (original behavior)
-    console.log("Running baseline workflow across all scenarios...");
-    const workflowResults = await runWorkflow(CURRENT_APL);
-
-    const workflowPath = resultsFile("workflow_current.json");
-    writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
-
-    const dps = {};
-    for (const s of workflowResults.scenarios.filter((s) => !s.error)) {
-      dps[s.scenario] = s.dps;
-    }
-
-    const hypotheses = generateHypotheses(workflowResults);
-
-    const state = {
-      version: STATE_VERSION,
-      startedAt: new Date().toISOString(),
-      lastUpdated: new Date().toISOString(),
-      multiBuild: false,
-      originalBaseline: {
-        apl: basename(aplPath),
-        dps,
-      },
-      current: {
-        apl: relative(ROOT, CURRENT_APL),
-        dps,
-        workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
-      },
-      iterations: [],
-      pendingHypotheses: hypotheses,
-      exhaustedHypotheses: [],
-      consecutiveRejections: 0,
-      findings: [],
-    };
-
-    saveState(state);
-    writeDashboard(state);
-    writeChangelog(state);
-    writeFindings(state);
-
-    console.log("\nBaseline DPS:");
-    for (const [key, value] of Object.entries(dps)) {
-      console.log(
-        `  ${SCENARIO_LABELS[key] || key}: ${value.toLocaleString()}`,
-      );
-    }
-
-    console.log(`\nGenerated ${hypotheses.length} hypotheses.`);
-    printHypotheses(hypotheses.slice(0, 5));
-    console.log("\nIteration state initialized. Ready for /iterate-apl.");
+    process.exit(1);
   }
+
+  console.log(`Multi-build mode: ${roster.builds.length} builds in roster`);
+  console.log("Running multi-actor baseline across all scenarios...");
+
+  const tierConfig = FIDELITY_TIERS.standard;
+  const baseline = await runMultiBuildBaseline(CURRENT_APL, roster, tierConfig);
+
+  // Update persistent roster with baseline DPS
+  for (const [buildId, b] of Object.entries(baseline.builds)) {
+    const weighted = SCENARIO_KEYS.reduce(
+      (sum, s) => sum + (b.dps[s] || 0) * SCENARIO_WEIGHTS[s],
+      0,
+    );
+    updateDps(roster, buildId, { ...b.dps, weighted });
+  }
+  saveRosterDps(roster);
+
+  // Also run single-actor workflow for hypothesis generation
+  console.log("Running single-actor workflow for hypothesis generation...");
+  const workflowResults = await runWorkflow(CURRENT_APL);
+  const workflowPath = resultsFile("workflow_current.json");
+  writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
+
+  const hypotheses = generateHypotheses(workflowResults);
+
+  const state = {
+    version: STATE_VERSION,
+    startedAt: new Date().toISOString(),
+    lastUpdated: new Date().toISOString(),
+    multiBuild: true,
+    roster: {
+      path: relative(ROOT, dataFile("build-roster.json")),
+      buildCount: roster.builds.length,
+    },
+    originalBaseline: {
+      apl: basename(aplPath),
+      builds: baseline.builds,
+    },
+    current: {
+      apl: relative(ROOT, CURRENT_APL),
+      builds: baseline.builds,
+      workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
+    },
+    iterations: [],
+    pendingHypotheses: hypotheses,
+    exhaustedHypotheses: [],
+    consecutiveRejections: 0,
+    findings: [],
+  };
+
+  saveState(state);
+  writeDashboard(state);
+  writeChangelog(state);
+  writeFindings(state);
+
+  console.log("\nBaseline DPS (per build):");
+  for (const [buildId, b] of Object.entries(baseline.builds)) {
+    const hero = (b.heroTree || "?").slice(0, 6);
+    const dpsStr = SCENARIO_KEYS.map(
+      (s) =>
+        `${SCENARIO_LABELS[s]}:${Math.round(b.dps[s] || 0).toLocaleString()}`,
+    ).join("  ");
+    console.log(`  ${buildId.padEnd(25)} [${hero}]  ${dpsStr}`);
+  }
+
+  console.log(`\nGenerated ${hypotheses.length} hypotheses.`);
+  printHypotheses(hypotheses.slice(0, 5));
+  console.log(
+    "\nMulti-build iteration state initialized. Ready for /iterate-apl.",
+  );
 }
 
 function cmdStatus() {
@@ -1024,6 +973,7 @@ async function cmdAccept(reason, hypothesisHint) {
 
   if (state.multiBuild && comparison.multiBuild) {
     // Update per-build DPS from multi-build comparison
+    const rosterForDps = loadRoster();
     for (const [buildId, br] of Object.entries(comparison.buildResults)) {
       if (state.current.builds[buildId]) {
         for (const scenario of SCENARIO_KEYS) {
@@ -1033,12 +983,20 @@ async function cmdAccept(reason, hypothesisHint) {
           }
         }
       }
+      // Also update persistent roster DPS
+      if (rosterForDps) {
+        const dps = {};
+        for (const scenario of SCENARIO_KEYS) {
+          dps[scenario] = br.scenarios[scenario]?.candidate || 0;
+        }
+        dps.weighted = SCENARIO_KEYS.reduce(
+          (sum, s) => sum + (dps[s] || 0) * SCENARIO_WEIGHTS[s],
+          0,
+        );
+        updateDps(rosterForDps, buildId, dps);
+      }
     }
-  } else {
-    // Single-build: update aggregate DPS
-    for (const [scenario, r] of Object.entries(comparison.results || {})) {
-      if (state.current.dps) state.current.dps[scenario] = r.candidate;
-    }
+    if (rosterForDps) saveRosterDps(rosterForDps);
   }
 
   console.log("Running workflow on new baseline...");
@@ -1988,23 +1946,23 @@ export { loadCheckpoint, hasRecentCheckpoint, areSpecialistOutputsFresh };
 // --- Escape Strategies ---
 
 function suggestEscapeStrategies(state) {
-  const suggestions = [];
   const consecRej = state.consecutiveRejections || 0;
+  const suggestions = [];
 
   if (consecRej >= 5) {
-    suggestions.push("Try compound mutations (combine 2-3 related changes)");
     suggestions.push(
+      "Try compound mutations (combine 2-3 related changes)",
       "Try reversing a previous accepted change that may have downstream effects",
-    );
-    suggestions.push(
       "Focus on a different scenario (if ST is stuck, try optimizing AoE)",
+      "Try radical reorder of action priority",
     );
-    suggestions.push("Try radical reorder of action priority");
   }
 
   if (consecRej >= 8) {
-    suggestions.push("Consider re-evaluating the archetype strategy");
-    suggestions.push("Run full workflow analysis to find new angles");
+    suggestions.push(
+      "Consider re-evaluating the archetype strategy",
+      "Run full workflow analysis to find new angles",
+    );
   }
 
   return suggestions;

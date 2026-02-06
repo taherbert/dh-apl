@@ -2,6 +2,24 @@
 
 Internal reference for the iteration loop within `/optimize`. Not a user-facing command.
 
+## Build Roster — REQUIRED BEFORE ITERATION
+
+**Every iteration session MUST test against ALL archetypes.** The APL is shared by all talent builds. A change that helps one archetype but hurts another is a regression, not an improvement.
+
+Before starting any iteration loop:
+
+1. **Verify roster:** `npm run roster show`
+   - The roster is persistent at `data/{spec}/build-roster.json` (version-controlled)
+   - Must include builds from BOTH hero trees
+   - Must cover all archetypes from `data/{spec}/build-theory.json`
+   - If roster is empty: run `npm run roster migrate` to populate from existing data
+   - If builds.json is stale/missing: re-run `npm run discover -- --ar-only --quick` (auto-imports to roster)
+   - To add builds manually: `npm run roster import-doe`, `npm run roster import-multi-build`
+2. `iterate.js init` requires the roster and runs multi-build baseline
+3. All subsequent `iterate.js compare` calls test against ALL roster builds simultaneously
+
+**iterate.js refuses to run without a populated roster.** Single-build mode is not supported.
+
 ## Session Resilience
 
 Before starting, validate the environment:
@@ -121,16 +139,19 @@ Run: `node src/sim/iterate.js compare apls/{spec}/candidate.simc --confirm`
 
 ### Step 5: Decide
 
-**Accept if:**
+**Multi-build decision criteria:**
 
-- At least one scenario shows a **statistically significant** improvement (delta > 2x stderr)
-- AND no scenario has a statistically significant regression >0.3%
-- OR total weighted improvement is positive AND significant (weight: 50% ST, 30% 5T, 20% 10T)
+- **Accept if:** mean weighted delta > 0 AND worst build weighted delta > -1%
+- **Reject if:** mean weighted ≤ 0, OR any build regresses > 1% weighted
+- **Archetype-gate if:** change helps some archetypes (>+0.1%) but hurts others (>-0.3%)
+  - Create a sub-action-list gated by talent or hero tree check
+  - Re-test the gated version against the FULL roster
+  - Accept only when gated version is neutral-or-positive for ALL builds
 
 **Reject if:**
 
-- No statistically significant improvement in any scenario
-- Any scenario has a significant regression without compensating significant gains
+- No statistically significant improvement across builds
+- Any build/scenario has a significant regression without compensating significant gains
 - Quick screen shows clear regression (>1%)
 
 **Inconclusive** (neither accept nor reject):
