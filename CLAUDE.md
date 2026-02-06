@@ -281,7 +281,7 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 
 ### Commands
 
-**One command for optimization:** `/optimize [focus]` — does everything: deep reasoning, parallel specialist analysis (4 Task subagents), synthesis, iteration, reporting. Pass an optional focus directive (e.g., `/optimize Check soul fragment economy`) to prioritize an area.
+**One command for optimization:** `/optimize [focus]` — fully autonomous: discovers archetypes via DoE, generates build roster, deep reasoning, 4 parallel specialist subagents, synthesis, multi-build iteration (tests against ALL roster builds simultaneously), APL branching for archetypes/hero trees, and reporting. No user confirmation needed — sim compute is not a concern. Pass an optional focus directive (e.g., `/optimize Check soul fragment economy`) to prioritize an area.
 
 **Utility commands:** `/bootstrap`, `/sim`, `/build`, `/verify`, `/audit`, `/simc-reference` — simple single-purpose tools.
 

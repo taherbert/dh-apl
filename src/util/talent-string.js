@@ -562,7 +562,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     }
 
     // Select all hero nodes from the first hero tree
-    const firstHeroTree = Object.values(HERO_SUBTREES)[0];
+    const firstHeroTree = Object.keys(data.heroSubtrees)[0];
     for (const n of data.heroSubtrees[firstHeroTree]) {
       const entry = { rank: n.maxRanks || 1 };
       if (n.type === "choice") entry.choiceIndex = 1;
