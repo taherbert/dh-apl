@@ -156,17 +156,7 @@ node src/sim/iterate.js init $ARGUMENTS  # or apls/{spec}/{spec}.simc
 
 Before launching any specialists, the orchestrator must form its own understanding using ALL available data. This prevents specialists from operating in a vacuum and ensures their output can be evaluated against a theory.
 
-**Load the full knowledge base:**
-
-1. Read the current APL (`apls/{spec}/current.simc` or `apls/{spec}/{spec}.simc`)
-2. Read the spec adapter (`src/spec/{spec}.js`) — `SPEC_CONFIG` has the mechanical blueprint: resource models, state machines, hero tree rhythms, synergy clusters, buff windows, resource flows
-3. Read `data/{spec}/spells-summary.json` — ability mechanics with numbers
-4. Read `data/{spec}/interactions-summary.json` — talent-to-spell interaction chains, modifier magnitudes, proc triggers
-5. Read `data/{spec}/cpp-proc-mechanics.json` — proc rates, ICDs, RPPM, hidden constants
-6. Read `data/{spec}/build-theory.json` — archetypes, clusters, synergies, tensions
-7. Read `results/{spec}/findings.json` (validated) and `results/{spec}/hypotheses.json` (queued)
-8. If deep analyses exist (`results/{spec}/*_analysis.md`), read them for prior investigations
-9. **External sources (lower priority):** When internal data has gaps — unclear talent interactions, uncertain mechanic behavior — search Wowhead or Icy Veins guides. Treat community sources as hypotheses to verify against C++ data and spell effects, not ground truth.
+**Load the full knowledge base per `prompts/apl-analysis-guide.md` Section 0.** That section is the single canonical list of data sources — all tiers (mechanical blueprint, interaction/proc data, accumulated knowledge, external references).
 
 **Reason about the system:**
 

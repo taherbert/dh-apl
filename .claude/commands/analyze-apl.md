@@ -8,20 +8,9 @@ This is a comprehension tool, not an optimization tool. Use it to understand the
 
 2. Read the APL to explain. Use `$ARGUMENTS` if provided, else `apls/{spec}/{spec}.simc`, else `apls/{spec}/baseline.simc`.
 
-3. Read spell data for context:
+3. **Load the knowledge base per `prompts/apl-analysis-guide.md` Section 0.** For comprehension, Tier 1 (spec adapter, spells) and Tier 2 (interactions, proc mechanics) are essential. Tier 3 (findings, builds) provides calibration context.
 
-```
-data/{spec}/spells-summary.json
-data/{spec}/interactions-summary.json
-```
-
-4. Read accumulated findings for calibration:
-
-```
-results/{spec}/findings.json
-```
-
-5. Check for recent sim results (`ls results/{spec}/`) — cast count data grounds the explanation in what actually happens vs what the APL intends.
+4. Check for recent sim results (`ls results/{spec}/`) — cast count data grounds the explanation in what actually happens vs what the APL intends.
 
 ## Walkthrough
 

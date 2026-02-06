@@ -7,34 +7,9 @@ The goal is systemic insight: understanding the resource economy, identifying co
 Every deep analysis must start with comprehensive data loading. Skipping sources means missing connections.
 
 1. Run `node src/engine/startup.js` to determine the active spec. All paths below use `{spec}`.
-2. Read the analysis methodology: `prompts/apl-analysis-guide.md`
+2. Read the analysis methodology: `prompts/apl-analysis-guide.md` — **Section 0 is the single canonical list of all data sources.** Load all tiers (mechanical blueprint, interaction/proc data, accumulated knowledge, external references).
 3. Read the APL to analyze. Use `$ARGUMENTS` if provided, else `apls/{spec}/{spec}.simc`, else `apls/{spec}/baseline.simc`.
-
-**Mechanical blueprint:**
-
-4. Read the spec adapter (`src/spec/{spec}.js`) — `SPEC_CONFIG` provides resource names, ability IDs, hero trees (state machines, rhythms, key buffs), burst windows, synergy clusters, resource flows, off-GCD abilities, and cooldown buffs. All spec-specific knowledge comes from here. Do not hardcode ability or resource names.
-
-**Spell and interaction data:**
-
-5. Read `data/{spec}/spells-summary.json` — ability mechanics: cooldowns, resources, durations, GCD, AoE radius, school, charges, descriptions
-6. Read `data/{spec}/interactions-summary.json` — talent-to-spell interaction map: what modifies what, proc chains, application types, magnitudes
-7. Read `data/{spec}/cpp-proc-mechanics.json` — proc rates, ICDs, RPPM values, hidden constants extracted from the C++ source. These reveal mechanics not visible in spell tooltips.
-
-**Accumulated knowledge:**
-
-8. Read `results/{spec}/findings.json` — filter to `status: "validated"` to calibrate. These are known truths — your analysis should be consistent with them, or explain why they no longer hold. Also check `status: "rejected"` to avoid retesting dead ends.
-9. Read `results/{spec}/hypotheses.json` — queued untested ideas from prior sessions
-10. Read `results/{spec}/builds.json` — discovered archetype rankings and factor impacts
-11. Read `data/{spec}/build-theory.json` — curated archetype and cluster knowledge, synergy/tension analysis
-12. If deep analyses exist (`results/{spec}/*_analysis.md`), read them for prior C++ investigations
-
-**External references (lower priority):**
-
-13. When internal data has gaps — unclear talent interactions, uncertain mechanic behavior, new abilities without C++ coverage — search Wowhead or Icy Veins spec guides. Treat community sources as hypotheses to verify against C++ proc data and spell effects, not ground truth. Prioritize official/primary sources over community speculation.
-
-**Baseline:**
-
-14. Check for sim results: `ls results/{spec}/`. If none exist, run `node src/sim/runner.js <apl-file>` to establish a baseline.
+4. Check for sim results: `ls results/{spec}/`. If none exist, run `node src/sim/runner.js <apl-file>` to establish a baseline.
 
 ## Phase 0: Study Reference APL Technique
 

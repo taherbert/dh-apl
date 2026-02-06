@@ -4,25 +4,11 @@ Perform temporal resource flow analysis on the active spec's APL and generate te
 
 1. Run `node src/engine/startup.js` to determine the active spec. Use the spec name for all `{spec}` path references below.
 
-2. Read spell data, proc mechanics, and accumulated findings:
-
-```
-data/{spec}/spells-summary.json
-data/{spec}/cpp-proc-mechanics.json
-data/{spec}/build-theory.json
-results/{spec}/findings.json
-results/{spec}/builds.json
-```
+2. **Load the full knowledge base per `prompts/apl-analysis-guide.md` Section 0.** That section is the single canonical list of all data sources — load all tiers relevant to temporal analysis (mechanical blueprint, interaction/proc data, accumulated knowledge, external references when gaps exist).
 
 3. Read the APL to analyze. If `$ARGUMENTS` was provided, use that file. Otherwise default to `apls/{spec}/{spec}.simc`. If neither exists, check `apls/{spec}/baseline.simc`.
 
-4. Read recent sim results if available:
-
-```
-ls results/{spec}/
-```
-
-Look for `workflow_current.json` or `*_summary.json` files (for detailed cast counts, buff uptimes, proc data).
+4. Read recent sim results if available: `ls results/{spec}/`. Look for `workflow_current.json` or `*_summary.json` files (for detailed cast counts, buff uptimes, proc data).
 
 5. Run the temporal analysis engine:
 

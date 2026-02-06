@@ -6,9 +6,47 @@ This guide is **spec-agnostic**. Spec-specific data (abilities, resources, spell
 
 ---
 
-## 0. Loading Spec Context
+## 0. Loading the Knowledge Base
 
-Before analysis, load the spec adapter to get concrete values for all frameworks below:
+**This is the single canonical list of data sources for any analysis session.** All skills (`/iterate-apl`, `/optimize`, `/full-analysis`, `/theorycraft`, `/talent-analysis`) reference this section. If a new data source is added, update it here — not in individual skills.
+
+Run `node src/engine/startup.js` to determine the active spec. All `{spec}` paths below use the spec name from startup output.
+
+### Tier 1 — Mechanical Blueprint (always load)
+
+| Source                                                            | What it provides                                                                                                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Spec adapter** (`src/spec/{spec}.js` → `SPEC_CONFIG`)           | Resource models (names, caps, generators, consumers), hero trees (state machines, rhythms, key buffs, `aplBranch`, `buildMethod`), burst windows (durations, damage amps), synergy clusters, resource flows, off-GCD abilities, cooldown buffs. This is the mechanical blueprint — all spec-specific knowledge comes from here. |
+| **APL** (`apls/{spec}/current.simc` or `apls/{spec}/{spec}.simc`) | The actual rotation being analyzed — action lists, conditions, variables, delegation structure.                                                                                                                                                                                                                                 |
+| **Spell data** (`data/{spec}/spells-summary.json`)                | Ability mechanics with numbers: cooldowns, resources, durations, GCD, AoE radius, school, charges, descriptions.                                                                                                                                                                                                                |
+
+### Tier 2 — Interaction & Proc Data (load for any non-trivial analysis)
+
+| Source                                                         | What it provides                                                                                                                                             |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Interactions** (`data/{spec}/interactions-summary.json`)     | Talent-to-spell interaction map: what modifies what, proc chains, application types, magnitudes. Trace chains through this to find non-obvious dependencies. |
+| **C++ proc mechanics** (`data/{spec}/cpp-proc-mechanics.json`) | Proc rates, ICDs, RPPM values, hidden constants extracted from the C++ source. Reveals mechanics not visible in spell tooltips.                              |
+| **Build theory** (`data/{spec}/build-theory.json`)             | Curated archetype definitions, talent clusters, synergy/tension analysis, hero tree interactions.                                                            |
+
+### Tier 3 — Accumulated Knowledge (load to avoid re-work)
+
+| Source                                             | What it provides                                                                                                                                                                                        |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Findings** (`results/{spec}/findings.json`)      | Filter `status: "validated"` for known truths. Check `status: "rejected"` to avoid retesting dead ends. Your analysis should be consistent with validated findings, or explain why they no longer hold. |
+| **Hypotheses** (`results/{spec}/hypotheses.json`)  | Queued untested ideas from prior sessions.                                                                                                                                                              |
+| **Builds** (`results/{spec}/builds.json`)          | Discovered archetype rankings and factor impacts from DoE.                                                                                                                                              |
+| **Deep analyses** (`results/{spec}/*_analysis.md`) | Prior C++ investigations, detailed mechanical analyses.                                                                                                                                                 |
+
+### Tier 4 — External References (when internal data has gaps)
+
+When you encounter unclear talent interactions, uncertain mechanic behavior, or new abilities without C++ coverage:
+
+- Search **Wowhead** or **Icy Veins** spec guides for the relevant mechanic
+- Treat community sources as **hypotheses to verify**, not ground truth
+- Cross-reference against C++ proc data and spell effects before trusting
+- Prioritize official/primary sources over community speculation
+
+### Spec Adapter API
 
 ```javascript
 import { getSpecAdapter } from "../spec/loader.js";
@@ -16,15 +54,7 @@ const adapter = getSpecAdapter();
 const config = adapter.getSpecConfig();
 ```
 
-Key config sections:
-
-- **`config.resources`** — Primary/secondary resource names, caps, generators, consumers
-- **`config.heroTrees`** — Hero tree names, subtree IDs, key abilities per tree
-- **`config.buffWindows`** — Major cooldown/burst windows with durations and damage amps
-- **`config.synergies`** — Known talent synergy clusters
-- **`config.offGcdAbilities`** — Abilities that don't consume GCDs
-- **`config.cooldownBuffs`** — Cooldown-tied damage amplification windows
-- **`config.resourceFlow`** — Generators and consumers with per-cast amounts
+Key config sections: `config.resources`, `config.heroTrees`, `config.buffWindows`, `config.synergies`, `config.offGcdAbilities`, `config.cooldownBuffs`, `config.resourceFlow`.
 
 Use `adapter.loadAbilityData()` for merged spell data with domain overrides applied.
 

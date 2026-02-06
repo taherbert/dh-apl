@@ -6,22 +6,7 @@ Companion to `/theorycraft` (which analyzes temporal resource flow given a fixed
 
 1. Run `node src/engine/startup.js` to determine the active spec. All paths below use `{spec}` as a placeholder for the spec name from config.
 
-2. Read the talent tree and interaction data:
-
-```
-data/{spec}/talents.json
-data/{spec}/interactions-summary.json
-data/{spec}/cpp-proc-mechanics.json
-data/{spec}/spells-summary.json
-```
-
-3. Read accumulated findings and build data:
-
-```
-results/{spec}/findings.json
-results/{spec}/builds.json
-data/{spec}/build-theory.json
-```
+2. **Load the full knowledge base per `prompts/apl-analysis-guide.md` Section 0.** That section is the single canonical list of all data sources — load all tiers (mechanical blueprint, interaction/proc data, accumulated knowledge, external references when gaps exist). For talent analysis, `data/{spec}/talents.json` and `data/{spec}/interactions-summary.json` are particularly important.
 
 Filter findings to `status: "validated"` -- these calibrate your analysis. Read `builds.json` for factor impacts and archetype rankings. Read `build-theory.json` for cluster synergies and tension points.
 
