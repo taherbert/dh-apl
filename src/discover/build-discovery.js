@@ -4,8 +4,7 @@
 // Usage: node src/discover/build-discovery.js [--quick|--confirm] [--{branch}-only]
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, resolve } from "node:path";
 import { createHash } from "node:crypto";
 
 import { generateCombos, buildToHash } from "../model/talent-combos.js";
@@ -14,16 +13,11 @@ import { SCENARIOS } from "../sim/runner.js";
 import {
   HERO_SUBTREES,
   config,
-  toTitleCase,
   loadSpecAdapter,
   getSpecAdapter,
   SCENARIO_WEIGHTS,
 } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
-const RESULTS_DIR = join(ROOT, "results");
+import { dataFile, resultsDir, resultsFile, aplsDir } from "../engine/paths.js";
 
 const WEIGHTS = SCENARIO_WEIGHTS;
 
@@ -37,7 +31,7 @@ const FIDELITY = {
 
 function generateBuilds(opts = {}) {
   const data = JSON.parse(
-    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf8"),
+    readFileSync(dataFile("raidbots-talents.json"), "utf8"),
   );
   const result = generateCombos(opts.comboOpts);
   let builds = [...result.builds.filter((b) => b.valid)];
@@ -47,9 +41,11 @@ function generateBuilds(opts = {}) {
     builds.push(...result.pinnedBuilds.filter((b) => b.valid));
   }
 
-  // Filter by hero tree — resolve from aplBranches config
+  // Filter by hero tree — use displayName from spec config
   if (opts.heroTreeFilter) {
-    const filterName = toTitleCase(opts.heroTreeFilter);
+    const treeConfig =
+      getSpecAdapter().getSpecConfig().heroTrees[opts.heroTreeFilter];
+    const filterName = treeConfig?.displayName || opts.heroTreeFilter;
     builds = builds.filter((b) => b.heroTree === filterName);
   }
 
@@ -651,7 +647,8 @@ async function discover(opts = {}) {
       ? FIDELITY.quick
       : FIDELITY.standard;
 
-  const aplPath = opts.aplPath || `apls/${config.spec.specName}.simc`;
+  const aplPath =
+    opts.aplPath || join(aplsDir(), `${config.spec.specName}.simc`);
 
   console.log("Step 1: Generating talent builds...");
   const { builds, factors, design, data } = generateBuilds({
@@ -702,8 +699,8 @@ async function discover(opts = {}) {
     fidelity,
   );
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
-  const outPath = join(RESULTS_DIR, "builds.json");
+  mkdirSync(resultsDir(), { recursive: true });
+  const outPath = resultsFile("builds.json");
   writeFileSync(outPath, JSON.stringify(output, null, 2));
   console.log(`  Wrote ${outPath}`);
 

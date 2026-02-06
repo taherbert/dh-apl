@@ -3,15 +3,11 @@
 // Usage: node src/sim/workflow.js <apl.simc> [scenario]
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join, dirname, basename } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, basename } from "node:path";
 import { runSimAsync, SCENARIOS } from "./runner.js";
 import { cpus } from "node:os";
-import { getSpecAdapter } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const RESULTS_DIR = join(ROOT, "results");
+import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
+import { resultsDir, resultsFile } from "../engine/paths.js";
 
 const ALL_SCENARIOS = Object.keys(SCENARIOS);
 
@@ -171,6 +167,7 @@ function analyzeCrossScenario(results) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await loadSpecAdapter();
   const aplPath = process.argv[2];
   const scenarioArg = process.argv[3];
 
@@ -186,11 +183,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   const output = await runWorkflow(aplPath, scenarios);
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
-  const outPath = join(
-    RESULTS_DIR,
-    `workflow_${basename(aplPath, ".simc")}.json`,
-  );
+  mkdirSync(resultsDir(), { recursive: true });
+  const outPath = resultsFile(`workflow_${basename(aplPath, ".simc")}.json`);
   writeFileSync(outPath, JSON.stringify(output, null, 2));
 
   // Print summary to stdout

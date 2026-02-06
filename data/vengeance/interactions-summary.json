@@ -54,11 +54,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -88,17 +83,6 @@
       "name": "Throw Glaive",
       "modifiers": [
         {
-          "source": "Bouncing Glaives",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Champion of the Glaive",
           "type": "range_modifier",
           "tree": "class",
@@ -120,22 +104,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Bouncing Glaives",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Champion of the Glaive",
           "type": "range_modifier",
           "tree": "class",
@@ -155,11 +123,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Tempered Steel",
@@ -213,19 +176,6 @@
     "187827": {
       "name": "Metamorphosis",
       "modifiers": [
-        {
-          "source": "Soul Rending",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
         {
           "source": "Vengeful Beast",
           "type": "duration_modifier",
@@ -294,11 +244,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -378,11 +323,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -468,11 +408,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -538,11 +473,6 @@
         {
           "source": "Evasive Action",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
           "application": "buff_on_player"
         },
         {
@@ -689,11 +619,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -739,11 +664,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -835,11 +755,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -924,11 +839,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -985,11 +895,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -1148,26 +1053,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -1298,26 +1187,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -1385,6 +1258,22 @@
         }
       ]
     },
+    "207347": {
+      "name": "Aura of Pain",
+      "modifiers": [
+        {
+          "source": "Aura of Pain",
+          "type": "damage_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 6,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        }
+      ]
+    },
     "207407": {
       "name": "Soul Carver",
       "modifiers": [
@@ -1440,11 +1329,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -1508,11 +1392,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -1659,11 +1538,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -1720,11 +1594,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -1801,11 +1670,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -1862,11 +1726,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -1981,11 +1840,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -2002,17 +1856,6 @@
           "heroSpec": "Annihilator",
           "magnitude": {
             "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Remorseless",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -2131,11 +1974,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -2152,17 +1990,6 @@
           "heroSpec": "Annihilator",
           "magnitude": {
             "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Remorseless",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -2281,11 +2108,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -2302,17 +2124,6 @@
           "heroSpec": "Annihilator",
           "magnitude": {
             "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Remorseless",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -2438,97 +2249,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Guile",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Soulforged Blades",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Singular Strikes",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 25,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Guile",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Soulforged Blades",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Singular Strikes",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 25,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -2624,11 +2348,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -2692,11 +2411,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -2754,11 +2468,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -2806,17 +2515,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -2877,11 +2575,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -2929,17 +2622,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3064,11 +2746,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -3116,17 +2793,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3187,11 +2853,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -3239,17 +2900,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3416,11 +3066,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -3436,17 +3081,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Remorseless",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3586,11 +3220,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -3606,17 +3235,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Remorseless",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3725,97 +3343,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Guile",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Soulforged Blades",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Singular Strikes",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 25,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Guile",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Soulforged Blades",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Singular Strikes",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 25,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3902,26 +3433,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Remorseless",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -4008,26 +3523,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Remorseless",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -4100,19 +3599,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -4130,17 +3616,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -4185,19 +3660,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -4247,37 +3709,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -4327,19 +3762,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -4387,11 +3809,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -4402,36 +3819,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -4463,19 +3856,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -4497,19 +3877,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -4545,6 +3912,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -4565,19 +3945,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -4595,17 +3962,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -4650,19 +4006,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -4712,37 +4055,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -4792,19 +4108,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -4852,11 +4155,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -4867,36 +4165,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -4928,19 +4202,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -4962,19 +4223,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -5010,6 +4258,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -5030,19 +4291,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -5060,17 +4308,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -5115,19 +4352,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -5177,37 +4401,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -5257,19 +4454,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -5317,11 +4501,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -5332,36 +4511,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -5393,19 +4548,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -5427,19 +4569,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -5475,6 +4604,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -5526,11 +4668,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -5578,17 +4715,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -5649,11 +4775,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -5701,17 +4822,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -5794,16 +4904,6 @@
       "name": "Consume Magic",
       "modifiers": [
         {
-          "source": "Guile",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Swallowed Anger",
           "type": "resource_modifier",
           "tree": "class",
@@ -5882,11 +4982,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -5998,11 +5093,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -6070,19 +5160,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -6100,17 +5177,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -6155,19 +5221,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -6217,37 +5270,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -6297,19 +5323,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -6357,11 +5370,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -6372,36 +5380,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -6433,19 +5417,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -6467,19 +5438,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -6517,6 +5475,19 @@
             "stacking": "additive"
           },
           "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
         }
       ]
     },
@@ -6535,17 +5506,6 @@
       "name": "Throw Glaive",
       "modifiers": [
         {
-          "source": "Bouncing Glaives",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Champion of the Glaive",
           "type": "range_modifier",
           "tree": "class",
@@ -6567,22 +5527,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Bouncing Glaives",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Champion of the Glaive",
           "type": "range_modifier",
           "tree": "class",
@@ -6602,11 +5546,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Tempered Steel",
@@ -6834,26 +5773,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -6984,11 +5907,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -7127,11 +6045,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -7222,11 +6135,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -7269,19 +6177,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -7299,17 +6194,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -7354,19 +6238,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -7416,37 +6287,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -7496,19 +6340,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -7556,11 +6387,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -7571,36 +6397,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -7632,19 +6434,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -7666,19 +6455,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -7714,6 +6490,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -7734,19 +6523,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -7764,17 +6540,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -7819,19 +6584,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -7881,37 +6633,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -7961,19 +6686,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -8021,11 +6733,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -8036,36 +6743,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -8097,19 +6780,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -8131,19 +6801,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -8179,6 +6836,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -8199,19 +6869,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -8229,17 +6886,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -8284,19 +6930,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -8346,37 +6979,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -8426,19 +7032,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -8486,11 +7079,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -8501,36 +7089,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -8562,19 +7126,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -8596,19 +7147,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -8644,6 +7182,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -8726,19 +7277,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -8756,17 +7294,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -8811,19 +7338,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -8873,37 +7387,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -8953,19 +7440,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -9013,11 +7487,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -9028,36 +7497,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -9089,19 +7534,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -9123,19 +7555,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -9171,6 +7590,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -9191,19 +7623,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -9221,17 +7640,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -9276,19 +7684,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -9338,37 +7733,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -9418,19 +7786,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -9478,11 +7833,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -9493,36 +7843,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -9554,19 +7880,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -9588,19 +7901,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -9636,6 +7936,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -9656,19 +7969,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -9686,17 +7986,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -9741,19 +8030,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -9803,37 +8079,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -9883,19 +8132,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -9943,11 +8179,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -9958,36 +8189,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -10019,19 +8226,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -10053,19 +8247,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -10101,6 +8282,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -10121,19 +8315,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -10151,17 +8332,6 @@
         {
           "source": "Immolation Aura",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -10206,19 +8376,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Blood",
@@ -10268,37 +8425,10 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
             "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Aura of Pain",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -10348,19 +8478,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Burning Blood",
           "type": "damage_modifier",
           "tree": "spec",
@@ -10408,11 +8525,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -10423,36 +8535,12 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Furious",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -10484,19 +8572,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Immolation Aura",
           "type": "buff_grant",
           "application": "buff_on_player"
@@ -10518,19 +8593,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -10566,6 +8628,19 @@
             "perRank": true,
             "maxRank": 2,
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Infernal Armor",
+          "type": "resource_modifier",
+          "tree": "class",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "perRank": true,
+            "maxRank": 2,
+            "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         }
@@ -10665,17 +8740,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Bouncing Glaives",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Champion of the Glaive",
           "type": "range_modifier",
           "tree": "class",
@@ -10695,11 +8759,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -10750,11 +8809,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Tempered Steel",
           "type": "damage_modifier",
           "tree": "spec",
@@ -10797,11 +8851,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Tempered Steel",
@@ -11010,11 +9059,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Tempered Steel",
           "type": "damage_modifier",
           "tree": "spec",
@@ -11051,11 +9095,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Tempered Steel",
@@ -11138,11 +9177,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Tempered Steel",
           "type": "damage_modifier",
           "tree": "spec",
@@ -11181,11 +9215,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Tempered Steel",
           "type": "damage_modifier",
           "tree": "spec",
@@ -11204,42 +9233,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        }
-      ]
-    },
-    "471306": {
-      "name": "Void Metamorphosis",
-      "modifiers": [
-        {
-          "source": "Soul Rending",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        }
-      ]
-    },
-    "1217605": {
-      "name": "Void Metamorphosis",
-      "modifiers": [
-        {
-          "source": "Soul Rending",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -11285,19 +9278,6 @@
           "magnitude": {
             "value": 10,
             "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Infernal Armor",
-          "type": "damage_modifier",
-          "tree": "class",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
@@ -11443,11 +9423,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -11471,11 +9446,6 @@
             "unit": "percent",
             "stacking": "multiplicative"
           },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
           "application": "buff_on_player"
         },
         {
@@ -11542,11 +9512,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -11587,11 +9552,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Harness the Cosmos",
           "type": "damage_modifier",
           "tree": "hero",
@@ -11655,11 +9615,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -11825,11 +9780,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -11853,11 +9803,6 @@
             "unit": "percent",
             "stacking": "multiplicative"
           },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
           "application": "buff_on_player"
         },
         {
@@ -11924,11 +9869,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -11969,11 +9909,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Harness the Cosmos",
           "type": "damage_modifier",
           "tree": "hero",
@@ -12037,11 +9972,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
         },
         {
           "source": "Thrill of the Fight",
@@ -12200,11 +10130,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Void Metamorphosis",
-          "type": "cooldown_modifier",
-          "application": "buff_on_player"
-        },
-        {
           "source": "Thrill of the Fight",
           "type": "damage_modifier",
           "magnitude": {
@@ -12332,49 +10257,12 @@
         }
       ]
     },
-    "204909": {
-      "name": "Soul Rending",
-      "tree": "class",
-      "targets": [
-        {
-          "spell": "Metamorphosis",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Void Metamorphosis",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
     "207347": {
       "name": "Aura of Pain",
       "tree": "class",
       "targets": [
         {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 6,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
+          "spell": "Aura of Pain",
           "type": "damage_modifier",
           "magnitude": {
             "value": 6,
@@ -13250,111 +11138,12 @@
       "targets": [
         {
           "spell": "Immolation Aura",
-          "type": "damage_modifier",
+          "type": "resource_modifier",
           "magnitude": {
             "value": 20,
             "unit": "percent",
             "perRank": true,
             "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Soul Immolation",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "perRank": true,
-            "maxRank": 2,
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
-    "320386": {
-      "name": "Bouncing Glaives",
-      "tree": "class",
-      "targets": [
-        {
-          "spell": "Throw Glaive",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Throw Glaive",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Reaver's Glaive",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
             "stacking": "multiplicative"
           }
         }
@@ -13421,6 +11210,15 @@
         {
           "spell": "Soul Cleave",
           "type": "damage_modifier",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
+        },
+        {
+          "spell": "soul_cleave_t",
+          "type": "direct_damage_modifier",
           "magnitude": {
             "value": 50,
             "unit": "percent",
@@ -14754,173 +12552,6 @@
         }
       ]
     },
-    "471306": {
-      "name": "Void Metamorphosis",
-      "tree": null,
-      "targets": [
-        {
-          "spell": "Chaos Nova",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Throw Glaive",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Infernal Strike",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Vengeful Retreat",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Shear",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Fiery Brand",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Sigil of Flame",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Soul Carver",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Fiery Brand",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Fel Devastation",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Felblade",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Soul Carver",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Fracture",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Fracture",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Soul Cleave",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Spirit Bomb",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Infernal Armor",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Throw Glaive",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Sigil of Spite",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Demon Spikes",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Reaver's Glaive",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Warblade's Hunger",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Fury of the Aldrachi",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Preemptive Strike",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Voidfall Meteor",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Voidfall Meteor",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Catastrophe",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Meteor Shower",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Meteor Shower",
-          "type": "cooldown_modifier"
-        },
-        {
-          "spell": "Explosion of the Soul",
-          "type": "cooldown_modifier"
-        }
-      ]
-    },
-    "1223171": {
-      "name": "Guile",
-      "tree": null,
-      "targets": [
-        {
-          "spell": "Felblade",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Felblade",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Consume Magic",
-          "type": "range_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
     "1227062": {
       "name": "Thrill of the Fight",
       "tree": null,
@@ -15349,6 +12980,22 @@
         }
       ]
     },
+    "1253817": {
+      "name": "Otherworldly Focus",
+      "tree": "hero",
+      "heroSpec": "Annihilator",
+      "targets": [
+        {
+          "spell": "otherworldly_focus_benefit_t",
+          "type": "direct_damage_modifier",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
+        }
+      ]
+    },
     "1256295": {
       "name": "Mass Acceleration",
       "tree": "hero",
@@ -15602,108 +13249,6 @@
         }
       ]
     },
-    "1266326": {
-      "name": "Furious",
-      "tree": "class",
-      "targets": [
-        {
-          "spell": "Sigil of Flame",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Felblade",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fracture",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fracture",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Felblade",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
-    "1266328": {
-      "name": "Remorseless",
-      "tree": "class",
-      "targets": [
-        {
-          "spell": "Fel Devastation",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Soul Cleave",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Spirit Bomb",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 3,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
     "1266329": {
       "name": "Demon Muzzle",
       "tree": "class",
@@ -15887,54 +13432,6 @@
         }
       ]
     },
-    "1272432": {
-      "name": "Soulforged Blades",
-      "tree": null,
-      "targets": [
-        {
-          "spell": "Felblade",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Felblade",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 15,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
-    "1272770": {
-      "name": "Singular Strikes",
-      "tree": null,
-      "targets": [
-        {
-          "spell": "Felblade",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 25,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Felblade",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 25,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
     "1279247": {
       "name": "Harness the Cosmos",
       "tree": "hero",
@@ -15987,7 +13484,7 @@
     "Unrestrained Fury": "stat_passive",
     "Shattered Restoration": "has_interactions",
     "Improved Sigil of Misery": "cpp_only",
-    "Bouncing Glaives": "has_interactions",
+    "Bouncing Glaives": "cpp_only",
     "Imprison": "active_ability",
     "Charred Warblades": "cpp_only",
     "Chaos Nova": "has_interactions",
@@ -16003,7 +13500,7 @@
     "Aura of Pain": "has_interactions",
     "Live by the Glaive": "has_interactions",
     "Pursuit": "cpp_only",
-    "Soul Rending": "has_interactions",
+    "Soul Rending": "cpp_only",
     "Felfire Haste": "has_interactions",
     "Infernal Armor": "has_interactions",
     "Burn It Out": "cpp_only",
@@ -16013,8 +13510,8 @@
     "Felbound": "cpp_only",
     "Will of the Illidari": "cpp_only",
     "Internal Struggle": "stat_passive",
-    "Furious": "has_interactions",
-    "Remorseless": "has_interactions",
+    "Furious": "cpp_only",
+    "Remorseless": "cpp_only",
     "First In, Last Out": "has_interactions",
     "Erratic Felheart": "cpp_only",
     "Final Breath": "cpp_only",
@@ -16100,7 +13597,7 @@
     "Final Hour": "cpp_only",
     "Meteoric Fall": "has_interactions",
     "Dark Matter": "has_interactions",
-    "Otherworldly Focus": "cpp_only",
+    "Otherworldly Focus": "has_interactions",
     "World Killer": "has_interactions"
   },
   "bySetBonus": {

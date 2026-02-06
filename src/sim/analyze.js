@@ -2,13 +2,12 @@
 // Identifies cooldown waste, resource overcap, buff uptime issues.
 
 import { readFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { SCENARIOS } from "./runner.js";
-import { getSpecAdapter } from "../engine/startup.js";
+import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
+import { resultsDir } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const RESULTS_DIR = join(__dirname, "..", "..", "results");
+const RESULTS_DIR = resultsDir();
 
 function analyze(summaryPath) {
   const results = JSON.parse(readFileSync(summaryPath, "utf-8"));
@@ -119,6 +118,7 @@ function analyzeGCDUsage(result) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await loadSpecAdapter();
   const path = process.argv[2];
   if (!path) {
     console.log("Usage: node src/sim/analyze.js <summary.json>");

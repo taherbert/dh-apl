@@ -1,5 +1,13 @@
 Autonomous APL iteration loop. Run without stopping until improvements are exhausted.
 
+## Step 0: Determine Active Spec
+
+Run `node src/engine/startup.js` to determine the active spec from `config.json`. The output includes the spec name (e.g., `vengeance`). All paths below use `{spec}` as a placeholder — substitute the actual spec name from startup output.
+
+- Data: `data/{spec}/`
+- Results: `results/{spec}/`
+- APLs: `apls/{spec}/`
+
 ## Session Resilience
 
 Before starting, validate the environment:
@@ -7,29 +15,30 @@ Before starting, validate the environment:
 1. Run `node src/sim/iterate.js status` to check state
 2. If state is corrupted, it will auto-recover from backups — check stderr for recovery messages
 3. Run `git status` — ensure clean working tree on the correct branch
-4. If no state exists: `node src/sim/iterate.js init apls/baseline.simc`
+4. If no state exists: `node src/sim/iterate.js init apls/{spec}/baseline.simc`
 
 ### Warm Restart
 
 If resuming from a crash or new session:
 
 1. Run `node src/sim/iterate.js status` — shows current progress and consecutive rejections
-2. Read `results/dashboard.md` for a quick overview
-3. Read `results/changelog.md` to understand what was already accepted
+2. Read `results/{spec}/dashboard.md` for a quick overview
+3. Read `results/{spec}/changelog.md` to understand what was already accepted
 4. Check `git log --oneline -10` for recent commits (each accept should have a commit)
-5. Read `apls/current.simc` as the working APL
+5. Read `apls/{spec}/current.simc` as the working APL
 6. Read `prompts/apl-iteration-guide.md` for methodology (only on first startup, not every iteration)
-7. Read `results/findings.json` — filter to `status: "validated"` to calibrate against known results
+7. Read `results/{spec}/findings.json` — filter to `status: "validated"` to calibrate against known results
 8. Resume the iteration loop from Step 1
 
 ## Startup (Fresh Session)
 
-1. Run `node src/sim/iterate.js status` to check state
-2. If no state exists: `node src/sim/iterate.js init apls/baseline.simc`
-3. Read `prompts/apl-iteration-guide.md` for methodology
-4. Read `apls/current.simc` as the working APL
-5. Read `results/findings.json` — validated findings from prior sessions inform hypothesis ranking
-6. Read `data/build-theory.json` — archetype and cluster context for hypothesis generation
+1. Run `node src/engine/startup.js` — confirm spec name and simc sync status
+2. Run `node src/sim/iterate.js status` to check state
+3. If no state exists: `node src/sim/iterate.js init apls/{spec}/baseline.simc`
+4. Read `prompts/apl-iteration-guide.md` for methodology
+5. Read `apls/{spec}/current.simc` as the working APL
+6. Read `results/{spec}/findings.json` — validated findings from prior sessions inform hypothesis ranking
+7. Read `data/{spec}/build-theory.json` — archetype and cluster context for hypothesis generation
 
 ## Iteration Loop
 
@@ -46,7 +55,7 @@ Repeat until no hypotheses remain or improvements plateau:
 
 Pick the highest-value hypothesis to test. Prioritize:
 
-1. **Theory-grounded hypotheses** — backed by a causal model of WHY the change should help. Cross-reference `results/findings.json` validated insights.
+1. **Theory-grounded hypotheses** — backed by a causal model of WHY the change should help. Cross-reference `results/{spec}/findings.json` validated insights.
 2. High-confidence hypotheses affecting abilities with large DPS share
 3. Novel approaches not yet tried (check exhausted list)
 4. Multi-part hypotheses — a coherent set of interdependent APL changes that implement one conceptual idea. These test as a single iteration if the components can't be evaluated independently.
@@ -61,42 +70,42 @@ If all hypotheses are exhausted, generate new ones:
 
 ### Step 3: Modify
 
-- Read `apls/current.simc`
+- Read `apls/{spec}/current.simc`
 - Make ONE targeted change based on the chosen hypothesis
-- Save as `apls/candidate.simc`
+- Save as `apls/{spec}/candidate.simc`
 - Describe the mutation clearly (for the iteration log)
 
 Rules:
 
 - One change per iteration (isolate variables)
 - Preserve round-trip fidelity (use parser when possible)
-- Don't modify profile/gear lines — APL only. The profile lives in `apls/profile.simc` (included via `input=profile.simc`). Only edit action lines.
-- The current baseline uses AR talents — only `actions.ar` is active. Changes to shared lists (precombat, default, externals) affect both hero trees. To optimize Annihilator, a separate baseline with Annihilator talents is needed.
+- Don't modify profile/gear lines — APL only. The profile lives in `apls/{spec}/profile.simc` (included via `input=`). Only edit action lines.
+- The APL may contain hero tree branches (e.g., `run_action_list,name=<branch>,if=hero_tree.<name>`). Changes to shared lists (precombat, default, externals) affect all hero trees. Changes within a hero-tree-specific sub-list only affect that branch. Check which hero tree branch is active for the current baseline talents before modifying hero-tree-specific lists.
 
 Structural mutations (beyond condition tweaks) are valid:
 
-- **Extract sub-list with `call_action_list`:** Factor shared logic into a sub-list (e.g., `actions.cooldowns`, `actions.ar_aoe`). Use `call_action_list` — it evaluates inline and falls through if nothing fires, so the caller continues normally.
-- **AoE/ST split:** Add `call_action_list,name=ar_aoe,if=spell_targets.spirit_bomb>=3` before ST priority. This is a structural change but still one logical mutation.
+- **Extract sub-list with `call_action_list`:** Factor shared logic into a sub-list (e.g., `actions.cooldowns`, `actions.aoe`). Use `call_action_list` — it evaluates inline and falls through if nothing fires, so the caller continues normally.
+- **AoE/ST split:** Add `call_action_list,name=aoe,if=spell_targets.X>=N` before ST priority. This is a structural change but still one logical mutation.
 - **Reordering:** Moving an action line up/down is a valid single mutation.
-- **Adding action lines:** New lines (e.g., a conditional Soul Cleave during Rending Strike windows) count as one mutation if they serve one hypothesis.
+- **Adding action lines:** New lines count as one mutation if they serve one hypothesis.
 - Do NOT use `run_action_list` for sub-routines that should fall through — use `call_action_list`. Reserve `run_action_list` for mutually exclusive branches only.
 
 ### Step 4: Test (Tiered)
 
 **Quick screen first:**
-Run: `node src/sim/iterate.js compare apls/candidate.simc --quick`
+Run: `node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick`
 
 - If any scenario regresses >1% → reject immediately (saves time)
 - If all scenarios are within +/-0.3% → inconclusive at this fidelity, escalate
 
 **Standard test (if quick screen passes):**
-Run: `node src/sim/iterate.js compare apls/candidate.simc`
+Run: `node src/sim/iterate.js compare apls/{spec}/candidate.simc`
 
 - Read delta and statistical significance per scenario from stdout
 
 **Confirm (if marginal):**
 If any improvement is 0.1-0.3% and marked "not significant":
-Run: `node src/sim/iterate.js compare apls/candidate.simc --confirm`
+Run: `node src/sim/iterate.js compare apls/{spec}/candidate.simc --confirm`
 
 - High-iteration run to resolve the ambiguity
 
@@ -133,12 +142,12 @@ The `--hypothesis` flag matches the hypothesis being tested by description subst
 
 After every accept or reject, record findings:
 
-1. **Append to `results/findings.json`:** Add a new finding entry with the insight, evidence (DPS delta numbers), confidence, tags, and `status: "validated"` (if accepted) or `status: "rejected"` (if rejected). Use the tag taxonomy from `results/SCHEMA.md`.
+1. **Append to `results/{spec}/findings.json`:** Add a new finding entry with the insight, evidence (DPS delta numbers), confidence, tags, and `status: "validated"` (if accepted) or `status: "rejected"` (if rejected). Use the tag taxonomy from `results/{spec}/SCHEMA.md`.
 
 After every successful `accept`, commit:
 
 ```bash
-git add apls/current.simc results/iteration-state.json results/dashboard.md results/changelog.md results/findings.json
+git add apls/{spec}/current.simc results/{spec}/iteration-state.json results/{spec}/dashboard.md results/{spec}/changelog.md results/{spec}/findings.json
 git commit -m "iterate: <hypothesis summary> (<+/-X.XX%> weighted)"
 ```
 
@@ -150,12 +159,22 @@ Go to Step 1. Continue until stopped by one of the conditions below.
 
 ## Parallelism Strategy
 
-When multiple hypotheses in the same category are available (e.g., several threshold sweeps):
+When multiple independent hypotheses are available (e.g., several threshold sweeps or condition variants):
 
-1. Use subagents to quick-screen 2-3 candidates simultaneously
-2. Each subagent: modify APL, run `--quick` comparison, report results
-3. Promote the best-performing candidate to standard fidelity test
-4. This is optional — sequential iteration is fine for most cases
+1. Launch 2-3 subagents using the Task tool, each working on a different hypothesis
+2. Each subagent: modify `apls/{spec}/current.simc` into a unique candidate file, run `node src/sim/iterate.js compare <candidate> --quick`, and report the per-scenario deltas
+3. Collect results from all subagents and promote the best-performing candidate to standard fidelity test
+4. This is optional — sequential iteration is fine for most cases. Use parallelism when the hypothesis queue is deep and candidates are independent.
+
+## Human-Reviewable Outputs
+
+The iteration loop maintains human-readable state files that are updated continuously:
+
+- **`results/{spec}/dashboard.md`** — Updated after every accept/reject. Shows current DPS, iteration count, and recent changes at a glance.
+- **`results/{spec}/changelog.md`** — Logs every accepted change with DPS impact. Append-only history of what worked.
+- **`results/{spec}/findings.json`** — Records insights (validated, rejected, inconclusive) with evidence and tags. Persists across sessions.
+
+On completion, print a human-readable summary to stdout (see "On Completion" below).
 
 ## Stop Conditions
 
@@ -178,7 +197,7 @@ Use the `consecutiveRejections` counter from `iterate.js status` (tracked in sta
 1. Run `node src/sim/iterate.js summary` — generates all reports
 2. Commit final state:
    ```bash
-   git add apls/current.simc results/
+   git add apls/{spec}/current.simc results/{spec}/
    git commit -m "iterate: final — N iterations, M accepted, +X.XX% weighted DPS"
    ```
 3. Print summary:

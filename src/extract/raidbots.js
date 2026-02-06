@@ -1,18 +1,16 @@
 // Fetches Vengeance DH talent data from Raidbots and saves filtered output.
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   DATA_ENV,
   RAIDBOTS_TALENTS,
   SPEC_ID,
   HERO_SUBTREES,
   SIMC_DIR,
+  loadSpecAdapter,
 } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import { dataDir, dataFile, ensureSpecDirs } from "../engine/paths.js";
 
 function simplifyNode(n) {
   return {
@@ -121,7 +119,8 @@ function supplementFromDbc(nodeById) {
 }
 
 async function fetchRaidbotsTalents() {
-  mkdirSync(DATA_DIR, { recursive: true });
+  await loadSpecAdapter();
+  ensureSpecDirs();
 
   console.log(`Fetching ${RAIDBOTS_TALENTS}...`);
   const res = await fetch(RAIDBOTS_TALENTS, {
@@ -161,7 +160,7 @@ async function fetchRaidbotsTalents() {
   }
 
   writeFileSync(
-    join(DATA_DIR, "raidbots-talents.json"),
+    join(dataDir(), "raidbots-talents.json"),
     JSON.stringify(output, null, 2),
   );
 
@@ -186,7 +185,7 @@ async function fetchRaidbotsTalents() {
   const fullNodeList = [...nodeById.values()].sort((a, b) => a.id - b.id);
 
   writeFileSync(
-    join(DATA_DIR, "dh-all-nodes.json"),
+    join(dataDir(), "dh-all-nodes.json"),
     JSON.stringify(fullNodeList, null, 2),
   );
 

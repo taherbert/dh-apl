@@ -40,10 +40,33 @@
 //   - specId, className, cppClassName, role
 //   - displayNames: { class, spec }
 //   - resources: { primary: {name, cap}, secondary?: {name, cap} }
-//   - spellIds, domainOverrides, heroTrees, resourceFlow
+//   - spellIds, domainOverrides, resourceFlow
+//   - heroTrees: { [key]: { displayName, subtree, buildMethod, damageSchool, keyBuffs, aplBranch, profileKeywords } }
+//       buildMethod: "doe" (DoE discovery pipeline) or "multi-actor" (manual .simc file)
 //   - buffWindows, synergies
 //   - keyBuffs, offGcdAbilities, cooldownBuffs
 //   - classificationHints, resourceNames
+//
+// SPEC_CONFIG optional fields (for data-driven analysis modules):
+//   - resourceModels: Array of { name, cap, baseCap?, generators[], consumers[] }
+//     Detailed resource generation/consumption models used by theorycraft and
+//     hypothesis generators. Extends the simpler resourceFlow with charge data,
+//     meta bonuses, proc rates, and value-per-unit descriptions.
+//   - burstWindows: Array of { buff, cooldown, duration, damageAmp, school,
+//     talentDep?, syncTargets?, resourceBonus? }
+//     Damage amplification windows with sync targets for cooldown alignment
+//     hypotheses.
+//   - stateMachines: Object keyed by hero tree name. Each entry describes a
+//     repeating ability cycle with states, transitions, and uptime targets.
+//     Used by hypothesis generators to check cycle completion.
+//   - hypothesisPatterns: Array of { id, category, template, appliesWhen(config) }
+//     Parameterized hypothesis templates. Each has a predicate that checks the
+//     spec config to determine applicability. Analysis modules iterate these
+//     to generate spec-specific optimization hypotheses.
+//   - clusterKeywords: Object mapping cluster names to keyword arrays. Used by
+//     interaction clustering to group talents/spells by thematic similarity.
+//   - schoolClusters: Object mapping damage school names to cluster identifiers.
+//     Used by damage school analysis to group abilities.
 //
 // Resource caps should be BASE values (without talents). Use validate-spec-data.js
 // to catch values that accidentally include talent bonuses.
@@ -73,6 +96,8 @@
  *
  * @property {function(): Object} getHeroTrees
  *   Returns hero tree configs from SPEC_CONFIG.
+ *   Each tree must have: displayName, subtree, damageSchool, keyBuffs, aplBranch, profileKeywords.
+ *   displayName must match the Raidbots talent tree display name exactly.
  *
  * @property {function(): Object} getResourceFlow
  *   Returns resource flow config from SPEC_CONFIG.

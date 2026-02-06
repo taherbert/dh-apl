@@ -1,12 +1,18 @@
 # Project-specific
-data/raw/
-results/
-apls/candidate.simc
-apls/current.simc
-!results/builds.json
-!results/findings.json
-!results/SCHEMA.md
+data/*/raw/
+data/*/talents-raw.json
+apls/*/candidate.simc
+apls/*/current.simc
 bin/
+
+# Results: ignore all output, track knowledge files per spec.
+results/*
+!results/*/
+results/*/*
+!results/*/builds.json
+!results/*/findings.json
+!results/*/hypotheses.json
+!results/*/SCHEMA.md
 
 # Logs
 logs

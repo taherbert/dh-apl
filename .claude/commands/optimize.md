@@ -17,13 +17,24 @@ This is the master orchestrator. It launches parallel specialist analyses, synth
 │ SPELL DATA      │ │ TALENT          │ │ RESOURCE FLOW   │
 │ SPECIALIST      │ │ SPECIALIST      │ │ SPECIALIST      │
 │                 │ │                 │ │                 │
-│ - DPGCD ranks   │ │ - Synergy       │ │ - Fury/frag     │
+│ - DPGCD ranks   │ │ - Synergy       │ │ - Resource      │
 │ - Modifier      │ │   clusters      │ │   equilibrium   │
 │   stacking      │ │ - Anti-synergies│ │ - Cooldown      │
 │ - School        │ │ - Build-APL     │ │   cycles        │
 │   clusters      │ │   coupling      │ │ - Timing        │
 │                 │ │                 │ │   conflicts     │
 └────────┬────────┘ └────────┬────────┘ └────────┬────────┘
+         │                   │                   │
+         │          ┌────────┴────────┐          │
+         │          │ STATE MACHINE   │          │
+         │          │ SPECIALIST      │          │
+         │          │                 │          │
+         │          │ - Hero tree     │          │
+         │          │   rhythms       │          │
+         │          │ - Variable      │          │
+         │          │   coherence     │          │
+         │          │ - Dead code     │          │
+         │          └────────┬────────┘          │
          │                   │                   │
          └───────────────────┼───────────────────┘
                              │
@@ -53,19 +64,29 @@ This is the master orchestrator. It launches parallel specialist analyses, synth
 
 ## Startup
 
+### 0. Determine Active Spec
+
+Run `node src/engine/startup.js` to load config and determine the active spec. The output includes the spec name (e.g., `vengeance`). Use this spec name for ALL path construction below — replace `{spec}` with the actual spec name throughout.
+
+All per-spec paths follow these patterns:
+
+- Data: `data/{spec}/filename.json`
+- Results: `results/{spec}/filename.json`
+- APLs: `apls/{spec}/filename.simc`
+
 ### 1. Check Knowledge System
 
 **BEFORE launching specialists, check existing knowledge:**
 
 ```bash
 # Check for known mechanics (avoid re-analyzing)
-cat data/mechanics.json 2>/dev/null
+cat data/{spec}/mechanics.json 2>/dev/null
 
 # Check for untested hypotheses (might already have ideas queued)
-cat results/hypotheses.json 2>/dev/null
+cat results/{spec}/hypotheses.json 2>/dev/null
 
 # Check for validated findings (don't re-test)
-cat results/findings.json 2>/dev/null | jq '.[] | select(.status == "validated")'
+cat results/{spec}/findings.json 2>/dev/null | jq '.[] | select(.status == "validated")'
 ```
 
 If `mechanics.json` has relevant mechanics for the current focus:
@@ -82,11 +103,11 @@ If `hypotheses.json` has untested hypotheses:
 
 ```bash
 # Check if resuming from a previous session
-cat results/checkpoint.md 2>/dev/null
+cat results/{spec}/checkpoint.md 2>/dev/null
 node src/sim/iterate.js status
 
-# Check for synthesis.json (ranked hypotheses from previous run)
-cat results/synthesis.json 2>/dev/null
+# Check for synthesis output (ranked hypotheses from previous run)
+cat results/{spec}/synthesis.json 2>/dev/null
 ```
 
 If checkpoint exists and is < 24h old:
@@ -107,48 +128,54 @@ If synthesis.json exists and is < 24h old:
 **Tier 1 — Always load:**
 
 ```
-data/mechanics.json          # Known mechanical facts
-data/spells-summary.json
-data/cpp-proc-mechanics.json
-results/findings.json (filter status: "validated")
-results/hypotheses.json      # Queued hypotheses
-results/builds.json
+data/{spec}/mechanics.json           # Known mechanical facts
+data/{spec}/spells-summary.json      # Context-efficient spell data
+data/{spec}/cpp-proc-mechanics.json  # Proc rates, ICDs, constants
+results/{spec}/findings.json         # Filter status: "validated"
+results/{spec}/hypotheses.json       # Queued hypotheses
+results/{spec}/builds.json           # Discovered archetypes + rankings
 ```
 
 **Tier 2 — For specialist synthesis:**
 
 ```
-data/talents.json
-data/interactions-summary.json
-data/build-theory.json
+data/{spec}/talents.json             # Full talent tree
+data/{spec}/interactions-summary.json # Talent-spell interaction map
+data/{spec}/build-theory.json        # Curated archetype/cluster knowledge
 ```
 
-### 3. Establish Baseline
+### 4. Establish Baseline
 
 ```bash
 # Initialize iteration state if not already present
-node src/sim/iterate.js init $ARGUMENTS  # or apls/vengeance.simc
+# Use $ARGUMENTS if provided, otherwise default to the spec's main APL
+node src/sim/iterate.js init $ARGUMENTS  # or apls/{spec}/{spec}.simc
 ```
 
 ## Phase 1: Parallel Specialist Launch
 
-Launch 4 specialist analyses IN PARALLEL using TaskCreate. Each specialist writes structured output to `results/analysis_*.json`.
+Launch 4 specialist analyses IN PARALLEL using the Task tool. Each specialist writes structured output to `results/{spec}/analysis_*.json`.
 
-**IMPORTANT:** Launch all 4 specialists in a SINGLE message with 4 TaskCreate calls. Do NOT wait for one to complete before launching the next.
+**IMPORTANT:** Launch all 4 specialists in a SINGLE message with 4 Task tool calls. Do NOT wait for one to complete before launching the next.
 
 ### Specialist Prompts
 
 **Spell Data Specialist:**
 
 ```
-Analyze VDH spell data for APL optimization opportunities.
+Analyze the current spec's spell data for APL optimization opportunities.
 
-Read: data/spells-summary.json, data/cpp-proc-mechanics.json
+Read the active spec's data files:
+- data/{spec}/spells-summary.json
+- data/{spec}/cpp-proc-mechanics.json
+
+Also read for context:
+- data/{spec}/interactions-summary.json
 
 Produce analysis:
 1. DPGCD ranking — damage per GCD for each ability, accounting for:
    - Base damage + modifiers from current build
-   - Resource cost (Fury, fragment consumption)
+   - Resource cost (primary resource, fragment consumption)
    - GCD length
 2. Modifier stacking depth — which abilities have the most amplifiers?
 3. School clusters — which abilities share damage schools for synergy?
@@ -165,16 +192,23 @@ Generate hypotheses in this format:
   "proposedChanges": [{ "type": "move_up|move_down|add_condition|...", "ability": "name", ... }]
 }
 
-Write output to: results/analysis_spell_data.json
+Write output to: results/{spec}/analysis_spell_data.json
 Include timestamp in output for freshness checking.
 ```
 
 **Talent Specialist:**
 
 ```
-Analyze VDH talent interactions for build-APL co-optimization.
+Analyze the current spec's talent interactions for build-APL co-optimization.
 
-Read: data/talents.json, data/interactions-summary.json, data/build-theory.json
+Read the active spec's data files:
+- data/{spec}/talents.json
+- data/{spec}/interactions-summary.json
+- data/{spec}/build-theory.json
+
+Also read for context:
+- results/{spec}/builds.json
+- results/{spec}/findings.json
 
 Produce analysis:
 1. Synergy clusters — which talents amplify each other?
@@ -186,19 +220,28 @@ Produce analysis:
 Generate hypotheses in the spell data format.
 Focus on COUPLED hypotheses that require both build AND APL changes.
 
-Write output to: results/analysis_talent.json
+Write output to: results/{spec}/analysis_talent.json
+Include timestamp in output for freshness checking.
 ```
 
 **Resource Flow Specialist:**
 
 ```
-Analyze VDH resource economy for timing optimization.
+Analyze the current spec's resource economy for timing optimization.
 
-Read: data/spells-summary.json, apls/current.simc (or vengeance.simc)
+Read the active spec's data files:
+- data/{spec}/spells-summary.json
+- data/{spec}/cpp-proc-mechanics.json
+
+Read the APL to analyze:
+- apls/{spec}/current.simc (if it exists, otherwise apls/{spec}/{spec}.simc)
+
+Also read for context:
+- data/{spec}/build-theory.json (for resource model documentation)
 
 Produce analysis:
-1. Fury generation/spending equilibrium — are we capping? starving?
-2. Fragment generation rate vs consumption — optimal thresholds?
+1. Resource generation/spending equilibrium — are we capping? starving?
+2. Secondary resource (fragments, combo points, etc.) generation rate vs consumption — optimal thresholds?
 3. GCD budget allocation — mandatory vs discretionary GCDs
 4. Cooldown cycle map — alignment windows, collision points
 5. Burst window utilization — do we pre-stock resources?
@@ -208,18 +251,24 @@ Generate hypotheses focused on TIMING:
 - Threshold adjustments based on resource flow
 - Cooldown sequencing improvements
 
-Write output to: results/analysis_resource_flow.json
+Write output to: results/{spec}/analysis_resource_flow.json
+Include timestamp in output for freshness checking.
 ```
 
 **State Machine Specialist:**
 
 ```
-Analyze VDH APL state machine for coherence.
+Analyze the current spec's APL state machine for coherence.
 
-Read: apls/current.simc (or vengeance.simc), data/build-theory.json
+Read the APL to analyze:
+- apls/{spec}/current.simc (if it exists, otherwise apls/{spec}/{spec}.simc)
+
+Read for context:
+- data/{spec}/build-theory.json (hero tree state machines, burst windows)
+- data/{spec}/spells-summary.json
 
 Produce analysis:
-1. Hero tree state machine — does the APL respect AR/Anni rhythms?
+1. Hero tree state machine — does the APL respect each hero tree's rhythms?
 2. Variable usage — are computed states correct? any stale values?
 3. Action list delegation — run_action_list vs call_action_list usage
 4. Dead code — unreachable conditions, redundant checks
@@ -230,55 +279,106 @@ Generate hypotheses focused on STATE COHERENCE:
 - Missing phase sub-lists
 - Timing guard additions
 
-Write output to: results/analysis_state_machine.json
+Write output to: results/{spec}/analysis_state_machine.json
+Include timestamp in output for freshness checking.
 ```
 
 ## Phase 2: Synthesis
 
-After all 4 specialists complete, run synthesis:
+After all 4 specialists complete:
 
-```javascript
-// Read and synthesize specialist outputs
-import {
-  loadSpecialistOutputs,
-  synthesize,
-  generateSynthesisReport,
-} from "./src/analyze/synthesizer.js";
+### 2a. Read Specialist Outputs
 
-const outputs = loadSpecialistOutputs();
-const result = synthesize(outputs);
+Read all four analysis files:
 
-// result contains:
-// - hypotheses: ranked list with consensus scores
-// - compound: hypotheses requiring multiple changes
-// - simple: single-change hypotheses
-// - conflicts: contradictory recommendations
-// - byArchetype: grouped by universal/AR/Anni
+```
+results/{spec}/analysis_spell_data.json
+results/{spec}/analysis_talent.json
+results/{spec}/analysis_resource_flow.json
+results/{spec}/analysis_state_machine.json
 ```
 
-### Synthesis Output
+### 2b. Run Programmatic Synthesis
 
-Present the synthesized hypotheses to the user:
+```bash
+node src/sim/iterate.js synthesize
+```
+
+This runs the hypothesis synthesizer which cross-references multiple specialist sources, detects consensus, and ranks hypotheses.
+
+### 2c. Generate Human-Readable Summary
+
+Write `results/{spec}/analysis_summary.md` with:
 
 1. **High-Consensus Hypotheses** — supported by 2+ specialists
 2. **Compound Hypotheses** — require multiple APL mutations
 3. **Conflicts** — contradictory recommendations with resolution strategy
 4. **By Archetype** — which apply universally vs hero-tree-specific
+5. **Specialist Findings** — key insights from each specialist
 
-Wait for user confirmation before proceeding to testing.
+### 2d. Initialize Tracking Files
+
+Write `results/{spec}/dashboard.md` with initial state:
+
+```markdown
+# Optimization Dashboard
+
+**Spec:** {spec}
+**Started:** {timestamp}
+**Baseline DPS:** (from iterate.js status)
+
+## Progress
+
+| Iteration | Hypothesis | Result | Impact |
+| --------- | ---------- | ------ | ------ |
+| (empty)   |            |        |        |
+
+## Stats
+
+- Tested: 0
+- Accepted: 0
+- Rejected: 0
+- Consecutive Rejections: 0
+```
+
+Write `results/{spec}/changelog.md` with:
+
+```markdown
+# Optimization Changelog
+
+## {date} Session
+
+### Accepted Changes
+
+(none yet)
+
+### Rejected Hypotheses
+
+(none yet)
+```
+
+### 2e. Present and Confirm
+
+Present the synthesized hypotheses to the user. Include:
+
+- The ranked hypothesis list from the synthesis
+- Key conflicts and how you propose to resolve them
+- Which archetypes each hypothesis targets
+
+**Wait for user confirmation before proceeding to testing.**
 
 ## Phase 3: Deep Iteration Loop
 
 Execute the nested iteration loop:
 
 ```
-FOR EACH archetype (from build-theory.json):
-  FOR EACH build in archetype (from builds.json):
+FOR EACH archetype (from data/{spec}/build-theory.json):
+  FOR EACH build in archetype (from results/{spec}/builds.json):
     FOR EACH hypothesis (from synthesis):
       1. Generate candidate APL
       2. Run quick screen
       3. If promising: run confirm fidelity
-      4. Record to findings.json
+      4. Record to results/{spec}/findings.json
       5. If accepted: check for second-order effects
 ```
 
@@ -291,16 +391,22 @@ For each hypothesis:
 node src/sim/iterate.js generate
 
 # 2. Quick screen
-node src/sim/iterate.js compare apls/candidate.simc --quick
+node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick
 
 # 3. If promising (weighted > 0.1%), confirm
-node src/sim/iterate.js compare apls/candidate.simc --confirm
+node src/sim/iterate.js compare apls/{spec}/candidate.simc --confirm
 
 # 4. Accept or reject
 node src/sim/iterate.js accept "reason" --hypothesis "fragment"
 # OR
 node src/sim/iterate.js reject "reason" --hypothesis "fragment"
 ```
+
+### After Each Iteration
+
+Update `results/{spec}/dashboard.md` with the new row.
+
+Update `results/{spec}/changelog.md` with the accepted change or rejected hypothesis.
 
 ### Hypothesis Types
 
@@ -316,8 +422,8 @@ node src/sim/iterate.js reject "reason" --hypothesis "fragment"
 
 **Coupled (build + APL):**
 
-1. Generate modified profile.simc with new talents string
-2. Write candidate.simc with adapted APL
+1. Generate modified profile with new talents string
+2. Write candidate APL with adapted action lines
 3. Compare against current baseline
 4. ALSO compare new build with OLD APL (to measure coupling value)
 
@@ -325,9 +431,9 @@ node src/sim/iterate.js reject "reason" --hypothesis "fragment"
 
 After accepting a change, check for downstream impacts:
 
-- Did resource equilibrium shift? → Re-evaluate thresholds
-- Did a new ability become valuable? → Check priority ordering
-- Did burst window characteristics change? → Re-evaluate pooling
+- Did resource equilibrium shift? Re-evaluate thresholds
+- Did a new ability become valuable? Check priority ordering
+- Did burst window characteristics change? Re-evaluate pooling
 
 Generate new hypotheses based on the accepted change.
 
@@ -339,7 +445,7 @@ After completing all builds in an archetype:
 2. **Archetype-Specific** — which only helped certain builds?
 3. **Build-Specific** — which only helped one build?
 
-Record findings to `results/findings.json`:
+Record findings to `results/{spec}/findings.json`:
 
 ```json
 {
@@ -348,32 +454,66 @@ Record findings to `results/findings.json`:
   "hypothesis": "description",
   "status": "validated",
   "scope": "universal|archetype|build",
-  "archetype": "spirit_bomb|etc",
+  "archetype": "archetype_name",
   "builds": ["affected_build_ids"],
   "impact": { "st": "+X%", "small_aoe": "+Y%", "big_aoe": "+Z%" },
   "mechanism": "explanation of why this worked"
 }
 ```
 
+After completing all archetypes, re-rank builds under the updated APL:
+
+```bash
+npm run discover -- --quick
+```
+
 ## Checkpoint Protocol
 
 ### On Context Limits or Interruption
 
+Save state to `results/{spec}/checkpoint.md`:
+
+```markdown
+# Optimization Checkpoint
+
+**Timestamp:** {ISO8601}
+**Spec:** {spec}
+**Current Archetype:** {archetype_name}
+**Current Build:** {build_id}
+**Current Hypothesis:** {hypothesis_id}
+**Iterations Completed:** N
+**Accepted:** M
+**Rejected:** R
+
+## Key Observations
+
+- {insight 1}
+- {insight 2}
+
+## Remaining Work
+
+- {what's left to do}
+
+## Resume Instructions
+
+1. Run /optimize
+2. Startup will detect this checkpoint and resume from here
+```
+
+Also save iterate.js state:
+
 ```bash
-node src/sim/iterate.js checkpoint \
-  --archetype "current_archetype" \
-  --build "current_build" \
-  --hypothesis "current_hypothesis" \
-  --notes "key observations this session"
+node src/sim/iterate.js status
 ```
 
 ### On Session Resume
 
-1. Run `node src/sim/iterate.js status`
-2. Read `results/checkpoint.md`
-3. If specialist outputs < 24h old: reuse them
-4. If specialist outputs > 24h old: re-run Phase 1
-5. Resume from checkpoint position
+1. Run `node src/engine/startup.js` to determine active spec
+2. Run `node src/sim/iterate.js status`
+3. Read `results/{spec}/checkpoint.md`
+4. If specialist outputs < 24h old: reuse them
+5. If specialist outputs > 24h old: re-run Phase 1
+6. Resume from checkpoint position
 
 ## Loop Termination
 
@@ -387,6 +527,43 @@ OR when:
 
 - Context approaching limits — save checkpoint and suggest re-running
 
+## Session Completion
+
+### 1. Generate Final Reports
+
+```bash
+node src/sim/iterate.js summary
+```
+
+### 2. Update Dashboard
+
+Write final state to `results/{spec}/dashboard.md` with complete iteration table and summary statistics.
+
+### 3. Print Session Summary
+
+Output to the user:
+
+- **Spec analyzed:** the active spec name
+- **Archetypes covered:** list
+- **Builds tested per archetype:** counts
+- **Hypotheses tested / accepted / rejected:** totals
+- **Total DPS improvement:** weighted across scenarios
+- **Key Findings:**
+  - Universal improvements (apply to all builds)
+  - Archetype-specific discoveries
+  - Mechanism insights (why things worked/didn't)
+- **Remaining Work:**
+  - Untested hypotheses for next session
+  - Checkpoint position for resume
+  - Areas needing deeper investigation
+
+### 4. Commit
+
+```bash
+git add apls/{spec}/current.simc results/{spec}/
+git commit -m "optimize: {spec} — N iterations, M accepted, +X.XX% weighted DPS"
+```
+
 ## Anti-Patterns
 
 - **Sequential specialist execution** — ALWAYS launch all 4 in parallel
@@ -394,25 +571,5 @@ OR when:
 - **Ignoring consensus** — hypotheses supported by multiple specialists are higher confidence
 - **Skipping second-order effects** — an accepted change may enable further improvements
 - **Testing talent swaps with unadapted APL** — coupled hypotheses need both changes
-- **Grinding thresholds without theory** — "fury>=38 vs 40 vs 42" without mechanism
-
-## Output
-
-### Session Summary
-
-- Archetypes covered
-- Builds tested per archetype
-- Hypotheses tested / accepted / rejected
-- Total DPS improvement (weighted across scenarios)
-
-### Key Findings
-
-- Universal improvements (apply to all builds)
-- Archetype-specific discoveries
-- Mechanism insights (why things worked/didn't)
-
-### Remaining Work
-
-- Untested hypotheses for next session
-- Checkpoint position for resume
-- Areas needing deeper investigation
+- **Grinding thresholds without theory** — "resource>=38 vs 40 vs 42" without mechanism
+- **Hardcoding spec-specific knowledge** — read from the spec adapter, not from memory

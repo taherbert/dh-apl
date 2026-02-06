@@ -1,0 +1,2219 @@
+{
+  "_schema": "builds-v1",
+  "_generated": "2026-02-06T02:19:32.171Z",
+  "apl": {
+    "file": "/Users/tom/Documents/GitHub/dh-apl/apls/vengeance/vengeance.simc",
+    "hash": "c5f75ab1"
+  },
+  "fidelity": "quick",
+  "scenarios": {
+    "st": {
+      "targets": 1,
+      "duration": 300
+    },
+    "small_aoe": {
+      "targets": 5,
+      "duration": 75
+    },
+    "big_aoe": {
+      "targets": 10,
+      "duration": 60
+    }
+  },
+  "weights": {
+    "st": 0.5,
+    "small_aoe": 0.3,
+    "big_aoe": 0.2
+  },
+  "factorImpacts": [
+    {
+      "talent": "Perfectly Balanced Glaive",
+      "nodeId": 90970,
+      "factorType": "binary",
+      "mainEffect": 8624,
+      "pct": 13.53
+    },
+    {
+      "talent": "Fallout",
+      "nodeId": 90972,
+      "factorType": "binary",
+      "mainEffect": 7866,
+      "pct": 12.34
+    },
+    {
+      "talent": "Cycle of Binding",
+      "nodeId": 90963,
+      "factorType": "binary",
+      "mainEffect": -6328,
+      "pct": -9.93
+    },
+    {
+      "talent": "Burning Alive",
+      "nodeId": 90959,
+      "factorType": "binary",
+      "mainEffect": 6153,
+      "pct": 9.66
+    },
+    {
+      "talent": "Down in Flames",
+      "nodeId": 90961,
+      "factorType": "binary",
+      "mainEffect": 4017,
+      "pct": 6.3
+    },
+    {
+      "talent": "Charred Flesh",
+      "nodeId": 90962,
+      "factorType": "multi_rank_r1",
+      "mainEffect": 3508,
+      "pct": 5.5
+    },
+    {
+      "talent": "Frailty",
+      "nodeId": 90977,
+      "factorType": "binary",
+      "mainEffect": 3150,
+      "pct": 4.94
+    },
+    {
+      "talent": "Tempered Steel",
+      "nodeId": 90968,
+      "factorType": "binary",
+      "mainEffect": 3057,
+      "pct": 4.8
+    },
+    {
+      "talent": "Charred Flesh",
+      "nodeId": 90962,
+      "factorType": "multi_rank_r2",
+      "mainEffect": 2847,
+      "pct": 4.47
+    },
+    {
+      "talent": "Vulnerability",
+      "nodeId": 90981,
+      "factorType": "multi_rank_r2",
+      "mainEffect": 2215,
+      "pct": 3.48
+    },
+    {
+      "talent": "Vengeful Beast",
+      "nodeId": 90983,
+      "factorType": "binary",
+      "mainEffect": 2049,
+      "pct": 3.22
+    },
+    {
+      "talent": "Soul Carver",
+      "nodeId": 90982,
+      "factorType": "binary",
+      "mainEffect": -1841,
+      "pct": -2.89
+    },
+    {
+      "talent": "Soul Barrier / Soul Sigils",
+      "nodeId": 90956,
+      "factorType": "choice",
+      "mainEffect": 1836,
+      "pct": 2.88
+    },
+    {
+      "talent": "Sigil of Spite",
+      "nodeId": 90978,
+      "factorType": "binary",
+      "mainEffect": 1724,
+      "pct": 2.71
+    },
+    {
+      "talent": "Volatile Flameblood",
+      "nodeId": 90986,
+      "factorType": "binary",
+      "mainEffect": -1683,
+      "pct": -2.64
+    },
+    {
+      "talent": "Stoke the Flames",
+      "nodeId": 90984,
+      "factorType": "binary",
+      "mainEffect": -1581,
+      "pct": -2.48
+    },
+    {
+      "talent": "Agonizing Flames",
+      "nodeId": 90971,
+      "factorType": "binary",
+      "mainEffect": -1282,
+      "pct": -2.01
+    },
+    {
+      "talent": "Vulnerability",
+      "nodeId": 90981,
+      "factorType": "multi_rank_r1",
+      "mainEffect": 768,
+      "pct": 1.2
+    },
+    {
+      "talent": "Retaliation",
+      "nodeId": 90952,
+      "factorType": "binary",
+      "mainEffect": 528,
+      "pct": 0.83
+    },
+    {
+      "talent": "Fiery Demise",
+      "nodeId": 90958,
+      "factorType": "multi_rank_r2",
+      "mainEffect": -499,
+      "pct": -0.78
+    }
+  ],
+  "synergyPairs": [
+    {
+      "talents": [
+        "Cycle of Binding",
+        "Vulnerability"
+      ],
+      "nodeIds": [
+        90963,
+        90981
+      ],
+      "interaction": -13578,
+      "pct": -21.31
+    },
+    {
+      "talents": [
+        "Stoke the Flames",
+        "Down in Flames"
+      ],
+      "nodeIds": [
+        90984,
+        90961
+      ],
+      "interaction": -12200,
+      "pct": -19.14
+    },
+    {
+      "talents": [
+        "Cycle of Binding",
+        "Vulnerability"
+      ],
+      "nodeIds": [
+        90963,
+        90981
+      ],
+      "interaction": -11410,
+      "pct": -17.91
+    },
+    {
+      "talents": [
+        "Soul Barrier / Soul Sigils",
+        "Vengeful Beast"
+      ],
+      "nodeIds": [
+        90956,
+        90983
+      ],
+      "interaction": -11022,
+      "pct": -17.3
+    },
+    {
+      "talents": [
+        "Cycle of Binding",
+        "Charred Flesh"
+      ],
+      "nodeIds": [
+        90963,
+        90962
+      ],
+      "interaction": -10417,
+      "pct": -16.35
+    },
+    {
+      "talents": [
+        "Cycle of Binding",
+        "Charred Flesh"
+      ],
+      "nodeIds": [
+        90963,
+        90962
+      ],
+      "interaction": -10233,
+      "pct": -16.06
+    },
+    {
+      "talents": [
+        "Agonizing Flames",
+        "Down in Flames"
+      ],
+      "nodeIds": [
+        90971,
+        90961
+      ],
+      "interaction": 10060,
+      "pct": 15.79
+    },
+    {
+      "talents": [
+        "Soul Carver",
+        "Darkglare Boon"
+      ],
+      "nodeIds": [
+        90982,
+        90985
+      ],
+      "interaction": -8900,
+      "pct": -13.97
+    },
+    {
+      "talents": [
+        "Retaliation",
+        "Cycle of Binding"
+      ],
+      "nodeIds": [
+        90952,
+        90963
+      ],
+      "interaction": -8836,
+      "pct": -13.87
+    },
+    {
+      "talents": [
+        "Tempered Steel",
+        "Cycle of Binding"
+      ],
+      "nodeIds": [
+        90968,
+        90963
+      ],
+      "interaction": 8131,
+      "pct": 12.76
+    }
+  ],
+  "discoveredArchetypes": [
+    {
+      "name": "Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [
+        "Burning Alive",
+        "Down in Flames",
+        "Charred Flesh"
+      ],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMgxMzwMjZMmZYGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+        "name": "AldrachiReaver_d62_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 28462.911357702993,
+          "small_aoe": 103311.20835373619,
+          "big_aoe": 185908.65580534405
+        },
+        "weighted": 82407,
+        "talents": {
+          "spec": [
+            "Fiery Brand",
+            "Retaliation",
+            "Felfire Fist",
+            "Soul Barrier",
+            "Fiery Demise",
+            "Burning Alive",
+            "Ascending Flame",
+            "Down in Flames",
+            "Charred Flesh",
+            "Tempered Steel",
+            "Perfectly Balanced Glaive",
+            "Agonizing Flames",
+            "Fallout",
+            "Soulmonger",
+            "Painbringer",
+            "Frailty",
+            "Sigil of Spite",
+            "Soulcrush",
+            "Vulnerability",
+            "Vengeful Beast",
+            "Darkglare Boon",
+            "Volatile Flameblood",
+            "Burning Blood",
+            "Spirit Bomb",
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage"
+          ],
+          "specDifferences": []
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMzMwMmZGmZYGMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+          "name": "AldrachiReaver_d92_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 28139.180643784333,
+            "small_aoe": 99027.25498539474,
+            "big_aoe": 177507.85793125836
+          },
+          "weighted": 79279
+        },
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMzMYMmZGmZYGYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+          "name": "AldrachiReaver_d34_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 28037.85500786221,
+            "small_aoe": 97474.04202401305,
+            "big_aoe": 167940.70861381214
+          },
+          "weighted": 76849
+        }
+      ],
+      "buildCount": 11
+    },
+    {
+      "name": "Cycle of Binding + Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [
+        "Cycle of Binding",
+        "Burning Alive",
+        "Down in Flames",
+        "Charred Flesh"
+      ],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZzMzMDmxMDMDMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+        "name": "AldrachiReaver_d53_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 26174.000409852288,
+          "small_aoe": 92783.77236594346,
+          "big_aoe": 173261.27583814698
+        },
+        "weighted": 75574,
+        "talents": {
+          "spec": [
+            "Fiery Brand",
+            "Retaliation",
+            "Felfire Fist",
+            "Sigil of Chains",
+            "Fel Flame Fortification",
+            "Soul Sigils",
+            "Fiery Demise",
+            "Burning Alive",
+            "Ascending Flame",
+            "Down in Flames",
+            "Charred Flesh",
+            "Cycle of Binding",
+            "Calcified Spikes",
+            "Tempered Steel",
+            "Perfectly Balanced Glaive",
+            "Agonizing Flames",
+            "Fallout",
+            "Frailty",
+            "Sigil of Spite",
+            "Vengeful Beast",
+            "Stoke the Flames",
+            "Darkglare Boon",
+            "Volatile Flameblood",
+            "Burning Blood",
+            "Quickened Sigils",
+            "Spirit Bomb",
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage"
+          ],
+          "specDifferences": [
+            "+Sigil of Chains",
+            "+Fel Flame Fortification",
+            "+Cycle of Binding",
+            "+Calcified Spikes",
+            "+Stoke the Flames",
+            "+Quickened Sigils",
+            "-Soulmonger",
+            "-Painbringer",
+            "-Soulcrush",
+            "-Vulnerability"
+          ]
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMDMmZGmZ4BmhZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+          "name": "AldrachiReaver_d38_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 27150.806259540976,
+            "small_aoe": 91887.36270776684,
+            "big_aoe": 164637.81204858076
+          },
+          "weighted": 74069
+        },
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMz8ADMmZGmZMzgZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+          "name": "AldrachiReaver_d84_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 27782.557739217154,
+            "small_aoe": 87275.31222548173,
+            "big_aoe": 154645.0235446842
+          },
+          "weighted": 71003
+        }
+      ],
+      "buildCount": 9
+    },
+    {
+      "name": "Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [
+        "Burning Alive",
+        "Charred Flesh"
+      ],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMjBMmZGmZMjZMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+        "name": "AldrachiReaver_d113_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 27600.31206160353,
+          "small_aoe": 90907.60183025709,
+          "big_aoe": 163097.66089749304
+        },
+        "weighted": 73692,
+        "talents": {
+          "spec": [
+            "Fiery Brand",
+            "Retaliation",
+            "Felfire Fist",
+            "Soul Barrier",
+            "Fiery Demise",
+            "Burning Alive",
+            "Ascending Flame",
+            "Charred Flesh",
+            "Tempered Steel",
+            "Perfectly Balanced Glaive",
+            "Agonizing Flames",
+            "Fallout",
+            "Soulmonger",
+            "Painbringer",
+            "Frailty",
+            "Sigil of Spite",
+            "Soulcrush",
+            "Vulnerability",
+            "Vengeful Beast",
+            "Stoke the Flames",
+            "Volatile Flameblood",
+            "Burning Blood",
+            "Quickened Sigils",
+            "Spirit Bomb",
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage"
+          ],
+          "specDifferences": [
+            "+Stoke the Flames",
+            "+Quickened Sigils",
+            "-Down in Flames",
+            "-Darkglare Boon"
+          ]
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMjBMmZGmZMjZYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+          "name": "AldrachiReaver_d14_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 27520.997245672195,
+            "small_aoe": 90673.73312742481,
+            "big_aoe": 158330.51438901012
+          },
+          "weighted": 72629
+        },
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBLmZMYMGzwMjZMjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+          "name": "AldrachiReaver_d15_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 26611.003550661055,
+            "small_aoe": 85629.05828964469,
+            "big_aoe": 150809.37473351866
+          },
+          "weighted": 69156
+        }
+      ],
+      "buildCount": 8
+    },
+    {
+      "name": "Cycle of Binding + Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [
+        "Cycle of Binding",
+        "Burning Alive",
+        "Charred Flesh"
+      ],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwMj5BGzMDzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+        "name": "AldrachiReaver_d27_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 27566.60534262363,
+          "small_aoe": 86374.30731609226,
+          "big_aoe": 150698.4208331509
+        },
+        "weighted": 69835,
+        "talents": {
+          "spec": [
+            "Fiery Brand",
+            "Retaliation",
+            "Felfire Fist",
+            "Soul Sigils",
+            "Fiery Demise",
+            "Burning Alive",
+            "Ascending Flame",
+            "Charred Flesh",
+            "Cycle of Binding",
+            "Tempered Steel",
+            "Perfectly Balanced Glaive",
+            "Agonizing Flames",
+            "Fallout",
+            "Soulmonger",
+            "Painbringer",
+            "Frailty",
+            "Sigil of Spite",
+            "Soulcrush",
+            "Vulnerability",
+            "Soul Carver",
+            "Stoke the Flames",
+            "Darkglare Boon",
+            "Volatile Flameblood",
+            "Burning Blood",
+            "Spirit Bomb",
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage"
+          ],
+          "specDifferences": [
+            "+Cycle of Binding",
+            "+Soul Carver",
+            "+Stoke the Flames",
+            "-Down in Flames",
+            "-Vengeful Beast"
+          ]
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwMjZYMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+          "name": "AldrachiReaver_d116_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 26679.40392868167,
+            "small_aoe": 84412.68715045806,
+            "big_aoe": 154482.88858703253
+          },
+          "weighted": 69560
+        },
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBbmZMDjxYGmZMjxYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+          "name": "AldrachiReaver_d58_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 26324.930213145963,
+            "small_aoe": 83627.35400499047,
+            "big_aoe": 152334.4457180359
+          },
+          "weighted": 68718
+        }
+      ],
+      "buildCount": 17
+    },
+    {
+      "name": "Cycle of Binding + Burning Alive",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [
+        "Cycle of Binding",
+        "Burning Alive"
+      ],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxMDjZmxMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+        "name": "AldrachiReaver_d7_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 25124.108528800596,
+          "small_aoe": 76683.90145187019,
+          "big_aoe": 138523.2243583433
+        },
+        "weighted": 63272,
+        "talents": {
+          "spec": [
+            "Fiery Brand",
+            "Soul Barrier",
+            "Fiery Demise",
+            "Burning Alive",
+            "Ascending Flame",
+            "Cycle of Binding",
+            "Ruinous Bulwark",
+            "Feed the Demon",
+            "Calcified Spikes",
+            "Tempered Steel",
+            "Perfectly Balanced Glaive",
+            "Agonizing Flames",
+            "Fallout",
+            "Soulmonger",
+            "Painbringer",
+            "Frailty",
+            "Sigil of Spite",
+            "Vulnerability",
+            "Vengeful Beast",
+            "Stoke the Flames",
+            "Volatile Flameblood",
+            "Burning Blood",
+            "Roaring Fire",
+            "Quickened Sigils",
+            "Spirit Bomb",
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage"
+          ],
+          "specDifferences": [
+            "+Cycle of Binding",
+            "+Ruinous Bulwark",
+            "+Feed the Demon",
+            "+Calcified Spikes",
+            "+Stoke the Flames",
+            "+Roaring Fire / Sigil of Silence",
+            "+Quickened Sigils",
+            "-Retaliation",
+            "-Felfire Fist",
+            "-Down in Flames",
+            "-Charred Flesh",
+            "-Soulcrush",
+            "-Darkglare Boon"
+          ]
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxMDDzMzMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+          "name": "AldrachiReaver_d6_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 24940.350324625033,
+            "small_aoe": 76593.10971010674,
+            "big_aoe": 138071.26009925012
+          },
+          "weighted": 63062
+        },
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZmZYwMmZGmZYMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+          "name": "AldrachiReaver_d121_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 24938.37758043962,
+            "small_aoe": 76414.7499691642,
+            "big_aoe": 137358.1683356306
+          },
+          "weighted": 62865
+        }
+      ],
+      "buildCount": 11
+    },
+    {
+      "name": "Cycle of Binding + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [
+        "Cycle of Binding",
+        "Down in Flames",
+        "Charred Flesh"
+      ],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYmZgxMzwMDPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+        "name": "AldrachiReaver_d91_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 27908.217706297746,
+          "small_aoe": 81993.71134601769,
+          "big_aoe": 138399.17705524096
+        },
+        "weighted": 66232,
+        "talents": {
+          "spec": [
+            "Fiery Brand",
+            "Retaliation",
+            "Felfire Fist",
+            "Soul Sigils",
+            "Fiery Demise",
+            "Ascending Flame",
+            "Down in Flames",
+            "Charred Flesh",
+            "Cycle of Binding",
+            "Tempered Steel",
+            "Perfectly Balanced Glaive",
+            "Agonizing Flames",
+            "Fallout",
+            "Soulmonger",
+            "Painbringer",
+            "Frailty",
+            "Sigil of Spite",
+            "Vulnerability",
+            "Soul Carver",
+            "Vengeful Beast",
+            "Stoke the Flames",
+            "Volatile Flameblood",
+            "Burning Blood",
+            "Quickened Sigils",
+            "Spirit Bomb",
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage"
+          ],
+          "specDifferences": [
+            "+Cycle of Binding",
+            "+Soul Carver",
+            "+Stoke the Flames",
+            "+Quickened Sigils",
+            "-Burning Alive",
+            "-Soulcrush",
+            "-Darkglare Boon"
+          ]
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDYmHYwMmZGmZMPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+          "name": "AldrachiReaver_d83_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 27704.8758448703,
+            "small_aoe": 79575.38050146127,
+            "big_aoe": 136556.07161545078
+          },
+          "weighted": 65036
+        },
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZbGzMDmxMDMDMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+          "name": "AldrachiReaver_d74_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 26559.73495977084,
+            "small_aoe": 78835.59865843641,
+            "big_aoe": 139946.56483305423
+          },
+          "weighted": 64920
+        }
+      ],
+      "buildCount": 18
+    },
+    {
+      "name": "Cycle of Binding + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [
+        "Cycle of Binding",
+        "Charred Flesh"
+      ],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYzYMDmxMzwMDzMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+        "name": "AldrachiReaver_d20_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 27077.172238659274,
+          "small_aoe": 81206.06843232305,
+          "big_aoe": 138900.93112353448
+        },
+        "weighted": 65681,
+        "talents": {
+          "spec": [
+            "Fiery Brand",
+            "Soul Sigils",
+            "Fiery Demise",
+            "Ascending Flame",
+            "Charred Flesh",
+            "Cycle of Binding",
+            "Calcified Spikes",
+            "Tempered Steel",
+            "Perfectly Balanced Glaive",
+            "Agonizing Flames",
+            "Fallout",
+            "Soulmonger",
+            "Painbringer",
+            "Frailty",
+            "Sigil of Spite",
+            "Vulnerability",
+            "Soul Carver",
+            "Vengeful Beast",
+            "Darkglare Boon",
+            "Volatile Flameblood",
+            "Burning Blood",
+            "Roaring Fire",
+            "Quickened Sigils",
+            "Spirit Bomb",
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage"
+          ],
+          "specDifferences": [
+            "+Cycle of Binding",
+            "+Calcified Spikes",
+            "+Soul Carver",
+            "+Roaring Fire / Sigil of Silence",
+            "+Quickened Sigils",
+            "-Retaliation",
+            "-Felfire Fist",
+            "-Burning Alive",
+            "-Down in Flames",
+            "-Soulcrush"
+          ]
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBLGjZYMGzwMjZMzYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+          "name": "AldrachiReaver_d56_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 26206.02106830669,
+            "small_aoe": 77620.62685768955,
+            "big_aoe": 140254.58957076425
+          },
+          "weighted": 64440
+        },
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDYMDjxMzwMjZMMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+          "name": "AldrachiReaver_d13_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 26973.28917716261,
+            "small_aoe": 77201.16918752535,
+            "big_aoe": 138345.59321913298
+          },
+          "weighted": 64316
+        }
+      ],
+      "buildCount": 22
+    },
+    {
+      "name": "aldrachi reaver",
+      "heroTree": "aldrachi_reaver",
+      "definingTalents": [],
+      "bestBuild": {
+        "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZZGDMzMzMjxMDgZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+        "name": "pin_pure_dps_AldrachiReaver_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+        "dps": {
+          "st": 23525.552479732738,
+          "small_aoe": 70720.86906710513,
+          "big_aoe": 123212.09892163303
+        },
+        "weighted": 57621,
+        "talents": {
+          "spec": [
+            "Fel Devastation",
+            "Untethered Rage / Untethered Rage / Untethered Rage",
+            "Spirit Bomb",
+            "Fiery Brand",
+            "Perfectly Balanced Glaive",
+            "Ascending Flame",
+            "Quickened Sigils",
+            "Tempered Steel",
+            "Roaring Fire",
+            "Retaliation",
+            "Felfire Fist",
+            "Calcified Spikes",
+            "Sigil of Spite",
+            "Agonizing Flames",
+            "Burning Blood",
+            "Feed the Demon",
+            "Revel in Pain",
+            "Frailty",
+            "Fallout",
+            "Volatile Flameblood",
+            "Soul Barrier",
+            "Feast of Souls",
+            "Ruinous Bulwark",
+            "Fel Flame Fortification",
+            "Fiery Demise",
+            "Void Reaver",
+            "Painbringer",
+            "Sigil of Chains"
+          ],
+          "specDifferences": [
+            "+Quickened Sigils",
+            "+Roaring Fire / Sigil of Silence",
+            "+Calcified Spikes",
+            "+Feed the Demon",
+            "+Revel in Pain",
+            "+Feast of Souls",
+            "+Ruinous Bulwark",
+            "+Fel Flame Fortification",
+            "+Void Reaver",
+            "+Sigil of Chains",
+            "-Burning Alive",
+            "-Down in Flames",
+            "-Charred Flesh",
+            "-Soulmonger",
+            "-Soulcrush",
+            "-Vulnerability",
+            "-Vengeful Beast",
+            "-Darkglare Boon"
+          ]
+        }
+      },
+      "alternateBuilds": [
+        {
+          "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmxMGYmZmZmhZMYYmlZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+          "name": "pin_max_defensive_AldrachiReaver_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+          "dps": {
+            "st": 23179.872451330506,
+            "small_aoe": 68450.98570030431,
+            "big_aoe": 127198.55591370456
+          },
+          "weighted": 57565
+        }
+      ],
+      "buildCount": 2
+    }
+  ],
+  "allBuilds": [
+    {
+      "name": "AldrachiReaver_d62_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMgxMzwMjZMmZYGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 28462.911357702993,
+        "small_aoe": 103311.20835373619,
+        "big_aoe": 185908.65580534405
+      },
+      "weighted": 82407,
+      "rank": 1,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d92_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMzMwMmZGmZYGMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 28139.180643784333,
+        "small_aoe": 99027.25498539474,
+        "big_aoe": 177507.85793125836
+      },
+      "weighted": 79279,
+      "rank": 2,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d34_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMzMYMmZGmZYGYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 28037.85500786221,
+        "small_aoe": 97474.04202401305,
+        "big_aoe": 167940.70861381214
+      },
+      "weighted": 76849,
+      "rank": 3,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d53_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZzMzMDmxMDMDMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26174.000409852288,
+        "small_aoe": 92783.77236594346,
+        "big_aoe": 173261.27583814698
+      },
+      "weighted": 75574,
+      "rank": 4,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d51_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDMzMwMzMzwMDDmZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26254.460192201987,
+        "small_aoe": 91694.39934838406,
+        "big_aoe": 170230.37637663205
+      },
+      "weighted": 74682,
+      "rank": 5,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d50_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDMzMYMmZGmZYwMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26485.26783827612,
+        "small_aoe": 91356.15531231048,
+        "big_aoe": 168843.54609692717
+      },
+      "weighted": 74418,
+      "rank": 6,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d38_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMDMmZGmZ4BmhZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27150.806259540976,
+        "small_aoe": 91887.36270776684,
+        "big_aoe": 164637.81204858076
+      },
+      "weighted": 74069,
+      "rank": 7,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d46_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMz8AwMmZGmZMPwMMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 28038.75413922158,
+        "small_aoe": 90251.26264500499,
+        "big_aoe": 163005.180393885
+      },
+      "weighted": 73696,
+      "rank": 8,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d113_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMjBMmZGmZMjZMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27600.31206160353,
+        "small_aoe": 90907.60183025709,
+        "big_aoe": 163097.66089749304
+      },
+      "weighted": 73692,
+      "rank": 9,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d35_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMzMYYmZGmBzgZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25396.546993552052,
+        "small_aoe": 89792.62487070187,
+        "big_aoe": 166980.53578784555
+      },
+      "weighted": 73032,
+      "rank": 10,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d14_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMjBMmZGmZMjZYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27520.997245672195,
+        "small_aoe": 90673.73312742481,
+        "big_aoe": 158330.51438901012
+      },
+      "weighted": 72629,
+      "rank": 11,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d84_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMz8ADMmZGmZMzgZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27782.557739217154,
+        "small_aoe": 87275.31222548173,
+        "big_aoe": 154645.0235446842
+      },
+      "weighted": 71003,
+      "rank": 12,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d76_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDMzMYmxMzwMYwMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25139.058849999226,
+        "small_aoe": 87478.99411100027,
+        "big_aoe": 160080.0261886586
+      },
+      "weighted": 70829,
+      "rank": 13,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d64_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMYwMzwgZMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23164.410991712164,
+        "small_aoe": 87066.5962373073,
+        "big_aoe": 165348.42575862873
+      },
+      "weighted": 70772,
+      "rank": 14,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d27_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwMj5BGzMDzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27566.60534262363,
+        "small_aoe": 86374.30731609226,
+        "big_aoe": 150698.4208331509
+      },
+      "weighted": 69835,
+      "rank": 15,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d116_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwMjZYMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26679.40392868167,
+        "small_aoe": 84412.68715045806,
+        "big_aoe": 154482.88858703253
+      },
+      "weighted": 69560,
+      "rank": 16,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d15_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBLmZMYMGzwMjZMjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26611.003550661055,
+        "small_aoe": 85629.05828964469,
+        "big_aoe": 150809.37473351866
+      },
+      "weighted": 69156,
+      "rank": 17,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d58_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBbmZMDjxYGmZMjxYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26324.930213145963,
+        "small_aoe": 83627.35400499047,
+        "big_aoe": 152334.4457180359
+      },
+      "weighted": 68718,
+      "rank": 18,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d69_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGDbmZMDjxYGmZMjxYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25913.41717950486,
+        "small_aoe": 83894.90506732113,
+        "big_aoe": 150372.05888973875
+      },
+      "weighted": 68200,
+      "rank": 19,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d73_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMLzDMzMDmZmZMMDMmZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24684.96703983927,
+        "small_aoe": 83863.67798213747,
+        "big_aoe": 153476.38407471878
+      },
+      "weighted": 68197,
+      "rank": 20,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d54_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMLegZmZwMzMjxDMDMmZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24740.526727927165,
+        "small_aoe": 83393.48146720129,
+        "big_aoe": 152824.6403045948
+      },
+      "weighted": 67953,
+      "rank": 21,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d22_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxDMjHYwMmZGmZYmZmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26397.530797548414,
+        "small_aoe": 82763.76928111212,
+        "big_aoe": 146514.51892281283
+      },
+      "weighted": 67331,
+      "rank": 22,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d2_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbmZMDzMzMDMDMjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24980.5681061182,
+        "small_aoe": 81575.9294563934,
+        "big_aoe": 151744.73173677363
+      },
+      "weighted": 67312,
+      "rank": 23,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d125_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbzMjZwMzMDMDMjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25368.707463702984,
+        "small_aoe": 82532.34003359968,
+        "big_aoe": 149037.86879713956
+      },
+      "weighted": 67252,
+      "rank": 24,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d112_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMjBjxYGmZYMjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25631.29972799565,
+        "small_aoe": 82471.92415720798,
+        "big_aoe": 147505.3125421827
+      },
+      "weighted": 67058,
+      "rank": 25,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d105_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxDMjHYgxMzwMDzMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26445.820783779676,
+        "small_aoe": 82233.10206992037,
+        "big_aoe": 144784.5255308379
+      },
+      "weighted": 66850,
+      "rank": 26,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d42_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMz8ADjxMzwYMzAzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25149.164599720352,
+        "small_aoe": 82960.48797087095,
+        "big_aoe": 146378.95094444262
+      },
+      "weighted": 66739,
+      "rank": 27,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d100_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwg5BGzMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25089.32282395942,
+        "small_aoe": 81113.28907629654,
+        "big_aoe": 147774.54991895496
+      },
+      "weighted": 66434,
+      "rank": 28,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d43_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMz8ADDmZGmhZGMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25062.94278399344,
+        "small_aoe": 80103.40654137144,
+        "big_aoe": 149041.80227111068
+      },
+      "weighted": 66371,
+      "rank": 29,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d91_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYmZgxMzwMDPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27908.217706297746,
+        "small_aoe": 81993.71134601769,
+        "big_aoe": 138399.17705524096
+      },
+      "weighted": 66232,
+      "rank": 30,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d11_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwMMDjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25696.772073909808,
+        "small_aoe": 80178.61738618375,
+        "big_aoe": 146581.61654096286
+      },
+      "weighted": 66218,
+      "rank": 31,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d19_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGMbegZ8AYmZmZGmZ4BGzMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25504.580955392426,
+        "small_aoe": 82656.3536795811,
+        "big_aoe": 143090.63724152616
+      },
+      "weighted": 66167,
+      "rank": 32,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d5_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYzMjHYYmxMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25740.957949293363,
+        "small_aoe": 78518.15042412093,
+        "big_aoe": 147657.93306093224
+      },
+      "weighted": 65958,
+      "rank": 33,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d20_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYzYMDmxMzwMDzMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27077.172238659274,
+        "small_aoe": 81206.06843232305,
+        "big_aoe": 138900.93112353448
+      },
+      "weighted": 65681,
+      "rank": 34,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d108_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYbegZ8AYmxMzwM4BGzMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24868.22744627686,
+        "small_aoe": 78864.49639677803,
+        "big_aoe": 145547.1372965795
+      },
+      "weighted": 65203,
+      "rank": 35,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d83_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDYmHYwMmZGmZMPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27704.8758448703,
+        "small_aoe": 79575.38050146127,
+        "big_aoe": 136556.07161545078
+      },
+      "weighted": 65036,
+      "rank": 36,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d74_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZbGzMDmxMDMDMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26559.73495977084,
+        "small_aoe": 78835.59865843641,
+        "big_aoe": 139946.56483305423
+      },
+      "weighted": 64920,
+      "rank": 37,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d23_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxDMjHYYmxMzwYYmZmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25008.527270711646,
+        "small_aoe": 79637.08641196636,
+        "big_aoe": 142469.6918991491
+      },
+      "weighted": 64889,
+      "rank": 38,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d52_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbGzMDmZmZMMDMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26047.68109244616,
+        "small_aoe": 78507.12243070862,
+        "big_aoe": 140114.2639568755
+      },
+      "weighted": 64599,
+      "rank": 39,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d80_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZmZmHAmxMGmZMPwMMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26976.91842899673,
+        "small_aoe": 80874.93054763264,
+        "big_aoe": 134234.88214996256
+      },
+      "weighted": 64598,
+      "rank": 40,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d36_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYmZgxMzwM4BmZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27000.16136347674,
+        "small_aoe": 78102.22465840625,
+        "big_aoe": 137580.6844885352
+      },
+      "weighted": 64447,
+      "rank": 41,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d56_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBLGjZYMGzwMjZMzYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26206.02106830669,
+        "small_aoe": 77620.62685768955,
+        "big_aoe": 140254.58957076425
+      },
+      "weighted": 64440,
+      "rank": 42,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d47_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMLmZmHAmxMGmZMPwMMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27034.942997408565,
+        "small_aoe": 81237.10146483697,
+        "big_aoe": 132442.4186268647
+      },
+      "weighted": 64377,
+      "rank": 43,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d13_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDYMDjxMzwMjZMMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26973.28917716261,
+        "small_aoe": 77201.16918752535,
+        "big_aoe": 138345.59321913298
+      },
+      "weighted": 64316,
+      "rank": 44,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d115_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYbeAjZwMmZGmZMjhZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26960.43795303291,
+        "small_aoe": 76766.47892693534,
+        "big_aoe": 138943.02846325317
+      },
+      "weighted": 64299,
+      "rank": 45,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d33_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxYmZgxMzwMDzYMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27359.573918246624,
+        "small_aoe": 78262.06260896889,
+        "big_aoe": 133822.2762364957
+      },
+      "weighted": 63923,
+      "rank": 46,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d44_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDYmHYwMmZGmh5BmZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26842.54649900748,
+        "small_aoe": 77475.85560579355,
+        "big_aoe": 135060.81312810842
+      },
+      "weighted": 63676,
+      "rank": 47,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d17_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxYMDzMmZGmZYGmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26314.955001259183,
+        "small_aoe": 77498.86814970594,
+        "big_aoe": 136225.84574895343
+      },
+      "weighted": 63652,
+      "rank": 48,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d49_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxYmZgxMzwMDDzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26367.501881019267,
+        "small_aoe": 76770.32508262369,
+        "big_aoe": 135970.23777520552
+      },
+      "weighted": 63409,
+      "rank": 49,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d25_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxYMDmxMzwMj5BGmZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27049.44232948453,
+        "small_aoe": 77343.71494855137,
+        "big_aoe": 133054.07348191206
+      },
+      "weighted": 63339,
+      "rank": 50,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d7_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxMDjZmxMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25124.108528800596,
+        "small_aoe": 76683.90145187019,
+        "big_aoe": 138523.2243583433
+      },
+      "weighted": 63272,
+      "rank": 51,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d21_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYzYMDzMmZGGDzMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26040.146769194183,
+        "small_aoe": 78190.27484096776,
+        "big_aoe": 133890.9188413061
+      },
+      "weighted": 63255,
+      "rank": 52,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d6_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxMDDzMzMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24940.350324625033,
+        "small_aoe": 76593.10971010674,
+        "big_aoe": 138071.26009925012
+      },
+      "weighted": 63062,
+      "rank": 53,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d71_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGDLGjZYMGzwMjZMzYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25866.97581132201,
+        "small_aoe": 76842.07154159342,
+        "big_aoe": 134446.64317835233
+      },
+      "weighted": 62875,
+      "rank": 54,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d121_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZmZYwMmZGmZYMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24938.37758043962,
+        "small_aoe": 76414.7499691642,
+        "big_aoe": 137358.1683356306
+      },
+      "weighted": 62865,
+      "rank": 55,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d120_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMDDjxMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25107.786397381493,
+        "small_aoe": 76352.746334832,
+        "big_aoe": 135990.75877670175
+      },
+      "weighted": 62658,
+      "rank": 56,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d41_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxDYmHYwMmZGmZMzYMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27280.986618309293,
+        "small_aoe": 76110.77156586545,
+        "big_aoe": 129892.02915728527
+      },
+      "weighted": 62452,
+      "rank": 57,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d29_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBbGjZYMGzwYMzMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25568.557254219606,
+        "small_aoe": 77636.41744996844,
+        "big_aoe": 130866.80343849193
+      },
+      "weighted": 62249,
+      "rank": 58,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d99_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYMDwMzwMMzMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26001.755236646775,
+        "small_aoe": 75159.29826014969,
+        "big_aoe": 131563.32144442902
+      },
+      "weighted": 61861,
+      "rank": 59,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d39_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMDmxMGmZ4BmhZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26031.53358719818,
+        "small_aoe": 77865.74400335643,
+        "big_aoe": 126691.96886829179
+      },
+      "weighted": 61714,
+      "rank": 60,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d123_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbzYYwMzMzwMDjhZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25607.96342575502,
+        "small_aoe": 74211.52341679261,
+        "big_aoe": 133016.98648979107
+      },
+      "weighted": 61671,
+      "rank": 61,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d106_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzY8ADjxMzwYYmxMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25819.324486127916,
+        "small_aoe": 75668.70727772247,
+        "big_aoe": 128692.29562674416
+      },
+      "weighted": 61349,
+      "rank": 62,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d98_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYMDjxYGGjZmhZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25459.711661771566,
+        "small_aoe": 76031.03169537846,
+        "big_aoe": 128184.65389805433
+      },
+      "weighted": 61176,
+      "rank": 63,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d1_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZxMDYmZmZMmZAjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23672.14389768608,
+        "small_aoe": 75145.74865816657,
+        "big_aoe": 133498.8713589909
+      },
+      "weighted": 61080,
+      "rank": 64,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d101_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMGmZMPwYmZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26683.23737038399,
+        "small_aoe": 77419.2246697865,
+        "big_aoe": 121800.53197698398
+      },
+      "weighted": 60927,
+      "rank": 65,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d127_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZZmZYGmZmZgZgZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23998.721101677354,
+        "small_aoe": 74474.96699131509,
+        "big_aoe": 132888.56574165597
+      },
+      "weighted": 60920,
+      "rank": 66,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d95_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxYmZYMmZGGDzYYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25721.994737361954,
+        "small_aoe": 74613.55159791729,
+        "big_aoe": 128281.7265431889
+      },
+      "weighted": 60901,
+      "rank": 67,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d124_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZbmZYwMzMjxMDYMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23706.828669995484,
+        "small_aoe": 73798.96598394796,
+        "big_aoe": 133928.42987901036
+      },
+      "weighted": 60779,
+      "rank": 68,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d12_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDYMDzMmZGmhZMMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25753.230910520982,
+        "small_aoe": 73039.29662099639,
+        "big_aoe": 129015.17990891259
+      },
+      "weighted": 60591,
+      "rank": 69,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d4_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGmZzYYYmZmZGmZYMMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25117.08110742469,
+        "small_aoe": 71650.03656120846,
+        "big_aoe": 132518.4719503575
+      },
+      "weighted": 60557,
+      "rank": 70,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d110_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZGjHYwMzMzwMDPwwMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25411.588216728167,
+        "small_aoe": 73989.42037386479,
+        "big_aoe": 128105.7664133363
+      },
+      "weighted": 60524,
+      "rank": 71,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d9_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZeAjZwMzMzwMjZgZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25414.80124661152,
+        "small_aoe": 72178.23012879245,
+        "big_aoe": 129659.7864044584
+      },
+      "weighted": 60293,
+      "rank": 72,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d48_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxYmZYMGzwMDDzYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24824.85424258939,
+        "small_aoe": 73145.06560106589,
+        "big_aoe": 128796.40084719777
+      },
+      "weighted": 60115,
+      "rank": 73,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d72_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZZmZmZGzMmBAMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23268.93444686314,
+        "small_aoe": 73662.61213104954,
+        "big_aoe": 129294.79458474636
+      },
+      "weighted": 59592,
+      "rank": 74,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d26_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMGmZMPwYGzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26253.942592440064,
+        "small_aoe": 75324.7282045266,
+        "big_aoe": 117729.46946596286
+      },
+      "weighted": 59270,
+      "rank": 75,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d75_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbzYmZYYmZMMgZmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23705.808319105403,
+        "small_aoe": 72264.8875234814,
+        "big_aoe": 127986.43862854273
+      },
+      "weighted": 59130,
+      "rank": 76,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d107_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYbGjHYYwMzwMYmxMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24282.24719179361,
+        "small_aoe": 71301.40955374391,
+        "big_aoe": 127551.66597764842
+      },
+      "weighted": 59042,
+      "rank": 77,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d87_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxDYmHYYMmZGGjZGjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24691.915614838068,
+        "small_aoe": 71791.42303529524,
+        "big_aoe": 125066.36127132295
+      },
+      "weighted": 58897,
+      "rank": 78,
+      "pinned": false
+    },
+    {
+      "name": "pin_soul_sigils_focus_AldrachiReaver_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZZmZYmZmxMDMDYMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23374.935944003617,
+        "small_aoe": 71018.36784733243,
+        "big_aoe": 127247.81646157568
+      },
+      "weighted": 58443,
+      "rank": 79,
+      "pinned": true
+    },
+    {
+      "name": "AldrachiReaver_d0_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZZmZYMzMzMDMDYMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23316.516065221622,
+        "small_aoe": 70781.0640189579,
+        "big_aoe": 127328.73718071976
+      },
+      "weighted": 58358,
+      "rank": 80,
+      "pinned": false
+    },
+    {
+      "name": "pin_pure_dps_AldrachiReaver_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZZGDMzMzMjxMDgZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23525.552479732738,
+        "small_aoe": 70720.86906710513,
+        "big_aoe": 123212.09892163303
+      },
+      "weighted": 57621,
+      "rank": 81,
+      "pinned": true
+    },
+    {
+      "name": "AldrachiReaver_d18_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGMbmZ8AYmxMmxMDPwYmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24902.247132962555,
+        "small_aoe": 73216.98444211997,
+        "big_aoe": 116001.26939237704
+      },
+      "weighted": 57616,
+      "rank": 82,
+      "pinned": false
+    },
+    {
+      "name": "pin_max_defensive_AldrachiReaver_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmxMGYmZmZmhZMYYmlZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23179.872451330506,
+        "small_aoe": 68450.98570030431,
+        "big_aoe": 127198.55591370456
+      },
+      "weighted": 57565,
+      "rank": 83,
+      "pinned": true
+    },
+    {
+      "name": "AldrachiReaver_d109_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbzDMjHAmxMmxMDPwYmZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24862.911838160395,
+        "small_aoe": 72324.7340869542,
+        "big_aoe": 115117.36833865063
+      },
+      "weighted": 57152,
+      "rank": 84,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d28_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYMDMmxwMjZmxYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 27420.95909735582,
+        "small_aoe": 70105.20315234757,
+        "big_aoe": 109554.89376836059
+      },
+      "weighted": 56653,
+      "rank": 85,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d37_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYmZwMmxwMDPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26829.746511266643,
+        "small_aoe": 71011.70382772722,
+        "big_aoe": 109622.05270547737
+      },
+      "weighted": 56643,
+      "rank": 86,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d40_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxYmZYwMzwgZGjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23698.28359776997,
+        "small_aoe": 66669.31400963236,
+        "big_aoe": 121782.18292445208
+      },
+      "weighted": 56206,
+      "rank": 87,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d32_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZGzMDDmZGGYGjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 23886.218162763736,
+        "small_aoe": 66659.43628110683,
+        "big_aoe": 121309.61138682456
+      },
+      "weighted": 56203,
+      "rank": 88,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d82_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYbeAz8ADmxMGmZMPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26606.466532109593,
+        "small_aoe": 70260.83959975181,
+        "big_aoe": 108446.2971238556
+      },
+      "weighted": 56071,
+      "rank": 89,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d45_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbeAz8ADmxMGmZMPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26642.6552397136,
+        "small_aoe": 69609.45054617514,
+        "big_aoe": 108608.86715832709
+      },
+      "weighted": 55926,
+      "rank": 90,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d104_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZegZ8AjZgZGGYmZmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 21289.616424666205,
+        "small_aoe": 67279.78101779347,
+        "big_aoe": 121789.34375348347
+      },
+      "weighted": 55187,
+      "rank": 91,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d117_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZwMmxwMjZYMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25572.274024528208,
+        "small_aoe": 67524.04018413431,
+        "big_aoe": 109997.16933886598
+      },
+      "weighted": 55043,
+      "rank": 92,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d10_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMGmZMDjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25477.020520225862,
+        "small_aoe": 67940.98736757536,
+        "big_aoe": 109318.45590290277
+      },
+      "weighted": 54984,
+      "rank": 93,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d24_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxYMDmxMGmZMPwwMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25835.78799985141,
+        "small_aoe": 67260.78682332442,
+        "big_aoe": 103613.53792915602
+      },
+      "weighted": 53819,
+      "rank": 94,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d103_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZGjZwMmxwMj5BGmZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 26057.82148574412,
+        "small_aoe": 66228.61110242108,
+        "big_aoe": 102977.07522044756
+      },
+      "weighted": 53493,
+      "rank": 95,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d16_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGMLGjZYmxMGmZYGmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 25417.42239066189,
+        "small_aoe": 66167.60882574177,
+        "big_aoe": 103570.8151004427
+      },
+      "weighted": 53273,
+      "rank": 96,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d8_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMLzYMjZwMzwgZgZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 21179.41607650637,
+        "small_aoe": 62593.463034784756,
+        "big_aoe": 113048.92980005164
+      },
+      "weighted": 51978,
+      "rank": 97,
+      "pinned": false
+    },
+    {
+      "name": "AldrachiReaver_d111_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMLzY8ADmxMmxMDPwwMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "heroTree": "aldrachi_reaver",
+      "dps": {
+        "st": 24332.038427215153,
+        "small_aoe": 62762.69263838161,
+        "big_aoe": 96397.1411603602
+      },
+      "weighted": 50274,
+      "rank": 98,
+      "pinned": false
+    }
+  ]
+}

@@ -3,15 +3,11 @@
 // Usage: node src/analyze/reasoning.js <workflow-results.json>
 
 import { readFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
+import { dataFile } from "../engine/paths.js";
+import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
 
 function loadInteractions() {
-  return JSON.parse(readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"));
+  return JSON.parse(readFileSync(dataFile("interactions.json"), "utf-8"));
 }
 
 // Generate improvement hypotheses from workflow results.
@@ -132,18 +128,21 @@ function analyzeBuffUptimeGaps(scenario, interactions) {
     }
   }
 
-  // Special case: Soul Furnace
-  const soulFurnace = scenario.buffUptimes?.soul_furnace;
-  if (soulFurnace !== undefined && soulFurnace < 20) {
-    hypotheses.push({
-      hypothesis: `Soul Furnace damage amp uptime is only ${soulFurnace}% — Spirit Bomb/Soul Cleave may not be aligning with 10-stack windows`,
-      category: "cooldown_alignment",
-      confidence: "high",
-      affectedAbilities: ["soul_furnace", "spirit_bomb", "soul_cleave"],
-      scenario: scenario.scenario,
-      suggestedTest:
-        "Try: spirit_bomb,if=soul_fragments>=4&(buff.soul_furnace.stack>=8|!talent.soul_furnace)",
-    });
+  // Generic buff-uptime hypotheses from SPEC_CONFIG hypothesis patterns
+  const specConfig = getSpecAdapter().getSpecConfig();
+  for (const pattern of specConfig.hypothesisPatterns || []) {
+    if (!pattern.buffName) continue;
+    const uptime = scenario.buffUptimes?.[pattern.buffName];
+    if (uptime !== undefined && uptime < 20) {
+      hypotheses.push({
+        hypothesis: `${pattern.buffName} uptime is only ${uptime}% — ${pattern.template}`,
+        category: pattern.category.toLowerCase(),
+        confidence: "medium",
+        affectedAbilities: [pattern.buffName],
+        scenario: scenario.scenario,
+        suggestedTest: pattern.template,
+      });
+    }
   }
 
   return hypotheses;
@@ -152,40 +151,47 @@ function analyzeBuffUptimeGaps(scenario, interactions) {
 // Talents that amplify each other but aren't aligned in usage.
 function analyzeCooldownAlignment(scenario, interactions) {
   const hypotheses = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const burstWindows = specConfig.burstWindows || [];
+  const synergies = specConfig.synergies || [];
 
-  // Check Fiery Brand + Fiery Demise interaction
-  const fieryBrand = scenario.buffUptimes?.fiery_brand;
-  const majorAbilities = scenario.majorDamage || [];
-  const fieryDemiseContrib = majorAbilities.find(
-    (a) =>
-      a.name.toLowerCase().includes("fiery") &&
-      a.name.toLowerCase().includes("demise"),
-  );
+  // Check burst window utilization from spec config
+  for (const window of burstWindows) {
+    const uptime = scenario.buffUptimes?.[window.buff];
+    if (uptime === undefined || uptime >= 30) continue;
 
-  if (fieryBrand !== undefined && fieryBrand < 30 && fieryDemiseContrib) {
+    const syncTargetNames = (window.syncTargets || []).join(", ");
+    if (!syncTargetNames) continue;
+
     hypotheses.push({
-      hypothesis: `Fiery Brand uptime is ${fieryBrand}% but Fiery Demise is a damage source — extending Fiery Brand uptime could amplify overall damage`,
+      hypothesis: `${window.buff} uptime is ${uptime}% but it provides ${(window.damageAmp * 100).toFixed(0)}% ${window.school} damage amp — aligning ${syncTargetNames} with this window could amplify damage`,
       category: "cooldown_alignment",
       confidence: "medium",
-      affectedAbilities: ["fiery_brand", "fiery_demise"],
+      affectedAbilities: [window.buff, ...(window.syncTargets || [])],
       scenario: scenario.scenario,
-      suggestedTest:
-        "Ensure Fiery Brand is used on cooldown and spread via Burning Alive talent",
+      suggestedTest: `Ensure ${window.buff} is used on cooldown and sync ${syncTargetNames} within the window`,
     });
   }
 
-  // Check Metamorphosis alignment with big cooldowns
-  const meta = scenario.buffUptimes?.metamorphosis;
-  if (meta !== undefined && meta > 20 && meta < 50) {
-    hypotheses.push({
-      hypothesis: `Metamorphosis uptime is ${meta}% — ensure high-value abilities (Fel Devastation, Soul Carver) are used during Meta windows`,
-      category: "cooldown_alignment",
-      confidence: "low",
-      affectedAbilities: ["metamorphosis", "fel_devastation", "soul_carver"],
-      scenario: scenario.scenario,
-      suggestedTest:
-        "Add buff.metamorphosis.up preference to Fel Devastation/Soul Carver conditions",
-    });
+  // Check synergy pair alignment from spec config
+  for (const synergy of synergies) {
+    const [buffA, buffB] = synergy.buffs || [];
+    if (!buffA || !buffB) continue;
+
+    const uptimeA = scenario.buffUptimes?.[buffA];
+    const uptimeB = scenario.buffUptimes?.[buffB];
+    if (uptimeA === undefined || uptimeB === undefined) continue;
+
+    if (uptimeA > 10 && uptimeB > 10 && Math.abs(uptimeA - uptimeB) > 15) {
+      hypotheses.push({
+        hypothesis: `${buffA} (${uptimeA}%) and ${buffB} (${uptimeB}%) have misaligned uptimes — ${synergy.reason}`,
+        category: "cooldown_alignment",
+        confidence: "low",
+        affectedAbilities: synergy.buffs,
+        scenario: scenario.scenario,
+        suggestedTest: `Add buff alignment conditions to sync ${buffA} and ${buffB}`,
+      });
+    }
   }
 
   return hypotheses;
@@ -267,6 +273,7 @@ export function printHypotheses(hypotheses) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await loadSpecAdapter();
   const resultsPath = process.argv[2];
 
   if (!resultsPath) {

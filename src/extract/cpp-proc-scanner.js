@@ -4,15 +4,12 @@
 // Output: data/cpp-proc-mechanics.json (replaces manually maintained proc-mechanics.json)
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { SIMC_DH_CPP, config } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "../..", "data");
+import { join } from "node:path";
+import { SIMC_CPP, config } from "../engine/startup.js";
+import { dataDir } from "../engine/paths.js";
 
 export function extractProcMechanics(preloadedSource) {
-  const src = preloadedSource || readFileSync(SIMC_DH_CPP, "utf-8");
+  const src = preloadedSource || readFileSync(SIMC_CPP, "utf-8");
   const lines = src.split("\n");
 
   const icdDeclarations = scanICDDeclarations(lines);
@@ -44,7 +41,7 @@ export function extractProcMechanics(preloadedSource) {
   };
 
   writeFileSync(
-    join(DATA_DIR, "cpp-proc-mechanics.json"),
+    join(dataDir(), "cpp-proc-mechanics.json"),
     JSON.stringify(output, null, 2),
   );
 

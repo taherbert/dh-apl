@@ -6,13 +6,11 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { resolveInputDirectives } from "./profilesets.js";
 import { DATA_ENV, config } from "../engine/startup.js";
+import { aplsDir, resultsFile } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const PROFILE_PATH = join(ROOT, "apls", "profile.simc");
+const PROFILE_PATH = join(aplsDir(), "profile.simc");
 
 // Lines from profile.simc that define the character (not gear, not talents)
 const CHAR_META_KEYS = [
@@ -156,9 +154,8 @@ export function generateMultiActorContent(roster, aplPath) {
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
   const aplPath =
-    process.argv[2] || join(ROOT, "apls", `${config.spec.specName}.simc`);
-  const rosterPath =
-    process.argv[3] || join(ROOT, "results", "build-roster.json");
+    process.argv[2] || join(aplsDir(), `${config.spec.specName}.simc`);
+  const rosterPath = process.argv[3] || resultsFile("build-roster.json");
 
   if (!existsSync(rosterPath)) {
     console.error(

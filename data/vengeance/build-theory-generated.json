@@ -1,0 +1,597 @@
+{
+  "_schema": "build-theory-v1",
+  "_curated": false,
+  "_generated": "2026-02-06T01:19:24.031Z",
+  "_doc": "Auto-generated build theory. Review and curate before using. This is a STARTING POINT — human analysis required for accuracy.",
+  "specClusters": [
+    {
+      "id": "physical",
+      "name": "Physical",
+      "talents": [
+        "Vengeful Retreat",
+        "Bouncing Glaives",
+        "Master of the Glaive",
+        "Champion of the Glaive",
+        "Live by the Glaive",
+        "Tempered Steel",
+        "Retaliation"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "cooldown",
+      "name": "Cooldown",
+      "talents": [
+        "Felblade",
+        "Blazing Path",
+        "Felbound",
+        "First In, Last Out",
+        "Erratic Felheart",
+        "Final Breath",
+        "Fel Devastation",
+        "Roaring Fire",
+        "Ruinous Bulwark",
+        "Stoke the Flames",
+        "Last Resort",
+        "Darkglare Boon"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "sigil",
+      "name": "Sigil",
+      "talents": [
+        "Sigil of Misery",
+        "Improved Sigil of Misery",
+        "Quickened Sigils",
+        "Sigil of Silence",
+        "Sigil of Chains",
+        "Chains of Anger",
+        "Cycle of Binding"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "misc",
+      "name": "Misc",
+      "talents": [
+        "Vengeful Bonds",
+        "Unrestrained Fury",
+        "Imprison",
+        "Improved Disrupt",
+        "Aldrachi Design",
+        "Focused Ire",
+        "Disrupting Fury",
+        "Pursuit",
+        "Lost in Darkness",
+        "Illidari Knowledge",
+        "Will of the Illidari",
+        "Internal Struggle",
+        "Furious",
+        "Remorseless",
+        "Darkness",
+        "Demon Muzzle",
+        "Wings of Wrath",
+        "Long Night",
+        "Pitch Black",
+        "Demonic Resilience",
+        "Calcified Spikes",
+        "Feed the Demon",
+        "Untethered Rage",
+        "Untethered Rage",
+        "Untethered Rage"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "fragment",
+      "name": "Fragment",
+      "talents": [
+        "Shattered Restoration",
+        "Chaos Nova",
+        "Consume Magic",
+        "Swallowed Anger",
+        "Soul Rending",
+        "Soul Splitter",
+        "Spirit Bomb",
+        "Perfectly Balanced Glaive",
+        "Sigil of Spite",
+        "Feast of Souls",
+        "Fallout",
+        "Soul Barrier",
+        "Soul Sigils",
+        "Painbringer",
+        "Focused Cleave",
+        "Soulmonger",
+        "Vengeful Beast",
+        "Soul Carver"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "fire-brand",
+      "name": "Fire Brand",
+      "talents": [
+        "Charred Warblades",
+        "Felfire Haste",
+        "Fiery Brand",
+        "Ascending Flame",
+        "Felfire Fist",
+        "Burning Blood",
+        "Revel in Pain",
+        "Frailty",
+        "Fiery Demise",
+        "Burning Alive",
+        "Charred Flesh",
+        "Down in Flames"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "immolation-aura",
+      "name": "Immolation Aura",
+      "talents": [
+        "Aura of Pain",
+        "Infernal Armor",
+        "Burn It Out",
+        "Soul Cleanse",
+        "Agonizing Flames",
+        "Volatile Flameblood",
+        "Fel Flame Fortification"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "frailty",
+      "name": "Frailty",
+      "talents": [
+        "Void Reaver",
+        "Vulnerability",
+        "Soulcrush"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    }
+  ],
+  "heroTrees": {
+    "unknown": {
+      "talents": [
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "damageSchool": null,
+      "keyMechanics": []
+    }
+  },
+  "clusterSynergies": [
+    {
+      "talents": [
+        "Vengeful Retreat",
+        "Felblade"
+      ],
+      "reason": "Both affect spell 1245496",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "Imprison",
+        "Chaos Nova",
+        "Darkness",
+        "Spirit Bomb",
+        "Fiery Brand",
+        "Sigil of Silence",
+        "Sigil of Spite",
+        "Sigil of Chains",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 212612",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "Imprison",
+        "Chaos Nova",
+        "Darkness",
+        "Spirit Bomb",
+        "Fiery Brand",
+        "Sigil of Silence",
+        "Sigil of Spite",
+        "Sigil of Chains",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 212613",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "Fiery Brand",
+        "Sigil of Silence",
+        "Sigil of Spite",
+        "Sigil of Chains",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 388114",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "Imprison",
+        "Chaos Nova",
+        "Darkness",
+        "Spirit Bomb",
+        "Fiery Brand",
+        "Sigil of Silence",
+        "Sigil of Spite",
+        "Sigil of Chains",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 1213636",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Consume Magic"
+      ],
+      "reason": "Both affect spell 1223171",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Sigil of Misery",
+        "Sigil of Silence",
+        "Sigil of Spite",
+        "Sigil of Chains"
+      ],
+      "reason": "Both affect spell 209281",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Sigil of Misery",
+        "Sigil of Silence",
+        "Sigil of Spite",
+        "Sigil of Chains"
+      ],
+      "reason": "Both affect spell 389715",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 163073",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 207744",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 207771",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 247456",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 347765",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 390213",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 425653",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 428241",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 442624",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 471306",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 1219012",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Fiery Brand",
+        "Soul Carver"
+      ],
+      "reason": "Both affect spell 1227062",
+      "strength": "strong"
+    }
+  ],
+  "buildArchetypes": [
+    {
+      "id": "unknown-physical",
+      "name": "unknown Physical",
+      "heroTree": "unknown",
+      "clusters": [
+        "physical"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Vengeful Retreat",
+        "Bouncing Glaives",
+        "Master of the Glaive",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-cooldown",
+      "name": "unknown Cooldown",
+      "heroTree": "unknown",
+      "clusters": [
+        "cooldown"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Felblade",
+        "Blazing Path",
+        "Felbound",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-sigil",
+      "name": "unknown Sigil",
+      "heroTree": "unknown",
+      "clusters": [
+        "sigil"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Sigil of Misery",
+        "Improved Sigil of Misery",
+        "Quickened Sigils",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-misc",
+      "name": "unknown Misc",
+      "heroTree": "unknown",
+      "clusters": [
+        "misc"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Vengeful Bonds",
+        "Unrestrained Fury",
+        "Imprison",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-fragment",
+      "name": "unknown Fragment",
+      "heroTree": "unknown",
+      "clusters": [
+        "fragment"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Shattered Restoration",
+        "Chaos Nova",
+        "Consume Magic",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-fire-brand",
+      "name": "unknown Fire Brand",
+      "heroTree": "unknown",
+      "clusters": [
+        "fire-brand"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Charred Warblades",
+        "Felfire Haste",
+        "Fiery Brand",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-immolation-aura",
+      "name": "unknown Immolation Aura",
+      "heroTree": "unknown",
+      "clusters": [
+        "immolation-aura"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Aura of Pain",
+        "Infernal Armor",
+        "Burn It Out",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-frailty",
+      "name": "unknown Frailty",
+      "heroTree": "unknown",
+      "clusters": [
+        "frailty"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Void Reaver",
+        "Vulnerability",
+        "Soulcrush",
+        "Aldrachi Design",
+        "Void Reaver"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    }
+  ],
+  "tensionPoints": [
+    {
+      "id": "auto-detected-resource-competition",
+      "description": "Resource competition detected — review manually",
+      "explanation": "Multiple talents/abilities compete for the same resource. Analyze which should take priority in different scenarios.",
+      "affectedArchetypes": [
+        "unknown-physical",
+        "unknown-cooldown",
+        "unknown-sigil"
+      ]
+    }
+  ]
+}

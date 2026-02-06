@@ -1,6 +1,6 @@
 # Vengeance Demon Hunter — Ability & Talent Report
 
-Generated from SimC midnight branch. 219 spells, 96 modifier sources.
+Generated from SimC midnight branch. 219 spells, 89 modifier sources.
 
 ## Active Abilities
 
@@ -19,7 +19,6 @@ Haste scales: gcd
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 
 ### Consume Magic (278326)
@@ -31,7 +30,6 @@ Haste scales: gcd
 > Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][].
 
 **Modified by:**
-- Guile (range_modifier)
 - Swallowed Anger (resource_modifier) [class]
 
 ### Darkness (196718)
@@ -55,7 +53,6 @@ School: Physical | GCD: off-GCD | CD: 1.5s | Charges: 1 (20s)
 - Mastery: Fel Blood (damage_modifier)
 - Frailty (damage_modifier)
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 
 ### Fel Devastation (212084)
@@ -73,10 +70,8 @@ Haste scales: ticks, gcd
 - Burning Blood (damage_modifier) [spec]
 - Stoke the Flames (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Meteoric Rise (damage_modifier) [hero:Annihilator]
-- Remorseless (damage_modifier) [class]
 - Ruinous Bulwark (damage_modifier) [spec]
 - Roaring Fire (buff_grant) [spec]
 - Thrill of the Fight (damage_modifier)
@@ -96,16 +91,7 @@ Haste scales: gcd
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
-- Guile (range_modifier)
 - Thrill of the Fight (damage_modifier)
-- Furious (damage_modifier) [class]
-- Soulforged Blades (damage_modifier)
-- Singular Strikes (damage_modifier)
-- Guile (range_modifier)
-- Furious (damage_modifier) [class]
-- Soulforged Blades (damage_modifier)
-- Singular Strikes (damage_modifier)
 - Warblade's Hunger (damage_modifier) [hero:Aldrachi Reaver]
 
 ### Fiery Brand (204021)
@@ -122,14 +108,12 @@ Haste scales: gcd
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Fiery Brand (damage_modifier)
 - Fiery Demise (damage_modifier)
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Burning Alive (duration_modifier) [spec]
 
@@ -146,25 +130,21 @@ Haste scales: gcd
 - Fiery Demise (damage_modifier)
 - Frailty (damage_modifier)
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Celestial Echoes (damage_modifier) [hero:Annihilator]
 - Celestial Echoes (damage_modifier)
 - Vengeance 12.0 Class Set 2pc (damage_modifier)
 - Tempered Steel (damage_modifier) [spec]
-- Furious (damage_modifier) [class]
 - Keen Edge (damage_modifier) [hero:Aldrachi Reaver]
 - Metamorphosis (damage_modifier)
 - Fiery Demise (damage_modifier)
 - Frailty (damage_modifier)
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Celestial Echoes (damage_modifier) [hero:Annihilator]
 - Celestial Echoes (damage_modifier)
 - Vengeance 12.0 Class Set 2pc (damage_modifier)
 - Tempered Steel (damage_modifier) [spec]
-- Furious (damage_modifier) [class]
 - Keen Edge (damage_modifier) [hero:Aldrachi Reaver]
 - Metamorphosis (damage_modifier)
 - Fiery Demise (damage_modifier)
@@ -184,60 +164,49 @@ ICD: 0.5s
 
 **Modified by:**
 - Agonizing Flames (damage_modifier) [spec]
-- Infernal Armor (damage_modifier) [class]
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
-- Aura of Pain (damage_modifier) [class]
 - Agonizing Flames (damage_modifier) [spec]
 - Fiery Brand (damage_modifier)
 - Fiery Brand (damage_modifier)
 - Fiery Demise (damage_modifier)
 - Frailty (damage_modifier)
-- Infernal Armor (damage_modifier) [class]
 - Burning Blood (damage_modifier) [spec]
 - Volatile Flameblood (damage_modifier) [spec]
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
-- Furious (damage_modifier) [class]
-- Aura of Pain (damage_modifier) [class]
 - Agonizing Flames (damage_modifier) [spec]
 - Fiery Brand (damage_modifier)
 - Fiery Brand (damage_modifier)
 - Fiery Demise (damage_modifier)
 - Frailty (damage_modifier)
-- Infernal Armor (damage_modifier) [class]
 - Burning Blood (damage_modifier) [spec]
 - Volatile Flameblood (damage_modifier) [spec]
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
-- Furious (damage_modifier) [class]
 - Agonizing Flames (damage_modifier) [spec]
-- Infernal Armor (damage_modifier) [class]
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Agonizing Flames (damage_modifier) [spec]
-- Infernal Armor (damage_modifier) [class]
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Agonizing Flames (damage_modifier) [spec]
-- Infernal Armor (damage_modifier) [class]
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Immolation Aura (buff_grant)
 - Fallout (resource_modifier) [spec]
 - Charred Flesh (resource_modifier) [spec]
+- Infernal Armor (resource_modifier) [class]
 
 ### Imprison (217832)
 
@@ -254,7 +223,6 @@ School: Chaos | GCD: off-GCD | CD: 1s | Charges: 1 (120s) | Duration: 15s
 > Transform to demon form for $d, increasing current health by $s2%, healing for that amount, and increasing Armor by $s8%$?s235893[. Versatility increased by $s5%][]$?s321067[. While transformed, Fracture generates one additional Lesser Soul Fragment][]$?s321068[ and $s4 additional Fury][].
 
 **Modified by:**
-- Soul Rending (damage_modifier) [class]
 - Vengeful Beast (duration_modifier) [spec]
 
 ### Shear (203782)
@@ -269,7 +237,6 @@ Haste scales: gcd
 - Fiery Demise (damage_modifier)
 - Frailty (damage_modifier)
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Celestial Echoes (damage_modifier) [hero:Annihilator]
 - Celestial Echoes (damage_modifier)
@@ -308,9 +275,7 @@ Haste scales: gcd
 - Burning Blood (damage_modifier) [spec]
 - Ascending Flame (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
-- Furious (damage_modifier) [class]
 - Cycle of Binding (cooldown_modifier) [spec]
 - Soul Sigils (cooldown_modifier) [spec]
 
@@ -356,7 +321,6 @@ Haste scales: gcd
 - Chains of Anger (range_modifier) [spec]
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Quickened Sigils (duration_modifier) [spec]
 - Chains of Anger (range_modifier) [spec]
@@ -376,7 +340,6 @@ Haste scales: gcd
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Fiery Brand (damage_modifier)
 - Fiery Brand (damage_modifier)
@@ -384,7 +347,6 @@ Haste scales: gcd
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 
 ### Spirit Bomb (247454)
@@ -402,9 +364,7 @@ Haste scales: gcd
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
-- Remorseless (damage_modifier) [class]
 - Dark Matter (proc_trigger) [hero:Annihilator]
 
 ### Throw Glaive (185123)
@@ -415,14 +375,10 @@ Haste scales: gcd
 > Throw a demonic glaive at the target, dealing $337819s1 Physical damage. The glaive can ricochet to $?$s320386[${$337819x1-1} additional enemies][an additional enemy] within 10 yards.
 
 **Modified by:**
-- Bouncing Glaives (damage_modifier) [class]
 - Champion of the Glaive (range_modifier) [class]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
-- Bouncing Glaives (damage_modifier) [class]
 - Champion of the Glaive (range_modifier) [class]
 - Reaver's Mark (damage_modifier)
-- Void Metamorphosis (cooldown_modifier)
 - Tempered Steel (damage_modifier) [spec]
 - Keen Edge (damage_modifier) [hero:Aldrachi Reaver]
 - Keen Engagement (resource_modifier) [hero:Aldrachi Reaver]
@@ -439,7 +395,6 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - Frailty (damage_modifier)
 - Reaver's Mark (damage_modifier)
 - Evasive Action (buff_grant)
-- Void Metamorphosis (cooldown_modifier)
 - Thrill of the Fight (damage_modifier)
 - Tempered Steel (damage_modifier) [spec]
 - Keen Edge (damage_modifier) [hero:Aldrachi Reaver]
@@ -470,9 +425,6 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 
 **Row 2:**
 - (1) **Bouncing Glaives** (320386) [spell_modifier]
-  → Throw Glaive (damage_modifier)
-  → Throw Glaive (damage_modifier)
-  → Reaver's Glaive (damage_modifier)
   _Throw Glaive ricochets to $s1 additional $ltarget:targets;._
 - (3) **Imprison** (217832) [active_ability]
   _Imprisons a demon, beast, or humanoid, incapacitating them for $d. Damage may cancel the effect. Limit 1._
@@ -510,8 +462,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
   → Consume Magic (resource_modifier)
   _Consume Magic generates $278326s2 Fury when a beneficial Magic effect is successfully removed from the target._
 - (5) **Aura of Pain** (207347) [spell_modifier]
-  → Immolation Aura (damage_modifier)
-  → Immolation Aura (damage_modifier)
+  → Aura of Pain (damage_modifier)
   _$?c3[Soul Immolation grants ${$s2*$1241937d} additional Fury over its duration.][Increases the critical strike chance of Immolation Aura by $s1%.]_
 - (6) **Live by the Glaive** (428607) [proc_trigger]
   → Live by the Glaive (proc_trigger)
@@ -521,20 +472,12 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - (0) **Pursuit** (320654) [passive]
   _Mastery increases your movement speed._
 - (2) **Soul Rending** (204909) [spell_modifier]
-  → Metamorphosis (damage_modifier)
-  → Void Metamorphosis (damage_modifier)
   _Leech increased by $s1%. Gain an additional $s2% leech while Metamorphosis is active._
 - (3) **Felfire Haste** (389846) [proc_trigger]
   → Felfire Haste (proc_trigger)
   _$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by $389847s1% for $389847d._
 - (4) **Infernal Armor** (320331) [spell_modifier]
-  → Immolation Aura (damage_modifier)
-  → Immolation Aura (damage_modifier)
-  → Immolation Aura (damage_modifier)
-  → Immolation Aura (damage_modifier)
-  → Immolation Aura (damage_modifier)
-  → Immolation Aura (damage_modifier)
-  → Soul Immolation (damage_modifier)
+  → Immolation Aura (resource_modifier)
   _Immolation Aura increases your armor by $s1% and causes melee attackers to suffer ${$320334s1/$s3} $@spelldesc395020 damage._
 - (5) **Burn It Out** (1266316) [passive_buff]
   _$?c3[Soul Immolation][Immolation Aura] removes $s1 Disease $Leffect:effects;._
@@ -555,18 +498,8 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - (1) **Internal Struggle** (393822) [passive]
   _Increases your mastery by ${$s1*$mas}.1%._
 - (2) **Furious** (1266326) [spell_modifier]
-  → Sigil of Flame (damage_modifier)
-  → Felblade (damage_modifier)
-  → Fracture (damage_modifier)
-  → Fracture (damage_modifier)
-  → Felblade (damage_modifier)
-  → Immolation Aura (damage_modifier)
-  → Immolation Aura (damage_modifier)
   _Attacks and abilities that generate Fury deal $s1% increased damage._
 - (4) **Remorseless** (1266328) [spell_modifier]
-  → Fel Devastation (damage_modifier)
-  → Soul Cleave (damage_modifier)
-  → Spirit Bomb (damage_modifier)
   _Attacks and abilities that spend Fury deal $s1% increased damage._
 - (5) **First In, Last Out** (1266497) [proc_trigger]
   → First In, Last Out (proc_trigger)
@@ -751,6 +684,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 **Row 7:**
 - (1) **Focused Cleave** (343207) [passive_buff]
   → Soul Cleave (damage_modifier)
+  → soul_cleave_t (direct_damage_modifier)
   _Soul Cleave deals $s1% increased damage to your primary target._
 - (2) **Soulmonger** (389711) [passive_buff]
   _When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}._
@@ -934,6 +868,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
   → Soul Cleave (cooldown_modifier)
   _Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $..._
 - (4) **Otherworldly Focus** (1253817) [passive_buff]
+  → otherworldly_focus_benefit_t (direct_damage_modifier)
   _$?a212613[Spirit Bomb][Collapsing Star] and Voidfall meteors deal $s1% increased damage when striking a single target. Each additional target reduces this bonus by $s2%._
 
 **Row 4:**

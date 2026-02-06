@@ -3,33 +3,37 @@
 // Usage: node src/analyze/build-theory-generator.js [output.json]
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
+import { dataFile } from "../engine/paths.js";
+import { getSpecAdapter } from "../engine/startup.js";
 
 // --- Cluster Detection ---
 
-// Keywords that suggest talent groupings
-const CLUSTER_KEYWORDS = {
-  "fire-brand": ["fiery", "brand", "fire", "burn", "flame"],
-  "immolation-aura": ["immolation", "aura", "flames", "engulf"],
-  sigil: ["sigil", "quickened", "concentrated", "chains"],
-  frailty: ["frailty", "spirit_bomb", "vulnerability", "soulcrush"],
-  fragment: ["fragment", "soul", "fracture", "consume", "shatter"],
-  cooldown: ["devastation", "carver", "metamorphosis", "fel"],
-  physical: ["cleave", "physical", "glaive", "strike"],
-};
+// Read cluster keywords and school clusters from spec adapter config.
+// Falls back to empty objects if adapter not loaded (graceful degradation).
+function getClusterKeywords() {
+  try {
+    return getSpecAdapter().getSpecConfig().clusterKeywords || {};
+  } catch {
+    return {};
+  }
+}
 
-// School-based clustering
-const SCHOOL_CLUSTERS = {
-  Fire: "fire-damage",
-  Physical: "physical-damage",
-  Chaos: "chaos-damage",
-  Shadowflame: "shadowflame-damage",
-};
+function getSchoolClusters() {
+  try {
+    return getSpecAdapter().getSpecConfig().schoolClusters || {};
+  } catch {
+    return {};
+  }
+}
+
+function getHeroTreeAplBranch(treeId) {
+  try {
+    const heroTrees = getSpecAdapter().getSpecConfig().heroTrees || {};
+    return heroTrees[treeId]?.aplBranch || treeId;
+  } catch {
+    return treeId;
+  }
+}
 
 function detectClusterFromTalent(talent) {
   const name = talent.name.toLowerCase();
@@ -38,7 +42,7 @@ function detectClusterFromTalent(talent) {
 
   const matches = [];
 
-  for (const [clusterId, keywords] of Object.entries(CLUSTER_KEYWORDS)) {
+  for (const [clusterId, keywords] of Object.entries(getClusterKeywords())) {
     const score = keywords.filter((k) => combined.includes(k)).length;
     if (score > 0) {
       matches.push({ clusterId, score });
@@ -90,34 +94,61 @@ function detectSynergies(talents, interactions) {
 function detectHeroTrees(talents) {
   const heroTrees = {};
 
-  // Find hero tree talents (usually have subtree field or specific naming)
-  const heroTreeTalents = talents.filter(
-    (t) =>
-      t.subtree ||
-      t.heroTree ||
-      t.name.toLowerCase().includes("reaver") ||
-      t.name.toLowerCase().includes("annihilator") ||
-      t.name.toLowerCase().includes("voidfall"),
-  );
+  // Read hero tree config from spec adapter for subtree IDs and keywords
+  let adapterHeroTrees = {};
+  try {
+    adapterHeroTrees = getSpecAdapter().getSpecConfig().heroTrees || {};
+  } catch {
+    // Graceful degradation if adapter not loaded
+  }
 
-  // Group by subtree
+  // Build set of known subtree IDs and profile keywords from adapter
+  const subtreeToTree = new Map();
+  const heroKeywords = new Map();
+  for (const [treeId, treeConfig] of Object.entries(adapterHeroTrees)) {
+    if (treeConfig.subtree) subtreeToTree.set(treeConfig.subtree, treeId);
+    for (const kw of treeConfig.profileKeywords || []) {
+      heroKeywords.set(kw, treeId);
+    }
+  }
+
+  // Find hero tree talents by subtree ID, heroTree field, or keyword match
+  const heroTreeTalents = talents.filter((t) => {
+    if (t.subtree && subtreeToTree.has(t.subtree)) return true;
+    if (t.heroTree) return true;
+    const name = t.name.toLowerCase();
+    for (const kw of heroKeywords.keys()) {
+      if (name.includes(kw)) return true;
+    }
+    return false;
+  });
+
+  // Group by subtree, resolving to adapter tree IDs where possible
   for (const talent of heroTreeTalents) {
-    const treeId = talent.subtree || talent.heroTree || "unknown";
+    const rawId = talent.subtree || talent.heroTree || "unknown";
+    const treeId = subtreeToTree.get(rawId) || rawId;
     if (!heroTrees[treeId]) {
+      // Pre-populate from adapter config if available
+      const adapterConfig = adapterHeroTrees[treeId];
       heroTrees[treeId] = {
         talents: [],
-        damageSchool: null,
+        damageSchool: adapterConfig?.damageSchool || null,
         keyMechanics: [],
       };
     }
     heroTrees[treeId].talents.push(talent.name);
 
-    // Detect damage school from description
-    const desc = (talent.description || "").toLowerCase();
-    if (desc.includes("physical")) heroTrees[treeId].damageSchool = "Physical";
-    if (desc.includes("shadowflame"))
-      heroTrees[treeId].damageSchool = "Shadowflame";
-    if (desc.includes("fire damage")) heroTrees[treeId].damageSchool = "Fire";
+    // Detect damage school from description (fallback if not in adapter)
+    if (!heroTrees[treeId].damageSchool) {
+      const desc = (talent.description || "").toLowerCase();
+      const schoolClusters = getSchoolClusters();
+      for (const school of Object.keys(schoolClusters)) {
+        if (desc.includes(school.toLowerCase())) {
+          heroTrees[treeId].damageSchool = school;
+          break;
+        }
+      }
+    }
   }
 
   return heroTrees;
@@ -200,7 +231,7 @@ function generateBuildTheory(talents, interactions, spells) {
           strengths: "Unknown — simulation required",
           tensions: "Unknown — analysis required",
           tradeoffs: "Unknown — comparison required",
-          aplFocus: [treeId.includes("reaver") ? "ar" : "anni"],
+          aplFocus: [getHeroTreeAplBranch(treeId)],
         });
       }
     }
@@ -224,9 +255,9 @@ function generateBuildTheory(talents, interactions, spells) {
 // --- Export Functions ---
 
 export function generateTheory() {
-  const talentsPath = join(DATA_DIR, "talents.json");
-  const interactionsPath = join(DATA_DIR, "interactions-summary.json");
-  const spellsPath = join(DATA_DIR, "spells-summary.json");
+  const talentsPath = dataFile("talents.json");
+  const interactionsPath = dataFile("interactions-summary.json");
+  const spellsPath = dataFile("spells-summary.json");
 
   if (!existsSync(talentsPath)) {
     throw new Error(
@@ -278,6 +309,8 @@ export function printTheorySummary(theory) {
 
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
+  const { loadSpecAdapter } = await import("../engine/startup.js");
+  await loadSpecAdapter();
   const outputPath = process.argv[2] || null;
 
   try {

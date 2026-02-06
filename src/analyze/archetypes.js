@@ -4,15 +4,8 @@
 // Usage: node src/analyze/archetypes.js [talents.json]
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
-const RESULTS_DIR = join(ROOT, "results");
-
-const THEORY_PATH = join(DATA_DIR, "build-theory.json");
+import "../engine/startup.js";
+import { dataFile, resultsFile } from "../engine/paths.js";
 
 // --- Build theory loader ---
 
@@ -21,7 +14,9 @@ let _theoryCache = null;
 function loadBuildTheory() {
   if (_theoryCache) return _theoryCache;
   try {
-    _theoryCache = JSON.parse(readFileSync(THEORY_PATH, "utf8"));
+    _theoryCache = JSON.parse(
+      readFileSync(dataFile("build-theory.json"), "utf8"),
+    );
     return _theoryCache;
   } catch (e) {
     throw new Error(`Failed to load build-theory.json: ${e.message}`);
@@ -186,7 +181,7 @@ let _discoveredCache = null;
 
 function loadBuildsJson() {
   if (_discoveredCache) return _discoveredCache;
-  const path = join(RESULTS_DIR, "builds.json");
+  const path = resultsFile("builds.json");
   if (!existsSync(path)) return null;
   try {
     _discoveredCache = JSON.parse(readFileSync(path, "utf8"));
@@ -226,16 +221,16 @@ export function getBestBuildHash(heroTree) {
 
 // --- Knowledge system helpers ---
 
-const FINDINGS_PATH = join(RESULTS_DIR, "findings.json");
-const MECHANICS_PATH = join(DATA_DIR, "mechanics.json");
-const HYPOTHESES_PATH = join(RESULTS_DIR, "hypotheses.json");
-
 // Load validated findings only
 export function getValidatedFindings() {
-  if (!existsSync(FINDINGS_PATH)) return [];
+  const fp = resultsFile("findings.json");
+  if (!existsSync(fp)) return [];
   try {
-    const findings = JSON.parse(readFileSync(FINDINGS_PATH, "utf8"));
-    return findings.filter((f) => f.status === "validated");
+    const data = JSON.parse(readFileSync(fp, "utf8"));
+    const findings = data.findings || data;
+    return (Array.isArray(findings) ? findings : []).filter(
+      (f) => f.status === "validated",
+    );
   } catch {
     return [];
   }
@@ -243,9 +238,10 @@ export function getValidatedFindings() {
 
 // Load mechanics for a topic
 export function getMechanics(topic) {
-  if (!existsSync(MECHANICS_PATH)) return null;
+  const mp = dataFile("mechanics.json");
+  if (!existsSync(mp)) return null;
   try {
-    const mechanics = JSON.parse(readFileSync(MECHANICS_PATH, "utf8"));
+    const mechanics = JSON.parse(readFileSync(mp, "utf8"));
     return mechanics.mechanics?.[topic] || null;
   } catch {
     return null;
@@ -254,9 +250,10 @@ export function getMechanics(topic) {
 
 // Check if hypothesis already tested
 export function isHypothesisTested(id) {
-  if (!existsSync(HYPOTHESES_PATH)) return false;
+  const hp = resultsFile("hypotheses.json");
+  if (!existsSync(hp)) return false;
   try {
-    const hypotheses = JSON.parse(readFileSync(HYPOTHESES_PATH, "utf8"));
+    const hypotheses = JSON.parse(readFileSync(hp, "utf8"));
     const h = hypotheses.hypotheses?.find((h) => h.id === id);
     return h?.tested ?? false;
   } catch {
@@ -266,9 +263,10 @@ export function isHypothesisTested(id) {
 
 // Load all untested hypotheses
 export function getUntestedHypotheses() {
-  if (!existsSync(HYPOTHESES_PATH)) return [];
+  const hp = resultsFile("hypotheses.json");
+  if (!existsSync(hp)) return [];
   try {
-    const hypotheses = JSON.parse(readFileSync(HYPOTHESES_PATH, "utf8"));
+    const hypotheses = JSON.parse(readFileSync(hp, "utf8"));
     return (hypotheses.hypotheses || []).filter((h) => !h.tested);
   } catch {
     return [];
@@ -278,11 +276,11 @@ export function getUntestedHypotheses() {
 // --- CLI entry point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const talentsPath = process.argv[2] || join(DATA_DIR, "talents.json");
+  const talentsPath = process.argv[2] || dataFile("talents.json");
   const archetypes = loadArchetypes();
 
   console.log("=".repeat(60));
-  console.log("VDH Archetype System");
+  console.log("Archetype System");
   console.log("=".repeat(60));
 
   // Show discovered archetypes first (from builds.json)

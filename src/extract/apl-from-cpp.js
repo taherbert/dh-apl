@@ -2,19 +2,16 @@
 // Reverse of reference/apl-conversion/ConvertAPL.py
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { SIMC_DIR, config } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
+import { REFERENCE_DIR } from "../engine/paths.js";
 
 const APL_CPP = join(
   SIMC_DIR,
   config.simc.aplModule || "engine/class_modules/apl/apl_demon_hunter.cpp",
 );
 const specName = config.spec.specName;
-const OUTPUT = join(ROOT, `reference/${specName}-apl.simc`);
+const OUTPUT = join(REFERENCE_DIR, `${specName}-apl.simc`);
 
 // Extract content between markers
 function extractBetweenMarkers(content, startMarker, endMarker) {

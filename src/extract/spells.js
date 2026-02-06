@@ -3,8 +3,7 @@
 
 import { execSync } from "node:child_process";
 import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
 import { resolveAllDescriptions } from "./template-resolver.js";
 import {
@@ -14,11 +13,9 @@ import {
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
+import { dataDir, dataFile, ensureSpecDirs } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
-const RAW_DIR = join(DATA_DIR, "raw");
+const RAW_DIR = join(dataDir(), "raw");
 
 function runSpellQuery(query) {
   try {
@@ -67,7 +64,7 @@ async function extractSpells() {
 
   // Step 1: Get spell IDs from Raidbots talent data
   const raidbots = JSON.parse(
-    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf-8"),
+    readFileSync(join(dataDir(), "raidbots-talents.json"), "utf-8"),
   );
   const allNodes = [
     ...raidbots.classNodes,
@@ -125,7 +122,7 @@ async function extractSpells() {
     }
   }
 
-  // Build talent name set for filtering modifiers to current VDH
+  // Build talent name set for filtering modifiers to current spec
   const raidbotTalentNames = new Set();
   for (const node of allNodes) {
     raidbotTalentNames.add(node.name);
@@ -216,7 +213,10 @@ async function extractSpells() {
     `\nTemplate resolution: ${stats.resolved} fully resolved, ${stats.partial} partial, ${stats.unresolved} unresolved out of ${stats.total}`,
   );
 
-  writeFileSync(join(DATA_DIR, "spells.json"), JSON.stringify(output, null, 2));
+  writeFileSync(
+    join(dataDir(), "spells.json"),
+    JSON.stringify(output, null, 2),
+  );
   console.log(`Wrote ${output.length} spells to data/spells.json`);
 
   const specName = getDisplayNames().spec;

@@ -16,18 +16,16 @@ import {
   readFileSync,
   writeFileSync,
   copyFileSync,
-  mkdirSync,
   existsSync,
   renameSync,
   readdirSync,
   unlinkSync,
 } from "node:fs";
-import { join, dirname, basename, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, dirname, basename, resolve, relative } from "node:path";
 import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
 import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
-import { getSpecAdapter } from "../engine/startup.js";
+import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
 import { loadRoster } from "./build-roster.js";
 import { generateMultiActorContent } from "./multi-actor.js";
 import {
@@ -39,8 +37,8 @@ import {
 import {
   generateStrategicHypotheses,
   loadApl,
-  MUTATION_OPS,
 } from "../analyze/strategic-hypotheses.js";
+import { MUTATION_OPS } from "../apl/mutator.js";
 import {
   analyzeResourceFlow,
   generateTemporalHypotheses,
@@ -56,13 +54,19 @@ import {
   saveSpecialistOutput,
 } from "../analyze/synthesizer.js";
 import { addFinding as dbAddFinding } from "../util/db.js";
+import {
+  ROOT,
+  resultsDir,
+  resultsFile,
+  aplsDir,
+  dataFile,
+  ensureSpecDirs,
+} from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const RESULTS_DIR = join(ROOT, "results");
-const STATE_PATH = join(RESULTS_DIR, "iteration-state.json");
+const RESULTS_DIR = resultsDir();
+const STATE_PATH = resultsFile("iteration-state.json");
 // Iteration working copy — created by `init`, updated by `accept`.
-const CURRENT_APL = join(ROOT, "apls", "current.simc");
+const CURRENT_APL = join(aplsDir(), "current.simc");
 
 const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];
 const SCENARIO_LABELS = { st: "1T", small_aoe: "5T", big_aoe: "10T" };
@@ -139,7 +143,7 @@ function migrateState(state) {
 }
 
 function saveState(state) {
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  ensureSpecDirs();
   state.version = STATE_VERSION;
   state.lastUpdated = new Date().toISOString();
 
@@ -450,7 +454,7 @@ async function runComparison(candidatePath, tier = "standard") {
   const results = Object.fromEntries(entries);
 
   // Save comparison with candidate path
-  const comparisonPath = join(RESULTS_DIR, "comparison_latest.json");
+  const comparisonPath = resultsFile("comparison_latest.json");
   writeFileSync(
     comparisonPath,
     JSON.stringify(
@@ -653,7 +657,7 @@ async function runMultiBuildComparison(
   };
 
   // Save comparison
-  const comparisonPath = join(RESULTS_DIR, "comparison_latest.json");
+  const comparisonPath = resultsFile("comparison_latest.json");
   writeFileSync(comparisonPath, JSON.stringify(comparison, null, 2));
 
   return comparison;
@@ -725,7 +729,7 @@ async function cmdInit(aplPath) {
   }
 
   console.log(`Initializing iteration state from ${basename(aplPath)}...`);
-  mkdirSync(dirname(CURRENT_APL), { recursive: true });
+  ensureSpecDirs();
   copyFileSync(resolvedPath, CURRENT_APL);
 
   // Check for multi-build roster
@@ -748,7 +752,7 @@ async function cmdInit(aplPath) {
     // Also run single-actor workflow for hypothesis generation
     console.log("Running single-actor workflow for hypothesis generation...");
     const workflowResults = await runWorkflow(CURRENT_APL);
-    const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+    const workflowPath = resultsFile("workflow_current.json");
     writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
 
     const hypotheses = generateHypotheses(workflowResults);
@@ -759,7 +763,7 @@ async function cmdInit(aplPath) {
       lastUpdated: new Date().toISOString(),
       multiBuild: true,
       roster: {
-        path: "results/build-roster.json",
+        path: relative(ROOT, resultsFile("build-roster.json")),
         tier: roster.tier,
         buildCount: roster.builds.length,
       },
@@ -768,9 +772,9 @@ async function cmdInit(aplPath) {
         builds: baseline.builds,
       },
       current: {
-        apl: "apls/current.simc",
+        apl: relative(ROOT, CURRENT_APL),
         builds: baseline.builds,
-        workflowResults: "results/workflow_current.json",
+        workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
       },
       iterations: [],
       pendingHypotheses: hypotheses,
@@ -804,7 +808,7 @@ async function cmdInit(aplPath) {
     console.log("Running baseline workflow across all scenarios...");
     const workflowResults = await runWorkflow(CURRENT_APL);
 
-    const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+    const workflowPath = resultsFile("workflow_current.json");
     writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
 
     const dps = {};
@@ -824,9 +828,9 @@ async function cmdInit(aplPath) {
         dps,
       },
       current: {
-        apl: "apls/current.simc",
+        apl: relative(ROOT, CURRENT_APL),
         dps,
-        workflowResults: "results/workflow_current.json",
+        workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
       },
       iterations: [],
       pendingHypotheses: hypotheses,
@@ -990,7 +994,7 @@ async function cmdAccept(reason, hypothesisHint) {
     process.exit(1);
   }
 
-  const compPath = join(RESULTS_DIR, "comparison_latest.json");
+  const compPath = resultsFile("comparison_latest.json");
   if (!existsSync(compPath)) {
     console.error("No comparison results found. Run compare first.");
     process.exit(1);
@@ -998,7 +1002,7 @@ async function cmdAccept(reason, hypothesisHint) {
   const comparison = JSON.parse(readFileSync(compPath, "utf-8"));
 
   const candidatePath =
-    comparison.candidatePath || join(ROOT, "apls", "candidate.simc");
+    comparison.candidatePath || join(aplsDir(), "candidate.simc");
   if (!existsSync(candidatePath)) {
     console.error(`Candidate file not found: ${candidatePath}`);
     process.exit(1);
@@ -1039,9 +1043,12 @@ async function cmdAccept(reason, hypothesisHint) {
 
   console.log("Running workflow on new baseline...");
   const workflowResults = await runWorkflow(CURRENT_APL);
-  const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+  const workflowPath = resultsFile("workflow_current.json");
   writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
-  state.current.workflowResults = "results/workflow_current.json";
+  state.current.workflowResults = relative(
+    ROOT,
+    resultsFile("workflow_current.json"),
+  );
 
   state.pendingHypotheses = generateHypotheses(workflowResults);
   state.consecutiveRejections = 0;
@@ -1113,7 +1120,7 @@ function cmdReject(reason, hypothesisHint) {
     process.exit(1);
   }
 
-  const compPath = join(RESULTS_DIR, "comparison_latest.json");
+  const compPath = resultsFile("comparison_latest.json");
   const comparison = existsSync(compPath)
     ? JSON.parse(readFileSync(compPath, "utf-8"))
     : { results: {} };
@@ -1228,11 +1235,16 @@ function cmdSummary() {
   // Iteration history
   lines.push("\n## Iteration History\n");
   if (state.multiBuild) {
-    lines.push(
-      "| # | Decision | Hypothesis | Mutation | Mean | Worst | AR | Anni |",
+    const specConfig = getSpecAdapter().getSpecConfig();
+    const treeNames = Object.keys(specConfig.heroTrees || {}).sort();
+    const treeCols = treeNames.map(
+      (t) => specConfig.heroTrees[t].displayName || t,
     );
     lines.push(
-      "|---|----------|------------|----------|------|-------|----|----|",
+      `| # | Decision | Hypothesis | Mutation | Mean | Worst | ${treeCols.join(" | ")} |`,
+    );
+    lines.push(
+      `|---|----------|------------|----------|------|-------|${treeCols.map(() => "----").join("|")}|`,
     );
   } else {
     lines.push("| # | Decision | Hypothesis | Mutation | 1T | 5T | 10T |");
@@ -1242,11 +1254,12 @@ function cmdSummary() {
     let cols;
     if (iter.comparison?.aggregates) {
       const a = iter.comparison.aggregates;
+      const treeAvgs = a.treeAvgs || {};
+      const treeKeys = Object.keys(treeAvgs).sort();
       cols = [
         signedPct(a.meanWeighted, 2),
-        `${a.worstWeighted.toFixed(2)}%`,
-        signedPct(a.arAvg, 2),
-        signedPct(a.anniAvg, 2),
+        `${(a.worstWeighted ?? 0).toFixed(2)}%`,
+        ...treeKeys.map((k) => signedPct(treeAvgs[k] ?? 0, 2)),
       ];
     } else {
       const r = iter.results || {};
@@ -1305,8 +1318,8 @@ function cmdSummary() {
   }
 
   const report = lines.join("\n");
-  const reportPath = join(RESULTS_DIR, "iteration-report.md");
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  const reportPath = resultsFile("iteration-report.md");
+  ensureSpecDirs();
   writeFileSync(reportPath, report);
   console.log(report);
   console.log(`\nReport saved to ${reportPath}`);
@@ -1445,7 +1458,7 @@ async function cmdAutoGenerate() {
       }
 
       // Generate candidate
-      const candidatePath = join(ROOT, "apls", "candidate.simc");
+      const candidatePath = join(aplsDir(), "candidate.simc");
       const result = generateCandidate(CURRENT_APL, mutation, candidatePath);
 
       console.log(`\nGenerated: ${result.outputPath}`);
@@ -1557,7 +1570,7 @@ async function cmdTheorycraft() {
   const aplText = readFileSync(CURRENT_APL, "utf-8");
 
   // Load spell data
-  const spellDataPath = join(ROOT, "data", "spells.json");
+  const spellDataPath = dataFile("spells.json");
   const spellData = existsSync(spellDataPath)
     ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
     : [];
@@ -1668,7 +1681,7 @@ async function cmdSynthesize() {
 
   console.log("Generating temporal hypotheses...");
   if (aplText) {
-    const spellDataPath = join(ROOT, "data", "spells.json");
+    const spellDataPath = dataFile("spells.json");
     const spellData = existsSync(spellDataPath)
       ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
       : [];
@@ -1737,7 +1750,7 @@ async function cmdSynthesize() {
 
 // --- Checkpoint Management ---
 
-const CHECKPOINT_PATH = join(RESULTS_DIR, "checkpoint.md");
+const CHECKPOINT_PATH = resultsFile("checkpoint.md");
 
 function cmdCheckpoint(options = {}) {
   const state = loadState();
@@ -1952,7 +1965,7 @@ function areSpecialistOutputsFresh(maxAgeHours = 24) {
   const now = Date.now();
 
   for (const filename of specialistFiles) {
-    const filepath = join(RESULTS_DIR, filename);
+    const filepath = resultsFile(filename);
     if (!existsSync(filepath)) return false;
 
     try {
@@ -2088,7 +2101,7 @@ function writeDashboard(state) {
     }
   }
 
-  const dashPath = join(RESULTS_DIR, "dashboard.md");
+  const dashPath = resultsFile("dashboard.md");
   writeFileSync(dashPath, lines.join("\n") + "\n");
 }
 
@@ -2117,7 +2130,7 @@ function writeFindings(state) {
     }
   }
 
-  writeFileSync(join(RESULTS_DIR, "findings.md"), lines.join("\n") + "\n");
+  writeFileSync(resultsFile("findings.md"), lines.join("\n") + "\n");
 }
 
 function writeChangelog(state) {
@@ -2139,8 +2152,12 @@ function writeChangelog(state) {
       if (iter.mutation) lines.push(`Change: ${iter.mutation}\n`);
       if (iter.comparison?.aggregates) {
         const a = iter.comparison.aggregates;
+        const treeAvgs = a.treeAvgs || {};
+        const treeStr = Object.entries(treeAvgs)
+          .map(([k, v]) => `${k}: ${signedPct(v ?? 0)}`)
+          .join(" | ");
         lines.push(
-          `AR avg: ${signedPct(a.arAvg)} | Anni avg: ${signedPct(a.anniAvg)} | Worst: ${a.worstWeighted.toFixed(3)}%\n`,
+          `${treeStr} | Worst: ${(a.worstWeighted ?? 0).toFixed(3)}%\n`,
         );
       } else {
         const scenarioDetail = SCENARIO_KEYS.map((k) => {
@@ -2155,7 +2172,7 @@ function writeChangelog(state) {
     }
   }
 
-  writeFileSync(join(RESULTS_DIR, "changelog.md"), lines.join("\n") + "\n");
+  writeFileSync(resultsFile("changelog.md"), lines.join("\n") + "\n");
 }
 
 function printHypotheses(hypotheses) {
@@ -2178,6 +2195,8 @@ function parseHypothesisFlag(args) {
 }
 
 const [cmd, ...rawArgs] = process.argv.slice(2);
+
+await loadSpecAdapter();
 
 switch (cmd) {
   case "init":

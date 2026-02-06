@@ -1,4 +1,4 @@
-input=apls/profile.simc
+input=apls/vengeance/profile.simc
 
 # === Precombat ===
 actions.precombat=/snapshot_stats

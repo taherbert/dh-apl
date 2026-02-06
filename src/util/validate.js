@@ -2,55 +2,53 @@
 // Validates required fields and checks freshness against simc commit.
 
 import { readFileSync, existsSync, statSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkSync } from "../engine/startup.js";
+import { dataFile, REFERENCE_DIR } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-
-// Schema definitions: field name → required type or validator
+// Schema definitions: filename → required type or validator
 const SCHEMAS = {
-  "data/spells.json": {
+  "spells.json": {
     type: "array",
     minLength: 50,
     itemFields: ["id", "name"],
   },
-  "data/talents.json": {
+  "talents.json": {
     type: "object",
     requiredKeys: ["class", "spec"],
   },
-  "data/raidbots-talents.json": {
+  "raidbots-talents.json": {
     type: "object",
     requiredKeys: ["classNodes", "specNodes", "heroNodes"],
   },
-  "data/interactions.json": {
+  "interactions.json": {
     type: "object",
     requiredKeys: ["bySpell"],
   },
-  "data/interactions-summary.json": {
+  "interactions-summary.json": {
     type: "object",
     requiredKeys: ["bySpell", "byTalent"],
   },
-  "data/cpp-interactions.json": {
+  "cpp-interactions.json": {
     type: "object",
     requiredKeys: ["talentAbility", "talentTalent"],
   },
-  "data/cpp-effects-inventory.json": {
+  "cpp-effects-inventory.json": {
     type: "object",
     requiredKeys: ["parseEffects", "compositeOverrides"],
   },
-  "data/cpp-proc-mechanics.json": {
+  "cpp-proc-mechanics.json": {
     type: "object",
   },
-  "data/build-theory.json": {
+  "build-theory.json": {
     type: "object",
   },
 };
 
-function validateFile(relPath) {
-  const absPath = join(ROOT, relPath);
-  const schema = SCHEMAS[relPath];
+function validateFile(filename) {
+  const absPath = dataFile(filename);
+  const schema = SCHEMAS[filename];
 
   if (!existsSync(absPath)) {
     return { valid: false, error: "file not found" };
@@ -117,7 +115,7 @@ export function validateAll() {
 // Staleness: compare data file mtimes against simc HEAD
 export function checkStaleness() {
   const sync = checkSync();
-  const metaPath = join(ROOT, "reference", ".refresh-metadata.json");
+  const metaPath = join(REFERENCE_DIR, ".refresh-metadata.json");
 
   let lastBuildTime = null;
   if (existsSync(metaPath)) {
@@ -132,10 +130,10 @@ export function checkStaleness() {
   }
 
   const staleFiles = [];
-  for (const relPath of Object.keys(SCHEMAS)) {
-    const absPath = join(ROOT, relPath);
+  for (const filename of Object.keys(SCHEMAS)) {
+    const absPath = dataFile(filename);
     if (!existsSync(absPath)) {
-      staleFiles.push({ file: relPath, reason: "missing" });
+      staleFiles.push({ file: filename, reason: "missing" });
       continue;
     }
 
@@ -144,7 +142,7 @@ export function checkStaleness() {
     // If data file is older than last build metadata, it's stale
     if (lastBuildTime && mtime < lastBuildTime) {
       staleFiles.push({
-        file: relPath,
+        file: filename,
         reason: `older than last build (${lastBuildTime.toISOString().slice(0, 10)})`,
       });
     }

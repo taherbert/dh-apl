@@ -2,12 +2,10 @@
 // Single source of truth for all configuration values.
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
+import { ROOT, setSpecName, REFERENCE_DIR } from "./paths.js";
 
 // --- Load and validate config.json ---
 
@@ -52,6 +50,7 @@ function validate(config) {
 }
 
 const config = loadConfig();
+setSpecName(config.spec.specName);
 
 // --- Derived values ---
 
@@ -64,9 +63,14 @@ export const SIMC_BIN = existsSync(LOCAL_BIN)
   ? LOCAL_BIN
   : join(SIMC_DIR, "engine", "simc");
 
-export const SIMC_DH_CPP = join(
+export const SIMC_CPP = join(
   SIMC_DIR,
   config.simc.cppModule || "engine/class_modules/sc_demon_hunter.cpp",
+);
+
+export const SIMC_APL_CPP = join(
+  SIMC_DIR,
+  config.simc.aplModule || "engine/class_modules/apl/apl_demon_hunter.cpp",
 );
 
 export const RAIDBOTS_BASE = `${config.data.raidbots}/${DATA_ENV}`;
@@ -92,6 +96,9 @@ export const SIM_DEFAULTS = config.simulation.defaults;
 
 // Full config object for advanced use
 export { config };
+
+// Re-export from paths.js for backward compatibility
+export { ROOT };
 
 // --- Display names from adapter ---
 
@@ -131,7 +138,7 @@ export async function loadSpecAdapter(specName = config.spec.specName) {
   HERO_SUBTREES = Object.fromEntries(
     Object.entries(specConfig.heroTrees).map(([name, data]) => [
       data.subtree,
-      toTitleCase(name),
+      data.displayName || toTitleCase(name),
     ]),
   );
 
@@ -147,7 +154,7 @@ export function getSpecAdapter() {
 
 // --- Upstream sync check ---
 
-const METADATA_PATH = join(ROOT, "reference", ".refresh-metadata.json");
+const METADATA_PATH = join(REFERENCE_DIR, ".refresh-metadata.json");
 
 export function checkSync() {
   const simcDir = config.simc.dir;

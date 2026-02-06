@@ -37,7 +37,7 @@ Discovered archetypes and ranked talent builds from the automated discovery pipe
 {
   "_schema": "builds-v1",
   "_generated": "2026-02-04T...",
-  "apl": { "file": "apls/vengeance.simc", "hash": "abc123" },
+  "apl": { "file": "apls/vengeance/vengeance.simc", "hash": "abc123" },
   "fidelity": "quick|standard|confirm",
   "scenarios": {
     "st": { "targets": 1, "duration": 300 },
@@ -47,7 +47,7 @@ Discovered archetypes and ranked talent builds from the automated discovery pipe
   "weights": { "st": 0.5, "small_aoe": 0.3, "big_aoe": 0.2 },
   "factorImpacts": [...],
   "synergyPairs": [...],
-  "archetypes": [...],
+  "discoveredArchetypes": [...],
   "allBuilds": [...]
 }
 ```
@@ -150,10 +150,12 @@ Accumulated analytical insights across sessions. Each finding is a discrete insi
 ### Operations
 
 **On session startup:**
+
 1. Read findings, filter to `status: "validated"` for current context
 2. Use as calibration: "we already know X, so hypothesis Y should account for it"
 
 **On session completion:**
+
 1. Append new findings for each insight discovered
 2. If a finding contradicts an existing one, mark the old one `superseded`
 

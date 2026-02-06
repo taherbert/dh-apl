@@ -1,30 +1,22 @@
 // Generates a markdown report of spell/talent interactions.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
   config,
   loadSpecAdapter,
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import { dataFile } from "../engine/paths.js";
 
 async function generateReport() {
   await loadSpecAdapter();
   const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = getSpecAdapter();
 
-  const spells = JSON.parse(
-    readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
-  );
-  const talents = JSON.parse(
-    readFileSync(join(DATA_DIR, "talents.json"), "utf-8"),
-  );
+  const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf-8"));
+  const talents = JSON.parse(readFileSync(dataFile("talents.json"), "utf-8"));
   const interactions = JSON.parse(
-    readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"),
+    readFileSync(dataFile("interactions.json"), "utf-8"),
   );
 
   const spellMap = new Map(spells.map((s) => [s.id, s]));
@@ -294,7 +286,7 @@ async function generateReport() {
   lines.push("");
 
   const report = lines.join("\n");
-  writeFileSync(join(DATA_DIR, "ability-report.md"), report);
+  writeFileSync(dataFile("ability-report.md"), report);
   console.log(`Wrote data/ability-report.md (${lines.length} lines)`);
 }
 

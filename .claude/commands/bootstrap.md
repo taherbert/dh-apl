@@ -6,7 +6,7 @@ Bootstrap workflow for fresh spec optimization. This skill orchestrates the full
 
 ## When to Use
 
-- Starting optimization for a **new spec** (not VDH)
+- Starting optimization for a **new spec**
 - After a **major game patch** that invalidates existing knowledge
 - When you want to **rebuild everything from scratch**
 - When the existing APL, build-theory, or findings are corrupt/stale
@@ -15,7 +15,11 @@ Bootstrap workflow for fresh spec optimization. This skill orchestrates the full
 
 1. **SimC binary** must be built and accessible
 2. **Raidbots data** must be available (run `npm run fetch-raidbots` if needed)
-3. **Spec identifier** — e.g., "vengeance", "havoc", "protection", etc.
+3. **config.json** must be configured with the target spec identifiers
+
+## Setup
+
+Run `node src/engine/startup.js` to determine the active spec. Use the spec name for all `{spec}` path references below.
 
 ## Workflow Steps
 
@@ -44,36 +48,58 @@ npm run context-summary
 
 After Phase 1, you should have:
 
-- `data/spells-summary.json` — spell catalog
-- `data/talents.json` — talent tree
-- `data/interactions-summary.json` — talent interactions
-- `data/cpp-proc-mechanics.json` — proc rates and ICDs
+- `data/{spec}/spells-summary.json` — spell catalog
+- `data/{spec}/talents.json` — talent tree
+- `data/{spec}/interactions-summary.json` — talent interactions
+- `data/{spec}/cpp-proc-mechanics.json` — proc rates and ICDs
 
-### Phase 2: APL Scaffold
+### Phase 2: Reference APL Technique Study
+
+Before building our own APL, study the SimC default APL for **technique** — syntax patterns, structural idioms, and SimC features we should use. This is NOT about copying priorities.
+
+```bash
+# Extract the default APL from SimC C++ source
+npm run extract-apl
+```
+
+Read `reference/{spec}-apl.simc` and document:
+
+1. **SimC syntax techniques** — variable patterns, accumulator usage, `prev_gcd` expressions, `time_to_die` conditions, trinket slot handling
+2. **Structural patterns** — how are action lists delegated? What sub-lists exist (cooldowns, AoE, burst)? How is hero tree branching done?
+3. **State machine encoding** — how are multi-step cycles expressed? (e.g., empowerment windows, charge management)
+4. **Scaling patterns** — how do `spell_targets` breakpoints work? How does the APL adapt from ST to AoE?
+
+**Important:** The reference APL's priority ordering and threshold values are background research, not ground truth. They may be wrong, incomplete, or tuned to a different build. Your priorities come from mathematical analysis; your thresholds come from simulation. The techniques (how to express ideas in SimC syntax) are what you're learning here.
+
+Also read `reference/wiki/action-lists.md` and `reference/wiki/action-list-expressions.md` for the full SimC expression language. These document features you might not know exist.
+
+### Phase 3: APL Scaffold
 
 ```bash
 # Generate initial APL skeleton from spell data
-node src/apl/scaffold.js vengeance null apls/vengeance-scaffold.simc
+node src/apl/scaffold.js {spec} null apls/{spec}/{spec}-scaffold.simc
 ```
 
 Review the generated scaffold:
 
-- `apls/vengeance-scaffold.simc` — starting APL
-- `apls/vengeance-scaffold-analysis.md` — analysis report
+- `apls/{spec}/{spec}-scaffold.simc` — starting APL
+- `apls/{spec}/{spec}-scaffold-analysis.md` — analysis report
 
 The scaffold is a **starting point**, not a finished APL. It:
 
-- ✅ Identifies relevant abilities
-- ✅ Classifies by cooldown, resource, category
-- ❌ Does NOT know talent gates
-- ❌ Does NOT know hero tree routing
-- ❌ Does NOT know optimal priorities
+- Identifies relevant abilities
+- Classifies by cooldown, resource, category
+- Does NOT know talent gates
+- Does NOT know hero tree routing
+- Does NOT know optimal priorities
 
-### Phase 3: Build Theory Generation
+Enhance the scaffold using techniques learned in Phase 2 — add hero tree branching structure, variable patterns for resource thresholds, and action list delegation. The priorities will be refined by `/full-analysis` and `/iterate-apl` later.
+
+### Phase 4: Build Theory Generation
 
 ```bash
 # Generate initial build theory from talent data
-node src/analyze/build-theory-generator.js data/build-theory-generated.json
+node src/analyze/build-theory-generator.js data/{spec}/build-theory-generated.json
 ```
 
 Review the generated theory:
@@ -83,13 +109,13 @@ Review the generated theory:
 - Synergies are detected by co-reference, not simulation
 - Archetypes are combinatorial, not optimal
 
-**Important:** Copy to `data/build-theory.json` only after manual curation.
+**Important:** Copy to `data/{spec}/build-theory.json` only after manual curation.
 
-### Phase 4: Talent-APL Coupling Analysis
+### Phase 5: Talent-APL Coupling Analysis
 
 ```bash
 # Analyze talent-APL dependencies
-node src/analyze/talent-apl-coupling.js data/talents.json apls/vengeance-scaffold.simc
+node src/analyze/talent-apl-coupling.js data/{spec}/talents.json apls/{spec}/{spec}-scaffold.simc
 ```
 
 This identifies:
@@ -99,35 +125,35 @@ This identifies:
 - Proc mechanics (need buff tracking)
 - Buff windows (need damage alignment)
 
-### Phase 5: Initial Simulation
+### Phase 6: Initial Simulation
 
 ```bash
 # Run baseline sim with scaffold APL
-npm run sim -- apls/vengeance-scaffold.simc st
+npm run sim -- apls/{spec}/{spec}-scaffold.simc st
 
 # If it works, initialize iteration state
-node src/sim/iterate.js init apls/vengeance-scaffold.simc
+node src/sim/iterate.js init apls/{spec}/{spec}-scaffold.simc
 ```
 
-### Phase 6: Build Discovery (Optional)
+### Phase 7: Build Discovery (Optional)
 
 ```bash
 # Run build discovery to find optimal talent combinations
 npm run discover -- --quick
 ```
 
-This generates `results/builds.json` with ranked builds.
+This generates `results/{spec}/builds.json` with ranked builds.
 
 ## Expected Outputs
 
 After bootstrap, you should have:
 
-- `data/spells-summary.json` — ✅ spell data
-- `data/talents.json` — ✅ talent tree
-- `data/interactions-summary.json` — ✅ interactions
-- `data/build-theory.json` — ⚠️ needs curation
-- `apls/vengeance-scaffold.simc` — ⚠️ starting point
-- `results/builds.json` — ✅ if discovery ran
+- `data/{spec}/spells-summary.json` — spell data
+- `data/{spec}/talents.json` — talent tree
+- `data/{spec}/interactions-summary.json` — interactions
+- `data/{spec}/build-theory.json` — needs curation
+- `apls/{spec}/{spec}-scaffold.simc` — starting point
+- `results/{spec}/builds.json` — if discovery ran
 
 ## Next Steps
 
@@ -158,20 +184,7 @@ The scaffold is a starting point — some abilities may need manual fixing
 
 To add support for a new spec:
 
-1. Add spec config to `src/apl/scaffold.js`:
-
-```javascript
-const SPEC_CONFIG = {
-  newspec: {
-    specId: "newspec",
-    className: "classname",
-    role: "role",
-    primaryResource: "resource",
-    spellKeywords: ["ability1", "ability2", ...],
-  },
-};
-```
-
-2. Update `config.json` with spec identifiers
+1. Copy `src/spec/_template.js` to `src/spec/{spec}.js` and fill in the blanks (see `src/spec/interface.js` for the full contract)
+2. Update `config.json` with the new spec identifiers
 3. Run bootstrap workflow
 4. Curate generated files

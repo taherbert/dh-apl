@@ -6,22 +6,19 @@
 // 4. assess_damage / target_mitigation → reactive/defensive effects
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import {
-  SIMC_DH_CPP,
+  SIMC_CPP,
   loadSpecAdapter,
   getSpecAdapter,
 } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "../..", "data");
+import { dataDir } from "../engine/paths.js";
 
 export function extractEffectsInventory(preloadedSource) {
   const adapter = getSpecAdapter();
   const structPatterns = adapter.getCppStructPatterns();
 
-  const src = preloadedSource || readFileSync(SIMC_DH_CPP, "utf-8");
+  const src = preloadedSource || readFileSync(SIMC_CPP, "utf-8");
   const lines = src.split("\n");
 
   const parseEffects = scanParseEffects(lines);
@@ -43,7 +40,7 @@ export function extractEffectsInventory(preloadedSource) {
   };
 
   writeFileSync(
-    join(DATA_DIR, "cpp-effects-inventory.json"),
+    join(dataDir(), "cpp-effects-inventory.json"),
     JSON.stringify(output, null, 2),
   );
 

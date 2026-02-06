@@ -6,8 +6,6 @@
 //   Section 2 — Machine-validated data (cross-checked by validate-spec-data.js)
 //   Section 3 — Auto-derived functions (generated from SPEC_CONFIG by common.js)
 
-import { dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
   buildAbilityData,
   matchHeroTreeFromText,
@@ -19,10 +17,7 @@ import {
   deriveTalentTreePattern,
   deriveKeySpellIds,
 } from "./common.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
+import { dataDir } from "../engine/paths.js";
 
 // ================================================================
 // SECTION 1: HUMAN DOMAIN KNOWLEDGE
@@ -82,7 +77,9 @@ export const SPEC_CONFIG = {
 
   heroTrees: {
     aldrachi_reaver: {
+      displayName: "Aldrachi Reaver",
       subtree: 35,
+      buildMethod: "doe",
       damageSchool: "Physical",
       keyBuffs: [
         "rending_strike",
@@ -95,7 +92,9 @@ export const SPEC_CONFIG = {
       profileKeywords: ["aldrachi", "reaver"],
     },
     annihilator: {
+      displayName: "Annihilator",
       subtree: 124,
+      buildMethod: "multi-actor",
       damageSchool: "Shadowflame",
       keyBuffs: ["voidfall_building", "voidfall_spending", "catastrophe"],
       aplBranch: "anni",
@@ -237,6 +236,215 @@ export const SPEC_CONFIG = {
     "soul_fragments.total",
     "souls_consumed",
   ],
+
+  // ---- Analysis-driven sections (read by analysis modules) ----
+
+  resourceModels: [
+    {
+      name: "fury",
+      cap: 120,
+      baseCap: 100,
+      generators: [
+        {
+          ability: "fracture",
+          amount: 25,
+          metaAmount: 40,
+          charges: 2,
+          rechargeCd: 4.5,
+        },
+        {
+          ability: "immolation_aura",
+          perTick: 3,
+          duration: 6,
+          charges: 2,
+          rechargeCd: 30,
+        },
+        { ability: "felblade", amount: 15, cooldown: 15 },
+      ],
+      consumers: [
+        { ability: "spirit_bomb", cost: 40 },
+        { ability: "soul_cleave", cost: 35 },
+        { ability: "fel_devastation", cost: 50 },
+      ],
+    },
+    {
+      name: "soul_fragments",
+      cap: 6,
+      generators: [
+        {
+          ability: "fracture",
+          amount: 2,
+          metaAmount: 3,
+          charges: 2,
+          rechargeCd: 4.5,
+        },
+        { ability: "soul_carver", amount: 3, cooldown: 30 },
+        { ability: "sigil_of_spite", amount: 3, cooldown: 60 },
+        {
+          ability: "fallout",
+          procRate: 0.6,
+          source: "immolation_aura",
+          perTick: true,
+        },
+      ],
+      consumers: [
+        {
+          ability: "spirit_bomb",
+          maxConsume: 5,
+          valuePerUnit: "+20% damage per fragment",
+        },
+        {
+          ability: "soul_cleave",
+          maxConsume: 2,
+          valuePerUnit: "healing + Soul Furnace stacks",
+        },
+      ],
+    },
+  ],
+
+  burstWindows: [
+    {
+      buff: "fiery_brand",
+      cooldown: 60,
+      duration: 10,
+      damageAmp: 0.15,
+      school: "Fire",
+      talentDep: "fiery_demise",
+      syncTargets: ["soul_carver", "fel_devastation"],
+    },
+    {
+      buff: "metamorphosis",
+      cooldown: 180,
+      duration: 15,
+      damageAmp: 0.2,
+      school: "all",
+      resourceBonus: {
+        resource: "soul_fragments",
+        ability: "fracture",
+        bonus: 1,
+      },
+      syncTargets: ["fracture", "spirit_bomb"],
+    },
+  ],
+
+  stateMachines: {
+    aldrachi_reaver: {
+      name: "AR Cycle",
+      description:
+        "Rending Strike → empowered Fracture → empowered Soul Cleave → Glaive Flurry",
+      states: [
+        {
+          name: "rending_strike",
+          buff: "rending_strike",
+          trigger: "auto_proc",
+          next: "empowered_fracture",
+        },
+        {
+          name: "empowered_fracture",
+          ability: "fracture",
+          appliesBuff: "reavers_mark",
+          ampPercent: 10,
+          next: "empowered_soul_cleave",
+        },
+        {
+          name: "empowered_soul_cleave",
+          ability: "soul_cleave",
+          ampPercent: 20,
+          triggersBuff: "glaive_flurry",
+          next: "rending_strike",
+        },
+      ],
+      uptimeTargets: {
+        rending_strike: 40,
+        glaive_flurry: 30,
+        reavers_mark: 50,
+      },
+    },
+    annihilator: {
+      name: "Voidfall Cycle",
+      description: "Build Voidfall stacks → spend at 3 for fel meteors",
+      states: [
+        {
+          name: "building",
+          buff: "voidfall_building",
+          stacksFrom: ["fracture", "metamorphosis"],
+          maxStacks: 3,
+        },
+        {
+          name: "spending",
+          buff: "voidfall_spending",
+          trigger: "spirit_bomb|soul_cleave",
+          effect: "fel_meteors",
+        },
+      ],
+      uptimeTargets: {},
+    },
+  },
+
+  hypothesisPatterns: [
+    {
+      id: "burst_window_sync",
+      category: "COOLDOWN_SYNC",
+      template:
+        "Align {ability} cast within {buff} window for {amp}% {school} amp",
+      appliesWhen: (config) =>
+        config.burstWindows.some((w) => w.syncTargets?.length > 0),
+    },
+    {
+      id: "resource_overflow",
+      category: "RESOURCE_GATING",
+      template: "Pool {resource} below cap before {consumer} to avoid overflow",
+      appliesWhen: (config) => config.resourceModels.some((r) => r.cap),
+    },
+    {
+      id: "meta_resource_bonus",
+      category: "CYCLE_ALIGNMENT",
+      template:
+        "Prioritize {ability} during {buff} for {bonus} extra {resource}",
+      appliesWhen: (config) => config.burstWindows.some((w) => w.resourceBonus),
+    },
+    {
+      id: "state_machine_completion",
+      category: "PRIORITY_REORDER",
+      template:
+        "Ensure {stateMachine} cycle completes: uptime targets {targets}",
+      appliesWhen: (config) =>
+        Object.keys(config.stateMachines || {}).length > 0,
+    },
+    {
+      id: "fragment_pooling",
+      category: "TEMPORAL_POOLING",
+      template: "Pool {resource} for {consumer} when {condition}",
+      appliesWhen: (config) =>
+        config.resourceModels.some((r) =>
+          r.consumers.some((c) => c.maxConsume),
+        ),
+    },
+    {
+      id: "soul_furnace_threshold",
+      category: "CONDITION_RELAXATION",
+      template: "Adjust {buff} stack threshold from {current} to {proposed}",
+      buffName: "soul_furnace",
+      appliesWhen: () => true,
+    },
+  ],
+
+  clusterKeywords: {
+    "fire-brand": ["fiery", "brand", "fire", "burn", "flame"],
+    "immolation-aura": ["immolation", "aura", "flames", "engulf"],
+    sigil: ["sigil", "quickened", "concentrated", "chains"],
+    frailty: ["frailty", "spirit_bomb", "vulnerability", "soulcrush"],
+    fragment: ["fragment", "soul", "fracture", "consume", "shatter"],
+    cooldown: ["devastation", "carver", "metamorphosis", "fel"],
+    physical: ["cleave", "physical", "glaive", "strike"],
+  },
+
+  schoolClusters: {
+    Fire: "fire-damage",
+    Physical: "physical-damage",
+    Chaos: "chaos-damage",
+    Shadowflame: "shadowflame-damage",
+  },
 };
 
 export const SET_BONUS_SPELL_IDS = new Set([
@@ -399,7 +607,7 @@ export const loadAbilityData = () =>
       SPEC_CONFIG.spellIds,
       SPEC_CONFIG.domainOverrides,
       SPEC_CONFIG.resources,
-      DATA_DIR,
+      dataDir(),
     ),
   );
 

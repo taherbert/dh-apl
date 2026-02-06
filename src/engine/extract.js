@@ -3,18 +3,15 @@
 // Usage: node src/engine/extract.js [--step=<step>] [--skip-fetch]
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { SIMC_DH_CPP } from "./startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
+import { SIMC_CPP } from "./startup.js";
+import { dataFile } from "./paths.js";
 
 // Cache the C++ source for all scanners to share
 let _cppSource = null;
 let _cppLines = null;
 
-export function loadCppSource(path = SIMC_DH_CPP) {
+export function loadCppSource(path = SIMC_CPP) {
   if (_cppSource) return { source: _cppSource, lines: _cppLines };
   _cppSource = readFileSync(path, "utf-8");
   _cppLines = _cppSource.split("\n");
@@ -26,41 +23,41 @@ export function clearCppCache() {
   _cppLines = null;
 }
 
-// Pipeline step definitions
+// Pipeline step definitions — output paths resolve via dataFile()
 const STEPS = {
   raidbots: {
     label: "Fetch Raidbots talent data",
-    output: "data/raidbots-talents.json",
+    file: "raidbots-talents.json",
     run: () => import("../extract/raidbots.js"),
   },
   spells: {
     label: "Extract spell data",
-    output: "data/spells.json",
+    file: "spells.json",
     run: () => import("../extract/spells.js"),
   },
   talents: {
     label: "Build talent tree",
-    output: "data/talents.json",
+    file: "talents.json",
     run: () => import("../model/talents.js"),
   },
   "cpp-interactions": {
     label: "Scan C++ talent cross-references",
-    output: "data/cpp-interactions.json",
+    file: "cpp-interactions.json",
     run: () => import("../extract/cpp-interactions.js"),
   },
   "cpp-effects": {
     label: "Scan C++ effect applications",
-    output: "data/cpp-effects-inventory.json",
+    file: "cpp-effects-inventory.json",
     run: () => import("../extract/cpp-effects-scanner.js"),
   },
   "cpp-procs": {
     label: "Scan C++ proc mechanics",
-    output: "data/cpp-proc-mechanics.json",
+    file: "cpp-proc-mechanics.json",
     run: () => import("../extract/cpp-proc-scanner.js"),
   },
   interactions: {
     label: "Build interaction map",
-    output: "data/interactions.json",
+    file: "interactions.json",
     run: () => import("../model/interactions.js"),
   },
 };
@@ -81,11 +78,11 @@ export function getSteps() {
 export function checkOutputs() {
   const results = {};
   for (const [name, step] of Object.entries(STEPS)) {
-    const path = join(ROOT, step.output);
+    const path = dataFile(step.file);
     results[name] = {
       exists: existsSync(path),
       label: step.label,
-      output: step.output,
+      output: path,
     };
   }
   return results;

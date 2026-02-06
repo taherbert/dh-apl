@@ -3,8 +3,6 @@
 // Usage: node src/analyze/strategic-hypotheses.js <workflow-results.json>
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { detectArchetype, describeArchetype } from "./archetypes.js";
 import { parse, getActionLists } from "../apl/parser.js";
 import {
@@ -13,10 +11,7 @@ import {
   findBuffReferences,
 } from "../apl/condition-parser.js";
 import { MUTATION_OPS } from "../apl/mutator.js";
-import { getSpecAdapter, config } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
+import { getSpecAdapter, loadSpecAdapter, config } from "../engine/startup.js";
 
 // --- Spec Configuration ---
 let currentSpecId = config.spec.specName;
@@ -35,6 +30,23 @@ const STRATEGIC_CATEGORIES = {
   PRIORITY_REORDER: "Adjust action priority for better sequencing",
 };
 
+// Returns the APL branch name for a given hero tree, or the first configured branch as fallback
+function getAplBranchForHeroTree(specConfig, heroTree) {
+  if (heroTree && specConfig.heroTrees?.[heroTree]?.aplBranch) {
+    return specConfig.heroTrees[heroTree].aplBranch;
+  }
+  return getDefaultAplBranch(specConfig);
+}
+
+// Returns the first configured APL branch as a default
+function getDefaultAplBranch(specConfig) {
+  const trees = specConfig.heroTrees || {};
+  for (const treeConfig of Object.values(trees)) {
+    if (treeConfig.aplBranch) return treeConfig.aplBranch;
+  }
+  return "default";
+}
+
 export function generateStrategicHypotheses(workflowResults, aplText = null) {
   const hypotheses = [];
   let archetypeContext = null;
@@ -45,7 +57,7 @@ export function generateStrategicHypotheses(workflowResults, aplText = null) {
     // 1. Check profile name (most reliable - explicit in APL header)
     heroTree = detectHeroTreeFromProfileName(aplText);
 
-    // 2. Check APL structure (ar/anni action lists)
+    // 2. Check APL structure (hero tree branch action lists)
     aplAst = parse(aplText);
     if (!heroTree) {
       heroTree = detectHeroTreeFromApl(aplAst);
@@ -180,16 +192,29 @@ function detectHeroTreeFromBuffs(workflowResults) {
 }
 
 function detectHeroTreeFromApl(aplAst) {
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const heroTrees = specConfig.heroTrees || {};
   const lists = getActionLists(aplAst);
-  const arList = lists.find((l) => l.name === "ar");
-  const anniList = lists.find((l) => l.name === "anni");
-  const hasArContent = arList?.entries.length > 0;
-  const hasAnniContent = anniList?.entries.length > 0;
 
-  if (hasArContent && !hasAnniContent) return "aldrachi_reaver";
-  if (hasAnniContent && !hasArContent) return "annihilator";
+  // Build a map of aplBranch → heroTreeId for each configured hero tree
+  const branchToTree = {};
+  for (const [treeId, treeConfig] of Object.entries(heroTrees)) {
+    if (treeConfig.aplBranch) {
+      branchToTree[treeConfig.aplBranch] = treeId;
+    }
+  }
 
-  // Both have content: check default list for hero_tree conditions
+  // Check which APL branches have content
+  const branchPresence = {};
+  for (const [branch, treeId] of Object.entries(branchToTree)) {
+    const list = lists.find((l) => l.name === branch);
+    branchPresence[branch] = { treeId, hasContent: list?.entries.length > 0 };
+  }
+
+  const withContent = Object.values(branchPresence).filter((b) => b.hasContent);
+  if (withContent.length === 1) return withContent[0].treeId;
+
+  // Multiple branches have content: check default list for hero_tree conditions
   const defaultList = lists.find((l) => l.name === "default");
   for (const entry of defaultList?.entries || []) {
     if (entry.type !== "RunActionList") continue;
@@ -197,20 +222,15 @@ function detectHeroTreeFromApl(aplAst) {
     const condition = entry.modifiers?.get("if") || "";
     const targetList = entry.modifiers?.get("name");
 
-    if (
-      targetList === "ar" &&
-      condition.includes("hero_tree.aldrachi_reaver")
-    ) {
-      return "aldrachi_reaver";
-    }
-    if (targetList === "anni" && condition.includes("hero_tree.annihilator")) {
-      return "annihilator";
+    for (const [branch, { treeId }] of Object.entries(branchPresence)) {
+      if (targetList === branch && condition.includes(`hero_tree.${treeId}`)) {
+        return treeId;
+      }
     }
   }
 
-  // Fallback: prefer ar as it's more common
-  if (hasArContent) return "aldrachi_reaver";
-  if (hasAnniContent) return "annihilator";
+  // Fallback: return the first branch with content
+  if (withContent.length > 0) return withContent[0].treeId;
   return null;
 }
 
@@ -249,148 +269,86 @@ function generateWindowHypotheses(scenario, archetype, aplAst) {
 
 function generateBuffUptimeHypotheses(scenario, archetype, aplAst) {
   const hypotheses = [];
-  const rendingStrike = getBuffUptime(scenario, "rending_strike");
-  const glaiveFlurry = getBuffUptime(scenario, "glaive_flurry");
-  const reaversMark = getBuffUptime(scenario, "reavers_mark");
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const stateMachines = specConfig.stateMachines || {};
 
-  // AR buff chain sequencing — critical for DPS
-  if (
-    archetype?.heroTree === "aldrachi_reaver" &&
-    rendingStrike !== undefined &&
-    glaiveFlurry !== undefined
-  ) {
-    // If Rending Strike is up but Glaive Flurry is much lower, sequence is broken
-    if (rendingStrike > 5 && glaiveFlurry < rendingStrike * 0.5) {
-      hypotheses.push({
-        category: STRATEGIC_CATEGORIES.PRIORITY_REORDER,
-        archetype: archetype?.id,
-        archetypeContext:
-          "After Reaver's Glaive, the correct sequence is ALWAYS Fracture (empowered) → Soul Cleave (empowered). Fracture deals +10% damage and applies Reaver's Mark. Soul Cleave deals +20% damage and triggers Aldrachi Tactics for faster regen. Breaking this sequence loses significant DPS.",
-        strategicGoal:
-          "Enforce Fracture→Soul Cleave sequence after Reaver's Glaive",
-        observation: `Rending Strike ${rendingStrike}% but Glaive Flurry only ${glaiveFlurry}% — sequence may be broken`,
-        metric: glaiveFlurry,
-        target: "soul_cleave",
-        hypothesis: `Ensure Soul Cleave follows Fracture during Rending Strike window`,
-        scenario: scenario.scenario,
-        priority: (rendingStrike - glaiveFlurry) * 2,
-        confidence: "high",
-        aplMutation: {
-          type: MUTATION_OPS.MOVE_UP,
-          list: "ar",
-          ability: "soul_cleave",
-          condition: "buff.rending_strike.up&!buff.glaive_flurry.up",
-          reason:
-            "Force Soul Cleave after empowered Fracture to complete the AR chain",
-        },
-      });
+  // Data-driven state machine uptime analysis
+  for (const [smId, sm] of Object.entries(stateMachines)) {
+    // Only analyze state machines matching the detected hero tree
+    if (archetype?.heroTree && archetype.heroTree !== smId) continue;
+
+    const uptimeTargets = sm.uptimeTargets || {};
+    for (const state of sm.states || []) {
+      if (!state.buff) continue;
+
+      const uptime = getBuffUptime(scenario, state.buff);
+      if (uptime === undefined) continue;
+
+      const target = uptimeTargets[state.buff];
+      if (target && uptime < target) {
+        hypotheses.push({
+          category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
+          archetype: archetype?.id,
+          archetypeContext: `${sm.name}: ${sm.description}. ${state.buff} is part of the cycle.`,
+          strategicGoal: `Improve ${state.buff} uptime in ${sm.name}`,
+          observation: `${state.buff} uptime only ${uptime}% (target: ${target}%) in ${scenario.scenarioName}`,
+          metric: uptime,
+          target: state.buff,
+          hypothesis: `Improve ${state.buff} uptime to maintain ${sm.name} cycle`,
+          scenario: scenario.scenario,
+          priority: (target - uptime) * 1.5,
+          confidence: "high",
+        });
+      }
+
+      // Check for cycle breakage: earlier states high but later states low
+      if (state.next) {
+        const nextState = sm.states.find((s) => s.name === state.next);
+        if (nextState?.buff) {
+          const nextUptime = getBuffUptime(scenario, nextState.buff);
+          if (
+            nextUptime !== undefined &&
+            uptime > 5 &&
+            nextUptime < uptime * 0.5
+          ) {
+            hypotheses.push({
+              category: STRATEGIC_CATEGORIES.PRIORITY_REORDER,
+              archetype: archetype?.id,
+              archetypeContext: `${sm.name}: ${sm.description}. ${state.buff} → ${nextState.buff} sequence may be broken.`,
+              strategicGoal: `Ensure ${sm.name} cycle completes through ${nextState.buff}`,
+              observation: `${state.buff} ${uptime}% but ${nextState.buff} only ${nextUptime}% — sequence may be broken`,
+              metric: nextUptime,
+              target: nextState.ability || nextState.buff,
+              hypothesis: `Ensure ${nextState.ability || nextState.buff} fires during ${state.buff} window`,
+              scenario: scenario.scenario,
+              priority: (uptime - nextUptime) * 2,
+              confidence: "high",
+            });
+          }
+        }
+      }
     }
   }
 
-  // Reaver's Mark uptime — indicates Fracture is landing during Rending Strike
-  if (reaversMark !== undefined && reaversMark < 10 && rendingStrike > 5) {
-    hypotheses.push({
-      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
-      archetype: archetype?.id,
-      archetypeContext:
-        "Reaver's Mark is applied when Fracture hits during Rending Strike. Low uptime means Fracture isn't being used during the window.",
-      strategicGoal: "Ensure Fracture lands during Rending Strike",
-      observation: `Reaver's Mark uptime only ${reaversMark}% (Rending Strike: ${rendingStrike}%)`,
-      metric: reaversMark,
-      target: "fracture",
-      hypothesis: `Prioritize Fracture immediately after Reaver's Glaive`,
-      scenario: scenario.scenario,
-      priority: (10 - reaversMark) * 1.5,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.MOVE_UP,
-        list: "ar",
-        ability: "fracture",
-        condition: "buff.rending_strike.up&!debuff.reavers_mark.up",
-        reason:
-          "Cast Fracture first during Rending Strike to apply Reaver's Mark",
-      },
-    });
-  }
-
-  if (rendingStrike !== undefined && rendingStrike < 15) {
-    hypotheses.push({
-      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
-      archetype: archetype?.id,
-      archetypeContext: archetype
-        ? `For ${archetype.id}, Rending Strike enables the empowered Soul Cleave/Fracture window. Low uptime means missing damage amplification.`
-        : "Rending Strike enables empowered abilities during the AR window.",
-      strategicGoal: "Improve Rending Strike window availability",
-      observation: `rending_strike uptime only ${rendingStrike}% in ${scenario.scenarioName}`,
-      metric: rendingStrike,
-      target: "rending_strike",
-      hypothesis: `Relax conditions on Reaver's Glaive to cast it more frequently`,
-      scenario: scenario.scenario,
-      priority: (15 - rendingStrike) * 2,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.REMOVE_CONDITION,
-        list: "ar",
-        ability: "reavers_glaive",
-        targetBuff: "glaive_flurry",
-        reason:
-          "Allow Reaver's Glaive even during Glaive Flurry to improve Rending Strike uptime",
-      },
-    });
-  }
-
-  if (
-    glaiveFlurry !== undefined &&
-    glaiveFlurry < 20 &&
-    rendingStrike !== undefined
-  ) {
-    hypotheses.push({
-      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
-      archetype: archetype?.id,
-      archetypeContext:
-        "Glaive Flurry follows Rending Strike in the AR chain. If both are low, the rotation may be breaking.",
-      strategicGoal: "Complete the full AR buff chain",
-      observation: `glaive_flurry uptime only ${glaiveFlurry}% (rending_strike: ${rendingStrike}%) in ${scenario.scenarioName}`,
-      metric: glaiveFlurry,
-      target: "glaive_flurry",
-      hypothesis: `Ensure Soul Cleave is prioritized during Rending Strike windows to proc Glaive Flurry`,
-      scenario: scenario.scenario,
-      priority: (20 - glaiveFlurry) * 1.5,
-      confidence: "medium",
-      aplMutation: {
-        type: MUTATION_OPS.MOVE_UP,
-        list: "ar",
-        ability: "soul_cleave",
-        condition: "buff.rending_strike.up",
-        reason:
-          "Prioritize Soul Cleave during Rending Strike to maintain Glaive Flurry",
-      },
-    });
-  }
-
-  const soulFurnace = getBuffUptime(scenario, "soul_furnace");
-  if (soulFurnace !== undefined && soulFurnace < 20) {
-    hypotheses.push({
-      category: STRATEGIC_CATEGORIES.RESOURCE_ALIGNMENT,
-      archetype: archetype?.id,
-      archetypeContext:
-        "Soul Furnace stacks to 10, then amplifies the next Spirit Bomb. Low uptime means spending fragments before reaching the threshold.",
-      strategicGoal: "Align Spirit Bomb with Soul Furnace windows",
-      observation: `Soul Furnace uptime only ${soulFurnace}% in ${scenario.scenarioName}`,
-      metric: soulFurnace,
-      target: "soul_furnace",
-      hypothesis: `Add Soul Furnace threshold condition to Spirit Bomb`,
-      scenario: scenario.scenario,
-      priority: (20 - soulFurnace) * 1.2,
-      confidence: "medium",
-      aplMutation: {
-        type: MUTATION_OPS.ADD_CONDITION,
-        list: "ar",
-        ability: "spirit_bomb",
-        condition: "buff.soul_furnace.stack>=8|!talent.soul_furnace",
-        reason: "Pool fragments until Soul Furnace reaches threshold",
-      },
-    });
+  // Generic buff-uptime hypotheses from SPEC_CONFIG hypothesis patterns
+  for (const pattern of specConfig.hypothesisPatterns || []) {
+    if (!pattern.buffName) continue;
+    const uptime = getBuffUptime(scenario, pattern.buffName);
+    if (uptime !== undefined && uptime < 20) {
+      hypotheses.push({
+        category: STRATEGIC_CATEGORIES[pattern.category] || pattern.category,
+        archetype: archetype?.id,
+        archetypeContext: pattern.template,
+        strategicGoal: `Improve ${pattern.buffName} utilization`,
+        observation: `${pattern.buffName} uptime only ${uptime}% in ${scenario.scenarioName}`,
+        metric: uptime,
+        target: pattern.buffName,
+        hypothesis: pattern.template,
+        scenario: scenario.scenario,
+        priority: (20 - uptime) * 1.2,
+        confidence: "medium",
+      });
+    }
   }
 
   return hypotheses;
@@ -398,207 +356,126 @@ function generateBuffUptimeHypotheses(scenario, archetype, aplAst) {
 
 function generateCooldownHypotheses(scenario, archetype, aplAst) {
   const hypotheses = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const burstWindows = specConfig.burstWindows || [];
+  const stateMachines = specConfig.stateMachines || {};
+  const aplBranch = getAplBranchForHeroTree(specConfig, archetype?.heroTree);
 
-  // Fiery Brand synergy — align Fire damage abilities during Fiery Brand window
-  const fieryBrandUptime = getBuffUptime(scenario, "fiery_brand");
-  if (fieryBrandUptime !== undefined && fieryBrandUptime > 10) {
-    const felDev = scenario.majorDamage?.find(
-      (a) =>
-        a.name.toLowerCase().includes("fel") &&
-        a.name.toLowerCase().includes("devastation"),
-    );
+  // Data-driven burst window sync analysis
+  for (const window of burstWindows) {
+    const uptime = getBuffUptime(scenario, window.buff);
+    if (uptime === undefined || uptime <= 10) continue;
 
-    if (felDev && felDev.fraction > 3) {
+    for (const syncTarget of window.syncTargets || []) {
+      const targetAbility = scenario.majorDamage?.find(
+        (a) => normalizeAbilityName(a.name) === syncTarget,
+      );
+      if (!targetAbility || targetAbility.fraction <= 2) continue;
+
       hypotheses.push({
         category: STRATEGIC_CATEGORIES.COOLDOWN_SYNC,
         archetype: archetype?.id,
-        archetypeContext:
-          "Fiery Brand provides 15% Fire damage amp via Fiery Demise. Fel Devastation deals Fire damage and should be synced with Fiery Brand windows.",
-        strategicGoal: "Align Fel Devastation with Fiery Brand",
-        observation: `Fiery Brand uptime is ${fieryBrandUptime}%, Fel Devastation is ${felDev.fraction}% of damage`,
-        metric: fieryBrandUptime,
-        target: "fel_devastation",
-        hypothesis: `Sync Fel Devastation with Fiery Brand for 15% Fire damage amp`,
+        archetypeContext: `${window.buff} provides ${(window.damageAmp * 100).toFixed(0)}% ${window.school} damage amp${window.talentDep ? ` via ${window.talentDep}` : ""}. ${syncTarget} should sync with ${window.buff} windows.`,
+        strategicGoal: `Align ${syncTarget} with ${window.buff}`,
+        observation: `${window.buff} uptime is ${uptime}%, ${syncTarget} is ${targetAbility.fraction}% of damage`,
+        metric: uptime,
+        target: syncTarget,
+        hypothesis: `Sync ${syncTarget} with ${window.buff} for ${(window.damageAmp * 100).toFixed(0)}% ${window.school} damage amp`,
         scenario: scenario.scenario,
-        priority: felDev.fraction * 0.8,
+        priority: targetAbility.fraction * 0.8,
         confidence: "high",
         aplMutation: {
           type: MUTATION_OPS.ADD_CONDITION,
-          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          ability: "fel_devastation",
-          condition: "dot.fiery_brand.ticking",
+          list: aplBranch,
+          ability: syncTarget,
+          condition: `dot.${window.buff}.ticking`,
           operator: "&",
           allowFallback: true,
-          reason:
-            "Prefer Fel Devastation during Fiery Brand for Fiery Demise amp",
+          reason: `Prefer ${syncTarget} during ${window.buff} for damage amp`,
         },
       });
     }
 
-    // Soul Carver + Fiery Brand synergy
-    const soulCarver = scenario.majorDamage?.find((a) =>
-      a.name.toLowerCase().includes("soul_carver"),
-    );
-    if (soulCarver && soulCarver.fraction > 2) {
-      hypotheses.push({
-        category: STRATEGIC_CATEGORIES.COOLDOWN_SYNC,
-        archetype: archetype?.id,
-        archetypeContext:
-          "Soul Carver benefits from Fiery Demise. Use with 3+ seconds of Fiery Brand remaining.",
-        strategicGoal: "Align Soul Carver with Fiery Brand",
-        observation: `Soul Carver is ${soulCarver.fraction}% of damage`,
-        metric: soulCarver.fraction,
-        target: "soul_carver",
-        hypothesis: `Sync Soul Carver with Fiery Brand (3+ sec remaining)`,
-        scenario: scenario.scenario,
-        priority: soulCarver.fraction * 0.6,
-        confidence: "medium",
-        aplMutation: {
-          type: MUTATION_OPS.ADD_CONDITION,
-          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          ability: "soul_carver",
-          condition: "dot.fiery_brand.remains>3",
-          operator: "&",
-          allowFallback: true,
-          reason: "Use Soul Carver with 3+ sec Fiery Brand for Fiery Demise",
-        },
-      });
+    // Resource bonus utilization during burst windows
+    if (window.resourceBonus) {
+      const rb = window.resourceBonus;
+      const metaUptime = uptime;
+      if (metaUptime > 10 && metaUptime < 50) {
+        hypotheses.push({
+          category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
+          archetype: archetype?.id,
+          archetypeContext: `During ${window.buff}, ${rb.ability} generates +${rb.bonus} ${rb.resource}. Threshold adjustments may optimize spending.`,
+          strategicGoal: `Optimize ${rb.resource} spending during ${window.buff}`,
+          observation: `${window.buff} uptime is ${metaUptime}%`,
+          metric: metaUptime,
+          target: rb.ability,
+          hypothesis: `Adjust ${rb.resource} thresholds during ${window.buff} for extra generation`,
+          scenario: scenario.scenario,
+          priority: 6,
+          confidence: "high",
+        });
+      }
     }
   }
 
-  // Metamorphosis synergy (general)
-  const metaUptime = getBuffUptime(scenario, "metamorphosis");
-  if (metaUptime !== undefined && metaUptime > 15 && metaUptime < 40) {
-    const felDev = scenario.majorDamage?.find(
-      (a) =>
-        a.name.toLowerCase().includes("fel") &&
-        a.name.toLowerCase().includes("devastation"),
-    );
+  // State machine hypotheses for the active hero tree
+  for (const [smId, sm] of Object.entries(stateMachines)) {
+    if (archetype?.heroTree && archetype.heroTree !== smId) continue;
+    const smAplBranch = specConfig.heroTrees?.[smId]?.aplBranch || aplBranch;
 
-    if (felDev && felDev.fraction > 5) {
-      hypotheses.push({
-        category: STRATEGIC_CATEGORIES.COOLDOWN_SYNC,
-        archetype: archetype?.id,
-        archetypeContext:
-          "Metamorphosis grants +20% damage. High-value abilities should be used during Meta windows when possible.",
-        strategicGoal: "Align Fel Devastation with Metamorphosis",
-        observation: `Metamorphosis uptime is ${metaUptime}%, Fel Devastation is ${felDev.fraction}% of damage`,
-        metric: metaUptime,
-        target: "fel_devastation",
-        hypothesis: `Prefer Fel Devastation during Metamorphosis windows`,
-        scenario: scenario.scenario,
-        priority: felDev.fraction * 0.5,
-        confidence: "low",
-        aplMutation: {
-          type: MUTATION_OPS.ADD_CONDITION,
-          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          ability: "fel_devastation",
-          condition: "buff.metamorphosis.up",
-          operator: "|",
-          reason: "Prefer Fel Devastation during Meta for damage amp",
-        },
-      });
+    for (const state of sm.states || []) {
+      if (!state.buff) continue;
+
+      const stateUptime = getBuffUptime(scenario, state.buff);
+      if (stateUptime === undefined) continue;
+
+      // Check for stack-based state machines (e.g., Voidfall)
+      if (state.maxStacks) {
+        hypotheses.push({
+          category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
+          archetype: archetype?.id,
+          archetypeContext: `${sm.name}: ${sm.description}`,
+          strategicGoal: `Optimize ${state.buff} stack management`,
+          observation: `${state.buff} tracking active in ${scenario.scenarioName}`,
+          metric: stateUptime,
+          target: state.buff,
+          hypothesis: `Ensure spenders fire at ${state.maxStacks} ${state.buff} stacks`,
+          scenario: scenario.scenario,
+          priority: 8,
+          confidence: "high",
+        });
+      }
+
+      // Check for trigger-based spending states
+      if (state.trigger) {
+        const triggerAbilities = state.trigger.split("|");
+        for (const trigger of triggerAbilities) {
+          hypotheses.push({
+            category: STRATEGIC_CATEGORIES.RESOURCE_ALIGNMENT,
+            archetype: archetype?.id,
+            archetypeContext: `${sm.name}: ${sm.description}. ${trigger} triggers ${state.effect || state.buff}.`,
+            strategicGoal: `Align ${trigger} with ${state.buff} state`,
+            observation: `${state.buff} management in ${scenario.scenarioName}`,
+            metric: stateUptime,
+            target: trigger,
+            hypothesis: `Optimize ${trigger} timing for ${sm.name} cycle`,
+            scenario: scenario.scenario,
+            priority: 7,
+            confidence: "medium",
+          });
+        }
+      }
     }
-  }
-
-  // Annihilator-specific: Voidfall + Spirit Bomb + Meta cycling
-  if (archetype?.heroTree === "annihilator") {
-    hypotheses.push(...generateAnnihilatorHypotheses(scenario, archetype));
-  }
-
-  return hypotheses;
-}
-
-function generateAnnihilatorHypotheses(scenario, archetype) {
-  const hypotheses = [];
-
-  // Voidfall stack management - SimC uses voidfall_building and voidfall_spending buffs
-  const voidfallBuilding = getBuffUptime(scenario, "voidfall_building");
-  const voidfallSpending = getBuffUptime(scenario, "voidfall_spending");
-  const hasVoidfallData =
-    voidfallBuilding !== undefined || voidfallSpending !== undefined;
-
-  if (hasVoidfallData) {
-    hypotheses.push({
-      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
-      archetype: archetype?.id,
-      archetypeContext:
-        "Voidfall stacks to 3 from Fracture (35% chance) and Metamorphosis. At 3 stacks, Soul Cleave or Spirit Bomb triggers fel meteors.",
-      strategicGoal: "Optimize Voidfall stack spending",
-      observation: `Voidfall tracking active in ${scenario.scenarioName}`,
-      metric: voidfallSpending ?? voidfallBuilding,
-      target: "voidfall",
-      hypothesis: `Ensure Spirit Bomb/Soul Cleave fire at 3 Voidfall stacks`,
-      scenario: scenario.scenario,
-      priority: 8,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.ADD_CONDITION,
-        list: "anni",
-        ability: "spirit_bomb",
-        condition: "buff.voidfall_spending.stack=3",
-        operator: "&",
-        reason: "Trigger Spirit Bomb at max Voidfall stacks for meteor burst",
-      },
-    });
-
-    // Spend Voidfall before Meta
-    hypotheses.push({
-      category: STRATEGIC_CATEGORIES.RESOURCE_ALIGNMENT,
-      archetype: archetype?.id,
-      archetypeContext:
-        "Metamorphosis grants up to 3 Voidfall stacks. Spending stacks before Meta avoids overcapping and wastes no value.",
-      strategicGoal: "Spend Voidfall before Metamorphosis",
-      observation: `Voidfall stack management in ${scenario.scenarioName}`,
-      metric: voidfallSpending ?? voidfallBuilding,
-      target: "metamorphosis",
-      hypothesis: `Add condition to spend Voidfall before using Meta`,
-      scenario: scenario.scenario,
-      priority: 7,
-      confidence: "medium",
-      aplMutation: {
-        type: MUTATION_OPS.ADD_CONDITION,
-        list: "anni",
-        ability: "metamorphosis",
-        condition: "buff.voidfall_spending.stack<2",
-        operator: "&",
-        reason: "Avoid Meta when Voidfall is high to prevent overcapping",
-      },
-    });
-  }
-
-  // Spirit Bomb threshold during Meta (3+ frags, not 4+)
-  const metaUptime = getBuffUptime(scenario, "metamorphosis");
-  if (metaUptime !== undefined && metaUptime > 10) {
-    hypotheses.push({
-      category: STRATEGIC_CATEGORIES.WINDOW_EFFICIENCY,
-      archetype: archetype?.id,
-      archetypeContext:
-        "During Metamorphosis, Fracture generates 3 Soul Fragments instead of 2. Spirit Bomb threshold should be lowered to 3+ fragments during Meta.",
-      strategicGoal: "Lower Spirit Bomb threshold during Metamorphosis",
-      observation: `Metamorphosis uptime is ${metaUptime}%`,
-      metric: metaUptime,
-      target: "spirit_bomb",
-      hypothesis: `Use Spirit Bomb at 3+ fragments during Meta (not 4+)`,
-      scenario: scenario.scenario,
-      priority: 6,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.RELAX_THRESHOLD,
-        list: "anni",
-        ability: "spirit_bomb",
-        condition: "soul_fragments>=3",
-        metaCondition: "buff.metamorphosis.up",
-        reason: "Fracture generates 3 fragments during Meta — lower threshold",
-      },
-    });
   }
 
   return hypotheses;
 }
 
 function generateConditionHypotheses(scenario, archetype, aplAst) {
-  const targetListName = archetype?.aplFocus?.[0] || "ar";
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const targetListName =
+    archetype?.aplFocus?.[0] ||
+    getAplBranchForHeroTree(specConfig, archetype?.heroTree);
   const list = getActionLists(aplAst).find((l) => l.name === targetListName);
   if (!list) return [];
 
@@ -643,10 +520,13 @@ function generateConditionHypotheses(scenario, archetype, aplAst) {
 }
 
 function generateBuffUptimeMutation(buff, aplAst) {
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const defaultBranch = getDefaultAplBranch(specConfig);
+
   if (!aplAst) {
     return {
       type: MUTATION_OPS.REMOVE_CONDITION,
-      list: "ar",
+      list: defaultBranch,
       ability: "unknown",
       targetBuff: buff,
       reason: `Remove blocking conditions to improve ${buff} uptime`,
@@ -679,7 +559,7 @@ function generateBuffUptimeMutation(buff, aplAst) {
 
   return {
     type: MUTATION_OPS.MOVE_UP,
-    list: "ar",
+    list: defaultBranch,
     ability: `ability_granting_${buff}`,
     reason: `Prioritize ability that grants ${buff}`,
   };
@@ -695,11 +575,10 @@ export function loadApl(aplPath) {
 // Deep hypothesis categories extend strategic categories with more specificity
 const DEEP_HYPOTHESIS_CATEGORIES = {
   ...STRATEGIC_CATEGORIES,
-  META_WINDOW_OPTIMIZATION:
-    "Optimize ability usage during Metamorphosis windows",
-  FRAGMENT_ECONOMY_RESTRUCTURE:
-    "Restructure fragment generation/consumption patterns",
-  FURY_POOLING: "Pool fury for upcoming burst windows",
+  BURST_WINDOW_OPTIMIZATION: "Optimize ability usage during burst windows",
+  RESOURCE_ECONOMY_RESTRUCTURE:
+    "Restructure resource generation/consumption patterns",
+  RESOURCE_POOLING: "Pool resources for upcoming burst windows",
   PHASE_EXTRACTION: "Extract phase-specific logic into sub-lists",
   STATE_MACHINE_ALIGNMENT: "Align APL with hero tree state machine transitions",
   MULTI_PART_CHANGE: "Compound hypothesis requiring multiple APL mutations",
@@ -711,7 +590,7 @@ export function generateDeepHypotheses(workflowResults, aplText, buildTheory) {
 
   // Generate hypotheses from each specialized analyst perspective
   hypotheses.push(
-    ...generateFragmentEconomyHypotheses(workflowResults, aplText, archetype),
+    ...generateResourceEconomyHypotheses(workflowResults, aplText, archetype),
   );
   hypotheses.push(
     ...generateBurstWindowHypotheses(workflowResults, aplText, archetype),
@@ -758,105 +637,134 @@ function detectArchetypeFromContext(workflowResults, aplText) {
   return null;
 }
 
-function generateFragmentEconomyHypotheses(
+function generateResourceEconomyHypotheses(
   workflowResults,
   aplText,
   archetype,
 ) {
   const hypotheses = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const resourceModels = specConfig.resourceModels || [];
+  const burstWindows = specConfig.burstWindows || [];
+  const aplBranch = getAplBranchForHeroTree(specConfig, archetype?.heroTree);
   const scenarios = normalizeScenarios(workflowResults);
   const st = scenarios.find((s) => s.scenario === "st" && !s.error);
-  const aoe = scenarios.find(
-    (s) => (s.scenario === "small_aoe" || s.scenario === "big_aoe") && !s.error,
-  );
 
   if (!st) return hypotheses;
 
-  // Fragment overflow analysis
-  const fractureCasts = getCastCount(st, "fracture");
-  const sbCasts = getCastCount(st, "spirit_bomb");
-  const scCasts = getCastCount(st, "soul_cleave");
-  const metaUptime = getBuffUptime(st, "metamorphosis") || 0;
+  // Analyze each resource model with a capped consumer (secondary resources)
+  for (const model of resourceModels) {
+    const burstConsumer = model.consumers.find((c) => c.maxConsume);
+    if (!burstConsumer) continue;
 
-  const estimatedFragsGen =
-    fractureCasts * 2 + fractureCasts * (metaUptime / 100); // +1 during Meta
-  const estimatedFragsConsumed = sbCasts * 4 + scCasts * 2;
-  const estimatedOverflow = Math.max(
-    0,
-    estimatedFragsGen - estimatedFragsConsumed,
-  );
+    // Estimate generation vs consumption from sim data
+    let estimatedGen = 0;
+    for (const gen of model.generators) {
+      const casts = getCastCount(st, gen.ability);
+      if (casts > 0 && gen.amount) {
+        estimatedGen += casts * gen.amount;
+        // Check for burst window bonuses on this generator
+        for (const window of burstWindows) {
+          if (
+            window.resourceBonus?.resource === model.name &&
+            window.resourceBonus.ability === gen.ability
+          ) {
+            const windowUptime = getBuffUptime(st, window.buff) || 0;
+            estimatedGen +=
+              casts * (windowUptime / 100) * window.resourceBonus.bonus;
+          }
+        }
+      }
+    }
 
-  if (estimatedOverflow > fractureCasts * 0.2) {
-    hypotheses.push({
-      id: "fragment-overflow-mitigation",
-      category: DEEP_HYPOTHESIS_CATEGORIES.FRAGMENT_ECONOMY_RESTRUCTURE,
-      systemicIssue:
-        "Fragment generation exceeds consumption capacity, leading to waste",
-      mechanism:
-        `Fracture generates ${fractureCasts * 2} base frags + ~${Math.round((fractureCasts * metaUptime) / 100)} Meta bonus = ` +
-        `~${Math.round(estimatedFragsGen)} total. SBomb consumes ${sbCasts * 4}, SC consumes ${scCasts * 2}. ` +
-        `Estimated ${Math.round(estimatedOverflow)} fragments (~${((estimatedOverflow / estimatedFragsGen) * 100).toFixed(0)}%) wasted.`,
-      proposedChanges: [
-        {
-          type: MUTATION_OPS.INSERT_ACTION,
-          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          ability: "spirit_bomb",
-          if: "soul_fragments>=4&cooldown.spirit_bomb.up",
-          position: "top",
-          description: "Emergency SBomb at 4+ frags when ready",
-        },
-      ],
-      expectedImpact:
-        "+0.5-1.5% DPS from converting wasted fragments to Spirit Bomb damage",
-      counterArgument:
-        "Lower SBomb threshold may fire with suboptimal fragment counts. " +
-        "However, 4-frag SBomb still deals 80% of 5-frag damage while preventing 100% frag loss.",
-      dependencies: [],
-      archetypeSpecific: false,
-      priority: Math.min(15, estimatedOverflow * 0.5),
-      confidence: estimatedOverflow > 20 ? "high" : "medium",
-      scenario: "st",
-    });
-  }
+    let estimatedConsumed = 0;
+    for (const consumer of model.consumers) {
+      const casts = getCastCount(st, consumer.ability);
+      estimatedConsumed += casts * (consumer.maxConsume || 1);
+    }
 
-  // Meta fragment acceleration
-  if (metaUptime > 10 && metaUptime < 50) {
-    const extraFragsFromMeta = fractureCasts * (metaUptime / 100);
-    const aplHasFractureMetaPriority = aplText?.includes(
-      "fracture,if=buff.metamorphosis.up",
-    );
+    const estimatedOverflow = Math.max(0, estimatedGen - estimatedConsumed);
+    const primaryGen = model.generators[0];
 
-    if (!aplHasFractureMetaPriority && extraFragsFromMeta > 5) {
+    // Resource overflow hypothesis
+    if (
+      estimatedGen > 0 &&
+      estimatedOverflow > (getCastCount(st, primaryGen?.ability) || 1) * 0.2
+    ) {
       hypotheses.push({
-        id: "meta-fracture-priority",
-        category: DEEP_HYPOTHESIS_CATEGORIES.META_WINDOW_OPTIMIZATION,
-        systemicIssue:
-          "Fragment economy shifts during Meta (+1 frag per Fracture) but APL doesn't adapt",
+        id: `${model.name}-overflow-mitigation`,
+        category: DEEP_HYPOTHESIS_CATEGORIES.RESOURCE_ECONOMY_RESTRUCTURE,
+        systemicIssue: `${model.name} generation exceeds consumption capacity, leading to waste`,
         mechanism:
-          `Fracture generates 3 frags during Meta vs 2 normally. At ${metaUptime.toFixed(0)}% Meta uptime, ` +
-          `~${Math.round(extraFragsFromMeta)} extra frags are available. Spirit Bomb scales at 0.4 AP/frag, ` +
-          `so each Meta-Fracture adds ~0.16 AP to the next SBomb. Over ${fractureCasts} Fractures, ` +
-          `this is ~${(extraFragsFromMeta * 0.16).toFixed(1)} AP worth of value.`,
+          `Estimated ~${Math.round(estimatedGen)} ${model.name} generated, ~${Math.round(estimatedConsumed)} consumed. ` +
+          `~${Math.round(estimatedOverflow)} (~${((estimatedOverflow / estimatedGen) * 100).toFixed(0)}%) wasted. ` +
+          `Cap is ${model.cap}.`,
         proposedChanges: [
           {
             type: MUTATION_OPS.INSERT_ACTION,
-            list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-            ability: "fracture",
-            if: "buff.metamorphosis.up&cooldown.fracture.charges>=1",
-            before: "fracture",
-            description: "Prioritize Fracture during Meta for extra fragment",
+            list: aplBranch,
+            ability: burstConsumer.ability,
+            if: `${model.name}>=${model.cap - 1}&cooldown.${burstConsumer.ability}.up`,
+            position: "top",
+            description: `Emergency ${burstConsumer.ability} near ${model.name} cap`,
           },
         ],
-        expectedImpact: "+3-5% ST DPS from maximizing fragment gen during Meta",
+        expectedImpact: `+0.5-1.5% DPS from converting wasted ${model.name} to damage`,
         counterArgument:
-          "Fracture charges may not be available. But recharge is 3.75s at 20% haste, " +
-          "so 4 charges regenerate during 15s Meta window.",
+          `Lower ${burstConsumer.ability} threshold may fire with suboptimal ${model.name} counts, ` +
+          `but preventing cap waste outweighs partial-count loss.`,
         dependencies: [],
         archetypeSpecific: false,
-        priority: Math.min(20, extraFragsFromMeta * 2),
-        confidence: "high",
+        priority: Math.min(15, estimatedOverflow * 0.5),
+        confidence: estimatedOverflow > 20 ? "high" : "medium",
         scenario: "st",
       });
+    }
+
+    // Burst window resource bonus acceleration hypothesis
+    for (const window of burstWindows) {
+      const rb = window.resourceBonus;
+      if (!rb || rb.resource !== model.name) continue;
+
+      const windowUptime = getBuffUptime(st, window.buff) || 0;
+      if (windowUptime <= 10 || windowUptime >= 50) continue;
+
+      const genAbilityCasts = getCastCount(st, rb.ability);
+      const extraFromWindow = genAbilityCasts * (windowUptime / 100) * rb.bonus;
+      const aplHasPriority = aplText?.includes(
+        `${rb.ability},if=buff.${window.buff}.up`,
+      );
+
+      if (!aplHasPriority && extraFromWindow > 5) {
+        hypotheses.push({
+          id: `${window.buff}-${rb.ability}-priority`,
+          category: DEEP_HYPOTHESIS_CATEGORIES.BURST_WINDOW_OPTIMIZATION,
+          systemicIssue: `${model.name} economy shifts during ${window.buff} (+${rb.bonus} per ${rb.ability}) but APL doesn't adapt`,
+          mechanism:
+            `${rb.ability} generates +${rb.bonus} ${model.name} during ${window.buff}. ` +
+            `At ${windowUptime.toFixed(0)}% uptime, ~${Math.round(extraFromWindow)} extra ${model.name} available. ` +
+            `${burstConsumer.ability} scales with ${model.name} count.`,
+          proposedChanges: [
+            {
+              type: MUTATION_OPS.INSERT_ACTION,
+              list: aplBranch,
+              ability: rb.ability,
+              if: `buff.${window.buff}.up&cooldown.${rb.ability}.charges>=1`,
+              before: rb.ability,
+              description: `Prioritize ${rb.ability} during ${window.buff} for extra ${model.name}`,
+            },
+          ],
+          expectedImpact: `+1-5% ST DPS from maximizing ${model.name} gen during ${window.buff}`,
+          counterArgument:
+            `${rb.ability} charges may not be available, but recharge during ${window.buff} ` +
+            `window should provide enough.`,
+          dependencies: [],
+          archetypeSpecific: false,
+          priority: Math.min(20, extraFromWindow * 2),
+          confidence: "high",
+          scenario: "st",
+        });
+      }
     }
   }
 
@@ -865,100 +773,64 @@ function generateFragmentEconomyHypotheses(
 
 function generateBurstWindowHypotheses(workflowResults, aplText, archetype) {
   const hypotheses = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const burstWindows = specConfig.burstWindows || [];
+  const aplBranch = getAplBranchForHeroTree(specConfig, archetype?.heroTree);
   const scenarios = normalizeScenarios(workflowResults);
   const st = scenarios.find((s) => s.scenario === "st" && !s.error);
 
   if (!st) return hypotheses;
 
-  const brandUptime = getBuffUptime(st, "fiery_brand") || 0;
-  const metaUptime = getBuffUptime(st, "metamorphosis") || 0;
-  const felDevCasts = getCastCount(st, "fel_devastation");
-  const soulCarverCasts = getCastCount(st, "soul_carver");
   const fightLength = st.fightLength || 300;
 
-  // Fiery Brand window utilization
-  if (brandUptime > 5 && felDevCasts > 0) {
-    const brandCasts = Math.floor(fightLength / 60); // ~60s CD
-    const felDevPerBrand = felDevCasts / brandCasts;
+  for (const window of burstWindows) {
+    const windowUptime = getBuffUptime(st, window.buff) || 0;
+    if (windowUptime <= 5) continue;
 
-    // Check if FelDev is aligned with Brand
-    const aplHasFelDevBrandSync = aplText?.includes(
-      "fel_devastation,if=dot.fiery_brand",
-    );
+    const windowCasts = Math.floor(fightLength / (window.cooldown || 60));
+    const ampPct = ((window.damageAmp || 0) * 100).toFixed(0);
 
-    if (!aplHasFelDevBrandSync && felDevPerBrand < 0.9) {
-      hypotheses.push({
-        id: "feldev-brand-sync",
-        category: DEEP_HYPOTHESIS_CATEGORIES.WINDOW_EFFICIENCY,
-        systemicIssue:
-          "Fel Devastation fires outside Fiery Brand windows, missing 15% Fire damage amp",
-        mechanism:
-          `Fiery Brand is up ${brandUptime.toFixed(1)}% (~${((brandUptime / 100) * fightLength).toFixed(0)}s total). ` +
-          `FelDev fires ${felDevCasts} times, but only ~${(felDevPerBrand * brandCasts).toFixed(1)} of those ` +
-          `can align with Brand. Fiery Demise provides +15% Fire damage. FelDev is 100% Fire damage.`,
-        proposedChanges: [
-          {
-            type: MUTATION_OPS.ADD_CONDITION,
-            list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-            ability: "fel_devastation",
-            condition:
-              "dot.fiery_brand.ticking|cooldown.fiery_brand.remains>25",
-            operator: "&",
-            description:
-              "Prefer FelDev during Brand, but allow if Brand is far",
-          },
-        ],
-        expectedImpact:
-          "+0.3-0.8% DPS from Fiery Demise amplification on Fel Devastation",
-        counterArgument:
-          "Holding FelDev for Brand delays casts. But with a 25s fallback, " +
-          "max delay is ~10s on a 40s CD (25% waste) vs 15% damage gain on a 5s channel.",
-        dependencies: [],
-        archetypeSpecific: false,
-        priority: 12,
-        confidence: "medium",
-        scenario: "st",
-      });
-    }
-  }
+    // Check each sync target for alignment
+    for (const syncTarget of window.syncTargets || []) {
+      const targetCasts = getCastCount(st, syncTarget);
+      if (targetCasts <= 0) continue;
 
-  // Soul Carver + Brand sync
-  if (soulCarverCasts > 0 && brandUptime > 5) {
-    const aplHasCarverBrandSync = aplText?.includes(
-      "soul_carver,if=dot.fiery_brand",
-    );
+      const targetPerWindow = targetCasts / windowCasts;
+      const aplHasSync = aplText?.includes(
+        `${syncTarget},if=dot.${window.buff}`,
+      );
 
-    if (!aplHasCarverBrandSync) {
-      hypotheses.push({
-        id: "carver-brand-sync",
-        category: DEEP_HYPOTHESIS_CATEGORIES.COOLDOWN_SYNC,
-        systemicIssue:
-          "Soul Carver fires independently of Fiery Brand despite both being 60s CDs",
-        mechanism:
-          "Soul Carver and Fiery Brand share 60s cooldown. Soul Carver deals Fire damage " +
-          "and benefits from Fiery Demise +15% amp. With identical CDs, perfect alignment is possible " +
-          "at zero cost — but requires explicit APL logic to fire Brand first.",
-        proposedChanges: [
-          {
-            type: MUTATION_OPS.ADD_CONDITION,
-            list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-            ability: "soul_carver",
-            condition: "dot.fiery_brand.remains>3|!talent.fiery_demise",
-            operator: "&",
-            description:
-              "Soul Carver during Brand window (3s+ remaining) or if no Fiery Demise",
-          },
-        ],
-        expectedImpact: "+0.3-0.6% DPS from Fiery Demise amp on Soul Carver",
-        counterArgument:
-          "If Brand is delayed, Carver is also delayed. But CDs are same length, " +
-          "so after initial alignment they stay synced.",
-        dependencies: [],
-        archetypeSpecific: false,
-        priority: 10,
-        confidence: "high",
-        scenario: "st",
-      });
+      if (!aplHasSync && targetPerWindow < 0.9) {
+        const halfCd = Math.floor((window.cooldown || 60) / 2);
+        hypotheses.push({
+          id: `${syncTarget}-${window.buff}-sync`,
+          category: DEEP_HYPOTHESIS_CATEGORIES.WINDOW_EFFICIENCY,
+          systemicIssue: `${syncTarget} fires outside ${window.buff} windows, missing ${ampPct}% ${window.school} damage amp`,
+          mechanism:
+            `${window.buff} is up ${windowUptime.toFixed(1)}% (~${((windowUptime / 100) * fightLength).toFixed(0)}s total). ` +
+            `${syncTarget} fires ${targetCasts} times, but only ~${(targetPerWindow * windowCasts).toFixed(1)} ` +
+            `can align with ${window.buff}.${window.talentDep ? ` ${window.talentDep} provides +${ampPct}% ${window.school} damage.` : ""}`,
+          proposedChanges: [
+            {
+              type: MUTATION_OPS.ADD_CONDITION,
+              list: aplBranch,
+              ability: syncTarget,
+              condition: `dot.${window.buff}.ticking|cooldown.${window.buff}.remains>${halfCd}`,
+              operator: "&",
+              description: `Prefer ${syncTarget} during ${window.buff}, but allow if ${window.buff} is far`,
+            },
+          ],
+          expectedImpact: `+0.3-0.8% DPS from ${window.school} damage amp on ${syncTarget}`,
+          counterArgument:
+            `Holding ${syncTarget} for ${window.buff} delays casts. But with a ${halfCd}s fallback, ` +
+            `the delay is bounded vs ${ampPct}% damage gain.`,
+          dependencies: [],
+          archetypeSpecific: false,
+          priority: 12,
+          confidence: "medium",
+          scenario: "st",
+        });
+      }
     }
   }
 
@@ -967,102 +839,154 @@ function generateBurstWindowHypotheses(workflowResults, aplText, archetype) {
 
 function generateStateMachineHypotheses(workflowResults, aplText, archetype) {
   const hypotheses = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const stateMachines = specConfig.stateMachines || {};
   const scenarios = normalizeScenarios(workflowResults);
   const st = scenarios.find((s) => s.scenario === "st" && !s.error);
 
   if (!st || !archetype) return hypotheses;
 
-  // AR-specific: Rending Strike / Glaive Flurry cycle
-  if (archetype.heroTree === "aldrachi_reaver") {
-    const rendingUptime = getBuffUptime(st, "rending_strike") || 0;
-    const glaiveFlurryUptime = getBuffUptime(st, "glaive_flurry") || 0;
+  // Iterate over state machines matching the active hero tree
+  for (const [smId, sm] of Object.entries(stateMachines)) {
+    if (archetype.heroTree !== smId) continue;
 
-    // Check for cycle breakage
-    if (rendingUptime > 5 && glaiveFlurryUptime < rendingUptime * 0.7) {
-      hypotheses.push({
-        id: "ar-cycle-completion",
-        category: DEEP_HYPOTHESIS_CATEGORIES.STATE_MACHINE_ALIGNMENT,
-        systemicIssue:
-          "AR cycle not completing — Rending Strike procs but Glaive Flurry often doesn't follow",
-        mechanism:
-          `Rending Strike uptime: ${rendingUptime.toFixed(1)}%, Glaive Flurry: ${glaiveFlurryUptime.toFixed(1)}%. ` +
-          "After Reaver's Glaive, the correct sequence is: Fracture (empowered, +10%, applies Mark) → " +
-          "Soul Cleave (empowered, +20%, triggers Glaive Flurry). If SC doesn't fire during Rending Strike, " +
-          "the cycle breaks and +20% damage amp + Aldrachi Tactics CDR are lost.",
-        proposedChanges: [
-          {
-            type: MUTATION_OPS.ADD_PHASE,
-            parentList: "ar",
-            phaseName: "empowered",
-            condition: "buff.rending_strike.up",
-            entries: [
+    const aplBranch = getAplBranchForHeroTree(specConfig, smId);
+    const states = sm.states || [];
+
+    // Sequential cycle analysis: check if later states have lower uptime (cycle breakage)
+    for (let i = 0; i < states.length; i++) {
+      const state = states[i];
+      if (!state.buff) continue;
+
+      const stateUptime = getBuffUptime(st, state.buff) || 0;
+
+      // Check for sequential cycle breakage with next state
+      const nextStateName = state.next;
+      if (nextStateName) {
+        const nextState = states.find((s) => s.name === nextStateName);
+        if (nextState?.buff || nextState?.triggersBuff) {
+          const nextBuff = nextState.triggersBuff || nextState.buff;
+          const nextUptime = nextBuff ? getBuffUptime(st, nextBuff) || 0 : 0;
+
+          if (stateUptime > 5 && nextUptime < stateUptime * 0.7) {
+            // Build proposedChanges from the state machine's ability references
+            const proposedChanges = [];
+            if (nextState.ability) {
+              proposedChanges.push({
+                type: MUTATION_OPS.ADD_PHASE,
+                parentList: aplBranch,
+                phaseName: `${sm.name.toLowerCase().replace(/\s+/g, "_")}_empowered`,
+                condition: `buff.${state.buff}.up`,
+                entries: states
+                  .filter(
+                    (s) =>
+                      s.ability &&
+                      s.name !== state.name &&
+                      s.trigger !== "auto_proc",
+                  )
+                  .map((s) => ({
+                    ability: s.ability,
+                    if: s.appliesBuff
+                      ? `!debuff.${s.appliesBuff}.up`
+                      : undefined,
+                  })),
+                insertPosition: "top",
+                description: `Extract ${sm.name} empowered phase into sub-list`,
+              });
+            }
+
+            // Build mechanism description from state machine data
+            const stateDescs = states
+              .filter((s) => s.ability)
+              .map((s) => {
+                const parts = [s.ability];
+                if (s.ampPercent) parts.push(`+${s.ampPercent}%`);
+                if (s.appliesBuff) parts.push(`applies ${s.appliesBuff}`);
+                if (s.triggersBuff) parts.push(`triggers ${s.triggersBuff}`);
+                return parts.join(" (") + (parts.length > 1 ? ")" : "");
+              })
+              .join(" -> ");
+
+            hypotheses.push({
+              id: `${smId}-cycle-completion`,
+              category: DEEP_HYPOTHESIS_CATEGORIES.STATE_MACHINE_ALIGNMENT,
+              systemicIssue: `${sm.name} cycle not completing — ${state.buff} procs but ${nextBuff} often doesn't follow`,
+              mechanism:
+                `${state.buff} uptime: ${stateUptime.toFixed(1)}%, ${nextBuff}: ${nextUptime.toFixed(1)}%. ` +
+                `${sm.description}. Sequence: ${stateDescs}. ` +
+                `If cycle breaks at ${state.buff}, later damage amps are lost.`,
+              proposedChanges,
+              expectedImpact: `+1-3% DPS from completing ${sm.name} cycle and capturing full damage amps`,
+              counterArgument:
+                `Sub-list adds complexity. But the empowered window is time-limited, ` +
+                `so explicit priority is needed to prevent fillers from wasting it.`,
+              dependencies: [],
+              archetypeSpecific: true,
+              priority: Math.max(5, (stateUptime - nextUptime) * 0.8),
+              confidence: "high",
+              scenario: "st",
+            });
+          }
+        }
+      }
+
+      // Stack-based state machine: building → spending pattern
+      if (state.maxStacks) {
+        const buildingUptime = stateUptime;
+        // Find the spending state (the one with a trigger)
+        const spendingState = states.find((s) => s.trigger && s !== state);
+        const spendingUptime = spendingState?.buff
+          ? getBuffUptime(st, spendingState.buff) || 0
+          : 0;
+
+        if (buildingUptime > 0 || spendingUptime > 0) {
+          const spendingBuff = spendingState?.buff || state.buff;
+          const triggerAbilities = spendingState?.trigger?.split("|") || [];
+          const primaryConsumer = triggerAbilities[0];
+
+          hypotheses.push({
+            id: `${smId}-stack-optimization`,
+            category: DEEP_HYPOTHESIS_CATEGORIES.STATE_MACHINE_ALIGNMENT,
+            systemicIssue: `${sm.name} stack management may not be optimal`,
+            mechanism:
+              `${sm.description}. ` +
+              `${state.buff} builds from ${(state.stacksFrom || []).join(", ")}. ` +
+              `At ${state.maxStacks} stacks, ${triggerAbilities.join("/")} trigger ${spendingState?.effect || "bonus"}. ` +
+              `Building: ${buildingUptime.toFixed(1)}%, Spending: ${spendingUptime.toFixed(1)}%.`,
+            proposedChanges: [
               {
-                ability: "fracture",
-                if: "!debuff.reavers_mark.up&cooldown.fracture.charges>=1",
+                type: MUTATION_OPS.ADD_VARIABLE,
+                list: aplBranch,
+                name: `${smId}_ready`,
+                value: `buff.${spendingBuff}.stack>=${state.maxStacks}`,
+                position: "top",
+                description: `Track when ${sm.name} is ready for spending`,
               },
-              { ability: "soul_cleave", if: "fury>=30" },
+              ...(primaryConsumer
+                ? [
+                    {
+                      type: MUTATION_OPS.ADD_CONDITION,
+                      list: aplBranch,
+                      ability: primaryConsumer,
+                      condition: `variable.${smId}_ready|buff.${state.buff}.stack<${Math.max(1, state.maxStacks - 1)}`,
+                      operator: "&",
+                      description: `Prefer ${primaryConsumer} when ${sm.name} ready, or during building to prevent overcap`,
+                    },
+                  ]
+                : []),
             ],
-            insertPosition: "top",
-            description: "Extract empowered phase into sub-list",
-          },
-        ],
-        expectedImpact:
-          "+1-3% DPS from completing AR cycle and capturing full damage amps",
-        counterArgument:
-          "Sub-list adds complexity. But the empowered window is time-limited (6s), " +
-          "so explicit priority is needed to prevent fillers from wasting it.",
-        dependencies: [],
-        archetypeSpecific: true,
-        priority: Math.max(5, (rendingUptime - glaiveFlurryUptime) * 0.8),
-        confidence: "high",
-        scenario: "st",
-      });
-    }
-  }
-
-  // Anni-specific: Voidfall cycle
-  if (archetype.heroTree === "annihilator") {
-    const voidfallBuilding = getBuffUptime(st, "voidfall_building") || 0;
-    const voidfallSpending = getBuffUptime(st, "voidfall_spending") || 0;
-
-    if (voidfallBuilding > 0 || voidfallSpending > 0) {
-      hypotheses.push({
-        id: "anni-voidfall-optimization",
-        category: DEEP_HYPOTHESIS_CATEGORIES.STATE_MACHINE_ALIGNMENT,
-        systemicIssue: "Voidfall stack management may not be optimal",
-        mechanism:
-          "Voidfall builds to 3 stacks from Fracture (35% chance) and Metamorphosis grants full stacks. " +
-          `At 3 stacks, spenders trigger fel meteors. Building: ${voidfallBuilding.toFixed(1)}%, Spending: ${voidfallSpending.toFixed(1)}%. ` +
-          "Key: don't waste spenders during building phase, don't waste Meta when already at 3 stacks.",
-        proposedChanges: [
-          {
-            type: MUTATION_OPS.ADD_VARIABLE,
-            list: "anni",
-            name: "voidfall_ready",
-            value: "buff.voidfall_spending.stack>=3",
-            position: "top",
-            description: "Track when Voidfall is ready for spending",
-          },
-          {
-            type: MUTATION_OPS.ADD_CONDITION,
-            list: "anni",
-            ability: "spirit_bomb",
-            condition: "variable.voidfall_ready|buff.voidfall_building.stack<2",
-            operator: "&",
-            description:
-              "Prefer SBomb when Voidfall ready, or during building to prevent overcap",
-          },
-        ],
-        expectedImpact: "+0.5-2% DPS from better Voidfall meteor triggering",
-        counterArgument:
-          "Voidfall stacking is somewhat RNG (35% proc). Delaying spenders for stacks " +
-          "may not be worth the lost casts. Test confirms.",
-        dependencies: [],
-        archetypeSpecific: true,
-        priority: 8,
-        confidence: "medium",
-        scenario: "st",
-      });
+            expectedImpact: `+0.5-2% DPS from better ${sm.name} management`,
+            counterArgument:
+              `${sm.name} stacking may be RNG-dependent. Delaying spenders for stacks ` +
+              `may not be worth the lost casts. Test confirms.`,
+            dependencies: [],
+            archetypeSpecific: true,
+            priority: 8,
+            confidence: "medium",
+            scenario: "st",
+          });
+        }
+      }
     }
   }
 
@@ -1071,117 +995,141 @@ function generateStateMachineHypotheses(workflowResults, aplText, archetype) {
 
 function generateCompoundHypotheses(workflowResults, aplText, archetype) {
   const hypotheses = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const burstWindows = specConfig.burstWindows || [];
+  const resourceModels = specConfig.resourceModels || [];
+  const aplBranch = getAplBranchForHeroTree(specConfig, archetype?.heroTree);
   const scenarios = normalizeScenarios(workflowResults);
   const st = scenarios.find((s) => s.scenario === "st" && !s.error);
 
   if (!st) return hypotheses;
 
-  // Resource pooling for burst window compound hypothesis
-  const metaUptime = getBuffUptime(st, "metamorphosis") || 0;
-  const brandUptime = getBuffUptime(st, "fiery_brand") || 0;
-  const fractureCasts = getCastCount(st, "fracture");
-  const sbCasts = getCastCount(st, "spirit_bomb");
+  const fightLength = st.fightLength || 300;
 
-  // Meta preparation phase
-  if (metaUptime > 10 && metaUptime < 40) {
-    const metaCd = 120; // base CD
-    const metaWindow = 15; // duration
-    const fightLength = st.fightLength || 300;
-    const metaCasts = Math.floor(fightLength / metaCd);
+  // Burst window pre-pooling hypotheses
+  for (const window of burstWindows) {
+    const windowUptime = getBuffUptime(st, window.buff) || 0;
+    if (windowUptime <= 10 || windowUptime >= 40) continue;
 
-    hypotheses.push({
-      id: "meta-prep-phase",
-      category: DEEP_HYPOTHESIS_CATEGORIES.MULTI_PART_CHANGE,
-      systemicIssue:
-        "Metamorphosis window has fixed duration but APL doesn't pre-pool resources",
-      mechanism:
-        `Meta provides +20% damage for ${metaWindow}s every ${metaCd}s (~${metaCasts} casts/fight). ` +
-        "During Meta, Fracture generates 3 frags (not 2), making fragment economy temporarily rich. " +
-        "But entering Meta with low fury/frags means the first few GCDs are spent building, not dealing damage. " +
-        "Pre-pooling 2-3s before Meta maximizes window value.",
-      proposedChanges: [
-        {
-          type: MUTATION_OPS.ADD_VARIABLE,
-          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          name: "meta_soon",
-          value: "cooldown.metamorphosis.remains<5&!buff.metamorphosis.up",
-          position: "top",
-          description: "Flag when Meta is approaching",
-        },
-        {
-          type: MUTATION_OPS.ADD_PHASE,
-          parentList: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          phaseName: "meta_prep",
-          condition: "variable.meta_soon",
-          entries: [
-            {
-              ability: "fracture",
-              if: "cooldown.fracture.charges>=2",
-              description: "Build charges for Meta",
-            },
-            {
-              ability: "spirit_bomb",
-              if: "soul_fragments>=5",
-              description: "Dump high-count SBomb before Meta",
-            },
-          ],
-          insertPosition: "top",
-          description: "Pre-Meta resource preparation phase",
-        },
-      ],
-      expectedImpact:
-        "+0.5-1.5% DPS from entering Meta with full resources and exiting with depleted pool",
-      counterArgument:
-        "5s of reduced aggression pre-Meta may cost more than the burst window gains. " +
-        "But the +20% damage amp during Meta is multiplicative with all other modifiers.",
-      dependencies: [],
-      archetypeSpecific: false,
-      priority: 15,
-      confidence: "medium",
-      scenario: "st",
-    });
+    const cd = window.cooldown || 60;
+    const dur = window.duration || 10;
+    const ampPct = ((window.damageAmp || 0) * 100).toFixed(0);
+    const windowCasts = Math.floor(fightLength / cd);
+
+    // Build prep phase entries from resource models
+    const prepEntries = [];
+    for (const model of resourceModels) {
+      const primaryGen = model.generators[0];
+      if (primaryGen?.charges) {
+        prepEntries.push({
+          ability: primaryGen.ability,
+          if: `cooldown.${primaryGen.ability}.charges>=2`,
+          description: `Build ${primaryGen.ability} charges for ${window.buff}`,
+        });
+      }
+      const burstConsumer = model.consumers.find((c) => c.maxConsume);
+      if (burstConsumer) {
+        prepEntries.push({
+          ability: burstConsumer.ability,
+          if: `${model.name}>=${model.cap || 5}`,
+          description: `Dump ${model.name} via ${burstConsumer.ability} before ${window.buff}`,
+        });
+      }
+    }
+
+    if (prepEntries.length > 0) {
+      hypotheses.push({
+        id: `${window.buff}-prep-phase`,
+        category: DEEP_HYPOTHESIS_CATEGORIES.MULTI_PART_CHANGE,
+        systemicIssue: `${window.buff} window has fixed duration but APL doesn't pre-pool resources`,
+        mechanism:
+          `${window.buff} provides +${ampPct}% damage for ${dur}s every ${cd}s (~${windowCasts} casts/fight). ` +
+          `Entering ${window.buff} with low resources means the first few GCDs are spent building, not dealing damage. ` +
+          `Pre-pooling 2-3s before ${window.buff} maximizes window value.`,
+        proposedChanges: [
+          {
+            type: MUTATION_OPS.ADD_VARIABLE,
+            list: aplBranch,
+            name: `${window.buff}_soon`,
+            value: `cooldown.${window.buff}.remains<5&!buff.${window.buff}.up`,
+            position: "top",
+            description: `Flag when ${window.buff} is approaching`,
+          },
+          {
+            type: MUTATION_OPS.ADD_PHASE,
+            parentList: aplBranch,
+            phaseName: `${window.buff}_prep`,
+            condition: `variable.${window.buff}_soon`,
+            entries: prepEntries,
+            insertPosition: "top",
+            description: `Pre-${window.buff} resource preparation phase`,
+          },
+        ],
+        expectedImpact: `+0.5-1.5% DPS from entering ${window.buff} with full resources`,
+        counterArgument:
+          `5s of reduced aggression pre-${window.buff} may cost more than the burst window gains. ` +
+          `But the +${ampPct}% damage amp during ${window.buff} is multiplicative with other modifiers.`,
+        dependencies: [],
+        archetypeSpecific: false,
+        priority: 15,
+        confidence: "medium",
+        scenario: "st",
+      });
+    }
   }
 
-  // Brand window resource optimization
-  if (brandUptime > 10 && sbCasts > 0) {
-    hypotheses.push({
-      id: "brand-window-optimization",
-      category: DEEP_HYPOTHESIS_CATEGORIES.MULTI_PART_CHANGE,
-      systemicIssue:
-        "Fiery Brand window has fixed duration but fragment spending may not align",
-      mechanism:
-        "Fiery Demise provides +15% Fire damage during Brand (10s window). " +
-        "Spirit Bomb deals Fire damage, so SBomb during Brand is +15% more effective. " +
-        "Optimal: enter Brand with 4-5 fragments, cast SBomb immediately, rebuild during window.",
-      proposedChanges: [
-        {
-          type: MUTATION_OPS.ADD_VARIABLE,
-          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          name: "brand_window",
-          value: "dot.fiery_brand.ticking&talent.fiery_demise",
-          position: "top",
-          description: "Track active Fiery Brand window",
-        },
-        {
-          type: MUTATION_OPS.ADD_CONDITION,
-          list: archetype?.heroTree === "annihilator" ? "anni" : "ar",
-          ability: "spirit_bomb",
-          condition: "variable.brand_window|soul_fragments>=5",
-          operator: "|",
-          description: "SBomb eagerly during Brand, or at 5 frags outside",
-        },
-      ],
-      expectedImpact:
-        "+0.3-0.8% DPS from better Spirit Bomb timing in Fiery Demise window",
-      counterArgument:
-        "Lower SBomb threshold during Brand may fire with 3-4 frags. " +
-        "But +15% on 3-frag SBomb > +0% on 5-frag SBomb outside window.",
-      dependencies: [],
-      archetypeSpecific: false,
-      priority: 10,
-      confidence: "medium",
-      scenario: "st",
-    });
+  // Burst window resource spending optimization
+  for (const window of burstWindows) {
+    const windowUptime = getBuffUptime(st, window.buff) || 0;
+    if (windowUptime <= 10) continue;
+
+    const ampPct = ((window.damageAmp || 0) * 100).toFixed(0);
+
+    // Find resources with burst consumers that benefit from this window
+    for (const model of resourceModels) {
+      const burstConsumer = model.consumers.find((c) => c.maxConsume);
+      if (!burstConsumer) continue;
+
+      const consumerCasts = getCastCount(st, burstConsumer.ability);
+      if (consumerCasts <= 0) continue;
+
+      hypotheses.push({
+        id: `${window.buff}-${burstConsumer.ability}-optimization`,
+        category: DEEP_HYPOTHESIS_CATEGORIES.MULTI_PART_CHANGE,
+        systemicIssue: `${window.buff} window has fixed duration but ${model.name} spending may not align`,
+        mechanism:
+          `${window.buff} provides +${ampPct}% ${window.school} damage (${window.duration}s window). ` +
+          `${burstConsumer.ability} benefits from this amp. Optimal: enter ${window.buff} with high ${model.name}, ` +
+          `cast ${burstConsumer.ability} immediately, rebuild during window.`,
+        proposedChanges: [
+          {
+            type: MUTATION_OPS.ADD_VARIABLE,
+            list: aplBranch,
+            name: `${window.buff}_window`,
+            value: `dot.${window.buff}.ticking${window.talentDep ? `&talent.${window.talentDep}` : ""}`,
+            position: "top",
+            description: `Track active ${window.buff} window`,
+          },
+          {
+            type: MUTATION_OPS.ADD_CONDITION,
+            list: aplBranch,
+            ability: burstConsumer.ability,
+            condition: `variable.${window.buff}_window|${model.name}>=${model.cap || 5}`,
+            operator: "|",
+            description: `${burstConsumer.ability} eagerly during ${window.buff}, or at cap outside`,
+          },
+        ],
+        expectedImpact: `+0.3-0.8% DPS from better ${burstConsumer.ability} timing in ${window.buff} window`,
+        counterArgument:
+          `Lower ${burstConsumer.ability} threshold during ${window.buff} may fire with suboptimal ${model.name} counts. ` +
+          `But +${ampPct}% on partial ${burstConsumer.ability} > +0% on full ${burstConsumer.ability} outside window.`,
+        dependencies: [],
+        archetypeSpecific: false,
+        priority: 10,
+        confidence: "medium",
+        scenario: "st",
+      });
+    }
   }
 
   return hypotheses;
@@ -1217,6 +1165,7 @@ export function printHypotheses(hypotheses) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await loadSpecAdapter();
   const resultsPath = process.argv[2];
   const aplPath = process.argv[3];
 

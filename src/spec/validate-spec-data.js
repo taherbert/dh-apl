@@ -4,13 +4,8 @@
 // Usage: node src/spec/validate-spec-data.js
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { loadSpecAdapter, getSpecAdapter } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
+import { dataFile } from "../engine/paths.js";
 
 await loadSpecAdapter();
 const adapter = getSpecAdapter();
@@ -33,7 +28,7 @@ function pass(msg) {
 
 // --- Load spell data ---
 
-const spellsPath = join(DATA_DIR, "spells-summary.json");
+const spellsPath = dataFile("spells-summary.json");
 if (!existsSync(spellsPath)) {
   console.log(
     "spells-summary.json not found — run `npm run build-data` first.",
@@ -51,7 +46,7 @@ console.log("\n=== Resource Cap Validation ===\n");
 const primary = SPEC_CONFIG.resources?.primary;
 if (primary) {
   // Look for talent that modifies the cap
-  const talentsPath = join(DATA_DIR, "talents.json");
+  const talentsPath = dataFile("talents.json");
   let capModTalent = null;
   if (existsSync(talentsPath)) {
     const talents = JSON.parse(readFileSync(talentsPath, "utf-8"));
@@ -232,7 +227,7 @@ if (fieldErrors === 0) {
 
 console.log("\n=== Hero Tree Validation ===\n");
 
-const raidbotsTalentsPath = join(DATA_DIR, "raidbots-talents.json");
+const raidbotsTalentsPath = dataFile("raidbots-talents.json");
 if (existsSync(raidbotsTalentsPath)) {
   const raidbots = JSON.parse(readFileSync(raidbotsTalentsPath, "utf-8"));
   const rbSubtreeIds = new Set(raidbots.heroNodes.map((n) => n.subTreeId));

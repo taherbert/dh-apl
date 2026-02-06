@@ -5,8 +5,7 @@
 // 3. Effect scan (self-buff talents with proc/modifier effects)
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import {
   classifyEffect,
   classifyByName,
@@ -21,18 +20,16 @@ import {
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import { dataDir } from "../engine/paths.js";
 
 function buildInteractions() {
   const SET_BONUS_SPELLS = getSpecAdapter().getSetBonusSpells();
 
   const spells = JSON.parse(
-    readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
+    readFileSync(join(dataDir(), "spells.json"), "utf-8"),
   );
   const talents = JSON.parse(
-    readFileSync(join(DATA_DIR, "talents.json"), "utf-8"),
+    readFileSync(join(dataDir(), "talents.json"), "utf-8"),
   );
 
   const spellMap = new Map(spells.map((s) => [s.id, s]));
@@ -161,7 +158,7 @@ function buildInteractions() {
   }
 
   // === Phase 2: Merge C++ scanner interactions ===
-  const cppPath = join(DATA_DIR, "cpp-interactions.json");
+  const cppPath = join(dataDir(), "cpp-interactions.json");
   if (existsSync(cppPath)) {
     const cppData = JSON.parse(readFileSync(cppPath, "utf-8"));
 
@@ -253,7 +250,7 @@ function buildInteractions() {
   }
 
   // === Phase 2b: C++ effects inventory (parse_effects/composite overrides) ===
-  const effectsPath = join(DATA_DIR, "cpp-effects-inventory.json");
+  const effectsPath = join(dataDir(), "cpp-effects-inventory.json");
   if (existsSync(effectsPath)) {
     const effectsData = JSON.parse(readFileSync(effectsPath, "utf-8"));
 
@@ -475,7 +472,7 @@ function buildInteractions() {
   };
 
   writeFileSync(
-    join(DATA_DIR, "interactions.json"),
+    join(dataDir(), "interactions.json"),
     JSON.stringify(output, null, 2),
   );
 

@@ -4,35 +4,28 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { execSync } from "node:child_process";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
   SIMC_DIR,
-  SIMC_DH_CPP,
+  SIMC_CPP,
   HERO_SUBTREES,
   loadSpecAdapter,
   getSpecAdapter,
 } from "./engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..");
-const DATA_DIR = join(ROOT, "data");
+import { dataFile } from "./engine/paths.js";
 
 await loadSpecAdapter();
 const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = getSpecAdapter();
 
-const src = readFileSync(SIMC_DH_CPP, "utf-8");
-const talents = JSON.parse(
-  readFileSync(join(DATA_DIR, "talents.json"), "utf-8"),
-);
-const spells = JSON.parse(readFileSync(join(DATA_DIR, "spells.json"), "utf-8"));
+const src = readFileSync(SIMC_CPP, "utf-8");
+const talents = JSON.parse(readFileSync(dataFile("talents.json"), "utf-8"));
+const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf-8"));
 const interactions = JSON.parse(
-  readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"),
+  readFileSync(dataFile("interactions.json"), "utf-8"),
 );
 
-const hasRaidbots = existsSync(join(DATA_DIR, "raidbots-talents.json"));
+const hasRaidbots = existsSync(dataFile("raidbots-talents.json"));
 const raidbots = hasRaidbots
-  ? JSON.parse(readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf-8"))
+  ? JSON.parse(readFileSync(dataFile("raidbots-talents.json"), "utf-8"))
   : null;
 
 const allOurTalents = [

@@ -4,12 +4,9 @@
 // Usage: node src/analyze/synthesizer.js [results-dir]
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const RESULTS_DIR = join(ROOT, "results");
+import { join } from "node:path";
+import "../engine/startup.js";
+import { resultsDir } from "../engine/paths.js";
 
 // Specialist output files
 const SPECIALIST_FILES = {
@@ -21,11 +18,11 @@ const SPECIALIST_FILES = {
 
 // --- Specialist Output Loading ---
 
-export function loadSpecialistOutputs(resultsDir = RESULTS_DIR) {
+export function loadSpecialistOutputs(dir = resultsDir()) {
   const outputs = {};
 
   for (const [specialist, filename] of Object.entries(SPECIALIST_FILES)) {
-    const filepath = join(resultsDir, filename);
+    const filepath = join(dir, filename);
     if (existsSync(filepath)) {
       try {
         outputs[specialist] = JSON.parse(readFileSync(filepath, "utf-8"));
@@ -41,17 +38,13 @@ export function loadSpecialistOutputs(resultsDir = RESULTS_DIR) {
   return outputs;
 }
 
-export function saveSpecialistOutput(
-  specialist,
-  data,
-  resultsDir = RESULTS_DIR,
-) {
+export function saveSpecialistOutput(specialist, data, dir = resultsDir()) {
   const filename = SPECIALIST_FILES[specialist];
   if (!filename) {
     throw new Error(`Unknown specialist: ${specialist}`);
   }
 
-  const filepath = join(resultsDir, filename);
+  const filepath = join(dir, filename);
   writeFileSync(filepath, JSON.stringify(data, null, 2));
   return filepath;
 }
@@ -436,7 +429,7 @@ export function synthesize(specialistOutputs, options = {}) {
 
 // Write synthesis.json for session resume
 function writeSynthesisJson(result, aplHash) {
-  const synthesisPath = join(RESULTS_DIR, "synthesis.json");
+  const synthesisPath = join(resultsDir(), "synthesis.json");
   const synthesis = {
     _schema: "synthesis-v1",
     timestamp: result.metadata.timestamp,
@@ -456,10 +449,10 @@ function writeSynthesisJson(result, aplHash) {
 // --- CLI Entry Point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const resultsDir = process.argv[2] || RESULTS_DIR;
+  const dir = process.argv[2] || resultsDir();
 
-  console.log("Loading specialist outputs from", resultsDir, "...");
-  const outputs = loadSpecialistOutputs(resultsDir);
+  console.log("Loading specialist outputs from", dir, "...");
+  const outputs = loadSpecialistOutputs(dir);
 
   const loadedCount = Object.values(outputs).filter((o) => o !== null).length;
   console.log(
@@ -499,12 +492,12 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Write report
   const report = generateSynthesisReport(result);
-  const reportPath = join(resultsDir, "synthesis_report.md");
+  const reportPath = join(dir, "synthesis_report.md");
   writeFileSync(reportPath, report);
   console.log(`\nReport written to ${reportPath}`);
 
   // Write synthesized hypotheses
-  const outputPath = join(resultsDir, "synthesized_hypotheses.json");
+  const outputPath = join(dir, "synthesized_hypotheses.json");
   writeFileSync(outputPath, JSON.stringify(result, null, 2));
   console.log(`Hypotheses written to ${outputPath}`);
 }

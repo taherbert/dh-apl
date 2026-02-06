@@ -7608,7 +7608,7 @@
         "details": {
           "baseValue": 0,
           "scaledValue": 0,
-          "miscValue": "300",
+          "Delay": "300_ms",
           "triggerSpell": 228478,
           "target": "Self (1)"
         }
@@ -9765,7 +9765,7 @@
         "details": {
           "baseValue": 0,
           "scaledValue": 0,
-          "miscValue": "150",
+          "Delay": "150_ms",
           "triggerSpell": 225921
         }
       },

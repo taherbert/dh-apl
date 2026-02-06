@@ -3,8 +3,7 @@
 
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import {
   SIMC_BIN,
   config,
@@ -12,14 +11,9 @@ import {
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
+import { dataDir, dataFile, REFERENCE_DIR } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
-const OUTPUT = join(
-  ROOT,
-  `reference/spelldatadump-${config.spec.specName}.txt`,
-);
+const OUTPUT = join(REFERENCE_DIR, `spelldatadump-${config.spec.specName}.txt`);
 
 function runSpellQuery(query) {
   try {
@@ -45,7 +39,7 @@ function collectSpellIds() {
 
   // Add talent spell IDs from raidbots data
   const raidbots = JSON.parse(
-    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf-8"),
+    readFileSync(dataFile("raidbots-talents.json"), "utf-8"),
   );
   const allNodes = [
     ...raidbots.classNodes,
@@ -58,9 +52,7 @@ function collectSpellIds() {
 
   // Add spell IDs from existing spells.json (includes sub-spells and modifiers)
   try {
-    const spells = JSON.parse(
-      readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
-    );
+    const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf-8"));
     for (const spell of spells) {
       ids.add(spell.id);
       for (const { id } of spell.affectingSpells ?? []) {

@@ -1,46 +1,33 @@
-Perform temporal resource flow analysis on the VDH APL and generate testable hypotheses.
+Perform temporal resource flow analysis on the active spec's APL and generate testable hypotheses.
 
 ## Setup
 
-1. Read spell data, proc mechanics, and accumulated findings:
+1. Run `node src/engine/startup.js` to determine the active spec. Use the spec name for all `{spec}` path references below.
+
+2. Read spell data, proc mechanics, and accumulated findings:
 
 ```
-data/spells-summary.json
-data/cpp-proc-mechanics.json
-data/build-theory.json
-results/findings.json
-results/builds.json
+data/{spec}/spells-summary.json
+data/{spec}/cpp-proc-mechanics.json
+data/{spec}/build-theory.json
+results/{spec}/findings.json
+results/{spec}/builds.json
 ```
 
-2. Read the APL to analyze. If `$ARGUMENTS` was provided, use that file. Otherwise default:
+3. Read the APL to analyze. If `$ARGUMENTS` was provided, use that file. Otherwise default to `apls/{spec}/{spec}.simc`. If neither exists, check `apls/{spec}/baseline.simc`.
+
+4. Read recent sim results if available:
 
 ```
-apls/vengeance.simc
+ls results/{spec}/
 ```
 
-If neither exists, check `apls/baseline.simc`.
+Look for `workflow_current.json` or `*_summary.json` files (for detailed cast counts, buff uptimes, proc data).
 
-3. Read recent sim results if available:
-
-```
-ls results/
-```
-
-Look for `workflow_current.json`, `vengeance_summary.json`, or `vengeance_st.json` (for detailed cast counts, buff uptimes, proc data).
-
-4. Run the temporal analysis engine:
-
-```javascript
-import {
-  analyzeResourceFlow,
-  generateTemporalHypotheses,
-} from "./src/analyze/theorycraft.js";
-```
-
-Or via CLI:
+5. Run the temporal analysis engine:
 
 ```bash
-node src/analyze/theorycraft.js results/workflow_current.json apls/vengeance.simc
+node src/analyze/theorycraft.js results/{spec}/workflow_current.json apls/{spec}/{spec}.simc
 ```
 
 ## Analysis Steps
@@ -49,7 +36,7 @@ Walk through the 5-step temporal analysis:
 
 ### 1. Resource Flow Model
 
-For each resource (fury, fragments, GCDs), trace the flow over one full rotation cycle (~25s for SBomb, ~60s for major CDs):
+For each resource (read from `SPEC_CONFIG.resourceModels`), trace the flow over one full rotation cycle:
 
 - Where does generation exceed consumption?
 - Where does consumption create bottlenecks?
@@ -57,19 +44,19 @@ For each resource (fury, fragments, GCDs), trace the flow over one full rotation
 
 ### 2. Cooldown Cycle Mapping
 
-For each ability with a significant cooldown (>10s), map its cycle:
+For each ability with a significant cooldown (>10s), map its cycle. Read cooldown values from `data/{spec}/spells-summary.json`:
 
-- Spirit Bomb (25s), Fiery Brand (60s), Soul Carver (60s), Sigil of Spite (60s), Fel Devastation (40s), Metamorphosis (120s)
-- Resource budget per cycle (fury/frags generated and consumed)
+- Cooldown period and charges
+- Resource budget per cycle (generated and consumed)
 - Compare theoretical vs actual cast counts from sim data
 
 ### 3. Timing Conflict Detection
 
 Scan for these conflict patterns:
 
-- **Resource Competition** — Two consumers drawing from the same pool on different timescales (SC vs SBomb for fragments)
-- **Cooldown Collision** — Two cooldowns that should be staggered or aligned but aren't (Carver + SBomb timing)
-- **Burst Window Waste** — Damage multiplier active but resources depleted (Brand up, no fury for SBomb)
+- **Resource Competition** — Two consumers drawing from the same pool on different timescales
+- **Cooldown Collision** — Two cooldowns that should be staggered or aligned but aren't
+- **Burst Window Waste** — Damage multiplier active but resources depleted
 - **Pooling Opportunity** — Burst phase approaching, resources could be saved
 - **Resource Gating** — Guards on abilities that cost more in opportunity than they save in overflow
 
@@ -107,7 +94,7 @@ Ranked list with:
 
 ### Cross-Reference Findings
 
-Read `results/findings.json` and filter to `status: "validated"`. Cross-reference your hypotheses against known results:
+Read `results/{spec}/findings.json` and filter to `status: "validated"`. Cross-reference your hypotheses against known results:
 
 - If a hypothesis matches a validated finding, note it and calibrate your expected impact accordingly
 - If a hypothesis contradicts a validated finding, investigate the discrepancy before testing
@@ -115,16 +102,16 @@ Read `results/findings.json` and filter to `status: "validated"`. Cross-referenc
 
 ### Record New Findings
 
-After analysis, append new insights to `results/findings.json`:
+After analysis, append new insights to `results/{spec}/findings.json`:
 
 - Each distinct insight gets its own entry with evidence, confidence, tags
 - If your analysis contradicts an existing finding, mark the old one `status: "superseded"` and add a `supersededBy` reference
-- Use the tag taxonomy from `results/SCHEMA.md`
+- Use the tag taxonomy from `results/{spec}/SCHEMA.md`
 
 ## Optional: Auto-Test
 
 If the user says "test" or "run", automatically:
 
 1. Build profileset variants for top 3 hypotheses
-2. Run via iterate.js pipeline: `node src/sim/iterate.js compare apls/candidate.simc --quick`
+2. Run via iterate.js pipeline: `node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick`
 3. Report results

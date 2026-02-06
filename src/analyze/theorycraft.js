@@ -3,14 +3,10 @@
 // Usage: node src/analyze/theorycraft.js [workflow-results.json] [apl.simc]
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { MUTATION_OPS } from "../apl/mutator.js";
-import { getSpecAdapter, config } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
+import { parse, getActionLists } from "../apl/parser.js";
+import { getSpecAdapter, loadSpecAdapter, config } from "../engine/startup.js";
+import { dataFile } from "../engine/paths.js";
 
 // --- Temporal hypothesis categories ---
 
@@ -32,7 +28,7 @@ export function setSpecId(specId) {
 
 // Load ability data from spec adapter
 function loadAbilityData() {
-  return getSpecAdapter().loadAbilityData(currentSpecId);
+  return getSpecAdapter().loadAbilityData();
 }
 
 let ABILITY_DATA = null;
@@ -59,131 +55,49 @@ export function analyzeResourceFlow(spellData, aplText, simResults) {
 
 function buildResourceModels(spellData, simResults) {
   const models = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const resourceModels = specConfig.resourceModels || [];
 
-  // Fury model
-  const furyModel = {
-    name: "fury",
-    cap: 120,
-    generators: [],
-    consumers: [],
-    flowRate: null,
-    overflowRate: null,
-  };
+  for (const rm of resourceModels) {
+    const model = {
+      name: rm.name,
+      cap: rm.cap,
+      generators: rm.generators.map((g) => ({
+        ability: g.ability,
+        amount: g.amount || (g.perTick ? g.perTick * (g.duration || 1) : 0),
+        amountMeta: g.metaAmount,
+        rechargeCd: g.rechargeCd,
+        charges: g.charges,
+        cooldown: g.cooldown || g.rechargeCd,
+        perTick: g.perTick !== undefined,
+        procRate: g.procRate,
+        source: g.source,
+      })),
+      consumers: rm.consumers.map((c) => ({
+        ability: c.ability,
+        amount: c.cost || c.maxConsume || 0,
+        maxConsume: c.maxConsume,
+        cooldown: 0,
+        valuePerUnit: c.valuePerUnit,
+      })),
+      flowRate: null,
+      overflowRate: null,
+    };
 
-  furyModel.generators.push(
-    {
-      ability: "fracture",
-      amount: getAbilityData().fracture.furyGen,
-      amountMeta: getAbilityData().fracture.furyGenMeta,
-      rechargeCd: getAbilityData().fracture.rechargeCd,
-      charges: getAbilityData().fracture.charges,
-    },
-    {
-      ability: "immolation_aura",
-      amount:
-        getAbilityData().immolation_aura.furyPerTick *
-        getAbilityData().immolation_aura.duration,
-      cooldown: getAbilityData().immolation_aura.rechargeCd,
-      charges: getAbilityData().immolation_aura.charges,
-      perTick: true,
-    },
-  );
-
-  furyModel.consumers.push(
-    {
-      ability: "spirit_bomb",
-      amount: getAbilityData().spirit_bomb.furyCost,
-      cooldown: getAbilityData().spirit_bomb.cooldown,
-    },
-    {
-      ability: "soul_cleave",
-      amount: getAbilityData().soul_cleave.furyCost,
-      cooldown: 0,
-    },
-    {
-      ability: "fel_devastation",
-      amount: getAbilityData().fel_devastation.furyCost,
-      cooldown: getAbilityData().fel_devastation.cooldown,
-    },
-  );
-
-  if (simResults) {
-    const st = findScenario(simResults, "st");
-    if (st) {
-      furyModel.flowRate = estimateResourceFlow(st, "fury", furyModel);
+    if (simResults) {
+      const st = findScenario(simResults, "st");
+      if (st) {
+        model.flowRate = estimateResourceFlow(st, rm.name, model);
+        if (rm.consumers.some((c) => c.maxConsume)) {
+          model.overflowRate = estimateOverflow(st, rm);
+        }
+      }
     }
+
+    models.push(model);
   }
 
-  models.push(furyModel);
-
-  // Soul Fragments model
-  const fragModel = {
-    name: "soul_fragments",
-    cap: 6,
-    generators: [],
-    consumers: [],
-    flowRate: null,
-    overflowRate: null,
-  };
-
-  fragModel.generators.push(
-    {
-      ability: "fracture",
-      amount: getAbilityData().fracture.fragGen,
-      amountMeta: getAbilityData().fracture.fragGenMeta,
-      rechargeCd: getAbilityData().fracture.rechargeCd,
-      charges: getAbilityData().fracture.charges,
-    },
-    {
-      ability: "soul_carver",
-      amount: getAbilityData().soul_carver.fragGen,
-      cooldown: getAbilityData().soul_carver.cooldown,
-    },
-    {
-      ability: "sigil_of_spite",
-      amount: 3, // approximate average
-      cooldown: getAbilityData().sigil_of_spite.cooldown,
-    },
-    {
-      ability: "fallout",
-      procRate: 0.6, // 60% per IA tick in AoE, 100% ST
-      source: "immolation_aura",
-      perTick: true,
-    },
-  );
-
-  fragModel.consumers.push(
-    {
-      ability: "spirit_bomb",
-      amount: "up_to_5",
-      maxConsume: 5,
-      cooldown: getAbilityData().spirit_bomb.cooldown,
-      valuePerUnit: "+20% damage per fragment",
-    },
-    {
-      ability: "soul_cleave",
-      amount: "up_to_2",
-      maxConsume: 2,
-      cooldown: 0,
-      valuePerUnit: "healing + Soul Furnace stacks",
-    },
-  );
-
-  if (simResults) {
-    const st = findScenario(simResults, "st");
-    if (st) {
-      fragModel.flowRate = estimateResourceFlow(
-        st,
-        "soul_fragments",
-        fragModel,
-      );
-      fragModel.overflowRate = estimateFragmentOverflow(st);
-    }
-  }
-
-  models.push(fragModel);
-
-  // GCD model
+  // GCD model (universal)
   const gcdModel = {
     name: "gcds",
     cap: null,
@@ -204,8 +118,33 @@ function buildResourceModels(spellData, simResults) {
   return models;
 }
 
+// Generic overflow estimation for resources with maxConsume consumers
+function estimateOverflow(scenario, resourceModel) {
+  if (!scenario) return null;
+
+  let generated = 0;
+  let consumed = 0;
+
+  for (const gen of resourceModel.generators) {
+    const casts = getCastCount(scenario, gen.ability);
+    generated += casts * (gen.amount || 0);
+  }
+  for (const con of resourceModel.consumers) {
+    const casts = getCastCount(scenario, con.ability);
+    consumed += casts * (con.maxConsume || con.cost || 0);
+  }
+
+  const overflow = Math.max(0, generated - consumed);
+  return {
+    estimated: overflow,
+    generated,
+    consumed,
+    pctOfGenerated: generated > 0 ? (overflow / generated) * 100 : 0,
+  };
+}
+
 function buildCooldownCycles(spellData, simResults) {
-  const cdAbilities = Object.entries(ABILITY_DATA)
+  const cdAbilities = Object.entries(getAbilityData())
     .filter(([, data]) => data.cooldown >= 10)
     .map(([name, data]) => ({ name, ...data }));
 
@@ -257,15 +196,23 @@ function buildCyclePhases(ability) {
 }
 
 function estimateCycleBudget(ability, gcdsPerCycle) {
-  const { rechargeCd, furyGen, fragGen } = getAbilityData().fracture;
-  const fracturesPerCycle = Math.floor(ability.cooldown / rechargeCd);
+  // Use spec config resource models to estimate budget per cycle
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const budget = { gcdsAvailable: gcdsPerCycle };
 
-  return {
-    furyGenerated: fracturesPerCycle * furyGen,
-    fragsGenerated: fracturesPerCycle * fragGen,
-    gcdsAvailable: gcdsPerCycle,
-    fracturesEstimated: fracturesPerCycle,
-  };
+  for (const rm of specConfig.resourceModels || []) {
+    // Find the primary charge-based generator for this resource
+    const primaryGen = rm.generators.find((g) => g.charges && g.rechargeCd);
+    if (primaryGen) {
+      const castsPerCycle = Math.floor(
+        ability.cooldown / primaryGen.rechargeCd,
+      );
+      budget[`${rm.name}Generated`] = castsPerCycle * (primaryGen.amount || 0);
+      budget[`${primaryGen.ability}Estimated`] = castsPerCycle;
+    }
+  }
+
+  return budget;
 }
 
 // --- Timing Conflict Detection ---
@@ -282,323 +229,382 @@ function detectTimingConflicts(resources, cycles, simResults, aplText) {
   return conflicts;
 }
 
-// Pattern A: Resource Competition
+// Pattern A: Resource Competition — data-driven from resource models
 function detectResourceCompetition(resources, cycles, simResults) {
   const conflicts = [];
-  const fragModel = resources.find((r) => r.name === "soul_fragments");
-  if (!fragModel) return conflicts;
-
-  const sbCycle = cycles.find((c) => c.ability === "spirit_bomb");
-  if (!sbCycle) return conflicts;
-
-  // SC (continuous consumer) vs SBomb (burst consumer every 25s)
   const st = findScenario(simResults, "st");
-  const sbCasts = getCastCount(st, "spirit_bomb");
-  const scCasts = getCastCount(st, "soul_cleave");
+  if (!st) return conflicts;
   const fightLength = getFightLength(st);
+  if (fightLength <= 0) return conflicts;
 
-  if (sbCasts > 0 && scCasts > 0 && fightLength > 0) {
-    // Estimate average fragments consumed by SC between SBomb casts
-    const sbInterval = fightLength / sbCasts;
-    const scBetweenSb = scCasts / sbCasts;
-    const fragsConsumedBySc = scBetweenSb * 2; // up to 2 per SC
+  for (const model of resources) {
+    if (model.name === "gcds") continue;
+    if (model.consumers.length < 2) continue;
 
-    // If SC consumes more frags than are generated between SBombs, SBomb may cast at low frags
-    const fragsGenPerInterval =
-      (sbInterval / getAbilityData().fracture.rechargeCd) *
-      getAbilityData().fracture.fragGen;
-    const netFrags = fragsGenPerInterval - fragsConsumedBySc;
+    const consumerCasts = model.consumers
+      .map((c) => ({ ...c, casts: getCastCount(st, c.ability) }))
+      .filter((c) => c.casts > 0);
+    if (consumerCasts.length < 2) continue;
 
-    if (netFrags < 4) {
+    // For maxConsume resources: check if burst consumers are starved
+    const burstConsumers = consumerCasts.filter(
+      (c) => c.maxConsume && c.maxConsume > 2,
+    );
+    const continuousConsumers = consumerCasts.filter(
+      (c) => !c.maxConsume || c.maxConsume <= 2,
+    );
+
+    if (burstConsumers.length > 0 && continuousConsumers.length > 0) {
+      const primaryBurst = burstConsumers[0];
+      const burstInterval = fightLength / primaryBurst.casts;
+      const primaryGen = model.generators.find((g) => g.charges);
+
+      if (primaryGen) {
+        const genCasts = getCastCount(st, primaryGen.ability);
+        const genPerInterval =
+          genCasts > 0
+            ? (burstInterval / fightLength) *
+              genCasts *
+              (primaryGen.amount || 0)
+            : 0;
+        const continuousConsumed = continuousConsumers.reduce(
+          (sum, c) =>
+            sum +
+            (c.casts / primaryBurst.casts) * (c.maxConsume || c.amount || 0),
+          0,
+        );
+        const netAvailable = genPerInterval - continuousConsumed;
+
+        if (netAvailable < (model.cap || 5) * 0.7) {
+          conflicts.push({
+            type: "resource_competition",
+            description: `${continuousConsumers.map((c) => c.ability).join(", ")} and ${primaryBurst.ability} compete for ${model.name}`,
+            detail:
+              `Continuous consumers use ~${continuousConsumed.toFixed(1)} ${model.name} between ${primaryBurst.ability} casts. ` +
+              `${primaryGen.ability} generates ~${genPerInterval.toFixed(1)} per ${burstInterval.toFixed(0)}s interval. ` +
+              `Net available for ${primaryBurst.ability}: ~${Math.max(0, netAvailable).toFixed(1)}`,
+            consumers: consumerCasts.map((c) => c.ability),
+            resource: model.name,
+            severity:
+              netAvailable < (model.cap || 5) * 0.35 ? "high" : "medium",
+          });
+        }
+      }
+    }
+
+    // General spending vs generation rate check
+    let totalSpend = 0;
+    for (const c of consumerCasts) {
+      totalSpend += c.casts * (c.amount || c.maxConsume || 0);
+    }
+    const spendPerSec = totalSpend / fightLength;
+
+    let totalGen = 0;
+    for (const g of model.generators) {
+      const casts = getCastCount(st, g.ability);
+      totalGen += casts * (g.amount || 0);
+    }
+    const genPerSec = totalGen / fightLength;
+
+    if (spendPerSec > genPerSec * 0.9 && genPerSec > 0) {
       conflicts.push({
         type: "resource_competition",
-        description: "Soul Cleave and Spirit Bomb compete for Soul Fragments",
+        description: `High ${model.name} consumption rate relative to generation`,
         detail:
-          `SC consumes ~${fragsConsumedBySc.toFixed(1)} frags between SBomb casts. ` +
-          `Fracture generates ~${fragsGenPerInterval.toFixed(1)} frags per ${sbInterval.toFixed(0)}s interval. ` +
-          `Net fragments available for SBomb: ~${Math.max(0, netFrags).toFixed(1)}`,
-        consumers: ["soul_cleave", "spirit_bomb"],
-        resource: "soul_fragments",
-        severity: netFrags < 2 ? "high" : "medium",
+          `${model.name} spending: ~${spendPerSec.toFixed(1)}/s. Generation: ~${genPerSec.toFixed(1)}/s. ` +
+          `Ratio: ${((spendPerSec / genPerSec) * 100).toFixed(0)}%`,
+        consumers: consumerCasts.map((c) => c.ability),
+        resource: model.name,
+        severity: spendPerSec > genPerSec ? "high" : "low",
       });
-    }
-  }
-
-  // Fury competition: SBomb (40) + SC (35) + FelDev (50) all draw from fury
-  const furyModel = resources.find((r) => r.name === "fury");
-  if (furyModel) {
-    const felDevCasts = getCastCount(st, "fel_devastation");
-    if (sbCasts > 0 && felDevCasts > 0 && fightLength > 0) {
-      const totalFuryCost = sbCasts * 40 + scCasts * 35 + felDevCasts * 50;
-      const furyPerSec = totalFuryCost / fightLength;
-      // Estimate fury gen from Fracture casts
-      const fracCasts = getCastCount(st, "fracture");
-      const furyGen =
-        fracCasts > 0
-          ? (fracCasts * getAbilityData().fracture.furyGen) / fightLength
-          : 0;
-
-      if (furyPerSec > furyGen * 0.9) {
-        conflicts.push({
-          type: "resource_competition",
-          description: "High fury consumption rate relative to generation",
-          detail:
-            `Fury spending: ~${furyPerSec.toFixed(1)}/s. Generation: ~${furyGen.toFixed(1)}/s. ` +
-            `Ratio: ${((furyPerSec / (furyGen || 1)) * 100).toFixed(0)}%`,
-          consumers: ["spirit_bomb", "soul_cleave", "fel_devastation"],
-          resource: "fury",
-          severity: furyPerSec > furyGen ? "high" : "low",
-        });
-      }
     }
   }
 
   return conflicts;
 }
 
-// Pattern B: Cooldown Collisions
+// Pattern B: Cooldown Collisions — data-driven from burstWindows and synergies
 function detectCooldownCollisions(cycles, simResults) {
   const conflicts = [];
   const st = findScenario(simResults, "st");
+  if (!st) return conflicts;
 
-  const soulCarverCycle = cycles.find((c) => c.ability === "soul_carver");
-  const sbCycle = cycles.find((c) => c.ability === "spirit_bomb");
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const burstWindows = specConfig.burstWindows || [];
+  const synergies = specConfig.synergies || [];
 
-  if (soulCarverCycle && sbCycle) {
-    // Soul Carver generates 3 frags. If SBomb is on CD when Carver fires,
-    // those frags may overflow before SBomb is ready.
-    const carverCasts = getCastCount(st, "soul_carver");
-    const fightLength = getFightLength(st);
+  // Check burst window sync targets for alignment
+  for (const window of burstWindows) {
+    const windowUptime = getBuffUptime(st, window.buff);
+    if (windowUptime === undefined || windowUptime <= 0) continue;
 
-    if (carverCasts > 0 && fightLength > 0) {
-      // Check if fragment overflow correlates with Carver timing
-      const fragOverflow = estimateFragmentOverflow(st);
-      if (fragOverflow && fragOverflow.pctOfGenerated > 5) {
-        conflicts.push({
-          type: "cooldown_collision",
-          description:
-            "Soul Carver fragment generation may overflow during Spirit Bomb CD",
-          detail:
-            `Soul Carver generates 3 fragments. SBomb CD is 25s. ` +
-            `Fragment overflow rate: ${fragOverflow.pctOfGenerated.toFixed(1)}%. ` +
-            `Consider sequencing Carver closer to SBomb readiness.`,
-          abilities: ["soul_carver", "spirit_bomb"],
-          severity: fragOverflow.pctOfGenerated > 10 ? "high" : "medium",
-        });
+    for (const syncTarget of window.syncTargets || []) {
+      const targetCasts = getCastCount(st, syncTarget);
+      const windowCasts = getCastCount(st, window.buff);
+
+      if (targetCasts > 0 && windowCasts > 0) {
+        const ratio = targetCasts / windowCasts;
+        if (ratio < 0.8) {
+          conflicts.push({
+            type: "burst_window_waste",
+            description: `${syncTarget} may not align with ${window.buff} windows`,
+            detail:
+              `${syncTarget} casts per ${window.buff} window: ~${ratio.toFixed(1)}. ` +
+              `${window.buff} uptime: ${windowUptime}%. Sync for ${(window.damageAmp * 100).toFixed(0)}% ${window.school} amp.`,
+            abilities: [syncTarget, window.buff],
+            severity: "medium",
+          });
+        }
       }
     }
   }
 
-  // Fiery Brand (60s) + Soul Carver (60s) — same CD, should be synced
-  const brandCycle = cycles.find((c) => c.ability === "fiery_brand");
-  if (brandCycle && soulCarverCycle) {
-    const brandUptime = getBuffUptime(st, "fiery_brand");
-    const carverCasts = getCastCount(st, "soul_carver");
-    if (brandUptime !== undefined && carverCasts > 0) {
-      // Both 60s CDs — should be used together for Fiery Demise synergy
-      conflicts.push({
-        type: "cooldown_collision",
-        description:
-          "Fiery Brand and Soul Carver share 60s cooldown — alignment opportunity",
-        detail:
-          `Both on 60s CD. Fiery Brand uptime: ${brandUptime}%. ` +
-          `Soul Carver should fire during Brand for Fiery Demise amp.`,
-        abilities: ["fiery_brand", "soul_carver"],
-        severity: "info",
-      });
+  // Check synergy pairs for cooldown alignment
+  for (const synergy of synergies) {
+    const [buffA, buffB] = synergy.buffs;
+    const cycleA = cycles.find((c) => c.ability === buffA);
+    const cycleB = cycles.find((c) => c.ability === buffB);
+
+    if (cycleA && cycleB) {
+      const castsA = getCastCount(st, buffA);
+      const castsB = getCastCount(st, buffB);
+      const uptimeA = getBuffUptime(st, buffA);
+
+      if (castsA > 0 && castsB > 0 && uptimeA !== undefined) {
+        const cdDiff = Math.abs(cycleA.cooldown - cycleB.cooldown);
+        if (cdDiff < 5) {
+          conflicts.push({
+            type: "cooldown_collision",
+            description: `${buffA} and ${buffB} share ~${cycleA.cooldown}s cooldown — alignment opportunity`,
+            detail:
+              `${synergy.reason}. ${buffA} uptime: ${uptimeA}%. ` +
+              `Both on similar CDs, should be synced.`,
+            abilities: [buffA, buffB],
+            severity: "info",
+          });
+        }
+      }
+    }
+  }
+
+  // Check resource models for generator + consumer collision
+  const resourceModels = specConfig.resourceModels || [];
+  for (const rm of resourceModels) {
+    const burstGen = rm.generators.find(
+      (g) => g.cooldown && g.cooldown >= 20 && g.amount >= 2,
+    );
+    const burstConsumer = rm.consumers.find(
+      (c) => c.maxConsume && c.maxConsume >= 3,
+    );
+
+    if (burstGen && burstConsumer) {
+      const genCasts = getCastCount(st, burstGen.ability);
+      if (genCasts > 0) {
+        const overflowData = estimateOverflow(st, rm);
+        if (overflowData && overflowData.pctOfGenerated > 5) {
+          conflicts.push({
+            type: "cooldown_collision",
+            description: `${burstGen.ability} ${rm.name} generation may overflow during ${burstConsumer.ability} CD`,
+            detail:
+              `${burstGen.ability} generates ${burstGen.amount} ${rm.name}. ` +
+              `Overflow rate: ${overflowData.pctOfGenerated.toFixed(1)}%. ` +
+              `Consider sequencing ${burstGen.ability} closer to ${burstConsumer.ability} readiness.`,
+            abilities: [burstGen.ability, burstConsumer.ability],
+            severity: overflowData.pctOfGenerated > 10 ? "high" : "medium",
+          });
+        }
+      }
     }
   }
 
   return conflicts;
 }
 
-// Pattern C: Burst Window Waste
+// Pattern C: Burst Window Waste — data-driven from burstWindows
 function detectBurstWindowWaste(cycles, simResults) {
   const conflicts = [];
   const st = findScenario(simResults, "st");
   if (!st) return conflicts;
 
-  // Check if high-damage abilities fire outside damage amp windows
-  const brandUptime = getBuffUptime(st, "fiery_brand");
-  const metaUptime = getBuffUptime(st, "metamorphosis");
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const burstWindows = specConfig.burstWindows || [];
 
-  // If Brand is up but Fel Dev isn't being used during it
-  if (brandUptime !== undefined && brandUptime > 5) {
-    const felDevCasts = getCastCount(st, "fel_devastation");
-    const brandCasts = getCastCount(st, "fiery_brand");
+  for (const window of burstWindows) {
+    const uptime = getBuffUptime(st, window.buff);
+    if (uptime === undefined || uptime <= 5) continue;
+
+    // Check if resource bonus during window is being utilized
+    if (window.resourceBonus) {
+      const rb = window.resourceBonus;
+      const abilityCasts = getCastCount(st, rb.ability);
+      const fightLength = getFightLength(st);
+
+      if (abilityCasts > 0 && fightLength > 0) {
+        const fraction = uptime / 100;
+        const expectedCastsDuringWindow = abilityCasts * fraction;
+        const extraResource = expectedCastsDuringWindow * rb.bonus;
+
+        if (extraResource > 5) {
+          conflicts.push({
+            type: "burst_window_waste",
+            description: `${window.buff} generates extra ${rb.resource} — optimize spending`,
+            detail:
+              `~${expectedCastsDuringWindow.toFixed(0)} ${rb.ability} casts during ${window.buff} ` +
+              `(${uptime}% uptime). Each generates +${rb.bonus} extra ${rb.resource}. ` +
+              `Ensure spenders fire fast enough to avoid overflow during ${window.buff}.`,
+            abilities: [rb.ability, window.buff],
+            severity: "info",
+          });
+        }
+      }
+    }
+  }
+
+  return conflicts;
+}
+
+// Pattern E: Pooling Opportunities — data-driven from resource models
+function detectPoolingOpportunities(resources, cycles, simResults) {
+  const conflicts = [];
+  const st = findScenario(simResults, "st");
+  if (!st) return conflicts;
+
+  for (const model of resources) {
+    if (model.name === "gcds") continue;
+
+    const burstConsumer = model.consumers.find(
+      (c) => c.maxConsume && c.maxConsume >= 3,
+    );
+    const continuousConsumer = model.consumers.find(
+      (c) => c.maxConsume && c.maxConsume <= 2,
+    );
+    if (!burstConsumer || !continuousConsumer) continue;
+
+    const burstCasts = getCastCount(st, burstConsumer.ability);
     const fightLength = getFightLength(st);
+    if (burstCasts <= 0 || fightLength <= 0) continue;
 
-    if (felDevCasts > 0 && brandCasts > 0 && fightLength > 0) {
-      // Expected FelDev casts during Brand = brandUptime% * felDevCasts
-      // If FelDev CD (40s) < Brand CD (60s), not all FelDevs can be in Brand
-      const felDevPerBrand = felDevCasts / brandCasts;
-      if (felDevPerBrand < 0.8) {
+    const burstAbility = getAbilityData()[burstConsumer.ability];
+    const contAbility = getAbilityData()[continuousConsumer.ability];
+    const burstApCoeff = burstAbility?.apCoeff || 0;
+    const contApCoeff = contAbility?.apCoeff || 0;
+
+    if (burstApCoeff > 0 && contApCoeff > 0) {
+      const poolingGain = (continuousConsumer.maxConsume || 2) * burstApCoeff;
+      const poolingCost = contApCoeff;
+      const netPerPool = poolingGain - poolingCost;
+      const totalNet = netPerPool * burstCasts;
+
+      conflicts.push({
+        type: "pooling_analysis",
+        description: `${model.name} pooling for ${burstConsumer.ability}: cost-benefit analysis`,
+        detail:
+          `Per pool window: gain ${poolingGain.toFixed(2)} AP (${continuousConsumer.maxConsume} extra ${burstConsumer.ability} ${model.name}) ` +
+          `vs lose ${poolingCost.toFixed(2)} AP (skipped ${continuousConsumer.ability}). ` +
+          `Net per window: ${netPerPool.toFixed(2)} AP. ` +
+          `Over ${burstCasts} casts: ${totalNet.toFixed(1)} AP total. ` +
+          `${netPerPool < 0 ? "POOLING NOT WORTH IT" : "Pooling may be beneficial"}.`,
+        resource: model.name,
+        burstConsumer: burstConsumer.ability,
+        continuousConsumer: continuousConsumer.ability,
+        costBenefit: {
+          gain: poolingGain,
+          loss: poolingCost,
+          net: netPerPool,
+          frequency: burstCasts,
+          totalNet,
+        },
+        severity: netPerPool >= 0 ? "medium" : "info",
+        recommendation:
+          netPerPool < 0
+            ? `DO NOT pool — ${continuousConsumer.ability} opportunity cost exceeds ${burstConsumer.ability} marginal gain`
+            : `Consider pooling ${model.name} 2-3s before ${burstConsumer.ability} comes off cooldown`,
+      });
+    }
+  }
+
+  return conflicts;
+}
+
+// Pattern: Resource Gating Issues — generic APL-text scanning
+function detectResourceGatingIssues(cycles, simResults, aplText) {
+  const conflicts = [];
+  const st = findScenario(simResults, "st");
+  if (!aplText) return conflicts;
+
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const resourceModels = specConfig.resourceModels || [];
+
+  // Scan each resource model's generators for resource guards in the APL
+  for (const rm of resourceModels) {
+    const resourceName = rm.name;
+    const cap = rm.cap;
+
+    for (const gen of rm.generators) {
+      if (!gen.ability || gen.procRate) continue;
+      // Look for resource guards on this generator
+      const pattern = new RegExp(
+        `${gen.ability}.*?${resourceName}\\s*<=?\\s*(\\d+)`,
+      );
+      const match = aplText.match(pattern);
+      if (!match) continue;
+
+      const threshold = parseInt(match[1], 10);
+      if (threshold > cap - 2) continue;
+
+      const casts = getCastCount(st, gen.ability);
+      const fightLength = getFightLength(st);
+      const cd = gen.cooldown || gen.rechargeCd || 0;
+      const theoreticalCasts =
+        fightLength > 0 && cd > 0 ? Math.floor(fightLength / cd) : 0;
+
+      if (theoreticalCasts > 0 && casts < theoreticalCasts * 0.85) {
         conflicts.push({
-          type: "burst_window_waste",
-          description: "Fel Devastation may not align with Fiery Brand windows",
+          type: "resource_gating",
+          description: `${gen.ability} ${resourceName} guard (<=${threshold}) may be too restrictive`,
           detail:
-            `FelDev casts per Brand window: ~${felDevPerBrand.toFixed(1)}. ` +
-            `Brand uptime: ${brandUptime}%. FelDev should sync with Brand for 15% Fire amp.`,
-          abilities: ["fel_devastation", "fiery_brand"],
+            `Actual casts: ${casts}, theoretical max: ${theoreticalCasts}. ` +
+            `Guard prevents casting when ${resourceName} > ${threshold}. ` +
+            `Relaxing to <=${cap - 1} may allow more casts with minimal overflow.`,
+          ability: gen.ability,
+          resource: resourceName,
+          currentThreshold: threshold,
           severity: "medium",
         });
       }
     }
   }
 
-  // Meta window utilization
-  if (metaUptime !== undefined && metaUptime > 5) {
-    const fracCasts = getCastCount(st, "fracture");
-    const fightLength = getFightLength(st);
-    if (fracCasts > 0 && fightLength > 0) {
-      // During Meta, Fracture generates 3 frags instead of 2.
-      // High-value: extra frag gen should translate to more spender casts
-      const metaDuration = getAbilityData().metamorphosis.duration;
-      const metaFraction = metaUptime / 100;
-      const expectedMetaFractures = fracCasts * metaFraction;
-      const extraFragsFromMeta = expectedMetaFractures; // +1 frag per Fracture in Meta
-
-      if (extraFragsFromMeta > 5) {
-        conflicts.push({
-          type: "burst_window_waste",
-          description:
-            "Metamorphosis generates extra fragments — optimize spending",
-          detail:
-            `~${expectedMetaFractures.toFixed(0)} Fractures during Meta ` +
-            `(${metaUptime}% uptime). Each generates +1 extra fragment. ` +
-            `Ensure spenders fire fast enough to avoid overflow during Meta.`,
-          abilities: ["fracture", "metamorphosis"],
-          severity: "info",
-        });
-      }
-    }
-  }
-
   return conflicts;
 }
 
-// Pattern E: Pooling Opportunities
-function detectPoolingOpportunities(resources, cycles, simResults) {
-  const conflicts = [];
-  const st = findScenario(simResults, "st");
-  if (!st) return conflicts;
-
-  const sbCycle = cycles.find((c) => c.ability === "spirit_bomb");
-  if (!sbCycle) return conflicts;
-
-  // Evaluate: should we pool fragments for SBomb?
-  // Cost: skip 1 Soul Cleave to save 2 frags
-  // Benefit: SBomb at 5 frags instead of 3
-  const sbApCoeff = getAbilityData().spirit_bomb.apCoeff; // 0.4 per frag
-  const scApCoeff = getAbilityData().soul_cleave.apCoeff; // 1.29
-
-  // Value of 2 extra frags in SBomb vs 1 Soul Cleave
-  const poolingGain = 2 * sbApCoeff; // +0.8 AP per SBomb from 2 extra frags
-  const poolingCost = scApCoeff; // 1.29 AP from skipped SC
-
-  const sbCasts = getCastCount(st, "spirit_bomb");
-  const fightLength = getFightLength(st);
-
-  if (sbCasts > 0 && fightLength > 0) {
-    // How often would pooling apply? Roughly 1 pool window per SBomb cast
-    const netPerPool = poolingGain - poolingCost;
-    const totalNet = netPerPool * sbCasts;
-
-    conflicts.push({
-      type: "pooling_analysis",
-      description: "Fragment pooling for Spirit Bomb: cost-benefit analysis",
-      detail:
-        `Per pool window: gain ${poolingGain.toFixed(2)} AP (2 extra SBomb frags) ` +
-        `vs lose ${poolingCost.toFixed(2)} AP (skipped SC). ` +
-        `Net per window: ${netPerPool.toFixed(2)} AP. ` +
-        `Over ${sbCasts} SBombs: ${totalNet.toFixed(1)} AP total. ` +
-        `${netPerPool < 0 ? "POOLING NOT WORTH IT" : "Pooling may be beneficial"}.`,
-      resource: "soul_fragments",
-      costBenefit: {
-        gain: poolingGain,
-        loss: poolingCost,
-        net: netPerPool,
-        frequency: sbCasts,
-        totalNet,
-      },
-      severity: netPerPool >= 0 ? "medium" : "info",
-      recommendation:
-        netPerPool < 0
-          ? "DO NOT pool — Soul Cleave opportunity cost exceeds Spirit Bomb marginal gain"
-          : "Consider pooling fragments 2-3s before Spirit Bomb comes off cooldown",
-    });
+// Returns the default APL branch (action list name) from the spec config
+function getDefaultAplBranch() {
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const trees = specConfig.heroTrees || {};
+  for (const treeConfig of Object.values(trees)) {
+    if (treeConfig.aplBranch) return treeConfig.aplBranch;
   }
-
-  return conflicts;
+  return "default";
 }
 
-// Pattern: Resource Gating Issues
-function detectResourceGatingIssues(cycles, simResults, aplText) {
-  const conflicts = [];
-  const st = findScenario(simResults, "st");
-
-  // Look for resource guards in APL conditions that may be too restrictive
-  if (aplText) {
-    // Sigil of Spite fragment guard
-    const spiteMatch = aplText.match(
-      /sigil_of_spite.*?soul_fragments\s*<=?\s*(\d+)/,
-    );
-    if (spiteMatch) {
-      const threshold = parseInt(spiteMatch[1], 10);
-      if (threshold <= 3) {
-        const spiteCasts = getCastCount(st, "sigil_of_spite");
-        const fightLength = getFightLength(st);
-        const theoreticalCasts =
-          fightLength > 0
-            ? Math.floor(fightLength / getAbilityData().sigil_of_spite.cooldown)
-            : 0;
-
-        if (spiteCasts < theoreticalCasts * 0.85) {
-          conflicts.push({
-            type: "resource_gating",
-            description: `Sigil of Spite fragment guard (<=\u200B${threshold}) may be too restrictive`,
-            detail:
-              `Actual casts: ${spiteCasts}, theoretical max: ${theoreticalCasts}. ` +
-              `Guard prevents casting when fragments > ${threshold}, but Spite generates fragments itself. ` +
-              `Relaxing to <=5 may allow more casts with minimal overflow.`,
-            ability: "sigil_of_spite",
-            resource: "soul_fragments",
-            currentThreshold: threshold,
-            severity: "medium",
-          });
-        }
+// Find which action list contains an ability by searching the APL text
+function findListForAbility(aplText, ability) {
+  if (!aplText) return getDefaultAplBranch();
+  try {
+    const ast = parse(aplText);
+    const lists = getActionLists(ast);
+    for (const list of lists) {
+      if (
+        list.entries.some((e) => e.type === "Action" && e.ability === ability)
+      ) {
+        return list.name;
       }
     }
-
-    // Fracture overflow guard
-    const fractureGuard = aplText.match(
-      /fracture.*?soul_fragments\s*<=?\s*(\d+)/,
-    );
-    if (fractureGuard) {
-      const threshold = parseInt(fractureGuard[1], 10);
-      if (threshold <= 4) {
-        const fracCasts = getCastCount(st, "fracture");
-        const fightLength = getFightLength(st);
-        // At cap 6, with 2 frags per Fracture, guard at <=4 means
-        // you can always Fracture without overflow. But the opportunity cost
-        // of NOT fracturing (losing fury gen) may exceed overflow cost.
-        conflicts.push({
-          type: "resource_gating",
-          description: `Fracture fragment guard (<=\u200B${threshold}) may cost DPS`,
-          detail:
-            `Fragment cap is 6, Fracture generates 2 (3 in Meta). ` +
-            `Guard at <=\u200B${threshold} prevents Fracture at ${threshold + 1}+ frags. ` +
-            `But Fracture is the primary fury generator — blocking it delays spenders.`,
-          ability: "fracture",
-          resource: "soul_fragments",
-          currentThreshold: threshold,
-          severity: "high",
-        });
-      }
-    }
+  } catch {
+    // Fall through to default
   }
-
-  return conflicts;
+  return getDefaultAplBranch();
 }
 
 // --- Hypothesis Generation ---
@@ -611,11 +617,8 @@ export function generateTemporalHypotheses(resourceFlow, aplText) {
     if (conflict.costBenefit?.net < -0.5 && conflict.severity !== "high") {
       continue;
     }
-
     const hypothesis = conflictToHypothesis(conflict, aplText);
-    if (hypothesis) {
-      hypotheses.push(hypothesis);
-    }
+    if (hypothesis) hypotheses.push(hypothesis);
   }
 
   hypotheses.push(...generateCycleAlignmentHypotheses(cycles, aplText));
@@ -632,311 +635,157 @@ export function generateTemporalHypotheses(resourceFlow, aplText) {
   return unique;
 }
 
+// Generic conflict-to-hypothesis converter — reads conflict metadata instead of
+// matching hardcoded ability names.
 function conflictToHypothesis(conflict, aplText) {
-  const generators = {
-    resource_gating: resourceGatingHypothesis,
-    resource_competition: resourceCompetitionHypothesis,
-    cooldown_collision: cooldownCollisionHypothesis,
-    burst_window_waste: burstWindowHypothesis,
-    pooling_analysis: poolingHypothesis,
-  };
-
-  return generators[conflict.type]?.(conflict) || null;
-}
-
-function resourceGatingHypothesis(conflict) {
-  if (conflict.ability === "sigil_of_spite") {
+  if (conflict.type === "resource_gating") {
     return {
       category: TEMPORAL_CATEGORIES.RESOURCE_GATING,
-      hypothesis: `Relax Sigil of Spite fragment guard from <=${conflict.currentThreshold} to <=5`,
+      hypothesis: `Relax ${conflict.ability} ${conflict.resource} guard (currently <=${conflict.currentThreshold})`,
       observation: conflict.detail,
-      target: "sigil_of_spite",
+      target: conflict.ability,
       priority: 7,
       confidence: "medium",
       aplMutation: {
         type: MUTATION_OPS.RELAX_THRESHOLD,
-        list: "ar",
-        ability: "sigil_of_spite",
-        resource: "soul_fragments",
-        adjustment: -(5 - conflict.currentThreshold), // negative = relax (increase threshold)
+        list: findListForAbility(aplText, conflict.ability),
+        ability: conflict.ability,
+        resource: conflict.resource,
         reason: conflict.detail,
       },
       temporalAnalysis: {
-        resourceFlow: "soul_fragments",
-        cycleLength: getAbilityData().sigil_of_spite.cooldown,
+        resourceFlow: conflict.resource,
         conflictType: "resource_gating",
-        timingWindow: "any time during 60s cycle",
       },
-      prediction:
-        "+0.2-0.4% DPS from more frequent Spite casts, slight increase in frag overflow",
     };
   }
 
-  if (conflict.ability === "fracture") {
-    return {
-      category: TEMPORAL_CATEGORIES.RESOURCE_GATING,
-      hypothesis: `Remove or relax Fracture fragment guard (currently <=${conflict.currentThreshold})`,
-      observation: conflict.detail,
-      target: "fracture",
-      priority: 9,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.REMOVE_CONDITION,
-        list: "ar",
-        ability: "fracture",
-        targetBuff: "soul_fragments", // will match soul_fragments conditions
-        reason:
-          "Fracture is the primary fury generator — blocking it delays spenders more than overflow costs",
-      },
-      temporalAnalysis: {
-        resourceFlow: "soul_fragments",
-        cycleLength: getAbilityData().fracture.rechargeCd,
-        conflictType: "resource_gating",
-        timingWindow: "continuous — Fracture is charge-based",
-      },
-      prediction:
-        "+5-10% DPS from unblocked fury generation, offset by minor fragment overflow",
-    };
-  }
-
-  return null;
-}
-
-function resourceCompetitionHypothesis(conflict) {
-  if (conflict.resource === "soul_fragments") {
+  if (conflict.type === "resource_competition") {
+    const consumers = conflict.consumers || [];
     return {
       category: TEMPORAL_CATEGORIES.TEMPORAL_POOLING,
-      hypothesis:
-        "Evaluate Soul Cleave fragment consumption rate vs Spirit Bomb needs",
+      hypothesis: `Evaluate ${consumers.join(" vs ")} competition for ${conflict.resource}`,
       observation: conflict.detail,
-      target: "soul_cleave",
+      target: consumers[0],
       priority: 5,
       confidence: "low",
       temporalAnalysis: {
-        resourceFlow: "soul_fragments",
+        resourceFlow: conflict.resource,
         conflictType: "resource_competition",
-        timingWindow: `${getAbilityData().spirit_bomb.cooldown}s Spirit Bomb cycle`,
       },
-      prediction:
-        "Marginal — pooling analysis typically shows net-negative for SC restriction",
     };
   }
 
-  return null;
-}
-
-function cooldownCollisionHypothesis(conflict) {
-  if (
-    conflict.abilities?.includes("soul_carver") &&
-    conflict.abilities?.includes("spirit_bomb")
-  ) {
+  if (conflict.type === "cooldown_collision") {
+    const abilities = conflict.abilities || [];
     return {
       category: TEMPORAL_CATEGORIES.COOLDOWN_SEQUENCING,
-      hypothesis:
-        "Sequence Soul Carver to fire 1-2 GCDs before Spirit Bomb is ready",
+      hypothesis: `Align ${abilities.join(" and ")} for better synergy`,
       observation: conflict.detail,
-      target: "soul_carver",
+      target: abilities[0],
       priority: 6,
-      confidence: "medium",
-      aplMutation: {
-        type: MUTATION_OPS.ADD_CONDITION,
-        list: "ar",
-        ability: "soul_carver",
-        condition: "cooldown.spirit_bomb.remains<3",
-        operator: "&",
-        allowFallback: true,
-        reason:
-          "Sync Soul Carver fragment generation with Spirit Bomb readiness",
-      },
+      confidence: conflict.severity === "info" ? "medium" : "high",
       temporalAnalysis: {
-        resourceFlow: "soul_fragments",
-        cycleLength: 60,
         conflictType: "cooldown_collision",
-        timingWindow: "3s before SBomb comes off CD",
       },
-      prediction:
-        "+0.1-0.3% from better fragment utilization, risk of delaying Carver",
     };
   }
 
-  if (
-    conflict.abilities?.includes("fiery_brand") &&
-    conflict.abilities?.includes("soul_carver")
-  ) {
-    return {
-      category: TEMPORAL_CATEGORIES.COOLDOWN_SEQUENCING,
-      hypothesis:
-        "Ensure Soul Carver fires during Fiery Brand for Fiery Demise amp",
-      observation: conflict.detail,
-      target: "soul_carver",
-      priority: 7,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.ADD_CONDITION,
-        list: "ar",
-        ability: "soul_carver",
-        condition: "dot.fiery_brand.remains>3",
-        operator: "&",
-        allowFallback: true,
-        reason:
-          "Soul Carver benefits from Fiery Demise — use with 3+ sec Brand remaining",
-      },
-      temporalAnalysis: {
-        resourceFlow: null,
-        cycleLength: 60,
-        conflictType: "cooldown_sync",
-        timingWindow: "during Fiery Brand (10s window every 60s)",
-      },
-      prediction: "+0.3-0.6% from Fiery Demise amp on Soul Carver damage",
-    };
-  }
-
-  return null;
-}
-
-function burstWindowHypothesis(conflict) {
-  if (
-    conflict.abilities?.includes("fel_devastation") &&
-    conflict.abilities?.includes("fiery_brand")
-  ) {
-    return {
-      category: TEMPORAL_CATEGORIES.COOLDOWN_SEQUENCING,
-      hypothesis:
-        "Sync Fel Devastation with Fiery Brand for 15% Fire damage amp",
-      observation: conflict.detail,
-      target: "fel_devastation",
-      priority: 6,
-      confidence: "medium",
-      aplMutation: {
-        type: MUTATION_OPS.ADD_CONDITION,
-        list: "ar",
-        ability: "fel_devastation",
-        condition: "dot.fiery_brand.ticking",
-        operator: "&",
-        allowFallback: true,
-        reason:
-          "Prefer Fel Devastation during Fiery Brand for Fiery Demise amp",
-      },
-      temporalAnalysis: {
-        resourceFlow: null,
-        cycleLength: 40,
-        conflictType: "burst_window_waste",
-        timingWindow: "during Fiery Brand window",
-      },
-      prediction: "+0.2-0.5% from Fiery Demise amp on FelDev",
-    };
-  }
-
-  if (
-    conflict.abilities?.includes("fracture") &&
-    conflict.abilities?.includes("metamorphosis")
-  ) {
+  if (conflict.type === "burst_window_waste") {
+    const abilities = conflict.abilities || [];
     return {
       category: TEMPORAL_CATEGORIES.CYCLE_ALIGNMENT,
-      hypothesis:
-        "Prioritize Fracture during Metamorphosis for +1 extra fragment per cast",
+      hypothesis: `Optimize ${abilities[0]} usage during ${abilities[1]} window`,
       observation: conflict.detail,
-      target: "fracture",
-      priority: 8,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.MOVE_UP,
-        list: "ar",
-        ability: "fracture",
-        condition: "buff.metamorphosis.up",
-        reason:
-          "Fracture generates 3 frags during Meta (not 2) — prioritize for resource acceleration",
-      },
+      target: abilities[0],
+      priority: 7,
+      confidence: "medium",
       temporalAnalysis: {
-        resourceFlow: "soul_fragments",
-        cycleLength: 120,
-        conflictType: "burst_window_utilization",
-        timingWindow: `during Metamorphosis (${getAbilityData().metamorphosis.duration}s window)`,
+        conflictType: "burst_window_waste",
       },
-      prediction:
-        "+3-5% DPS from maximizing fragment generation during Meta windows",
+    };
+  }
+
+  if (conflict.type === "pooling_analysis") {
+    const cb = conflict.costBenefit;
+    if (!cb) return null;
+
+    const baseAnalysis = {
+      resourceFlow: conflict.resource,
+      opportunityCost: cb,
+    };
+
+    if (cb.net < 0) {
+      return {
+        category: TEMPORAL_CATEGORIES.TEMPORAL_POOLING,
+        hypothesis: `${conflict.resource} pooling for ${conflict.burstConsumer} is NET NEGATIVE (${cb.net.toFixed(2)} AP/window)`,
+        observation: conflict.detail,
+        target: conflict.burstConsumer,
+        priority: 3,
+        confidence: "high",
+        temporalAnalysis: {
+          ...baseAnalysis,
+          conflictType: "pooling_rejected",
+        },
+        counterArgument: conflict.recommendation,
+      };
+    }
+
+    return {
+      category: TEMPORAL_CATEGORIES.TEMPORAL_POOLING,
+      hypothesis: `Pool ${conflict.resource} 2-3s before ${conflict.burstConsumer} CD (net +${cb.net.toFixed(2)} AP/window)`,
+      observation: conflict.detail,
+      target: conflict.continuousConsumer,
+      priority: 6,
+      confidence: "medium",
+      temporalAnalysis: {
+        ...baseAnalysis,
+        conflictType: "pooling_opportunity",
+      },
     };
   }
 
   return null;
 }
 
-function poolingHypothesis(conflict) {
-  const cb = conflict.costBenefit;
-  if (!cb) return null;
-
-  const sbCooldown = getAbilityData().spirit_bomb.cooldown;
-  const baseAnalysis = {
-    resourceFlow: "soul_fragments",
-    cycleLength: sbCooldown,
-    opportunityCost: cb,
-  };
-
-  if (cb.net < 0) {
-    return {
-      category: TEMPORAL_CATEGORIES.TEMPORAL_POOLING,
-      hypothesis: `Fragment pooling for Spirit Bomb is NET NEGATIVE (${cb.net.toFixed(2)} AP/window)`,
-      observation: conflict.detail,
-      target: "spirit_bomb",
-      priority: 3,
-      confidence: "high",
-      temporalAnalysis: { ...baseAnalysis, conflictType: "pooling_rejected" },
-      counterArgument: conflict.recommendation,
-      prediction: `Pooling would lose ~${Math.abs(cb.totalNet).toFixed(1)} AP over the fight`,
-    };
-  }
-
-  return {
-    category: TEMPORAL_CATEGORIES.TEMPORAL_POOLING,
-    hypothesis: `Pool fragments 2-3s before Spirit Bomb CD (net +${cb.net.toFixed(2)} AP/window)`,
-    observation: conflict.detail,
-    target: "soul_cleave",
-    priority: 6,
-    confidence: "medium",
-    aplMutation: {
-      type: MUTATION_OPS.ADD_CONDITION,
-      list: "ar",
-      ability: "soul_cleave",
-      condition: "cooldown.spirit_bomb.remains>3|soul_fragments<=3",
-      operator: "&",
-      reason: "Pool fragments when Spirit Bomb is almost ready",
-    },
-    temporalAnalysis: { ...baseAnalysis, conflictType: "pooling_opportunity" },
-    prediction: `+${cb.totalNet.toFixed(1)} AP over fight from better SBomb fragment counts`,
-  };
-}
-
+// Generate cycle alignment hypotheses from burst windows with sync targets
 function generateCycleAlignmentHypotheses(cycles, aplText) {
   const hypotheses = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const burstWindows = specConfig.burstWindows || [];
 
-  // Brand-first ordering: Brand before other 60s CDs
-  const brandCycle = cycles.find((c) => c.ability === "fiery_brand");
-  const carverCycle = cycles.find((c) => c.ability === "soul_carver");
+  for (const window of burstWindows) {
+    if (!window.syncTargets?.length) continue;
 
-  if (brandCycle && carverCycle) {
-    hypotheses.push({
-      category: TEMPORAL_CATEGORIES.COOLDOWN_SEQUENCING,
-      hypothesis:
-        "Cast Fiery Brand before Soul Carver/FelDev in cooldown sequence",
-      observation: `Brand (60s CD, 10s duration) enables 15% Fire amp. Other cooldowns should fire during this window.`,
-      target: "fiery_brand",
-      priority: 7,
-      confidence: "high",
-      aplMutation: {
-        type: MUTATION_OPS.MOVE_UP,
-        list: "ar",
-        ability: "fiery_brand",
-        reason: "Brand first enables Fiery Demise amp for subsequent cooldowns",
-      },
-      temporalAnalysis: {
-        resourceFlow: null,
-        cycleLength: 60,
-        conflictType: "cooldown_ordering",
-        timingWindow: "every 60s CD cycle",
-      },
-      prediction:
-        "+0.3-0.6% from Fiery Demise amplification of Soul Carver and FelDev",
-    });
+    const windowCycle = cycles.find((c) => c.ability === window.buff);
+    if (!windowCycle) continue;
+
+    // Check if any sync target shares a similar cooldown
+    for (const target of window.syncTargets) {
+      const targetCycle = cycles.find((c) => c.ability === target);
+      if (!targetCycle) continue;
+
+      hypotheses.push({
+        category: TEMPORAL_CATEGORIES.COOLDOWN_SEQUENCING,
+        hypothesis: `Cast ${window.buff} before ${target} in cooldown sequence`,
+        observation: `${window.buff} (${window.cooldown}s CD, ${window.duration}s duration) enables ${(window.damageAmp * 100).toFixed(0)}% ${window.school} amp. ${target} should fire during this window.`,
+        target: window.buff,
+        priority: 7,
+        confidence: "high",
+        aplMutation: {
+          type: MUTATION_OPS.MOVE_UP,
+          list: findListForAbility(aplText, window.buff),
+          ability: window.buff,
+          reason: `${window.buff} first enables damage amp for ${target}`,
+        },
+        temporalAnalysis: {
+          resourceFlow: null,
+          cycleLength: window.cooldown,
+          conflictType: "cooldown_ordering",
+          timingWindow: `every ${window.cooldown}s CD cycle`,
+        },
+      });
+    }
   }
 
   return hypotheses;
@@ -985,7 +834,14 @@ function estimateResourceFlow(scenario, resourceName, model) {
   const fightLength = getFightLength(scenario);
   if (fightLength <= 0) return null;
 
-  const metaUptime = (getBuffUptime(scenario, "metamorphosis") || 0) / 100;
+  // Find burst window that grants resource bonus for this resource
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const bonusWindow = (specConfig.burstWindows || []).find(
+    (w) => w.resourceBonus?.resource === resourceName,
+  );
+  const bonusUptime = bonusWindow
+    ? (getBuffUptime(scenario, bonusWindow.buff) || 0) / 100
+    : 0;
 
   let totalGen = 0;
   for (const gen of model.generators) {
@@ -993,7 +849,8 @@ function estimateResourceFlow(scenario, resourceName, model) {
     if (casts > 0) {
       const baseAmount = gen.amount || 0;
       const metaAmount = gen.amountMeta || baseAmount;
-      const effective = baseAmount * (1 - metaUptime) + metaAmount * metaUptime;
+      const effective =
+        baseAmount * (1 - bonusUptime) + metaAmount * bonusUptime;
       totalGen += casts * effective;
     }
   }
@@ -1012,27 +869,6 @@ function estimateResourceFlow(scenario, resourceName, model) {
     generationPerMin: (totalGen / fightLength) * 60,
     consumptionPerMin: (totalConsume / fightLength) * 60,
     netPerMin: ((totalGen - totalConsume) / fightLength) * 60,
-  };
-}
-
-// Approximate overflow — does not account for Fallout procs, Sigil of Spite
-// generation, or Meta bonus (+1 frag per Fracture). Use sim logs for precision.
-function estimateFragmentOverflow(scenario) {
-  if (!scenario) return null;
-
-  const generated =
-    getCastCount(scenario, "fracture") * 2 +
-    getCastCount(scenario, "soul_carver") * 3;
-  const consumed =
-    getCastCount(scenario, "spirit_bomb") * 4 +
-    getCastCount(scenario, "soul_cleave") * 2;
-  const overflow = Math.max(0, generated - consumed);
-
-  return {
-    estimated: overflow,
-    generated,
-    consumed,
-    pctOfGenerated: generated > 0 ? (overflow / generated) * 100 : 0,
   };
 }
 
@@ -1083,9 +919,12 @@ export function printTemporalAnalysis(resourceFlow) {
     }
     if (c.resourceBudget) {
       const b = c.resourceBudget;
-      console.log(
-        `  Budget: ~${b.furyGenerated} fury, ~${b.fragsGenerated} frags per cycle`,
-      );
+      const parts = Object.entries(b)
+        .filter(([k]) => k.endsWith("Generated"))
+        .map(([k, v]) => `~${v} ${k.replace("Generated", "")}`);
+      if (parts.length > 0) {
+        console.log(`  Budget: ${parts.join(", ")} per cycle`);
+      }
     }
     console.log();
   }
@@ -1152,6 +991,7 @@ export function printTemporalHypotheses(hypotheses) {
 // --- CLI Entry Point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await loadSpecAdapter();
   const resultsPath = process.argv[2];
   const aplPath = process.argv[3];
 
@@ -1179,7 +1019,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     aplText = readFileSync(aplPath, "utf-8");
   }
 
-  const spellDataPath = join(DATA_DIR, "spells.json");
+  const spellDataPath = dataFile("spells.json");
   const spellData = existsSync(spellDataPath)
     ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
     : [];

@@ -3,14 +3,9 @@
 // Usage: node src/analyze/talent-apl-coupling.js [talents.json] [apl.simc]
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { config } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
-const APL_DIR = join(ROOT, "apls");
+import { dataFile, aplsDir } from "../engine/paths.js";
 
 // --- Coupling Categories ---
 
@@ -222,7 +217,7 @@ function generateCouplingReport(talents, spells, aplText) {
 
 export function detectCouplings(talentsPath, aplPath = null) {
   const talents = JSON.parse(readFileSync(talentsPath, "utf-8"));
-  const spellsPath = join(DATA_DIR, "spells-summary.json");
+  const spellsPath = dataFile("spells-summary.json");
   const spells = existsSync(spellsPath)
     ? JSON.parse(readFileSync(spellsPath, "utf-8"))
     : [];
@@ -288,9 +283,9 @@ export function printCouplingReport(report) {
 
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const talentsPath = process.argv[2] || join(DATA_DIR, "talents.json");
+  const talentsPath = process.argv[2] || dataFile("talents.json");
   const aplPath =
-    process.argv[3] || join(APL_DIR, `${config.spec.specName}.simc`);
+    process.argv[3] || join(aplsDir(), `${config.spec.specName}.simc`);
 
   if (!existsSync(talentsPath)) {
     console.error(`Talents file not found: ${talentsPath}`);

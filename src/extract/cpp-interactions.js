@@ -5,18 +5,13 @@
 // 3. Effect scan: talent->ok() gating buff triggers or action procs
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import {
-  SIMC_DH_CPP,
+  SIMC_CPP,
   loadSpecAdapter,
   getSpecAdapter,
 } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "../..");
-const DATA_DIR = join(ROOT, "data");
-const REF_DIR = join(ROOT, "reference");
+import { dataDir, REFERENCE_DIR } from "../engine/paths.js";
 
 let _structToAbility = null;
 
@@ -24,11 +19,11 @@ export function extractCppInteractions(preloadedSource) {
   const adapter = getSpecAdapter();
   _structToAbility = adapter.getStructToAbilityMap();
 
-  const src = preloadedSource || readFileSync(SIMC_DH_CPP, "utf-8");
+  const src = preloadedSource || readFileSync(SIMC_CPP, "utf-8");
   const lines = src.split("\n");
 
   const talentVars = JSON.parse(
-    readFileSync(join(REF_DIR, "simc-talent-variables.json"), "utf-8"),
+    readFileSync(join(REFERENCE_DIR, "simc-talent-variables.json"), "utf-8"),
   );
 
   const varToName = new Map();
@@ -126,7 +121,7 @@ export function extractCppInteractions(preloadedSource) {
   };
 
   writeFileSync(
-    join(DATA_DIR, "cpp-interactions.json"),
+    join(dataDir(), "cpp-interactions.json"),
     JSON.stringify(output, null, 2),
   );
 

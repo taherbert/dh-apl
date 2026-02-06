@@ -2,26 +2,23 @@
 // Reads raidbots-talents.json (primary) and spells.json, outputs talents.json.
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import {
   HERO_SUBTREES,
   getDisplayNames,
   loadSpecAdapter,
 } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import { dataDir } from "../engine/paths.js";
 
 function buildTalentTrees() {
   const raidbots = JSON.parse(
-    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf-8"),
+    readFileSync(join(dataDir(), "raidbots-talents.json"), "utf-8"),
   );
 
   const spellMap = new Map();
-  if (existsSync(join(DATA_DIR, "spells.json"))) {
+  if (existsSync(join(dataDir(), "spells.json"))) {
     const spells = JSON.parse(
-      readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
+      readFileSync(join(dataDir(), "spells.json"), "utf-8"),
     );
     for (const s of spells) spellMap.set(s.id, s);
   }
@@ -98,7 +95,10 @@ function buildTalentTrees() {
   trees.spec.talents.sort(sortFn);
   for (const hero of Object.values(trees.hero)) hero.talents.sort(sortFn);
 
-  writeFileSync(join(DATA_DIR, "talents.json"), JSON.stringify(trees, null, 2));
+  writeFileSync(
+    join(dataDir(), "talents.json"),
+    JSON.stringify(trees, null, 2),
+  );
 
   console.log("Wrote data/talents.json");
   console.log(`  Class tree: ${trees.class.talents.length} talents`);

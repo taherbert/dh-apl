@@ -10,14 +10,12 @@ import {
   printProfilesetResults,
 } from "./profilesets.js";
 import { writeFileSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { config } from "../engine/startup.js";
+import { resultsDir, aplsDir } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const RESULTS_DIR = join(ROOT, "results");
-const APL_PATH = join(ROOT, "apls", `${config.spec.specName}.simc`);
+const RESULTS_DIR = resultsDir();
+const APL_PATH = join(aplsDir(), `${config.spec.specName}.simc`);
 
 // Shared AR list prefix (trinkets, potion, externals, sub-list calls)
 const AR_PREFIX = [

@@ -3,11 +3,7 @@
 // Leaves unresolvable variables as raw template text.
 
 import { readFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import { dataFile } from "../engine/paths.js";
 
 // Build a lookup map from spell ID → spell object
 function buildSpellMap(spells) {
@@ -455,9 +451,7 @@ export function resolveAllDescriptions(spells) {
 
 // CLI entry point — resolve and report
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const spells = JSON.parse(
-    readFileSync(join(DATA_DIR, "spells.json"), "utf8"),
-  );
+  const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf8"));
   const stats = resolveAllDescriptions(spells);
 
   console.log(

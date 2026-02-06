@@ -1,42 +1,68 @@
-Deep theorycraft analysis of the VDH APL. Not a checklist — a thinking session.
+Deep theorycraft analysis of the active spec's APL. Not a checklist — a thinking session.
 
 The goal is systemic insight: understanding the resource economy, identifying conceptual tensions in the rotation, and proposing multi-part changes that address root causes rather than symptoms. Simple threshold tweaks and line reorderings are not the point — those fall out naturally once the underlying model is right.
 
 ## Setup
 
-1. Read the analysis methodology: `prompts/apl-analysis-guide.md`
-2. Read the APL to analyze. Use `$ARGUMENTS` if provided, else `apls/vengeance.simc`, else `apls/baseline.simc`.
-3. Read spell data: `data/spells-summary.json`, `data/interactions-summary.json`, `data/cpp-proc-mechanics.json`
-4. Read accumulated findings and build history:
-   - `results/findings.json` — filter to `status: "validated"` to calibrate. These are known truths — your analysis should be consistent with them, or explain why they no longer hold.
-   - `results/builds.json` — discovered archetype rankings and factor impacts.
-5. Read from-scratch modeling work: `plans/apl-from-scratch-v2.md` (sections 1.1–1.5 contain the resource value analysis, state machine models, GCD budget, and burst window math)
-6. Check for sim results: `ls results/`. If none exist, run `node src/sim/runner.js <apl-file>` to establish a baseline.
+1. Run `node src/engine/startup.js` to determine the active spec (from `config.json`). Note the spec name — all paths below use it.
+2. Read the analysis methodology: `prompts/apl-analysis-guide.md`
+3. Read the APL to analyze. Use `$ARGUMENTS` if provided, else `apls/{spec}/{spec}.simc`, else `apls/{spec}/baseline.simc`.
+4. Read the spec adapter (`src/spec/{spec}.js`) — specifically `SPEC_CONFIG` — to learn the spec's resource names, ability names, hero trees, burst windows, state machines, and synergy clusters. All spec-specific knowledge comes from here. Do not hardcode ability or resource names.
+5. Read spell data: `data/{spec}/spells-summary.json`, `data/{spec}/interactions-summary.json`, `data/{spec}/cpp-proc-mechanics.json`
+6. Read accumulated findings and build history:
+   - `results/{spec}/findings.json` — filter to `status: "validated"` to calibrate. These are known truths — your analysis should be consistent with them, or explain why they no longer hold.
+   - `results/{spec}/builds.json` — discovered archetype rankings and factor impacts.
+   - `data/{spec}/build-theory.json` — curated archetype and cluster knowledge.
+7. Check for sim results: `ls results/{spec}/`. If none exist, run `node src/sim/runner.js <apl-file>` to establish a baseline.
+
+## Phase 0: Study Reference APL Technique
+
+Before modeling the economy, study the SimC default APL for **technique** — not priorities.
+
+Read `reference/{spec}-apl.simc` (the extracted SimC default APL). You are NOT copying this APL or adopting its priority ordering. You are studying it for SimC syntax patterns and structural techniques that inform how to EXPRESS your own ideas.
+
+Look for:
+
+- **Variable patterns** — how are complex conditions factored into reusable variables? What state do the variables track (resource thresholds, burst window detection, target count breakpoints)?
+- **Trinket handling** — how are trinkets pooled, condition-gated, or sync'd with burst windows? Trinket logic is notoriously complex in SimC; learn from existing implementations.
+- **Accumulator / state machine encoding** — how do the APL authors express multi-step cycles (e.g., "cast A, then B, then C in sequence")?
+- **Action list delegation** — how is `run_action_list` vs `call_action_list` used to structure the rotation? What sub-lists exist and why?
+- **AoE breakpoint logic** — how are `spell_targets` conditions structured for scaling?
+- **Cooldown sync patterns** — how are burst windows and cooldown alignment expressed?
+- **Off-GCD interleaving** — how are `use_off_gcd=true` and `use_while_casting=true` used?
+
+**Important constraints:**
+
+- The reference APL's priority ordering may be wrong, incomplete, or based on different assumptions. Do not trust its priorities — derive yours from math.
+- The reference APL's threshold values are likely tuned to one specific build. Your thresholds should come from your economic model.
+- Community wisdom embedded in the reference APL is at best incomplete and at worst wrong. Treat it as background research, not ground truth.
+
+Document any interesting techniques found for use in later phases.
 
 ## Phase 1: Model the Economy
 
 Before looking at any individual APL line, build a mental model of the rotation as an economic system. Use the frameworks from the analysis guide (sections 1, 2, 10).
 
-### Fury Economy
+### Primary Resource Economy
 
-Compute the equilibrium. How much Fury enters the system per minute? How much leaves? Where is the surplus or deficit? What is the marginal damage value of 1 Fury spent on each available spender? Does the APL's spending pattern match the mathematically optimal allocation?
-
-Key questions:
-
-- Is the Fury generation rate matched to the spending rate, or is one side bottlenecked?
-- What is the opportunity cost of each Fury spent? (Soul Cleave at 30 Fury vs Spirit Bomb at 40 Fury — what's the damage-per-Fury of each?)
-- During burst windows (Fiery Demise, Meta), does the Fury economy shift? Does the APL adapt?
-
-### Fragment Economy
-
-Fragments are the more interesting resource because they have dual value: direct damage (Spirit Bomb/Soul Cleave consumption) and secondary effects (Frailty uptime, Untethered Rage procs). Model both.
+Compute the equilibrium. How much primary resource enters the system per minute? How much leaves? Where is the surplus or deficit? What is the marginal damage value of 1 unit of primary resource spent on each available spender? Does the APL's spending pattern match the mathematically optimal allocation?
 
 Key questions:
 
-- What is the steady-state fragment generation rate? How does it change with target count (Fallout quadratic scaling)?
-- What is a fragment worth in damage terms? This depends on HOW it's consumed — 1 fragment in a 5-fragment Spirit Bomb is worth more than 1 fragment consumed by Soul Cleave.
-- Where do fragments get wasted? (Cap overflow, suboptimal consumption, movement consumption)
-- Does the APL's fragment consumption pattern maximize the value extracted per fragment?
+- Is the generation rate matched to the spending rate, or is one side bottlenecked?
+- What is the opportunity cost of each unit spent? Compare the damage-per-resource of each spender — which is most efficient per unit, and does the APL reflect that ordering?
+- During burst windows (from `SPEC_CONFIG.buffWindows`), does the resource economy shift? Does the APL adapt its spending to the amplified context?
+
+### Secondary Resource Economy (if applicable)
+
+If the spec has a secondary resource (check `SPEC_CONFIG.resources.secondary`), it is often the more interesting one because secondary resources tend to have dual value: direct damage via consumption and indirect effects (buff application, proc triggers). Model both.
+
+Key questions:
+
+- What is the steady-state generation rate? How does it change with target count?
+- What is a unit of this resource worth in damage terms? This depends on HOW it's consumed — the same resource may be worth more when consumed by a high-value spender than a low-value one.
+- Where does the resource get wasted? (Cap overflow, suboptimal consumption, movement waste)
+- Does the APL's consumption pattern maximize the value extracted per unit?
 
 ### GCD Budget
 
@@ -54,60 +80,54 @@ With the economic model built, look for structural conflicts — places where th
 
 ### Resource Competition
 
-Two consumers drawing from the same pool but serving different purposes. Example: Soul Cleave and Spirit Bomb both consume fragments, but Spirit Bomb applies Frailty (secondary value) while Soul Cleave is raw damage per Fury. The APL has to arbitrate between them, and the optimal choice depends on state (Frailty uptime, fragment count, burst window active, target count).
+Two consumers drawing from the same pool but serving different purposes. One may provide raw damage while another applies a debuff, buff, or triggers a secondary mechanic. The APL has to arbitrate between them, and the optimal choice depends on state (buff uptime, resource count, burst window active, target count).
 
 Is the APL's arbitration logic correct? Does it account for all the relevant state, or does it use a simplified heuristic that leaves value on the table?
 
 ### Cooldown Cycle Misalignment
 
-Map the cooldown periods: Spirit Bomb 25s, Fel Devastation 40s, Fiery Brand 60s, Soul Carver 60s, Sigil of Spite 60s, Metamorphosis 120s. These are not harmonics of each other — they drift in and out of alignment.
+Map the cooldown periods of every major ability (from `SPEC_CONFIG.cooldownBuffs` and spell data). These are rarely harmonics of each other — they drift in and out of alignment.
 
 Key questions:
 
-- Which cooldown overlaps create multiplicative damage windows? (Fiery Demise + Meta is the big one)
+- Which cooldown overlaps create multiplicative damage windows?
 - Does the APL try to align them, and if so, at what cost? (Holding a cooldown delays all future casts — model the holding cost per second using the analysis guide formula)
 - Are there cooldown collisions where two abilities compete for the same resource window?
 - What is the LCM of the major cooldowns, and does the APL's behavior over that supercycle look coherent?
 
 ### Burst Window Utilization
 
-During damage amplification windows (Fiery Demise, Metamorphosis, Thrill of the Fight), the value of every GCD increases. The APL should front-load high-value abilities into these windows.
+During damage amplification windows (from `SPEC_CONFIG.buffWindows`), the value of every GCD increases. The APL should front-load high-value abilities into these windows.
 
 Key questions:
 
 - How many GCDs fit inside each burst window?
 - What is the damage profile of those GCDs? Is the APL filling windows with its highest-DPGCD abilities, or are low-value fillers leaking in?
-- Does the APL pre-pool resources (Fury, fragments) before burst windows to ensure the window is fully utilized?
+- Does the APL pre-pool resources before burst windows to ensure the window is fully utilized?
 - What's the cost of pooling vs the gain from a fully-stocked burst window? (Use the opportunity cost framework)
 
 ### Second-Order Effect Chains
 
-Trace the indirect value chains (analysis guide section 9). Some changes that look negative in isolation are positive when you follow the chain:
+Trace the indirect value chains (analysis guide section 9). Some changes that look negative in isolation are positive when you follow the chain. For example, generating more of a resource than a spender immediately needs may trigger procs, buffs, or secondary effects that produce more value than the direct consumption.
 
-```
-Example: Generating more fragments than needed for Spirit Bomb
-  → More Untethered Rage procs (10% per fragment consumed)
-    → More haste/damage buffs
-      → More casts per minute → more Fury → more spending
-```
+Map these chains from `SPEC_CONFIG.resourceFlow` and `interactions-summary.json`. Is the APL's resource generation target accounting for these chains, or is it optimizing only for direct consumption value?
 
-Is the APL's fragment generation target accounting for these chains, or is it optimizing only for the direct Spirit Bomb value?
+### State Machine Coherence
 
-### State Machine Coherence (AR / Anni)
-
-The hero tree state machines (Art of the Glaive cycle for AR, Voidfall cycle for Anni) impose their own rhythm on the rotation. Does the APL's priority structure respect these rhythms, or does it fight against them?
+The hero trees (from `SPEC_CONFIG.heroTrees`) often impose their own rhythm on the rotation through state machines — cycles of ability empowerment, alternating phases, or proc chains. Does the APL's priority structure respect these rhythms, or does it fight against them?
 
 Key questions:
 
-- During the AR empowered phase (Rending Strike + Glaive Flurry), should cooldown usage change?
-- Does the AR cycle's ~4 GCD rhythm align with or conflict with Spirit Bomb's fragment accumulation pattern?
-- Should the APL treat the AR cycle as a "mini burst window" and adjust resource usage accordingly?
+- During empowered phases of a hero tree cycle, should cooldown usage or resource spending change?
+- Does the hero tree's GCD rhythm align with or conflict with the spec's core resource accumulation pattern?
+- Should the APL treat the hero tree cycle as a "mini burst window" and adjust resource usage accordingly?
+- If the spec supports multiple hero trees, does each branch handle its state machine correctly?
 
 ## Phase 3: Generate Deep Hypotheses
 
 For each systemic tension identified, formulate a multi-part hypothesis. Each hypothesis should:
 
-1. **Name the systemic issue** — not "move X above Y" but "the fragment economy is suboptimal because the APL treats all fragments as equal when their value depends on consumption context"
+1. **Name the systemic issue** — not "move X above Y" but "the resource economy is suboptimal because the APL treats all units of resource R as equal when their value depends on consumption context"
 2. **Describe the mechanism** — trace the causal chain with numbers from the spell data
 3. **Propose a multi-part solution** — this might involve new variables, restructured conditions, and changed priorities working together
 4. **Compute the expected impact** — use AP coefficients and cycle frequencies to estimate DPS delta
@@ -116,24 +136,24 @@ For each systemic tension identified, formulate a multi-part hypothesis. Each hy
 
 Aim for 3-5 deep hypotheses, not 15 shallow ones.
 
+**Present the ranked hypothesis list to the user and wait for confirmation before proceeding to testing.** The user may reorder, reject, or refine hypotheses based on domain knowledge not captured in the data files.
+
 ## Phase 4: Validate with Tools
 
-NOW run the automated analysis engines to cross-reference:
+Run the automated analysis engines to cross-reference your hypotheses:
 
 ```bash
 node src/sim/iterate.js strategic
 node src/sim/iterate.js theorycraft
 ```
 
-Compare their output against your hypotheses. Do the engines corroborate your reasoning? Did they find issues you missed? Did your deep analysis identify things the engines can't see (because they're structural, not pattern-matched)?
+These two commands are independent — launch them as parallel subagents to save time. Compare their output against your hypotheses. Do the engines corroborate your reasoning? Did they find issues you missed? Did your deep analysis identify things the engines can't see (because they're structural, not pattern-matched)?
 
 Also audit the APL for logic errors (stale hardcoded values, missing talent gates, dead lines) — these should be fixed before any optimization work.
 
 ## Phase 5: Test
 
-Present the ranked hypothesis list and wait for user confirmation before iterating.
-
-For each hypothesis, use the `/iterate-apl` methodology:
+For each approved hypothesis, use the `/iterate-apl` methodology:
 
 - Translate the multi-part hypothesis into a sequence of testable APL changes
 - If the hypothesis is truly multi-part (components are interdependent), test them together — a single "iteration" can be a coherent set of changes that implement one conceptual idea
@@ -153,19 +173,30 @@ Run `node src/sim/iterate.js summary` and commit final state.
 
 ### Record Findings
 
-Append insights discovered during this session to `results/findings.json`:
+Write findings discovered during this session to `results/{spec}/findings.json`:
 
 - Each systemic tension identified gets a finding entry (even if untested — use `status: "untested"`)
 - Each tested hypothesis gets a finding entry (use `status: "validated"` or `status: "rejected"`)
 - If any finding contradicts an existing validated finding, mark the old one `status: "superseded"` with a `supersededBy` reference
-- Use the tag taxonomy from `results/SCHEMA.md` — especially `fragment-economy`, `fury-economy`, `cooldown-sequencing`, `burst-window`, `state-machine`
+- Use the tag taxonomy from `results/{spec}/SCHEMA.md`
 
-If builds were tested, re-run `npm run discover -- --quick` to update `results/builds.json`.
+If builds were tested, re-run `npm run discover -- --quick` to update `results/{spec}/builds.json`.
+
+### Analysis Summary
+
+Write `results/{spec}/analysis_summary.md` with the full analysis narrative:
+
+- Economic models built (resource flow rates, GCD budget, marginal values)
+- Systemic tensions identified and their severity
+- Hypotheses generated, tested, and outcomes
+- Net DPS impact of accepted changes
+- Open questions for future sessions
 
 ## Anti-Patterns to Avoid
 
-- **Threshold grinding** — testing `fury>=38` vs `fury>=40` vs `fury>=42` is not theorycraft. If you can't explain WHY a different threshold would matter mechanically, don't test it.
-- **Blind reordering** — "move Fracture above Soul Cleave" without a theory of why the current order is wrong.
+- **Threshold grinding** — testing small numeric variations without a theory of why a different value would matter mechanically.
+- **Blind reordering** — moving one ability above another without a theory of why the current order is wrong.
 - **One-dimensional analysis** — evaluating an ability's value only by its direct damage, ignoring resource generation, buff application, and state machine progression.
 - **Ignoring interaction effects** — proposing a change without tracing its impact on cooldown alignment, resource flow, and burst window utilization.
 - **Over-trusting the engines** — the strategic and temporal hypothesis generators are pattern matchers. They find surface-level opportunities. The deep work is identifying systemic issues they can't see.
+- **Hardcoding spec knowledge** — ability names, resource names, thresholds, and cooldown values belong in the spec adapter. Reference `SPEC_CONFIG` fields, not literals.

@@ -3,16 +3,10 @@
 // Database files live in results/ alongside existing JSON.
 
 import { DatabaseSync } from "node:sqlite";
-import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { existsSync, readFileSync } from "node:fs";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const RESULTS_DIR = join(ROOT, "results");
-
-const BUILDS_DB_PATH = join(RESULTS_DIR, "builds.db");
-const FINDINGS_DB_PATH = join(RESULTS_DIR, "findings.db");
+import "../engine/startup.js";
+import { resultsFile } from "../engine/paths.js";
 
 // --- Schema definitions ---
 
@@ -59,15 +53,6 @@ const BUILDS_SCHEMA = `
   CREATE INDEX IF NOT EXISTS idx_builds_weighted ON builds(weighted DESC);
   CREATE INDEX IF NOT EXISTS idx_builds_hero_tree ON builds(hero_tree);
   CREATE INDEX IF NOT EXISTS idx_factors_talent ON factors(talent);
-
-  CREATE TABLE IF NOT EXISTS runs (
-    id TEXT PRIMARY KEY,
-    apl TEXT,
-    fidelity TEXT,
-    scenarios TEXT,  -- JSON
-    weights TEXT,    -- JSON
-    created_at TEXT DEFAULT (datetime('now'))
-  );
 `;
 
 const FINDINGS_SCHEMA = `
@@ -86,6 +71,7 @@ const FINDINGS_SCHEMA = `
   );
 
   CREATE INDEX IF NOT EXISTS idx_findings_status ON findings(status);
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_findings_dedup ON findings(insight, date);
 
   CREATE TABLE IF NOT EXISTS hypotheses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -99,6 +85,8 @@ const FINDINGS_SCHEMA = `
     created_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (finding_id) REFERENCES findings(id)
   );
+
+  CREATE INDEX IF NOT EXISTS idx_hypotheses_status ON hypotheses(status, priority DESC);
 `;
 
 // --- Database access ---
@@ -108,14 +96,14 @@ let _findingsDb = null;
 
 export function getBuildsDb() {
   if (_buildsDb) return _buildsDb;
-  _buildsDb = new DatabaseSync(BUILDS_DB_PATH);
+  _buildsDb = new DatabaseSync(resultsFile("builds.db"));
   _buildsDb.exec(BUILDS_SCHEMA);
   return _buildsDb;
 }
 
 export function getFindingsDb() {
   if (_findingsDb) return _findingsDb;
-  _findingsDb = new DatabaseSync(FINDINGS_DB_PATH);
+  _findingsDb = new DatabaseSync(resultsFile("findings.db"));
   _findingsDb.exec(FINDINGS_SCHEMA);
   return _findingsDb;
 }
@@ -318,6 +306,19 @@ export function importBuildsFromJson(jsonPath) {
     }
   }
 
+  // Back-fill archetype column from discoveredArchetypes
+  if (data.discoveredArchetypes) {
+    const updateStmt = db.prepare(
+      `UPDATE builds SET archetype = ? WHERE hash = ?`,
+    );
+    for (const a of data.discoveredArchetypes) {
+      if (a.bestBuild?.hash) updateStmt.run(a.name, a.bestBuild.hash);
+      for (const b of a.builds || []) {
+        if (b.hash) updateStmt.run(a.name, b.hash);
+      }
+    }
+  }
+
   // Import factors
   const runId = data._generated || "imported";
   if (data.factorImpacts) {
@@ -366,6 +367,19 @@ export function importBuildsFromJson(jsonPath) {
     }
   }
 
+  // Back-fill archetype column on builds from discoveredArchetypes mapping
+  if (data.discoveredArchetypes) {
+    const updateStmt = db.prepare(
+      `UPDATE builds SET archetype = ? WHERE hash = ?`,
+    );
+    for (const a of data.discoveredArchetypes) {
+      if (a.bestBuild?.hash) updateStmt.run(a.name, a.bestBuild.hash);
+      for (const b of a.builds || []) {
+        if (b.hash) updateStmt.run(a.name, b.hash);
+      }
+    }
+  }
+
   return { imported };
 }
 
@@ -378,7 +392,7 @@ export function importFindingsFromJson(jsonPath) {
   let imported = 0;
   if (data.findings) {
     const stmt = db.prepare(`
-      INSERT INTO findings (date, insight, evidence, confidence, build, apl_version, status, tags)
+      INSERT OR REPLACE INTO findings (date, insight, evidence, confidence, build, apl_version, status, tags)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
     for (const f of data.findings) {
@@ -405,12 +419,10 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const cmd = process.argv[2];
 
   if (cmd === "migrate") {
-    const buildsResult = importBuildsFromJson(join(RESULTS_DIR, "builds.json"));
+    const buildsResult = importBuildsFromJson(resultsFile("builds.json"));
     console.log(`Imported ${buildsResult.imported} builds to SQLite`);
 
-    const findingsResult = importFindingsFromJson(
-      join(RESULTS_DIR, "findings.json"),
-    );
+    const findingsResult = importFindingsFromJson(resultsFile("findings.json"));
     console.log(`Imported ${findingsResult.imported} findings to SQLite`);
 
     closeAll();

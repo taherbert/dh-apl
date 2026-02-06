@@ -3,8 +3,7 @@
 // Usage: node src/apl/mutator.js <apl-file.simc> <mutation.json>
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname, basename } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, dirname } from "node:path";
 import {
   parse,
   serialize,
@@ -41,9 +40,6 @@ export const MUTATION_OPS = {
   REPLACE_ACTION: "replace_action", // Replace entire action line
   DELETE_ACTION: "delete_action", // Remove action from list
 };
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
 
 const MUTATION_HANDLERS = {
   [MUTATION_OPS.ADD_CONDITION]: applyAddCondition,

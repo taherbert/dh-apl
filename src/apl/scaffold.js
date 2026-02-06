@@ -3,13 +3,8 @@
 // Usage: node src/apl/scaffold.js [spec] [hero-tree] [output.simc]
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import { loadSpecAdapter, getSpecAdapter, config } from "../engine/startup.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
+import { dataFile } from "../engine/paths.js";
 
 function getScaffoldConfig() {
   const adapter = getSpecAdapter();
@@ -189,7 +184,7 @@ function generateScaffoldApl(specConfig, spells, talents) {
   lines.push("");
 
   // Profile reference
-  lines.push("input=apls/profile.simc");
+  lines.push(`input=apls/${specConfig.specId}/profile.simc`);
   lines.push("");
 
   // Precombat
@@ -351,8 +346,8 @@ function generateAnalysisReport(specConfig, spells) {
 export function scaffold(specId, heroTree = null) {
   const specConfig = getScaffoldConfig();
 
-  const spellsPath = join(DATA_DIR, "spells-summary.json");
-  const talentsPath = join(DATA_DIR, "talents.json");
+  const spellsPath = dataFile("spells-summary.json");
+  const talentsPath = dataFile("talents.json");
 
   if (!existsSync(spellsPath)) {
     throw new Error(

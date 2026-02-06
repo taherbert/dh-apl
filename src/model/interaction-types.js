@@ -276,7 +276,7 @@ export function resolveSchoolTarget(sourceSpell, effectIndices) {
 }
 
 // Extract detailed effect info for enriched interaction output.
-// vdhSpellNames: optional Set<string> to filter affectedSpells to VDH-relevant only.
+// specSpellNames: optional Set<string> to filter affectedSpells to spec-relevant only.
 export function extractEffectDetails(
   sourceSpell,
   effectIndices,

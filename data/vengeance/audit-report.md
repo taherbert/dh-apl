@@ -1,61 +1,62 @@
 # Interaction Audit Report
 
-Generated: 2026-02-03T18:38:33.320Z
+Generated: 2026-02-06T01:26:55.829Z
 
 ## Summary
 
-- **Total interactions:** 296
-- **Talents with interactions:** 87
+- **Total interactions:** 340
+- **Talents with interactions:** 89
 - **Total talents:** 124
 
 ### By Type
 
 | Type | Count |
 |------|-------|
-| damage_modifier | 169 |
-| buff_grant | 36 |
-| proc_trigger | 33 |
-| duration_modifier | 15 |
+| damage_modifier | 216 |
+| buff_grant | 41 |
+| proc_trigger | 32 |
 | resource_modifier | 14 |
 | range_modifier | 13 |
-| cooldown_modifier | 12 |
-| mechanic_change | 3 |
-| stacking_modifier | 1 |
+| duration_modifier | 11 |
+| cooldown_modifier | 10 |
+| direct_damage_modifier | 2 |
+| mechanic_change | 1 |
 
 ### By Discovery Method
 
 | Method | Count |
 |--------|-------|
-| spell_data | 219 |
-| cpp_scanner | 57 |
-| effect_scan | 14 |
-| manual | 6 |
+| spell_data | 262 |
+| cpp_scanner | 55 |
+| effect_scan | 20 |
+| cpp_effects | 2 |
+| manual | 1 |
 
 ### By Confidence
 
 | Confidence | Count |
 |------------|-------|
-| high | 225 |
-| medium | 71 |
+| high | 265 |
+| medium | 75 |
 
 ### By Source Tree
 
 | Tree | Count |
 |------|-------|
-| non-talent | 164 |
-| spec | 75 |
-| hero | 32 |
-| class | 25 |
+| non-talent | 180 |
+| spec | 89 |
+| hero | 53 |
+| class | 18 |
 
 ## Talent Triage
 
 | Category | Count |
 |----------|-------|
-| has_interactions | 68 |
-| cpp_only | 46 |
-| stat_passive | 5 |
+| has_interactions | 77 |
+| cpp_only | 38 |
+| stat_passive | 4 |
+| self_buff | 2 |
 | active_ability | 1 |
-| self_buff | 1 |
 
 ## Per-Talent Detail
 
@@ -100,13 +101,9 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Bouncing Glaives (320386) — has_interactions
+#### Bouncing Glaives (320386) — cpp_only
 
-| Target | Type | Method |
-|--------|------|--------|
-| Throw Glaive | damage_modifier | spell_data |
-| Throw Glaive | damage_modifier | spell_data |
-| Reaver's Glaive | damage_modifier | spell_data |
+_No outgoing interactions_
 
 #### Imprison (217832) — active_ability
 
@@ -127,7 +124,6 @@ _No outgoing interactions_
 - Frailty [damage_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
 - Reaver's Mark [damage_modifier, spell_data]
-- Thrill of the Fight [damage_modifier, spell_data]
 - Thrill of the Fight [damage_modifier, spell_data]
 
 #### Improved Disrupt (320361) — cpp_only
@@ -188,8 +184,7 @@ _No outgoing interactions_
 
 | Target | Type | Method |
 |--------|------|--------|
-| Immolation Aura | damage_modifier | spell_data |
-| Immolation Aura | damage_modifier | spell_data |
+| Aura of Pain | damage_modifier | effect_scan |
 
 #### Live by the Glaive (428607) — has_interactions
 
@@ -201,11 +196,9 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Soul Rending (204909) — has_interactions
+#### Soul Rending (204909) — cpp_only
 
-| Target | Type | Method |
-|--------|------|--------|
-| Metamorphosis | damage_modifier | spell_data |
+_No outgoing interactions_
 
 #### Felfire Haste (389846) — has_interactions
 
@@ -217,12 +210,7 @@ _No outgoing interactions_
 
 | Target | Type | Method |
 |--------|------|--------|
-| Immolation Aura | damage_modifier | spell_data |
-| Immolation Aura | damage_modifier | spell_data |
-| Immolation Aura | damage_modifier | spell_data |
-| Immolation Aura | damage_modifier | spell_data |
-| Immolation Aura | damage_modifier | spell_data |
-| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | resource_modifier | cpp_scanner |
 
 **Incoming:**
 - Fallout [resource_modifier, cpp_scanner]
@@ -250,7 +238,7 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Will of the Illidari (389695) — stat_passive
+#### Will of the Illidari (389695) — cpp_only
 
 _No outgoing interactions_
 
@@ -266,9 +254,11 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### First In, Last Out (1266497) — cpp_only
+#### First In, Last Out (1266497) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| First In, Last Out | proc_trigger | effect_scan |
 
 #### Erratic Felheart (391397) — cpp_only
 
@@ -286,13 +276,17 @@ _No outgoing interactions_
 - Long Night [duration_modifier, spell_data]
 - Pitch Black [cooldown_modifier, spell_data]
 
-#### Demon Muzzle (1266329) — cpp_only
+#### Demon Muzzle (1266329) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Demon Muzzle | proc_trigger | effect_scan |
 
-#### Soul Splitter (1266330) — cpp_only
+#### Soul Splitter (1266330) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Soul Splitter | damage_modifier | effect_scan |
 
 #### Wings of Wrath (1266493) — cpp_only
 
@@ -324,7 +318,6 @@ _No outgoing interactions_
 | Darkglare Boon | cooldown_modifier | cpp_scanner |
 
 **Incoming:**
-- Meteoric Rise [cooldown_modifier, cpp_scanner]
 - Darkglare Boon [cooldown_modifier, cpp_scanner]
 
 #### Spirit Bomb (247454) — has_interactions
@@ -336,7 +329,6 @@ _No outgoing interactions_
 
 **Incoming:**
 - Dark Matter [proc_trigger, cpp_scanner]
-- Untethered Rage [mechanic_change, manual]
 
 #### Fiery Brand (204021) — has_interactions
 
@@ -347,7 +339,6 @@ _No outgoing interactions_
 - Fiery Brand [damage_modifier, spell_data]
 - Fiery Demise [damage_modifier, spell_data]
 - Frailty [damage_modifier, spell_data]
-- Fiery Brand [duration_modifier, spell_data]
 - Burning Blood [damage_modifier, spell_data]
 - Reaver's Mark [damage_modifier, spell_data]
 - Thrill of the Fight [damage_modifier, spell_data]
@@ -371,15 +362,26 @@ _No outgoing interactions_
 
 | Target | Type | Method |
 |--------|------|--------|
-| Sigil of Flame | duration_modifier | cpp_scanner |
+| Sigil of Flame | damage_modifier | spell_data |
 
 **Incoming:**
 - Cycle of Binding [duration_modifier, cpp_scanner]
 - Frailty [duration_modifier, cpp_scanner]
 
-#### Tempered Steel (1265800) — cpp_only
+#### Tempered Steel (1265800) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Vengeful Retreat | damage_modifier | spell_data |
+| Shear | damage_modifier | spell_data |
+| Fracture | damage_modifier | spell_data |
+| Fracture | damage_modifier | spell_data |
+| Soul Cleave | damage_modifier | spell_data |
+| Throw Glaive | damage_modifier | spell_data |
+| Reaver's Glaive | damage_modifier | spell_data |
+| Warblade's Hunger | damage_modifier | spell_data |
+| Fury of the Aldrachi | damage_modifier | spell_data |
+| Preemptive Strike | damage_modifier | spell_data |
 
 #### Calcified Spikes (389720) — cpp_only
 
@@ -390,6 +392,8 @@ _No outgoing interactions_
 | Target | Type | Method |
 |--------|------|--------|
 | Fel Devastation | buff_grant | spell_data |
+| Voidfall Meteor | buff_grant | spell_data |
+| Meteor Shower | buff_grant | spell_data |
 
 #### Sigil of Silence (202137) — has_interactions
 
@@ -428,6 +432,7 @@ _No outgoing interactions_
 | Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
 | Immolation Aura | damage_modifier | spell_data |
+| Soul Immolation | damage_modifier | spell_data |
 | Infernal Armor | cooldown_modifier | cpp_scanner |
 
 #### Feed the Demon (218612) — cpp_only
@@ -452,12 +457,13 @@ _No outgoing interactions_
 | Immolation Aura | damage_modifier | spell_data |
 | Infernal Armor | damage_modifier | spell_data |
 | Sigil of Spite | damage_modifier | spell_data |
+| Voidfall Meteor | damage_modifier | spell_data |
+| Catastrophe | damage_modifier | spell_data |
+| Meteor Shower | damage_modifier | spell_data |
 
-#### Revel in Pain (343014) — has_interactions
+#### Revel in Pain (343014) — cpp_only
 
-| Target | Type | Method |
-|--------|------|--------|
-| Revel in Pain | proc_trigger | effect_scan |
+_No outgoing interactions_
 
 #### Frailty (389958) — has_interactions
 
@@ -496,7 +502,8 @@ _No outgoing interactions_
 
 | Target | Type | Method |
 |--------|------|--------|
-| Immolation Aura | resource_modifier | cpp_scanner |
+| Immolation Aura | damage_modifier | spell_data |
+| Immolation Aura | damage_modifier | spell_data |
 | Infernal Armor | resource_modifier | cpp_scanner |
 
 **Incoming:**
@@ -520,11 +527,9 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Void Reaver (268175) — has_interactions
+#### Void Reaver (268175) — cpp_only
 
-| Target | Type | Method |
-|--------|------|--------|
-| Void Reaver | proc_trigger | effect_scan |
+_No outgoing interactions_
 
 #### Painbringer (207387) — self_buff
 
@@ -564,6 +569,7 @@ _No outgoing interactions_
 | Target | Type | Method |
 |--------|------|--------|
 | Soul Cleave | damage_modifier | cpp_scanner |
+| soul_cleave_t | direct_damage_modifier | cpp_effects |
 
 **Incoming:**
 - Frailty [damage_modifier, cpp_scanner]
@@ -597,9 +603,11 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Vengeful Beast (1265818) — cpp_only
+#### Vengeful Beast (1265818) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Metamorphosis | duration_modifier | spell_data |
 
 #### Charred Flesh (336639) — has_interactions
 
@@ -616,7 +624,7 @@ _No outgoing interactions_
 
 | Target | Type | Method |
 |--------|------|--------|
-| Frailty | stacking_modifier | spell_data |
+| Frailty | damage_modifier | spell_data |
 
 #### Soul Carver (207407) — has_interactions
 
@@ -649,24 +657,19 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Untethered Rage (1270444) — unknown
+#### Untethered Rage (1270444) — has_interactions
+
+_No outgoing interactions_
+
+#### Untethered Rage (1270448) — has_interactions
+
+_No outgoing interactions_
+
+#### Untethered Rage (1270449) — has_interactions
 
 | Target | Type | Method |
 |--------|------|--------|
-| Metamorphosis | proc_trigger | manual |
-
-#### Untethered Rage (1270448) — unknown
-
-| Target | Type | Method |
-|--------|------|--------|
-| Spirit Bomb | mechanic_change | manual |
-| Soul Cleave | mechanic_change | manual |
-
-#### Untethered Rage (1270449) — unknown
-
-| Target | Type | Method |
-|--------|------|--------|
-| Seething Anger | buff_grant | manual |
+| buff:untethered_rage | buff_grant | effect_scan |
 
 ### Hero: Aldrachi Reaver
 
@@ -714,9 +717,11 @@ _No outgoing interactions_
 **Incoming:**
 - Fury of the Aldrachi [proc_trigger, cpp_scanner]
 
-#### Broken Spirit (1272143) — cpp_only
+#### Broken Spirit (1272143) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Broken Spirit | damage_modifier | effect_scan |
 
 #### Aldrachi Tactics (442683) — has_interactions
 
@@ -741,9 +746,19 @@ _No outgoing interactions_
 
 _No outgoing interactions_
 
-#### Keen Edge (1272138) — cpp_only
+#### Keen Edge (1272138) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Vengeful Retreat | damage_modifier | spell_data |
+| Shear | damage_modifier | spell_data |
+| Fracture | damage_modifier | spell_data |
+| Fracture | damage_modifier | spell_data |
+| Throw Glaive | damage_modifier | spell_data |
+| Reaver's Glaive | damage_modifier | spell_data |
+| Warblade's Hunger | damage_modifier | spell_data |
+| Fury of the Aldrachi | damage_modifier | spell_data |
+| Preemptive Strike | damage_modifier | spell_data |
 
 #### Incisive Blade (442492) — has_interactions
 
@@ -805,15 +820,17 @@ _No outgoing interactions_
 **Incoming:**
 - World Killer [mechanic_change, cpp_scanner]
 
-#### Swift Erasure (1253668) — cpp_only
+#### Swift Erasure (1253668) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Swift Erasure | damage_modifier | effect_scan |
 
 #### Meteoric Rise (1253377) — has_interactions
 
 | Target | Type | Method |
 |--------|------|--------|
-| Fel Devastation | cooldown_modifier | cpp_scanner |
+| Fel Devastation | damage_modifier | spell_data |
 | Darkglare Boon | cooldown_modifier | cpp_scanner |
 | buff:voidfall_building | buff_grant | effect_scan |
 
@@ -826,13 +843,15 @@ _No outgoing interactions_
 |--------|------|--------|
 | Soul Cleave | proc_trigger | cpp_scanner |
 
-#### Phase Shift (1256245) — cpp_only
+#### Phase Shift (1256245) — self_buff
 
 _No outgoing interactions_
 
-#### Path to Oblivion (1253399) — cpp_only
+#### Path to Oblivion (1253399) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Path to Oblivion | damage_modifier | effect_scan |
 
 #### State of Matter (1253402) — cpp_only
 
@@ -851,13 +870,23 @@ _No outgoing interactions_
 | World Killer | proc_trigger | cpp_scanner |
 | buff:doomsayer_in_combat | buff_grant | effect_scan |
 
-#### Harness the Cosmos (1279247) — cpp_only
+#### Harness the Cosmos (1279247) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Voidfall Meteor | damage_modifier | spell_data |
+| Voidfall Meteor | damage_modifier | spell_data |
+| Meteor Shower | damage_modifier | spell_data |
+| Meteor Shower | damage_modifier | spell_data |
 
-#### Celestial Echoes (1253415) — cpp_only
+#### Celestial Echoes (1253415) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| Shear | damage_modifier | spell_data |
+| Fracture | damage_modifier | spell_data |
+| Fracture | damage_modifier | spell_data |
+| Fracture | damage_modifier | spell_data |
 
 #### Final Hour (1253805) — cpp_only
 
@@ -880,9 +909,11 @@ _No outgoing interactions_
 - Spirit Bomb [proc_trigger, cpp_scanner]
 - Frailty [proc_trigger, cpp_scanner]
 
-#### Otherworldly Focus (1253817) — cpp_only
+#### Otherworldly Focus (1253817) — has_interactions
 
-_No outgoing interactions_
+| Target | Type | Method |
+|--------|------|--------|
+| otherworldly_focus_benefit_t | direct_damage_modifier | cpp_effects |
 
 #### World Killer (1256353) — has_interactions
 
@@ -899,9 +930,26 @@ _No outgoing interactions_
 
 Hero talents that interact with spec/class abilities:
 
+- **Keen Edge** (Aldrachi Reaver) → Vengeful Retreat [damage_modifier]
+- **Celestial Echoes** (Annihilator) → Shear [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Shear [damage_modifier]
+- **Meteoric Rise** (Annihilator) → Fel Devastation [damage_modifier]
+- **Celestial Echoes** (Annihilator) → Fracture [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Fracture [damage_modifier]
+- **Celestial Echoes** (Annihilator) → Fracture [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Fracture [damage_modifier]
 - **Incisive Blade** (Aldrachi Reaver) → Soul Cleave [damage_modifier]
+- **Celestial Echoes** (Annihilator) → Fracture [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Throw Glaive [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Reaver's Glaive [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Warblade's Hunger [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Fury of the Aldrachi [damage_modifier]
+- **Keen Edge** (Aldrachi Reaver) → Preemptive Strike [damage_modifier]
+- **Harness the Cosmos** (Annihilator) → Voidfall Meteor [damage_modifier]
+- **Harness the Cosmos** (Annihilator) → Voidfall Meteor [damage_modifier]
+- **Harness the Cosmos** (Annihilator) → Meteor Shower [damage_modifier]
+- **Harness the Cosmos** (Annihilator) → Meteor Shower [damage_modifier]
 - **Catastrophe** (Annihilator) → Soul Cleave [proc_trigger]
-- **Meteoric Rise** (Annihilator) → Fel Devastation [cooldown_modifier]
 - **Dark Matter** (Annihilator) → Spirit Bomb [proc_trigger]
 - **Dark Matter** (Annihilator) → Soul Cleave [cooldown_modifier]
 - **Warblade's Hunger** (Aldrachi Reaver) → Felblade [damage_modifier]
@@ -913,6 +961,7 @@ Hero talents that interact with spec/class abilities:
 - **Mass Acceleration** (Annihilator) → buff:voidfall_building [buff_grant]
 - **Meteoric Rise** (Annihilator) → buff:voidfall_building [buff_grant]
 - **Doomsayer** (Annihilator) → buff:doomsayer_in_combat [buff_grant]
+- **Otherworldly Focus** (Annihilator) → otherworldly_focus_benefit_t [direct_damage_modifier]
 
 ## Resource Economy
 
@@ -923,7 +972,7 @@ Interactions involving resource generation/spending:
 - Swallowed Anger → Consume Magic [resource_modifier] (conditional)
 - Fallout → Immolation Aura [resource_modifier] (conditional)
 - Charred Flesh → Immolation Aura [resource_modifier] (conditional)
-- Volatile Flameblood → Immolation Aura [resource_modifier] (conditional)
+- Infernal Armor → Immolation Aura [resource_modifier] (conditional)
 - Keen Engagement → Throw Glaive [resource_modifier] (conditional)
 - Consume Magic → Swallowed Anger [resource_modifier] (conditional)
 - Fallout → Charred Flesh [resource_modifier] (conditional)
@@ -939,57 +988,49 @@ Talents with zero interactions (excluding stat passives):
 
 - **Vengeful Bonds** (320635) — cpp_only [class]
 - **Improved Sigil of Misery** (320418) — cpp_only [class]
+- **Bouncing Glaives** (320386) — cpp_only [class]
 - **Imprison** (217832) — active_ability [class]
 - **Charred Warblades** (213010) — cpp_only [class]
 - **Improved Disrupt** (320361) — cpp_only [class]
 - **Focused Ire** (1266296) — cpp_only [class]
 - **Blazing Path** (320416) — cpp_only [class]
 - **Pursuit** (320654) — cpp_only [class]
+- **Soul Rending** (204909) — cpp_only [class]
 - **Burn It Out** (1266316) — cpp_only [class]
 - **Soul Cleanse** (1266496) — cpp_only [class]
 - **Lost in Darkness** (389849) — cpp_only [class]
 - **Felbound** (1266762) — cpp_only [class]
+- **Will of the Illidari** (389695) — cpp_only [class]
 - **Furious** (1266326) — cpp_only [class]
 - **Remorseless** (1266328) — cpp_only [class]
-- **First In, Last Out** (1266497) — cpp_only [class]
 - **Erratic Felheart** (391397) — cpp_only [class]
 - **Final Breath** (1266500) — cpp_only [class]
-- **Demon Muzzle** (1266329) — cpp_only [class]
-- **Soul Splitter** (1266330) — cpp_only [class]
 - **Wings of Wrath** (1266493) — cpp_only [class]
 - **Demonic Resilience** (1266307) — cpp_only [class]
 - **Perfectly Balanced Glaive** (320387) — cpp_only [spec]
-- **Tempered Steel** (1265800) — cpp_only [spec]
 - **Calcified Spikes** (389720) — cpp_only [spec]
 - **Retaliation** (389729) — cpp_only [spec]
 - **Feed the Demon** (218612) — cpp_only [spec]
+- **Revel in Pain** (343014) — cpp_only [spec]
 - **Soul Barrier** (1265924) — cpp_only [spec]
 - **Fel Flame Fortification** (389705) — cpp_only [spec]
+- **Void Reaver** (268175) — cpp_only [spec]
 - **Painbringer** (207387) — self_buff [spec]
 - **Soulmonger** (389711) — cpp_only [spec]
 - **Vulnerability** (389976) — cpp_only [spec]
-- **Vengeful Beast** (1265818) — cpp_only [spec]
 - **Last Resort** (209258) — cpp_only [spec]
 - **Down in Flames** (389732) — cpp_only [spec]
 - **Unhindered Assault** (444931) — cpp_only [hero/Aldrachi Reaver]
-- **Broken Spirit** (1272143) — cpp_only [hero/Aldrachi Reaver]
 - **Army Unto Oneself** (442714) — cpp_only [hero/Aldrachi Reaver]
 - **Incorruptible Spirit** (442736) — cpp_only [hero/Aldrachi Reaver]
 - **Wounded Quarry** (442806) — cpp_only [hero/Aldrachi Reaver]
-- **Keen Edge** (1272138) — cpp_only [hero/Aldrachi Reaver]
-- **Swift Erasure** (1253668) — cpp_only [hero/Annihilator]
-- **Phase Shift** (1256245) — cpp_only [hero/Annihilator]
-- **Path to Oblivion** (1253399) — cpp_only [hero/Annihilator]
+- **Phase Shift** (1256245) — self_buff [hero/Annihilator]
 - **State of Matter** (1253402) — cpp_only [hero/Annihilator]
-- **Harness the Cosmos** (1279247) — cpp_only [hero/Annihilator]
-- **Celestial Echoes** (1253415) — cpp_only [hero/Annihilator]
 - **Final Hour** (1253805) — cpp_only [hero/Annihilator]
-- **Otherworldly Focus** (1253817) — cpp_only [hero/Annihilator]
 
 ## Stat Passives (Excluded from Coverage)
 
 - Unrestrained Fury (320770)
 - Aldrachi Design (391409)
 - Illidari Knowledge (389696)
-- Will of the Illidari (389695)
 - Internal Struggle (393822)
