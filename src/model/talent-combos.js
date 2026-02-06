@@ -4,23 +4,20 @@
 // reconciliation and connectivity repair.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import {
   encode,
   buildToSelections,
   loadFullNodeList,
 } from "../util/talent-string.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import { dataDir, ROOT } from "../engine/paths.js";
 
 const CLASS_POINTS = 34;
 const SPEC_POINTS = 34;
 
 function loadData() {
   return JSON.parse(
-    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf8"),
+    readFileSync(join(dataDir(), "raidbots-talents.json"), "utf8"),
   );
 }
 
@@ -877,7 +874,7 @@ export function generateCombos(opts = {}) {
   const classMap = buildNodeMap(data.classNodes);
   const specMap = buildNodeMap(data.specNodes);
 
-  // Class tree: single default fill (low build-defining variance for VDH)
+  // Class tree: single default fill (low build-defining variance)
   const classLocked = new Set();
   const classLockedRanks = new Map();
   for (const node of data.classNodes) {
@@ -1085,12 +1082,7 @@ function bfsFillSimple(nodes, nodeMap, locked, lockedRanks, budget) {
 // Load profiles from profiles.json and generate one pinned build per profile × hero combo.
 // Each profile specifies required/excluded nodes; the rest are filled by BFS.
 function loadProfiles() {
-  const profilesPath = join(
-    dirname(fileURLToPath(import.meta.url)),
-    "..",
-    "..",
-    "profiles.json",
-  );
+  const profilesPath = join(ROOT, "profiles.json");
   try {
     return JSON.parse(readFileSync(profilesPath, "utf8")).profiles || [];
   } catch {
@@ -1372,7 +1364,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     pinnedBuilds: validPinned,
   };
   writeFileSync(
-    join(DATA_DIR, "talent-combos.json"),
+    join(dataDir(), "talent-combos.json"),
     JSON.stringify(output, null, 2),
   );
   console.log(

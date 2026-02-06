@@ -1,0 +1,46 @@
+# === Auto-generated APL Scaffold ===
+# Spec: vengeance
+# Generated: 2026-02-06T01:19:20.572Z
+#
+# WARNING: This is a STARTING POINT, not a finished APL.
+# Review conditions, add talent gates, and optimize priorities.
+
+input=apls/vengeance/profile.simc
+
+# === Precombat ===
+actions.precombat=/snapshot_stats
+# Consider: actions.precombat+=/soul_carver
+
+# === Default (runs every cycle) ===
+actions=/auto_attack
+# Interrupt
+actions+=/disrupt,if=target.debuff.casting.react
+
+# Off-GCD abilities
+
+# === Cooldowns ===
+actions+=/call_action_list,name=cooldowns
+
+# === Core Rotation ===
+# Spenders
+actions+=/fel_devastation,if=fury>=50
+actions+=/spirit_bomb,if=fury>=40
+actions+=/soul_cleave,if=fury>=35
+actions+=/throw_glaive,if=fury>=25
+# Generators
+actions+=/immolation_aura
+actions+=/fracture
+# Fillers
+actions+=/fiery_brand
+actions+=/sigil_of_flame
+actions+=/felblade
+actions+=/sigil_of_spite
+actions+=/immolation_aura
+actions+=/immolation_aura
+actions+=/immolation_aura
+actions+=/immolation_aura
+actions+=/void_metamorphosis
+
+# === Cooldowns ===
+actions.cooldowns=/soul_carver
+actions.cooldowns=/soul_carver

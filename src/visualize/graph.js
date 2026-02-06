@@ -1,19 +1,14 @@
 // Generates a Mermaid graph of spell-talent interactions.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import "../engine/startup.js";
+import { dataFile } from "../engine/paths.js";
 
 function generateGraph() {
   const interactions = JSON.parse(
-    readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"),
+    readFileSync(dataFile("interactions.json"), "utf-8"),
   );
-  const spells = JSON.parse(
-    readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
-  );
+  const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf-8"));
 
   const spellMap = new Map(spells.map((s) => [s.id, s]));
   const lines = [];
@@ -92,7 +87,7 @@ function generateGraph() {
   }
 
   const graph = lines.join("\n");
-  writeFileSync(join(DATA_DIR, "interaction-graph.mermaid"), graph);
+  writeFileSync(dataFile("interaction-graph.mermaid"), graph);
   console.log(
     `Wrote data/interaction-graph.mermaid (${nodes.size} nodes, ${edges.length} edges)`,
   );

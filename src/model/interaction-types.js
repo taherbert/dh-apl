@@ -1,6 +1,7 @@
 // Interaction categories for talent → spell relationships.
 
 import { parseMiscValueMask, maskToSchoolNames } from "./schools.js";
+import { getSpecAdapter } from "../engine/startup.js";
 
 export const INTERACTION_TYPES = {
   damage_modifier: "Changes spell damage (% increase/decrease)",
@@ -66,69 +67,14 @@ export function classifyEffect(effectType) {
 }
 
 // Name-based heuristic classification for spells with no effect data.
-// Used when the modifier spell wasn't fully fetched via spell_query.
+// Reads classification hints from spec adapter.
 export function classifyByName(sourceName) {
+  const hints = getSpecAdapter().getSpecConfig().classificationHints;
   const n = (sourceName || "").toLowerCase();
 
-  const damageNames = [
-    "empowerment",
-    "any means necessary",
-    "chaos blades",
-    "seething chaos",
-    "exergy",
-    "inertia",
-    "demon soul",
-    "burning blades",
-    "fires of fel",
-    "fiery demise",
-    "mastery:",
-    "immolation aura",
-    "soul furnace",
-    "bionic stabilizer",
-    "serrated glaive",
-    "burning wound",
-    "scarred strikes",
-    "soul flame",
-    "accelerated blade",
-  ];
-  if (damageNames.some((name) => n.includes(name))) return "damage_modifier";
-
-  const buffNames = [
-    "mark",
-    "brand",
-    "reaver",
-    "revel in pain",
-    "spirit of the darkness flame",
-    "fiery resolve",
-    "soul rending",
-    "metamorphosis",
-    "demon hide",
-  ];
-  if (buffNames.some((name) => n.includes(name))) return "buff_grant";
-
-  const mechNames = ["thrill of the fight", "demonsurge", "evasive action"];
-  if (mechNames.some((name) => n.includes(name))) return "mechanic_change";
-
-  const cooldownNames = [
-    "first of the illidari",
-    "fel defender",
-    "rush of chaos",
-  ];
-  if (cooldownNames.some((name) => n.includes(name)))
-    return "cooldown_modifier";
-
-  const resourceNames = [
-    "unleashed power",
-    "prepared",
-    "shear fury",
-    "tactical retreat",
-  ];
-  if (resourceNames.some((name) => n.includes(name)))
-    return "resource_modifier";
-
-  if (n.includes("cover of darkness")) return "duration_modifier";
-  if (n.includes("extended spikes")) return "duration_modifier";
-  if (n.includes("luck of the draw")) return "proc_trigger";
+  for (const [type, names] of Object.entries(hints)) {
+    if (names.some((name) => n.includes(name))) return type;
+  }
 
   return null;
 }
@@ -330,7 +276,7 @@ export function resolveSchoolTarget(sourceSpell, effectIndices) {
 }
 
 // Extract detailed effect info for enriched interaction output.
-// vdhSpellNames: optional Set<string> to filter affectedSpells to VDH-relevant only.
+// specSpellNames: optional Set<string> to filter affectedSpells to spec-relevant only.
 export function extractEffectDetails(
   sourceSpell,
   effectIndices,

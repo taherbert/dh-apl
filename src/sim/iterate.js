@@ -10,22 +10,22 @@
 //   reject "reason"              Log rejection and move on
 //   hypotheses                   Generate improvement hypotheses
 //   summary                      Generate iteration report
+//   checkpoint                   Save checkpoint for session resume
 
 import {
   readFileSync,
   writeFileSync,
   copyFileSync,
-  mkdirSync,
   existsSync,
   renameSync,
   readdirSync,
   unlinkSync,
 } from "node:fs";
-import { join, dirname, basename, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, dirname, basename, resolve, relative } from "node:path";
 import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
 import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
+import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
 import { loadRoster } from "./build-roster.js";
 import { generateMultiActorContent } from "./multi-actor.js";
 import {
@@ -37,8 +37,8 @@ import {
 import {
   generateStrategicHypotheses,
   loadApl,
-  MUTATION_OPS,
 } from "../analyze/strategic-hypotheses.js";
+import { MUTATION_OPS } from "../apl/mutator.js";
 import {
   analyzeResourceFlow,
   generateTemporalHypotheses,
@@ -49,13 +49,24 @@ import {
   validateMutation,
 } from "../apl/mutator.js";
 import { parse } from "../apl/parser.js";
+import {
+  synthesize as synthesizeHypotheses,
+  saveSpecialistOutput,
+} from "../analyze/synthesizer.js";
+import { addFinding as dbAddFinding } from "../util/db.js";
+import {
+  ROOT,
+  resultsDir,
+  resultsFile,
+  aplsDir,
+  dataFile,
+  ensureSpecDirs,
+} from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const RESULTS_DIR = join(ROOT, "results");
-const STATE_PATH = join(RESULTS_DIR, "iteration-state.json");
+const RESULTS_DIR = resultsDir();
+const STATE_PATH = resultsFile("iteration-state.json");
 // Iteration working copy — created by `init`, updated by `accept`.
-const CURRENT_APL = join(ROOT, "apls", "current.simc");
+const CURRENT_APL = join(aplsDir(), "current.simc");
 
 const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];
 const SCENARIO_LABELS = { st: "1T", small_aoe: "5T", big_aoe: "10T" };
@@ -125,42 +136,14 @@ function recoverFromBackup() {
 
 function migrateState(state) {
   if (state.version >= STATE_VERSION) return state;
-
-  // v1 → v2: DPS keys changed from labels ("1T") to scenario keys ("st")
-  if (state.version === 1 || !state.version) {
-    const labelToKey = { "1T": "st", "5T": "small_aoe", "10T": "big_aoe" };
-    const migrateDps = (dps) => {
-      const migrated = {};
-      for (const [k, v] of Object.entries(dps)) {
-        migrated[labelToKey[k] || k] = v;
-      }
-      return migrated;
-    };
-    if (state.originalBaseline?.dps) {
-      state.originalBaseline.dps = migrateDps(state.originalBaseline.dps);
-    }
-    if (state.current?.dps) {
-      state.current.dps = migrateDps(state.current.dps);
-    }
-    state.version = 2;
-  }
-
-  // v2 → v3: multi-build support (backward compat: single-build states just get multiBuild: false)
-  if (state.version === 2) {
-    state.multiBuild = false;
-    state.version = 3;
-  }
-
-  // Ensure new fields exist on old states
-  if (state.consecutiveRejections === undefined)
-    state.consecutiveRejections = 0;
-  if (!Array.isArray(state.findings)) state.findings = [];
-
-  return state;
+  throw new Error(
+    `Iteration state version ${state.version || "unknown"} is too old. ` +
+      `Expected version ${STATE_VERSION}. Delete results/iteration-state.json and re-init.`,
+  );
 }
 
 function saveState(state) {
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  ensureSpecDirs();
   state.version = STATE_VERSION;
   state.lastUpdated = new Date().toISOString();
 
@@ -246,7 +229,8 @@ function generateHypotheses(workflowResults) {
   // 3. Low buff uptimes
   for (const s of scenarios) {
     for (const [name, uptime] of Object.entries(s.buffUptimes || {})) {
-      if (uptime < 40 && name !== "metamorphosis" && name !== "fiery_brand") {
+      const { cooldownBuffs: cdBuffs } = getSpecAdapter().getSpecConfig();
+      if (uptime < 40 && !cdBuffs.includes(name)) {
         hypotheses.push({
           category: "buff_uptime_gap",
           description: `${name} uptime only ${uptime}% in ${SCENARIO_LABELS[s.scenario] || s.scenario} — prioritize refresh higher`,
@@ -295,8 +279,8 @@ function generateHypotheses(workflowResults) {
 
   // 7. Cooldown alignment
   if (st) {
-    const cooldownBuffs = ["fiery_brand", "metamorphosis", "fel_devastation"];
-    for (const name of cooldownBuffs) {
+    const { cooldownBuffs: specCdBuffs } = getSpecAdapter().getSpecConfig();
+    for (const name of specCdBuffs) {
       const uptime = st.buffUptimes?.[name];
       if (uptime !== undefined && uptime > 0) {
         hypotheses.push({
@@ -470,7 +454,7 @@ async function runComparison(candidatePath, tier = "standard") {
   const results = Object.fromEntries(entries);
 
   // Save comparison with candidate path
-  const comparisonPath = join(RESULTS_DIR, "comparison_latest.json");
+  const comparisonPath = resultsFile("comparison_latest.json");
   writeFileSync(
     comparisonPath,
     JSON.stringify(
@@ -645,14 +629,19 @@ async function runMultiBuildComparison(
     buildEntries.length;
   const worstWeighted = Math.min(...buildEntries.map((b) => b.weightedDelta));
 
-  const arBuilds = buildEntries.filter((b) => b.heroTree === "aldrachi_reaver");
-  const anniBuilds = buildEntries.filter((b) => b.heroTree === "annihilator");
-  const arAvg = arBuilds.length
-    ? arBuilds.reduce((s, b) => s + b.weightedDelta, 0) / arBuilds.length
-    : 0;
-  const anniAvg = anniBuilds.length
-    ? anniBuilds.reduce((s, b) => s + b.weightedDelta, 0) / anniBuilds.length
-    : 0;
+  // Group by hero tree dynamically
+  const treeAvgs = {};
+  const treeGroups = {};
+  for (const b of buildEntries) {
+    const tree = b.heroTree || "unknown";
+    if (!treeGroups[tree]) treeGroups[tree] = [];
+    treeGroups[tree].push(b);
+  }
+  for (const [tree, builds] of Object.entries(treeGroups)) {
+    treeAvgs[tree] = +(
+      builds.reduce((s, b) => s + b.weightedDelta, 0) / builds.length
+    ).toFixed(3);
+  }
 
   const comparison = {
     multiBuild: true,
@@ -662,14 +651,13 @@ async function runMultiBuildComparison(
     aggregate: {
       meanWeighted: +meanWeighted.toFixed(3),
       worstWeighted: +worstWeighted.toFixed(3),
-      arAvg: +arAvg.toFixed(3),
-      anniAvg: +anniAvg.toFixed(3),
+      treeAvgs,
     },
     timestamp: new Date().toISOString(),
   };
 
   // Save comparison
-  const comparisonPath = join(RESULTS_DIR, "comparison_latest.json");
+  const comparisonPath = resultsFile("comparison_latest.json");
   writeFileSync(comparisonPath, JSON.stringify(comparison, null, 2));
 
   return comparison;
@@ -686,7 +674,7 @@ function printMultiBuildComparison(comparison) {
   console.log("-".repeat(67));
 
   for (const [buildId, br] of Object.entries(buildResults)) {
-    const hero = br.heroTree === "aldrachi_reaver" ? "AR" : "Anni";
+    const hero = (br.heroTree || "?").slice(0, 6);
     const cols = SCENARIO_KEYS.map((s) =>
       signedPct(br.scenarios[s]?.deltaPct || 0, 2),
     );
@@ -696,8 +684,13 @@ function printMultiBuildComparison(comparison) {
   }
 
   console.log("-".repeat(67));
+  const treeAvgStr = aggregate.treeAvgs
+    ? Object.entries(aggregate.treeAvgs)
+        .map(([tree, avg]) => `${tree}: ${signedPct(avg)}`)
+        .join("  ")
+    : "";
   console.log(
-    `Mean: ${signedPct(aggregate.meanWeighted)}  |  Worst: ${signedPct(aggregate.worstWeighted)}  |  AR avg: ${signedPct(aggregate.arAvg)}  Anni avg: ${signedPct(aggregate.anniAvg)}`,
+    `Mean: ${signedPct(aggregate.meanWeighted)}  |  Worst: ${signedPct(aggregate.worstWeighted)}  |  ${treeAvgStr}`,
   );
 
   // Accept criteria check
@@ -736,7 +729,7 @@ async function cmdInit(aplPath) {
   }
 
   console.log(`Initializing iteration state from ${basename(aplPath)}...`);
-  mkdirSync(dirname(CURRENT_APL), { recursive: true });
+  ensureSpecDirs();
   copyFileSync(resolvedPath, CURRENT_APL);
 
   // Check for multi-build roster
@@ -759,7 +752,7 @@ async function cmdInit(aplPath) {
     // Also run single-actor workflow for hypothesis generation
     console.log("Running single-actor workflow for hypothesis generation...");
     const workflowResults = await runWorkflow(CURRENT_APL);
-    const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+    const workflowPath = resultsFile("workflow_current.json");
     writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
 
     const hypotheses = generateHypotheses(workflowResults);
@@ -770,7 +763,7 @@ async function cmdInit(aplPath) {
       lastUpdated: new Date().toISOString(),
       multiBuild: true,
       roster: {
-        path: "results/build-roster.json",
+        path: relative(ROOT, resultsFile("build-roster.json")),
         tier: roster.tier,
         buildCount: roster.builds.length,
       },
@@ -779,9 +772,9 @@ async function cmdInit(aplPath) {
         builds: baseline.builds,
       },
       current: {
-        apl: "apls/current.simc",
+        apl: relative(ROOT, CURRENT_APL),
         builds: baseline.builds,
-        workflowResults: "results/workflow_current.json",
+        workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
       },
       iterations: [],
       pendingHypotheses: hypotheses,
@@ -797,7 +790,7 @@ async function cmdInit(aplPath) {
 
     console.log("\nBaseline DPS (per build):");
     for (const [buildId, b] of Object.entries(baseline.builds)) {
-      const hero = b.heroTree === "aldrachi_reaver" ? "AR" : "Anni";
+      const hero = (b.heroTree || "?").slice(0, 6);
       const dpsStr = SCENARIO_KEYS.map(
         (s) =>
           `${SCENARIO_LABELS[s]}:${Math.round(b.dps[s] || 0).toLocaleString()}`,
@@ -815,7 +808,7 @@ async function cmdInit(aplPath) {
     console.log("Running baseline workflow across all scenarios...");
     const workflowResults = await runWorkflow(CURRENT_APL);
 
-    const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+    const workflowPath = resultsFile("workflow_current.json");
     writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
 
     const dps = {};
@@ -835,9 +828,9 @@ async function cmdInit(aplPath) {
         dps,
       },
       current: {
-        apl: "apls/current.simc",
+        apl: relative(ROOT, CURRENT_APL),
         dps,
-        workflowResults: "results/workflow_current.json",
+        workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
       },
       iterations: [],
       pendingHypotheses: hypotheses,
@@ -1001,7 +994,7 @@ async function cmdAccept(reason, hypothesisHint) {
     process.exit(1);
   }
 
-  const compPath = join(RESULTS_DIR, "comparison_latest.json");
+  const compPath = resultsFile("comparison_latest.json");
   if (!existsSync(compPath)) {
     console.error("No comparison results found. Run compare first.");
     process.exit(1);
@@ -1009,7 +1002,7 @@ async function cmdAccept(reason, hypothesisHint) {
   const comparison = JSON.parse(readFileSync(compPath, "utf-8"));
 
   const candidatePath =
-    comparison.candidatePath || join(ROOT, "apls", "candidate.simc");
+    comparison.candidatePath || join(aplsDir(), "candidate.simc");
   if (!existsSync(candidatePath)) {
     console.error(`Candidate file not found: ${candidatePath}`);
     process.exit(1);
@@ -1050,29 +1043,45 @@ async function cmdAccept(reason, hypothesisHint) {
 
   console.log("Running workflow on new baseline...");
   const workflowResults = await runWorkflow(CURRENT_APL);
-  const workflowPath = join(RESULTS_DIR, "workflow_current.json");
+  const workflowPath = resultsFile("workflow_current.json");
   writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
-  state.current.workflowResults = "results/workflow_current.json";
+  state.current.workflowResults = relative(
+    ROOT,
+    resultsFile("workflow_current.json"),
+  );
 
   state.pendingHypotheses = generateHypotheses(workflowResults);
   state.consecutiveRejections = 0;
 
-  // Track significant findings
+  // Track significant findings (state + SQLite)
   if (comparison.multiBuild) {
     if (Math.abs(comparison.aggregate.meanWeighted) > 0.5) {
-      state.findings.push({
+      const finding = {
         iteration: iterNum,
         timestamp: new Date().toISOString(),
         hypothesis: reason,
         weightedDelta: comparison.aggregate.meanWeighted,
         multiBuild: true,
         aggregate: comparison.aggregate,
-      });
+      };
+      state.findings.push(finding);
+      try {
+        dbAddFinding({
+          insight: reason,
+          evidence: `${comparison.aggregate.meanWeighted > 0 ? "+" : ""}${comparison.aggregate.meanWeighted.toFixed(2)}% weighted (multi-build)`,
+          confidence:
+            Math.abs(comparison.aggregate.meanWeighted) > 1 ? "high" : "medium",
+          status: "validated",
+          tags: ["iteration", "accepted"],
+        });
+      } catch {
+        /* SQLite optional */
+      }
     }
   } else {
     const weighted = computeWeightedDelta(comparison.results);
     if (Math.abs(weighted.delta) > 0.5) {
-      state.findings.push({
+      const finding = {
         iteration: iterNum,
         timestamp: new Date().toISOString(),
         hypothesis: reason,
@@ -1080,7 +1089,19 @@ async function cmdAccept(reason, hypothesisHint) {
         scenarios: Object.fromEntries(
           Object.entries(comparison.results).map(([k, v]) => [k, v.deltaPct]),
         ),
-      });
+      };
+      state.findings.push(finding);
+      try {
+        dbAddFinding({
+          insight: reason,
+          evidence: `${weighted.delta > 0 ? "+" : ""}${weighted.delta.toFixed(2)}% weighted`,
+          confidence: Math.abs(weighted.delta) > 1 ? "high" : "medium",
+          status: "validated",
+          tags: ["iteration", "accepted"],
+        });
+      } catch {
+        /* SQLite optional */
+      }
     }
   }
 
@@ -1099,7 +1120,7 @@ function cmdReject(reason, hypothesisHint) {
     process.exit(1);
   }
 
-  const compPath = join(RESULTS_DIR, "comparison_latest.json");
+  const compPath = resultsFile("comparison_latest.json");
   const comparison = existsSync(compPath)
     ? JSON.parse(readFileSync(compPath, "utf-8"))
     : { results: {} };
@@ -1214,11 +1235,16 @@ function cmdSummary() {
   // Iteration history
   lines.push("\n## Iteration History\n");
   if (state.multiBuild) {
-    lines.push(
-      "| # | Decision | Hypothesis | Mutation | Mean | Worst | AR | Anni |",
+    const specConfig = getSpecAdapter().getSpecConfig();
+    const treeNames = Object.keys(specConfig.heroTrees || {}).sort();
+    const treeCols = treeNames.map(
+      (t) => specConfig.heroTrees[t].displayName || t,
     );
     lines.push(
-      "|---|----------|------------|----------|------|-------|----|----|",
+      `| # | Decision | Hypothesis | Mutation | Mean | Worst | ${treeCols.join(" | ")} |`,
+    );
+    lines.push(
+      `|---|----------|------------|----------|------|-------|${treeCols.map(() => "----").join("|")}|`,
     );
   } else {
     lines.push("| # | Decision | Hypothesis | Mutation | 1T | 5T | 10T |");
@@ -1228,11 +1254,12 @@ function cmdSummary() {
     let cols;
     if (iter.comparison?.aggregates) {
       const a = iter.comparison.aggregates;
+      const treeAvgs = a.treeAvgs || {};
+      const treeKeys = Object.keys(treeAvgs).sort();
       cols = [
         signedPct(a.meanWeighted, 2),
-        `${a.worstWeighted.toFixed(2)}%`,
-        signedPct(a.arAvg, 2),
-        signedPct(a.anniAvg, 2),
+        `${(a.worstWeighted ?? 0).toFixed(2)}%`,
+        ...treeKeys.map((k) => signedPct(treeAvgs[k] ?? 0, 2)),
       ];
     } else {
       const r = iter.results || {};
@@ -1291,8 +1318,8 @@ function cmdSummary() {
   }
 
   const report = lines.join("\n");
-  const reportPath = join(RESULTS_DIR, "iteration-report.md");
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  const reportPath = resultsFile("iteration-report.md");
+  ensureSpecDirs();
   writeFileSync(reportPath, report);
   console.log(report);
   console.log(`\nReport saved to ${reportPath}`);
@@ -1431,7 +1458,7 @@ async function cmdAutoGenerate() {
       }
 
       // Generate candidate
-      const candidatePath = join(ROOT, "apls", "candidate.simc");
+      const candidatePath = join(aplsDir(), "candidate.simc");
       const result = generateCandidate(CURRENT_APL, mutation, candidatePath);
 
       console.log(`\nGenerated: ${result.outputPath}`);
@@ -1543,7 +1570,7 @@ async function cmdTheorycraft() {
   const aplText = readFileSync(CURRENT_APL, "utf-8");
 
   // Load spell data
-  const spellDataPath = join(ROOT, "data", "spells.json");
+  const spellDataPath = dataFile("spells.json");
   const spellData = existsSync(spellDataPath)
     ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
     : [];
@@ -1606,6 +1633,357 @@ async function cmdTheorycraft() {
     console.log(`...and ${fresh.length - 10} more\n`);
   }
 }
+
+// --- Synthesis ---
+
+async function cmdSynthesize() {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  const workflowPath = join(ROOT, state.current.workflowResults);
+  if (!existsSync(workflowPath)) {
+    console.error("No workflow results found. Run init or accept first.");
+    process.exit(1);
+  }
+
+  const workflowResults = JSON.parse(readFileSync(workflowPath, "utf-8"));
+
+  // Generate from all specialist sources
+  console.log("Generating metric hypotheses...");
+  const metricHypotheses = generateHypotheses(workflowResults);
+  saveSpecialistOutput("resource_flow", {
+    hypotheses: metricHypotheses.map((h) => ({
+      ...h,
+      id: h.description,
+      hypothesis: h.description,
+      priority: h.priority || 5,
+    })),
+  });
+
+  console.log("Generating strategic hypotheses...");
+  const aplPath = state.current.apl;
+  const aplText = existsSync(join(ROOT, aplPath))
+    ? readFileSync(join(ROOT, aplPath), "utf-8")
+    : null;
+  if (aplText) {
+    const strategicHyps = generateStrategicHypotheses(workflowResults, aplText);
+    saveSpecialistOutput("talent", {
+      hypotheses: strategicHyps.map((h) => ({
+        ...h,
+        id: h.hypothesis || h.observation,
+        priority: h.priority || 5,
+      })),
+    });
+  }
+
+  console.log("Generating temporal hypotheses...");
+  if (aplText) {
+    const spellDataPath = dataFile("spells.json");
+    const spellData = existsSync(spellDataPath)
+      ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
+      : [];
+    const resourceFlow = analyzeResourceFlow(
+      spellData,
+      aplText,
+      workflowResults,
+    );
+    const temporalHyps = generateTemporalHypotheses(resourceFlow, aplText);
+    saveSpecialistOutput("state_machine", {
+      hypotheses: temporalHyps.map((h) => ({
+        ...h,
+        id: h.hypothesis,
+        priority: h.priority || 5,
+      })),
+    });
+  }
+
+  // Synthesize all sources
+  console.log("\nSynthesizing across all specialists...");
+  const { loadSpecialistOutputs } = await import("../analyze/synthesizer.js");
+  const outputs = loadSpecialistOutputs();
+  const result = synthesizeHypotheses(outputs);
+
+  // Filter exhausted
+  const exhaustedKeys = new Set(
+    state.exhaustedHypotheses.map((h) =>
+      normalizeHypothesisKey(h.hypothesis || h.description || ""),
+    ),
+  );
+  const fresh = result.hypotheses.filter(
+    (h) =>
+      !exhaustedKeys.has(
+        normalizeHypothesisKey(h.hypothesis || h.systemicIssue || h.id || ""),
+      ),
+  );
+
+  // Map synthesized hypotheses back to iteration format
+  state.pendingHypotheses = fresh.map((h) => ({
+    description: h.systemicIssue || h.hypothesis || h.id,
+    hypothesis: h.systemicIssue || h.hypothesis || h.id,
+    priority: h.aggregatePriority || h.priority || 0,
+    consensusCount: h.consensusCount || 1,
+    specialists: h.specialists || [],
+    aplMutation: h.proposedChanges?.[0]?.aplMutation || h.aplMutation || null,
+  }));
+
+  saveState(state);
+
+  console.log(
+    `\n${fresh.length} synthesized hypotheses (${result.metadata.totalRaw} raw, ${result.conflicts.length} conflicts resolved):`,
+  );
+  console.log(`  Specialists: ${result.metadata.specialists.join(", ")}`);
+
+  for (const h of fresh.slice(0, 10)) {
+    const desc = h.systemicIssue || h.hypothesis || h.id || "unknown";
+    const consensus =
+      h.consensusCount > 1 ? ` [${h.consensusCount}x consensus]` : "";
+    console.log(`\n${consensus} ${desc}`);
+    console.log(`  Priority: ${(h.aggregatePriority || 0).toFixed(1)}`);
+    if (h.specialists?.length > 1) {
+      console.log(`  Sources: ${h.specialists.join(", ")}`);
+    }
+  }
+}
+
+// --- Checkpoint Management ---
+
+const CHECKPOINT_PATH = resultsFile("checkpoint.md");
+
+function cmdCheckpoint(options = {}) {
+  const state = loadState();
+  if (!state) {
+    console.error("No iteration state. Run init first.");
+    process.exit(1);
+  }
+
+  const {
+    currentArchetype = null,
+    currentBuild = null,
+    currentHypothesis = null,
+    problemStatement = null,
+    rootTheory = null,
+    notes = "",
+  } = options;
+
+  const lines = [];
+  lines.push("# Iteration Checkpoint\n");
+  lines.push(`Saved: ${new Date().toISOString()}\n`);
+
+  // Problem statement section (for context when resuming)
+  if (problemStatement || rootTheory) {
+    lines.push("## Problem Statement\n");
+    if (problemStatement) {
+      lines.push(`- **Focus:** ${problemStatement}`);
+    }
+    if (rootTheory) {
+      lines.push(`- **Root Theory:** ${rootTheory}`);
+    }
+    lines.push("");
+  }
+
+  // Session summary
+  const iterCount = state.iterations.length;
+  const accepted = state.iterations.filter(
+    (i) => i.decision === "accepted",
+  ).length;
+  const rejected = iterCount - accepted;
+
+  lines.push("## Session Summary\n");
+  lines.push(
+    `- Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
+  );
+  lines.push(`- Consecutive rejections: ${state.consecutiveRejections || 0}`);
+  lines.push(`- Pending hypotheses: ${state.pendingHypotheses.length}`);
+  lines.push(`- Exhausted hypotheses: ${state.exhaustedHypotheses.length}`);
+  lines.push("");
+
+  // Current position in deep iteration loop
+  lines.push("## Current Position\n");
+  if (currentArchetype) {
+    lines.push(`- **Archetype:** ${currentArchetype}`);
+  }
+  if (currentBuild) {
+    lines.push(`- **Build:** ${currentBuild}`);
+  }
+  if (currentHypothesis) {
+    lines.push(`- **Hypothesis:** ${currentHypothesis}`);
+  }
+  if (!currentArchetype && !currentBuild && !currentHypothesis) {
+    lines.push(
+      "- No deep iteration position recorded (use --archetype, --build, --hypothesis flags)",
+    );
+  }
+  lines.push("");
+
+  // DPS progress
+  const origDps = getAggregateDps(state.originalBaseline);
+  const currDps = getAggregateDps(state.current);
+  lines.push(
+    `## DPS Progress${state.multiBuild ? " (mean across builds)" : ""}\n`,
+  );
+  lines.push("| Scenario | Baseline | Current | Delta |");
+  lines.push("|----------|----------|---------|-------|");
+  for (const key of SCENARIO_KEYS) {
+    const label = SCENARIO_LABELS[key];
+    const orig = origDps[key];
+    const curr = currDps[key];
+    if (orig === undefined) continue;
+    const delta =
+      curr !== undefined ? signedPct(((curr - orig) / orig) * 100, 2) : "—";
+    lines.push(
+      `| ${label} | ${(orig || 0).toLocaleString()} | ${(curr || 0).toLocaleString()} | ${delta} |`,
+    );
+  }
+  lines.push("");
+
+  // Key findings this session
+  const sessionFindings = (state.findings || []).slice(-10);
+  if (sessionFindings.length > 0) {
+    lines.push("## Key Findings This Session\n");
+    for (const f of sessionFindings) {
+      lines.push(
+        `- **#${f.iteration}** (${signedPct(f.weightedDelta, 2)}): ${f.hypothesis}`,
+      );
+    }
+    lines.push("");
+  }
+
+  // Remaining work
+  lines.push("## Remaining Work\n");
+
+  // Top pending hypotheses
+  if (state.pendingHypotheses.length > 0) {
+    lines.push("### Top Pending Hypotheses\n");
+    for (const h of state.pendingHypotheses.slice(0, 5)) {
+      const desc =
+        h.description || h.hypothesis || h.strategicGoal || "unknown";
+      lines.push(
+        `1. [${h.category || "unknown"}] ${desc.slice(0, 80)}${desc.length > 80 ? "…" : ""}`,
+      );
+      if (h.aplMutation) {
+        lines.push(
+          `   - Has auto-mutation: ${describeMutation(h.aplMutation).slice(0, 60)}`,
+        );
+      }
+    }
+    if (state.pendingHypotheses.length > 5) {
+      lines.push(
+        `\n...and ${state.pendingHypotheses.length - 5} more hypotheses`,
+      );
+    }
+    lines.push("");
+  }
+
+  // Recent iterations for context
+  if (state.iterations.length > 0) {
+    lines.push("### Recent Iterations\n");
+    lines.push("| # | Decision | Hypothesis | Weighted |");
+    lines.push("|---|----------|------------|----------|");
+    for (const iter of state.iterations.slice(-5)) {
+      const wDelta = iterWeightedDelta(iter);
+      const hyp =
+        (iter.hypothesis || "").slice(0, 40) +
+        (iter.hypothesis?.length > 40 ? "…" : "");
+      lines.push(
+        `| ${iter.id} | ${iter.decision} | ${hyp} | ${signedPct(wDelta || 0, 2)} |`,
+      );
+    }
+    lines.push("");
+  }
+
+  // User notes
+  if (notes) {
+    lines.push("## Session Notes\n");
+    lines.push(notes);
+    lines.push("");
+  }
+
+  // Resume instructions
+  lines.push("## Resume Instructions\n");
+  lines.push("To continue from this checkpoint:");
+  lines.push("1. Run `node src/sim/iterate.js status` to verify state");
+  lines.push(
+    "2. If specialist outputs > 24h old, re-run `strategic` or `theorycraft`",
+  );
+  lines.push("3. Continue from the position recorded above");
+  lines.push("");
+
+  const checkpointContent = lines.join("\n");
+  writeFileSync(CHECKPOINT_PATH, checkpointContent);
+
+  // Also save checkpoint metadata to state for programmatic resume
+  state.checkpoint = {
+    timestamp: new Date().toISOString(),
+    archetype: currentArchetype,
+    build: currentBuild,
+    hypothesis: currentHypothesis,
+    notes,
+  };
+  saveState(state);
+
+  console.log("Checkpoint saved to results/checkpoint.md");
+  console.log(`\nSession summary:`);
+  console.log(
+    `  Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
+  );
+  console.log(`  Pending hypotheses: ${state.pendingHypotheses.length}`);
+  if (currentArchetype || currentBuild) {
+    console.log(
+      `  Position: ${currentArchetype || "—"} / ${currentBuild || "—"}`,
+    );
+  }
+}
+
+function loadCheckpoint() {
+  const state = loadState();
+  if (!state?.checkpoint) return null;
+  return state.checkpoint;
+}
+
+function hasRecentCheckpoint(maxAgeHours = 24) {
+  const checkpoint = loadCheckpoint();
+  if (!checkpoint) return false;
+
+  const age = Date.now() - new Date(checkpoint.timestamp).getTime();
+  const maxAgeMs = maxAgeHours * 60 * 60 * 1000;
+  return age < maxAgeMs;
+}
+
+// Check if specialist outputs are fresh enough to reuse
+function areSpecialistOutputsFresh(maxAgeHours = 24) {
+  const specialistFiles = [
+    "analysis_spell_data.json",
+    "analysis_talent.json",
+    "analysis_resource_flow.json",
+    "analysis_state_machine.json",
+  ];
+
+  const maxAgeMs = maxAgeHours * 60 * 60 * 1000;
+  const now = Date.now();
+
+  for (const filename of specialistFiles) {
+    const filepath = resultsFile(filename);
+    if (!existsSync(filepath)) return false;
+
+    try {
+      const content = JSON.parse(readFileSync(filepath, "utf-8"));
+      if (!content.timestamp) return false;
+
+      const age = now - new Date(content.timestamp).getTime();
+      if (age > maxAgeMs) return false;
+    } catch {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Export checkpoint functions for use by orchestrator
+export { loadCheckpoint, hasRecentCheckpoint, areSpecialistOutputsFresh };
 
 // --- Escape Strategies ---
 
@@ -1723,7 +2101,7 @@ function writeDashboard(state) {
     }
   }
 
-  const dashPath = join(RESULTS_DIR, "dashboard.md");
+  const dashPath = resultsFile("dashboard.md");
   writeFileSync(dashPath, lines.join("\n") + "\n");
 }
 
@@ -1752,7 +2130,7 @@ function writeFindings(state) {
     }
   }
 
-  writeFileSync(join(RESULTS_DIR, "findings.md"), lines.join("\n") + "\n");
+  writeFileSync(resultsFile("findings.md"), lines.join("\n") + "\n");
 }
 
 function writeChangelog(state) {
@@ -1774,8 +2152,12 @@ function writeChangelog(state) {
       if (iter.mutation) lines.push(`Change: ${iter.mutation}\n`);
       if (iter.comparison?.aggregates) {
         const a = iter.comparison.aggregates;
+        const treeAvgs = a.treeAvgs || {};
+        const treeStr = Object.entries(treeAvgs)
+          .map(([k, v]) => `${k}: ${signedPct(v ?? 0)}`)
+          .join(" | ");
         lines.push(
-          `AR avg: ${signedPct(a.arAvg)} | Anni avg: ${signedPct(a.anniAvg)} | Worst: ${a.worstWeighted.toFixed(3)}%\n`,
+          `${treeStr} | Worst: ${(a.worstWeighted ?? 0).toFixed(3)}%\n`,
         );
       } else {
         const scenarioDetail = SCENARIO_KEYS.map((k) => {
@@ -1790,7 +2172,7 @@ function writeChangelog(state) {
     }
   }
 
-  writeFileSync(join(RESULTS_DIR, "changelog.md"), lines.join("\n") + "\n");
+  writeFileSync(resultsFile("changelog.md"), lines.join("\n") + "\n");
 }
 
 function printHypotheses(hypotheses) {
@@ -1813,6 +2195,8 @@ function parseHypothesisFlag(args) {
 }
 
 const [cmd, ...rawArgs] = process.argv.slice(2);
+
+await loadSpecAdapter();
 
 switch (cmd) {
   case "init":
@@ -1893,6 +2277,32 @@ switch (cmd) {
     await cmdTheorycraft();
     break;
 
+  case "synthesize":
+    await cmdSynthesize();
+    break;
+
+  case "checkpoint": {
+    // Parse checkpoint flags
+    const checkpointOpts = {};
+    for (let i = 0; i < rawArgs.length; i++) {
+      if (rawArgs[i] === "--archetype" && rawArgs[i + 1]) {
+        checkpointOpts.currentArchetype = rawArgs[++i];
+      } else if (rawArgs[i] === "--build" && rawArgs[i + 1]) {
+        checkpointOpts.currentBuild = rawArgs[++i];
+      } else if (rawArgs[i] === "--hypothesis" && rawArgs[i + 1]) {
+        checkpointOpts.currentHypothesis = rawArgs[++i];
+      } else if (rawArgs[i] === "--problem" && rawArgs[i + 1]) {
+        checkpointOpts.problemStatement = rawArgs[++i];
+      } else if (rawArgs[i] === "--theory" && rawArgs[i + 1]) {
+        checkpointOpts.rootTheory = rawArgs[++i];
+      } else if (rawArgs[i] === "--notes" && rawArgs[i + 1]) {
+        checkpointOpts.notes = rawArgs[++i];
+      }
+    }
+    cmdCheckpoint(checkpointOpts);
+    break;
+  }
+
   default:
     console.log(`APL Iteration Manager
 
@@ -1905,8 +2315,10 @@ Usage:
   node src/sim/iterate.js hypotheses                 List improvement hypotheses
   node src/sim/iterate.js strategic                  Generate strategic hypotheses with auto-mutations
   node src/sim/iterate.js theorycraft                Generate temporal resource flow hypotheses
+  node src/sim/iterate.js synthesize                 Synthesize hypotheses from all specialist sources
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
-  node src/sim/iterate.js summary                    Generate iteration report`);
+  node src/sim/iterate.js summary                    Generate iteration report
+  node src/sim/iterate.js checkpoint                 Save checkpoint for session resume`);
     break;
 }

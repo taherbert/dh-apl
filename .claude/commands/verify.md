@@ -1,6 +1,14 @@
 Run `npm run verify` and analyze the results.
 
-Expected baseline: 0 failures, 1 warning (unknown interaction rate ~5%, target 0%).
+## Setup
+
+Run `node src/engine/startup.js` to determine the active spec.
+
+## Expected Baseline
+
+0 failures, minimal warnings (unknown interaction rate ~5%, target 0%).
+
+## Investigation
 
 If there are failures or warnings beyond the known baseline, investigate each one:
 
@@ -10,3 +18,5 @@ If there are failures or warnings beyond the known baseline, investigate each on
 - For contamination: trace the leak path and fix the filter
 
 Fix any issues found, rebuild data with `npm run build-data`, and re-verify until clean.
+
+Data files are in `data/{spec}/`. Results are in `results/{spec}/`.

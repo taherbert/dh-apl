@@ -5,86 +5,25 @@
 // 3. Effect scan: talent->ok() gating buff triggers or action procs
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { SIMC_DH_CPP } from "../config.js";
+import { join } from "node:path";
+import {
+  SIMC_CPP,
+  loadSpecAdapter,
+  getSpecAdapter,
+} from "../engine/startup.js";
+import { dataDir, REFERENCE_DIR } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "../..");
-const DATA_DIR = join(ROOT, "data");
-const REF_DIR = join(ROOT, "reference");
+let _structToAbility = null;
 
-// Map struct names to ability names
-const STRUCT_TO_ABILITY = {
-  soul_cleave: "Soul Cleave",
-  spirit_bomb: "Spirit Bomb",
-  fiery_brand: "Fiery Brand",
-  fracture: "Fracture",
-  fel_devastation: "Fel Devastation",
-  immolation_aura: "Immolation Aura",
-  sigil_of_flame: "Sigil of Flame",
-  demon_spikes: "Demon Spikes",
-  metamorphosis: "Metamorphosis",
-  throw_glaive: "Throw Glaive",
-  vengeful_retreat: "Vengeful Retreat",
-  infernal_strike: "Infernal Strike",
-  shear: "Shear",
-  the_hunt: "The Hunt",
-  elysian_decree: "Elysian Decree",
-  sigil_of_misery: "Sigil of Misery",
-  sigil_of_silence: "Sigil of Silence",
-  sigil_of_spite: "Sigil of Spite",
-  felblade: "Felblade",
-  soul_carver: "Soul Carver",
-  darkness: "Darkness",
-  chaos_nova: "Chaos Nova",
-  consume_magic: "Consume Magic",
-  bulk_extraction: "Bulk Extraction",
-  consume_soul: "Consume Soul",
-  soul_cleave_heal: "Soul Cleave",
-  feast_of_souls_heal: "Soul Cleave",
-  frailty_heal: "Frailty",
-  soul_barrier: "Soul Barrier",
-  demon_hunter_sigil: "Sigil of Flame",
-  sigil_of_flame_damage_base: "Sigil of Flame",
-  sigil_of_flame_damage: "Sigil of Flame",
-  sigil_of_flame_base: "Sigil of Flame",
-  sigil_of_doom_damage: "Sigil of Flame",
-  sigil_of_doom: "Sigil of Flame",
-  retaliation: "Demon Spikes",
-  eye_beam_base: "Eye Beam",
-  eye_beam: "Eye Beam",
-  blade_dance_base: "Blade Dance",
-  blade_dance: "Blade Dance",
-  death_sweep: "Blade Dance",
-  chaos_strike_base: "Chaos Strike",
-  chaos_strike: "Chaos Strike",
-  annihilation: "Chaos Strike",
-  auto_attack_damage: "Auto Attack",
-  auto_attack: "Auto Attack",
-  pick_up_fragment: "Consume Soul",
-  reap_base: "Soul Cleave",
-  eradicate: "Soul Cleave",
-  cull: "Soul Cleave",
-  reap: "Soul Cleave",
-  voidfall_meteor_base: "Voidfall",
-  voidfall_meteor: "Voidfall",
-  world_killer: "Voidfall",
-  catastrophe: "Soul Cleave",
-  collapsing_star: "Soul Cleave",
-  art_of_the_glaive: "Art of the Glaive",
-  preemptive_strike: "Throw Glaive",
-  warblades_hunger: "Fracture",
-  wounded_quarry: "Throw Glaive",
-  reavers_glaive: "Throw Glaive",
-};
+export function extractCppInteractions(preloadedSource) {
+  const adapter = getSpecAdapter();
+  _structToAbility = adapter.getStructToAbilityMap();
 
-function extractCppInteractions() {
-  const src = readFileSync(SIMC_DH_CPP, "utf-8");
+  const src = preloadedSource || readFileSync(SIMC_CPP, "utf-8");
   const lines = src.split("\n");
 
   const talentVars = JSON.parse(
-    readFileSync(join(REF_DIR, "simc-talent-variables.json"), "utf-8"),
+    readFileSync(join(REFERENCE_DIR, "simc-talent-variables.json"), "utf-8"),
   );
 
   const varToName = new Map();
@@ -95,8 +34,7 @@ function extractCppInteractions() {
   }
 
   const contexts = findContexts(lines);
-  const talentRefPattern =
-    /talent\.(vengeance|aldrachi_reaver|annihilator|demon_hunter)\.(\w+)/g;
+  const talentRefPattern = adapter.getTalentTreePattern();
 
   const talentTalent = [];
   const talentAbility = [];
@@ -183,7 +121,7 @@ function extractCppInteractions() {
   };
 
   writeFileSync(
-    join(DATA_DIR, "cpp-interactions.json"),
+    join(dataDir(), "cpp-interactions.json"),
     JSON.stringify(output, null, 2),
   );
 
@@ -245,11 +183,11 @@ function resolveAbility(structName) {
     .replace(/_damage$/, "")
     .replace(/_initial$/, "");
 
-  if (STRUCT_TO_ABILITY[base]) return STRUCT_TO_ABILITY[base];
+  if (_structToAbility[base]) return _structToAbility[base];
 
   // Try without trigger suffixes for talent-named structs
   const noTrigger = base.replace(/_trigger$/, "");
-  if (STRUCT_TO_ABILITY[noTrigger]) return STRUCT_TO_ABILITY[noTrigger];
+  if (_structToAbility[noTrigger]) return _structToAbility[noTrigger];
 
   return null;
 }
@@ -306,8 +244,11 @@ function scanTalentEffects(lines, varToName) {
   const results = [];
   const seen = new Set();
 
-  const pattern =
-    /talent\.(vengeance|aldrachi_reaver|annihilator|demon_hunter)\.(\w+)->ok\(\)/g;
+  // Build ok() pattern from the same talent tree pattern
+  const adapter = getSpecAdapter();
+  const basePattern = adapter.getTalentTreePattern();
+  const patternSource = basePattern.source.replace(/\)$/, ")->ok\\(\\)");
+  const pattern = new RegExp(patternSource, "g");
   const buffPattern =
     /buff\.(\w+)->trigger|buff\.(\w+)->extend_duration|buff\.(\w+)->increment/;
 
@@ -347,24 +288,9 @@ function scanTalentEffects(lines, varToName) {
 }
 
 function validateAgainstSeedList(talentAbilityRefs) {
-  // Known talent→ability relationships verified against C++ source.
-  // These validate the scanner finds correct context placement.
-  const seedList = [
-    ["Charred Flesh", "Immolation Aura"],
-    ["Feed the Demon", "Consume Soul"],
-    ["Burning Alive", "Fiery Brand"],
-    ["Cycle of Binding", "Sigil of Flame"],
-    ["Soul Sigils", "Sigil of Flame"],
-    ["Feast of Souls", "Soul Cleave"],
-    ["Darkglare Boon", "Fel Devastation"],
-    ["Focused Cleave", "Soul Cleave"],
-    ["Fallout", "Immolation Aura"],
-    ["Volatile Flameblood", "Immolation Aura"],
-    ["Frailty", "Soul Cleave"],
-    ["Frailty", "Spirit Bomb"],
-    ["Ascending Flame", "Sigil of Flame"],
-    ["Meteoric Rise", "Fel Devastation"],
-  ];
+  const adapter = getSpecAdapter();
+  const seedList = adapter.getCppScannerSeedList?.() || [];
+  if (seedList.length === 0) return;
 
   const foundPairs = new Set(
     talentAbilityRefs.map((f) => `${f.source}|${f.target}`),
@@ -386,4 +312,4 @@ function validateAgainstSeedList(talentAbilityRefs) {
   }
 }
 
-extractCppInteractions();
+loadSpecAdapter().then(() => extractCppInteractions());

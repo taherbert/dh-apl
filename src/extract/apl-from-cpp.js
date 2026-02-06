@@ -1,16 +1,17 @@
-// Extracts VDH APL from simc C++ source (apl_demon_hunter.cpp) to .simc format.
+// Extracts spec APL from simc C++ source to .simc format.
 // Reverse of reference/apl-conversion/ConvertAPL.py
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { SIMC_DIR } from "../config.js";
+import { join } from "node:path";
+import { SIMC_DIR, config } from "../engine/startup.js";
+import { REFERENCE_DIR } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-
-const APL_CPP = join(SIMC_DIR, "engine/class_modules/apl/apl_demon_hunter.cpp");
-const OUTPUT = join(ROOT, "reference/vengeance-apl.simc");
+const APL_CPP = join(
+  SIMC_DIR,
+  config.simc.aplModule || "engine/class_modules/apl/apl_demon_hunter.cpp",
+);
+const specName = config.spec.specName;
+const OUTPUT = join(REFERENCE_DIR, `${specName}-apl.simc`);
 
 // Extract content between markers
 function extractBetweenMarkers(content, startMarker, endMarker) {
@@ -92,12 +93,14 @@ function main() {
 
   const cpp = readFileSync(APL_CPP, "utf-8");
 
-  // Extract vengeance APL section
-  const vengeanceSection = extractBetweenMarkers(
-    cpp,
-    "//vengeance_apl_start",
-    "//vengeance_apl_end",
-  );
+  // Extract spec APL section
+  const markers = config.simc.aplMarkers?.[specName];
+  if (!markers || markers.length !== 2) {
+    throw new Error(
+      `No APL markers configured for spec "${specName}" in config.simc.aplMarkers`,
+    );
+  }
+  const vengeanceSection = extractBetweenMarkers(cpp, markers[0], markers[1]);
 
   // Parse all add_action calls
   const actions = [];

@@ -4,11 +4,8 @@
 // keeping everything needed for APL reasoning.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import "../engine/startup.js";
+import { dataFile } from "../engine/paths.js";
 
 function summarizeSpells(spells) {
   return spells.map((s) => {
@@ -84,18 +81,16 @@ function summarizeInteractions(data) {
 }
 
 function generate() {
-  const spells = JSON.parse(
-    readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
-  );
+  const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf-8"));
   const interactions = JSON.parse(
-    readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"),
+    readFileSync(dataFile("interactions.json"), "utf-8"),
   );
 
   const spellsSummary = summarizeSpells(spells);
   const interactionsSummary = summarizeInteractions(interactions);
 
-  const spellsOut = join(DATA_DIR, "spells-summary.json");
-  const interactionsOut = join(DATA_DIR, "interactions-summary.json");
+  const spellsOut = dataFile("spells-summary.json");
+  const interactionsOut = dataFile("interactions-summary.json");
 
   writeFileSync(spellsOut, JSON.stringify(spellsSummary, null, 2));
   writeFileSync(interactionsOut, JSON.stringify(interactionsSummary, null, 2));
@@ -103,10 +98,10 @@ function generate() {
   const spellsSize = (JSON.stringify(spellsSummary).length / 1024).toFixed(0);
   const ixSize = (JSON.stringify(interactionsSummary).length / 1024).toFixed(0);
   const origSpells = (
-    readFileSync(join(DATA_DIR, "spells.json"), "utf-8").length / 1024
+    readFileSync(dataFile("spells.json"), "utf-8").length / 1024
   ).toFixed(0);
   const origIx = (
-    readFileSync(join(DATA_DIR, "interactions.json"), "utf-8").length / 1024
+    readFileSync(dataFile("interactions.json"), "utf-8").length / 1024
   ).toFixed(0);
 
   console.log(

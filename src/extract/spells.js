@@ -1,22 +1,21 @@
-// Extracts Vengeance DH spell data from simc's spell_query into structured JSON.
+// Extracts spec spell data from simc's spell_query into structured JSON.
 // Gets spell IDs from Raidbots talent data instead of simc talent dump.
 
 import { execSync } from "node:child_process";
 import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
 import { resolveAllDescriptions } from "./template-resolver.js";
 import {
-  BASE_SPELL_IDS,
-  SET_BONUS_SPELL_IDS,
-} from "../model/vengeance-base.js";
-import { SIMC_BIN } from "../config.js";
+  SIMC_BIN,
+  config,
+  loadSpecAdapter,
+  getSpecAdapter,
+  getDisplayNames,
+} from "../engine/startup.js";
+import { dataDir, dataFile, ensureSpecDirs } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const DATA_DIR = join(ROOT, "data");
-const RAW_DIR = join(DATA_DIR, "raw");
+const RAW_DIR = join(dataDir(), "raw");
 
 function runSpellQuery(query) {
   try {
@@ -32,12 +31,40 @@ function runSpellQuery(query) {
   }
 }
 
-function extractSpells() {
+// Batch spell queries: union IDs with | operator to avoid N+1 subprocess spawns.
+// Chunks to avoid command line length limits.
+const BATCH_SIZE = 50;
+
+function runBatchSpellQuery(ids) {
+  const idArray = [...ids].filter((id) => Number.isInteger(id) && id > 0);
+  if (idArray.length === 0) return "";
+
+  const chunks = [];
+  for (let i = 0; i < idArray.length; i += BATCH_SIZE) {
+    chunks.push(idArray.slice(i, i + BATCH_SIZE));
+  }
+
+  const results = [];
+  for (const chunk of chunks) {
+    const query = chunk.map((id) => `spell.id=${id}`).join("|");
+    const raw = runSpellQuery(query);
+    if (raw) results.push(raw);
+  }
+  return results.join("\n");
+}
+
+async function extractSpells() {
+  await loadSpecAdapter();
+  const adapter = getSpecAdapter();
+  const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = adapter;
+  const classSpellQuery = adapter.getClassSpellQuery();
+  const specSpellFilter = adapter.getSpecSpellFilter();
+
   mkdirSync(RAW_DIR, { recursive: true });
 
   // Step 1: Get spell IDs from Raidbots talent data
   const raidbots = JSON.parse(
-    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf-8"),
+    readFileSync(join(dataDir(), "raidbots-talents.json"), "utf-8"),
   );
   const allNodes = [
     ...raidbots.classNodes,
@@ -57,27 +84,20 @@ function extractSpells() {
     `Found ${talentSpellIds.size} spell IDs from Raidbots + base abilities`,
   );
 
-  // Step 2: Get DH class spells
-  console.log("Querying DH class spells...");
-  const classRaw = runSpellQuery("spell.class=demon_hunter");
-  writeFileSync(join(RAW_DIR, "dh_class_spells.txt"), classRaw);
+  // Step 2: Get class spells
+  console.log("Querying class spells...");
+  const classRaw = runSpellQuery(classSpellQuery);
+  writeFileSync(join(RAW_DIR, "class_spells.txt"), classRaw);
 
   const classSpells = parseSpellQueryOutput(classRaw);
   console.log(`Parsed ${classSpells.length} class spells`);
 
-  // Step 3: Query all talent spell IDs for full spell data
-  console.log(`Querying ${talentSpellIds.size} talent spell IDs...`);
-  const talentSpellRaws = [];
-  for (const id of talentSpellIds) {
-    if (!Number.isInteger(id) || id <= 0) {
-      console.warn(`Skipping invalid spell ID: ${id}`);
-      continue;
-    }
-    const raw = runSpellQuery(`spell.id=${id}`);
-    if (raw.includes(`id=${id}`)) talentSpellRaws.push(raw);
-  }
-  const talentSpellRaw = talentSpellRaws.join("\n");
-  writeFileSync(join(RAW_DIR, "dh_talent_spells.txt"), talentSpellRaw);
+  // Step 3: Query all talent spell IDs (batched to avoid N+1 subprocess spawns)
+  console.log(
+    `Querying ${talentSpellIds.size} talent spell IDs in batches of ${BATCH_SIZE}...`,
+  );
+  const talentSpellRaw = runBatchSpellQuery(talentSpellIds);
+  writeFileSync(join(RAW_DIR, "talent_spells.txt"), talentSpellRaw);
 
   const talentSpells = parseSpellQueryOutput(talentSpellRaw);
   console.log(`Parsed ${talentSpells.length} talent spells`);
@@ -102,7 +122,7 @@ function extractSpells() {
     }
   }
 
-  // Build talent name set for filtering modifiers to current VDH
+  // Build talent name set for filtering modifiers to current spec
   const raidbotTalentNames = new Set();
   for (const node of allNodes) {
     raidbotTalentNames.add(node.name);
@@ -118,35 +138,26 @@ function extractSpells() {
 
   if (missingModifierIds.size > 0) {
     console.log(
-      `Fetching ${missingModifierIds.size} modifier spells from affectingSpells...`,
+      `Fetching ${missingModifierIds.size} modifier spells (batched)...`,
     );
+    const modRaw = runBatchSpellQuery(missingModifierIds);
+    const modSpells = parseSpellQueryOutput(modRaw);
     let kept = 0;
     let skipped = 0;
-    for (const id of missingModifierIds) {
-      const raw = runSpellQuery(`spell.id=${id}`);
-      if (raw.includes(`id=${id}`)) {
-        const parsed = parseSpellQueryOutput(raw);
-        for (const spell of parsed) {
-          if (!spell.id) continue;
-          // Keep modifier if it has a current VDH signal:
-          // - Name matches a Raidbots talent (secondary spell ID for current talent)
-          // - Name matches a base ability (e.g. Immolation Aura rank spells)
-          // - Has a talentEntry (simc maps it to a talent)
-          // - Is a mastery or spec aura spell
-          const name = spell.name || "";
-          const isCurrent =
-            raidbotTalentNames.has(name) ||
-            baseSpellNames.has(name) ||
-            spell.talentEntry ||
-            name.startsWith("Mastery:") ||
-            name === "Vengeance Demon Hunter";
-          if (isCurrent) {
-            spellMap.set(spell.id, spell);
-            kept++;
-          } else {
-            skipped++;
-          }
-        }
+    for (const spell of modSpells) {
+      if (!spell.id) continue;
+      const name = spell.name || "";
+      const isCurrent =
+        raidbotTalentNames.has(name) ||
+        baseSpellNames.has(name) ||
+        spell.talentEntry ||
+        name.startsWith("Mastery:") ||
+        specSpellFilter(spell);
+      if (isCurrent) {
+        spellMap.set(spell.id, spell);
+        kept++;
+      } else {
+        skipped++;
       }
     }
     console.log(
@@ -154,16 +165,17 @@ function extractSpells() {
     );
   }
 
-  // Filter to DH-relevant
-  const dhSpells = [...spellMap.values()].filter((spell) => {
+  // Filter to class-relevant spells
+  const className = getDisplayNames().class;
+  const relevantSpells = [...spellMap.values()].filter((spell) => {
     if (talentSpellIds.has(spell.id)) return true;
-    if (spell.class?.includes("Demon Hunter")) return true;
+    if (spell.class?.includes(className)) return true;
     if (spell.talentEntry) return true;
-    if (spell.labels?.some((l) => l.includes("Demon Hunter"))) return true;
+    if (spell.labels?.some((l) => l.includes(className))) return true;
     return false;
   });
 
-  const output = dhSpells.map(cleanSpell).sort((a, b) => a.id - b.id);
+  const output = relevantSpells.map(cleanSpell).sort((a, b) => a.id - b.id);
 
   // Fetch sub-spells referenced in descriptions (e.g., $204598s1 → spell 204598)
   const descReferencedIds = new Set();
@@ -180,19 +192,15 @@ function extractSpells() {
   );
   if (missingDescRefs.length > 0) {
     console.log(
-      `\nFetching ${missingDescRefs.length} sub-spells referenced in descriptions...`,
+      `\nFetching ${missingDescRefs.length} sub-spells referenced in descriptions (batched)...`,
     );
+    const descRaw = runBatchSpellQuery(new Set(missingDescRefs));
+    const descSpells = parseSpellQueryOutput(descRaw);
     let fetched = 0;
-    for (const id of missingDescRefs) {
-      const raw = runSpellQuery(`spell.id=${id}`);
-      if (raw.includes(`id=${id}`)) {
-        const parsed = parseSpellQueryOutput(raw);
-        for (const spell of parsed) {
-          if (spell.id) {
-            output.push(cleanSpell(spell));
-            fetched++;
-          }
-        }
+    for (const spell of descSpells) {
+      if (spell.id) {
+        output.push(cleanSpell(spell));
+        fetched++;
       }
     }
     output.sort((a, b) => a.id - b.id);
@@ -205,31 +213,28 @@ function extractSpells() {
     `\nTemplate resolution: ${stats.resolved} fully resolved, ${stats.partial} partial, ${stats.unresolved} unresolved out of ${stats.total}`,
   );
 
-  writeFileSync(join(DATA_DIR, "spells.json"), JSON.stringify(output, null, 2));
+  writeFileSync(
+    join(dataDir(), "spells.json"),
+    JSON.stringify(output, null, 2),
+  );
   console.log(`Wrote ${output.length} spells to data/spells.json`);
 
+  const specName = getDisplayNames().spec;
   const withTalent = output.filter((s) => s.talentEntry);
-  const vengeance = output.filter(
-    (s) =>
-      s.class?.includes("Vengeance") || s.talentEntry?.spec === "Vengeance",
+  const specSpecific = output.filter(
+    (s) => s.class?.includes(specName) || s.talentEntry?.spec === specName,
   );
   console.log(`  ${withTalent.length} with talent entries`);
-  console.log(`  ${vengeance.length} Vengeance-specific`);
+  console.log(`  ${specSpecific.length} ${specName}-specific`);
 
-  const checks = [
-    [247454, "Spirit Bomb"],
-    [228477, "Soul Cleave"],
-    [204021, "Fiery Brand"],
-    [263642, "Fracture"],
-    [212084, "Fel Devastation"],
-    [258920, "Immolation Aura"],
-    [204596, "Sigil of Flame"],
-    [390163, "Sigil of Spite"],
-  ];
-  for (const [id, name] of checks) {
+  const keySpells = adapter.getKeySpellIds?.() || [];
+  for (const [id, name] of keySpells) {
     const found = output.find((s) => s.id === id);
     console.log(`  ${found ? "\u2713" : "\u2717"} ${name} (${id})`);
   }
 }
 
-extractSpells();
+extractSpells().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

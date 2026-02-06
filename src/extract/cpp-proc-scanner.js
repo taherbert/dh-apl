@@ -1,18 +1,15 @@
-// Extracts proc mechanics from sc_demon_hunter.cpp that are NOT in spell data.
+// Extracts proc mechanics from the simc C++ class module that are NOT in spell data.
 // Targets: rng().roll() proc rates, ICD declarations and durations,
 // accumulator thresholds, and RPPM declarations.
 // Output: data/cpp-proc-mechanics.json (replaces manually maintained proc-mechanics.json)
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-import { SIMC_DH_CPP } from "../config.js";
+import { join } from "node:path";
+import { SIMC_CPP, config } from "../engine/startup.js";
+import { dataDir } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "../..", "data");
-
-function extractProcMechanics() {
-  const src = readFileSync(SIMC_DH_CPP, "utf-8");
+export function extractProcMechanics(preloadedSource) {
+  const src = preloadedSource || readFileSync(SIMC_CPP, "utf-8");
   const lines = src.split("\n");
 
   const icdDeclarations = scanICDDeclarations(lines);
@@ -24,7 +21,7 @@ function extractProcMechanics() {
   const constants = scanConstants(lines);
 
   const output = {
-    source: "sc_demon_hunter.cpp (auto-extracted)",
+    source: `${config.simc.cppModule} (auto-extracted)`,
     extractedAt: new Date().toISOString(),
     icds: icdUsages,
     procs: procRolls,
@@ -44,7 +41,7 @@ function extractProcMechanics() {
   };
 
   writeFileSync(
-    join(DATA_DIR, "cpp-proc-mechanics.json"),
+    join(dataDir(), "cpp-proc-mechanics.json"),
     JSON.stringify(output, null, 2),
   );
 

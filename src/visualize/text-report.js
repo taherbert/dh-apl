@@ -1,31 +1,29 @@
 // Generates a markdown report of spell/talent interactions.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
 import {
-  BASE_SPELL_IDS,
-  SET_BONUS_SPELL_IDS,
-} from "../model/vengeance-base.js";
+  config,
+  loadSpecAdapter,
+  getSpecAdapter,
+  getDisplayNames,
+} from "../engine/startup.js";
+import { dataFile } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+async function generateReport() {
+  await loadSpecAdapter();
+  const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = getSpecAdapter();
 
-function generateReport() {
-  const spells = JSON.parse(
-    readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
-  );
-  const talents = JSON.parse(
-    readFileSync(join(DATA_DIR, "talents.json"), "utf-8"),
-  );
+  const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf-8"));
+  const talents = JSON.parse(readFileSync(dataFile("talents.json"), "utf-8"));
   const interactions = JSON.parse(
-    readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"),
+    readFileSync(dataFile("interactions.json"), "utf-8"),
   );
 
   const spellMap = new Map(spells.map((s) => [s.id, s]));
   const lines = [];
 
-  lines.push("# Vengeance Demon Hunter — Ability & Talent Report");
+  const { spec: specName, class: className } = getDisplayNames();
+  lines.push(`# ${specName} ${className} — Ability & Talent Report`);
   lines.push("");
   lines.push(
     `Generated from SimC midnight branch. ${spells.length} spells, ${Object.keys(interactions.byTalent).length} modifier sources.`,
@@ -44,7 +42,7 @@ function generateReport() {
   for (const id of BASE_SPELL_IDS) vengSpellIds.add(id);
   for (const id of SET_BONUS_SPELL_IDS) vengSpellIds.add(id);
   for (const s of spells) {
-    if (s.talentEntry?.spec === "Vengeance") vengSpellIds.add(s.id);
+    if (s.talentEntry?.spec === specName) vengSpellIds.add(s.id);
   }
 
   // Active abilities section
@@ -155,7 +153,7 @@ function generateReport() {
 
   for (const [treeName, treeData] of [
     ["Class", talents.class],
-    ["Spec (Vengeance)", talents.spec],
+    [`Spec (${specName})`, talents.spec],
     ...Object.entries(talents.hero).map(([name, data]) => [
       `Hero: ${name}`,
       data,
@@ -288,8 +286,11 @@ function generateReport() {
   lines.push("");
 
   const report = lines.join("\n");
-  writeFileSync(join(DATA_DIR, "ability-report.md"), report);
+  writeFileSync(dataFile("ability-report.md"), report);
   console.log(`Wrote data/ability-report.md (${lines.length} lines)`);
 }
 
-generateReport();
+generateReport().catch((e) => {
+  console.error(e);
+  process.exit(1);
+});

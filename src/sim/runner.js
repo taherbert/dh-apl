@@ -7,40 +7,22 @@ import { execSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { cpus } from "node:os";
-import { join, dirname, basename } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, basename } from "node:path";
 
-import { SIMC_BIN, DATA_ENV } from "../config.js";
+import {
+  SIMC_BIN,
+  DATA_ENV,
+  SCENARIOS,
+  SIM_DEFAULTS as _SIM_DEFAULTS,
+} from "../engine/startup.js";
+import { resultsDir, resultsFile } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
 const SIMC = SIMC_BIN;
-const RESULTS_DIR = join(ROOT, "results");
 const TOTAL_CORES = cpus().length;
 
-export const SIM_DEFAULTS = {
-  threads: TOTAL_CORES,
-  target_error: 0.5,
-  iterations: 5000000, // cap — target_error stops early
-};
-
-export const SCENARIOS = {
-  st: {
-    name: "Patchwerk 1T",
-    maxTime: 300,
-    desiredTargets: 1,
-  },
-  small_aoe: {
-    name: "Patchwerk 5T",
-    maxTime: 75,
-    desiredTargets: 5,
-  },
-  big_aoe: {
-    name: "Patchwerk 10T",
-    maxTime: 60,
-    desiredTargets: 10,
-  },
-};
+// Re-export from config, adding runtime-only `threads` to defaults
+export { SCENARIOS };
+export const SIM_DEFAULTS = { threads: TOTAL_CORES, ..._SIM_DEFAULTS };
 
 function buildOverrides(scenario, extraOverrides = {}) {
   const config = SCENARIOS[scenario];
@@ -69,13 +51,11 @@ export function prepareSim(
       `Unknown scenario: ${scenario}. Valid: ${Object.keys(SCENARIOS).join(", ")}`,
     );
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  mkdirSync(resultsDir(), { recursive: true });
 
   const profileName = basename(profilePath, ".simc");
-  const jsonPath = join(RESULTS_DIR, `${profileName}_${scenario}.json`);
-  const htmlPath = html
-    ? join(RESULTS_DIR, `${profileName}_${scenario}.html`)
-    : null;
+  const jsonPath = resultsFile(`${profileName}_${scenario}.json`);
+  const htmlPath = html ? resultsFile(`${profileName}_${scenario}.html`) : null;
 
   const overrides = buildOverrides(scenario, simOverrides);
   const extras = extraOverrides ? extraOverrides.split(" ") : [];
@@ -239,10 +219,10 @@ export async function runMultiActorAsync(
   const config = SCENARIOS[scenario];
   if (!config) throw new Error(`Unknown scenario: ${scenario}`);
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  mkdirSync(resultsDir(), { recursive: true });
 
-  const simcPath = join(RESULTS_DIR, `${label}_${scenario}.simc`);
-  const jsonPath = join(RESULTS_DIR, `${label}_${scenario}.json`);
+  const simcPath = resultsFile(`${label}_${scenario}.simc`);
+  const jsonPath = resultsFile(`${label}_${scenario}.json`);
   writeFileSync(simcPath, simcContent);
 
   const merged = { ...SIM_DEFAULTS, ...simOverrides };
@@ -301,8 +281,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     results.push(result);
   }
 
-  const summaryPath = join(
-    RESULTS_DIR,
+  const summaryPath = resultsFile(
     `${basename(profilePath, ".simc")}_summary.json`,
   );
   writeFileSync(summaryPath, JSON.stringify(results, null, 2));

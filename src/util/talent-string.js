@@ -205,24 +205,22 @@ export function decode(str, nodes) {
 // --- Helpers for integration with our data model ---
 
 import { readFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DEFAULT_DATA_DIR = join(__dirname, "..", "..", "data");
+import { join } from "node:path";
+import { SPEC_ID as CONFIG_SPEC_ID, HERO_SUBTREES } from "../engine/startup.js";
+import { dataDir, dataFile } from "../engine/paths.js";
 
 // Load the full DH node list from dh-all-nodes.json (all specs, all hero trees).
 // Required for decoding external talent strings (game client, Wowhead, Raidbots).
-export function loadFullNodeList(dataDir) {
+export function loadFullNodeList(dataDirOverride) {
   return JSON.parse(
     readFileSync(
-      join(dataDir || DEFAULT_DATA_DIR, "dh-all-nodes.json"),
+      join(dataDirOverride || dataDir(), "dh-all-nodes.json"),
       "utf8",
     ),
   );
 }
 
-// Build a VDH-only sorted node list from raidbots-talents.json data.
+// Build a spec-only sorted node list from raidbots-talents.json data.
 // Sufficient for encoding builds and round-tripping our own strings,
 // but NOT for decoding external strings. Use loadFullNodeList() for that.
 export function buildNodeList(data) {
@@ -350,12 +348,11 @@ export function selectionsToNodeSets(selections, data) {
 // --- CLI ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const DATA_DIR = DEFAULT_DATA_DIR;
   const data = JSON.parse(
-    readFileSync(join(DATA_DIR, "raidbots-talents.json"), "utf8"),
+    readFileSync(dataFile("raidbots-talents.json"), "utf8"),
   );
   // Use full DH node list for CLI (supports decoding external strings)
-  const nodes = loadFullNodeList(DATA_DIR);
+  const nodes = loadFullNodeList();
 
   const arg = process.argv[2];
 
@@ -532,7 +529,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(encoded);
   } else if (arg === "--test") {
     // Round-trip test: build a mock selection, encode, decode, verify
-    const SPEC_ID = 581;
     const sel = new Map();
 
     // Select all class entry/free nodes
@@ -565,14 +561,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       count++;
     }
 
-    // Select all Aldrachi Reaver hero nodes
-    for (const n of data.heroSubtrees["Aldrachi Reaver"]) {
+    // Select all hero nodes from the first hero tree
+    const firstHeroTree = Object.keys(data.heroSubtrees)[0];
+    for (const n of data.heroSubtrees[firstHeroTree]) {
       const entry = { rank: n.maxRanks || 1 };
       if (n.type === "choice") entry.choiceIndex = 1;
       sel.set(n.id, entry);
     }
 
-    const encoded = encode(SPEC_ID, nodes, sel);
+    const encoded = encode(CONFIG_SPEC_ID, nodes, sel);
     console.log(`Encoded: ${encoded}`);
     console.log(`Length: ${encoded.length} chars`);
 

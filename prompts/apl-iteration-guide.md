@@ -1,6 +1,6 @@
 # APL Iteration Methodology Guide
 
-Reference for the autonomous APL optimization loop (`/iterate-apl`). Complements `prompts/apl-analysis-guide.md` with iteration-specific strategy.
+Reference for the autonomous APL optimization loop (Phase 3 of `/optimize`). Complements `prompts/apl-analysis-guide.md` with iteration-specific strategy.
 
 ## 0. Error Audit — Before Optimizing, Fix What's Wrong
 
@@ -8,8 +8,8 @@ Before pursuing optimization hypotheses, audit the APL for logic errors. Fixing 
 
 ### What to look for
 
-- **Stale hardcoded values.** Variables and conditions that assume fixed caps, thresholds, or counts that talents modify. Example: `num_spawnable_souls` may assume a soul fragment cap of 5, but an apex talent (e.g., Untethered Rage) raises it to 6. Any `soul_fragments>=5` or `soul_fragments<=2+talent.soul_sigils` check is suspect if it doesn't account for the actual cap.
-- **Missing talent interactions.** Conditions that don't gate on a talent that fundamentally changes the mechanic. If a talent doubles a proc chance, extends a duration, or adds a new resource source, the APL logic downstream of that mechanic needs to reflect it.
+- **Stale hardcoded values.** Variables and conditions that assume fixed caps, thresholds, or counts that talents modify. Read `config.resources` for actual resource caps and check whether APL conditions reflect them. If a talent raises a resource cap or changes a proc rate, downstream conditions using the old values are suspect.
+- **Missing talent interactions.** Conditions that don't gate on a talent that fundamentally changes the mechanic. If a talent doubles a proc chance, extends a duration, or adds a new resource source, the APL logic downstream of that mechanic needs to reflect it. Cross-reference `interactions-summary.json` for modifier sources.
 - **Incorrect operator or comparison.** Off-by-one errors (`>=4` vs `>=5`), wrong boolean logic (`&` vs `|`), or inverted checks (`!buff.X.up` when `buff.X.up` was intended).
 - **Dead or unreachable lines.** Actions whose conditions can never be true given the talent build, or that are shadowed by an earlier unconditional action that always fires first.
 
@@ -17,10 +17,10 @@ Before pursuing optimization hypotheses, audit the APL for logic errors. Fixing 
 
 A single corrected assumption can cascade. When you fix an error, trace outward:
 
-1. **What variables reference the corrected value?** Update them. If `num_spawnable_souls` now accounts for 6 fragments, every condition using `variable.num_spawnable_souls` may need revisiting.
-2. **What thresholds change?** A higher fragment cap means Spirit Bomb at 5 fragments is no longer "full" — does 6 change the DPGCD breakpoint? Does the `spb_1t_souls` variable need a new branch?
-3. **What target-count breakpoints shift?** More fragments per cycle means more Spirit Bomb damage in AoE, which may lower the `active_enemies>=N` threshold where Spirit Bomb overtakes other spenders.
-4. **What resource flows change?** Extra fragments may mean more healing (Charred Flesh, Soul Barrier) or more Fury-free damage, shifting the Fury economy.
+1. **What variables reference the corrected value?** Update them.
+2. **What thresholds change?** A higher resource cap means the old "full" threshold is no longer full — does this change DPGCD breakpoints?
+3. **What target-count breakpoints shift?** More secondary resources per cycle means more AoE spender damage, which may lower the `active_enemies>=N` threshold.
+4. **What resource flows change?** Extra secondary resources may mean more healing or more resource-free damage, shifting the primary resource economy.
 
 Document each error and its downstream trace as a finding before making the fix. The fix itself may be one line, but the theory behind it should be thorough.
 
@@ -30,7 +30,7 @@ Types of APL changes, ordered by risk/impact:
 
 ### Low Risk
 
-- **Threshold sweep:** Vary numeric condition values (`fury>=N`, `soul_fragments>=N`, `active_enemies>=N`). Small, isolated, easy to measure.
+- **Threshold sweep:** Vary numeric condition values (`resource>=N`, `secondary_resource>=N`, `active_enemies>=N`). Small, isolated, easy to measure.
 - **Condition relaxation:** Remove or loosen a condition to allow more casts. E.g., drop a `&buff.X.up` guard.
 - **Condition addition:** Add `active_enemies>=N`, `buff.X.up`, or resource guards to reduce waste casts.
 
@@ -69,9 +69,9 @@ Before touching any ability, build a complete mental model of its role. Never sk
 
 1. **Locate the ability.** Find it in `apls/current.simc` — note which action list it's in, its priority position, and every condition on the line.
 2. **Understand why it's there.** Read the surrounding actions above and below. What does this ability compete with for GCDs? What fires instead if this condition fails? What would fire _less_ if this condition is loosened?
-3. **Trace the resource/cooldown impact.** Does this ability generate or spend Fury? Produce or consume soul fragments? Interact with a cooldown window (e.g., Fiery Brand/Fiery Demise)? A change here ripples through the resource economy.
+3. **Trace the resource/cooldown impact.** Does this ability generate or spend primary resource? Produce or consume secondary resource? Interact with a cooldown window? A change here ripples through the resource economy. Read `config.resourceFlow` and `config.buffWindows` for the spec's resource and burst mechanics.
 4. **Check cross-references.** Search for `variable,name=` definitions and other action lines that reference the same buff, debuff, or resource threshold. A condition change on one line may conflict with assumptions elsewhere.
-5. **Check both hero tree branches** (`actions.ar` and `actions.anni`). The current baseline uses AR talents, so `actions.ar` is the active branch. The `actions.anni` list exists but won't execute without an Annihilator talent profile. Changes to shared lists (precombat, default, externals) affect both.
+5. **Check all hero tree branches.** Read `config.heroTrees` for the spec's hero tree names. The APL may have separate action lists per hero tree (e.g., `actions.tree_a` and `actions.tree_b`). Changes to shared lists affect all builds.
 6. **Form a theory.** State explicitly: "This change should improve X because Y, at the cost of Z." If you can't articulate the expected mechanism, you don't understand the change well enough to make it. Do more analysis before simulating.
 7. **Predict the direction.** Before running the sim, predict whether the change will be positive, negative, or neutral — and roughly by how much. After results come back, compare against your prediction. Wrong predictions mean your model of the APL is incomplete; update it before the next iteration.
 
@@ -87,7 +87,7 @@ When improvements plateau (3+ consecutive rejections):
 
 3. **Radical reorder:** Swap the top 3-5 priority actions in a sub-list. Large perturbation to escape local optima.
 
-4. **Reference import:** Compare against `reference/vengeance-apl.simc` (the simc default APL). If it handles something differently, try that approach.
+4. **Reference import:** Compare against the simc default APL in `reference/`. If it handles something differently, try that approach.
 
 5. **Category rotation:** If threshold sweeps are exhausted, switch to priority reordering. If reordering is exhausted, try condition changes. Cycle through mutation types.
 
@@ -101,12 +101,12 @@ When improvements plateau (3+ consecutive rejections):
 
 ### SimC Statistics
 
-SimC reports `mean_stddev` (standard error of the mean) directly in profileset output when available. This is more precise than computing `stddev / sqrt(iterations)` manually, since simc accounts for autocorrelation. The comparison code uses `mean_stddev` when present and falls back to the manual computation.
+SimC reports `mean_stddev` (standard error of the mean) directly in profileset output when available. This is more precise than computing `stddev / sqrt(iterations)` manually, since simc accounts for autocorrelation.
 
 A delta is **statistically significant** when:
 
 ```
-|delta| > 2 × stderr  (≈95% confidence)
+|delta| > 2 * stderr  (approximately 95% confidence)
 ```
 
 ### target_error and Adaptive Iteration Counts
@@ -119,8 +119,6 @@ Instead of fixed iteration counts, comparison runs use `target_error` to let sim
 | Standard | 0.3          | ~0.15%         | >0.3%            |
 | Confirm  | 0.1          | ~0.05%         | >0.1%            |
 
-This is faster than fixed iterations for easy-to-converge scenarios and uses more iterations only when variance is high.
-
 ### Tiered Testing Strategy
 
 1. **Quick screen** (`--quick`, target_error=1.0): Reject obvious losers fast. Never accept based on quick alone.
@@ -132,8 +130,8 @@ This is faster than fixed iterations for easy-to-converge scenarios and uses mor
 If one scenario improves and another regresses:
 
 - Escalate both to `--confirm` for higher confidence
-- Use the weighted score (50% ST, 30% 5T, 20% 10T) for the final decision
-- A significant regression in ST is harder to accept than in 10T
+- Use the weighted score (from config.json scenario weights) for the final decision
+- A significant regression in ST is harder to accept than in heavy AoE
 
 ### Profileset Advantage
 
@@ -206,9 +204,9 @@ This is 2-3x faster than testing sequentially when hypotheses are independent.
 
 Group hypotheses by independence:
 
-- **Independent**: Different abilities, different action lists → safe to batch
-- **Dependent**: Same ability, same conditions → must test sequentially (results interact)
-- **Conflicting**: Opposite mutations (e.g., "move X higher" vs "remove X") → pick one
+- **Independent**: Different abilities, different action lists -> safe to batch
+- **Dependent**: Same ability, same conditions -> must test sequentially (results interact)
+- **Conflicting**: Opposite mutations (e.g., "move X higher" vs "remove X") -> pick one
 
 ### Subagent Delegation
 

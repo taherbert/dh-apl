@@ -2,14 +2,11 @@
 // gaps in coverage: effects declared in C++ but missing from the interaction model.
 
 import { readFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "../..", "data");
+import "../engine/startup.js";
+import { dataFile } from "../engine/paths.js";
 
 function runGapReport() {
-  const inventoryPath = join(DATA_DIR, "cpp-effects-inventory.json");
+  const inventoryPath = dataFile("cpp-effects-inventory.json");
   if (!existsSync(inventoryPath)) {
     console.log(
       "No cpp-effects-inventory.json found. Run: npm run cpp-effects",
@@ -19,7 +16,7 @@ function runGapReport() {
 
   const inventory = JSON.parse(readFileSync(inventoryPath, "utf-8"));
   const interactions = JSON.parse(
-    readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"),
+    readFileSync(dataFile("interactions.json"), "utf-8"),
   );
 
   // Build lookup sets from interactions

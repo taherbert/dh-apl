@@ -1,0 +1,141 @@
+graph LR
+  t442718[/"Fury of the Aldrachi"/]
+  s442290(("Art of the Glaive"))
+  t442679[/"Reaver's Mark"/]
+  t442686[/"Thrill of the Fight"/]
+  t442683[/"Aldrachi Tactics"/]
+  t1253769[/"Catastrophe"/]
+  snull(("Soul Cleave"))
+  t389718["Cycle of Binding"]
+  t395446["Soul Sigils"]
+  t389824["Shattered Restoration"]
+  s203981(("Consume Soul"))
+  t207697["Feast of Souls"]
+  t320313["Swallowed Anger"]
+  s278326(("Consume Magic"))
+  t1253377[/"Meteoric Rise"/]
+  s212084(("Fel Devastation"))
+  t389708["Darkglare Boon"]
+  t207739["Burning Alive"]
+  s204021(("Fiery Brand"))
+  t389958["Frailty"]
+  t428603["Ascending Flame"]
+  t389724["Felfire Fist"]
+  t227174["Fallout"]
+  t336639["Charred Flesh"]
+  t390808["Volatile Flameblood"]
+  t320331["Infernal Armor"]
+  s247454(("Spirit Bomb"))
+  t1256307[/"Dark Matter"/]
+  t1256353[/"World Killer"/]
+  s1253304(("Voidfall"))
+  t442502[/"Warblade's Hunger"/]
+  s232893(("Felblade"))
+  t343207["Focused Cleave"]
+  t442497[/"Keen Engagement"/]
+  t1272153[/"Bladecraft"/]
+  t444997[/"Preemptive Strike"/]
+  s442679(("Reaver's Mark"))
+  s442686(("Thrill of the Fight"))
+  s442683(("Aldrachi Tactics"))
+  t1253304[/"Voidfall"/]
+  s1256353(("World Killer"))
+  t1253391[/"Meteoric Fall"/]
+  t1253676[/"Doomsayer"/]
+  s395446(("Soul Sigils"))
+  t278326["Consume Magic"]
+  s320313(("Swallowed Anger"))
+  t212084["Fel Devastation"]
+  s1253377(("Meteoric Rise"))
+  s389708(("Darkglare Boon"))
+  s389958(("Frailty"))
+  s428603(("Ascending Flame"))
+  s336639(("Charred Flesh"))
+  s390808(("Volatile Flameblood"))
+  s320331(("Infernal Armor"))
+  t247454["Spirit Bomb"]
+  s1256307(("Dark Matter"))
+  t232893["Felblade"]
+  s442502(("Warblade's Hunger"))
+  s343207(("Focused Cleave"))
+  s1272153(("Bladecraft"))
+  t207548["Agonizing Flames"]
+  t1270449["Untethered Rage"]
+  t1256295[/"Mass Acceleration"/]
+  t1253817[/"Otherworldly Focus"/]
+  t1264809{{"Vengeance 12.0 Class Set 4pc"}}
+  s1276488(("Explosion of the Soul"))
+  t442718 -->|proc trigger| s442290
+  t442679 -->|proc trigger| s442290
+  t442686 -->|proc trigger| s442290
+  t442683 -->|proc trigger| s442290
+  t1253769 -->|proc trigger| snull
+  t389718 -->|cooldown modifier| snull
+  t395446 -->|cooldown modifier| snull
+  t389824 -->|resource modifier| s203981
+  t207697 -->|resource modifier| snull
+  t320313 -->|resource modifier| s278326
+  t1253377 -->|cooldown modifier| s212084
+  t389708 -->|cooldown modifier| s212084
+  t207739 -->|duration modifier| s204021
+  t389958 -->|duration modifier| snull
+  t428603 -->|duration modifier| snull
+  t389724 -->|proc trigger| snull
+  t227174 -->|resource modifier| snull
+  t336639 -->|resource modifier| snull
+  t390808 -->|resource modifier| snull
+  t320331 -->|resource modifier| snull
+  t389958 -->|proc trigger| s247454
+  t1256307 -->|proc trigger| s247454
+  t1256307 -->|cooldown modifier| snull
+  t1256353 -->|mechanic change| s1253304
+  t442502 -->|damage modifier| s232893
+  t442502 -->|proc trigger| snull
+  t389958 -->|damage modifier| snull
+  t343207 -->|damage modifier| snull
+  t442497 -->|resource modifier| snull
+  t1272153 -->|proc trigger| s442290
+  t444997 -->|proc trigger| snull
+  t442718 -->|proc trigger| s442679
+  t442718 -->|proc trigger| s442686
+  t442718 -->|proc trigger| s442683
+  t442679 -->|proc trigger| s442686
+  t442679 -->|proc trigger| s442683
+  t442686 -->|proc trigger| s442683
+  t1253304 -->|proc trigger| s1256353
+  t1253391 -->|proc trigger| s1256353
+  t1253676 -->|proc trigger| s1256353
+  t389718 -->|cooldown modifier| s395446
+  t278326 -->|resource modifier| s320313
+  t212084 -->|cooldown modifier| s1253377
+  t212084 -->|cooldown modifier| s389708
+  t1253377 -->|cooldown modifier| s389708
+  t389718 -->|duration modifier| s389958
+  t389718 -->|duration modifier| s428603
+  t389958 -->|duration modifier| s428603
+  t227174 -->|resource modifier| s336639
+  t227174 -->|resource modifier| s390808
+  t227174 -->|resource modifier| s320331
+  t336639 -->|resource modifier| s390808
+  t336639 -->|resource modifier| s320331
+  t390808 -->|resource modifier| s320331
+  t247454 -->|proc trigger| s389958
+  t247454 -->|proc trigger| s1256307
+  t389958 -->|proc trigger| s1256307
+  t232893 -->|damage modifier| s442502
+  t389958 -->|damage modifier| s343207
+  t442718 -->|proc trigger| s1272153
+  t207548 -->|cooldown modifier| s320331
+  t1270449 -->|buff grant| snull
+  t442686 -->|buff grant| snull
+  t1256295 -->|buff grant| snull
+  t1253377 -->|buff grant| snull
+  t389724 -->|buff grant| snull
+  t1253676 -->|buff grant| snull
+  t1253817 -->|direct damage_modifier| snull
+  t343207 -->|direct damage_modifier| snull
+  t1264809 -->|proc trigger| s1276488
+  classDef hero fill:#f9d,stroke:#333
+  class t442718,t442679,t442686,t442683,t1253769,t1253377,t1256307,t1256353,t442502,t442497,t1272153,t444997,t1253304,t1253391,t1253676,t1256295,t1253817 hero
+  classDef mechanic fill:#bdf,stroke:#333
+  class t1264809 mechanic

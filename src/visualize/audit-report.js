@@ -1,19 +1,13 @@
 // Generates a comprehensive interaction audit report in Markdown.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "../..");
-const DATA_DIR = join(ROOT, "data");
+import "../engine/startup.js";
+import { dataFile } from "../engine/paths.js";
 
 function generateAuditReport() {
-  const talents = JSON.parse(
-    readFileSync(join(DATA_DIR, "talents.json"), "utf-8"),
-  );
+  const talents = JSON.parse(readFileSync(dataFile("talents.json"), "utf-8"));
   const interactions = JSON.parse(
-    readFileSync(join(DATA_DIR, "interactions.json"), "utf-8"),
+    readFileSync(dataFile("interactions.json"), "utf-8"),
   );
 
   const allTalents = [
@@ -202,7 +196,7 @@ function generateAuditReport() {
   w();
 
   const report = lines.join("\n");
-  const outPath = join(DATA_DIR, "audit-report.md");
+  const outPath = dataFile("audit-report.md");
   writeFileSync(outPath, report);
   console.log(`Wrote ${outPath}`);
   console.log(`  ${interactions.interactions.length} interactions audited`);

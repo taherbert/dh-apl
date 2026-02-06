@@ -1,0 +1,51 @@
+{
+  "_schema": "mechanics-v1",
+  "_doc": "Immutable game/SimC mechanical facts. Verified via C++ source analysis. Check here before re-analyzing mechanics.",
+  "mechanics": {
+    "ar_empowerment": {
+      "summary": "Art of the Glaive empowerment cycle",
+      "source": "results/ar_empowerment_analysis.md",
+      "verified": "2026-02-05",
+      "facts": [
+        "Reaver's Glaive grants glaive_flurry AND rending_strike simultaneously",
+        "Fracture-first applies 2 stacks Reaver's Mark (14% amp, 20s)",
+        "Soul Cleave-first applies 1 stack Reaver's Mark + 12 burst strikes",
+        "700ms delay between first and second empowered ability",
+        "20 fragments consumed = 1 empowerment; Sigil of Spite bypasses this"
+      ],
+      "simcExpressions": {
+        "empowermentAvailable": "buff.reavers_glaive.up",
+        "bothBuffsActive": "buff.glaive_flurry.up&buff.rending_strike.up",
+        "rmStacks": "debuff.reavers_mark.stack",
+        "rmRemains": "debuff.reavers_mark.remains",
+        "aotgStacks": "buff.art_of_the_glaive.stack"
+      },
+      "aplImplications": [
+        "Default to Fracture-first for 2x RM maintenance",
+        "SC-first only when RM stacks=2 AND remains > time_to_next_empowerment + 5",
+        "IMPORTANT: APL fall-through achieves Fracture-first without explicit reordering — a condition that fails on first check (both buffs up) can match on second check (after one buff consumed)"
+      ]
+    },
+    "voidfall_cycle": {
+      "summary": "Annihilator Voidfall building/spending state machine",
+      "source": "results/voidfall_fury_analysis.md",
+      "verified": "2026-02-05",
+      "facts": [
+        "Building stacks have NO duration timeout (persist indefinitely)",
+        "Spending stacks have NO duration timeout (persist indefinitely)",
+        "3 Soul Cleaves required to consume all spending stacks = 105 fury minimum",
+        "World Killer (3rd meteor) fires automatically when final stack consumed",
+        "Mass Acceleration (Meta) overwrites existing building stacks"
+      ],
+      "simcExpressions": {
+        "buildingStacks": "buff.voidfall_building.stack",
+        "spendingStacks": "buff.voidfall_spending.stack",
+        "inSpendingPhase": "buff.voidfall_spending.up"
+      },
+      "aplImplications": [
+        "Add fury>=105 guard before triggering 2→3 building stack transition",
+        "No timeout pressure — can pool fury indefinitely during building phase"
+      ]
+    }
+  }
+}

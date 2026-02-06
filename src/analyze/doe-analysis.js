@@ -2,11 +2,7 @@
 // 2-way interactions, predicts optimal builds, and generates diagnostics.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
+import { dataFile, resultsFile } from "../engine/paths.js";
 
 // --- OLS regression ---
 
@@ -334,13 +330,13 @@ export function diagnostics(model) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   // Load talent combos data
   const combosData = JSON.parse(
-    readFileSync(join(DATA_DIR, "talent-combos.json"), "utf8"),
+    readFileSync(dataFile("talent-combos.json"), "utf8"),
   );
 
   const factors = combosData.factors.spec;
 
   // Check for simulation results
-  const resultsPath = join(DATA_DIR, "..", "results", "doe-results.json");
+  const resultsPath = resultsFile("doe-results.json");
   let dpsResults;
   try {
     dpsResults = JSON.parse(readFileSync(resultsPath, "utf8"));
@@ -457,9 +453,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     diagnostics: diag,
   };
 
-  writeFileSync(
-    join(DATA_DIR, "doe-analysis.json"),
-    JSON.stringify(output, null, 2),
-  );
+  writeFileSync(dataFile("doe-analysis.json"), JSON.stringify(output, null, 2));
   console.log("\nWrote analysis to data/doe-analysis.json");
 }

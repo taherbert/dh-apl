@@ -6,14 +6,12 @@ import { execSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
+import { SIMC_BIN, DATA_ENV } from "../engine/startup.js";
+import { resultsDir, resultsFile, dataFile } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const SIMC = "/Users/tom/Documents/GitHub/simc/engine/simc";
-const RESULTS_DIR = join(ROOT, "results");
-const GOLDEN_DIR = join(RESULTS_DIR, "golden");
+const SIMC = SIMC_BIN;
+const GOLDEN_DIR = join(resultsDir(), "golden");
 
 // Resolve `input=<filename>` directives by inlining referenced file contents.
 // SimC resolves input= relative to CWD (verified experimentally).
@@ -78,10 +76,10 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
     throw new Error(`Unknown scenario: ${scenario}`);
   }
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  mkdirSync(resultsDir(), { recursive: true });
 
-  const simcPath = join(RESULTS_DIR, `${label}_${scenario}.simc`);
-  const jsonPath = join(RESULTS_DIR, `${label}_${scenario}.json`);
+  const simcPath = resultsFile(`${label}_${scenario}.simc`);
+  const jsonPath = resultsFile(`${label}_${scenario}.json`);
   writeFileSync(simcPath, simcContent);
 
   const merged = { ...SIM_DEFAULTS, ...simOverrides };
@@ -98,6 +96,9 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
     `profileset_work_threads=${workThreads}`,
     "profileset_metric=dps",
   ];
+  if (DATA_ENV === "ptr" || DATA_ENV === "beta") {
+    args.unshift("ptr=1");
+  }
 
   console.log(`Running profileset: ${config.name}...`);
   return { args, jsonPath, scenario };
@@ -320,17 +321,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   }
 
   // Demo: generate a simple profileset with talent string overrides
-  const combosPath = join(ROOT, "data", "talent-combos.json");
+  const combosPath = dataFile("talent-combos.json");
   if (!existsSync(combosPath)) {
     console.log("No talent-combos.json found. Run talent-combos.js first.");
     process.exit(1);
   }
 
   const combosData = JSON.parse(readFileSync(combosPath, "utf-8"));
-  // Support both old (array) and new (object with .builds) formats
-  const combos = Array.isArray(combosData)
-    ? combosData
-    : combosData.builds || [];
+  const combos = combosData.builds || [];
   // Pick first 3 builds as demo variants
   const variants = combos.slice(0, 3).map((build) => ({
     name: build.name,

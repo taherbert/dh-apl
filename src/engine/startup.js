@@ -1,0 +1,231 @@
+// Engine startup: loads config.json, derives paths, checks simc sync.
+// Single source of truth for all configuration values.
+
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
+import { ROOT, setSpecName, REFERENCE_DIR } from "./paths.js";
+
+// --- Load and validate config.json ---
+
+const CONFIG_PATH = join(ROOT, "config.json");
+
+function loadConfig() {
+  if (!existsSync(CONFIG_PATH)) {
+    throw new Error(`Missing config.json at ${CONFIG_PATH}`);
+  }
+  const raw = readFileSync(CONFIG_PATH, "utf-8");
+  const config = JSON.parse(raw);
+  validate(config);
+  return config;
+}
+
+function validate(config) {
+  const required = [
+    ["spec.className", config.spec?.className],
+    ["spec.specName", config.spec?.specName],
+    ["spec.specId", config.spec?.specId],
+    ["simc.dir", config.simc?.dir],
+    ["simc.branch", config.simc?.branch],
+    ["data.env", config.data?.env],
+    ["data.raidbots", config.data?.raidbots],
+    ["simulation.scenarios", config.simulation?.scenarios],
+    ["simulation.scenarioWeights", config.simulation?.scenarioWeights],
+    ["simulation.fidelity", config.simulation?.fidelity],
+  ];
+  for (const [path, value] of required) {
+    if (value === undefined || value === null || value === "") {
+      throw new Error(`config.json: missing required field "${path}"`);
+    }
+  }
+  if (!["live", "ptr", "beta"].includes(config.data.env)) {
+    throw new Error(
+      `config.json: data.env must be "live", "ptr", or "beta" (got "${config.data.env}")`,
+    );
+  }
+  if (!existsSync(config.simc.dir)) {
+    throw new Error(`config.json: simc.dir not found: ${config.simc.dir}`);
+  }
+}
+
+const config = loadConfig();
+setSpecName(config.spec.specName);
+
+// --- Derived values ---
+
+export const DATA_ENV = config.data.env;
+export const SIMC_DIR = config.simc.dir;
+export const SIMC_BRANCH = config.simc.branch;
+
+const LOCAL_BIN = join(ROOT, "bin", "simc");
+export const SIMC_BIN = existsSync(LOCAL_BIN)
+  ? LOCAL_BIN
+  : join(SIMC_DIR, "engine", "simc");
+
+export const SIMC_CPP = join(
+  SIMC_DIR,
+  config.simc.cppModule || "engine/class_modules/sc_demon_hunter.cpp",
+);
+
+export const SIMC_APL_CPP = join(
+  SIMC_DIR,
+  config.simc.aplModule || "engine/class_modules/apl/apl_demon_hunter.cpp",
+);
+
+export const RAIDBOTS_BASE = `${config.data.raidbots}/${DATA_ENV}`;
+export const RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
+
+export const SPEC_ID = config.spec.specId;
+
+export function toTitleCase(s) {
+  return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+// HERO_SUBTREES: numeric subtree ID → Title Case name.
+// Derived from spec adapter after loadSpecAdapter() is called.
+// Falls back to empty object before adapter is loaded.
+let HERO_SUBTREES = {};
+export { HERO_SUBTREES };
+
+// Simulation config exports
+export const SCENARIOS = config.simulation.scenarios;
+export const SCENARIO_WEIGHTS = config.simulation.scenarioWeights;
+export const FIDELITY_TIERS = config.simulation.fidelity;
+export const SIM_DEFAULTS = config.simulation.defaults;
+
+// Full config object for advanced use
+export { config };
+
+// Re-export from paths.js for backward compatibility
+export { ROOT };
+
+// --- Display names from adapter ---
+
+export function getDisplayNames() {
+  return getSpecAdapter().getSpecConfig().displayNames;
+}
+
+// --- Dynamic spec adapter loading ---
+
+let _specAdapter = null;
+
+export async function loadSpecAdapter(specName = config.spec.specName) {
+  if (_specAdapter) return _specAdapter;
+
+  const adapterPath = join(ROOT, "src", "spec", `${specName}.js`);
+  if (!existsSync(adapterPath)) {
+    throw new Error(
+      `No spec adapter found at src/spec/${specName}.js. ` +
+        `Create one following the contract in src/spec/interface.js.`,
+    );
+  }
+
+  const mod = await import(`../spec/${specName}.js`);
+
+  const { validateAdapter } = await import("../spec/interface.js");
+  const { valid, missing } = validateAdapter(mod, specName);
+  if (!valid) {
+    throw new Error(
+      `Spec adapter "${specName}" missing required exports: ${missing.join(", ")}`,
+    );
+  }
+
+  _specAdapter = mod;
+
+  // Derive HERO_SUBTREES from adapter
+  const specConfig = mod.getSpecConfig();
+  HERO_SUBTREES = Object.fromEntries(
+    Object.entries(specConfig.heroTrees).map(([name, data]) => [
+      data.subtree,
+      data.displayName || toTitleCase(name),
+    ]),
+  );
+
+  return mod;
+}
+
+export function getSpecAdapter() {
+  if (!_specAdapter) {
+    throw new Error("Spec adapter not loaded. Call loadSpecAdapter() first.");
+  }
+  return _specAdapter;
+}
+
+// --- Upstream sync check ---
+
+const METADATA_PATH = join(REFERENCE_DIR, ".refresh-metadata.json");
+
+export function checkSync() {
+  const simcDir = config.simc.dir;
+
+  // Get current simc HEAD
+  let currentHead;
+  try {
+    currentHead = execSync("git rev-parse HEAD", {
+      cwd: simcDir,
+      encoding: "utf-8",
+    }).trim();
+  } catch {
+    return {
+      synced: false,
+      reason: "Cannot read simc git HEAD",
+      currentHead: null,
+      lastHead: null,
+    };
+  }
+
+  // Get last synced commit
+  let lastHead = null;
+  if (existsSync(METADATA_PATH)) {
+    try {
+      const meta = JSON.parse(readFileSync(METADATA_PATH, "utf-8"));
+      lastHead = meta.simc?.commit || null;
+    } catch {
+      // Corrupt metadata — treat as unsynced
+    }
+  }
+
+  if (!lastHead) {
+    return {
+      synced: false,
+      reason: "No previous sync recorded",
+      currentHead,
+      lastHead,
+    };
+  }
+
+  if (currentHead !== lastHead) {
+    return {
+      synced: false,
+      reason: `simc HEAD changed: ${lastHead.slice(0, 8)} → ${currentHead.slice(0, 8)}`,
+      currentHead,
+      lastHead,
+    };
+  }
+
+  return { synced: true, currentHead, lastHead };
+}
+
+// --- Status report ---
+
+export function reportStatus() {
+  const sync = checkSync();
+  const lines = [
+    `Spec: ${config.spec.className} / ${config.spec.specName}`,
+    `Data env: ${DATA_ENV}`,
+    `SimC: ${SIMC_DIR} (${SIMC_BRANCH})`,
+    `Binary: ${SIMC_BIN}${existsSync(SIMC_BIN) ? "" : " (NOT FOUND)"}`,
+    `Sync: ${sync.synced ? "up to date" : sync.reason}`,
+  ];
+  return lines.join("\n");
+}
+
+// CLI: node src/engine/startup.js
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  console.log(reportStatus());
+  const sync = checkSync();
+  if (!sync.synced) {
+    console.log("\nRun `npm run refresh` to rebuild from upstream.");
+  }
+}

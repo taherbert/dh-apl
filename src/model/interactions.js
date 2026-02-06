@@ -1,12 +1,11 @@
-// Builds the talent → spell interaction graph.
+// Builds the talent → spell interaction graph for the configured spec.
 // Merges three discovery methods:
 // 1. affectingSpells from spell data (primary)
 // 2. C++ scanner talent→ability and talent↔talent references
 // 3. Effect scan (self-buff talents with proc/modifier effects)
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import {
   classifyEffect,
   classifyByName,
@@ -16,35 +15,21 @@ import {
   extractEffectDetails,
   inferCategories,
 } from "./interaction-types.js";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = join(__dirname, "..", "..", "data");
-
-const SET_BONUS_SPELLS = new Map([
-  [
-    1264808,
-    {
-      name: "vengeance_12.0",
-      pieceCount: 2,
-      displayName: "Vengeance 12.0 Class Set 2pc",
-    },
-  ],
-  [
-    1264809,
-    {
-      name: "vengeance_12.0",
-      pieceCount: 4,
-      displayName: "Vengeance 12.0 Class Set 4pc",
-    },
-  ],
-]);
+import {
+  loadSpecAdapter,
+  getSpecAdapter,
+  getDisplayNames,
+} from "../engine/startup.js";
+import { dataDir } from "../engine/paths.js";
 
 function buildInteractions() {
+  const SET_BONUS_SPELLS = getSpecAdapter().getSetBonusSpells();
+
   const spells = JSON.parse(
-    readFileSync(join(DATA_DIR, "spells.json"), "utf-8"),
+    readFileSync(join(dataDir(), "spells.json"), "utf-8"),
   );
   const talents = JSON.parse(
-    readFileSync(join(DATA_DIR, "talents.json"), "utf-8"),
+    readFileSync(join(dataDir(), "talents.json"), "utf-8"),
   );
 
   const spellMap = new Map(spells.map((s) => [s.id, s]));
@@ -88,7 +73,7 @@ function buildInteractions() {
     spellsByName.get(sp.name).push(sp);
   }
 
-  const vdhSpellNames = new Set(spells.map((s) => s.name));
+  const specSpellNames = new Set(spells.map((s) => s.name));
 
   const interactions = [];
   const spellToModifiers = new Map();
@@ -104,20 +89,27 @@ function buildInteractions() {
       const isTalent = !!talent;
       const setBonus = SET_BONUS_SPELLS.get(ref.id);
 
-      if (ref.name.includes("Demon Hunter") && !isTalent && !setBonus) continue;
+      const { class: displayClass, spec: displaySpec } = getDisplayNames();
+      if (ref.name.includes(displayClass) && !isTalent && !setBonus) continue;
 
       // Skip non-talent modifiers that aren't current DH spells — these are
       // legacy references (old runecarving powers, covenant abilities, etc.)
       // retained in simc's spell data but not part of any current talent tree.
       if (!isTalent && !setBonus && !modifierSpell) continue;
 
-      // Skip Havoc-specific talents that leak into Vengeance spell data.
-      // Check both talent entry and name-based lookup for non-talent variants.
-      if (modifierSpell?.talentEntry?.spec === "Havoc") continue;
+      // Skip talents from sibling specs that leak into our spell data.
+      const currentSpec = displaySpec;
+      if (
+        modifierSpell?.talentEntry?.spec &&
+        modifierSpell.talentEntry.spec !== currentSpec
+      )
+        continue;
       const refNameSpells = spellsByName.get(ref.name);
       if (
-        refNameSpells?.some((s) => s.talentEntry?.spec === "Havoc") &&
-        !refNameSpells?.some((s) => s.talentEntry?.spec === "Vengeance")
+        refNameSpells?.some(
+          (s) => s.talentEntry?.spec && s.talentEntry.spec !== currentSpec,
+        ) &&
+        !refNameSpells?.some((s) => s.talentEntry?.spec === currentSpec)
       )
         continue;
 
@@ -166,7 +158,7 @@ function buildInteractions() {
   }
 
   // === Phase 2: Merge C++ scanner interactions ===
-  const cppPath = join(DATA_DIR, "cpp-interactions.json");
+  const cppPath = join(dataDir(), "cpp-interactions.json");
   if (existsSync(cppPath)) {
     const cppData = JSON.parse(readFileSync(cppPath, "utf-8"));
 
@@ -257,6 +249,84 @@ function buildInteractions() {
     }
   }
 
+  // === Phase 2b: C++ effects inventory (parse_effects/composite overrides) ===
+  const effectsPath = join(dataDir(), "cpp-effects-inventory.json");
+  if (existsSync(effectsPath)) {
+    const effectsData = JSON.parse(readFileSync(effectsPath, "utf-8"));
+
+    // Convert snake_case C++ names to Title Case talent names
+    const toTitleCase = (s) =>
+      s?.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+    // parse_effects: buff automatically modifies ability damage
+    for (const entry of effectsData.parseEffects || []) {
+      const buffName = toTitleCase(entry.buff);
+      const talent = buffName && talentByName.get(buffName);
+      if (!talent) continue;
+
+      // Skip if already discovered
+      if (
+        interactions.some(
+          (i) =>
+            i.source.name === talent.name &&
+            i.discoveryMethod !== "cpp_effects",
+        )
+      )
+        continue;
+
+      addInteraction({
+        source: {
+          id: talent.spellId,
+          name: talent.name,
+          isTalent: true,
+          tree: talent.treeName,
+          heroSpec: talent.heroSpec || null,
+        },
+        target: {
+          id: talent.spellId,
+          name: talent.name,
+        },
+        type: "damage_modifier",
+        mechanism: "parse_effects",
+        discoveryMethod: "cpp_effects",
+        confidence: "high",
+      });
+    }
+
+    // composite overrides: manual multiplier gated by talent check
+    for (const entry of effectsData.compositeOverrides || []) {
+      for (const check of entry.talentChecks || []) {
+        const talentName = toTitleCase(check.talent);
+        const talent = talentName && talentByName.get(talentName);
+        if (!talent) continue;
+
+        const fnType = entry.function?.includes("da_multiplier")
+          ? "direct_damage_modifier"
+          : entry.function?.includes("ta_multiplier")
+            ? "periodic_damage_modifier"
+            : "damage_modifier";
+
+        addInteraction({
+          source: {
+            id: talent.spellId,
+            name: talent.name,
+            isTalent: true,
+            tree: talent.treeName,
+            heroSpec: talent.heroSpec || null,
+          },
+          target: {
+            id: null,
+            name: entry.context || "ability",
+          },
+          type: fnType,
+          mechanism: "composite_override",
+          discoveryMethod: "cpp_effects",
+          confidence: "high",
+        });
+      }
+    }
+  }
+
   // === Phase 3: Self-buff talents (proc trigger / labeled modifier effects) ===
   for (const talent of allTalents) {
     const sp = spellMap.get(talent.spellId);
@@ -293,50 +363,13 @@ function buildInteractions() {
     }
   }
 
-  // === Phase 4: Manual set bonus interactions (C++ hardcoded, not in spell data) ===
-  // TODO: Remove when SimC midnight binary includes set bonus spell data —
-  // Phase 1 will discover these automatically via affectingSpells.
-  // 2pc: Fracture damage +35% (affects 225919/225921 — aliased, so target one)
-  addInteraction({
-    source: {
-      id: 1264808,
-      name: "Vengeance 12.0 Class Set 2pc",
-      isTalent: false,
-      isSetBonus: true,
-      setBonus: { name: "vengeance_12.0", pieceCount: 2 },
-      tree: null,
-      heroSpec: null,
-    },
-    target: {
-      id: 225919,
-      name: spellMap.get(225919)?.name || "Fracture",
-    },
-    type: "damage_modifier",
-    discoveryMethod: "manual",
-    confidence: "high",
-    magnitude: { value: 35, unit: "percent", stacking: "multiplicative" },
-  });
-  // 4pc: Fracture has 30% chance to proc Explosion of the Soul
-  addInteraction({
-    source: {
-      id: 1264809,
-      name: "Vengeance 12.0 Class Set 4pc",
-      isTalent: false,
-      isSetBonus: true,
-      setBonus: { name: "vengeance_12.0", pieceCount: 4 },
-      tree: null,
-      heroSpec: null,
-    },
-    target: {
-      id: 1276488,
-      name: "Explosion of the Soul",
-    },
-    type: "proc_trigger",
-    discoveryMethod: "manual",
-    confidence: "high",
-    procInfo: { procChance: 0.3, internalCooldown: 0.5 },
-    triggerSpell: { id: 263642, name: "Fracture" },
-  });
+  // === Phase 4: Manual set bonus interactions (spec-specific, from adapter) ===
+  const adapter = getSpecAdapter();
+  if (adapter.getManualSetBonusInteractions) {
+    for (const interaction of adapter.getManualSetBonusInteractions(spellMap)) {
+      addInteraction(interaction);
+    }
+  }
 
   // === 1G: Compute modified uptimes accounting for CD/duration modifiers ===
   for (const interaction of interactions) {
@@ -439,7 +472,7 @@ function buildInteractions() {
   };
 
   writeFileSync(
-    join(DATA_DIR, "interactions.json"),
+    join(dataDir(), "interactions.json"),
     JSON.stringify(output, null, 2),
   );
 
@@ -469,14 +502,8 @@ function buildInteractions() {
     console.log(`    ${cat}: ${count}`);
   }
 
-  // Key spell modifiers
-  const keySpells = [
-    [204021, "Fiery Brand"],
-    [247454, "Spirit Bomb"],
-    [228477, "Soul Cleave"],
-    [212084, "Fel Devastation"],
-    [258920, "Immolation Aura"],
-  ];
+  // Key spell modifiers (from spec adapter)
+  const keySpells = (adapter.getKeySpellIds?.() || []).slice(0, 5);
   console.log("\n  Key spell modifiers:");
   for (const [id, name] of keySpells) {
     const mods = spellToModifiers.get(id);
@@ -546,7 +573,7 @@ function buildInteractions() {
     const effectDetails = extractEffectDetails(
       sourceSpell,
       effectIndices,
-      vdhSpellNames,
+      specSpellNames,
     );
     if (effectDetails) interaction.effectDetails = effectDetails;
 
@@ -706,4 +733,4 @@ function sortCounts(countsObj) {
   return Object.entries(countsObj).sort((a, b) => b[1] - a[1]);
 }
 
-buildInteractions();
+loadSpecAdapter().then(() => buildInteractions());

@@ -1,8 +1,13 @@
-Run `npm run build-data` to regenerate all data files. After the build:
+Run `npm run build-data` to regenerate all data files for the active spec.
 
-1. Check output counts against expected values (from Raidbots):
-   - Raidbots: 42 class nodes, 42 spec nodes, 14+14 hero nodes, 10 choice nodes
-   - talents.json: 45 class entries, 44 spec entries, 17 Aldrachi Reaver, 16 Annihilator (higher than node counts due to choice node expansion)
-   - spells.json: ~104 spells
+## Setup
+
+Run `node src/engine/startup.js` to determine the active spec.
+
+## After the Build
+
+1. Check output counts against expected values (from Raidbots). Expected counts vary by spec — compare against the Raidbots talent data to verify node counts, choice node expansion, and spell coverage.
 2. Run `npm run verify` to validate — expect 0 failures
 3. Report any changes from previous build (new spells, removed talents, count shifts)
+
+Output files will be in `data/{spec}/`.

@@ -1,0 +1,99 @@
+// Extraction pipeline orchestrator.
+// Coordinates data extraction from simc, raidbots, and C++ source.
+// Usage: node src/engine/extract.js [--step=<step>] [--skip-fetch]
+
+import { readFileSync, existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { SIMC_CPP } from "./startup.js";
+import { dataFile } from "./paths.js";
+
+// Cache the C++ source for all scanners to share
+let _cppSource = null;
+let _cppLines = null;
+
+export function loadCppSource(path = SIMC_CPP) {
+  if (_cppSource) return { source: _cppSource, lines: _cppLines };
+  _cppSource = readFileSync(path, "utf-8");
+  _cppLines = _cppSource.split("\n");
+  return { source: _cppSource, lines: _cppLines };
+}
+
+export function clearCppCache() {
+  _cppSource = null;
+  _cppLines = null;
+}
+
+// Pipeline step definitions — output paths resolve via dataFile()
+const STEPS = {
+  raidbots: {
+    label: "Fetch Raidbots talent data",
+    file: "raidbots-talents.json",
+    run: () => import("../extract/raidbots.js"),
+  },
+  spells: {
+    label: "Extract spell data",
+    file: "spells.json",
+    run: () => import("../extract/spells.js"),
+  },
+  talents: {
+    label: "Build talent tree",
+    file: "talents.json",
+    run: () => import("../model/talents.js"),
+  },
+  "cpp-interactions": {
+    label: "Scan C++ talent cross-references",
+    file: "cpp-interactions.json",
+    run: () => import("../extract/cpp-interactions.js"),
+  },
+  "cpp-effects": {
+    label: "Scan C++ effect applications",
+    file: "cpp-effects-inventory.json",
+    run: () => import("../extract/cpp-effects-scanner.js"),
+  },
+  "cpp-procs": {
+    label: "Scan C++ proc mechanics",
+    file: "cpp-proc-mechanics.json",
+    run: () => import("../extract/cpp-proc-scanner.js"),
+  },
+  interactions: {
+    label: "Build interaction map",
+    file: "interactions.json",
+    run: () => import("../model/interactions.js"),
+  },
+};
+
+// Sequential dependencies: later steps depend on earlier ones
+const PIPELINE_ORDER = [
+  "raidbots",
+  "spells",
+  "talents",
+  ["cpp-interactions", "cpp-effects", "cpp-procs"], // parallel group
+  "interactions",
+];
+
+export function getSteps() {
+  return STEPS;
+}
+
+export function checkOutputs() {
+  const results = {};
+  for (const [name, step] of Object.entries(STEPS)) {
+    const path = dataFile(step.file);
+    results[name] = {
+      exists: existsSync(path),
+      label: step.label,
+      output: path,
+    };
+  }
+  return results;
+}
+
+// CLI entry point
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  const outputs = checkOutputs();
+  console.log("Extraction pipeline status:");
+  for (const [name, info] of Object.entries(outputs)) {
+    const status = info.exists ? "OK" : "MISSING";
+    console.log(`  ${status}  ${name.padEnd(20)} → ${info.output}`);
+  }
+}

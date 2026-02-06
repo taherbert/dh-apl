@@ -1,5 +1,6 @@
 // Phase 2: Simulation-Driven Priority Discovery
 // Runs profileset tests to discover optimal AR priority ordering.
+// VDH-specific: these tests are tied to Vengeance mechanics and are not spec-agnostic.
 // Usage: node src/sim/phase2-tests.js [test-name] [scenario]
 // Tests: spb-threshold, fracture-guard, cooldown-order, felblade, core-order, all
 
@@ -9,13 +10,12 @@ import {
   printProfilesetResults,
 } from "./profilesets.js";
 import { writeFileSync, mkdirSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+import { config } from "../engine/startup.js";
+import { resultsDir, aplsDir } from "../engine/paths.js";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..", "..");
-const RESULTS_DIR = join(ROOT, "results");
-const APL_PATH = join(ROOT, "apls", "vengeance.simc");
+const RESULTS_DIR = resultsDir();
+const APL_PATH = join(aplsDir(), `${config.spec.specName}.simc`);
 
 // Shared AR list prefix (trinkets, potion, externals, sub-list calls)
 const AR_PREFIX = [
