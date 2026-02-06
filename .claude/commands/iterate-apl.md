@@ -1,4 +1,6 @@
-Autonomous APL iteration loop. Run without stopping until improvements are exhausted.
+Autonomous APL iteration loop. **Single command — runs the entire pipeline without stopping:** load all data, perform deep analysis, form theories, generate hypotheses, create candidates, run sims, accept/reject, repeat until improvements are exhausted. No user interaction required except reviewing the final summary.
+
+If `$ARGUMENTS` includes a focus directive (e.g., `/iterate-apl Focus on cooldown alignment`), prioritize that area while still considering the full system.
 
 ## Step 0: Determine Active Spec
 

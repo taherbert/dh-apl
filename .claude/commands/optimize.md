@@ -1,5 +1,9 @@
 Co-optimize talent build and APL together. The build determines what the rotation CAN do; the APL determines what it DOES. Optimizing either in isolation leaves value on the table.
 
+**This is the single command that does everything.** When invoked, run the entire pipeline autonomously: load all data, perform deep reasoning, launch specialists, synthesize, iterate, and report. The only pause point is presenting hypotheses for user confirmation before burning sim compute.
+
+If `$ARGUMENTS` is provided (e.g., `/optimize Check soul fragment economy`), treat it as a **focus directive** — prioritize that area in deep reasoning and hypothesis generation while still considering the full system. If no arguments, analyze the full rotation holistically.
+
 This is the master orchestrator. It launches parallel specialist analyses, synthesizes their outputs, and executes deep iteration loops across archetypes and builds.
 
 ## Architecture

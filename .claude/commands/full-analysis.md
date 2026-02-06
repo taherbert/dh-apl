@@ -1,5 +1,9 @@
 Deep theorycraft analysis of the active spec's APL. Not a checklist — a thinking session.
 
+**This is a single command that does everything autonomously:** load all data, model the economy, identify tensions, generate deep hypotheses, validate with tools, test, and synthesize. The only pause is presenting hypotheses for user confirmation before sim testing.
+
+If `$ARGUMENTS` includes a focus directive (e.g., `/full-analysis Check cooldown alignment`), prioritize that area while still analyzing the full system. If `$ARGUMENTS` is an APL file path, analyze that file.
+
 The goal is systemic insight: understanding the resource economy, identifying conceptual tensions in the rotation, and proposing multi-part changes that address root causes rather than symptoms. Simple threshold tweaks and line reorderings are not the point — those fall out naturally once the underlying model is right.
 
 ## Setup — Load the Full Knowledge Base

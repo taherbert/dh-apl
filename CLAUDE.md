@@ -293,8 +293,10 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 
 ### Skill Hierarchy
 
+Each skill is a **single command that runs autonomously end-to-end.** All analysis skills load the full knowledge base (`prompts/apl-analysis-guide.md` Section 0) automatically, perform deep reasoning, and execute their full pipeline. Arguments act as focus directives.
+
 ```
-/optimize          ← Master loop: co-optimizes build + APL together
+/optimize          ← Single command: deep reasoning → specialists → synthesis → iteration → report
   ├── npm run discover  ← Automated build discovery (DoE → sim → archetypes)
   ├── /talent-analysis  ← Talent interaction graph, synergy clusters
   ├── /theorycraft      ← Temporal resource flow, timing conflicts
@@ -305,7 +307,7 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 /simc-reference    ← Look up SimC syntax and expressions
 ```
 
-**Analysis flow:** Deep reasoning FIRST (read APL, understand mechanics, form causal theories), THEN use automated screeners (`iterate strategic/theorycraft/generate`) to quantify and validate those theories. Screeners never run standalone — they serve theories formed through deep understanding.
+**Analysis flow:** Deep reasoning FIRST (load ALL data, understand mechanics, form causal theories), THEN use automated screeners to quantify and validate those theories. Screeners never run standalone — they serve theories formed through deep understanding.
 
 ## Conventions
 
