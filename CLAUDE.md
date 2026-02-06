@@ -305,6 +305,8 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 /simc-reference    ← Look up SimC syntax and expressions
 ```
 
+**Analysis flow:** Deep reasoning FIRST (read APL, understand mechanics, form causal theories), THEN use automated screeners (`iterate strategic/theorycraft/generate`) to quantify and validate those theories. Screeners never run standalone — they serve theories formed through deep understanding.
+
 ## Conventions
 
 - APL files use `.simc` extension.
@@ -312,5 +314,6 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 - Comment non-obvious conditions with `#` lines explaining the "why."
 - Keep the default action list short — delegate to sub-lists via `run_action_list` (mutually exclusive branches) or `call_action_list` (optional sub-routines that fall through).
 - **Theory before simulation.** Before changing any ability's placement, conditions, or priority, read it in context. Understand _why_ it is where it is, what role it plays in the resource/GCD/cooldown economy, and what downstream effects a change would cause. Form a clear theory — "this change should improve X because Y" — before creating a candidate or running a sim. Never shotgun changes to see what sticks.
+- **Deep reasoning drives automation.** Every analysis session must start with deep mechanical reasoning — reading the APL, understanding resource flows, identifying causal relationships. Automated hypothesis generators (`strategic`, `theorycraft`, `workflow`) are heuristic screeners that serve the deep theory, not replacements for it. A shallow observation like "buff uptime is low" is only useful when paired with reasoning about _why_ it's low and what the real fix costs. Never run automated screeners in isolation — always frame their output within a deeper understanding of the system.
 - **Audit existing logic for errors.** APL variables and conditions encode assumptions about game mechanics — caps, thresholds, talent interactions. These assumptions can become wrong when talents change the rules (e.g., an apex talent raising the soul fragment cap from 5 to 6). Actively look for hardcoded values or implicit assumptions that don't account for the current talent build. When you find one, trace the downstream effects: a corrected cap may change fragment thresholds, spender conditions, and target-count breakpoints.
 - All JS uses ESM (`import`/`export`), Node.js 23+.

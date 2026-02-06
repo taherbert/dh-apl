@@ -44,25 +44,43 @@ If resuming from a crash or new session:
 
 Repeat until no hypotheses remain or improvements plateau:
 
-### Step 1: Assess
+### Step 1: Deep Analysis (REQUIRED — do this BEFORE touching hypotheses)
 
-- Run `node src/sim/iterate.js status`
-- Run `node src/sim/iterate.js hypotheses`
-- Review pending hypotheses and recent iteration history
-- Check consecutive rejection count from status output
+Read the current APL and reason about the mechanical system. This is not optional — every iteration cycle must start from understanding, not from a hypothesis queue.
+
+1. Read `apls/{spec}/current.simc` — understand every action list, condition, and variable
+2. Read `data/{spec}/spells-summary.json` for ability mechanics (cooldowns, resources, durations)
+3. Read `data/{spec}/build-theory.json` for talent cluster context
+4. Think through the resource/GCD/cooldown economy:
+   - Where do resources come from and go? Are any being wasted or over-pooled?
+   - What cooldown cycles exist? Are abilities aligned or fighting for the same windows?
+   - What talent interactions create non-obvious dependencies?
+   - What assumptions in conditions might be wrong for certain builds?
+5. Form 1-3 **causal theories** — "X should improve Y because Z" — grounded in mechanical reasoning
+6. Cross-reference `results/{spec}/findings.json` (validated insights) to avoid re-testing known results
+
+Only AFTER forming your own theories, check what the automated screeners found:
+
+- Run `node src/sim/iterate.js status` and `node src/sim/iterate.js hypotheses`
+- Use screener output to _validate_ or _quantify_ your theories, not to replace them
+- A screener hypothesis that aligns with your deep theory gets priority
+- A screener hypothesis with no causal backing gets deprioritized
 
 ### Step 2: Choose
 
 Pick the highest-value hypothesis to test. Prioritize:
 
-1. **Theory-grounded hypotheses** — backed by a causal model of WHY the change should help. Cross-reference `results/{spec}/findings.json` validated insights.
-2. High-confidence hypotheses affecting abilities with large DPS share
-3. Novel approaches not yet tried (check exhausted list)
+1. **Your own deep theories** — backed by causal reasoning about the mechanical system. A theory you formed by reading the APL and understanding resource flows always outranks a screener observation.
+2. **Screener hypotheses that align with deep theories** — automated observations that confirm or quantify something you already reasoned about.
+3. High-confidence hypotheses affecting abilities with large DPS share, but only if you understand WHY the change should help.
 4. Multi-part hypotheses — a coherent set of interdependent APL changes that implement one conceptual idea. These test as a single iteration if the components can't be evaluated independently.
+
+**Never test a hypothesis you can't explain causally.** If a screener says "buff uptime is low," you must reason about WHY before acting — is it a priority issue, a GCD competition issue, a talent dependency? The cause determines the fix.
 
 If all hypotheses are exhausted, generate new ones:
 
 - Run the analytical engines: `node src/sim/iterate.js strategic` and `node src/sim/iterate.js theorycraft`
+- But FIRST re-read the APL and think about what's left to improve — use the engines to validate your thinking, not to think for you
 - Resource economy rebalancing (fury/fragment equilibrium shifts)
 - Cooldown alignment changes (stagger vs group)
 - Burst window utilization improvements

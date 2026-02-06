@@ -152,6 +152,22 @@ data/{spec}/build-theory.json        # Curated archetype/cluster knowledge
 node src/sim/iterate.js init $ARGUMENTS  # or apls/{spec}/{spec}.simc
 ```
 
+## Phase 0: Deep Reasoning (REQUIRED before specialists)
+
+Before launching any specialists, the orchestrator must form its own understanding. This prevents specialists from operating in a vacuum and ensures their output can be evaluated against a theory.
+
+1. Read the current APL (`apls/{spec}/current.simc` or `apls/{spec}/{spec}.simc`)
+2. Read `data/{spec}/spells-summary.json` and `data/{spec}/build-theory.json`
+3. Think through the mechanical system:
+   - What is the resource generation/spending equilibrium? Where is waste?
+   - What cooldown cycles exist and how do they interact?
+   - What talent interactions create the most leverage?
+   - What about the current APL structure seems suboptimal and WHY?
+4. Form 2-3 **root theories** — "The biggest opportunity is X because Y"
+5. These root theories GUIDE what the specialists should focus on and how to evaluate their output
+
+The specialists below are research assistants, not decision makers. They gather evidence. The orchestrator reasons about that evidence through the lens of its root theories.
+
 ## Phase 1: Parallel Specialist Launch
 
 Launch 4 specialist analyses IN PARALLEL using the Task tool. Each specialist writes structured output to `results/{spec}/analysis_*.json`.
@@ -566,10 +582,12 @@ git commit -m "optimize: {spec} — N iterations, M accepted, +X.XX% weighted DP
 
 ## Anti-Patterns
 
+- **Specialists without theory** — launching specialists before the orchestrator has its own understanding. Specialists gather evidence; the orchestrator reasons about it. If you can't explain WHY a specialist's finding matters mechanically, it's not actionable.
 - **Sequential specialist execution** — ALWAYS launch all 4 in parallel
-- **Shallow iteration** — test one thing, accept/reject, repeat without depth
+- **Shallow iteration** — test one thing, accept/reject, repeat without depth. Every iteration must connect back to a causal theory.
 - **Ignoring consensus** — hypotheses supported by multiple specialists are higher confidence
 - **Skipping second-order effects** — an accepted change may enable further improvements
 - **Testing talent swaps with unadapted APL** — coupled hypotheses need both changes
 - **Grinding thresholds without theory** — "resource>=38 vs 40 vs 42" without mechanism
+- **Trusting screener output without reasoning** — automated generators find patterns, not causes. "Buff uptime is low" is an observation, not an insight. The insight is understanding WHY it's low and what the fix costs in GCDs, resources, and opportunity.
 - **Hardcoding spec-specific knowledge** — read from the spec adapter, not from memory
