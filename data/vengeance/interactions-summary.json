@@ -186,6 +186,12 @@
             "stacking": "additive"
           },
           "application": "buff_on_player"
+        },
+        {
+          "source": "Untethered Rage",
+          "type": "duration_modifier",
+          "tree": "spec",
+          "application": "passive_always"
         }
       ]
     },
@@ -13307,7 +13313,11 @@
       "tree": "spec",
       "targets": [
         {
-          "spell": "buff:untethered_rage",
+          "spell": "Metamorphosis",
+          "type": "duration_modifier"
+        },
+        {
+          "spell": "buff:seething_anger",
           "type": "buff_grant"
         }
       ]

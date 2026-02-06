@@ -224,6 +224,7 @@ School: Chaos | GCD: off-GCD | CD: 1s | Charges: 1 (120s) | Duration: 15s
 
 **Modified by:**
 - Vengeful Beast (duration_modifier) [spec]
+- Untethered Rage (duration_modifier) [spec]
 
 ### Shear (203782)
 
@@ -731,7 +732,8 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - (4) **Untethered Rage** (1270444) [active_ability]
 - (4) **Untethered Rage** (1270448) [active_ability]
 - (4) **Untethered Rage** (1270449) [active_ability]
-  → buff:untethered_rage (buff_grant)
+  → Metamorphosis (duration_modifier)
+  → buff:seething_anger (buff_grant)
 
 ### Hero: Aldrachi Reaver (17 talents)
 

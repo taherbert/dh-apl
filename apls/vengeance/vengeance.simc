@@ -14,8 +14,9 @@ actions.precombat+=/immolation_aura
 actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
 # Spirit Bomb fragment threshold — 5 is the mechanical cap of SBomb consumption
 actions+=/variable,name=spb_threshold,value=5
-# UR fishing: lower threshold to 4 when Meta about to drop (more SBomb casts = more proc attempts)
-actions+=/variable,name=spb_threshold,op=set,value=4,if=talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<8
+# Meta fragment acceleration: Fracture generates 3 frags in Meta (not 2), so SBomb at 4
+# fires faster (~1.5 GCDs) with better per-GCD efficiency than pooling to 5 (~2 GCDs)
+actions+=/variable,name=spb_threshold,op=set,value=4,if=buff.metamorphosis.up
 # Track UR fishing window — Meta dropping, UR talented, no proc yet
 actions+=/variable,name=ur_fishing,value=talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<8&!buff.untethered_rage.up
 # Fallout AoE mode: at 3+ targets with Fallout, ImmAura generates ~1.8+ frags/tick passively
@@ -138,7 +139,7 @@ actions.anni+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
 # Charred Flesh: extend Brand via ImmAura ticks during Brand window
 actions.anni+=/immolation_aura,if=talent.charred_flesh&dot.fiery_brand.ticking
 actions.anni+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
-actions.anni+=/soul_carver,if=soul_fragments<=3
+actions.anni+=/soul_carver,if=talent.soul_carver&soul_fragments<=3
 # FelDev: don't channel during Voidfall spending (wastes meteor triggers)
 actions.anni+=/fel_devastation,if=!buff.voidfall_spending.up
 # Fracture charge management — keep recharging but not when fragment-saturated
