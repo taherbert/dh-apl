@@ -47,7 +47,8 @@ actions.ar+=/call_action_list,name=ar_cooldowns
 # Fallout AoE: ImmAura top priority to generate fragments passively at 3+ targets
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.fallout_aoe
 # Core rotation
-# Spirit Bomb — threshold 5 confirmed optimal (+0.21% weighted vs threshold 4)
+# Spirit Bomb — drop threshold to 3 during Fiery Demise (30% fire amp makes 3-frag casts worthwhile)
+actions.ar+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active
 actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 # Fracture in Meta — +1 frag/cast makes aggressive use a +5.2% DPS gain
 actions.ar+=/fracture,if=buff.metamorphosis.up
