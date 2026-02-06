@@ -1,0 +1,625 @@
+{
+  "_schema": "roster-v2",
+  "_updated": "2026-02-06T18:20:33.047Z",
+  "builds": [
+    {
+      "id": "AR_BurningAliveDowninFlamesCharredFlesh_1",
+      "archetype": "Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMgxMzwMjZMmZYGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.018Z",
+      "validated": true,
+      "lastDps": {
+        "st": 28075,
+        "small_aoe": 101240,
+        "big_aoe": 183542,
+        "weighted": 81118
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAliveDowninFlamesCharredFlesh_2",
+      "archetype": "Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMzMwMmZGmZYGMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.019Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27590,
+        "small_aoe": 97549,
+        "big_aoe": 177344,
+        "weighted": 78529
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAliveDowninFlamesCharredFlesh_3",
+      "archetype": "Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMzMYMmZGmZYGYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.019Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27524,
+        "small_aoe": 96241,
+        "big_aoe": 168092,
+        "weighted": 76253
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingBurningAliveDowninFlamesCh_1",
+      "archetype": "Cycle of Binding + Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZzMzMDmxMDMDMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.020Z",
+      "validated": true,
+      "lastDps": {
+        "st": 25635,
+        "small_aoe": 91321,
+        "big_aoe": 170439,
+        "weighted": 74301
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingBurningAliveDowninFlamesCh_2",
+      "archetype": "Cycle of Binding + Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMzMDMmZGmZ4BmhZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.020Z",
+      "validated": true,
+      "lastDps": {
+        "st": 26736,
+        "small_aoe": 90395,
+        "big_aoe": 162475,
+        "weighted": 72981
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingBurningAliveDowninFlamesCh_3",
+      "archetype": "Cycle of Binding + Burning Alive + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMz8ADMmZGmZMzgZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.021Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27530,
+        "small_aoe": 86592,
+        "big_aoe": 154691,
+        "weighted": 70681
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAliveCharredFlesh_1",
+      "archetype": "Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMjBMmZGmZMjZMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.021Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27249,
+        "small_aoe": 89022,
+        "big_aoe": 159726,
+        "weighted": 72276
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAliveCharredFlesh_2",
+      "archetype": "Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYxMjBMmZGmZMjZYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.022Z",
+      "validated": true,
+      "lastDps": {
+        "st": 26953,
+        "small_aoe": 88876,
+        "big_aoe": 156671,
+        "weighted": 71474
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAliveCharredFlesh_3",
+      "archetype": "Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBLmZMYMGzwMjZMjZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.022Z",
+      "validated": true,
+      "lastDps": {
+        "st": 25983,
+        "small_aoe": 83659,
+        "big_aoe": 148488,
+        "weighted": 67786
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingBurningAliveCharredFlesh_1",
+      "archetype": "Cycle of Binding + Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwMj5BGzMDzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.023Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27315,
+        "small_aoe": 85214,
+        "big_aoe": 149300,
+        "weighted": 69081
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingBurningAliveCharredFlesh_2",
+      "archetype": "Cycle of Binding + Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzMjZgxMzwMjZYMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.023Z",
+      "validated": true,
+      "lastDps": {
+        "st": 26444,
+        "small_aoe": 81828,
+        "big_aoe": 151513,
+        "weighted": 68073
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingBurningAliveCharredFlesh_3",
+      "archetype": "Cycle of Binding + Burning Alive + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBbmZMDjxYGmZMjxYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.024Z",
+      "validated": true,
+      "lastDps": {
+        "st": 25511,
+        "small_aoe": 82134,
+        "big_aoe": 150159,
+        "weighted": 67427
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAlive_1",
+      "archetype": "Burning Alive",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxMDDzMzMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.024Z",
+      "validated": true,
+      "lastDps": {
+        "st": 24446,
+        "small_aoe": 74772,
+        "big_aoe": 135580,
+        "weighted": 61771
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAlive_2",
+      "archetype": "Burning Alive",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYZmZYwMmZGmZYMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.025Z",
+      "validated": true,
+      "lastDps": {
+        "st": 24422,
+        "small_aoe": 74106,
+        "big_aoe": 135647,
+        "weighted": 61572
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_BurningAlive_3",
+      "archetype": "Burning Alive",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxMDjZmxMzwMDjZMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.025Z",
+      "validated": true,
+      "lastDps": {
+        "st": 24101,
+        "small_aoe": 74799,
+        "big_aoe": 134966,
+        "weighted": 61484
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingDowninFlamesCharredFlesh_1",
+      "archetype": "Cycle of Binding + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzYmZgxMzwMDPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.026Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27349,
+        "small_aoe": 80497,
+        "big_aoe": 137133,
+        "weighted": 65250
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingDowninFlamesCharredFlesh_2",
+      "archetype": "Cycle of Binding + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZYzDYmHYwMmZGmZMPwMjZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.026Z",
+      "validated": true,
+      "lastDps": {
+        "st": 26939,
+        "small_aoe": 78115,
+        "big_aoe": 134522,
+        "weighted": 63808
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingDowninFlamesCharredFlesh_3",
+      "archetype": "Cycle of Binding + Down in Flames + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZbGzMDmxMDMDMzMjZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.027Z",
+      "validated": true,
+      "lastDps": {
+        "st": 25839,
+        "small_aoe": 76255,
+        "big_aoe": 138536,
+        "weighted": 63503
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBinding_1",
+      "archetype": "Cycle of Binding",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZMbzYYwMzMzwMDjhZMzYhZwMzAAAAwsMDGGLLMhBzYWAAAAwgZAAwMDAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.027Z",
+      "validated": true,
+      "lastDps": {
+        "st": 24683,
+        "small_aoe": 71893,
+        "big_aoe": 131011,
+        "weighted": 60111
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBinding_2",
+      "archetype": "Cycle of Binding",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGmZzYYYmZmZGmZYMMzyMjFmBzMDAAAAzyMYYsswEGMjZBAAAADmBAAzMAAAAAMA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.028Z",
+      "validated": true,
+      "lastDps": {
+        "st": 24535,
+        "small_aoe": 69807,
+        "big_aoe": 130532,
+        "weighted": 59316
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingCharredFlesh_1",
+      "archetype": "Cycle of Binding + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYzYMDmxMzwMDzMmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.028Z",
+      "validated": true,
+      "lastDps": {
+        "st": 26592,
+        "small_aoe": 79447,
+        "big_aoe": 135950,
+        "weighted": 64320
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingCharredFlesh_2",
+      "archetype": "Cycle of Binding + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmBLGjZYMGzwMjZMzYWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.028Z",
+      "validated": true,
+      "lastDps": {
+        "st": 25690,
+        "small_aoe": 76810,
+        "big_aoe": 137190,
+        "weighted": 63326
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_CycleofBindingCharredFlesh_3",
+      "archetype": "Cycle of Binding + Charred Flesh",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYGYxYMDzMmZGmZYGmZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.029Z",
+      "validated": true,
+      "lastDps": {
+        "st": 25969,
+        "small_aoe": 76364,
+        "big_aoe": 134590,
+        "weighted": 62812
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_aldrachireaver_1",
+      "archetype": "aldrachi reaver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmZZGDMzMzMjxMDgZWmZswMYmZAAAAYWmBDjlFmwgZMLAAAAYwMAAYmBAAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.029Z",
+      "validated": true,
+      "lastDps": {
+        "st": 22950,
+        "small_aoe": 68723,
+        "big_aoe": 122200,
+        "weighted": 56532
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "AR_aldrachireaver_2",
+      "archetype": "aldrachi reaver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAwCzMzMzMzMTzYmZmxMGYmZmZmhZMYYmlZGLMDmZGAAAAmlZwwYZhJMYGzCAAAAGMDAAmZAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-06T18:20:33.030Z",
+      "validated": true,
+      "lastDps": {
+        "st": 22538,
+        "small_aoe": 67144,
+        "big_aoe": 123296,
+        "weighted": 56071
+      },
+      "lastTestedAt": "2026-02-06T04:42:14.382Z"
+    },
+    {
+      "id": "Anni_CF_DiF_SC_FO",
+      "archetype": "CF+DiF+SC+FO",
+      "heroTree": "annihilator",
+      "hash": null,
+      "overrides": {
+        "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
+        "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/fallout:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/soulcrush:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4",
+        "hero_talents": "annihilator"
+      },
+      "source": "multi-build",
+      "addedAt": "2026-02-06T18:20:33.032Z",
+      "validated": false,
+      "validationErrors": [
+        "Unknown talent in class_talents: \"champion_of_the_glaive\"",
+        "Unknown talent in class_talents: \"long_night\"",
+        "Unknown talent in spec_talents: \"soul_sigils\"",
+        "Unknown talent in spec_talents: \"sigil_of_silence\"",
+        "Unknown talent in spec_talents: \"untethered_rage\"",
+        "Unknown hero tree: \"annihilator\"",
+        "Class tree: 32 points, expected 34",
+        "Spec tree: 28 points, expected 34"
+      ],
+      "lastDps": null,
+      "lastTestedAt": null
+    },
+    {
+      "id": "Anni_CF_SC",
+      "archetype": "CF+SC",
+      "heroTree": "annihilator",
+      "hash": null,
+      "overrides": {
+        "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/soulcrush:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/last_resort:1/feed_the_demon:1",
+        "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
+        "hero_talents": "annihilator"
+      },
+      "source": "multi-build",
+      "addedAt": "2026-02-06T18:20:33.032Z",
+      "validated": false,
+      "validationErrors": [
+        "Unknown talent in class_talents: \"champion_of_the_glaive\"",
+        "Unknown talent in class_talents: \"long_night\"",
+        "Unknown talent in spec_talents: \"soul_sigils\"",
+        "Unknown talent in spec_talents: \"sigil_of_silence\"",
+        "Unknown talent in spec_talents: \"untethered_rage\"",
+        "Unknown hero tree: \"annihilator\"",
+        "Class tree: 32 points, expected 34",
+        "Spec tree: 28 points, expected 34"
+      ],
+      "lastDps": null,
+      "lastTestedAt": null
+    },
+    {
+      "id": "Anni_CF_DiF",
+      "archetype": "CF+DiF",
+      "heroTree": "annihilator",
+      "hash": null,
+      "overrides": {
+        "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/cycle_of_binding:1/feed_the_demon:1",
+        "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
+        "hero_talents": "annihilator"
+      },
+      "source": "multi-build",
+      "addedAt": "2026-02-06T18:20:33.032Z",
+      "validated": false,
+      "validationErrors": [
+        "Unknown talent in class_talents: \"champion_of_the_glaive\"",
+        "Unknown talent in class_talents: \"long_night\"",
+        "Unknown talent in spec_talents: \"soul_sigils\"",
+        "Unknown talent in spec_talents: \"sigil_of_silence\"",
+        "Unknown talent in spec_talents: \"untethered_rage\"",
+        "Unknown hero tree: \"annihilator\"",
+        "Class tree: 32 points, expected 34",
+        "Spec tree: 28 points, expected 34"
+      ],
+      "lastDps": null,
+      "lastTestedAt": null
+    },
+    {
+      "id": "Anni_CF_DiF_FO",
+      "archetype": "CF+DiF+FO",
+      "heroTree": "annihilator",
+      "hash": null,
+      "overrides": {
+        "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/fallout:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/cycle_of_binding:1",
+        "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
+        "hero_talents": "annihilator"
+      },
+      "source": "multi-build",
+      "addedAt": "2026-02-06T18:20:33.033Z",
+      "validated": false,
+      "validationErrors": [
+        "Unknown talent in class_talents: \"champion_of_the_glaive\"",
+        "Unknown talent in class_talents: \"long_night\"",
+        "Unknown talent in spec_talents: \"soul_sigils\"",
+        "Unknown talent in spec_talents: \"sigil_of_silence\"",
+        "Unknown talent in spec_talents: \"untethered_rage\"",
+        "Unknown hero tree: \"annihilator\"",
+        "Class tree: 32 points, expected 34",
+        "Spec tree: 28 points, expected 34"
+      ],
+      "lastDps": null,
+      "lastTestedAt": null
+    },
+    {
+      "id": "Anni_CF_DiF_SC",
+      "archetype": "CF+DiF+SC",
+      "heroTree": "annihilator",
+      "hash": null,
+      "overrides": {
+        "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/soulcrush:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/feed_the_demon:1",
+        "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
+        "hero_talents": "annihilator"
+      },
+      "source": "multi-build",
+      "addedAt": "2026-02-06T18:20:33.033Z",
+      "validated": false,
+      "validationErrors": [
+        "Unknown talent in class_talents: \"champion_of_the_glaive\"",
+        "Unknown talent in class_talents: \"long_night\"",
+        "Unknown talent in spec_talents: \"soul_sigils\"",
+        "Unknown talent in spec_talents: \"sigil_of_silence\"",
+        "Unknown talent in spec_talents: \"untethered_rage\"",
+        "Unknown hero tree: \"annihilator\"",
+        "Class tree: 32 points, expected 34",
+        "Spec tree: 28 points, expected 34"
+      ],
+      "lastDps": null,
+      "lastTestedAt": null
+    },
+    {
+      "id": "Anni_CF",
+      "archetype": "CF",
+      "heroTree": "annihilator",
+      "hash": null,
+      "overrides": {
+        "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/last_resort:1/cycle_of_binding:1/feed_the_demon:1",
+        "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
+        "hero_talents": "annihilator"
+      },
+      "source": "multi-build",
+      "addedAt": "2026-02-06T18:20:33.033Z",
+      "validated": false,
+      "validationErrors": [
+        "Unknown talent in class_talents: \"champion_of_the_glaive\"",
+        "Unknown talent in class_talents: \"long_night\"",
+        "Unknown talent in spec_talents: \"soul_sigils\"",
+        "Unknown talent in spec_talents: \"sigil_of_silence\"",
+        "Unknown talent in spec_talents: \"untethered_rage\"",
+        "Unknown hero tree: \"annihilator\"",
+        "Class tree: 32 points, expected 34",
+        "Spec tree: 28 points, expected 34"
+      ],
+      "lastDps": null,
+      "lastTestedAt": null
+    },
+    {
+      "id": "Anni_FO",
+      "archetype": "FO",
+      "heroTree": "annihilator",
+      "hash": null,
+      "overrides": {
+        "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/fallout:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/stoke_the_flames:1/last_resort:1/cycle_of_binding:1",
+        "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
+        "hero_talents": "annihilator"
+      },
+      "source": "multi-build",
+      "addedAt": "2026-02-06T18:20:33.034Z",
+      "validated": false,
+      "validationErrors": [
+        "Unknown talent in class_talents: \"champion_of_the_glaive\"",
+        "Unknown talent in class_talents: \"long_night\"",
+        "Unknown talent in spec_talents: \"soul_sigils\"",
+        "Unknown talent in spec_talents: \"sigil_of_silence\"",
+        "Unknown talent in spec_talents: \"untethered_rage\"",
+        "Unknown hero tree: \"annihilator\"",
+        "Class tree: 32 points, expected 34",
+        "Spec tree: 28 points, expected 34"
+      ],
+      "lastDps": null,
+      "lastTestedAt": null
+    },
+    {
+      "id": "AR_Profile_Reference",
+      "archetype": "Profile Reference",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMzMPAYMzYmZGzMjZmtZGbjZWGjZAAAAYWmBDjlFmwwMzYBAAAADMAAYmBYAAAAMA",
+      "overrides": null,
+      "source": "profile",
+      "addedAt": "2026-02-06T18:20:33.035Z",
+      "validated": true,
+      "lastDps": null,
+      "lastTestedAt": null
+    }
+  ]
+}

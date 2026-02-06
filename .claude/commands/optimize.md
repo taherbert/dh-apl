@@ -59,10 +59,11 @@ If iteration state exists, check `results/{spec}/checkpoint.md` and `results/{sp
 
 ```bash
 # Run DoE-based build discovery (quick fidelity for speed)
+# This auto-imports new discoveries into the persistent build roster
 npm run discover -- --quick
 
-# Generate build roster (2-3 builds per archetype)
-node src/sim/build-roster.js generate --tier standard
+# Verify the roster covers all archetypes
+npm run roster show
 ```
 
 Build discovery uses Design of Experiments (DoE) to:
@@ -75,9 +76,9 @@ Build discovery uses Design of Experiments (DoE) to:
 
 Output: `results/{spec}/builds.json` with `discoveredArchetypes[]`, `allBuilds[]`, `factorImpacts[]`, `synergyPairs[]`
 
-The build roster (`results/{spec}/build-roster.json`) contains 2-3 builds per archetype across all hero trees. ALL subsequent simulation testing uses this roster.
+The persistent build roster (`data/{spec}/build-roster.json`) is auto-updated by discovery and tracks builds across sessions. ALL subsequent simulation testing uses this roster.
 
-**If builds.json already exists and is < 24h old**, skip discovery and just regenerate the roster.
+**If builds.json already exists and is < 24h old**, skip discovery and verify the roster with `npm run roster show`.
 
 ### 0d. Establish Multi-Build Baseline
 

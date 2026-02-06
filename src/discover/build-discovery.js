@@ -704,6 +704,17 @@ async function discover(opts = {}) {
   writeFileSync(outPath, JSON.stringify(output, null, 2));
   console.log(`  Wrote ${outPath}`);
 
+  // Auto-import new discoveries into persistent build roster
+  try {
+    const { importFromDoe } = await import("../sim/build-roster.js");
+    const rosterResult = importFromDoe();
+    console.log(
+      `  Roster: ${rosterResult.added} added, ${rosterResult.skipped} existing`,
+    );
+  } catch {
+    // Roster import is optional — may fail if roster not yet initialized
+  }
+
   printSummary(output);
 
   return output;

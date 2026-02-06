@@ -144,6 +144,7 @@ data/
     interactions-summary.json  # Context-efficient interactions — use this for analysis
     cpp-proc-mechanics.json    # Auto-extracted C++ proc rates, ICDs, constants
     build-theory.json          # Curated: talent clusters, hero trees, archetype theory
+    build-roster.json          # Persistent build roster (version-controlled)
     raidbots-talents.json      # Raidbots talent data
   havoc/                  # Future: another DH spec
 apls/
@@ -204,6 +205,15 @@ npm run discover -- --quick                  # Quick screening (~2-5 min)
 npm run discover -- --confirm                # High fidelity (~30-60 min)
 npm run discover -- --ar-only                # Aldrachi Reaver builds only
 npm run discover -- --anni-only              # Annihilator builds only
+
+# === Build Roster (persistent, version-controlled) ===
+npm run roster show                          # Show roster with validation status
+npm run roster import-doe                    # Import from builds.json (DoE discovery)
+npm run roster import-multi-build            # Import from multi-build.simc (Anni builds)
+npm run roster import-profile                # Import profile.simc reference build
+npm run roster validate                      # Re-validate all builds
+npm run roster prune                         # Remove redundant builds within threshold
+npm run roster migrate                       # One-time v1→v2 migration from existing data
 
 # === Simulation ===
 node src/sim/runner.js apls/vengeance/baseline.simc  # Run simulation
@@ -270,6 +280,7 @@ Targeting **Midnight** expansion. The simc `midnight` branch may have new abilit
 Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` track state across sessions:
 
 - **`data/{spec}/build-theory.json`** — Curated mechanical knowledge: talent clusters, hero tree interactions, cluster×hero synergies, build archetypes, and tension points. Not auto-generated — edited by hand when analysis reveals new structural insights. Used by `archetypes.js` and skill prompts.
+- **`data/{spec}/build-roster.json`** — Persistent build roster for multi-build evaluation. Version-controlled alongside build-theory.json. Contains validated builds from all hero trees with DPS history. Auto-updated by `npm run discover` and `iterate.js`. Manage via `npm run roster`.
 - **`results/{spec}/builds.json`** — Discovered archetypes and ranked talent builds from `npm run discover`. Contains factor impacts, synergy pairs, archetype groupings, and per-build DPS across all scenarios. Re-run after APL changes to update rankings.
 - **`results/{spec}/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags.
 - **`results/{spec}/builds.db`** — SQLite mirror of builds.json (queryable). Run `npm run db:migrate` to import.
@@ -301,6 +312,7 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 - Use action list names that describe purpose (e.g., `defensives`, `cooldowns`, `aoe`, `single_target`).
 - Comment non-obvious conditions with `#` lines explaining the "why."
 - Keep the default action list short — delegate to sub-lists via `run_action_list` (mutually exclusive branches) or `call_action_list` (optional sub-routines that fall through).
+- **Always test against ALL archetypes.** The APL is shared by all talent builds. Verify the build roster covers all archetypes: `npm run roster show`. The roster is persistent and auto-updated by `npm run discover`. `iterate.js` requires the roster and refuses single-build mode. If a change helps some archetypes but hurts others, create a sub-action-list gated by talent/hero-tree check, then re-test against the full roster.
 - **Theory before simulation.** Before changing any ability's placement, conditions, or priority, read it in context. Understand _why_ it is where it is, what role it plays in the resource/GCD/cooldown economy, and what downstream effects a change would cause. Form a clear theory — "this change should improve X because Y" — before creating a candidate or running a sim. Never shotgun changes to see what sticks.
 - **Deep reasoning drives automation.** Every analysis session must start with deep mechanical reasoning using the full knowledge base (`prompts/apl-analysis-guide.md` Section 0 is the single canonical list of all data sources). Automated hypothesis generators (`strategic`, `theorycraft`, `workflow`) are heuristic screeners that serve the deep theory, not replacements for it. A shallow observation like "buff uptime is low" is only useful when paired with reasoning about _why_ it's low and what the real fix costs. Never run automated screeners in isolation — always frame their output within a deeper understanding of the system.
 - **Audit existing logic for errors.** APL variables and conditions encode assumptions about game mechanics — caps, thresholds, talent interactions. These assumptions can become wrong when talents change the rules (e.g., an apex talent raising the soul fragment cap from 5 to 6). Actively look for hardcoded values or implicit assumptions that don't account for the current talent build. When you find one, trace the downstream effects: a corrected cap may change fragment thresholds, spender conditions, and target-count breakpoints.
