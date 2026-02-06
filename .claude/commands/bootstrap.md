@@ -93,7 +93,7 @@ The scaffold is a **starting point**, not a finished APL. It:
 - Does NOT know hero tree routing
 - Does NOT know optimal priorities
 
-Enhance the scaffold using techniques learned in Phase 2 — add hero tree branching structure, variable patterns for resource thresholds, and action list delegation. The priorities will be refined by `/full-analysis` and `/iterate-apl` later.
+Enhance the scaffold using techniques learned in Phase 2 — add hero tree branching structure, variable patterns for resource thresholds, and action list delegation. The priorities will be refined by `/optimize` later.
 
 ### Phase 4: Build Theory Generation
 
@@ -159,8 +159,7 @@ After bootstrap, you should have:
 
 1. **Curate build-theory.json** — review clusters, archetypes, synergies
 2. **Refine APL** — add talent gates, hero tree routing, conditions
-3. **Run /optimize** — start the full optimization loop
-4. **Iterate** — use /iterate-apl to improve incrementally
+3. **Run /optimize** — start the full optimization loop (deep reasoning + iteration)
 
 ## Common Issues
 

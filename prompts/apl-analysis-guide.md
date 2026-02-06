@@ -8,7 +8,7 @@ This guide is **spec-agnostic**. Spec-specific data (abilities, resources, spell
 
 ## 0. Loading the Knowledge Base
 
-**This is the single canonical list of data sources for any analysis session.** All skills (`/iterate-apl`, `/optimize`, `/full-analysis`, `/theorycraft`, `/talent-analysis`) reference this section. If a new data source is added, update it here — not in individual skills.
+**This is the single canonical list of data sources for any analysis session.** `/optimize` and all internal methodology files reference this section. If a new data source is added, update it here — not in individual prompts.
 
 Run `node src/engine/startup.js` to determine the active spec. All `{spec}` paths below use the spec name from startup output.
 

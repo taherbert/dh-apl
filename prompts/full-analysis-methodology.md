@@ -1,19 +1,8 @@
-Deep theorycraft analysis of the active spec's APL. Not a checklist — a thinking session.
+# Deep Analysis Methodology
 
-**This is a single command that does everything autonomously:** load all data, model the economy, identify tensions, generate deep hypotheses, validate with tools, test, and synthesize. The only pause is presenting hypotheses for user confirmation before sim testing.
-
-If `$ARGUMENTS` includes a focus directive (e.g., `/full-analysis Check cooldown alignment`), prioritize that area while still analyzing the full system. If `$ARGUMENTS` is an APL file path, analyze that file.
+Internal reference for the deep theorycraft analysis phase within `/optimize`. Not a user-facing command.
 
 The goal is systemic insight: understanding the resource economy, identifying conceptual tensions in the rotation, and proposing multi-part changes that address root causes rather than symptoms. Simple threshold tweaks and line reorderings are not the point — those fall out naturally once the underlying model is right.
-
-## Setup — Load the Full Knowledge Base
-
-Every deep analysis must start with comprehensive data loading. Skipping sources means missing connections.
-
-1. Run `node src/engine/startup.js` to determine the active spec. All paths below use `{spec}`.
-2. Read the analysis methodology: `prompts/apl-analysis-guide.md` — **Section 0 is the single canonical list of all data sources.** Load all tiers (mechanical blueprint, interaction/proc data, accumulated knowledge, external references).
-3. Read the APL to analyze. Use `$ARGUMENTS` if provided, else `apls/{spec}/{spec}.simc`, else `apls/{spec}/baseline.simc`.
-4. Check for sim results: `ls results/{spec}/`. If none exist, run `node src/sim/runner.js <apl-file>` to establish a baseline.
 
 ## Phase 0: Study Reference APL Technique
 
@@ -136,8 +125,6 @@ For each systemic tension identified, formulate a multi-part hypothesis. Each hy
 
 Aim for 3-5 deep hypotheses, not 15 shallow ones.
 
-**Present the ranked hypothesis list to the user and wait for confirmation before proceeding to testing.** The user may reorder, reject, or refine hypotheses based on domain knowledge not captured in the data files.
-
 ## Phase 4: Validate with Tools
 
 Run the automated analysis engines to cross-reference your hypotheses:
@@ -151,48 +138,7 @@ These two commands are independent — launch them as parallel subagents to save
 
 Also audit the APL for logic errors (stale hardcoded values, missing talent gates, dead lines) — these should be fixed before any optimization work.
 
-## Phase 5: Test
-
-For each approved hypothesis, use the `/iterate-apl` methodology:
-
-- Translate the multi-part hypothesis into a sequence of testable APL changes
-- If the hypothesis is truly multi-part (components are interdependent), test them together — a single "iteration" can be a coherent set of changes that implement one conceptual idea
-- Quick screen first, escalate if promising
-- When a hypothesis is confirmed, document WHY it worked — the mechanism, not just the delta
-
-## Phase 6: Synthesize
-
-After testing, step back and look at what was learned:
-
-- Did the economic model's predictions match reality?
-- What does the rotation look like now — has the character of it changed, or just the edges?
-- What systemic tensions remain? What would require a fundamentally different APL structure to address?
-- What questions remain unanswered that future analysis should investigate?
-
-Run `node src/sim/iterate.js summary` and commit final state.
-
-### Record Findings
-
-Write findings discovered during this session to `results/{spec}/findings.json`:
-
-- Each systemic tension identified gets a finding entry (even if untested — use `status: "untested"`)
-- Each tested hypothesis gets a finding entry (use `status: "validated"` or `status: "rejected"`)
-- If any finding contradicts an existing validated finding, mark the old one `status: "superseded"` with a `supersededBy` reference
-- Use the tag taxonomy from `results/{spec}/SCHEMA.md`
-
-If builds were tested, re-run `npm run discover -- --quick` to update `results/{spec}/builds.json`.
-
-### Analysis Summary
-
-Write `results/{spec}/analysis_summary.md` with the full analysis narrative:
-
-- Economic models built (resource flow rates, GCD budget, marginal values)
-- Systemic tensions identified and their severity
-- Hypotheses generated, tested, and outcomes
-- Net DPS impact of accepted changes
-- Open questions for future sessions
-
-## Anti-Patterns to Avoid
+## Anti-Patterns
 
 - **Threshold grinding** — testing small numeric variations without a theory of why a different value would matter mechanically.
 - **Blind reordering** — moving one ability above another without a theory of why the current order is wrong.

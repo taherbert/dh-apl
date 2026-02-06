@@ -1,16 +1,6 @@
-Walk through the active spec's APL and explain it — what every line does, why it's there, and how the pieces fit together as a rotation.
+# APL Comprehension Methodology
 
-This is a comprehension tool, not an optimization tool. Use it to understand the current APL before trying to improve it with `/full-analysis`, `/theorycraft`, or `/optimize`.
-
-## Setup
-
-1. Run `node src/engine/startup.js` to determine the active spec. Use the spec name for all `{spec}` path references below.
-
-2. Read the APL to explain. Use `$ARGUMENTS` if provided, else `apls/{spec}/{spec}.simc`, else `apls/{spec}/baseline.simc`.
-
-3. **Load the knowledge base per `prompts/apl-analysis-guide.md` Section 0.** For comprehension, Tier 1 (spec adapter, spells) and Tier 2 (interactions, proc mechanics) are essential. Tier 3 (findings, builds) provides calibration context.
-
-4. Check for recent sim results (`ls results/{spec}/`) — cast count data grounds the explanation in what actually happens vs what the APL intends.
+Internal reference for APL comprehension within `/optimize` (Phase 0 deep reasoning). Not a user-facing command.
 
 ## Walkthrough
 
@@ -60,9 +50,9 @@ After the line-by-line, synthesize:
 ### Structure Diagram
 
 ```
-default → [precombat] → [externals] → hero tree branch
-  ├── branch_a → [cooldowns] → [core priority]
-  └── branch_b → [cooldowns] → [core priority]
+default -> [precombat] -> [externals] -> hero tree branch
+  +-- branch_a -> [cooldowns] -> [core priority]
+  +-- branch_b -> [cooldowns] -> [core priority]
 ```
 
 ### Variable Reference Table
@@ -70,18 +60,6 @@ default → [precombat] → [externals] → hero tree branch
 | Variable | Purpose | Used In |
 | -------- | ------- | ------- |
 
-### Annotated APL
-
-The full APL with inline comments explaining each line.
-
 ### Issues Found
 
 Any dead lines, stale values, missing guards, or ordering anomalies flagged during the walkthrough.
-
-### Suggested Next Steps
-
-Based on what was found:
-
-- If issues were found → "Fix these before optimizing: ..."
-- If the APL looks sound → "Ready for `/full-analysis` or `/optimize`"
-- If comprehension revealed questions → "These need investigation: ..."

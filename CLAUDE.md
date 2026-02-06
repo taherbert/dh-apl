@@ -223,26 +223,14 @@ npm run synthesize                           # Run hypothesis synthesizer standa
 npm run verify                               # Verify data against simc C++
 npm run extract-simc                         # Extract simc C++ talent variables
 
-# Analyze APL — walk through APL explaining what each line does and why
-/analyze-apl [apls/vengeance/baseline.simc]
-
-# SimC reference — look up SimC syntax, expressions, fight styles
-/simc-reference [topic]
-
-# Iterate APL — autonomous improvement loop
-/iterate-apl
-
-# Theorycraft — temporal resource flow analysis and hypotheses
-/theorycraft [apls/vengeance/vengeance.simc]
-
-# Talent analysis — synergy clusters, build-APL co-optimization
-/talent-analysis
-
-# Full analysis — deep theorycraft + iteration loop
-/full-analysis [apls/vengeance/baseline.simc]
-
-# Optimize — co-optimize build + APL together
-/optimize [apls/vengeance/vengeance.simc]
+# === User Commands ===
+/optimize [focus directive]                          # THE optimization command — does everything
+/bootstrap                                           # Fresh spec setup from scratch
+/sim [apl-file]                                      # Run a simulation
+/build                                               # Rebuild all data files
+/verify                                              # Verify data against simc C++
+/audit                                               # Full cross-reference audit
+/simc-reference [topic]                              # Look up SimC syntax and expressions
 
 # Iteration state management
 node src/sim/iterate.js init apls/vengeance/baseline.simc
@@ -291,23 +279,21 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 
 **After accepting APL changes:** Re-run `npm run discover -- --quick` to re-rank builds under the new APL.
 
-### Skill Hierarchy
+### Commands
 
-Each skill is a **single command that runs autonomously end-to-end.** All analysis skills load the full knowledge base (`prompts/apl-analysis-guide.md` Section 0) automatically, perform deep reasoning, and execute their full pipeline. Arguments act as focus directives.
+**One command for optimization:** `/optimize [focus]` — does everything: deep reasoning, parallel specialist analysis (4 Task subagents), synthesis, iteration, reporting. Pass an optional focus directive (e.g., `/optimize Check soul fragment economy`) to prioritize an area.
 
-```
-/optimize          ← Single command: deep reasoning → specialists → synthesis → iteration → report
-  ├── npm run discover  ← Automated build discovery (DoE → sim → archetypes)
-  ├── /talent-analysis  ← Talent interaction graph, synergy clusters
-  ├── /theorycraft      ← Temporal resource flow, timing conflicts
-  └── /full-analysis    ← Deep APL theorycraft, systemic tensions
-        └── /iterate-apl  ← Autonomous iteration (test, accept/reject)
+**Utility commands:** `/bootstrap`, `/sim`, `/build`, `/verify`, `/audit`, `/simc-reference` — simple single-purpose tools.
 
-/analyze-apl       ← Comprehension: walk through APL explaining it
-/simc-reference    ← Look up SimC syntax and expressions
-```
+**Internal methodology** (NOT user-facing — referenced by `/optimize` internally):
 
-**Analysis flow:** Deep reasoning FIRST (load ALL data, understand mechanics, form causal theories), THEN use automated screeners to quantify and validate those theories. Screeners never run standalone — they serve theories formed through deep understanding.
+- `prompts/apl-analysis-guide.md` — canonical knowledge base + calculation frameworks
+- `prompts/full-analysis-methodology.md` — economy modeling, systemic tensions
+- `prompts/iterate-apl-methodology.md` — iteration loop protocol
+- `prompts/theorycraft-methodology.md` — temporal resource flow
+- `prompts/talent-analysis-methodology.md` — talent interaction graphs
+- `prompts/analyze-apl-methodology.md` — APL comprehension walkthrough
+- `prompts/apl-iteration-guide.md` — iteration tactics and escape strategies
 
 ## Conventions
 

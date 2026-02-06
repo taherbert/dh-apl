@@ -1,6 +1,6 @@
 # APL Iteration Methodology Guide
 
-Reference for the autonomous APL optimization loop (`/iterate-apl`). Complements `prompts/apl-analysis-guide.md` with iteration-specific strategy.
+Reference for the autonomous APL optimization loop (Phase 3 of `/optimize`). Complements `prompts/apl-analysis-guide.md` with iteration-specific strategy.
 
 ## 0. Error Audit — Before Optimizing, Fix What's Wrong
 

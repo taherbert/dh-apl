@@ -1,14 +1,6 @@
-Autonomous APL iteration loop. **Single command — runs the entire pipeline without stopping:** load all data, perform deep analysis, form theories, generate hypotheses, create candidates, run sims, accept/reject, repeat until improvements are exhausted. No user interaction required except reviewing the final summary.
+# APL Iteration Methodology
 
-If `$ARGUMENTS` includes a focus directive (e.g., `/iterate-apl Focus on cooldown alignment`), prioritize that area while still considering the full system.
-
-## Step 0: Determine Active Spec
-
-Run `node src/engine/startup.js` to determine the active spec from `config.json`. The output includes the spec name (e.g., `vengeance`). All paths below use `{spec}` as a placeholder — substitute the actual spec name from startup output.
-
-- Data: `data/{spec}/`
-- Results: `results/{spec}/`
-- APLs: `apls/{spec}/`
+Internal reference for the iteration loop within `/optimize`. Not a user-facing command.
 
 ## Session Resilience
 
@@ -31,16 +23,6 @@ If resuming from a crash or new session:
 6. Read `prompts/apl-iteration-guide.md` for methodology (only on first startup, not every iteration)
 7. Read `results/{spec}/findings.json` — filter to `status: "validated"` to calibrate against known results
 8. Resume the iteration loop from Step 1
-
-## Startup (Fresh Session)
-
-1. Run `node src/engine/startup.js` — confirm spec name and simc sync status
-2. Run `node src/sim/iterate.js status` to check state
-3. If no state exists: `node src/sim/iterate.js init apls/{spec}/baseline.simc`
-4. Read `prompts/apl-iteration-guide.md` for methodology
-5. Read `apls/{spec}/current.simc` as the working APL
-6. Read `results/{spec}/findings.json` — validated findings from prior sessions inform hypothesis ranking
-7. Read `data/{spec}/build-theory.json` — archetype and cluster context for hypothesis generation
 
 ## Iteration Loop
 
@@ -196,8 +178,6 @@ The iteration loop maintains human-readable state files that are updated continu
 - **`results/{spec}/changelog.md`** — Logs every accepted change with DPS impact. Append-only history of what worked.
 - **`results/{spec}/findings.json`** — Records insights (validated, rejected, inconclusive) with evidence and tags. Persists across sessions.
 
-On completion, print a human-readable summary to stdout (see "On Completion" below).
-
 ## Stop Conditions
 
 Use the `consecutiveRejections` counter from `iterate.js status` (tracked in state automatically):
@@ -209,7 +189,7 @@ Use the `consecutiveRejections` counter from `iterate.js status` (tracked in sta
 
 ### Context Window Management
 
-- Stop at ~180k tokens of context usage. Save state and suggest restarting with `/iterate-apl`
+- Stop at ~180k tokens of context usage. Save state and suggest restarting with `/optimize`
 - Don't read full sim JSON — use `iterate.js status` and `iterate.js compare` for summaries
 - Don't re-read guides every iteration — read once at startup
 - Use short reasons in accept/reject — one sentence per iteration
