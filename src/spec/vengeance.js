@@ -75,6 +75,28 @@ export const SPEC_CONFIG = {
     reavers_glaive: { apCoeff: 3.45 },
   },
 
+  // Non-DPS spec talents excluded from DoE factor space.
+  // Pure defensive, utility, or healing-only — never contribute to damage output.
+  excludedTalents: [
+    "Calcified Spikes",
+    "Sigil of Silence",
+    "Revel in Pain",
+    "Feast of Souls",
+    "Ruinous Bulwark",
+    "Soul Barrier",
+    "Fel Flame Fortification",
+    "Last Resort",
+    "Soulmonger",
+    "Focused Cleave",
+    "Quickened Sigils",
+    "Sigil of Chains",
+    "Chains of Anger",
+    "Feed the Demon",
+    "Roaring Fire",
+    "Painbringer",
+    "Void Reaver",
+  ],
+
   heroTrees: {
     aldrachi_reaver: {
       displayName: "Aldrachi Reaver",
@@ -90,15 +112,19 @@ export const SPEC_CONFIG = {
       ],
       aplBranch: "ar",
       profileKeywords: ["aldrachi", "reaver"],
+      // DPS-optimal hero choice locks (determined by profileset sim)
+      choiceLocks: { 94911: 1, 94896: 0, 94910: 0 },
     },
     annihilator: {
       displayName: "Annihilator",
       subtree: 124,
-      buildMethod: "multi-actor",
+      buildMethod: "doe",
       damageSchool: "Shadowflame",
       keyBuffs: ["voidfall_building", "voidfall_spending", "catastrophe"],
       aplBranch: "anni",
       profileKeywords: ["annihilator", "anni"],
+      // DPS-optimal hero choice locks (determined by profileset sim)
+      choiceLocks: { 109448: 1, 109450: 1 },
     },
   },
 

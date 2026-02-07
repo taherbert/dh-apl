@@ -41,11 +41,17 @@
 //   - displayNames: { class, spec }
 //   - resources: { primary: {name, cap}, secondary?: {name, cap} }
 //   - spellIds, domainOverrides, resourceFlow
-//   - heroTrees: { [key]: { displayName, subtree, buildMethod, damageSchool, keyBuffs, aplBranch, profileKeywords } }
+//   - heroTrees: { [key]: { displayName, subtree, buildMethod, damageSchool, keyBuffs, aplBranch, profileKeywords, choiceLocks? } }
 //       buildMethod: "doe" (DoE discovery pipeline) or "multi-actor" (manual .simc file)
+//       choiceLocks: { [nodeId]: entryIndex } — DPS-optimal hero choice locks (determined by sim)
 //   - buffWindows, synergies
 //   - keyBuffs, offGcdAbilities, cooldownBuffs
 //   - classificationHints, resourceNames
+//
+// SPEC_CONFIG optional fields (for build generation):
+//   - excludedTalents: string[] — Non-DPS talent names excluded from DoE factor space.
+//     Pure defensive, utility, or healing-only talents. Connectivity repair may still
+//     add them as pathing nodes to reach deeper DPS talents.
 //
 // SPEC_CONFIG optional fields (for data-driven analysis modules):
 //   - resourceModels: Array of { name, cap, baseCap?, generators[], consumers[] }

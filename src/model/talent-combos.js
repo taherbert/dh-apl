@@ -12,6 +12,7 @@ import {
   loadFullNodeList,
 } from "../util/talent-string.js";
 import { dataDir, aplsDir, ROOT } from "../engine/paths.js";
+import { getSpecAdapter } from "../engine/startup.js";
 
 const CLASS_POINTS = 34;
 const SPEC_POINTS = 34;
@@ -137,47 +138,21 @@ function reachableFrom(startIds, nodeMap) {
   return visited;
 }
 
-// Non-DPS talents: pure defensive, utility, or healing-only.
-// These are excluded from the DoE factor space and default to SKIP.
-// Connectivity repair may still add them as pathing nodes to reach deeper DPS talents.
-const EXCLUDED_SPEC_NAMES = new Set([
-  "Calcified Spikes", // Demon Spikes armor bonus (defensive)
-  "Sigil of Silence", // Silence (utility) — choice entry on Roaring Fire node
-  "Revel in Pain", // Shield from Fiery Brand (defensive)
-  "Feast of Souls", // Healing from Soul Cleave (healing-only)
-  "Ruinous Bulwark", // Fel Dev healing increase (healing-only)
-  "Soul Barrier", // Absorb shield (defensive) — choice entry on Soul Barrier/Soul Sigils node
-  "Fel Flame Fortification", // Fire damage reduction (defensive)
-  "Last Resort", // Cheat death (defensive)
-  "Soulmonger", // Soul fragment healing (healing-only)
-  "Focused Cleave", // Soul Cleave secondary damage (minor, mostly defensive context)
-  "Quickened Sigils", // Sigil activation speed (utility)
-  "Sigil of Chains", // AoE grip (utility)
-  "Chains of Anger", // Sigil of Chains extra functionality (utility)
-  "Feed the Demon", // Demon Spikes CDR from soul fragments (defensive)
-  "Roaring Fire", // Fel Dev healing increase (healing-only)
-  "Painbringer", // DR per soul fragment consumed (defensive)
-  "Void Reaver", // Frailty = damage taken reduction (defensive)
-]);
+// Derive excluded talent names from SPEC_CONFIG.excludedTalents.
+function getExcludedSpecNames() {
+  const config = getSpecAdapter().getSpecConfig();
+  return new Set(config.excludedTalents || []);
+}
 
-// For choice nodes where one entry is excluded and the other isn't,
-// the node stays as a factor but the excluded entry is noted.
-// Soul Barrier / Soul Sigils: Soul Barrier = defensive, Soul Sigils = DPS (resource gen)
-
-// Hero tree choice locks: all choices locked to DPS-optimal option.
-// Determined by profileset sim comparison (standard fidelity, weighted DPS).
-export const HERO_CHOICE_LOCKS = {
-  // Annihilator: Path to Oblivion [0] = movement speed → State of Matter [1] = damage
-  109448: 1,
-  // Annihilator: Doomsayer [0] = opener meteor → Harness the Cosmos [1] = +15% meteor damage (+4.1% weighted)
-  109450: 1,
-  // Aldrachi Reaver: Evasive Action [0] = dodge → Unhindered Assault [1] = movement+damage
-  94911: 1,
-  // Aldrachi Reaver: Army Unto Oneself [0] = leech / Incorruptible Spirit [1] = healing → both non-DPS, lock to 0
-  94896: 0,
-  // Aldrachi Reaver: Keen Engagement [0] = +20 Fury gen (+1.05% weighted) / Preemptive Strike [1] = AoE damage
-  94910: 0,
-};
+// Derive hero choice locks from SPEC_CONFIG.heroTrees[tree].choiceLocks.
+export function getHeroChoiceLocks() {
+  const config = getSpecAdapter().getSpecConfig();
+  const locks = {};
+  for (const tree of Object.values(config.heroTrees || {})) {
+    Object.assign(locks, tree.choiceLocks || {});
+  }
+  return locks;
+}
 
 // Classify nodes into locked (always taken) and factors (decision points).
 // Locked: entry nodes, free nodes, and nodes that are the sole path to other
@@ -204,8 +179,8 @@ export function classifyNodes(nodes, nodeMap, budget, overrides = {}) {
     }
   }
 
-  // Build effective exclusion set from defaults + overrides
-  const effectiveExclusions = new Set(EXCLUDED_SPEC_NAMES);
+  // Build effective exclusion set from SPEC_CONFIG + overrides
+  const effectiveExclusions = getExcludedSpecNames();
   for (const name of overrides.include || []) effectiveExclusions.delete(name);
   for (const name of overrides.exclude || []) effectiveExclusions.add(name);
 
@@ -744,9 +719,9 @@ function heroChoiceCombos(heroNodes, opts = {}) {
   const choiceNodes = heroNodes.filter((n) => n.type === "choice");
   if (choiceNodes.length === 0) return [{}];
 
-  // Merge default locks with overrides
+  // Merge default locks from SPEC_CONFIG with overrides
   const effectiveLocks = {
-    ...HERO_CHOICE_LOCKS,
+    ...getHeroChoiceLocks(),
     ...(opts.lockHeroChoices || {}),
   };
   const unlocked = new Set(opts.unlockHeroChoices || []);
@@ -1136,8 +1111,8 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     }
   }
 
-  // Build exclusion set: default exclusions minus profile includes/requires, plus profile excludes
-  const effectiveExclusions = new Set(EXCLUDED_SPEC_NAMES);
+  // Build exclusion set: SPEC_CONFIG exclusions minus profile includes/requires, plus profile excludes
+  const effectiveExclusions = getExcludedSpecNames();
   for (const name of profile.include || []) effectiveExclusions.delete(name);
   for (const name of profile.require || []) effectiveExclusions.delete(name);
   for (const name of profile.exclude || []) effectiveExclusions.add(name);

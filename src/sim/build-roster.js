@@ -37,7 +37,7 @@ import {
 } from "../engine/paths.js";
 import { validateBuild, validateHash } from "../util/validate-build.js";
 import { overridesToHash } from "../util/talent-string.js";
-import { HERO_CHOICE_LOCKS } from "../model/talent-combos.js";
+import { getHeroChoiceLocks } from "../model/talent-combos.js";
 
 const ROSTER_PATH = dataFile("build-roster.json");
 const BUILDS_PATH = resultsFile("builds.json");
@@ -166,12 +166,14 @@ export function importFromDoe(roster) {
   const data = JSON.parse(readFileSync(BUILDS_PATH, "utf8"));
   const archetypes = data.discoveredArchetypes || [];
   const specConfig = getSpecAdapter().getSpecConfig();
-  const primaryTree = Object.entries(specConfig.heroTrees).find(
-    ([, cfg]) => cfg.buildMethod === "doe",
-  )?.[0];
+  const doeTrees = new Set(
+    Object.entries(specConfig.heroTrees)
+      .filter(([, cfg]) => cfg.buildMethod === "doe")
+      .map(([name]) => name),
+  );
 
-  if (!primaryTree) {
-    console.error("No DoE hero tree configured");
+  if (doeTrees.size === 0) {
+    console.error("No DoE hero trees configured");
     return { added: 0, skipped: 0, invalid: 0 };
   }
 
@@ -179,7 +181,7 @@ export function importFromDoe(roster) {
   const usedIds = new Set(roster.builds.map((b) => b.id));
 
   for (const arch of archetypes) {
-    if (arch.heroTree !== primaryTree) continue;
+    if (!doeTrees.has(arch.heroTree)) continue;
 
     // bestBuild + up to 2 alternates
     const candidates = [arch.bestBuild, ...(arch.alternateBuilds || [])].slice(
@@ -191,7 +193,7 @@ export function importFromDoe(roster) {
     for (const candidate of candidates) {
       if (!candidate?.hash) continue;
 
-      const prefix = primaryTree
+      const prefix = arch.heroTree
         .split("_")
         .map((w) => w[0].toUpperCase())
         .join("");
@@ -203,7 +205,7 @@ export function importFromDoe(roster) {
       newBuilds.push({
         id,
         archetype: arch.name,
-        heroTree: primaryTree,
+        heroTree: arch.heroTree,
         hash: candidate.hash,
         overrides: null,
         lastDps: {
@@ -572,7 +574,7 @@ export function generateHashes(roster) {
 
     try {
       const hash = overridesToHash(build.overrides, {
-        heroChoiceLocks: HERO_CHOICE_LOCKS,
+        heroChoiceLocks: getHeroChoiceLocks(),
       });
       const validation = validateHash(hash);
       if (!validation.valid) {
