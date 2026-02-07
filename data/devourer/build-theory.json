@@ -1,0 +1,228 @@
+{
+  "_schema": "build-theory-v1",
+  "_curated": false,
+  "_generated": "2026-02-07T23:03:53.560Z",
+  "_doc": "Auto-generated build theory. Review and curate before using. This is a STARTING POINT — human analysis required for accuracy.",
+  "specClusters": [
+    {
+      "id": "misc",
+      "name": "Misc",
+      "talents": [
+        "Vengeful Retreat",
+        "Sigil of Misery",
+        "Vengeful Bonds",
+        "Unrestrained Fury",
+        "Improved Sigil of Misery",
+        "Bouncing Glaives",
+        "Imprison",
+        "Charred Warblades",
+        "Improved Disrupt",
+        "Aldrachi Design",
+        "Master of the Glaive",
+        "Champion of the Glaive",
+        "Disrupting Fury",
+        "Blazing Path",
+        "Live by the Glaive",
+        "Pursuit",
+        "Felfire Haste",
+        "Lost in Darkness",
+        "Illidari Knowledge",
+        "Will of the Illidari",
+        "Internal Struggle",
+        "Furious",
+        "Remorseless",
+        "First In, Last Out",
+        "Erratic Felheart",
+        "Demon Muzzle",
+        "Wings of Wrath",
+        "Long Night",
+        "Pitch Black",
+        "Demonic Resilience",
+        "Calamitous",
+        "Midnight",
+        "Midnight"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "void-ray",
+      "name": "Void Ray",
+      "talents": [
+        "Voidblade",
+        "Void Nova",
+        "Focused Ire",
+        "Guile",
+        "Final Breath",
+        "Darkness",
+        "Void Ray",
+        "Duty Eternal",
+        "Moment of Craving",
+        "Gift of the Void",
+        "Waste Not",
+        "Voidpurge",
+        "Voidrage",
+        "Focused Ray",
+        "Demonic Instinct",
+        "Voidglare Boon",
+        "Rolling Torment",
+        "Devourer's Bite",
+        "Soul Glutton",
+        "Eradicate"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "soul-consumption",
+      "name": "Soul Consumption",
+      "talents": [
+        "Shattered Restoration",
+        "Consume Magic",
+        "Swallowed Anger",
+        "Soul Rending",
+        "Soul Splitter",
+        "Soul Immolation",
+        "Predator's Thirst",
+        "Tempered Soul",
+        "Spontaneous Immolation",
+        "Void Metamorphosis",
+        "Feast of Souls",
+        "Scythe's Embrace",
+        "Collapsing Star",
+        "Entropy",
+        "Soulshaper",
+        "Singed Spirit",
+        "Sweet Suffering",
+        "Second Helping",
+        "Umbral Blade",
+        "Improved Consume",
+        "Sweet Release",
+        "Devourer's Edge",
+        "Star Fragments",
+        "Emptiness"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "immolation",
+      "name": "Immolation",
+      "talents": [
+        "Aura of Pain",
+        "Infernal Armor",
+        "Burn It Out",
+        "Soul Cleanse"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "melee",
+      "name": "Melee",
+      "talents": [
+        "Hungering Slash",
+        "Soulforged Blades",
+        "Singular Strikes"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "collapsing-star",
+      "name": "Collapsing Star",
+      "talents": [
+        "Voidrush",
+        "Impending Apocalypse",
+        "Midnight"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    }
+  ],
+  "heroTrees": {},
+  "clusterSynergies": [
+    {
+      "talents": [
+        "Vengeful Retreat",
+        "Voidblade",
+        "The Hunt"
+      ],
+      "reason": "Both affect spell 1245496",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Voidblade",
+        "Sigil of Misery",
+        "Imprison",
+        "Void Nova",
+        "Darkness",
+        "Void Ray",
+        "Soul Immolation",
+        "The Hunt"
+      ],
+      "reason": "Both affect spell 212613",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Voidblade",
+        "Sigil of Misery",
+        "Soul Immolation",
+        "The Hunt"
+      ],
+      "reason": "Both affect spell 388114",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Voidblade",
+        "Consume Magic"
+      ],
+      "reason": "Both affect spell 1223171",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Sigil of Misery",
+        "Imprison",
+        "Void Nova",
+        "Darkness",
+        "Void Ray",
+        "Soul Immolation",
+        "The Hunt"
+      ],
+      "reason": "Both affect spell 212612",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Sigil of Misery",
+        "Imprison",
+        "Void Nova",
+        "Darkness",
+        "Void Ray",
+        "Soul Immolation",
+        "The Hunt"
+      ],
+      "reason": "Both affect spell 1213636",
+      "strength": "strong"
+    }
+  ],
+  "buildArchetypes": [],
+  "tensionPoints": [
+    {
+      "id": "auto-detected-resource-competition",
+      "description": "Resource competition detected — review manually",
+      "explanation": "Multiple talents/abilities compete for the same resource. Analyze which should take priority in different scenarios.",
+      "affectedArchetypes": []
+    }
+  ]
+}

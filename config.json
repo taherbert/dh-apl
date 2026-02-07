@@ -1,8 +1,8 @@
 {
   "spec": {
     "className": "demonhunter",
-    "specName": "vengeance",
-    "specId": 581
+    "specName": "devourer",
+    "specId": 1480
   },
   "simc": {
     "dir": "/Users/tom/Documents/GitHub/simc",
@@ -10,7 +10,8 @@
     "cppModule": "engine/class_modules/sc_demon_hunter.cpp",
     "aplModule": "engine/class_modules/apl/apl_demon_hunter.cpp",
     "aplMarkers": {
-      "vengeance": ["//vengeance_apl_start", "//vengeance_apl_end"]
+      "vengeance": ["//vengeance_apl_start", "//vengeance_apl_end"],
+      "devourer": ["//devourer_apl_start", "//devourer_apl_end"]
     }
   },
   "data": {

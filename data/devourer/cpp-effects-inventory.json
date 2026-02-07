@@ -1,0 +1,531 @@
+{
+  "parseEffects": [
+    {
+      "buff": "demon_soul",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2052,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.demon_soul )"
+    },
+    {
+      "buff": "empowered_demon_soul",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2053,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.empowered_demon_soul )"
+    },
+    {
+      "buff": "metamorphosis",
+      "secondarySource": "monster_within",
+      "effectMask": "meta_mask",
+      "line": 2061,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.metamorphosis, p()->mastery.monster_within, meta_mask )"
+    },
+    {
+      "buff": "feast_of_souls",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2064,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.feast_of_souls )"
+    },
+    {
+      "buff": "rolling_torment",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2065,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.rolling_torment )"
+    },
+    {
+      "buff": "impending_apocalypse",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2066,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.impending_apocalypse )"
+    },
+    {
+      "buff": "exergy",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2069,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.exergy )"
+    },
+    {
+      "buff": "inertia",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2070,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.inertia )"
+    },
+    {
+      "buff": "empowered_eye_beam",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2071,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.empowered_eye_beam )"
+    },
+    {
+      "buff": "warblades_hunger",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2076,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.warblades_hunger )"
+    },
+    {
+      "buff": "thrill_of_the_fight_damage",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2077,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.thrill_of_the_fight_damage )"
+    },
+    {
+      "buff": "enduring_torment",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2115,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.enduring_torment )"
+    },
+    {
+      "buff": "demonsurge_demonsurge",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2116,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.demonsurge_demonsurge )"
+    },
+    {
+      "buff": "demonsurge_demonic_intensity",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2117,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.demonsurge_demonic_intensity )"
+    },
+    {
+      "buff": "demonsurge",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2118,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.demonsurge )"
+    },
+    {
+      "buff": "voidsurge",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 2119,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "raw": "ab::parse_effects( p()->buff.voidsurge )"
+    },
+    {
+      "buff": "metamorphosis",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12536,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.metamorphosis )"
+    },
+    {
+      "buff": "blur",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12537,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.blur )"
+    },
+    {
+      "buff": "metamorphosis",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12543,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.metamorphosis )"
+    },
+    {
+      "buff": "blur",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12544,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.blur )"
+    },
+    {
+      "buff": "metamorphosis",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12550,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.metamorphosis )"
+    },
+    {
+      "buff": "demon_spikes",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12551,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.demon_spikes )"
+    },
+    {
+      "buff": "seething_anger",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12552,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.seething_anger )"
+    },
+    {
+      "buff": "fel_blood_rank_2",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12553,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( mastery.fel_blood_rank_2 )"
+    },
+    {
+      "buff": "thrill_of_the_fight_haste",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12557,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.thrill_of_the_fight_haste )"
+    },
+    {
+      "buff": "voidfall_building",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12560,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.voidfall_building )"
+    },
+    {
+      "buff": "voidfall_spending",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12561,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.voidfall_spending )"
+    },
+    {
+      "buff": "voidfall_final_hour",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12562,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.voidfall_final_hour )"
+    }
+  ],
+  "parseTargetEffects": [
+    {
+      "targetType": "debuffs_t",
+      "debuff": "devourers_bite",
+      "spellSource": "spec.devourers_bite_debuff",
+      "effectMask": null,
+      "line": 2129,
+      "context": "demon_hunter_pet_t",
+      "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::debuffs_t::devourers_bite ), p()->spec.devourers_bite_debuff )"
+    },
+    {
+      "targetType": "debuffs_t",
+      "debuff": "burning_wound",
+      "spellSource": "spec.burning_wound_debuff",
+      "effectMask": null,
+      "line": 2132,
+      "context": "demon_hunter_pet_t",
+      "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::debuffs_t::burning_wound ), p()->spec.burning_wound_debuff )"
+    },
+    {
+      "targetType": "debuffs_t",
+      "debuff": "frailty",
+      "spellSource": "spec.frailty_debuff",
+      "effectMask": {
+        "defaultEnabled": false,
+        "modifications": ".enable( 4, 5 )"
+      },
+      "line": 2140,
+      "context": "demon_hunter_pet_t",
+      "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::debuffs_t::frailty ), p()->spec.frailty_debuff, effect_mask_t( false ).enable( 4, 5 ), p()->talent.vengeance.vulnerability->effectN( 1 ).percent() + p()->talent.vengeance.soulcrush->effectN( 4 ).percent() )"
+    },
+    {
+      "targetType": "dots_t",
+      "debuff": "fiery_brand",
+      "spellSource": "spec.fiery_brand_debuff",
+      "effectMask": {
+        "defaultEnabled": true,
+        "modifications": ".disable( 4 )"
+      },
+      "line": 2148,
+      "context": "demon_hunter_pet_t",
+      "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::dots_t::fiery_brand ), p()->spec.fiery_brand_debuff, effect_mask_t( true ).disable( 4 ) )"
+    }
+  ],
+  "compositeOverrides": [
+    {
+      "function": "composite_da_multiplier",
+      "line": 2175,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "havoc",
+          "talent": "chaotic_disposition"
+        }
+      ],
+      "buffChecks": []
+    },
+    {
+      "function": "composite_ta_multiplier",
+      "line": 2222,
+      "context": "demon_hunter_pet_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "havoc",
+          "talent": "chaotic_disposition"
+        }
+      ],
+      "buffChecks": []
+    },
+    {
+      "function": "composite_da_multiplier",
+      "line": 3235,
+      "context": "otherworldly_focus_benefit_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "annihilator",
+          "talent": "otherworldly_focus"
+        }
+      ],
+      "buffChecks": []
+    },
+    {
+      "function": "composite_da_multiplier",
+      "line": 5698,
+      "context": "surge_base_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "scarred",
+          "talent": "focused_hatred"
+        }
+      ],
+      "buffChecks": []
+    },
+    {
+      "function": "composite_da_multiplier",
+      "line": 6208,
+      "context": "reap_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "devourer",
+          "talent": "focused_ray"
+        }
+      ],
+      "buffChecks": []
+    },
+    {
+      "function": "composite_da_multiplier",
+      "line": 6601,
+      "context": "hungering_slash_base_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "devourer",
+          "talent": "singular_strikes"
+        }
+      ],
+      "buffChecks": []
+    },
+    {
+      "function": "composite_da_multiplier",
+      "line": 6924,
+      "context": "auto_attack_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "havoc",
+          "talent": "first_blood"
+        }
+      ],
+      "buffChecks": []
+    },
+    {
+      "function": "composite_da_multiplier",
+      "line": 8023,
+      "context": "soul_cleave_t",
+      "contextType": "struct",
+      "talentChecks": [
+        {
+          "tree": "vengeance",
+          "talent": "focused_cleave"
+        }
+      ],
+      "buffChecks": []
+    }
+  ],
+  "reactiveTriggers": [
+    {
+      "source": "assess_damage",
+      "trigger": "infernal_armor",
+      "type": "reactive_proc",
+      "conditions": [
+        "buff.immolation_aura"
+      ]
+    },
+    {
+      "source": "assess_damage",
+      "trigger": "infernal_armor",
+      "type": "reactive_proc",
+      "conditions": [
+        "buff.immolation_aura",
+        "buff.demon_spikes"
+      ]
+    },
+    {
+      "source": "assess_damage",
+      "trigger": "retaliation",
+      "type": "reactive_proc",
+      "conditions": [
+        "buff.demon_spikes"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "illidari_knowledge",
+      "type": "mitigation_modifier",
+      "conditions": [
+        "school_conditional"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "blur",
+      "type": "mitigation_modifier",
+      "conditions": [
+        "school_conditional"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "blur",
+      "type": "mitigation_modifier",
+      "conditions": []
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "demonic_wards",
+      "type": "mitigation_modifier",
+      "conditions": [
+        "school_conditional"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "demonic_wards_2",
+      "type": "mitigation_modifier",
+      "conditions": [
+        "school_conditional"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "demon_hide",
+      "type": "mitigation_modifier",
+      "conditions": [
+        "school_conditional"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "demonic_wards",
+      "type": "mitigation_modifier",
+      "conditions": [
+        "school_conditional"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "demonic_wards_2",
+      "type": "mitigation_modifier",
+      "conditions": [
+        "school_conditional"
+      ]
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "demonic_wards_3",
+      "type": "mitigation_modifier",
+      "conditions": []
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "painbringer",
+      "type": "mitigation_modifier",
+      "conditions": []
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "demon_spikes_buff",
+      "type": "mitigation_modifier",
+      "conditions": []
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "fiery_brand_debuff",
+      "type": "mitigation_modifier",
+      "conditions": []
+    },
+    {
+      "source": "target_mitigation",
+      "trigger": "frailty_debuff",
+      "type": "mitigation_modifier",
+      "conditions": []
+    }
+  ],
+  "stats": {
+    "parseEffects": 28,
+    "parseTargetEffects": 4,
+    "compositeOverrides": 8,
+    "reactiveTriggers": 16
+  }
+}

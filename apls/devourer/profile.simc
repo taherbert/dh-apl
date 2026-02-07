@@ -1,0 +1,33 @@
+# Devourer DH Midnight Profile
+# Int-based caster DPS spec — generic gear, no expansion-specific enchants/gems
+
+ptr=1
+demonhunter="Devourer_DH"
+spec=devourer
+level=90
+race=night_elf
+timeofday=night
+role=attack
+position=back
+talents=CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMmZYmZmZGjZG0yCAAAYGmZ2mZmmtZ2GYGmB
+
+# Consumables disabled — no Midnight consumables in SimC yet
+flask=disabled
+
+# Generic Midnight gear (same item IDs as VDH, stat type from spec)
+head=,id=153840,ilevel=289
+neck=,id=153861,ilevel=289
+shoulder=,id=153842,ilevel=289
+back=,id=153865,ilevel=289
+chest=,id=153837,ilevel=289
+wrist=,id=153844,ilevel=289
+hands=,id=153839,ilevel=289
+waist=,id=153843,ilevel=289
+legs=,id=153841,ilevel=289
+feet=,id=153838,ilevel=289
+finger1=,id=153863,ilevel=289
+finger2=,id=153862,ilevel=289
+trinket1=,id=153860,ilevel=289
+trinket2=,id=153864,ilevel=289
+main_hand=,id=248072,ilevel=289
+off_hand=,id=248062,ilevel=289

@@ -584,7 +584,7 @@ const SET_BONUS_INTERACTION_DATA = {
 // Sibling spec/hero tree names (for contamination detection in verify.js)
 const SIBLING_SPECS = {
   siblingSpec: "havoc",
-  siblingHeroTrees: ["devourer", "scarred"],
+  siblingHeroTrees: ["fel_scarred", "void_scarred"],
 };
 
 // ================================================================

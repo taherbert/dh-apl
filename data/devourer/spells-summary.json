@@ -1,0 +1,1581 @@
+[
+  {
+    "id": 162264,
+    "name": "Metamorphosis",
+    "school": "Chaos",
+    "gcd": 0,
+    "duration": 20,
+    "description": "$@spelldesc191427"
+  },
+  {
+    "id": 183782,
+    "name": "Disrupting Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Disrupt generates 30 Fury on a successful interrupt."
+  },
+  {
+    "id": 185123,
+    "name": "Throw Glaive",
+    "school": "Physical",
+    "resource": "25 Fury",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 9
+    },
+    "description": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
+  },
+  {
+    "id": 185164,
+    "name": "Mastery: Demonic Presence",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your Chaos damage by 0.1% and your movement speed by 0.1%."
+  },
+  {
+    "id": 196718,
+    "name": "Darkness",
+    "school": "Physical",
+    "gcd": 1.5,
+    "cooldown": 300,
+    "duration": 8,
+    "description": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec. Chance to avoid damage increased by 100% when not in a raid."
+  },
+  {
+    "id": 198793,
+    "name": "Vengeful Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "cooldown": 0.5,
+    "duration": 1,
+    "categoryCooldown": 25,
+    "description": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
+  },
+  {
+    "id": 198813,
+    "name": "Vengeful Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 3,
+    "aoeRadius": 5,
+    "description": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
+  },
+  {
+    "id": 203650,
+    "name": "Prepared",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 10,
+    "description": "$@spelldesc203551"
+  },
+  {
+    "id": 204909,
+    "name": "Soul Rending",
+    "school": "Physical",
+    "passive": true,
+    "description": "Leech increased by 6%. Gain an additional 6% leech while Metamorphosis is active."
+  },
+  {
+    "id": 207347,
+    "name": "Aura of Pain",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation grants 5 additional Fury over its duration.][Increases the critical strike chance of Immolation Aura by 6%.]"
+  },
+  {
+    "id": 207548,
+    "name": "Agonizing Flames",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura increases your movement speed by 10% and its duration is increased by 50%."
+  },
+  {
+    "id": 207684,
+    "name": "Sigil of Misery",
+    "school": "Physical",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 120
+    },
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Place a Sigil of Misery at the target location that activates after 2 sec. Causes all enemies affected by the sigil to cower in fear, disorienting them for 15 sec."
+  },
+  {
+    "id": 207685,
+    "name": "Sigil of Misery",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 15,
+    "aoeRadius": 8,
+    "description": "Disorient affected enemies for 15 sec."
+  },
+  {
+    "id": 209281,
+    "name": "Quickened Sigils",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your Sigils activate 1 second faster."
+  },
+  {
+    "id": 209426,
+    "name": "Darkness",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec. Chance to avoid damage increased by $s3% when not in a raid."
+  },
+  {
+    "id": 213010,
+    "name": "Charred Warblades",
+    "school": "Physical",
+    "passive": true,
+    "description": "You heal for 3% of all Fire damage you deal."
+  },
+  {
+    "id": 213405,
+    "name": "Master of the Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by -50% for 6 sec."
+  },
+  {
+    "id": 217832,
+    "name": "Imprison",
+    "school": "Shadow",
+    "gcd": 1.5,
+    "cooldown": 45,
+    "duration": 60,
+    "description": "Imprisons a demon, beast, or humanoid, incapacitating them for 60 sec. Damage may cancel the effect. Limit 1."
+  },
+  {
+    "id": 218903,
+    "name": "Disrupt",
+    "school": "Chaos",
+    "gcd": 0,
+    "generates": [
+      "30 fury",
+      "300 none"
+    ],
+    "description": "$@spelldesc183752"
+  },
+  {
+    "id": 258920,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 1.5,
+    "cooldown": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 30
+    },
+    "duration": 6,
+    "generates": [
+      "20 fury",
+      "8 fury"
+    ],
+    "categoryCooldown": 1.5,
+    "description": "Engulf yourself in flames, radiating 0 Chaos damage over 6 sec.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][]"
+  },
+  {
+    "id": 258921,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][]"
+  },
+  {
+    "id": 258922,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "generates": [
+      "4 fury",
+      "2 fury"
+    ],
+    "description": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][]"
+  },
+  {
+    "id": 278326,
+    "name": "Consume Magic",
+    "school": "Chromatic",
+    "gcd": 1.5,
+    "cooldown": 10,
+    "aoeRadius": 8,
+    "description": "Consume 1 beneficial Magic effect removing it from the target and granting you 1 Fury."
+  },
+  {
+    "id": 320313,
+    "name": "Swallowed Anger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Consume Magic generates 1 Fury when a beneficial Magic effect is successfully removed from the target."
+  },
+  {
+    "id": 320331,
+    "name": "Infernal Armor",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura increases your armor by 20% and causes melee attackers to suffer 0 Fire damage."
+  },
+  {
+    "id": 320334,
+    "name": "Infernal Armor",
+    "school": "Fire",
+    "gcd": 0,
+    "description": "Immolation Aura increases your armor by 0% and causes melee attackers to suffer ${$320334s1/$s3} Fire damage."
+  },
+  {
+    "id": 320361,
+    "name": "Improved Disrupt",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the range of Disrupt to 10 yds."
+  },
+  {
+    "id": 320386,
+    "name": "Bouncing Glaives",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive ricochets to 1 additional $ltarget:targets;."
+  },
+  {
+    "id": 320416,
+    "name": "Blazing Path",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212613[Infernal Strike]?s195072[Fel Rush][Shift] gains an additional charge."
+  },
+  {
+    "id": 320418,
+    "name": "Improved Sigil of Misery",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Sigil of Misery by 30 sec."
+  },
+  {
+    "id": 320635,
+    "name": "Vengeful Bonds",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat reduces the movement speed of all nearby enemies by -70% for 3 sec."
+  },
+  {
+    "id": 320654,
+    "name": "Pursuit",
+    "school": "Physical",
+    "passive": true,
+    "description": "Mastery increases your movement speed."
+  },
+  {
+    "id": 320770,
+    "name": "Unrestrained Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases maximum Fury by 20."
+  },
+  {
+    "id": 337819,
+    "name": "Throw Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
+  },
+  {
+    "id": 370967,
+    "name": "The Hunt",
+    "school": "Nature",
+    "duration": 1.5
+  },
+  {
+    "id": 370970,
+    "name": "The Hunt",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 1.5,
+    "description": "$@spelldesc370965"
+  },
+  {
+    "id": 389688,
+    "name": "Tactical Retreat",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat has a 5 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
+  },
+  {
+    "id": 389695,
+    "name": "Will of the Illidari",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases maximum health by 3%."
+  },
+  {
+    "id": 389696,
+    "name": "Illidari Knowledge",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces magic damage taken by -3%."
+  },
+  {
+    "id": 389715,
+    "name": "Chains of Anger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the duration of your Sigils by 2 sec and radius by 2 yds."
+  },
+  {
+    "id": 389763,
+    "name": "Master of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive has 2 charges and snares all enemies hit by -50% for 6 sec."
+  },
+  {
+    "id": 389781,
+    "name": "Long Night",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the duration of Darkness by 3 sec."
+  },
+  {
+    "id": 389783,
+    "name": "Pitch Black",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Darkness by 120 sec."
+  },
+  {
+    "id": 389824,
+    "name": "Shattered Restoration",
+    "school": "Physical",
+    "passive": true,
+    "description": "The healing of Shattered Souls is increased by 10%."
+  },
+  {
+    "id": 389846,
+    "name": "Felfire Haste",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by 10% for 8 sec."
+  },
+  {
+    "id": 389847,
+    "name": "Felfire Haste",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 8,
+    "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by 10% for 8 sec."
+  },
+  {
+    "id": 389849,
+    "name": "Lost in Darkness",
+    "school": "Physical",
+    "passive": true,
+    "description": "Spectral Sight has 5 sec reduced cooldown and no longer reduces movement speed."
+  },
+  {
+    "id": 389890,
+    "name": "Tactical Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 10,
+    "generates": [
+      "8 unknown"
+    ],
+    "description": "Vengeful Retreat has a -0.01 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
+  },
+  {
+    "id": 390213,
+    "name": "Burning Blood",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fire damage increased by 8%."
+  },
+  {
+    "id": 391275,
+    "name": "Accelerated Blade",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive deals 60% increased damage, reduced by 30% for each previous enemy hit."
+  },
+  {
+    "id": 391397,
+    "name": "Erratic Felheart",
+    "school": "Physical",
+    "passive": true,
+    "description": "The cooldown of $?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] is reduced by ${-$s1/1000}.1 sec."
+  },
+  {
+    "id": 391409,
+    "name": "Aldrachi Design",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your chance to parry by 3%."
+  },
+  {
+    "id": 393822,
+    "name": "Internal Struggle",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your mastery by ${$s1*$mas}.1%."
+  },
+  {
+    "id": 395020,
+    "name": "Any Means Necessary",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fire"
+  },
+  {
+    "id": 427775,
+    "name": "A Fire Inside",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura has 1676 (Category) additional $Lcharge:charges;, has 6 sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 428241,
+    "name": "Demon Hide",
+    "school": "Physical",
+    "passive": true,
+    "description": "Magical damage increased by 3%, and Physical damage taken reduced by -5%."
+  },
+  {
+    "id": 428607,
+    "name": "Live by the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury. This effect may only occur once every 5 sec."
+  },
+  {
+    "id": 428608,
+    "name": "Live by the Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "generates": [
+      "10 fury"
+    ],
+    "description": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury. This effect may only occur once every 10 sec."
+  },
+  {
+    "id": 429211,
+    "name": "Champion of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive has 2 charges and 10 yard increased range."
+  },
+  {
+    "id": 433719,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433721,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433724,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433737,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 452402,
+    "name": "Demonsurge",
+    "school": "Physical",
+    "passive": true,
+    "description": "Metamorphosis now also greatly empowers Voidblade and Hungering Slash. While demon form is active, the first cast of each empowered ability induces a Voidsurge, causing you to explode with Void energy, dealing 0 Cosmic damage to nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 452403,
+    "name": "Wave of Debilitation",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c1[Chaos][Void] Nova slows enemies by 60% and reduces attack and cast speed by -15% for 5 sec after its stun fades."
+  },
+  {
+    "id": 452404,
+    "name": "Pursuit of Angriness",
+    "school": "Physical",
+    "passive": true,
+    "description": "Movement speed increased by 1% per 10 Fury."
+  },
+  {
+    "id": 452405,
+    "name": "Focused Hatred",
+    "school": "Physical",
+    "passive": true,
+    "description": "Voidsurge deals 50% increased damage when it strikes a single target. Each additional target reduces this bonus by 10%."
+  },
+  {
+    "id": 452406,
+    "name": "Set Fire to the Pain",
+    "school": "Physical",
+    "passive": true,
+    "description": "5% of all non-Fire damage taken is instead taken as Fire damage over 6 sec. Fire damage taken reduced by $S3%."
+  },
+  {
+    "id": 452407,
+    "name": "Improved Soul Rending",
+    "school": "Physical",
+    "passive": true,
+    "description": "Leech granted by Soul Rending increased by 2% and an additional 2% while Metamorphosis is active."
+  },
+  {
+    "id": 452408,
+    "name": "Burning Blades",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your blades burn with Cosmic energy, causing your Voidblade, Reap, and Throw Glaive to deal an additional 30% damage as Cosmic damage."
+  },
+  {
+    "id": 452409,
+    "name": "Violent Transformation",
+    "school": "Physical",
+    "passive": true,
+    "description": "Entering Void Metamorphosis resets the cooldown of Voidblade and The Hunt."
+  },
+  {
+    "id": 452410,
+    "name": "Enduring Torment",
+    "school": "Physical",
+    "passive": true,
+    "description": "The effects of your demon form persist outside of it in a weakened state, increasing Mastery: Monster Within's effectiveness by 10%."
+  },
+  {
+    "id": 452411,
+    "name": "Untethered Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Maximum Fury increased by 20."
+  },
+  {
+    "id": 452412,
+    "name": "Student of Suffering",
+    "school": "Physical",
+    "passive": true,
+    "description": "Void Ray applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting 5 Fury every $453239t2 sec, for 6 sec."
+  },
+  {
+    "id": 452413,
+    "name": "Flamebound",
+    "school": "Physical",
+    "passive": true,
+    "description": "Hungering Slash has 2 yd increased radius and 50% increased critical strike damage bonus."
+  },
+  {
+    "id": 452414,
+    "name": "Monster Rising",
+    "school": "Physical",
+    "passive": true,
+    "description": "Intellect increased by 8% while not in demon form."
+  },
+  {
+    "id": 452415,
+    "name": "Demonic Intensity",
+    "school": "Physical",
+    "passive": true,
+    "description": "Activating Metamorphosis greatly empowers The Hunt. Voidsurge damage is increased by 10% for each time it previously triggered while your demon form is active."
+  },
+  {
+    "id": 452416,
+    "name": "Demonsurge",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 15,
+    "aoeRadius": 10,
+    "description": "Metamorphosis now also greatly empowers Voidblade and Hungering Slash. While demon form is active, the first cast of each empowered ability induces a Voidsurge, causing you to explode with Void energy, dealing 0 Cosmic damage to nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 452550,
+    "name": "Monster Rising",
+    "school": "Physical",
+    "description": "Intellect increased by 8% while not in demon form."
+  },
+  {
+    "id": 453177,
+    "name": "Burning Blades",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 6,
+    "description": "$@spelldesc388106"
+  },
+  {
+    "id": 453236,
+    "name": "Student of Suffering",
+    "school": "Chaos",
+    "gcd": 0,
+    "generates": [
+      "5 fury"
+    ],
+    "description": "Void Ray applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting 5 Fury every $453239t2 sec, for 6 sec."
+  },
+  {
+    "id": 453239,
+    "name": "Student of Suffering",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Void Ray applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting 5 Fury every $453239t2 sec, for 6 sec."
+  },
+  {
+    "id": 453263,
+    "name": "Wave of Debilitation",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 5,
+    "description": "$?c1[Chaos][Void] Nova slows enemies by 60% and reduces attack and cast speed by -15% for 5 sec after its stun fades."
+  },
+  {
+    "id": 453286,
+    "name": "Set Fire to the Pain",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 6,
+    "description": "$s2% of all non-Fire damage taken is instead taken as Fire damage over 6 sec. Fire damage taken reduced by $S3%."
+  },
+  {
+    "id": 453314,
+    "name": "Enduring Torment",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Intellect increased by 8% while not in demon form."
+  },
+  {
+    "id": 471306,
+    "name": "Void Metamorphosis",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "Collecting $1225789u Soul Fragments grants access to Void Metamorphosis. $@spellicon1217605 $@spellname1217605 |CFFffffffRequires $1225789u Soul Fragments|R You ascend to a higher state of being, substantially empowering your abilities. While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury."
+  },
+  {
+    "id": 473662,
+    "name": "Consume",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "description": "Drain the essence from your target, dealing 0 Cosmic damage. Castable while moving. |CFFffffffGenerates 8 Fury and 1 Soul $LFragment:Fragments;.|R"
+  },
+  {
+    "id": 473728,
+    "name": "Void Ray",
+    "school": "Spellshadow",
+    "resource": "100 Fury",
+    "gcd": 1.5,
+    "duration": 3,
+    "description": " Unleash a beam of concentrated void energy, dealing 0 Cosmic damage every ${$t1}.1 sec. Channeling Void Ray substantially reduces your Fury drain."
+  },
+  {
+    "id": 1213636,
+    "name": "Devourer Demon Hunter",
+    "school": "Physical",
+    "passive": true
+  },
+  {
+    "id": 1213649,
+    "name": "Void Ray",
+    "school": "Cosmic",
+    "resource": "5 Fury",
+    "gcd": 0,
+    "aoeRadius": 30
+  },
+  {
+    "id": 1215617,
+    "name": "Predator's Thirst",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "Consume damage increased by 15%. Consume generates a Soul Fragment."
+  },
+  {
+    "id": 1217605,
+    "name": "Void Metamorphosis",
+    "school": "Physical",
+    "gcd": 1.5,
+    "description": "|CFFffffffRequires $1225789u Soul Fragments|R You ascend to a higher state of being, substantially empowering your abilities. While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury."
+  },
+  {
+    "id": 1217607,
+    "name": "Void Metamorphosis",
+    "school": "Chaos",
+    "gcd": 0,
+    "description": "|CFFffffffRequires $1225789u Soul Fragments|R You ascend to a higher state of being, substantially empowering your abilities. While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury."
+  },
+  {
+    "id": 1217610,
+    "name": "Devour",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "generates": [
+      "8 fury"
+    ],
+    "description": "Devour the life essence of your target, dealing 0 Cosmic damage. Reduces the cooldown of Reap by 1.1 sec. Castable while moving. |CFFffffffGenerates 8 Fury and 1 soul $Lfragment:fragments;.|R"
+  },
+  {
+    "id": 1221150,
+    "name": "Collapsing Star",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "description": "Channel an immense amount of void energy into a single, cataclysmic blast, critically striking for 0 Cosmic damage to your target and 0 Cosmic damage to all nearby enemies. Damage reduced beyond 8 targets. While casting Collapsing Star, your Fury drain is significantly reduced. |CFFffffffGenerates 3 Soul $LFragment:Fragments;|R."
+  },
+  {
+    "id": 1221162,
+    "name": "Collapsing Star",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Channel an immense amount of void energy into a single, cataclysmic blast, critically striking for 0 Cosmic damage to your target and ${2*($1221162s1*($s2/100))} Cosmic damage to all nearby enemies. Damage reduced beyond 0 targets. While casting Collapsing Star, your Fury drain is significantly reduced. |CFFffffffGenerates 3 Soul $LFragment:Fragments;|R."
+  },
+  {
+    "id": 1221167,
+    "name": "Collapsing Star",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "While in Void Metamorphosis, every 30 Soul Fragments harvested grants access to Collapsing Star. $@spellicon1221150 $@spellname1221150 Channel an immense amount of void energy into a single, cataclysmic blast, critically striking for 0 Cosmic damage to your target and ${2*($1221162s1*($s2/100))} Cosmic damage to all nearby enemies. Damage reduced beyond 30 targets. While casting Collapsing Star, your Fury drain is significantly reduced. |CFFffffffGenerates 3 Soul $LFragment:Fragments;|R."
+  },
+  {
+    "id": 1221171,
+    "name": "Collapsing Star",
+    "school": "Cosmic"
+  },
+  {
+    "id": 1223157,
+    "name": "Voidstep",
+    "school": "Spellshadow",
+    "gcd": 0,
+    "duration": 6
+  },
+  {
+    "id": 1223171,
+    "name": "Guile",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "The cast range of Voidblade, Consume Magic, and Disrupt are increased by 20 yds."
+  },
+  {
+    "id": 1223918,
+    "name": "Waste Not",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "Damage from Void Ray has a 200% increased chance to generate a Soul Fragment."
+  },
+  {
+    "id": 1224451,
+    "name": "A Fire Inside",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos"
+  },
+  {
+    "id": 1225789,
+    "name": "Void Metamorphosis",
+    "school": "Spellshadow",
+    "gcd": 0
+  },
+  {
+    "id": 1225826,
+    "name": "Eradicate",
+    "school": "Spellshadow",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 8
+    },
+    "duration": 1.5,
+    "description": "Slam your Scythe to the ground, dealing 0 Cosmic damage to all enemies within a 25 yd cone in front of you. Damage reduced beyond 5 targets. Eradicate gathers up to 4 nearby souls. |CFFffffffGenerates $s3 Fury.|R"
+  },
+  {
+    "id": 1225827,
+    "name": "Eradicate",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 30,
+    "description": "Slam your Scythe to the ground, dealing 0 Cosmic damage to all enemies within a 25 yd cone in front of you. Damage reduced beyond 5 targets. Eradicate gathers up to 4 nearby souls. |CFFffffffGenerates $s3 Fury.|R"
+  },
+  {
+    "id": 1226019,
+    "name": "Reap",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 8
+    },
+    "duration": 1,
+    "description": "Cut a hole in the fabric of reality, sending a concentrated bolt of cosmic matter towards your target, dealing 0 Cosmic damage. Reap gathers up to 4 nearby souls. |CFFffffffGenerates 10 Fury.|R"
+  },
+  {
+    "id": 1226033,
+    "name": "Eradicate",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Fully channeling Void Ray causes your next Reap to deal 0 Cosmic damage to all enemies within a 25 yd cone in front of you. Damage reduced beyond 5 targets."
+  },
+  {
+    "id": 1227338,
+    "name": "Impending Apocalypse",
+    "school": "Spellshadow",
+    "gcd": 0,
+    "description": "Each Collapsing Star you cast increases the damage of your next Collapsing Star by 30%."
+  },
+  {
+    "id": 1227619,
+    "name": "Shattered Souls",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Damaging an enemy has a 4% chance to shatter a lesser soul fragment from them. $@spellicon1223412 $@spellname1223412: $@spelldesc1223412"
+  },
+  {
+    "id": 1227702,
+    "name": "Collapsing Star",
+    "school": "Spellshadow",
+    "gcd": 0,
+    "description": "While in Void Metamorphosis, every 1 Soul Fragments harvested grants access to Collapsing Star. $@spellicon1221150 $@spellname1221150 Channel an immense amount of void energy into a single, cataclysmic blast, critically striking for 0 Cosmic damage to your target and ${2*($1221162s1*($s2/100))} Cosmic damage to all nearby enemies. Damage reduced beyond 1 targets. While casting Collapsing Star, your Fury drain is significantly reduced. |CFFffffffGenerates 3 Soul $LFragment:Fragments;|R."
+  },
+  {
+    "id": 1227707,
+    "name": "Impending Apocalypse",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "Each Collapsing Star you cast increases the damage of your next Collapsing Star by 30%."
+  },
+  {
+    "id": 1232310,
+    "name": "Feast of Souls",
+    "school": "Cosmic",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Soul Fragments grant 1% increased damage for 6 sec. Multiple applications may overlap."
+  },
+  {
+    "id": 1234195,
+    "name": "Void Nova",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "cooldown": 45,
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Unleash an eruption of void energy, dealing 0 Cosmic damage and stunning your target and all nearby enemies for 2 sec."
+  },
+  {
+    "id": 1237270,
+    "name": "Feast of Souls",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "Soul Fragments grant 1% increased damage for 6 sec. Multiple applications may overlap."
+  },
+  {
+    "id": 1238488,
+    "name": "Moment of Craving",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "After fully channeling Void Ray, the cooldown of Reap is reset and your next Reap will collect up to 6 additional Soul Fragments."
+  },
+  {
+    "id": 1238495,
+    "name": "Moment of Craving",
+    "school": "Cosmic",
+    "gcd": 0,
+    "duration": 8,
+    "description": "After fully channeling Void Ray, the cooldown of Reap is reset and your next Reap will collect up to 6 additional Soul Fragments."
+  },
+  {
+    "id": 1238739,
+    "name": "Soulshaper",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Each Soul Fragment gathered by Reap increases its damage by 8%."
+  },
+  {
+    "id": 1238855,
+    "name": "Mastery: Monster Within",
+    "school": "Physical",
+    "passive": true,
+    "description": "All Cosmic damage dealt is increased by 0%. While in Void Metamorphosis, this bonus is increased by an additional 0%."
+  },
+  {
+    "id": 1239123,
+    "name": "Hungering Slash",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "duration": 1,
+    "description": "Violently slash your scythe around you, dealing 0 Cosmic damage to nearby enemies and generating 10 Fury. Shatters up to 2 Soul $LFragment:Fragments; from nearby enemies. Damage reduced beyond 8 targets."
+  },
+  {
+    "id": 1239127,
+    "name": "Hungering Slash",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Violently slash your scythe around you, dealing 0 Cosmic damage to nearby enemies and generating 10 Fury. Shatters up to 0 Soul $LFragment:Fragments; from nearby enemies. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1239507,
+    "name": "Hungering Slash",
+    "school": "Cosmic",
+    "gcd": 0,
+    "generates": [
+      "10 fury"
+    ]
+  },
+  {
+    "id": 1239519,
+    "name": "Hungering Slash",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "After dealing damage with The Hunt or Voidblade, they are replaced with Hungering Slash for 6 sec. $@spellicon1239123 $@spellname1239123 Violently slash your scythe around you, dealing 0 Cosmic damage to nearby enemies and generating 10 Fury. Shatters up to 3 Soul $LFragment:Fragments; from nearby enemies. Damage reduced beyond $s2 targets. Hungering Slash grants a temporary charge of Vengeful Retreat and causes your next Vengeful Retreat within 6 sec to deal an additional 0 Cosmic damage."
+  },
+  {
+    "id": 1239525,
+    "name": "Hungering Slash",
+    "school": "Spellshadow",
+    "gcd": 0,
+    "duration": 6
+  },
+  {
+    "id": 1239526,
+    "name": "Voidstep",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 5,
+    "description": "$@spelldesc1239520"
+  },
+  {
+    "id": 1239537,
+    "name": "Second Helping",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Reap gains an additional charge."
+  },
+  {
+    "id": 1240201,
+    "name": "Devourer's Bite",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Damage from Voidblade and the Hunt increases the damage your target takes from you by 12% for 10 sec. Multiple applications may overlap."
+  },
+  {
+    "id": 1240202,
+    "name": "Voidglare Boon",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "After fully channeling Void Ray, gain 10 Fury."
+  },
+  {
+    "id": 1240203,
+    "name": "Focused Ray",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Void Ray deals 50% more damage when damaging a single target."
+  },
+  {
+    "id": 1240204,
+    "name": "Star Fragments",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Collapsing Star now generates 3 Soul $LFragment:Fragments;."
+  },
+  {
+    "id": 1241532,
+    "name": "Devourer's Bite",
+    "school": "Cosmic",
+    "gcd": 0,
+    "duration": 10,
+    "description": "Damage from Voidblade and the Hunt increases the damage your target takes from you by 12% for 10 sec. Multiple applications may overlap."
+  },
+  {
+    "id": 1241922,
+    "name": "Voidglare Boon",
+    "school": "Cosmic",
+    "gcd": 0,
+    "generates": [
+      "10 fury"
+    ],
+    "description": "After fully channeling Void Ray, gain 10 Fury."
+  },
+  {
+    "id": 1241937,
+    "name": "Soul Immolation",
+    "school": "Fire",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 60
+    },
+    "duration": 5,
+    "description": "Light your soul aflame, dealing 0 Fire damage to yourself, generating 30 Fury and shattering 3 Soul Fragments over 5 sec."
+  },
+  {
+    "id": 1242475,
+    "name": "Soul Immolation",
+    "school": "Cosmic",
+    "gcd": 0,
+    "generates": [
+      "5 fury"
+    ],
+    "description": "Light your soul aflame, dealing $o2 Fire damage to yourself, generating ${$1242475s1*$s3} Fury and shattering 5 Soul Fragments over $d."
+  },
+  {
+    "id": 1242486,
+    "name": "Midnight",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Collapsing Star always critically strikes."
+  },
+  {
+    "id": 1242492,
+    "name": "Emptiness",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Every soul consumed in Void Metamorphosis grants 0.25.2% haste, up to 25%."
+  },
+  {
+    "id": 1242495,
+    "name": "Calamitous",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Your damaging critical strikes deal 240% damage instead of the usual 200%."
+  },
+  {
+    "id": 1242768,
+    "name": "Sweet Release",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Your chance to shatter a Soul Fragment from enemies you damage is increased by 2%."
+  },
+  {
+    "id": 1242956,
+    "name": "Voidrage",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Your Mastery is increased by 2%."
+  },
+  {
+    "id": 1244220,
+    "name": "Voidpurge",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Void Ray's cooldown during Void Metamorphosis is reduced by ${-$s1/1000}.1 sec."
+  },
+  {
+    "id": 1244222,
+    "name": "Devourer's Edge",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Reap and Consume damage increased by 10%."
+  },
+  {
+    "id": 1244235,
+    "name": "Rolling Torment",
+    "school": "Cosmic",
+    "gcd": 0,
+    "duration": 12,
+    "description": "When Void Metamorphosis expires, for each unused Soul you harvested, gain 0.5 Fury and increase your damage by 0.05.2% for 12 sec."
+  },
+  {
+    "id": 1244237,
+    "name": "Rolling Torment",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "When Void Metamorphosis expires, for each unused Soul you harvested, gain 5 Fury and increase your damage by 0.5.2% for 12 sec."
+  },
+  {
+    "id": 1244295,
+    "name": "Sweet Suffering",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "The duration of Feast of Souls is increased by 2 sec. $@spellicon1237270 $@spellname1237270: Soul Fragments grant 1% increased damage for 6 sec. Multiple applications may overlap."
+  },
+  {
+    "id": 1245412,
+    "name": "Voidblade",
+    "school": "Physical",
+    "gcd": 0.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 30
+    },
+    "description": "Unleash your glaives and charge to your target, dealing 0 Cosmic damage. Generates 0 Fury."
+  },
+  {
+    "id": 1245414,
+    "name": "Voidblade",
+    "school": "Cosmic",
+    "gcd": 0,
+    "description": "Unleash your glaives and charge to your target, dealing 0 Cosmic damage. Generates 0 Fury."
+  },
+  {
+    "id": 1245453,
+    "name": "Cull",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 8
+    },
+    "duration": 1,
+    "description": "Cut a hole in the fabric of reality, sending a concentrated bolt of cosmic matter towards your target, dealing 0 Cosmic damage. Cull gathers up to 4 nearby souls. |CFFffffffGenerates 10 Fury.|R"
+  },
+  {
+    "id": 1246160,
+    "name": "Voidsurge",
+    "school": "Cosmic",
+    "gcd": 0,
+    "duration": 12,
+    "aoeRadius": 10,
+    "description": "Metamorphosis now also greatly empowers Voidblade and Hungering Slash. While demon form is active, the first cast of each empowered ability induces a Voidsurge, causing you to explode with Void energy, dealing 0 Cosmic damage to nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 1246167,
+    "name": "The Hunt",
+    "school": "Cosmic",
+    "gcd": 1.5,
+    "cooldown": 90,
+    "duration": 2,
+    "description": "Charge to your target, striking them for 0 Cosmic damage, rooting them in place for 1.5 sec and inflicting 0 Cosmic damage over 6 sec to up to $370967s2 enemies in your path."
+  },
+  {
+    "id": 1246168,
+    "name": "The Hunt",
+    "school": "Cosmic",
+    "gcd": 0,
+    "duration": 6,
+    "description": "$@spelldesc370965"
+  },
+  {
+    "id": 1246169,
+    "name": "The Hunt",
+    "school": "Cosmic",
+    "gcd": 0,
+    "description": "$@spelldesc370965"
+  },
+  {
+    "id": 1246555,
+    "name": "Tempered Soul",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "The cooldown of Soul Immolation is reduced by ${-$s1/1000} sec and it gains 1 additional $Lcharge:charges;."
+  },
+  {
+    "id": 1246556,
+    "name": "Spontaneous Immolation",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Casting a damaging spell has a 5% chance to activate Soul Immolation for 5 sec."
+  },
+  {
+    "id": 1246558,
+    "name": "Scythe's Embrace",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Reap now generates 10 Fury."
+  },
+  {
+    "id": 1246562,
+    "name": "Duty Eternal",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Voidblade damage increased by 100% and Voidblade now generates 20 Fury."
+  },
+  {
+    "id": 1247534,
+    "name": "Soul Glutton",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Void Metamorphosis requires -15 less souls. Your Fury drains ${-$s2}% faster while in Void Metamorphosis."
+  },
+  {
+    "id": 1247538,
+    "name": "Demonic Instinct",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Void Ray and Hungering Slash damage increased by 10%."
+  },
+  {
+    "id": 1253304,
+    "name": "Voidfall",
+    "school": "None",
+    "passive": true,
+    "description": "Consume has a 35% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Reap consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Cosmic damage to all enemies within $1256306A yards. Damage reduced beyond 8 targets."
+  },
+  {
+    "id": 1253377,
+    "name": "Meteoric Rise",
+    "school": "None",
+    "passive": true,
+    "description": "$?c2[Fel Devastation][Void Ray] damage increased by 15%. $?c2[Fel Devastation][Fully channeling Void Ray] generates $?c2[3 Soul Fragments over its duration][1 $Lstack:stacks; of Voidfall]."
+  },
+  {
+    "id": 1253391,
+    "name": "Meteoric Fall",
+    "school": "None",
+    "passive": true,
+    "description": "While at 3 stacks of Voidfall, $?c2[Spirit Bomb and Soul Cleave][Reap] consumes all 3 to rapidly call down that many meteor strikes."
+  },
+  {
+    "id": 1253399,
+    "name": "Path to Oblivion",
+    "school": "None",
+    "passive": true,
+    "description": "Each stack of Voidfall grants 3% increased movement speed."
+  },
+  {
+    "id": 1253402,
+    "name": "State of Matter",
+    "school": "None",
+    "passive": true,
+    "description": "Shift has 2447 (Category) additional $Lcharge:charges;."
+  },
+  {
+    "id": 1253415,
+    "name": "Celestial Echoes",
+    "school": "None",
+    "passive": true,
+    "description": "$?s263642[Fracture]?a212613[Shear][Consume] generates 2 additional Fury and deals 15% increased damage."
+  },
+  {
+    "id": 1253668,
+    "name": "Swift Erasure",
+    "school": "None",
+    "passive": true,
+    "description": "Each stack of Voidfall grants 2% Haste."
+  },
+  {
+    "id": 1253676,
+    "name": "Doomsayer",
+    "school": "None",
+    "passive": true,
+    "description": "Activating Void Ray out of combat or within 10 sec of entering combat calls down 3 Voidfall $LMeteor:Meteors; over its duration."
+  },
+  {
+    "id": 1253769,
+    "name": "Catastrophe",
+    "school": "None",
+    "passive": true,
+    "description": "Enemies struck by a Voidfall Meteor take an additional 25% damage over 8 sec."
+  },
+  {
+    "id": 1253805,
+    "name": "Final Hour",
+    "school": "None",
+    "passive": true,
+    "description": "Passive bonuses granted by each stack of Voidfall persist for 8 sec after being consumed."
+  },
+  {
+    "id": 1253817,
+    "name": "Otherworldly Focus",
+    "school": "None",
+    "passive": true,
+    "description": "Collapsing Star and Voidfall meteors deal 35% increased damage when striking a single target. Each additional target reduces this bonus by 5%."
+  },
+  {
+    "id": 1256245,
+    "name": "Phase Shift",
+    "school": "None",
+    "passive": true,
+    "description": "Each stack of Voidfall grants -2% reduced damage taken."
+  },
+  {
+    "id": 1256295,
+    "name": "Mass Acceleration",
+    "school": "None",
+    "passive": true,
+    "description": "Gain $m1 $Lstack:stacks; of Voidfall and reset the cooldown of Reap upon activating Void Metamorphosis."
+  },
+  {
+    "id": 1256305,
+    "name": "Voidfall Meteor",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Consume has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Reap consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Cosmic damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1256306,
+    "name": "Voidfall Meteor",
+    "school": "Shadowflame",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Consume has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Reap consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Cosmic damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1256307,
+    "name": "Dark Matter",
+    "school": "None",
+    "passive": true,
+    "description": "Your first Collapsing Star after casting Void Metamorphosis causes a Cosmic meteor shower to assault the area, dealing 0 Cosmic damage over 6 sec."
+  },
+  {
+    "id": 1256312,
+    "name": "Celestial Echoes",
+    "school": "None",
+    "gcd": 0,
+    "duration": 8,
+    "description": "$?s263642[Fracture]?a212613[Shear][Consume] generates 5 additional Fury and deals 25% increased damage."
+  },
+  {
+    "id": 1256322,
+    "name": "Voidfall",
+    "school": "None",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Consume has a 0% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Reap consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Cosmic damage to all enemies within $1256306A yards. Damage reduced beyond 0 targets."
+  },
+  {
+    "id": 1256353,
+    "name": "World Killer",
+    "school": "None",
+    "passive": true,
+    "description": "The third Voidfall meteor strike called down in sequence is larger, has 50% increased area, deals 50% increased damage, and generates 1 Soul $LFragment:Fragments;."
+  },
+  {
+    "id": 1256667,
+    "name": "Catastrophe",
+    "school": "Shadowflame",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Enemies struck by a Voidfall Meteor take an additional $s2% damage over 8 sec."
+  },
+  {
+    "id": 1256964,
+    "name": "Devourer Demon Hunter",
+    "school": "Physical",
+    "passive": true
+  },
+  {
+    "id": 1261679,
+    "name": "Reap",
+    "school": "Cosmic",
+    "gcd": 0,
+    "generates": [
+      "10 fury"
+    ],
+    "description": "Reap now generates 10 Fury."
+  },
+  {
+    "id": 1261684,
+    "name": "Entropy",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "While in combat, generate 1 Soul $LFragment:Fragments; every $t1 sec. While out of combat, you will slowly build towards your Void Metamorphosis, up to 25 Soul Fragments."
+  },
+  {
+    "id": 1261710,
+    "name": "Consume",
+    "school": "Cosmic",
+    "gcd": 0,
+    "generates": [
+      "8 fury"
+    ],
+    "description": "Drain the essence from your target, dealing 8 Cosmic damage. Castable while moving. |CFFffffffGenerates 8 Fury and 1 Soul $LFragment:Fragments;.|R"
+  },
+  {
+    "id": 1264129,
+    "name": "Meteor Shower",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 6,
+    "description": "Consume has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Reap consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Cosmic damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1264130,
+    "name": "Meteor Shower",
+    "school": "Shadowflame",
+    "gcd": 0,
+    "aoeRadius": 6,
+    "description": "Consume has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Reap consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Cosmic damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1265768,
+    "name": "Doomsayer",
+    "school": "None",
+    "gcd": 0,
+    "duration": 5,
+    "description": "Activating Void Ray out of combat or within ${$1265768d*$s2} sec of entering combat calls down 1 Voidfall $LMeteor:Meteors; over its duration."
+  },
+  {
+    "id": 1266296,
+    "name": "Focused Ire",
+    "school": "Physical",
+    "passive": true,
+    "description": "The primary target of $?c3[Void Nova][Chaos Nova] is stunned for an additional 2 sec."
+  },
+  {
+    "id": 1266307,
+    "name": "Demonic Resilience",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c2[Demon Spikes][Blur] gains 1 additional $Lcharge:charges;."
+  },
+  {
+    "id": 1266316,
+    "name": "Burn It Out",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation][Immolation Aura] removes 1 Disease $Leffect:effects;."
+  },
+  {
+    "id": 1266326,
+    "name": "Furious",
+    "school": "Physical",
+    "passive": true,
+    "description": "Attacks and abilities that generate Fury deal 3% increased damage."
+  },
+  {
+    "id": 1266328,
+    "name": "Remorseless",
+    "school": "Physical",
+    "passive": true,
+    "description": "Attacks and abilities that spend Fury deal 3% increased damage."
+  },
+  {
+    "id": 1266329,
+    "name": "Demon Muzzle",
+    "school": "Physical",
+    "passive": true,
+    "description": "Interrupting a spell with Disrupt decreases your magic damage taken by -15% for 12 sec."
+  },
+  {
+    "id": 1266330,
+    "name": "Soul Splitter",
+    "school": "Physical",
+    "passive": true,
+    "description": "Any time you would generate one or more soul fragments, you have a 2% chance to generate an additional Soul Fragment."
+  },
+  {
+    "id": 1266493,
+    "name": "Wings of Wrath",
+    "school": "Physical",
+    "passive": true,
+    "description": "Glide speed increased by 10%."
+  },
+  {
+    "id": 1266496,
+    "name": "Soul Cleanse",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation][Immolation Aura] removes 1 Curse $Leffect:effects;."
+  },
+  {
+    "id": 1266497,
+    "name": "First In, Last Out",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212612[Fel Rush]?a212613[Infernal Strike][Shift] grants you a rapidly decaying shield equal to 6% of your maximum health."
+  },
+  {
+    "id": 1266500,
+    "name": "Final Breath",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fully channeling $?a212612[Eye Beam]?a212613[Fel Devastation][Void Ray] increases the damage of its final tick by 300%."
+  },
+  {
+    "id": 1266616,
+    "name": "Demon Muzzle",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 12,
+    "description": "Interrupting a spell with Disrupt decreases your magic damage taken by -15% for 12 sec."
+  },
+  {
+    "id": 1272364,
+    "name": "Blind Focus",
+    "school": "Physical",
+    "passive": true,
+    "description": "Cosmic damage increased by 3%. Effect is doubled while in demon form."
+  },
+  {
+    "id": 1272405,
+    "name": "Undying Embers",
+    "school": "Physical",
+    "passive": true,
+    "description": "Soul Immolation has a 25% chance to reignite after it expires, reapplying its effect."
+  },
+  {
+    "id": 1272422,
+    "name": "Voidrush",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Collapsing Star reduces the cooldown of Voidblade by 10 sec. Voidblade and The Hunt briefly reduce your Fury drain while in Void Metamorphosis."
+  },
+  {
+    "id": 1272432,
+    "name": "Soulforged Blades",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Hungering Slash and Voidblade's critical strike chance is increased by 15%."
+  },
+  {
+    "id": 1272453,
+    "name": "Volatile Instinct",
+    "school": "Physical",
+    "passive": true,
+    "description": "Entering demon form causes your next Voidsurge to repeat after a short delay."
+  },
+  {
+    "id": 1272770,
+    "name": "Singular Strikes",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Voidblade damage increased by 25%. Hungering Slash deals 50% increased damage to its primary target."
+  },
+  {
+    "id": 1272817,
+    "name": "Improved Consume",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Consume deals 10% increased damage and its cast time is reduced by ${-$s2/1000}.2 sec."
+  },
+  {
+    "id": 1272832,
+    "name": "Singed Spirit",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Soul Immolation generates an additional ${$s2*$1241937s3} Fury over its duration."
+  },
+  {
+    "id": 1272842,
+    "name": "Umbral Blade",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Reap's cooldown is reduced by your Haste."
+  },
+  {
+    "id": 1272847,
+    "name": "Gift of the Void",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Your critical strike chance is increased by 2%."
+  },
+  {
+    "id": 1279200,
+    "name": "Eradicate",
+    "school": "Cosmic",
+    "gcd": 0,
+    "aoeRadius": 30,
+    "description": "Slam your Scythe to the ground, dealing 0 Cosmic damage to all enemies within a 25 yd cone in front of you. Damage reduced beyond 5 targets. Eradicate gathers up to 4 nearby souls. |CFFffffffGenerates $s3 Fury.|R"
+  },
+  {
+    "id": 1279247,
+    "name": "Harness the Cosmos",
+    "school": "None",
+    "passive": true,
+    "description": "Voidfall Meteor damage increased by 15%."
+  }
+]

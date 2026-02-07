@@ -52,6 +52,9 @@
 //   - excludedTalents: string[] — Non-DPS talent names excluded from DoE factor space.
 //     Pure defensive, utility, or healing-only talents. Connectivity repair may still
 //     add them as pathing nodes to reach deeper DPS talents.
+//   - requiredTalents: string[] — Talent names forced always-on in DoE factor space.
+//     Use for talents that must be taken (e.g., SimC crashes without them, or they are
+//     fundamental to the spec's core loop and never worth dropping).
 //
 // SPEC_CONFIG optional fields (for data-driven analysis modules):
 //   - resourceModels: Array of { name, cap, baseCap?, generators[], consumers[] }
