@@ -351,7 +351,11 @@ export function selectionsToNodeSets(selections, data) {
 // Convert SimC override strings (class_talents/spec_talents/hero_talents) to a
 // selections Map suitable for encode(). The inverse of what validateOverrides does
 // for checking — here we produce encodable selections.
-export function overridesToSelections(overrides, data) {
+export function overridesToSelections(
+  overrides,
+  data,
+  { heroChoiceLocks } = {},
+) {
   const selections = new Map();
 
   // Build name→{node, tree, entryIndex} lookup (mirrors validateOverrides pattern)
@@ -403,7 +407,9 @@ export function overridesToSelections(overrides, data) {
     }
     for (const node of data.heroSubtrees[heroTreeKey]) {
       const sel = { rank: node.maxRanks || 1 };
-      if (node.type === "choice") sel.choiceIndex = 0;
+      if (node.type === "choice") {
+        sel.choiceIndex = heroChoiceLocks?.[node.id] ?? 0;
+      }
       selections.set(node.id, sel);
     }
 
@@ -424,12 +430,12 @@ export function overridesToSelections(overrides, data) {
 }
 
 // High-level: convert override strings directly to a talent hash string.
-export function overridesToHash(overrides) {
+export function overridesToHash(overrides, opts = {}) {
   const data = JSON.parse(
     readFileSync(dataFile("raidbots-talents.json"), "utf8"),
   );
   const fullNodes = loadFullNodeList();
-  const selections = overridesToSelections(overrides, data);
+  const selections = overridesToSelections(overrides, data, opts);
   return encode(CONFIG_SPEC_ID, fullNodes, selections);
 }
 

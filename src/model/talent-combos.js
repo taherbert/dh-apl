@@ -7,13 +7,48 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   encode,
+  decode,
   buildToSelections,
   loadFullNodeList,
 } from "../util/talent-string.js";
-import { dataDir, ROOT } from "../engine/paths.js";
+import { dataDir, aplsDir, ROOT } from "../engine/paths.js";
+import { getSpecAdapter } from "../engine/startup.js";
 
 const CLASS_POINTS = 34;
 const SPEC_POINTS = 34;
+
+// Extract class tree selections from profile.simc talent hash.
+// Returns { selected, rankMap, pointsSpent } matching bfsFillSimple output shape.
+function classTreeFromProfile(classNodes) {
+  const profilePath = join(aplsDir(), "profile.simc");
+  const lines = readFileSync(profilePath, "utf8").split("\n");
+  const talentLine = lines.find((l) => l.trim().startsWith("talents="));
+  if (!talentLine) throw new Error("No talents= line in profile.simc");
+
+  const hash = talentLine.trim().split("=")[1];
+  const fullNodes = loadFullNodeList();
+  const { selections } = decode(hash, fullNodes);
+
+  // Use raidbots classNodes for accurate freeNode info
+  const classNodeMap = new Map(classNodes.map((n) => [n.id, n]));
+  const selected = [];
+  const rankMap = new Map();
+  let pts = 0;
+
+  for (const [nodeId, sel] of selections) {
+    if (!classNodeMap.has(nodeId)) continue;
+    selected.push(nodeId);
+    rankMap.set(nodeId, sel.rank);
+    if (!classNodeMap.get(nodeId).freeNode) pts += sel.rank;
+  }
+
+  if (pts !== CLASS_POINTS) {
+    console.warn(
+      `Profile class tree: ${pts}/${CLASS_POINTS} points (expected ${CLASS_POINTS})`,
+    );
+  }
+  return { selected, rankMap, pointsSpent: pts };
+}
 
 function loadData() {
   return JSON.parse(
@@ -103,43 +138,29 @@ function reachableFrom(startIds, nodeMap) {
   return visited;
 }
 
-// Non-DPS talents: pure defensive, utility, or healing-only.
-// These are excluded from the DoE factor space and default to SKIP.
-// Connectivity repair may still add them as pathing nodes to reach deeper DPS talents.
-const EXCLUDED_SPEC_NAMES = new Set([
-  "Calcified Spikes", // Demon Spikes armor bonus (defensive)
-  "Sigil of Silence", // Silence (utility) — choice entry on Roaring Fire node
-  "Revel in Pain", // Shield from Fiery Brand (defensive)
-  "Feast of Souls", // Healing from Soul Cleave (healing-only)
-  "Ruinous Bulwark", // Fel Dev healing increase (healing-only)
-  "Soul Barrier", // Absorb shield (defensive) — choice entry on Soul Barrier/Soul Sigils node
-  "Fel Flame Fortification", // Fire damage reduction (defensive)
-  "Last Resort", // Cheat death (defensive)
-  "Soulmonger", // Soul fragment healing (healing-only)
-  "Focused Cleave", // Soul Cleave secondary damage (minor, mostly defensive context)
-  "Quickened Sigils", // Sigil activation speed (utility)
-  "Sigil of Chains", // AoE grip (utility)
-  "Chains of Anger", // Sigil of Chains extra functionality (utility)
-  "Feed the Demon", // Demon Spikes CDR from soul fragments (defensive)
-  "Roaring Fire", // Fel Dev healing increase (healing-only)
-  "Painbringer", // DR per soul fragment consumed (defensive)
-  "Void Reaver", // Frailty = damage taken reduction (defensive)
-]);
+// Returns the base excluded talent set from SPEC_CONFIG.excludedTalents.
+function getBaseExclusionSet() {
+  const config = getSpecAdapter().getSpecConfig();
+  return new Set(config.excludedTalents || []);
+}
 
-// For choice nodes where one entry is excluded and the other isn't,
-// the node stays as a factor but the excluded entry is noted.
-// Soul Barrier / Soul Sigils: Soul Barrier = defensive, Soul Sigils = DPS (resource gen)
+// Builds effective exclusion set from base SPEC_CONFIG + include/exclude overrides.
+function buildEffectiveExclusions(overrides = {}) {
+  const exclusions = getBaseExclusionSet();
+  for (const name of overrides.include || []) exclusions.delete(name);
+  for (const name of overrides.exclude || []) exclusions.add(name);
+  return exclusions;
+}
 
-// Hero tree choice locks: non-DPS choices are locked to the DPS option.
-// Only choices where both entries have DPS relevance remain as factors.
-const HERO_CHOICE_LOCKS = {
-  // Annihilator: Path to Oblivion [0] = movement speed → lock to State of Matter [1] = damage
-  109448: 1,
-  // Aldrachi Reaver: Evasive Action [0] = dodge → lock to Unhindered Assault [1] = movement+damage
-  94911: 1,
-  // Aldrachi Reaver: Army Unto Oneself [0] = leech / Incorruptible Spirit [1] = healing → both non-DPS, lock to 0
-  94896: 0,
-};
+// Derive hero choice locks from SPEC_CONFIG.heroTrees[tree].choiceLocks.
+export function getHeroChoiceLocks() {
+  const config = getSpecAdapter().getSpecConfig();
+  const locks = {};
+  for (const tree of Object.values(config.heroTrees || {})) {
+    Object.assign(locks, tree.choiceLocks || {});
+  }
+  return locks;
+}
 
 // Classify nodes into locked (always taken) and factors (decision points).
 // Locked: entry nodes, free nodes, and nodes that are the sole path to other
@@ -166,10 +187,7 @@ export function classifyNodes(nodes, nodeMap, budget, overrides = {}) {
     }
   }
 
-  // Build effective exclusion set from defaults + overrides
-  const effectiveExclusions = new Set(EXCLUDED_SPEC_NAMES);
-  for (const name of overrides.include || []) effectiveExclusions.delete(name);
-  for (const name of overrides.exclude || []) effectiveExclusions.add(name);
+  const effectiveExclusions = buildEffectiveExclusions(overrides);
 
   // Force-require nodes: move from factors to locked
   const requireNames = new Set(overrides.require || []);
@@ -706,9 +724,9 @@ function heroChoiceCombos(heroNodes, opts = {}) {
   const choiceNodes = heroNodes.filter((n) => n.type === "choice");
   if (choiceNodes.length === 0) return [{}];
 
-  // Merge default locks with overrides
+  // Merge default locks from SPEC_CONFIG with overrides
   const effectiveLocks = {
-    ...HERO_CHOICE_LOCKS,
+    ...getHeroChoiceLocks(),
     ...(opts.lockHeroChoices || {}),
   };
   const unlocked = new Set(opts.unlockHeroChoices || []);
@@ -874,27 +892,8 @@ export function generateCombos(opts = {}) {
   const classMap = buildNodeMap(data.classNodes);
   const specMap = buildNodeMap(data.specNodes);
 
-  // Class tree: single default fill (low build-defining variance)
-  const classLocked = new Set();
-  const classLockedRanks = new Map();
-  for (const node of data.classNodes) {
-    if (node.freeNode) classLocked.add(node.id);
-  }
-  for (const node of data.classNodes) {
-    if (node.entryNode && !node.freeNode) {
-      classLocked.add(node.id);
-      classLockedRanks.set(node.id, node.maxRanks || 1);
-    }
-  }
-
-  // BFS fill the class tree to budget
-  const classResult = bfsFillSimple(
-    data.classNodes,
-    classMap,
-    classLocked,
-    classLockedRanks,
-    CLASS_POINTS,
-  );
+  // Class tree: use profile.simc selections (DPS-optimized, not BFS utility fill)
+  const classResult = classTreeFromProfile(data.classNodes);
 
   // Spec tree: DoE approach
   const {
@@ -1017,7 +1016,7 @@ export function generateCombos(opts = {}) {
         type: f.type,
         ...(f.entries ? { entries: f.entries } : {}),
       })),
-      class: "default_fill",
+      class: "profile",
     },
     design: {
       K,
@@ -1117,11 +1116,10 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     }
   }
 
-  // Build exclusion set: default exclusions minus profile includes/requires, plus profile excludes
-  const effectiveExclusions = new Set(EXCLUDED_SPEC_NAMES);
-  for (const name of profile.include || []) effectiveExclusions.delete(name);
-  for (const name of profile.require || []) effectiveExclusions.delete(name);
-  for (const name of profile.exclude || []) effectiveExclusions.add(name);
+  const effectiveExclusions = buildEffectiveExclusions({
+    include: [...(profile.include || []), ...(profile.require || [])],
+    exclude: profile.exclude || [],
+  });
 
   // Connectivity repair: ensure all locked nodes have a path from entry
   let repairChanged = true;

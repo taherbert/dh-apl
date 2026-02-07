@@ -37,6 +37,7 @@ import {
 } from "../engine/paths.js";
 import { validateBuild, validateHash } from "../util/validate-build.js";
 import { overridesToHash } from "../util/talent-string.js";
+import { getHeroChoiceLocks } from "../model/talent-combos.js";
 
 const ROSTER_PATH = dataFile("build-roster.json");
 const BUILDS_PATH = resultsFile("builds.json");
@@ -165,12 +166,14 @@ export function importFromDoe(roster) {
   const data = JSON.parse(readFileSync(BUILDS_PATH, "utf8"));
   const archetypes = data.discoveredArchetypes || [];
   const specConfig = getSpecAdapter().getSpecConfig();
-  const primaryTree = Object.entries(specConfig.heroTrees).find(
-    ([, cfg]) => cfg.buildMethod === "doe",
-  )?.[0];
+  const doeTrees = new Set(
+    Object.entries(specConfig.heroTrees)
+      .filter(([, cfg]) => cfg.buildMethod === "doe")
+      .map(([name]) => name),
+  );
 
-  if (!primaryTree) {
-    console.error("No DoE hero tree configured");
+  if (doeTrees.size === 0) {
+    console.error("No DoE hero trees configured");
     return { added: 0, skipped: 0, invalid: 0 };
   }
 
@@ -178,7 +181,7 @@ export function importFromDoe(roster) {
   const usedIds = new Set(roster.builds.map((b) => b.id));
 
   for (const arch of archetypes) {
-    if (arch.heroTree !== primaryTree) continue;
+    if (!doeTrees.has(arch.heroTree)) continue;
 
     // bestBuild + up to 2 alternates
     const candidates = [arch.bestBuild, ...(arch.alternateBuilds || [])].slice(
@@ -190,7 +193,7 @@ export function importFromDoe(roster) {
     for (const candidate of candidates) {
       if (!candidate?.hash) continue;
 
-      const prefix = primaryTree
+      const prefix = arch.heroTree
         .split("_")
         .map((w) => w[0].toUpperCase())
         .join("");
@@ -202,7 +205,7 @@ export function importFromDoe(roster) {
       newBuilds.push({
         id,
         archetype: arch.name,
-        heroTree: primaryTree,
+        heroTree: arch.heroTree,
         hash: candidate.hash,
         overrides: null,
         lastDps: {
@@ -235,15 +238,15 @@ export function importFromMultiBuild(roster) {
 
   const className = config.spec.className;
   const specConfig = getSpecAdapter().getSpecConfig();
-  const secondaryTrees = Object.entries(specConfig.heroTrees)
-    .filter(([, cfg]) => cfg.buildMethod === "multi-actor")
-    .map(([name]) => name);
 
-  if (secondaryTrees.length === 0) {
+  const secondaryTree = Object.entries(specConfig.heroTrees).find(
+    ([, cfg]) => cfg.buildMethod === "multi-actor",
+  )?.[0];
+
+  if (!secondaryTree) {
     console.error("No multi-actor hero tree configured");
     return { added: 0, skipped: 0, invalid: 0 };
   }
-  const secondaryTree = secondaryTrees[0];
 
   const content = readFileSync(MULTI_BUILD_PATH, "utf8");
   const actors = [];
@@ -292,7 +295,11 @@ export function importFromMultiBuild(roster) {
     .filter((a) => a.overrides.hero_talents === secondaryTree)
     .map((a) => ({
       id: a.name,
-      archetype: inferArchetype(a.name),
+      archetype:
+        a.name
+          .replace(/^Anni_/, "")
+          .split("_")
+          .join("+") || a.name,
       heroTree: secondaryTree,
       hash: null,
       overrides: a.overrides,
@@ -570,7 +577,9 @@ export function generateHashes(roster) {
     }
 
     try {
-      const hash = overridesToHash(build.overrides);
+      const hash = overridesToHash(build.overrides, {
+        heroChoiceLocks: getHeroChoiceLocks(),
+      });
       const validation = validateHash(hash);
       if (!validation.valid) {
         console.error(
@@ -580,6 +589,7 @@ export function generateHashes(roster) {
         continue;
       }
       build.hash = hash;
+      delete build.overrides;
       build.validated = true;
       delete build.validationErrors;
       generated++;
@@ -598,15 +608,6 @@ export function generateHashes(roster) {
 
 function sanitizeId(name) {
   return name.replace(/[^a-zA-Z0-9]+/g, "").slice(0, 40);
-}
-
-function inferArchetype(actorName) {
-  return (
-    actorName
-      .replace(/^Anni_/, "")
-      .split("_")
-      .join("+") || actorName
-  );
 }
 
 // --- CLI ---
