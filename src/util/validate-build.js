@@ -157,7 +157,7 @@ export function validateHash(hash) {
 }
 
 // Normalize SimC talent name: "charred_flesh" → "charred_flesh" (lowercase with underscores)
-function normalizeSimcName(simcName) {
+export function normalizeSimcName(simcName) {
   return simcName
     .toLowerCase()
     .replace(/[' ]/g, "_")

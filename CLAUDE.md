@@ -213,6 +213,7 @@ npm run roster import-multi-build            # Import from multi-build.simc (Ann
 npm run roster import-profile                # Import profile.simc reference build
 npm run roster validate                      # Re-validate all builds
 npm run roster prune                         # Remove redundant builds within threshold
+npm run roster generate-hashes               # Generate hashes for override-only builds
 npm run roster migrate                       # One-time v1→v2 migration from existing data
 
 # === Simulation ===

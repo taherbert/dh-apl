@@ -208,6 +208,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { SPEC_ID as CONFIG_SPEC_ID, HERO_SUBTREES } from "../engine/startup.js";
 import { dataDir, dataFile } from "../engine/paths.js";
+import { normalizeSimcName } from "./validate-build.js";
 
 // Load the full DH node list from dh-all-nodes.json (all specs, all hero trees).
 // Required for decoding external talent strings (game client, Wowhead, Raidbots).
@@ -343,6 +344,93 @@ export function selectionsToNodeSets(selections, data) {
   }
 
   return result;
+}
+
+// --- Override string → selections → hash ---
+
+// Convert SimC override strings (class_talents/spec_talents/hero_talents) to a
+// selections Map suitable for encode(). The inverse of what validateOverrides does
+// for checking — here we produce encodable selections.
+export function overridesToSelections(overrides, data) {
+  const selections = new Map();
+
+  // Build name→{node, tree, entryIndex} lookup (mirrors validateOverrides pattern)
+  const nodeBySimcName = new Map();
+  function addNode(n, tree) {
+    const name = normalizeSimcName(n.name || n.entries?.[0]?.name || "");
+    if (name) nodeBySimcName.set(name, { node: n, tree, entryIndex: 0 });
+    if (n.entries) {
+      for (let i = 0; i < n.entries.length; i++) {
+        const eName = normalizeSimcName(n.entries[i].name || "");
+        if (eName && !nodeBySimcName.has(eName)) {
+          nodeBySimcName.set(eName, { node: n, tree, entryIndex: i });
+        }
+      }
+    }
+  }
+  for (const n of data.classNodes) addNode(n, "class");
+  for (const n of data.specNodes) addNode(n, "spec");
+
+  // Parse class_talents and spec_talents override strings
+  for (const key of ["class_talents", "spec_talents"]) {
+    const str = overrides[key];
+    if (!str) continue;
+    for (const entry of str.split("/").filter(Boolean)) {
+      const [name, rankStr] = entry.split(":");
+      const rank = rankStr ? parseInt(rankStr, 10) : 1;
+      const lookup = nodeBySimcName.get(normalizeSimcName(name));
+      if (!lookup) {
+        throw new Error(`Unknown talent "${name}" in ${key}`);
+      }
+      const sel = { rank };
+      // Choice node: set choiceIndex from which entry name matched
+      if (lookup.node.type === "choice") {
+        sel.choiceIndex = lookup.entryIndex;
+      }
+      selections.set(lookup.node.id, sel);
+    }
+  }
+
+  // Hero tree: select ALL nodes in the specified subtree
+  const heroTreeName = overrides.hero_talents;
+  if (heroTreeName) {
+    // Case-insensitive hero tree lookup
+    const heroTreeKey = Object.keys(data.heroSubtrees).find(
+      (k) => normalizeSimcName(k) === normalizeSimcName(heroTreeName),
+    );
+    if (!heroTreeKey) {
+      throw new Error(`Unknown hero tree "${heroTreeName}"`);
+    }
+    for (const node of data.heroSubtrees[heroTreeKey]) {
+      const sel = { rank: node.maxRanks || 1 };
+      if (node.type === "choice") sel.choiceIndex = 0;
+      selections.set(node.id, sel);
+    }
+
+    // Subtree selector node
+    const fullNodes = loadFullNodeList();
+    const selectorNode = fullNodes.find((n) => n.type === "subtree");
+    if (selectorNode?.entries) {
+      const choiceIdx = selectorNode.entries.findIndex(
+        (e) => normalizeSimcName(e.name) === normalizeSimcName(heroTreeName),
+      );
+      if (choiceIdx >= 0) {
+        selections.set(selectorNode.id, { rank: 1, choiceIndex: choiceIdx });
+      }
+    }
+  }
+
+  return selections;
+}
+
+// High-level: convert override strings directly to a talent hash string.
+export function overridesToHash(overrides) {
+  const data = JSON.parse(
+    readFileSync(dataFile("raidbots-talents.json"), "utf8"),
+  );
+  const fullNodes = loadFullNodeList();
+  const selections = overridesToSelections(overrides, data);
+  return encode(CONFIG_SPEC_ID, fullNodes, selections);
 }
 
 // --- CLI ---

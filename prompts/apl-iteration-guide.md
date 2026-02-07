@@ -184,7 +184,7 @@ Commit message format: `iterate: <hypothesis summary> (<+/-X.XX%> weighted)`
 
 - **Disk**: Each comparison produces ~1MB of JSON. Clean old comparison files periodically.
 - **CPU**: Comparisons run scenarios in parallel using all cores. One comparison at a time.
-- **Memory**: SimC profileset mode is memory-efficient. No special handling needed.
+- **Memory**: Profileset mode (2-actor, constant memory) auto-activates when all builds have hashes (`npm run roster generate-hashes`). Batched multi-actor mode handles override-only builds with fidelity-aware batch sizes (quick=12, standard=8, confirm=4). Use `--batch-size N` to override.
 
 ## 7. Parallelism Techniques
 

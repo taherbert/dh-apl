@@ -1,6 +1,6 @@
 {
   "_schema": "roster-v2",
-  "_updated": "2026-02-07T03:15:30.572Z",
+  "_updated": "2026-02-07T06:27:35.977Z",
   "builds": [
     {
       "id": "AR_BurningAliveDowninFlamesCharredFlesh_1",
@@ -142,7 +142,7 @@
       "id": "Anni_CF_DiF_SC_FO",
       "archetype": "CF+DiF+SC+FO",
       "heroTree": "annihilator",
-      "hash": null,
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmB2MzMPAYMzYmZGzMjZmtZGbjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAD",
       "overrides": {
         "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
         "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/fallout:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/soulcrush:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4",
@@ -163,7 +163,7 @@
       "id": "Anni_CF_SC",
       "archetype": "CF+SC",
       "heroTree": "annihilator",
-      "hash": null,
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmB2Mz4BwYMDzMzMzMjZmtZGbjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAD",
       "overrides": {
         "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/soulcrush:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/last_resort:1/feed_the_demon:1",
         "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
@@ -184,7 +184,7 @@
       "id": "Anni_CF_DiF",
       "archetype": "CF+DiF",
       "heroTree": "annihilator",
-      "hash": null,
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmB2MzMPwwYMDzMzwMjZmtZGbjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAD",
       "overrides": {
         "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/cycle_of_binding:1/feed_the_demon:1",
         "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
@@ -205,7 +205,7 @@
       "id": "Anni_CF_DiF_FO",
       "archetype": "CF+DiF+FO",
       "heroTree": "annihilator",
-      "hash": null,
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmB2MzMPwAjZGzMzwMjZmtZGbjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAD",
       "overrides": {
         "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/fallout:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/cycle_of_binding:1",
         "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
@@ -226,7 +226,7 @@
       "id": "Anni_CF_DiF_SC",
       "archetype": "CF+DiF+SC",
       "heroTree": "annihilator",
-      "hash": null,
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmB2MzMPAGjZYmZGzMjZmtZGbjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAD",
       "overrides": {
         "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/down_in_flames:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/soulcrush:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/feed_the_demon:1",
         "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
@@ -247,7 +247,7 @@
       "id": "Anni_CF",
       "archetype": "CF",
       "heroTree": "annihilator",
-      "hash": null,
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmB2Mz4BGGjZYmZmxMjZmtZGbjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAD",
       "overrides": {
         "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/charred_flesh:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/last_resort:1/cycle_of_binding:1/feed_the_demon:1",
         "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
@@ -268,7 +268,7 @@
       "id": "Anni_FO",
       "archetype": "FO",
       "heroTree": "annihilator",
-      "hash": null,
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmB2MzwAjZGzMzMmZmZmtZGbjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAD",
       "overrides": {
         "spec_talents": "fiery_brand:1/soul_sigils:1/fiery_demise:2/burning_alive:1/ascending_flame:1/tempered_steel:1/perfectly_balanced_glaive:1/agonizing_flames:1/fallout:1/void_reaver:1/focused_cleave:1/painbringer:2/frailty:1/sigil_of_spite:1/vulnerability:2/soul_carver:1/vengeful_beast:1/darkglare_boon:1/volatile_flameblood:1/burning_blood:1/sigil_of_silence:1/quickened_sigils:1/spirit_bomb:1/fel_devastation:1/untethered_rage:4/stoke_the_flames:1/last_resort:1/cycle_of_binding:1",
         "class_talents": "remorseless:1/bouncing_glaives:1/aura_of_pain:1/internal_struggle:1/illidari_knowledge:2/soul_rending:2/improved_disrupt:1/unrestrained_fury:1/vengeful_retreat:1/sigil_of_misery:1/charred_warblades:1/soul_splitter:2/shattered_restoration:1/champion_of_the_glaive:1/erratic_felheart:2/aldrachi_design:1/will_of_the_illidari:2/long_night:1/darkness:1/infernal_armor:2/consume_magic:1/imprison:1/first_in_last_out:1/blazing_path:1/live_by_the_glaive:1/furious:1/felblade:1/chaos_nova:1/final_breath:1",
