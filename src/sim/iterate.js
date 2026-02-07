@@ -33,6 +33,8 @@ import {
   runProfileset,
   runProfilesetAsync,
   resolveInputDirectives,
+  generateRosterProfilesetContent,
+  profilesetResultsToActorMap,
 } from "./profilesets.js";
 import {
   generateStrategicHypotheses,
@@ -500,30 +502,103 @@ function printComparison(results, tier) {
 
 // --- Multi-Build Comparison ---
 
+// Batch size based on target_error. Higher fidelity = more iterations per actor = more memory.
+// Confirm (0.1) needs small batches because 10T with many actors at low target_error
+// generates huge sample data per actor. Quick (1.0) can handle more actors per batch.
+function batchSizeForFidelity(tierConfig) {
+  const te = tierConfig.target_error ?? 0.3;
+  if (te <= 0.1) return 4;
+  if (te <= 0.3) return 8;
+  return 12;
+}
+
+// Split roster into batches of at most batchSize builds.
+function chunkRoster(roster, batchSize) {
+  if (roster.builds.length <= batchSize) return [roster];
+  const chunks = [];
+  for (let i = 0; i < roster.builds.length; i += batchSize) {
+    chunks.push({ builds: roster.builds.slice(i, i + batchSize) });
+  }
+  return chunks;
+}
+
+// Merge multiple actor Maps (disjoint build IDs) into one.
+function mergeActorMaps(maps) {
+  const merged = new Map();
+  for (const m of maps) {
+    for (const [k, v] of m) merged.set(k, v);
+  }
+  return merged;
+}
+
+// Check if all roster builds have talent hashes (required for profileset mode).
+function canUseProfilesets(roster) {
+  return roster.builds.every((b) => b.hash != null);
+}
+
 // Run multi-actor sims for an APL file against the roster.
 // Returns { builds: { "<buildId>": { heroTree, dps: {st, small_aoe, big_aoe} } } }
+// Batches actors to avoid OOM at high fidelity.
 async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
+  // Profileset path: constant memory (~2 actors) regardless of roster size
+  if (canUseProfilesets(roster)) {
+    console.log(
+      `Using profileset mode (${roster.builds.length} builds, constant memory)`,
+    );
+    return runMultiBuildBaselineProfileset(aplPath, roster, tierConfig);
+  }
+
   const totalCores = cpus().length;
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
   );
 
-  const content = generateMultiActorContent(roster, aplPath);
+  const batchSize = batchSizeForFidelity(tierConfig);
+  const batches = chunkRoster(roster, batchSize);
+  if (batches.length > 1) {
+    console.log(
+      `Batching ${roster.builds.length} builds into ${batches.length} groups of ≤${batchSize}`,
+    );
+  }
 
-  const scenarioResults = await Promise.all(
-    SCENARIO_KEYS.map(async (scenario) => {
-      const actorDps = await runMultiActorAsync(
-        content,
-        scenario,
-        "multibuild",
-        {
-          simOverrides: { ...tierConfig, threads: threadsPerSim },
-        },
+  // Run batches sequentially to limit peak memory
+  const scenarioMaps = {};
+  for (const scenario of SCENARIO_KEYS) scenarioMaps[scenario] = [];
+
+  for (let bi = 0; bi < batches.length; bi++) {
+    const batch = batches[bi];
+    if (batches.length > 1) {
+      console.log(
+        `  Batch ${bi + 1}/${batches.length} (${batch.builds.length} builds)...`,
       );
-      return [scenario, actorDps];
-    }),
-  );
+    }
+    const content = generateMultiActorContent(batch, aplPath);
+
+    const batchResults = await Promise.all(
+      SCENARIO_KEYS.map(async (scenario) => {
+        const actorDps = await runMultiActorAsync(
+          content,
+          scenario,
+          `multibuild_b${bi}`,
+          {
+            simOverrides: { ...tierConfig, threads: threadsPerSim },
+          },
+        );
+        return [scenario, actorDps];
+      }),
+    );
+
+    for (const [scenario, actorDps] of batchResults) {
+      scenarioMaps[scenario].push(actorDps);
+    }
+  }
+
+  // Merge batch results per scenario
+  const scenarioResults = SCENARIO_KEYS.map((scenario) => [
+    scenario,
+    mergeActorMaps(scenarioMaps[scenario]),
+  ]);
 
   // Combine into per-build results
   const builds = {};
@@ -542,45 +617,65 @@ async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
   return { builds };
 }
 
+// Profileset-based baseline: constant memory, uses talents= hash overrides.
+async function runMultiBuildBaselineProfileset(aplPath, roster, tierConfig) {
+  const totalCores = cpus().length;
+  const threadsPerSim = Math.max(
+    1,
+    Math.floor(totalCores / SCENARIO_KEYS.length),
+  );
+
+  const content = generateRosterProfilesetContent(roster, aplPath);
+
+  const scenarioResults = await Promise.all(
+    SCENARIO_KEYS.map(async (scenario) => {
+      const psResults = await runProfilesetAsync(content, scenario, "mb_ps", {
+        simOverrides: { ...tierConfig, threads: threadsPerSim },
+      });
+      return [scenario, profilesetResultsToActorMap(psResults, roster)];
+    }),
+  );
+
+  const builds = {};
+  for (const build of roster.builds) {
+    builds[build.id] = {
+      heroTree: build.heroTree,
+      archetype: build.archetype,
+      dps: {},
+    };
+    for (const [scenario, actorDps] of scenarioResults) {
+      const actorResult = actorDps.get(build.id);
+      builds[build.id].dps[scenario] = actorResult ? actorResult.dps : 0;
+    }
+  }
+
+  return { builds };
+}
+
 // Run multi-build comparison: baseline APL + candidate APL against all roster builds.
 // Returns per-build deltas + aggregate metrics.
+// Automatically uses profilesets (constant memory) when all builds have hashes,
+// otherwise batches actors to avoid OOM at high fidelity.
 async function runMultiBuildComparison(
   candidatePath,
   roster,
   tier = "standard",
 ) {
   const tierConfig = FIDELITY_TIERS[tier] || FIDELITY_TIERS.standard;
-  const totalCores = cpus().length;
-  const threadsPerSim = Math.max(
-    1,
-    Math.floor(totalCores / (SCENARIO_KEYS.length * 2)),
-  );
 
-  const baseContent = generateMultiActorContent(roster, CURRENT_APL);
-  const candidateContent = generateMultiActorContent(roster, candidatePath);
-
-  // Run all 6 sims (3 scenarios × 2 APLs) in parallel
-  const allPromises = [];
-  for (const scenario of SCENARIO_KEYS) {
-    allPromises.push(
-      runMultiActorAsync(baseContent, scenario, "mb_current", {
-        simOverrides: { ...tierConfig, threads: threadsPerSim },
-      }).then((r) => ({ scenario, type: "current", results: r })),
+  // Get per-scenario actor Maps for current and candidate APLs
+  let byScenario;
+  if (canUseProfilesets(roster)) {
+    console.log(
+      `Using profileset mode (${roster.builds.length} builds, constant memory)`,
     );
-    allPromises.push(
-      runMultiActorAsync(candidateContent, scenario, "mb_candidate", {
-        simOverrides: { ...tierConfig, threads: threadsPerSim },
-      }).then((r) => ({ scenario, type: "candidate", results: r })),
+    byScenario = await runComparisonProfileset(
+      candidatePath,
+      roster,
+      tierConfig,
     );
-  }
-
-  const allResults = await Promise.all(allPromises);
-
-  // Group by scenario and type
-  const byScenario = {};
-  for (const r of allResults) {
-    if (!byScenario[r.scenario]) byScenario[r.scenario] = {};
-    byScenario[r.scenario][r.type] = r.results;
+  } else {
+    byScenario = await runComparisonBatched(candidatePath, roster, tierConfig);
   }
 
   // Compute per-build, per-scenario deltas
@@ -655,6 +750,122 @@ async function runMultiBuildComparison(
   writeFileSync(comparisonPath, JSON.stringify(comparison, null, 2));
 
   return comparison;
+}
+
+// Batched multi-actor comparison: splits roster into smaller groups to limit memory.
+// Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
+async function runComparisonBatched(candidatePath, roster, tierConfig) {
+  const totalCores = cpus().length;
+  const threadsPerSim = Math.max(
+    1,
+    Math.floor(totalCores / (SCENARIO_KEYS.length * 2)),
+  );
+
+  const batchSize = batchSizeForFidelity(tierConfig);
+  const batches = chunkRoster(roster, batchSize);
+  if (batches.length > 1) {
+    console.log(
+      `Batching ${roster.builds.length} builds into ${batches.length} groups of ≤${batchSize}`,
+    );
+  }
+
+  // Accumulate per-scenario Maps across batches
+  const scenarioMaps = {};
+  for (const scenario of SCENARIO_KEYS) {
+    scenarioMaps[scenario] = { current: [], candidate: [] };
+  }
+
+  for (let bi = 0; bi < batches.length; bi++) {
+    const batch = batches[bi];
+    if (batches.length > 1) {
+      console.log(
+        `  Batch ${bi + 1}/${batches.length} (${batch.builds.length} builds)...`,
+      );
+    }
+
+    const baseContent = generateMultiActorContent(batch, CURRENT_APL);
+    const candidateContent = generateMultiActorContent(batch, candidatePath);
+
+    // Run 6 sims (3 scenarios × 2 APLs) in parallel within this batch
+    const allPromises = [];
+    for (const scenario of SCENARIO_KEYS) {
+      allPromises.push(
+        runMultiActorAsync(baseContent, scenario, `mb_current_b${bi}`, {
+          simOverrides: { ...tierConfig, threads: threadsPerSim },
+        }).then((r) => ({ scenario, type: "current", results: r })),
+      );
+      allPromises.push(
+        runMultiActorAsync(candidateContent, scenario, `mb_candidate_b${bi}`, {
+          simOverrides: { ...tierConfig, threads: threadsPerSim },
+        }).then((r) => ({ scenario, type: "candidate", results: r })),
+      );
+    }
+
+    const batchResults = await Promise.all(allPromises);
+    for (const r of batchResults) {
+      scenarioMaps[r.scenario][r.type].push(r.results);
+    }
+  }
+
+  // Merge batch Maps per scenario+type
+  const byScenario = {};
+  for (const scenario of SCENARIO_KEYS) {
+    byScenario[scenario] = {
+      current: mergeActorMaps(scenarioMaps[scenario].current),
+      candidate: mergeActorMaps(scenarioMaps[scenario].candidate),
+    };
+  }
+
+  return byScenario;
+}
+
+// Profileset-based comparison: constant memory, uses talents= hash overrides.
+// Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
+async function runComparisonProfileset(candidatePath, roster, tierConfig) {
+  const totalCores = cpus().length;
+  const threadsPerSim = Math.max(
+    1,
+    Math.floor(totalCores / (SCENARIO_KEYS.length * 2)),
+  );
+
+  const currentContent = generateRosterProfilesetContent(roster, CURRENT_APL);
+  const candidateContent = generateRosterProfilesetContent(
+    roster,
+    candidatePath,
+  );
+
+  // Run 6 profileset sims (3 scenarios × 2 APLs) in parallel
+  const allPromises = [];
+  for (const scenario of SCENARIO_KEYS) {
+    allPromises.push(
+      runProfilesetAsync(currentContent, scenario, "mb_ps_current", {
+        simOverrides: { ...tierConfig, threads: threadsPerSim },
+      }).then((r) => ({
+        scenario,
+        type: "current",
+        results: profilesetResultsToActorMap(r, roster),
+      })),
+    );
+    allPromises.push(
+      runProfilesetAsync(candidateContent, scenario, "mb_ps_candidate", {
+        simOverrides: { ...tierConfig, threads: threadsPerSim },
+      }).then((r) => ({
+        scenario,
+        type: "candidate",
+        results: profilesetResultsToActorMap(r, roster),
+      })),
+    );
+  }
+
+  const allResults = await Promise.all(allPromises);
+
+  const byScenario = {};
+  for (const r of allResults) {
+    if (!byScenario[r.scenario]) byScenario[r.scenario] = {};
+    byScenario[r.scenario][r.type] = r.results;
+  }
+
+  return byScenario;
 }
 
 function printMultiBuildComparison(comparison) {

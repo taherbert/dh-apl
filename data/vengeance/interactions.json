@@ -12793,6 +12793,27 @@
     },
     {
       "source": {
+        "id": 1270449,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 187827,
+        "name": "Metamorphosis"
+      },
+      "type": "duration_modifier",
+      "mechanism": "on_impact",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium",
+      "application": "passive_always",
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
         "id": 1256307,
         "name": "Dark Matter",
         "isTalent": true,
@@ -14791,7 +14812,7 @@
       },
       "target": {
         "id": null,
-        "name": "buff:untethered_rage"
+        "name": "buff:seething_anger"
       },
       "type": "buff_grant",
       "mechanism": "talent_gates_buff",
@@ -16344,6 +16365,18 @@
           ],
           "schoolTarget": [
             "Physical"
+          ]
+        },
+        {
+          "source": "Untethered Rage",
+          "sourceId": 1270449,
+          "type": "duration_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "cpp_scanner",
+          "application": "passive_always",
+          "categories": [
+            "offensive"
           ]
         }
       ]
@@ -42113,7 +42146,18 @@
       "heroSpec": null,
       "targets": [
         {
-          "spell": "buff:untethered_rage",
+          "spell": "Metamorphosis",
+          "spellId": 187827,
+          "type": "duration_modifier",
+          "discoveryMethod": "cpp_scanner",
+          "application": "passive_always",
+          "categories": [
+            "offensive"
+          ],
+          "mechanism": "on_impact"
+        },
+        {
+          "spell": "buff:seething_anger",
           "spellId": null,
           "type": "buff_grant",
           "discoveryMethod": "effect_scan",

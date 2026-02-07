@@ -575,6 +575,16 @@
       "confidence": "medium"
     },
     {
+      "source": "Untethered Rage",
+      "sourceVar": "vengeance.untethered_rage_1",
+      "target": "Metamorphosis",
+      "context": "metamorphosis_t",
+      "type": "duration_modifier",
+      "mechanism": "on_impact",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium"
+    },
+    {
       "source": "Frailty",
       "sourceVar": "vengeance.frailty",
       "target": "Spirit Bomb",
@@ -688,15 +698,6 @@
   "effectScans": [
     {
       "talent": "Untethered Rage",
-      "talentVar": "vengeance.untethered_rage_1",
-      "target": "buff:untethered_rage",
-      "type": "buff_grant",
-      "mechanism": "talent_gates_buff",
-      "discoveryMethod": "effect_scan",
-      "confidence": "medium"
-    },
-    {
-      "talent": "Untethered Rage",
       "talentVar": "vengeance.untethered_rage_3",
       "target": "buff:seething_anger",
       "type": "buff_grant",
@@ -771,7 +772,7 @@
   "scanStats": {
     "contextsScanned": 132,
     "talentCrossRefs": 31,
-    "talentAbilityRefs": 31,
-    "effectScans": 9
+    "talentAbilityRefs": 32,
+    "effectScans": 8
   }
 }

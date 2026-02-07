@@ -180,6 +180,17 @@ export function validateOverrides(overrides) {
       if (heroTree) entry.heroTree = heroTree;
       nodeBySimcName.set(name, entry);
     }
+    // Also register individual entry names (for choice/tiered nodes)
+    if (n.entries) {
+      for (const e of n.entries) {
+        const eName = normalizeSimcName(e.name || "");
+        if (eName && !nodeBySimcName.has(eName)) {
+          const entry = { node: n, tree };
+          if (heroTree) entry.heroTree = heroTree;
+          nodeBySimcName.set(eName, entry);
+        }
+      }
+    }
   }
 
   for (const n of data.classNodes) addNode(n, "class");
@@ -220,9 +231,13 @@ export function validateOverrides(overrides) {
     }
   }
 
-  // Hero tree: just validate name, can't count points from string alone
+  // Hero tree: case-insensitive lookup (SimC uses lowercase, raidbots uses display names)
   if (heroTree) {
-    if (!data.heroSubtrees[heroTree]) {
+    const heroTreeNormalized = new Map();
+    for (const key of Object.keys(data.heroSubtrees)) {
+      heroTreeNormalized.set(normalizeSimcName(key), key);
+    }
+    if (!heroTreeNormalized.has(normalizeSimcName(heroTree))) {
       errors.push(`Unknown hero tree: "${heroTree}"`);
     }
   }
