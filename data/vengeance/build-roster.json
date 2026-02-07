@@ -1,6 +1,6 @@
 {
   "_schema": "roster-v2",
-  "_updated": "2026-02-07T18:39:55.241Z",
+  "_updated": "2026-02-07T19:18:10.914Z",
   "builds": [
     {
       "id": "A_BurningAliveDowninFlames_1",
@@ -12,12 +12,12 @@
       "addedAt": "2026-02-07T18:35:45.364Z",
       "validated": true,
       "lastDps": {
-        "st": 27917,
-        "small_aoe": 131853,
-        "big_aoe": 239874,
-        "weighted": 101489.11889771605
+        "st": 27949,
+        "small_aoe": 131219,
+        "big_aoe": 240875,
+        "weighted": 101515
       },
-      "lastTestedAt": "2026-02-07T18:39:55.240Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBindingDowninFlamesSo_1",
@@ -29,12 +29,12 @@
       "addedAt": "2026-02-07T18:35:45.369Z",
       "validated": true,
       "lastDps": {
-        "st": 25204,
-        "small_aoe": 126025,
-        "big_aoe": 228322,
-        "weighted": 96073.85467410172
+        "st": 25395,
+        "small_aoe": 126827,
+        "big_aoe": 228509,
+        "weighted": 96447
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBindingDowninFlamesSo_2",
@@ -46,12 +46,12 @@
       "addedAt": "2026-02-07T18:35:45.371Z",
       "validated": true,
       "lastDps": {
-        "st": 25191,
-        "small_aoe": 126223,
-        "big_aoe": 229454,
-        "weighted": 96353.38823107354
+        "st": 25194,
+        "small_aoe": 126401,
+        "big_aoe": 228377,
+        "weighted": 96193
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBindingDowninFlames_1",
@@ -63,12 +63,12 @@
       "addedAt": "2026-02-07T18:35:45.374Z",
       "validated": true,
       "lastDps": {
-        "st": 24156,
-        "small_aoe": 121998,
-        "big_aoe": 223916,
-        "weighted": 93460.75506144308
+        "st": 24272,
+        "small_aoe": 122293,
+        "big_aoe": 224329,
+        "weighted": 93690
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBindingDowninFlames_2",
@@ -80,12 +80,12 @@
       "addedAt": "2026-02-07T18:35:45.375Z",
       "validated": true,
       "lastDps": {
-        "st": 24241,
-        "small_aoe": 121629,
-        "big_aoe": 221629,
-        "weighted": 92934.93515465896
+        "st": 24184,
+        "small_aoe": 121934,
+        "big_aoe": 221683,
+        "weighted": 93009
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBindingDowninFlames_3",
@@ -97,12 +97,12 @@
       "addedAt": "2026-02-07T18:35:45.376Z",
       "validated": true,
       "lastDps": {
-        "st": 24214,
-        "small_aoe": 121703,
-        "big_aoe": 220790,
-        "weighted": 92775.85520347598
+        "st": 24209,
+        "small_aoe": 122771,
+        "big_aoe": 220673,
+        "weighted": 93070
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveSoulCarver_1",
@@ -114,12 +114,12 @@
       "addedAt": "2026-02-07T18:35:45.377Z",
       "validated": true,
       "lastDps": {
-        "st": 24839,
-        "small_aoe": 122170,
-        "big_aoe": 218912,
-        "weighted": 92852.91980425661
+        "st": 24712,
+        "small_aoe": 122589,
+        "big_aoe": 219056,
+        "weighted": 92944
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAlive_1",
@@ -131,12 +131,12 @@
       "addedAt": "2026-02-07T18:35:45.382Z",
       "validated": true,
       "lastDps": {
-        "st": 25741,
-        "small_aoe": 118311,
-        "big_aoe": 210626,
-        "weighted": 90488.76403889745
+        "st": 25821,
+        "small_aoe": 118403,
+        "big_aoe": 209685,
+        "weighted": 90368
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAlive_2",
@@ -148,12 +148,12 @@
       "addedAt": "2026-02-07T18:35:45.383Z",
       "validated": true,
       "lastDps": {
-        "st": 25734,
-        "small_aoe": 117246,
-        "big_aoe": 209013,
-        "weighted": 89843.16893170911
+        "st": 25622,
+        "small_aoe": 117411,
+        "big_aoe": 210501,
+        "weighted": 90134
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBindingSoulCarver_1",
@@ -165,12 +165,12 @@
       "addedAt": "2026-02-07T18:35:45.385Z",
       "validated": true,
       "lastDps": {
-        "st": 25894,
-        "small_aoe": 115490,
-        "big_aoe": 208286,
-        "weighted": 89251.0884609076
+        "st": 26047,
+        "small_aoe": 115074,
+        "big_aoe": 210797,
+        "weighted": 89705
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBindingSoulCarver_2",
@@ -182,12 +182,12 @@
       "addedAt": "2026-02-07T18:35:45.386Z",
       "validated": true,
       "lastDps": {
-        "st": 24069,
-        "small_aoe": 116468,
-        "big_aoe": 210586,
-        "weighted": 89091.86519059743
+        "st": 23959,
+        "small_aoe": 116100,
+        "big_aoe": 212519,
+        "weighted": 89313
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBinding_1",
@@ -199,12 +199,12 @@
       "addedAt": "2026-02-07T18:35:45.388Z",
       "validated": true,
       "lastDps": {
-        "st": 22750,
-        "small_aoe": 111214,
-        "big_aoe": 203158,
-        "weighted": 85370.80647485044
+        "st": 22787,
+        "small_aoe": 110008,
+        "big_aoe": 202925,
+        "weighted": 84981
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_BurningAliveCycleofBinding_2",
@@ -216,12 +216,12 @@
       "addedAt": "2026-02-07T18:35:45.390Z",
       "validated": true,
       "lastDps": {
-        "st": 22665,
-        "small_aoe": 110647,
-        "big_aoe": 202549,
-        "weighted": 85036.39958243004
+        "st": 22574,
+        "small_aoe": 111328,
+        "big_aoe": 203710,
+        "weighted": 85427
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_SoulCarver_1",
@@ -233,12 +233,12 @@
       "addedAt": "2026-02-07T18:35:45.392Z",
       "validated": true,
       "lastDps": {
-        "st": 25555,
-        "small_aoe": 99729,
-        "big_aoe": 178465,
-        "weighted": 78389.41367504859
+        "st": 25473,
+        "small_aoe": 99915,
+        "big_aoe": 178393,
+        "weighted": 78389
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_SoulCarver_2",
@@ -267,12 +267,12 @@
       "addedAt": "2026-02-07T18:35:45.394Z",
       "validated": true,
       "lastDps": {
-        "st": 25588,
-        "small_aoe": 100287,
-        "big_aoe": 177893,
-        "weighted": 78459.11753719355
+        "st": 25538,
+        "small_aoe": 100412,
+        "big_aoe": 178358,
+        "weighted": 78564
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_CycleofBindingDowninFlamesSoulCarver_1",
@@ -284,46 +284,12 @@
       "addedAt": "2026-02-07T18:35:45.396Z",
       "validated": true,
       "lastDps": {
-        "st": 26960,
-        "small_aoe": 103321,
-        "big_aoe": 184485,
-        "weighted": 81373.59533690973
+        "st": 26967,
+        "small_aoe": 103421,
+        "big_aoe": 185442,
+        "weighted": 81598
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
-    },
-    {
-      "id": "A_CycleofBindingDowninFlamesSoulCarver_2",
-      "archetype": "Cycle of Binding + Down in Flames + Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwixMzAjZmhZGzMYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.397Z",
-      "validated": true,
-      "lastDps": {
-        "st": 27096,
-        "small_aoe": 101615,
-        "big_aoe": 181258,
-        "weighted": 80284.03904377349
-      },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
-    },
-    {
-      "id": "A_CycleofBindingDowninFlamesSoulCarver_3",
-      "archetype": "Cycle of Binding + Down in Flames + Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwixMzgZMzMMzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.398Z",
-      "validated": true,
-      "lastDps": {
-        "st": 25255,
-        "small_aoe": 103138,
-        "big_aoe": 184097,
-        "weighted": 80388.63420464985
-      },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_CycleofBindingSoulCarver_1",
@@ -335,12 +301,12 @@
       "addedAt": "2026-02-07T18:35:45.399Z",
       "validated": true,
       "lastDps": {
-        "st": 26218,
-        "small_aoe": 101148,
-        "big_aoe": 181049,
-        "weighted": 79663.41523356573
+        "st": 26180,
+        "small_aoe": 101608,
+        "big_aoe": 181029,
+        "weighted": 79778
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_CycleofBindingSoulCarver_2",
@@ -352,12 +318,12 @@
       "addedAt": "2026-02-07T18:35:45.400Z",
       "validated": true,
       "lastDps": {
-        "st": 26306,
-        "small_aoe": 101517,
-        "big_aoe": 181725,
-        "weighted": 79953.06868339264
+        "st": 26433,
+        "small_aoe": 100568,
+        "big_aoe": 181871,
+        "weighted": 79761
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveDowninFlamesSoulCarver_1",
@@ -369,12 +335,12 @@
       "addedAt": "2026-02-07T18:35:45.406Z",
       "validated": true,
       "lastDps": {
-        "st": 29277,
-        "small_aoe": 104603,
-        "big_aoe": 191628,
-        "weighted": 84344.68959183234
+        "st": 29297,
+        "small_aoe": 105199,
+        "big_aoe": 190736,
+        "weighted": 84355
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveDowninFlamesSoulCarver_2",
@@ -386,12 +352,12 @@
       "addedAt": "2026-02-07T18:35:45.406Z",
       "validated": true,
       "lastDps": {
-        "st": 30318,
-        "small_aoe": 105222,
-        "big_aoe": 186258,
-        "weighted": 83977.22430464975
+        "st": 29765,
+        "small_aoe": 105677,
+        "big_aoe": 186395,
+        "weighted": 83865
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_CycleofBinding_1",
@@ -403,12 +369,12 @@
       "addedAt": "2026-02-07T18:35:45.408Z",
       "validated": true,
       "lastDps": {
-        "st": 25411,
-        "small_aoe": 99453,
-        "big_aoe": 179705,
-        "weighted": 78482.30544064846
+        "st": 25476,
+        "small_aoe": 98958,
+        "big_aoe": 179367,
+        "weighted": 78299
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "A_annihilator_1",
@@ -420,12 +386,12 @@
       "addedAt": "2026-02-07T18:35:45.411Z",
       "validated": true,
       "lastDps": {
-        "st": 25006,
-        "small_aoe": 98123,
-        "big_aoe": 176106,
-        "weighted": 77161.24254618459
+        "st": 25012,
+        "small_aoe": 98358,
+        "big_aoe": 175380,
+        "weighted": 77090
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveCycleofBindingDowninFlamesSo_1",
@@ -437,12 +403,12 @@
       "addedAt": "2026-02-07T18:35:45.414Z",
       "validated": true,
       "lastDps": {
-        "st": 27661,
-        "small_aoe": 96788,
-        "big_aoe": 173346,
-        "weighted": 77536.08178506521
+        "st": 27714,
+        "small_aoe": 97085,
+        "big_aoe": 174817,
+        "weighted": 77946
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveCycleofBindingDowninFlames_1",
@@ -454,12 +420,12 @@
       "addedAt": "2026-02-07T18:35:45.417Z",
       "validated": true,
       "lastDps": {
-        "st": 27167,
-        "small_aoe": 94789,
-        "big_aoe": 174677,
-        "weighted": 76955.65142702134
+        "st": 26924,
+        "small_aoe": 94256,
+        "big_aoe": 174712,
+        "weighted": 76681
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveSoulCarver_1",
@@ -471,12 +437,12 @@
       "addedAt": "2026-02-07T18:35:45.423Z",
       "validated": true,
       "lastDps": {
-        "st": 27320,
-        "small_aoe": 94262,
-        "big_aoe": 168176,
-        "weighted": 75574.03927962238
+        "st": 27421,
+        "small_aoe": 94984,
+        "big_aoe": 168347,
+        "weighted": 75875
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_SoulCarver_1",
@@ -488,12 +454,12 @@
       "addedAt": "2026-02-07T18:35:45.428Z",
       "validated": true,
       "lastDps": {
-        "st": 28216,
-        "small_aoe": 82421,
-        "big_aoe": 138912,
-        "weighted": 66616.63307386989
+        "st": 28229,
+        "small_aoe": 82336,
+        "big_aoe": 139795,
+        "weighted": 66774
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_SoulCarver_2",
@@ -505,12 +471,12 @@
       "addedAt": "2026-02-07T18:35:45.428Z",
       "validated": true,
       "lastDps": {
-        "st": 28244,
-        "small_aoe": 82427,
-        "big_aoe": 139414,
-        "weighted": 66732.86928594063
+        "st": 28215,
+        "small_aoe": 82273,
+        "big_aoe": 138988,
+        "weighted": 66587
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_SoulCarver_3",
@@ -539,12 +505,12 @@
       "addedAt": "2026-02-07T18:35:45.430Z",
       "validated": true,
       "lastDps": {
-        "st": 27283,
-        "small_aoe": 90837,
-        "big_aoe": 155556,
-        "weighted": 72003.54262559106
+        "st": 27153,
+        "small_aoe": 90830,
+        "big_aoe": 155415,
+        "weighted": 71908
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveCycleofBindingSoulCarver_2",
@@ -556,12 +522,12 @@
       "addedAt": "2026-02-07T18:35:45.461Z",
       "validated": true,
       "lastDps": {
-        "st": 28215,
-        "small_aoe": 88756,
-        "big_aoe": 156391,
-        "weighted": 72012.62637289008
+        "st": 27884,
+        "small_aoe": 88821,
+        "big_aoe": 155963,
+        "weighted": 71781
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveCycleofBinding_1",
@@ -573,12 +539,12 @@
       "addedAt": "2026-02-07T18:35:45.462Z",
       "validated": true,
       "lastDps": {
-        "st": 25319,
-        "small_aoe": 81888,
-        "big_aoe": 150106,
-        "weighted": 67246.94211480668
+        "st": 25278,
+        "small_aoe": 82074,
+        "big_aoe": 148645,
+        "weighted": 66990
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveCycleofBinding_2",
@@ -590,12 +556,12 @@
       "addedAt": "2026-02-07T18:35:45.462Z",
       "validated": true,
       "lastDps": {
-        "st": 25316,
-        "small_aoe": 81699,
-        "big_aoe": 149823,
-        "weighted": 67132.06287395998
+        "st": 25298,
+        "small_aoe": 81863,
+        "big_aoe": 149419,
+        "weighted": 67092
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_BurningAliveCycleofBinding_3",
@@ -607,12 +573,12 @@
       "addedAt": "2026-02-07T18:35:45.463Z",
       "validated": true,
       "lastDps": {
-        "st": 26681,
-        "small_aoe": 81237,
-        "big_aoe": 146010,
-        "weighted": 66913.69172276105
+        "st": 26647,
+        "small_aoe": 81320,
+        "big_aoe": 144666,
+        "weighted": 66653
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_CycleofBindingDowninFlamesSoulCarver_1",
@@ -624,29 +590,12 @@
       "addedAt": "2026-02-07T18:35:45.474Z",
       "validated": true,
       "lastDps": {
-        "st": 28459,
-        "small_aoe": 83837,
-        "big_aoe": 146102,
-        "weighted": 68600.92923617033
+        "st": 28339,
+        "small_aoe": 83485,
+        "big_aoe": 146570,
+        "weighted": 68529
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
-    },
-    {
-      "id": "AR_CycleofBindingDowninFlamesSoulCarver_2",
-      "archetype": "Cycle of Binding + Down in Flames + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwixMzAjZmhZGzMYGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.475Z",
-      "validated": true,
-      "lastDps": {
-        "st": 29083,
-        "small_aoe": 82141,
-        "big_aoe": 141328,
-        "weighted": 67449.70532941361
-      },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_aldrachireaver_1",
@@ -658,12 +607,12 @@
       "addedAt": "2026-02-07T18:35:45.476Z",
       "validated": true,
       "lastDps": {
-        "st": 26475,
-        "small_aoe": 78583,
-        "big_aoe": 139482,
-        "weighted": 64708.73023659863
+        "st": 26221,
+        "small_aoe": 78854,
+        "big_aoe": 139519,
+        "weighted": 64671
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_CycleofBindingSoulCarver_1",
@@ -675,29 +624,12 @@
       "addedAt": "2026-02-07T18:35:45.480Z",
       "validated": true,
       "lastDps": {
-        "st": 28524,
-        "small_aoe": 83545,
-        "big_aoe": 143956,
-        "weighted": 68116.73671500466
+        "st": 28779,
+        "small_aoe": 83717,
+        "big_aoe": 143705,
+        "weighted": 68246
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
-    },
-    {
-      "id": "AR_CycleofBindingSoulCarver_2",
-      "archetype": "Cycle of Binding + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxYGYMzMMzwMzMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.480Z",
-      "validated": true,
-      "lastDps": {
-        "st": 28377,
-        "small_aoe": 83285,
-        "big_aoe": 142401,
-        "weighted": 67654.13004680048
-      },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_CycleofBindingDowninFlames_1",
@@ -709,12 +641,12 @@
       "addedAt": "2026-02-07T18:35:45.481Z",
       "validated": true,
       "lastDps": {
-        "st": 28570,
-        "small_aoe": 83834,
-        "big_aoe": 150202,
-        "weighted": 69475.40052930612
+        "st": 28639,
+        "small_aoe": 84319,
+        "big_aoe": 149398,
+        "weighted": 69495
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_CycleofBindingDowninFlames_2",
@@ -726,12 +658,12 @@
       "addedAt": "2026-02-07T18:35:45.483Z",
       "validated": true,
       "lastDps": {
-        "st": 27902,
-        "small_aoe": 84132,
-        "big_aoe": 149388,
-        "weighted": 69068.26204107031
+        "st": 27975,
+        "small_aoe": 83753,
+        "big_aoe": 149996,
+        "weighted": 69113
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_CycleofBinding_1",
@@ -743,12 +675,12 @@
       "addedAt": "2026-02-07T18:35:45.485Z",
       "validated": true,
       "lastDps": {
-        "st": 27062,
-        "small_aoe": 79882,
-        "big_aoe": 144654,
-        "weighted": 66426.3749634159
+        "st": 27134,
+        "small_aoe": 80270,
+        "big_aoe": 143548,
+        "weighted": 66357
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_Profile_Reference",
@@ -768,23 +700,6 @@
       "lastTestedAt": "2026-02-07T18:39:55.241Z"
     },
     {
-      "id": "A_BurningAliveCycleofBindingSoulCarver_2_2",
-      "archetype": "Burning Alive + Cycle of Binding + Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwyMzYGMjZmhZGzMzYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:55.179Z",
-      "validated": true,
-      "lastDps": {
-        "st": 24069,
-        "small_aoe": 115621,
-        "big_aoe": 209417,
-        "weighted": 88604.08235329957
-      },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
-    },
-    {
       "id": "A_SoulCarver_1_2",
       "archetype": "Soul Carver",
       "heroTree": "annihilator",
@@ -794,12 +709,12 @@
       "addedAt": "2026-02-07T18:35:55.179Z",
       "validated": true,
       "lastDps": {
-        "st": 25594,
-        "small_aoe": 99896,
-        "big_aoe": 178601,
-        "weighted": 78486.0324435218
+        "st": 25687,
+        "small_aoe": 100113,
+        "big_aoe": 178933,
+        "weighted": 78664
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     },
     {
       "id": "AR_SoulCarver_3_2",
@@ -811,12 +726,80 @@
       "addedAt": "2026-02-07T18:35:55.181Z",
       "validated": true,
       "lastDps": {
-        "st": 27572,
-        "small_aoe": 80589,
-        "big_aoe": 141375,
-        "weighted": 66237.80465200881
+        "st": 27735,
+        "small_aoe": 81027,
+        "big_aoe": 139679,
+        "weighted": 66112
       },
-      "lastTestedAt": "2026-02-07T18:39:55.241Z"
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
+    },
+    {
+      "id": "A_BurningAliveDowninFlames_2",
+      "archetype": "Burning Alive + Down in Flames",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzwYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T19:13:23.474Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27348,
+        "small_aoe": 130656,
+        "big_aoe": 240602,
+        "weighted": 100991
+      },
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
+    },
+    {
+      "id": "A_BurningAliveCycleofBinding_3",
+      "archetype": "Burning Alive + Cycle of Binding",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwyMzYGzMjZGYGYGzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T19:13:23.477Z",
+      "validated": true,
+      "lastDps": {
+        "st": 23882,
+        "small_aoe": 109694,
+        "big_aoe": 199941,
+        "weighted": 84837
+      },
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
+    },
+    {
+      "id": "AR_BurningAliveDowninFlames_3",
+      "archetype": "Burning Alive + Down in Flames",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMz2MzMDMzMzAzAzYGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T19:13:23.479Z",
+      "validated": true,
+      "lastDps": {
+        "st": 27292,
+        "small_aoe": 99956,
+        "big_aoe": 184106,
+        "weighted": 80454
+      },
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
+    },
+    {
+      "id": "AR_BurningAlive_2",
+      "archetype": "Burning Alive",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZGDMjZmhZGGjZGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T19:13:23.485Z",
+      "validated": true,
+      "lastDps": {
+        "st": 26965,
+        "small_aoe": 91435,
+        "big_aoe": 164940,
+        "weighted": 73901
+      },
+      "lastTestedAt": "2026-02-07T19:13:23.468Z"
     }
   ]
 }

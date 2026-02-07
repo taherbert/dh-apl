@@ -138,10 +138,18 @@ function reachableFrom(startIds, nodeMap) {
   return visited;
 }
 
-// Derive excluded talent names from SPEC_CONFIG.excludedTalents.
-function getExcludedSpecNames() {
+// Returns the base excluded talent set from SPEC_CONFIG.excludedTalents.
+function getBaseExclusionSet() {
   const config = getSpecAdapter().getSpecConfig();
   return new Set(config.excludedTalents || []);
+}
+
+// Builds effective exclusion set from base SPEC_CONFIG + include/exclude overrides.
+function buildEffectiveExclusions(overrides = {}) {
+  const exclusions = getBaseExclusionSet();
+  for (const name of overrides.include || []) exclusions.delete(name);
+  for (const name of overrides.exclude || []) exclusions.add(name);
+  return exclusions;
 }
 
 // Derive hero choice locks from SPEC_CONFIG.heroTrees[tree].choiceLocks.
@@ -179,10 +187,7 @@ export function classifyNodes(nodes, nodeMap, budget, overrides = {}) {
     }
   }
 
-  // Build effective exclusion set from SPEC_CONFIG + overrides
-  const effectiveExclusions = getExcludedSpecNames();
-  for (const name of overrides.include || []) effectiveExclusions.delete(name);
-  for (const name of overrides.exclude || []) effectiveExclusions.add(name);
+  const effectiveExclusions = buildEffectiveExclusions(overrides);
 
   // Force-require nodes: move from factors to locked
   const requireNames = new Set(overrides.require || []);
@@ -1111,11 +1116,10 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     }
   }
 
-  // Build exclusion set: SPEC_CONFIG exclusions minus profile includes/requires, plus profile excludes
-  const effectiveExclusions = getExcludedSpecNames();
-  for (const name of profile.include || []) effectiveExclusions.delete(name);
-  for (const name of profile.require || []) effectiveExclusions.delete(name);
-  for (const name of profile.exclude || []) effectiveExclusions.add(name);
+  const effectiveExclusions = buildEffectiveExclusions({
+    include: [...(profile.include || []), ...(profile.require || [])],
+    exclude: profile.exclude || [],
+  });
 
   // Connectivity repair: ensure all locked nodes have a path from entry
   let repairChanged = true;

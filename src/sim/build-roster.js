@@ -238,15 +238,15 @@ export function importFromMultiBuild(roster) {
 
   const className = config.spec.className;
   const specConfig = getSpecAdapter().getSpecConfig();
-  const secondaryTrees = Object.entries(specConfig.heroTrees)
-    .filter(([, cfg]) => cfg.buildMethod === "multi-actor")
-    .map(([name]) => name);
 
-  if (secondaryTrees.length === 0) {
+  const secondaryTree = Object.entries(specConfig.heroTrees).find(
+    ([, cfg]) => cfg.buildMethod === "multi-actor",
+  )?.[0];
+
+  if (!secondaryTree) {
     console.error("No multi-actor hero tree configured");
     return { added: 0, skipped: 0, invalid: 0 };
   }
-  const secondaryTree = secondaryTrees[0];
 
   const content = readFileSync(MULTI_BUILD_PATH, "utf8");
   const actors = [];
@@ -295,7 +295,11 @@ export function importFromMultiBuild(roster) {
     .filter((a) => a.overrides.hero_talents === secondaryTree)
     .map((a) => ({
       id: a.name,
-      archetype: inferArchetype(a.name),
+      archetype:
+        a.name
+          .replace(/^Anni_/, "")
+          .split("_")
+          .join("+") || a.name,
       heroTree: secondaryTree,
       hash: null,
       overrides: a.overrides,
@@ -604,15 +608,6 @@ export function generateHashes(roster) {
 
 function sanitizeId(name) {
   return name.replace(/[^a-zA-Z0-9]+/g, "").slice(0, 40);
-}
-
-function inferArchetype(actorName) {
-  return (
-    actorName
-      .replace(/^Anni_/, "")
-      .split("_")
-      .join("+") || actorName
-  );
 }
 
 // --- CLI ---
