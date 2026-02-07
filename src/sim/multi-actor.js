@@ -43,9 +43,13 @@ const GEAR_KEYS = [
 ];
 
 // Emit talent lines for a build into the output array.
+// Hash is authoritative — if present, skip overrides (they encode the same info).
+// Emitting both causes SimC to partially override the hash with override strings,
+// producing invalid builds (dual hero trees, wrong ranks).
 function emitTalentOverrides(output, build) {
   if (build.hash) {
     output.push(`talents=${build.hash}`);
+    return;
   }
   if (build.overrides) {
     for (const key of ["class_talents", "spec_talents", "hero_talents"]) {

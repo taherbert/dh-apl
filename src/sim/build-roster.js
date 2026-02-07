@@ -37,6 +37,7 @@ import {
 } from "../engine/paths.js";
 import { validateBuild, validateHash } from "../util/validate-build.js";
 import { overridesToHash } from "../util/talent-string.js";
+import { HERO_CHOICE_LOCKS } from "../model/talent-combos.js";
 
 const ROSTER_PATH = dataFile("build-roster.json");
 const BUILDS_PATH = resultsFile("builds.json");
@@ -570,7 +571,9 @@ export function generateHashes(roster) {
     }
 
     try {
-      const hash = overridesToHash(build.overrides);
+      const hash = overridesToHash(build.overrides, {
+        heroChoiceLocks: HERO_CHOICE_LOCKS,
+      });
       const validation = validateHash(hash);
       if (!validation.valid) {
         console.error(
@@ -580,6 +583,7 @@ export function generateHashes(roster) {
         continue;
       }
       build.hash = hash;
+      delete build.overrides;
       build.validated = true;
       delete build.validationErrors;
       generated++;
