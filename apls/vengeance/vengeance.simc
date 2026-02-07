@@ -71,6 +71,8 @@ actions.ar+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
 actions.ar+=/call_action_list,name=ar_cooldowns
 # Fallout AoE: ImmAura top priority to generate fragments passively at 3+ targets
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.fallout_aoe
+# WQ Physical feed: Fracture when Reaver's Mark is up to maximize WQ accumulation in ST
+actions.ar+=/fracture,if=debuff.reavers_mark.up&active_enemies=1&soul_fragments<variable.spb_threshold
 # Fracture charge management — keep recharging but not when fragment-saturated
 # In ST during FD, skip: SBomb at 3 per-GCD (3.9×) > Fracture→SBomb at 5 per-GCD (3.75×)
 # In AoE during FD, keep: AoE SBomb damage scales with frags, building to 5 is worth the Fracture GCD

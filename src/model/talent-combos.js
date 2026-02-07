@@ -732,7 +732,7 @@ function heroChoiceCombos(heroNodes, opts = {}) {
   const unlocked = new Set(opts.unlockHeroChoices || []);
   for (const id of unlocked) delete effectiveLocks[id];
 
-  const combos = [{}];
+  let combos = [{}];
   for (const choice of choiceNodes) {
     const lockedIdx = effectiveLocks[choice.id];
     const newCombos = [];
@@ -745,8 +745,7 @@ function heroChoiceCombos(heroNodes, opts = {}) {
         }
       }
     }
-    combos.length = 0;
-    combos.push(...newCombos);
+    combos = newCombos;
   }
   return combos;
 }
