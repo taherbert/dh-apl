@@ -1,0 +1,49 @@
+# === Auto-generated APL Scaffold ===
+# Spec: havoc
+# Generated: 2026-02-07T22:45:39.688Z
+#
+# WARNING: This is a STARTING POINT, not a finished APL.
+# Review conditions, add talent gates, and optimize priorities.
+
+input=apls/havoc/profile.simc
+
+# === Precombat ===
+actions.precombat=/snapshot_stats
+# Consider: actions.precombat+=/the_hunt
+
+# === Default (runs every cycle) ===
+actions=/auto_attack
+# Interrupt
+actions+=/disrupt,if=target.debuff.casting.react
+
+# Off-GCD abilities
+
+# === Cooldowns ===
+actions+=/call_action_list,name=cooldowns
+
+# === Core Rotation ===
+# Spenders
+actions+=/chaos_strike,if=fury>=40
+actions+=/annihilation,if=fury>=40
+actions+=/blade_dance,if=fury>=35
+actions+=/death_sweep,if=fury>=35
+actions+=/eye_beam,if=fury>=30
+actions+=/chaos_nova,if=fury>=25
+actions+=/throw_glaive,if=fury>=25
+# Generators
+actions+=/immolation_aura
+# Fillers
+actions+=/fel_rush
+actions+=/felblade
+actions+=/the_hunt
+actions+=/eye_beam
+actions+=/immolation_aura
+actions+=/immolation_aura
+actions+=/immolation_aura
+actions+=/immolation_aura
+actions+=/void_metamorphosis
+
+# === Cooldowns ===
+actions.cooldowns=/the_hunt
+actions.cooldowns=/metamorphosis
+actions.cooldowns=/essence_break

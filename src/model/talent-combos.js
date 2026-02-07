@@ -809,14 +809,16 @@ export function toTalentString(build, data) {
 // Encode a DoE build into a base64 talent hash string.
 // Must use the full DH node list (all specs, all hero trees) for correct
 // bit alignment — the game client encodes against C_Traits.GetTreeNodes().
-export function buildToHash(build, data, specId = 581) {
+export function buildToHash(build, data, specId) {
+  if (!specId) throw new Error("specId is required for buildToHash");
   const selections = buildToSelections(build, data);
   const nodes = loadFullNodeList();
   return encode(specId, nodes, selections);
 }
 
 // Return a profileset variant object for a DoE build.
-export function buildToVariant(build, data, specId = 581) {
+export function buildToVariant(build, data, specId) {
+  if (!specId) throw new Error("specId is required for buildToVariant");
   const hash = buildToHash(build, data, specId);
   return { name: build.name, overrides: [`talents=${hash}`] };
 }

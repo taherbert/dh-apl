@@ -13,6 +13,7 @@ import { generateProfileset, runProfilesetAsync } from "../sim/profilesets.js";
 import { SCENARIOS } from "../sim/runner.js";
 import {
   HERO_SUBTREES,
+  SPEC_ID,
   config,
   loadSpecAdapter,
   getSpecAdapter,
@@ -21,6 +22,17 @@ import {
 import { dataFile, resultsDir, resultsFile, aplsDir } from "../engine/paths.js";
 
 const WEIGHTS = SCENARIO_WEIGHTS;
+
+// Map hero tree display names (from Raidbots) to spec config keys (from adapter).
+// e.g., "Fel-Scarred" → "felscarred", "Aldrachi Reaver" → "aldrachi_reaver"
+function normalizeHeroTree(displayName) {
+  const heroTrees = getSpecAdapter().getSpecConfig().heroTrees;
+  for (const [key, cfg] of Object.entries(heroTrees)) {
+    if (cfg.displayName === displayName) return key;
+  }
+  // Fallback: lowercase, collapse non-alphanum to underscore
+  return displayName.toLowerCase().replace(/[^a-z0-9]+/g, "_");
+}
 
 const FIDELITY = {
   quick: { target_error: 1.0, label: "quick" },
@@ -55,7 +67,7 @@ function generateBuilds(opts = {}) {
   const encoded = [];
   for (const build of builds) {
     try {
-      const hash = buildToHash(build, data);
+      const hash = buildToHash(build, data, SPEC_ID);
       if (seen.has(hash)) continue;
       seen.add(hash);
       encoded.push({ ...build, hash });
@@ -368,7 +380,7 @@ function discoverArchetypes(
       groupBuilds.reduce((s, b) => s + b.weighted, 0) / groupBuilds.length;
 
     archetypes.push({
-      heroTree: heroTree.toLowerCase().replace(/\s+/g, "_"),
+      heroTree: normalizeHeroTree(heroTree),
       definingTalents,
       signature: key,
       bestBuild: best,
@@ -436,7 +448,7 @@ function discoverArchetypes(
 function groupByHeroTreeOnly(builds, data) {
   const byTree = {};
   for (const b of builds) {
-    const tree = b.heroTree.toLowerCase().replace(/\s+/g, "_");
+    const tree = normalizeHeroTree(b.heroTree);
     (byTree[tree] ||= []).push(b);
   }
   return Object.entries(byTree).map(([tree, treeBuilds]) => {
@@ -582,7 +594,7 @@ function buildOutput(
     allBuilds: builds.map((b) => ({
       name: b.name,
       hash: b.hash,
-      heroTree: (b.heroTree || "").toLowerCase().replace(/\s+/g, "_"),
+      heroTree: normalizeHeroTree(b.heroTree || ""),
       dps: b.dps,
       weighted: Math.round(b.weighted),
       rank: b.rank,

@@ -1,0 +1,556 @@
+{
+  "_schema": "build-theory-v1",
+  "_curated": false,
+  "_generated": "2026-02-07T22:45:43.944Z",
+  "_doc": "Auto-generated build theory. Review and curate before using. This is a STARTING POINT — human analysis required for accuracy.",
+  "specClusters": [
+    {
+      "id": "movement",
+      "name": "Movement",
+      "talents": [
+        "Vengeful Retreat",
+        "Vengeful Bonds",
+        "Tactical Retreat",
+        "Exergy",
+        "Inertia",
+        "Unbound Chaos"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "blade-dance",
+      "name": "Blade Dance",
+      "talents": [
+        "Felblade",
+        "Charred Warblades",
+        "First Blood",
+        "Accelerated Blade",
+        "Deflecting Dance",
+        "Mortal Dance",
+        "Trail of Ruin",
+        "Dancing with Fate",
+        "Burning Wound",
+        "Chaotic Transformation",
+        "Essence Break",
+        "Glaive Tempest",
+        "Screaming Brutality"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "demonsurge-cycle",
+      "name": "Demonsurge Cycle",
+      "talents": [
+        "Sigil of Misery",
+        "Improved Sigil of Misery"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "misc",
+      "name": "Misc",
+      "talents": [
+        "Unrestrained Fury",
+        "Shattered Restoration",
+        "Imprison",
+        "Improved Disrupt",
+        "Consume Magic",
+        "Aldrachi Design",
+        "Disrupting Fury",
+        "Swallowed Anger",
+        "Pursuit",
+        "Infernal Armor",
+        "Burn It Out",
+        "Soul Cleanse",
+        "Lost in Darkness",
+        "Illidari Knowledge",
+        "Felbound",
+        "Will of the Illidari",
+        "Internal Struggle",
+        "Remorseless",
+        "Darkness",
+        "Demon Muzzle",
+        "Soul Splitter",
+        "Wings of Wrath",
+        "Long Night",
+        "Pitch Black",
+        "Demonic Resilience",
+        "Burning Hatred",
+        "Demon Hide",
+        "Desperate Instincts",
+        "Scars of Suffering",
+        "Growing Inferno",
+        "Shattered Destiny"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "reaver-cycle",
+      "name": "Reaver Cycle",
+      "talents": [
+        "Bouncing Glaives",
+        "Master of the Glaive",
+        "Champion of the Glaive",
+        "Live by the Glaive",
+        "Soul Rending"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "chaos-strike",
+      "name": "Chaos Strike",
+      "talents": [
+        "Chaos Nova",
+        "Focused Ire",
+        "Blazing Path",
+        "Aura of Pain",
+        "Felfire Haste",
+        "First In, Last Out",
+        "Erratic Felheart",
+        "Eye Beam",
+        "Critical Chaos",
+        "Dash of Chaos",
+        "Improved Chaos Strike",
+        "Initiative",
+        "Isolated Prey",
+        "The Hunt",
+        "Serrated Glaive",
+        "Chaos Theory",
+        "Inner Demon",
+        "Relentless Onslaught",
+        "Soulscar",
+        "Ragefire",
+        "Know Your Enemy",
+        "Chaotic Disposition",
+        "A Fire Inside"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "eye-beam",
+      "name": "Eye Beam",
+      "talents": [
+        "Furious",
+        "Final Breath",
+        "Demonic",
+        "Furious Throws",
+        "Blind Fury",
+        "Furious Gaze",
+        "Cycle of Hatred",
+        "Collective Anguish"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    },
+    {
+      "id": "cooldown",
+      "name": "Cooldown",
+      "talents": [
+        "Eternal Hunt",
+        "Eternal Hunt",
+        "Eternal Hunt"
+      ],
+      "coreLoop": "Auto-detected cluster — manual description needed",
+      "keyMechanics": [],
+      "role": "unknown"
+    }
+  ],
+  "heroTrees": {
+    "unknown": {
+      "talents": [
+        "Aldrachi Design"
+      ],
+      "damageSchool": null,
+      "keyMechanics": []
+    }
+  },
+  "clusterSynergies": [
+    {
+      "talents": [
+        "Vengeful Retreat",
+        "Felblade",
+        "The Hunt"
+      ],
+      "reason": "Both affect spell 1245496",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "Imprison",
+        "Chaos Nova",
+        "Darkness",
+        "The Hunt",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 212612",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "Imprison",
+        "Chaos Nova",
+        "Darkness",
+        "The Hunt",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 212613",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "The Hunt"
+      ],
+      "reason": "Both affect spell 388114",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Sigil of Misery",
+        "Imprison",
+        "Chaos Nova",
+        "Darkness",
+        "The Hunt",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 1213636",
+      "strength": "strong"
+    },
+    {
+      "talents": [
+        "Felblade",
+        "Consume Magic"
+      ],
+      "reason": "Both affect spell 1223171",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 163073",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 185164",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 207744",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 207771",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 208628",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 247938",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 347765",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 390213",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 394934",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 427641",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 428241",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 442624",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 471306",
+      "strength": "moderate"
+    },
+    {
+      "talents": [
+        "Chaos Nova",
+        "Essence Break"
+      ],
+      "reason": "Both affect spell 1256955",
+      "strength": "moderate"
+    }
+  ],
+  "buildArchetypes": [
+    {
+      "id": "unknown-movement",
+      "name": "unknown Movement",
+      "heroTree": "unknown",
+      "clusters": [
+        "movement"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Vengeful Retreat",
+        "Vengeful Bonds",
+        "Tactical Retreat",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-blade-dance",
+      "name": "unknown Blade Dance",
+      "heroTree": "unknown",
+      "clusters": [
+        "blade-dance"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Felblade",
+        "Charred Warblades",
+        "First Blood",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-demonsurge-cycle",
+      "name": "unknown Demonsurge Cycle",
+      "heroTree": "unknown",
+      "clusters": [
+        "demonsurge-cycle"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Sigil of Misery",
+        "Improved Sigil of Misery",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-misc",
+      "name": "unknown Misc",
+      "heroTree": "unknown",
+      "clusters": [
+        "misc"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Unrestrained Fury",
+        "Shattered Restoration",
+        "Imprison",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-reaver-cycle",
+      "name": "unknown Reaver Cycle",
+      "heroTree": "unknown",
+      "clusters": [
+        "reaver-cycle"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Bouncing Glaives",
+        "Master of the Glaive",
+        "Champion of the Glaive",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-chaos-strike",
+      "name": "unknown Chaos Strike",
+      "heroTree": "unknown",
+      "clusters": [
+        "chaos-strike"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Chaos Nova",
+        "Focused Ire",
+        "Blazing Path",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-eye-beam",
+      "name": "unknown Eye Beam",
+      "heroTree": "unknown",
+      "clusters": [
+        "eye-beam"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Furious",
+        "Final Breath",
+        "Demonic",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    },
+    {
+      "id": "unknown-cooldown",
+      "name": "unknown Cooldown",
+      "heroTree": "unknown",
+      "clusters": [
+        "cooldown"
+      ],
+      "coreLoop": "Auto-generated — requires manual description",
+      "keyTalents": [
+        "Eternal Hunt",
+        "Eternal Hunt",
+        "Eternal Hunt",
+        "Aldrachi Design"
+      ],
+      "keyBuffs": [],
+      "keyAbilities": [],
+      "strengths": "Unknown — simulation required",
+      "tensions": "Unknown — analysis required",
+      "tradeoffs": "Unknown — comparison required",
+      "aplFocus": [
+        "unknown"
+      ]
+    }
+  ],
+  "tensionPoints": [
+    {
+      "id": "auto-detected-resource-competition",
+      "description": "Resource competition detected — review manually",
+      "explanation": "Multiple talents/abilities compete for the same resource. Analyze which should take priority in different scenarios.",
+      "affectedArchetypes": [
+        "unknown-movement",
+        "unknown-blade-dance",
+        "unknown-demonsurge-cycle"
+      ]
+    }
+  ]
+}

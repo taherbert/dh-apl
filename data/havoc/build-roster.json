@@ -1,0 +1,431 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "id": "FS_Ragefire_1",
+      "archetype": "Ragefire",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMzYmxyYmxMzMz0MzYAAAAAAAzCzwMzMjNPwMzysMzMWGmZmlBWmFzYYWYaMjZM2AAAAGAAAAzMAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.512Z",
+      "validated": true,
+      "lastDps": {
+        "st": 39547,
+        "small_aoe": 123331,
+        "big_aoe": 216478,
+        "weighted": 100068
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_KnowYourEnemyRagefire_1",
+      "archetype": "Know Your Enemy + Ragefire",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMzMzMWGzMmZmZmmZGDAAAAAAYWYGmZmZsMzMWmNzMzyYMsMwysYGDzCTj5BMjxGAAAwAAAAYmBAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.515Z",
+      "validated": true,
+      "lastDps": {
+        "st": 43239,
+        "small_aoe": 134380,
+        "big_aoe": 237553,
+        "weighted": 109444
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_ShatteredDestinyCollectiveAnguishRagefir_1",
+      "archetype": "Shattered Destiny / Collective Anguish + Ragefire",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZmZmxyYmxMzMz0MzYAAAAAAAzCzwMzMjNzM2mNmZ2GYmtBWmFzYYWYaMjZM2AAAAGAAAAzMAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.517Z",
+      "validated": true,
+      "lastDps": {
+        "st": 37220,
+        "small_aoe": 129499,
+        "big_aoe": 220197,
+        "weighted": 101499
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_KnowYourEnemyShatteredDestinyCollectiveA_1",
+      "archetype": "Know Your Enemy + Shattered Destiny / Collective Anguish + Ragefire",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZmZmZWGzMmZmZmmZGDAAAAAAYWYGmZmZmNPwM2mNmZMGMLDsMLmxwsw0YGzYsBAAAAAAAwMDAAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.518Z",
+      "validated": true,
+      "lastDps": {
+        "st": 43692,
+        "small_aoe": 124287,
+        "big_aoe": 207268,
+        "weighted": 100585
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_ShatteredDestinyCollectiveAnguishRagefir_1",
+      "archetype": "Shattered Destiny / Collective Anguish + Ragefire",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZmZmxyYmxMzMz0MzYAAAAAAAzCzwMzMjNzM2mNmZ2GYmtZWmBDjlFmwMjZMWAAAAGAAAYmBAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.519Z",
+      "validated": true,
+      "lastDps": {
+        "st": 37504,
+        "small_aoe": 121422,
+        "big_aoe": 182433,
+        "weighted": 91665
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_ShatteredDestinyCollectiveAnguishRagefir_2",
+      "archetype": "Shattered Destiny / Collective Anguish + Ragefire",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMzYmxyYmxMzMz0MzYAAAAAAAzCzwMzMjNPwMzysMzMWGmZmlZWmBDjlFmwMjZMWAAAAGAAAYmBAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.520Z",
+      "validated": true,
+      "lastDps": {
+        "st": 38399,
+        "small_aoe": 115079,
+        "big_aoe": 188126,
+        "weighted": 91348
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_KnowYourEnemyRagefire_1",
+      "archetype": "Know Your Enemy + Ragefire",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMzYmxyYmxMzMz0MzYAAAAAAAzCzwMzMjtxMz2s4BmZWGzYmlZWmBDjlFmwMjZMWAAAAGAAAYmBAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.521Z",
+      "validated": true,
+      "lastDps": {
+        "st": 40252,
+        "small_aoe": 121116,
+        "big_aoe": 197017,
+        "weighted": 95864
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_KnowYourEnemy_1",
+      "archetype": "Know Your Enemy",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMDzMWGzMmZmZmmZGDAAAAAAYWYGmZmZsYmxysNzMzyYMmlBWmFzYYWYaMjZM2AAAAGAAAAzMAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.522Z",
+      "validated": true,
+      "lastDps": {
+        "st": 42635,
+        "small_aoe": 119217,
+        "big_aoe": 194699,
+        "weighted": 96022
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_EssenceBreakKnowYourEnemyShatteredDestin_1",
+      "archetype": "Essence Break + Know Your Enemy + Shattered Destiny / Collective Anguish + Ragefire",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMzMzMWGzMmZmZmmZGDAAAAAAYWYGmZmZmNPwMWmtZmZ2m5BGzsNzyMYYsswEGMjxCAAAwAAAAzMAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.523Z",
+      "validated": true,
+      "lastDps": {
+        "st": 40415,
+        "small_aoe": 115696,
+        "big_aoe": 176117,
+        "weighted": 90140
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_EssenceBreakKnowYourEnemyShatteredDestin_2",
+      "archetype": "Essence Break + Know Your Enemy + Shattered Destiny / Collective Anguish + Ragefire",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZmZmZWGzMmZmZmmZGDAAAAAAYWYGmZmZmNPwM2mNmZMGMLzsMDGGLLMhZGzYsAAAAAAAAmZAAAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.524Z",
+      "validated": true,
+      "lastDps": {
+        "st": 45203,
+        "small_aoe": 115055,
+        "big_aoe": 162520,
+        "weighted": 89622
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_aldrachireaver_1",
+      "archetype": "aldrachi reaver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMjZMWGzMmZmZmmZGDAAAAAAYWYGmZmZsNPwMzysYmZWGmZmlZWmBDjlFmwMjZMWAAAAGAAAYmBAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.525Z",
+      "validated": true,
+      "lastDps": {
+        "st": 38261,
+        "small_aoe": 112845,
+        "big_aoe": 168646,
+        "weighted": 86713
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_KnowYourEnemyShatteredDestinyCollectiveA_1",
+      "archetype": "Know Your Enemy + Shattered Destiny / Collective Anguish",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZYmxyYmxMzMz0MzYAAAAAAAzCzwMzMjt5Bmx2sNmZ2GDmtZWmBDjlFmwMjZMWAAAAGAAAYmBAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.526Z",
+      "validated": true,
+      "lastDps": {
+        "st": 38946,
+        "small_aoe": 115804,
+        "big_aoe": 167987,
+        "weighted": 87812
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_felscarred_1",
+      "archetype": "fel scarred",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMjZmZWGzMmZmZmmZGDAAAAAAYWYGmZmZmt5BmZWmt5BmZWGGzsNwysYGDzCTDjZM2AAAAAAAAYmBAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.527Z",
+      "validated": true,
+      "lastDps": {
+        "st": 45904,
+        "small_aoe": 103771,
+        "big_aoe": 148531,
+        "weighted": 83790
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_felscarred_2",
+      "archetype": "fel scarred",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMjZmZWGzMmZmZmmZGDAAAAAAYWYGmZmZsZmZ2ml5BmZWGGmlBWmFzYYWYaMjZM2AAAAGAAAAzMAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.528Z",
+      "validated": true,
+      "lastDps": {
+        "st": 42916,
+        "small_aoe": 103893,
+        "big_aoe": 155594,
+        "weighted": 83745
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_felscarred_3",
+      "archetype": "fel scarred",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMjZmZWGzMmZmZmmZGDAAAAAAYWYGmZmZmt5BmZWmNzMzywYmtBWmFzYYWYaYMjxGAAAAAAAAzMAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.528Z",
+      "validated": true,
+      "lastDps": {
+        "st": 44898,
+        "small_aoe": 105186,
+        "big_aoe": 147130,
+        "weighted": 83431
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_ShatteredDestinyCollectiveAnguish_1",
+      "archetype": "Shattered Destiny / Collective Anguish",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMDzMWGzMmZmZmmZGDAAAAAAYWYGmZmZsYmZ2mlZmhhhZbmlZwwYZhJMGzYsAAAAMAAAwMDAAAAAG",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.528Z",
+      "validated": true,
+      "lastDps": {
+        "st": 35780,
+        "small_aoe": 110171,
+        "big_aoe": 161703,
+        "weighted": 83282
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_EssenceBreakKnowYourEnemy_1",
+      "archetype": "Essence Break + Know Your Enemy",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZGzMWGzMmZmZmmZGDAAAAAAYWYGmZmZmFPwMWmNzMzyMPwglZWmBDjlFmw4BMjxCAAAwAAAAzMAAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.530Z",
+      "validated": true,
+      "lastDps": {
+        "st": 36685,
+        "small_aoe": 111853,
+        "big_aoe": 164543,
+        "weighted": 84807
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_EssenceBreakKnowYourEnemy_2",
+      "archetype": "Essence Break + Know Your Enemy",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMMzMzyYmxMzMz0MzYAAAAAAAzCzwMzMjNmZWmtxMWm5BMzsNzyMYYsswEm5BMjxCAAAAAAAYmBAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.530Z",
+      "validated": true,
+      "lastDps": {
+        "st": 45530,
+        "small_aoe": 109373,
+        "big_aoe": 145541,
+        "weighted": 84685
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "AR_EssenceBreakKnowYourEnemy_3",
+      "archetype": "Essence Break + Know Your Enemy",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMDzMWGzMmZmZmmZGDAAAAAAYWYGmZmZmFzMzysMzM2mZwsNzyMYYsswEGjZMWAAAAGAAAYmBAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.530Z",
+      "validated": true,
+      "lastDps": {
+        "st": 37052,
+        "small_aoe": 106502,
+        "big_aoe": 170780,
+        "weighted": 84632
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_KnowYourEnemyShatteredDestinyCollectiveA_1_2",
+      "archetype": "Know Your Enemy + Shattered Destiny / Collective Anguish",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZYmxyYmxMzMz0MzYAAAAAAAzCzwMzMjt5Bmx2sNmZ2GDmtBWmFzYYWYaMjZM2AAAAGAAAAzMAAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.531Z",
+      "validated": true,
+      "lastDps": {
+        "st": 38891,
+        "small_aoe": 119612,
+        "big_aoe": 187138,
+        "weighted": 92757
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_EssenceBreakKnowYourEnemyShatteredDestin_1",
+      "archetype": "Essence Break + Know Your Enemy + Shattered Destiny / Collective Anguish + Ragefire",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMzMzMWGzMmZmZmmZGDAAAAAAYWYGmZmZmthx2s4BmZ2mZGzsNwysYGDzCTjZMjxGAAAAAAAAzMAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.532Z",
+      "validated": true,
+      "lastDps": {
+        "st": 16472,
+        "small_aoe": 45628,
+        "big_aoe": 73129,
+        "weighted": 36550
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_EssenceBreakKnowYourEnemyRagefire_1",
+      "archetype": "Essence Break + Know Your Enemy + Ragefire",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMmZGzMzyYmxMzMz0MzYAAAAAAAzCzwMzMjlxM2mlxMjZmhZbglZxMGmFmGGzYsBAAAAAAAwMDAAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.533Z",
+      "validated": true,
+      "lastDps": {
+        "st": 17953,
+        "small_aoe": 35995,
+        "big_aoe": 44908,
+        "weighted": 28757
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_EssenceBreakKnowYourEnemyRagefire_2",
+      "archetype": "Essence Break + Know Your Enemy + Ragefire",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMzYmxyYmxMzMz0MzYAAAAAAAzCzwMzMzsNzMzys4BmhZGMLDsMLmxwsw0AzYsBAAAAAAAwMDAAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.534Z",
+      "validated": true,
+      "lastDps": {
+        "st": 16741,
+        "small_aoe": 36826,
+        "big_aoe": 46426,
+        "weighted": 28703
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_EssenceBreakKnowYourEnemy_1",
+      "archetype": "Essence Break + Know Your Enemy",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMDjxyYmxMzMz0MzYAAAAAAAzCzwMzMzsMPgxyswMzyMPwMjlBWmFzYYWYaMjZM2AAAAAAAAYmBAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.535Z",
+      "validated": true,
+      "lastDps": {
+        "st": 18229,
+        "small_aoe": 29639,
+        "big_aoe": 31854,
+        "weighted": 24377
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    },
+    {
+      "id": "FS_EssenceBreakKnowYourEnemyShatteredDestin_1_2",
+      "archetype": "Essence Break + Know Your Enemy + Shattered Destiny / Collective Anguish",
+      "heroTree": "fel_scarred",
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAMzMDjZWGzMmZmZmmZGDAAAAAAYWYGmZmZmt5BMWmFzMz2MPwMzsNwysYGDzCTjZMjxGAAAAAAAAzMAAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-07T23:15:32.536Z",
+      "validated": true,
+      "lastDps": {
+        "st": 16349,
+        "small_aoe": 28327,
+        "big_aoe": 33153,
+        "weighted": 23303
+      },
+      "lastTestedAt": "2026-02-07T23:15:06.999Z"
+    }
+  ],
+  "_updated": "2026-02-07T23:15:39.948Z"
+}
