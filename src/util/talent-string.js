@@ -556,7 +556,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       if (n.grantedForSpecs?.includes(specId)) freeNodeIds.add(n.id);
     }
 
-    function countPoints(nodeSet, label) {
+    function countPoints(nodeSet) {
       let spent = 0;
       for (const [id, s] of sel) {
         if (!nodeSet.has(id)) continue;
