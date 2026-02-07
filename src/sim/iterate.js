@@ -83,6 +83,9 @@ const FIDELITY_TIERS = {
 
 const STATE_VERSION = 3;
 
+// CLI override for actor batch size (null = use fidelity-based default)
+let batchSizeOverride = null;
+
 // Extract aggregate per-scenario DPS from state, handling both single-build and multi-build.
 // For multi-build: averages across all builds. Returns {st, small_aoe, big_aoe}.
 function getAggregateDps(stateSection) {
@@ -506,6 +509,7 @@ function printComparison(results, tier) {
 // Confirm (0.1) needs small batches because 10T with many actors at low target_error
 // generates huge sample data per actor. Quick (1.0) can handle more actors per batch.
 function batchSizeForFidelity(tierConfig) {
+  if (batchSizeOverride) return batchSizeOverride;
   const te = tierConfig.target_error ?? 0.3;
   if (te <= 0.1) return 4;
   if (te <= 0.3) return 8;
@@ -2365,6 +2369,17 @@ function parseHypothesisFlag(args) {
 
 const [cmd, ...rawArgs] = process.argv.slice(2);
 
+// Parse --batch-size N (global flag, applies to init and compare)
+const bsIdx = rawArgs.indexOf("--batch-size");
+if (bsIdx !== -1 && rawArgs[bsIdx + 1]) {
+  batchSizeOverride = parseInt(rawArgs[bsIdx + 1], 10);
+  rawArgs.splice(bsIdx, 2);
+  if (!batchSizeOverride || batchSizeOverride < 1) {
+    console.error("--batch-size must be a positive integer");
+    process.exit(1);
+  }
+}
+
 await loadSpecAdapter();
 
 switch (cmd) {
@@ -2383,7 +2398,7 @@ switch (cmd) {
   case "compare": {
     if (!rawArgs[0]) {
       console.error(
-        "Usage: node src/sim/iterate.js compare <candidate.simc> [--quick|--confirm]",
+        "Usage: node src/sim/iterate.js compare <candidate.simc> [--quick|--confirm] [--batch-size N]",
       );
       process.exit(1);
     }
@@ -2478,7 +2493,7 @@ switch (cmd) {
 Usage:
   node src/sim/iterate.js init <apl.simc>           Initialize with baseline
   node src/sim/iterate.js status                     Show current state
-  node src/sim/iterate.js compare <candidate.simc>   Compare candidate [--quick|--confirm]
+  node src/sim/iterate.js compare <candidate.simc>   Compare candidate [--quick|--confirm] [--batch-size N]
   node src/sim/iterate.js accept "reason"            Accept candidate [--hypothesis "fragment"]
   node src/sim/iterate.js reject "reason"            Reject candidate [--hypothesis "fragment"]
   node src/sim/iterate.js hypotheses                 List improvement hypotheses

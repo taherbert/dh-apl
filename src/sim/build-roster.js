@@ -35,7 +35,8 @@ import {
   aplsDir,
   ensureSpecDirs,
 } from "../engine/paths.js";
-import { validateBuild } from "../util/validate-build.js";
+import { validateBuild, validateHash } from "../util/validate-build.js";
+import { overridesToHash } from "../util/talent-string.js";
 
 const ROSTER_PATH = dataFile("build-roster.json");
 const BUILDS_PATH = resultsFile("builds.json");
@@ -549,6 +550,50 @@ export function migrate() {
   return roster;
 }
 
+// --- Generate hashes for override-only builds ---
+
+export function generateHashes(roster) {
+  if (!roster) roster = loadRoster();
+  if (!roster) {
+    console.error("No roster found.");
+    return { generated: 0, failed: 0 };
+  }
+
+  let generated = 0;
+  let failed = 0;
+
+  for (const build of roster.builds) {
+    if (build.hash) continue;
+    if (!build.overrides) {
+      console.warn(`  SKIP: ${build.id} — no hash and no overrides`);
+      continue;
+    }
+
+    try {
+      const hash = overridesToHash(build.overrides);
+      const validation = validateHash(hash);
+      if (!validation.valid) {
+        console.error(
+          `  FAIL: ${build.id} — hash validation: ${validation.errors.join("; ")}`,
+        );
+        failed++;
+        continue;
+      }
+      build.hash = hash;
+      build.validated = true;
+      delete build.validationErrors;
+      generated++;
+      console.log(`  OK: ${build.id} → ${hash.slice(0, 20)}...`);
+    } catch (e) {
+      console.error(`  FAIL: ${build.id} — ${e.message}`);
+      failed++;
+    }
+  }
+
+  if (generated > 0) saveRoster(roster);
+  return { generated, failed };
+}
+
 // --- Utilities ---
 
 function sanitizeId(name) {
@@ -657,6 +702,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       break;
     }
 
+    case "generate-hashes": {
+      const result = generateHashes();
+      console.log(
+        `Generated ${result.generated} hashes, ${result.failed} failed`,
+      );
+      break;
+    }
+
     case "migrate":
       migrate();
       break;
@@ -672,6 +725,7 @@ Usage:
   node src/sim/build-roster.js add <hash> --archetype "N" --hero <tree>  Add manually
   node src/sim/build-roster.js validate                          Re-validate all builds
   node src/sim/build-roster.js prune [--threshold 1.0]           Prune redundant builds
+  node src/sim/build-roster.js generate-hashes                   Generate hashes for override-only builds
   node src/sim/build-roster.js migrate                           One-time migration from v1`);
       break;
   }
