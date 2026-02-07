@@ -199,6 +199,76 @@ function parseProfilesetResults(data, scenario) {
   return results;
 }
 
+// Generate a profileset .simc file from a build roster + APL.
+// Uses talents=<hash> for each build — requires all builds to have hashes.
+// The baseline actor uses the first build's hash; each subsequent build
+// becomes a profileset variant with a talents= override.
+// Memory: only 2 actors in memory at a time (baseline + current variant).
+export function generateRosterProfilesetContent(roster, aplPath) {
+  const builds = roster.builds;
+  if (builds.length === 0) throw new Error("Roster has no builds");
+  if (!builds.every((b) => b.hash))
+    throw new Error("All builds must have talent hashes for profileset mode");
+
+  // Resolve the APL file (which inlines profile.simc via input= directive)
+  const resolvedAplPath = resolve(aplPath);
+  const rawApl = readFileSync(resolvedAplPath, "utf-8");
+  const resolved = resolveInputDirectives(rawApl, dirname(resolvedAplPath));
+
+  // Replace the profile's talents= line with the first build's hash
+  const first = builds[0];
+  const lines = resolved.split("\n").map((line) => {
+    if (!line.trim().startsWith("#") && line.match(/^\s*talents\s*=/))
+      return `talents=${first.hash}`;
+    return line;
+  });
+
+  const output = [];
+  output.push(`# Profileset comparison (auto-generated)`);
+  output.push(`# Roster: ${builds.length} builds, baseline: ${first.id}`);
+  output.push("");
+  output.push(...lines);
+  output.push("");
+
+  // Each subsequent build becomes a profileset variant
+  for (let i = 1; i < builds.length; i++) {
+    const build = builds[i];
+    const safeName = build.id.replace(/\./g, "_").replace(/\s+/g, "_");
+    output.push(`profileset.${safeName}=talents=${build.hash}`);
+  }
+
+  return output.join("\n");
+}
+
+// Convert profileset results to the same Map<buildId, {dps, hps, dtps}> format
+// used by runMultiActorAsync, so callers can use either mode interchangeably.
+export function profilesetResultsToActorMap(profilesetResults, roster) {
+  const actorMap = new Map();
+  const builds = roster.builds;
+
+  // Baseline actor = first build
+  actorMap.set(builds[0].id, {
+    dps: profilesetResults.baseline.dps,
+    hps: profilesetResults.baseline.hps || 0,
+    dtps: 0,
+  });
+
+  // Build a reverse map from sanitized profileset names back to build IDs
+  const nameToId = new Map();
+  for (let i = 1; i < builds.length; i++) {
+    const safeName = builds[i].id.replace(/\./g, "_").replace(/\s+/g, "_");
+    nameToId.set(safeName, builds[i].id);
+  }
+
+  // Map each variant's DPS back to its build ID
+  for (const variant of profilesetResults.variants) {
+    const buildId = nameToId.get(variant.name) || variant.name;
+    actorMap.set(buildId, { dps: variant.dps, hps: 0, dtps: 0 });
+  }
+
+  return actorMap;
+}
+
 // Compare profileset results against a baseline DPS value.
 export function compareResults(baselineDPS, results) {
   return results.variants.map((v) => {
