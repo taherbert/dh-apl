@@ -13,11 +13,6 @@ import { resultsDir, resultsFile, dataFile } from "../engine/paths.js";
 const SIMC = SIMC_BIN;
 const GOLDEN_DIR = join(resultsDir(), "golden");
 
-// Resolve `input=<filename>` directives by inlining referenced file contents.
-// SimC resolves input= relative to CWD (verified experimentally).
-// When we write profileset content to results/, those relative paths break.
-// This function inlines them so the output is self-contained.
-// Tries: sourceDir-relative first, then CWD-relative as fallback.
 export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
   return content
     .split("\n")
@@ -30,11 +25,17 @@ export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
 
       if (!existsSync(refPath)) {
         const cwdPath = resolve(process.cwd(), ref);
-        if (existsSync(cwdPath)) refPath = cwdPath;
+        if (existsSync(cwdPath)) {
+          refPath = cwdPath;
+        }
       }
 
-      if (seen.has(refPath)) return [`# [circular input= skipped: ${ref}]`];
-      if (!existsSync(refPath)) return [`# [input= not found: ${ref}]`];
+      if (seen.has(refPath)) {
+        return [`# [circular input= skipped: ${ref}]`];
+      }
+      if (!existsSync(refPath)) {
+        return [`# [input= not found: ${ref}]`];
+      }
 
       seen.add(refPath);
       const included = readFileSync(refPath, "utf-8");
@@ -45,9 +46,6 @@ export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
     .join("\n");
 }
 
-// Generate a .simc profileset file from a base profile and variant list.
-// Each variant: { name, overrides: string[] }
-// overrides are SimC option lines (talents=..., actions=..., etc.)
 export function generateProfileset(baseProfilePath, variants) {
   const raw = readFileSync(baseProfilePath, "utf-8");
   const base = resolveInputDirectives(raw, dirname(resolve(baseProfilePath)));
@@ -55,7 +53,9 @@ export function generateProfileset(baseProfilePath, variants) {
 
   for (const variant of variants) {
     const safeName = variant.name.replace(/\./g, "_").replace(/\s+/g, "_");
-    if (variant.overrides.length === 0) continue;
+    if (variant.overrides.length === 0) {
+      continue;
+    }
 
     lines.push(`profileset.${safeName}=${variant.overrides[0]}`);
     for (let i = 1; i < variant.overrides.length; i++) {
@@ -83,7 +83,10 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
   writeFileSync(simcPath, simcContent);
 
   const merged = { ...SIM_DEFAULTS, ...simOverrides };
-  const workThreads = Math.max(1, Math.floor(merged.threads / 6));
+  const workThreads =
+    merged.profileset_work_threads ||
+    Math.max(1, Math.floor(merged.threads / 4));
+  const initThreads = Math.min(4, Math.max(1, Math.floor(merged.threads / 3)));
 
   const args = [
     simcPath,
@@ -94,7 +97,10 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
     `json2=${jsonPath}`,
     `threads=${merged.threads}`,
     `profileset_work_threads=${workThreads}`,
+    `profileset_init_threads=${initThreads}`,
     "profileset_metric=dps",
+    "buff_uptime_timeline=0",
+    "buff_stack_uptime_timeline=0",
   ];
   if (DATA_ENV === "ptr" || DATA_ENV === "beta") {
     args.unshift("ptr=1");
@@ -104,7 +110,6 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
   return { args, jsonPath, scenario };
 }
 
-// Run a profileset .simc file and parse JSON results.
 export function runProfileset(
   simcContent,
   scenario = "st",
@@ -133,7 +138,6 @@ export function runProfileset(
   return parseProfilesetResults(data, scenario);
 }
 
-// Async variant of runProfileset for parallel execution.
 export async function runProfilesetAsync(
   simcContent,
   scenario = "st",
@@ -161,7 +165,6 @@ export async function runProfilesetAsync(
   return parseProfilesetResults(data, scenario);
 }
 
-// Parse SimC JSON output for profileset results.
 function parseProfilesetResults(data, scenario) {
   const baseline = data.sim.players[0];
   const profilesets = data.sim.profilesets?.results || [];
@@ -193,33 +196,28 @@ function parseProfilesetResults(data, scenario) {
     });
   }
 
-  // Sort by DPS descending
   results.variants.sort((a, b) => b.dps - a.dps);
-
   return results;
 }
 
-// Generate a profileset .simc file from a build roster + APL.
-// Uses talents=<hash> for each build — requires all builds to have hashes.
-// The baseline actor uses the first build's hash; each subsequent build
-// becomes a profileset variant with a talents= override.
-// Memory: only 2 actors in memory at a time (baseline + current variant).
 export function generateRosterProfilesetContent(roster, aplPath) {
   const builds = roster.builds;
-  if (builds.length === 0) throw new Error("Roster has no builds");
-  if (!builds.every((b) => b.hash))
+  if (builds.length === 0) {
+    throw new Error("Roster has no builds");
+  }
+  if (!builds.every((b) => b.hash)) {
     throw new Error("All builds must have talent hashes for profileset mode");
+  }
 
-  // Resolve the APL file (which inlines profile.simc via input= directive)
   const resolvedAplPath = resolve(aplPath);
   const rawApl = readFileSync(resolvedAplPath, "utf-8");
   const resolved = resolveInputDirectives(rawApl, dirname(resolvedAplPath));
 
-  // Replace the profile's talents= line with the first build's hash
   const first = builds[0];
   const lines = resolved.split("\n").map((line) => {
-    if (!line.trim().startsWith("#") && line.match(/^\s*talents\s*=/))
+    if (!line.trim().startsWith("#") && line.match(/^\s*talents\s*=/)) {
       return `talents=${first.hash}`;
+    }
     return line;
   });
 
@@ -230,7 +228,6 @@ export function generateRosterProfilesetContent(roster, aplPath) {
   output.push(...lines);
   output.push("");
 
-  // Each subsequent build becomes a profileset variant
   for (let i = 1; i < builds.length; i++) {
     const build = builds[i];
     const safeName = build.id.replace(/\./g, "_").replace(/\s+/g, "_");
@@ -240,27 +237,22 @@ export function generateRosterProfilesetContent(roster, aplPath) {
   return output.join("\n");
 }
 
-// Convert profileset results to the same Map<buildId, {dps, hps, dtps}> format
-// used by runMultiActorAsync, so callers can use either mode interchangeably.
 export function profilesetResultsToActorMap(profilesetResults, roster) {
   const actorMap = new Map();
   const builds = roster.builds;
 
-  // Baseline actor = first build
   actorMap.set(builds[0].id, {
     dps: profilesetResults.baseline.dps,
     hps: profilesetResults.baseline.hps || 0,
     dtps: 0,
   });
 
-  // Build a reverse map from sanitized profileset names back to build IDs
   const nameToId = new Map();
   for (let i = 1; i < builds.length; i++) {
     const safeName = builds[i].id.replace(/\./g, "_").replace(/\s+/g, "_");
     nameToId.set(safeName, builds[i].id);
   }
 
-  // Map each variant's DPS back to its build ID
   for (const variant of profilesetResults.variants) {
     const buildId = nameToId.get(variant.name) || variant.name;
     actorMap.set(buildId, { dps: variant.dps, hps: 0, dtps: 0 });
@@ -269,7 +261,6 @@ export function profilesetResultsToActorMap(profilesetResults, roster) {
   return actorMap;
 }
 
-// Compare profileset results against a baseline DPS value.
 export function compareResults(baselineDPS, results) {
   return results.variants.map((v) => {
     const delta = v.dps - baselineDPS;
@@ -283,7 +274,6 @@ export function compareResults(baselineDPS, results) {
   });
 }
 
-// Save golden results for regression testing.
 export function saveGolden(label, results) {
   mkdirSync(GOLDEN_DIR, { recursive: true });
   const path = join(GOLDEN_DIR, `${label}.json`);
@@ -291,27 +281,27 @@ export function saveGolden(label, results) {
   console.log(`Golden results saved to ${path}`);
 }
 
-// Load golden results.
 export function loadGolden(label) {
   const path = join(GOLDEN_DIR, `${label}.json`);
-  if (!existsSync(path)) return null;
+  if (!existsSync(path)) {
+    return null;
+  }
   return JSON.parse(readFileSync(path, "utf-8"));
 }
 
-// Check for regressions against golden results.
-// Returns { passed: bool, regressions: [], warnings: [] }
 export function checkRegressions(
   current,
   golden,
   warnThreshold = 1,
   errorThreshold = 3,
 ) {
-  if (!golden) return { passed: true, regressions: [], warnings: [] };
+  if (!golden) {
+    return { passed: true, regressions: [], warnings: [] };
+  }
 
   const regressions = [];
   const warnings = [];
 
-  // Build golden lookup by variant name
   const goldenByName = new Map();
   for (const v of golden.variants || []) {
     goldenByName.set(v.name, v);
@@ -319,7 +309,9 @@ export function checkRegressions(
 
   for (const v of current.variants || []) {
     const g = goldenByName.get(v.name);
-    if (!g) continue;
+    if (!g) {
+      continue;
+    }
 
     const pctChange = ((v.dps - g.dps) / g.dps) * 100;
     if (pctChange < -errorThreshold) {
@@ -346,7 +338,6 @@ export function checkRegressions(
   };
 }
 
-// Print profileset results as a ranked table.
 export function printProfilesetResults(results) {
   console.log(`\n=== ${results.scenarioName} ===`);
   console.log(
@@ -390,7 +381,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     process.exit(1);
   }
 
-  // Demo: generate a simple profileset with talent string overrides
   const combosPath = dataFile("talent-combos.json");
   if (!existsSync(combosPath)) {
     console.log("No talent-combos.json found. Run talent-combos.js first.");
@@ -399,7 +389,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   const combosData = JSON.parse(readFileSync(combosPath, "utf-8"));
   const combos = combosData.builds || [];
-  // Pick first 3 builds as demo variants
   const variants = combos.slice(0, 3).map((build) => ({
     name: build.name,
     overrides: [`talents=${build.talentString || ""}`].filter(
@@ -418,7 +407,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const results = runProfileset(simcContent, scenario, "demo");
   printProfilesetResults(results);
 
-  // Save as golden if none exists
   const goldenLabel = `demo_${scenario}`;
   const golden = loadGolden(goldenLabel);
   if (!golden) {

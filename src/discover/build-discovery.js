@@ -6,6 +6,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { createHash } from "node:crypto";
+import { cpus } from "node:os";
 
 import { generateCombos, buildToHash } from "../model/talent-combos.js";
 import { generateProfileset, runProfilesetAsync } from "../sim/profilesets.js";
@@ -85,9 +86,17 @@ async function simBuilds(builds, aplPath, fidelity, data) {
   );
 
   const results = {};
-  const simOverrides = { target_error: fidelity.target_error };
+  const totalCores = cpus().length;
+  const threadsPerScenario = Math.max(
+    1,
+    Math.floor(totalCores / scenarios.length),
+  );
+  const simOverrides = {
+    target_error: fidelity.target_error,
+    threads: threadsPerScenario,
+  };
 
-  // Run scenarios in parallel
+  // Run scenarios in parallel, splitting threads across them
   const promises = scenarios.map(async (scenario) => {
     const content = generateProfileset(aplPath, variants);
     const result = await runProfilesetAsync(
@@ -241,26 +250,23 @@ function discoverArchetypes(
   meanDPS,
   data,
 ) {
-  // Identify archetype-forming factors: must have significant DPS impact
-  // AND actually differentiate among competitive builds (not universally taken/skipped)
   const threshold = meanDPS * 0.005;
-
-  // Sort builds by DPS to identify competitive tier
   const sorted = [...builds].sort((a, b) => b.weighted - a.weighted);
   const topHalf = sorted.slice(0, Math.ceil(sorted.length / 2));
 
-  // Helper: check if a build includes a given factor
   function hasFactor(build, fi) {
-    if (fi.factorType === "choice")
+    if (fi.factorType === "choice") {
       return (build.specChoices?.[fi.nodeId] || 0) > 0;
-    if (fi.factorType === "multi_rank_r2")
+    }
+    if (fi.factorType === "multi_rank_r2") {
       return (build.specRanks?.[fi.nodeId] || 0) >= 2;
-    if (fi.factorType === "multi_rank_r1")
+    }
+    if (fi.factorType === "multi_rank_r1") {
       return (build.specRanks?.[fi.nodeId] || 0) >= 1;
+    }
     return build.specNodes?.includes(fi.nodeId);
   }
 
-  // Compute adoption rate in top half for each significant factor
   const candidateFactors = factorImpacts
     .filter((fi) => Math.abs(fi.mainEffect) > threshold)
     .map((fi) => {
@@ -268,28 +274,27 @@ function discoverArchetypes(
         topHalf.filter((b) => hasFactor(b, fi)).length / topHalf.length;
       return { ...fi, topAdoption };
     })
-    // Keep only factors that vary among competitive builds (15-85% adoption)
     .filter((fi) => fi.topAdoption >= 0.15 && fi.topAdoption <= 0.85)
-    // Sort by absolute impact descending
     .sort((a, b) => Math.abs(b.mainEffect) - Math.abs(a.mainEffect));
 
-  // Deduplicate by talent name (multi-rank talents produce r1 and r2 factors)
   const seenTalents = new Set();
   const dedupedFactors = candidateFactors.filter((fi) => {
-    if (seenTalents.has(fi.talent)) return false;
+    if (seenTalents.has(fi.talent)) {
+      return false;
+    }
     seenTalents.add(fi.talent);
     return true;
   });
 
-  // Cap at 4 forming factors to keep archetype count manageable (max 2^4 = 16)
   const MAX_FORMING_FACTORS = 4;
   const formingFactorNames = new Set(
     dedupedFactors.slice(0, MAX_FORMING_FACTORS).map((f) => f.talent),
   );
 
-  // Also include synergy pair members if both are differentiating
   for (const sp of synergyPairs) {
-    if (formingFactorNames.size >= MAX_FORMING_FACTORS) break;
+    if (formingFactorNames.size >= MAX_FORMING_FACTORS) {
+      break;
+    }
     const combined =
       Math.abs(sp.interaction) +
       Math.abs(
@@ -309,53 +314,52 @@ function discoverArchetypes(
   }
 
   if (formingFactorNames.size === 0) {
-    // No differentiating factors — all competitive builds are essentially equivalent
     return groupByHeroTreeOnly(builds, data);
   }
 
-  // Get forming factor impacts for quick lookup — one entry per talent name
   const formingFactorSeen = new Set();
   const formingFactors = factorImpacts.filter((f) => {
-    if (!formingFactorNames.has(f.talent) || formingFactorSeen.has(f.talent))
+    if (!formingFactorNames.has(f.talent) || formingFactorSeen.has(f.talent)) {
       return false;
+    }
     formingFactorSeen.add(f.talent);
     return true;
   });
 
-  // Build signature for each build: values of forming factors
   function buildSignature(build) {
     return formingFactors
       .map((f) => {
-        if (f.factorType === "choice")
+        if (f.factorType === "choice") {
           return build.specChoices?.[f.nodeId] || 0;
-        if (f.factorType === "multi_rank_r2")
+        }
+        if (f.factorType === "multi_rank_r2") {
           return (build.specRanks?.[f.nodeId] || 0) >= 2 ? 1 : 0;
-        if (f.factorType === "multi_rank_r1")
+        }
+        if (f.factorType === "multi_rank_r1") {
           return (build.specRanks?.[f.nodeId] || 0) >= 1 ? 1 : 0;
+        }
         return build.specNodes?.includes(f.nodeId) ? 1 : 0;
       })
       .join(",");
   }
 
-  // Group builds by hero tree + factor signature
   const groups = new Map();
   for (const build of builds) {
     const key = `${build.heroTree}|${buildSignature(build)}`;
-    if (!groups.has(key)) groups.set(key, []);
+    if (!groups.has(key)) {
+      groups.set(key, []);
+    }
     groups.get(key).push(build);
   }
 
-  // Convert groups to archetypes
   let archetypes = [];
   for (const [key, groupBuilds] of groups) {
     const [heroTree] = key.split("|");
     const sig = key.split("|")[1].split(",").map(Number);
 
-    // Sort builds within group by weighted DPS
     groupBuilds.sort((a, b) => b.weighted - a.weighted);
     const best = groupBuilds[0];
 
-    // Determine defining talents (forming factors that are "on" for this archetype)
     const definingTalents = formingFactors
       .filter((_, i) => sig[i] === 1)
       .map((f) => f.talent);
@@ -374,17 +378,17 @@ function discoverArchetypes(
     });
   }
 
-  // Merge archetypes with similar factor signatures within noise range
   const mergeThreshold = meanDPS * 0.01;
   archetypes.sort((a, b) => b.avgWeighted - a.avgWeighted);
 
-  // Compute signature distance: number of forming factors that differ
   function sigDistance(a, b) {
     const aSig = a.signature.split("|")[1].split(",");
     const bSig = b.signature.split("|")[1].split(",");
     let diff = 0;
     for (let k = 0; k < aSig.length; k++) {
-      if (aSig[k] !== bSig[k]) diff++;
+      if (aSig[k] !== bSig[k]) {
+        diff++;
+      }
     }
     return diff;
   }
@@ -392,11 +396,15 @@ function discoverArchetypes(
   const merged = [];
   const consumed = new Set();
   for (let i = 0; i < archetypes.length; i++) {
-    if (consumed.has(i)) continue;
+    if (consumed.has(i)) {
+      continue;
+    }
     const base = archetypes[i];
     const mergeGroup = [base];
     for (let j = i + 1; j < archetypes.length; j++) {
-      if (consumed.has(j)) continue;
+      if (consumed.has(j)) {
+        continue;
+      }
       const candidate = archetypes[j];
       if (
         base.heroTree === candidate.heroTree &&
@@ -408,11 +416,9 @@ function discoverArchetypes(
       }
     }
 
-    // Merge builds from all consumed archetypes
     const allBuilds = mergeGroup.flatMap((a) => a.builds);
     allBuilds.sort((a, b) => b.weighted - a.weighted);
 
-    // Use the base archetype's defining talents (highest DPS group)
     merged.push({
       heroTree: base.heroTree,
       definingTalents: base.definingTalents,
@@ -424,7 +430,6 @@ function discoverArchetypes(
     });
   }
 
-  // Generate labels and format output
   return merged.map((arch) => formatArchetype(arch, builds, data));
 }
 
@@ -453,18 +458,15 @@ function groupByHeroTreeOnly(builds, data) {
 }
 
 function formatArchetype(arch, allBuilds, data) {
-  // Name uses all defining talents (forming factors that are ON)
   const name =
     arch.definingTalents.length > 0
       ? arch.definingTalents.join(" + ")
       : arch.heroTree.replace(/_/g, " ");
 
-  // Compute spec talent differences vs the global best build
   const globalBest = allBuilds[0];
   const best = arch.bestBuild;
   const specDifferences = computeSpecDifferences(best, globalBest, data);
 
-  // Select up to 2 alternate builds
   const alternateBuilds = arch.builds
     .filter((b) => b !== best)
     .slice(0, 2)
@@ -519,19 +521,25 @@ function computeSpecDifferences(build, reference, data) {
   const buildNodes = new Set(build.specNodes || []);
   const refNodes = new Set(reference.specNodes || []);
   const specNodeMap = new Map();
-  for (const n of data.specNodes) specNodeMap.set(n.id, n);
+  for (const n of data.specNodes) {
+    specNodeMap.set(n.id, n);
+  }
 
   const diffs = [];
   for (const id of buildNodes) {
     if (!refNodes.has(id)) {
       const node = specNodeMap.get(id);
-      if (node) diffs.push(`+${node.name}`);
+      if (node) {
+        diffs.push(`+${node.name}`);
+      }
     }
   }
   for (const id of refNodes) {
     if (!buildNodes.has(id)) {
       const node = specNodeMap.get(id);
-      if (node) diffs.push(`-${node.name}`);
+      if (node) {
+        diffs.push(`-${node.name}`);
+      }
     }
   }
   return diffs;
