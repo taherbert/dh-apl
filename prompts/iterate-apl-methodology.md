@@ -15,8 +15,12 @@ Before starting any iteration loop:
    - If roster is empty: run `npm run roster migrate` to populate from existing data
    - If builds.json is stale/missing: re-run `npm run discover -- --ar-only --quick` (auto-imports to roster)
    - To add builds manually: `npm run roster import-doe`, `npm run roster import-multi-build`
+   - To generate hashes for override-only builds: `npm run roster generate-hashes` (enables profileset mode)
 2. `iterate.js init` requires the roster and runs multi-build baseline
+   - Profileset mode (constant 2-actor memory) auto-activates when all builds have hashes
+   - Falls back to batched multi-actor mode otherwise (batch sizes: quick=12, standard=8, confirm=4)
 3. All subsequent `iterate.js compare` calls test against ALL roster builds simultaneously
+   - Use `--batch-size N` to override the fidelity-based default batch size
 
 **iterate.js refuses to run without a populated roster.** Single-build mode is not supported.
 

@@ -80,6 +80,14 @@ The persistent build roster (`data/{spec}/build-roster.json`) is auto-updated by
 
 **If builds.json already exists and is < 24h old**, skip discovery and verify the roster with `npm run roster show`.
 
+After verifying the roster, ensure all builds have talent hashes for profileset mode:
+
+```bash
+npm run roster generate-hashes    # Converts override-only builds to hashes
+```
+
+This enables profileset simulation (constant 2-actor memory) instead of batched multi-actor mode.
+
 ### 0d. Establish Multi-Build Baseline
 
 ```bash
@@ -372,26 +380,31 @@ npm run discover                   # Standard fidelity: ~10-20 min
 ### Build Roster
 
 ```bash
-node src/sim/build-roster.js generate --tier fast      # 1 build/archetype
-node src/sim/build-roster.js generate --tier standard  # 2-3 builds/archetype
-node src/sim/build-roster.js generate --tier full      # All builds/archetype
+npm run roster show                    # Show roster with validation status
+npm run roster validate                # Re-validate all builds
+npm run roster generate-hashes         # Generate hashes for override-only builds
+npm run roster import-doe              # Import from builds.json (DoE discovery)
+npm run roster import-multi-build      # Import from multi-build.simc (Anni builds)
+npm run roster prune                   # Remove redundant builds within threshold
 ```
 
 ### Talent Hashing
 
 ```bash
-node src/util/talent-string.js --decode <hash>              # Decode to talent list
+node src/util/talent-string.js <hash>                           # Decode to talent list
 node src/util/talent-string.js --modify <hash> +Talent -Talent  # Modify build
-node src/util/talent-string.js --test <hash>                # Round-trip validation
+node src/util/talent-string.js --test                           # Round-trip validation
 ```
 
 ### Multi-Build Iteration
 
 ```bash
-node src/sim/iterate.js init <apl>           # Multi-build baseline (auto-detects roster)
-node src/sim/iterate.js compare <candidate>  # Tests against ALL roster builds
-node src/sim/iterate.js status               # Shows per-build DPS + aggregate
+node src/sim/iterate.js init <apl>                          # Multi-build baseline (auto-detects roster)
+node src/sim/iterate.js compare <candidate> [--batch-size N] # Tests against ALL roster builds
+node src/sim/iterate.js status                               # Shows per-build DPS + aggregate
 ```
+
+Profileset mode auto-activates when all roster builds have talent hashes (constant 2-actor memory). Falls back to batched multi-actor mode otherwise (batch sizes: quick=12, standard=8, confirm=4). Use `--batch-size N` to override.
 
 ## Anti-Patterns
 
