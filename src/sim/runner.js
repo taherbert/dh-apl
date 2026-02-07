@@ -1,8 +1,3 @@
-// Runs simc simulations and parses JSON results.
-// Usage: node src/sim/runner.js <profile.simc> [scenario] [--html]
-// Scenarios: st (default), small_aoe, big_aoe, all
-// Options: --html generates HTML report alongside JSON
-
 import { execSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
@@ -20,7 +15,6 @@ import { resultsDir, resultsFile } from "../engine/paths.js";
 const SIMC = SIMC_BIN;
 const TOTAL_CORES = cpus().length;
 
-// Re-export from config, adding runtime-only `threads` to defaults
 export { SCENARIOS };
 export const SIM_DEFAULTS = { threads: TOTAL_CORES, ..._SIM_DEFAULTS };
 
@@ -33,7 +27,6 @@ function buildOverrides(scenario, extraOverrides = {}) {
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
   ];
-  // PTR/beta data environments require ptr=1 for SimC to use ptr data tables
   if (DATA_ENV === "ptr" || DATA_ENV === "beta") {
     overrides.unshift("ptr=1");
   }
@@ -46,10 +39,11 @@ export function prepareSim(
   { extraOverrides = "", simOverrides = {}, html = false } = {},
 ) {
   const config = SCENARIOS[scenario];
-  if (!config)
+  if (!config) {
     throw new Error(
       `Unknown scenario: ${scenario}. Valid: ${Object.keys(SCENARIOS).join(", ")}`,
     );
+  }
 
   mkdirSync(resultsDir(), { recursive: true });
 
@@ -66,6 +60,8 @@ export function prepareSim(
     ...extras,
     `json2=${jsonPath}`,
     `threads=${simOverrides.threads || SIM_DEFAULTS.threads}`,
+    "buff_uptime_timeline=0",
+    "buff_stack_uptime_timeline=0",
   ];
 
   if (htmlPath) {
@@ -97,7 +93,9 @@ export function runSim(profilePath, scenario = "st", opts = {}) {
 
   const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
   const result = parseResults(data, scenario);
-  if (htmlPath) result.htmlPath = htmlPath;
+  if (htmlPath) {
+    result.htmlPath = htmlPath;
+  }
   return result;
 }
 
@@ -124,7 +122,9 @@ export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
 
   const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
   const result = parseResults(data, scenario);
-  if (htmlPath) result.htmlPath = htmlPath;
+  if (htmlPath) {
+    result.htmlPath = htmlPath;
+  }
   return result;
 }
 
@@ -158,7 +158,6 @@ function parseResults(data, scenario) {
   }
   result.abilities.sort((a, b) => b.dps - a.dps);
 
-  // Parse buff uptimes
   for (const buff of player.buffs || []) {
     if (buff.uptime && buff.uptime > 0) {
       result.buffs.push({
@@ -193,9 +192,6 @@ export function printResults(result) {
   }
 }
 
-// --- Multi-actor support ---
-
-// Parse multi-actor SimC JSON output. Returns Map<actorName, {dps, hps, dtps}>.
 export function parseMultiActorResults(data) {
   const results = new Map();
   for (const player of data.sim.players) {
@@ -208,8 +204,6 @@ export function parseMultiActorResults(data) {
   return results;
 }
 
-// Write multi-actor .simc content to a temp file, run SimC, parse results.
-// Returns Map<actorName, {dps, hps, dtps}>.
 export async function runMultiActorAsync(
   simcContent,
   scenario = "st",
@@ -217,7 +211,9 @@ export async function runMultiActorAsync(
   { simOverrides = {} } = {},
 ) {
   const config = SCENARIOS[scenario];
-  if (!config) throw new Error(`Unknown scenario: ${scenario}`);
+  if (!config) {
+    throw new Error(`Unknown scenario: ${scenario}`);
+  }
 
   mkdirSync(resultsDir(), { recursive: true });
 
@@ -234,6 +230,9 @@ export async function runMultiActorAsync(
     `iterations=${merged.iterations}`,
     `json2=${jsonPath}`,
     `threads=${merged.threads || TOTAL_CORES}`,
+    "report_details=0",
+    "buff_uptime_timeline=0",
+    "buff_stack_uptime_timeline=0",
   ];
 
   console.log(`Running multi-actor ${config.name} (${label})...`);
@@ -251,7 +250,6 @@ export async function runMultiActorAsync(
   return parseMultiActorResults(data);
 }
 
-// CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);
   const htmlFlag = args.includes("--html");
