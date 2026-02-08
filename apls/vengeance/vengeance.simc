@@ -91,7 +91,10 @@ actions.ar+=/soul_cleave
 actions.ar+=/call_action_list,name=fillers
 
 # === AR Empowered — Art of the Glaive cycle spending ===
+# Fracture-first (ST): 12 FotA slashes via Bladecraft, 1 RM stack
+# Cleave-first (AoE): 3 FotA slashes, 3 RM stacks (21% amp) — RM amp outweighs slash count at 3+ targets
 actions.ar_empowered=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up
+actions.ar_empowered+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up&active_enemies>=3
 actions.ar_empowered+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up
 actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
 actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
