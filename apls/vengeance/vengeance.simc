@@ -59,7 +59,8 @@ actions.ar+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 actions.ar+=/potion,use_off_gcd=1,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
 actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
 # Meta on CD or use free charge from Untethered Rage (refreshes/extends Meta)
-actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up|buff.untethered_rage.up
+# Pre-Meta fragment pooling (AR only): enter with frags ready for instant SBomb→Fracture(3)→SBomb chain
+actions.ar+=/metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up&soul_fragments>=3)|buff.untethered_rage.up
 # AR cycle spending — fires if empowered buffs active, falls through otherwise
 actions.ar+=/call_action_list,name=ar_empowered
 # Fiery Demise brand window — fire-school CDs during Brand for +30% amp
@@ -118,8 +119,10 @@ actions.ar_aoe+=/soul_cleave
 actions.ar_aoe+=/call_action_list,name=fillers
 
 # === AR Brand Window — Fiery Demise: sequence fire-school CDs during Brand for +30% amp ===
+# Pre-apply Frailty via SBomb before fire CDs land — ensures damage-taken amp is active
+actions.ar_brand_window=/spirit_bomb,if=soul_fragments>=3&!debuff.frailty.up
 # Charred Flesh: ImmAura fire ticks extend Brand duration — top priority when talented
-actions.ar_brand_window=/immolation_aura,if=talent.charred_flesh&!buff.immolation_aura.up
+actions.ar_brand_window+=/immolation_aura,if=talent.charred_flesh&!buff.immolation_aura.up
 actions.ar_brand_window+=/soul_carver
 actions.ar_brand_window+=/sigil_of_spite,if=soul_fragments<=3
 actions.ar_brand_window+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
