@@ -19,7 +19,7 @@ actions+=/variable,name=spb_threshold,value=5
 actions+=/variable,name=spb_threshold,op=set,value=4,if=buff.metamorphosis.up
 # Track UR fishing window — Meta dropping, UR talented, no proc yet
 actions+=/variable,name=ur_fishing,value=talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<8&!buff.untethered_rage.up
-# Fallout AoE mode: at 3+ targets with Fallout, ImmAura generates ~1.8+ frags/tick passively
+# Fallout AoE mode: at 3+ targets with Fallout, ImmAura generates frags on initial hit (100% ST, 60% AoE)
 actions+=/variable,name=fallout_aoe,value=talent.fallout&active_enemies>=3
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react
@@ -69,14 +69,14 @@ actions.ar+=/call_action_list,name=ar_brand_window,if=variable.fiery_demise_acti
 actions.ar+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
 # Long cooldowns — fires one if ready, falls through otherwise
 actions.ar+=/call_action_list,name=ar_cooldowns
-# Fallout AoE: ImmAura top priority to generate fragments passively at 3+ targets
+# Fallout AoE: ImmAura top priority at 3+ targets (Fallout generates frag on initial hit)
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.fallout_aoe
 # WQ Physical feed: Fracture when Reaver's Mark is up to maximize WQ accumulation in ST
 actions.ar+=/fracture,if=debuff.reavers_mark.up&active_enemies=1&soul_fragments<variable.spb_threshold
-# Fracture charge management — keep recharging but not when fragment-saturated
+# Fracture charge management — fire when second charge is about to cap (within 1 GCD)
 # In ST during FD, skip: SBomb at 3 per-GCD (3.9×) > Fracture→SBomb at 5 per-GCD (3.75×)
 # In AoE during FD, keep: AoE SBomb damage scales with frags, building to 5 is worth the Fracture GCD
-actions.ar+=/fracture,if=cooldown.fracture.charges>=2&soul_fragments<variable.spb_threshold&(!variable.fiery_demise_active|active_enemies>=3)
+actions.ar+=/fracture,if=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold&(!variable.fiery_demise_active|active_enemies>=3)
 # Spirit Bomb — drop threshold to 3 during Fiery Demise (30% fire amp makes 3-frag casts worthwhile)
 actions.ar+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active
 actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
@@ -84,7 +84,7 @@ actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 actions.ar+=/fracture
 # Felblade — removing costs -13.8%; after Fracture is +2.1% over low priority
 actions.ar+=/felblade
-# Immolation Aura — Fallout generates fragments (100% ST, 60% AoE per tick)
+# Immolation Aura — Fallout generates fragments on initial hit (100% ST, 60% AoE per cast)
 actions.ar+=/immolation_aura,if=talent.fallout
 actions.ar+=/sigil_of_flame
 actions.ar+=/soul_cleave
@@ -99,8 +99,8 @@ actions.ar_empowered+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up
 actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
 actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
 
-# === AR Cooldowns — Brand first enables Fiery Demise window ===
-actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|!dot.fiery_brand.ticking)
+# === AR Cooldowns — Brand synced to fire CD availability for denser FD windows ===
+actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&(cooldown.soul_carver.remains<6|cooldown.fel_devastation.remains<6|cooldown.sigil_of_spite.remains<6)))
 actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=5
 actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
@@ -145,16 +145,16 @@ actions.anni+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
 actions.anni+=/immolation_aura,if=talent.charred_flesh&dot.fiery_brand.ticking
 actions.anni+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
 actions.anni+=/soul_carver,if=talent.soul_carver&soul_fragments<=3
-# FelDev: don't channel during Voidfall spending (wastes meteor triggers)
+# FelDev: channeling doesn't consume Voidfall stacks, but delays Soul Cleave meteor triggers
 actions.anni+=/fel_devastation,if=!buff.voidfall_spending.up
-# Fracture charge management — keep recharging but not when fragment-saturated
-actions.anni+=/fracture,if=cooldown.fracture.charges>=2&soul_fragments<variable.spb_threshold
+# Fracture charge management — fire when second charge is about to cap (within 1 GCD)
+actions.anni+=/fracture,if=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold
 # Spirit Bomb — uses variable threshold (lowered during UR fishing)
 actions.anni+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 # Core rotation
 actions.anni+=/fracture,if=!buff.voidfall_spending.up
 actions.anni+=/felblade
-# Fallout: ImmAura generates fragments (100% ST, 60% AoE per tick)
+# Fallout: ImmAura generates fragments on initial hit (100% ST, 60% AoE per cast)
 actions.anni+=/immolation_aura,if=talent.fallout
 actions.anni+=/sigil_of_flame
 actions.anni+=/soul_cleave
