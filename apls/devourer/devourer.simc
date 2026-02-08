@@ -10,7 +10,6 @@ actions.precombat=/snapshot_stats
 actions.precombat+=/variable,name=trinket_1_buffs,value=trinket.1.has_buff.intellect|trinket.1.has_buff.mastery|trinket.1.has_buff.versatility|trinket.1.has_buff.haste|trinket.1.has_buff.crit|trinket.1.is.mirror_of_fractured_tomorrows|trinket.1.is.signet_of_the_priory
 actions.precombat+=/variable,name=trinket_2_buffs,value=trinket.2.has_buff.intellect|trinket.2.has_buff.mastery|trinket.2.has_buff.versatility|trinket.2.has_buff.haste|trinket.2.has_buff.crit|trinket.2.is.mirror_of_fractured_tomorrows|trinket.2.is.signet_of_the_priory
 actions.precombat+=/variable,name=weapon_buffs,value=equipped.bestinslots
-actions.precombat+=/variable,name=weapon_sync,op=setif,value=1,value_else=0.5,condition=equipped.bestinslots
 actions.precombat+=/variable,name=weapon_stat_value,value=equipped.bestinslots*5142*15
 actions.precombat+=/variable,name=trinket_1_manual,value=trinket.1.is.belorrelos_the_suncaller|trinket.1.is.nymues_unraveling_spindle|trinket.1.is.spymasters_web
 actions.precombat+=/variable,name=trinket_2_manual,value=trinket.2.is.belorrelos_the_suncaller|trinket.2.is.nymues_unraveling_spindle|trinket.2.is.spymasters_web
@@ -39,7 +38,7 @@ actions+=/the_hunt,if=buff.void_metamorphosis_stack.at_max_stacks&talent.voidsur
 actions+=/void_ray,if=talent.eradicate&active_enemies>1&!buff.eradicate.up
 actions+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate|active_enemies=1
 # Dark Matter CStar urgency — fire CStar immediately after Meta to trigger meteor shower
-actions+=/collapsing_star,if=buff.dark_matter.up&buff.metamorphosis.up&talent.dark_matter
+actions+=/collapsing_star,if=buff.dark_matter.up&buff.metamorphosis.up
 # Meta Cull Line
 actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)
 # Cast Void Ray: always with Eradicate (triggers MoC+Eradicate buff), otherwise need Meta/talents/AoE
@@ -72,7 +71,7 @@ actions.illicit_doping+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs&!va
 
 # === Melee Combo ===
 # Use Voidsteps on CD — do not use if you need to be stationary for Collapsing Star afterwards
-actions.melee_combo=/vengeful_retreat,if=buff.voidstep.up&(buff.collapsing_star_stacking.stack<30|cooldown.voidblade.up|cooldown.predators_wake.up|buff.collapsing_star_stacking.stack<=38)
+actions.melee_combo=/vengeful_retreat,if=buff.voidstep.up&(buff.collapsing_star_stacking.stack<=38|cooldown.voidblade.up|cooldown.predators_wake.up)
 actions.melee_combo+=/hungering_slash
 actions.melee_combo+=/reapers_toll
 actions.melee_combo+=/the_hunt,if=!talent.voidsurge
