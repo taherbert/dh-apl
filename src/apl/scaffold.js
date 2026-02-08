@@ -3,7 +3,13 @@
 // Usage: node src/apl/scaffold.js [spec] [hero-tree] [output.simc]
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { loadSpecAdapter, getSpecAdapter, config } from "../engine/startup.js";
+import {
+  loadSpecAdapter,
+  getSpecAdapter,
+  config,
+  initSpec,
+} from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
 function getScaffoldConfig() {
@@ -368,36 +374,35 @@ export function scaffold(specId, heroTree = null) {
 
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const specId = process.argv[2] || config.spec.specName;
   const heroTree = process.argv[3] || null;
   const outputPath = process.argv[4] || null;
 
-  loadSpecAdapter().then(() => {
-    console.log(`Generating APL scaffold for ${specId}...`);
+  console.log(`Generating APL scaffold for ${specId}...`);
 
-    try {
-      const { aplContent, analysisReport } = scaffold(specId, heroTree);
+  try {
+    const { aplContent, analysisReport } = scaffold(specId, heroTree);
 
-      if (outputPath) {
-        writeFileSync(outputPath, aplContent);
-        console.log(`APL written to: ${outputPath}`);
+    if (outputPath) {
+      writeFileSync(outputPath, aplContent);
+      console.log(`APL written to: ${outputPath}`);
 
-        const reportPath = outputPath.replace(".simc", "-analysis.md");
-        writeFileSync(reportPath, analysisReport);
-        console.log(`Analysis report written to: ${reportPath}`);
-      } else {
-        console.log("\n" + "=".repeat(70));
-        console.log("Generated APL Scaffold");
-        console.log("=".repeat(70));
-        console.log(aplContent);
-        console.log("\n" + "=".repeat(70));
-        console.log("Analysis Report");
-        console.log("=".repeat(70));
-        console.log(analysisReport);
-      }
-    } catch (err) {
-      console.error(`Error: ${err.message}`);
-      process.exit(1);
+      const reportPath = outputPath.replace(".simc", "-analysis.md");
+      writeFileSync(reportPath, analysisReport);
+      console.log(`Analysis report written to: ${reportPath}`);
+    } else {
+      console.log("\n" + "=".repeat(70));
+      console.log("Generated APL Scaffold");
+      console.log("=".repeat(70));
+      console.log(aplContent);
+      console.log("\n" + "=".repeat(70));
+      console.log("Analysis Report");
+      console.log("=".repeat(70));
+      console.log(analysisReport);
     }
-  });
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+    process.exit(1);
+  }
 }

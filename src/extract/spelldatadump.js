@@ -7,13 +7,15 @@ import { join } from "node:path";
 import {
   SIMC_BIN,
   config,
+  initSpec,
   loadSpecAdapter,
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir, dataFile, REFERENCE_DIR } from "../engine/paths.js";
 
-const OUTPUT = join(REFERENCE_DIR, `spelldatadump-${config.spec.specName}.txt`);
+let OUTPUT;
 
 function runSpellQuery(query) {
   try {
@@ -70,6 +72,7 @@ function collectSpellIds() {
 
 async function main() {
   await loadSpecAdapter();
+  OUTPUT = join(REFERENCE_DIR, `spelldatadump-${config.spec.specName}.txt`);
   console.log("Collecting spell IDs...");
   const spellIds = collectSpellIds();
   console.log(`Found ${spellIds.length} unique spell IDs`);
@@ -110,7 +113,10 @@ async function main() {
   console.log(`${specLabel}-specific spells: ${specCount}`);
 }
 
-main().catch((e) => {
+(async () => {
+  await initSpec(parseSpecArg());
+  await main();
+})().catch((e) => {
   console.error(e);
   process.exit(1);
 });

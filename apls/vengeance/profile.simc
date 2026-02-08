@@ -1,6 +1,6 @@
 # Vengeance DH Midnight Profile — Gear and Talents
 # Use with: simc apls/profile.simc <apl_file>
-# Talent hash generated from data/talents.json (all class+spec+AR hero talents)
+# Gear-only partial — no talents (builds come from the roster)
 
 ptr=1
 demonhunter="VDH_Midnight"
@@ -11,7 +11,6 @@ race=night_elf
 timeofday=night
 role=tank
 position=front
-talents=CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMzMPAYMzYmZGzMjZmtZGbjZWGjZAAAAYWmBDjlFmwwMzYBAAAADMAAYmBYAAAAMA
 
 # Consumables disabled — no Midnight consumables in SimC yet
 flask=disabled

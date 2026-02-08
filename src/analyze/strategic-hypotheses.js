@@ -11,13 +11,23 @@ import {
   findBuffReferences,
 } from "../apl/condition-parser.js";
 import { MUTATION_OPS } from "../apl/mutator.js";
-import { getSpecAdapter, loadSpecAdapter, config } from "../engine/startup.js";
+import {
+  getSpecAdapter,
+  loadSpecAdapter,
+  initSpec,
+} from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
+import { getSpecName } from "../engine/paths.js";
 
 // --- Spec Configuration ---
-let currentSpecId = config.spec.specName;
+let currentSpecId = null;
 
 export function setSpecId(specId) {
   currentSpecId = specId;
+}
+
+function getCurrentSpecId() {
+  return currentSpecId || getSpecName();
 }
 
 // Strategic hypothesis categories
@@ -118,11 +128,14 @@ function getBuffUptime(scenario, buffName) {
 
 function detectHeroTreeFromProfileName(aplText) {
   const adapter = getSpecAdapter();
-  const result = adapter.detectHeroTreeFromProfileName(aplText, currentSpecId);
+  const result = adapter.detectHeroTreeFromProfileName(
+    aplText,
+    getCurrentSpecId(),
+  );
   if (result) return result;
 
   // Fallback: Look for profile name in APL text
-  const trees = adapter.getHeroTrees(currentSpecId);
+  const trees = adapter.getHeroTrees(getCurrentSpecId());
   const profileMatch = aplText.match(
     new RegExp(`${adapter.SPEC_CONFIG.className}\\s*=\\s*"([^"]+)"`, "i"),
   );
@@ -166,12 +179,12 @@ function detectHeroTreeFromBuffs(workflowResults) {
   const adapter = getSpecAdapter();
   const result = adapter.detectHeroTreeFromBuffs(
     workflowResults,
-    currentSpecId,
+    getCurrentSpecId(),
   );
   if (result) return result;
 
   // Fallback: manual detection using config-defined buffs
-  const trees = adapter.getHeroTrees(currentSpecId);
+  const trees = adapter.getHeroTrees(getCurrentSpecId());
   const hasAnyBuff = (scenario, buffs) =>
     buffs.some((b) => getBuffUptime(scenario, b) > 0);
 
@@ -1165,7 +1178,7 @@ export function printHypotheses(hypotheses) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const resultsPath = process.argv[2];
   const aplPath = process.argv[3];
 

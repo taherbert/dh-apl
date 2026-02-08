@@ -4,7 +4,8 @@
 // keeping everything needed for APL reasoning.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import "../engine/startup.js";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
 function summarizeSpells(spells) {
@@ -110,4 +111,5 @@ function generate() {
   console.log(`Wrote interactions-summary.json (${ixSize}KB, was ${origIx}KB)`);
 }
 
+await initSpec(parseSpecArg());
 generate();

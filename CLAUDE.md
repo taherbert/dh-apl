@@ -12,7 +12,7 @@ SimulationCraft APLs are text-based priority lists that define ability usage, co
 
 - **SimulationCraft (SimC):** Open-source WoW combat simulator. APLs drive the decision engine.
 - **APL syntax:** Each line is an action entry with optional conditions. Lines are evaluated top-to-bottom; first matching action fires.
-- **Multi-spec architecture:** `config.json` selects the active spec. Per-spec data lives in `data/{spec}/`, `results/{spec}/`, `apls/{spec}/`. The spec adapter (`src/spec/{spec}.js`) provides all spec-specific knowledge.
+- **Multi-spec architecture:** Spec is selected via `--spec <name>` CLI flag or `SPEC` env var. Global settings live in `config.json`, per-spec identity in `config.{spec}.json` (deep-merged at runtime). Per-spec data lives in `data/{spec}/`, `results/{spec}/`, `apls/{spec}/`. The spec adapter (`src/spec/{spec}.js`) provides all spec-specific knowledge.
 - **DPS only.** This project optimizes exclusively for damage output. Survivability, HPS, DTPS, and defensive metrics are not goals. Defensives are maintained for SimC realism but never at the expense of DPS.
 - **Spec-specific knowledge** (abilities, resources, hero trees, burst windows, state machines) lives in the spec adapter's `SPEC_CONFIG`. Read it via `getSpecAdapter().getSpecConfig()`. Never hardcode ability names in analysis modules.
 - **Talent builds** affect which abilities are available and how the APL branches.
@@ -48,11 +48,11 @@ actions=auto_attack
 actions+=/...
 ```
 
-`apls/{spec}/profile.simc` contains the shared character setup (race, talents, gear). APL files contain only action lines. The `resolveInputDirectives()` function in `profilesets.js` inlines `input=` directives so profileset content written to `results/` is self-contained.
+`apls/{spec}/profile.simc` contains the shared character setup (race, gear) without talents. APL files contain only action lines. The `resolveInputDirectives()` function in `profilesets.js` inlines `input=` directives so profileset content written to `results/` is self-contained.
 
 ## Session Protocol
 
-1. Run `node src/engine/startup.js` to check config and simc sync status
+1. Run `SPEC=vengeance node src/engine/startup.js` to check config and simc sync status (use appropriate spec)
 2. Check `MULTI-SPEC-PLAN.md` for any ongoing multi-phase work
 3. Read `data/{spec}/build-theory.json` for structural context
 4. Update this file if new commands, patterns, or architectural decisions emerge
@@ -70,7 +70,7 @@ When effect data is ambiguous (e.g., unclear whether a value is a damage amp or 
 
 ### Environment Toggle
 
-Change `data.env` in `config.json` to switch between `"live"`, `"ptr"`, or `"beta"`. Then run `npm run build-data` to regenerate from the new environment. Midnight data uses `"beta"`.
+Change `data.env` in the per-spec config file (`config.{spec}.json`) or in `config.json` (global default) to switch between `"live"`, `"ptr"`, or `"beta"`. Then run `SPEC={spec} npm run build-data` to regenerate from the new environment. Midnight data uses `"beta"`.
 
 ### Hero Trees
 
@@ -115,11 +115,13 @@ Only read the full files when you need raw spell effect data (coefficients, effe
 ## Architecture
 
 ```
-config.json         # Single human-editable config (spec, simc, scenarios, fidelity)
+config.json              # Global settings (simc, data defaults, simulation, scenarios)
+config.vengeance.json    # Vengeance spec identity (className, specName, specId)
+config.devourer.json     # Devourer spec identity + overrides (e.g., data.env)
 src/
   engine/           # Core engine (spec-agnostic)
     paths.js        # Centralized per-spec path resolution (dataDir, resultsDir, aplsDir)
-    startup.js      # Loads config.json, sets spec name, derives paths, checks simc sync
+    startup.js      # Loads config.json, deep-merges config.{spec}.json via initSpec(), checks simc sync
     extract.js      # Extraction pipeline orchestrator
     model.js        # Model pipeline orchestrator
   spec/             # Spec-specific adapters
@@ -148,9 +150,9 @@ data/
     raidbots-talents.json      # Raidbots talent data
   havoc/                  # Future: another DH spec
 apls/
-  vengeance/              # Per-spec APL files
-    profile.simc          # Shared character profile (gear, talents, race)
-    baseline.simc         # SimC default APL (reference only)
+  vengeance/              # Per-spec APL files (exactly 3 tracked files)
+    baseline.simc         # SimC default APL (self-contained, including talents)
+    profile.simc          # Gear/config partial (NO talents — builds come from roster)
     vengeance.simc        # Our from-scratch APL (uses input=profile.simc)
     current.simc          # Iteration working copy (gitignored)
 results/
@@ -169,11 +171,14 @@ reference/                # Shared (cross-spec C++ source)
 
 ## Commands
 
+All commands require a spec. Use `SPEC=vengeance` env var or `--spec vengeance` flag.
+
 ```bash
 # === FULL REFRESH (after simc update) ===
-npm run refresh                              # Rebuild everything from simc
+SPEC=vengeance npm run refresh               # Rebuild everything from simc
 
 # Environment variables for refresh:
+#   SPEC=vengeance                           # Required: which spec to target
 #   SIMC_DIR=/path/to/simc                   # Override simc path
 #   SIMC_BRANCH=midnight                     # Branch to use (default: midnight)
 #   SKIP_BUILD=1                             # Skip simc binary rebuild
@@ -209,8 +214,6 @@ npm run discover -- --anni-only              # Annihilator builds only
 # === Build Roster (persistent, version-controlled) ===
 npm run roster show                          # Show roster with validation status
 npm run roster import-doe                    # Import from builds.json (DoE discovery)
-npm run roster import-multi-build            # Import from multi-build.simc (Anni builds)
-npm run roster import-profile                # Import profile.simc reference build
 npm run roster validate                      # Re-validate all builds
 npm run roster prune                         # Remove redundant builds within threshold
 npm run roster generate-hashes               # Generate hashes for override-only builds
@@ -220,11 +223,11 @@ npm run roster migrate                       # One-time v1→v2 migration from e
 node src/sim/runner.js apls/vengeance/baseline.simc  # Run simulation
 node src/sim/analyze.js                              # Analyze results
 
-# === Engine ===
-node src/engine/startup.js                   # Check config + simc sync status
-node src/engine/extract.js                   # Check extraction pipeline status
-node src/engine/model.js                     # Check model pipeline status
-node src/util/validate.js                    # Validate all data + staleness check
+# === Engine (all require SPEC env var or --spec flag) ===
+SPEC=vengeance node src/engine/startup.js    # Check config + simc sync status
+SPEC=vengeance node src/engine/extract.js    # Check extraction pipeline status
+SPEC=vengeance node src/engine/model.js      # Check model pipeline status
+SPEC=vengeance node src/util/validate.js     # Validate all data + staleness check
 npm run db:migrate                           # Import builds.json/findings.json → SQLite
 npm run db:status                            # Show SQLite record counts
 node src/util/db.js top 10                   # Top 10 builds by weighted DPS

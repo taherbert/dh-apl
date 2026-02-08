@@ -4,15 +4,11 @@
 //
 // Sources:
 //   1. DoE discovery: results/builds.json → hash-based builds per archetype
-//   2. Multi-build.simc: apls/{spec}/multi-build.simc → override-based builds
-//   3. Profile reference: apls/{spec}/profile.simc → hash from current profile
-//   4. Manual: add <hash> --archetype "Name" --hero <tree>
+//   2. Manual: add <hash> --archetype "Name" --hero <tree>
 //
 // Usage:
 //   node src/sim/build-roster.js show
 //   node src/sim/build-roster.js import-doe
-//   node src/sim/build-roster.js import-multi-build
-//   node src/sim/build-roster.js import-profile
 //   node src/sim/build-roster.js add <hash> --archetype "Name" --hero <tree>
 //   node src/sim/build-roster.js validate
 //   node src/sim/build-roster.js prune [--threshold 1.0]
@@ -25,30 +21,25 @@ import {
   renameSync,
   copyFileSync,
 } from "node:fs";
-import { join } from "node:path";
-import { config, getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
-import {
-  dataDir,
-  dataFile,
-  resultsFile,
-  aplsDir,
-  ensureSpecDirs,
-} from "../engine/paths.js";
+import { getSpecAdapter, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
+import { dataFile, resultsFile, ensureSpecDirs } from "../engine/paths.js";
 import { validateBuild, validateHash } from "../util/validate-build.js";
 import { overridesToHash } from "../util/talent-string.js";
 import { getHeroChoiceLocks } from "../model/talent-combos.js";
 
-const ROSTER_PATH = dataFile("build-roster.json");
-const BUILDS_PATH = resultsFile("builds.json");
-const MULTI_BUILD_PATH = join(aplsDir(), "multi-build.simc");
-const PROFILE_PATH = join(aplsDir(), "profile.simc");
-
+function rosterPath() {
+  return dataFile("build-roster.json");
+}
+function buildsPath() {
+  return resultsFile("builds.json");
+}
 // --- Roster I/O ---
 
 export function loadRoster() {
-  if (!existsSync(ROSTER_PATH)) return null;
+  if (!existsSync(rosterPath())) return null;
   try {
-    return JSON.parse(readFileSync(ROSTER_PATH, "utf8"));
+    return JSON.parse(readFileSync(rosterPath(), "utf8"));
   } catch (e) {
     console.error(`Failed to read roster: ${e.message}`);
     return null;
@@ -60,20 +51,21 @@ function saveRoster(roster) {
   roster._updated = new Date().toISOString();
 
   const content = JSON.stringify(roster, null, 2);
-  const tmpPath = ROSTER_PATH + ".tmp";
+  const path = rosterPath();
+  const tmpPath = path + ".tmp";
   writeFileSync(tmpPath, content);
 
   // Backup existing file before overwriting
-  if (existsSync(ROSTER_PATH)) {
-    const backupPath = ROSTER_PATH + ".bak";
+  if (existsSync(path)) {
+    const backupPath = path + ".bak";
     try {
-      copyFileSync(ROSTER_PATH, backupPath);
+      copyFileSync(path, backupPath);
     } catch {
       // Non-fatal: backup failed, proceed anyway
     }
   }
 
-  renameSync(tmpPath, ROSTER_PATH);
+  renameSync(tmpPath, path);
 }
 
 function createEmptyRoster() {
@@ -157,12 +149,12 @@ export function addBuilds(roster, newBuilds, { source = "manual" } = {}) {
 export function importFromDoe(roster) {
   if (!roster) roster = loadRoster() || createEmptyRoster();
 
-  if (!existsSync(BUILDS_PATH)) {
-    console.error(`builds.json not found at ${BUILDS_PATH}`);
+  if (!existsSync(buildsPath())) {
+    console.error(`builds.json not found at ${buildsPath()}`);
     return { added: 0, skipped: 0, invalid: 0 };
   }
 
-  const data = JSON.parse(readFileSync(BUILDS_PATH, "utf8"));
+  const data = JSON.parse(readFileSync(buildsPath(), "utf8"));
   const archetypes = data.discoveredArchetypes || [];
   const specConfig = getSpecAdapter().getSpecConfig();
   // Build DoE tree set with both config key and normalized forms for matching
@@ -224,135 +216,6 @@ export function importFromDoe(roster) {
 
   console.log(`Importing ${newBuilds.length} DoE builds from builds.json...`);
   const result = addBuilds(roster, newBuilds, { source: "doe" });
-  if (result.added > 0) saveRoster(roster);
-  return result;
-}
-
-// --- Import from multi-build.simc ---
-
-export function importFromMultiBuild(roster) {
-  if (!roster) roster = loadRoster() || createEmptyRoster();
-
-  if (!existsSync(MULTI_BUILD_PATH)) {
-    console.error(`multi-build.simc not found at ${MULTI_BUILD_PATH}`);
-    return { added: 0, skipped: 0, invalid: 0 };
-  }
-
-  const className = config.spec.className;
-  const specConfig = getSpecAdapter().getSpecConfig();
-
-  const secondaryTree = Object.entries(specConfig.heroTrees).find(
-    ([, cfg]) => cfg.buildMethod === "multi-actor",
-  )?.[0];
-
-  if (!secondaryTree) {
-    console.error("No multi-actor hero tree configured");
-    return { added: 0, skipped: 0, invalid: 0 };
-  }
-
-  const content = readFileSync(MULTI_BUILD_PATH, "utf8");
-  const actors = [];
-  let current = null;
-
-  for (const line of content.split("\n")) {
-    const trimmed = line.trim();
-
-    const actorMatch = trimmed.match(new RegExp(`^${className}="([^"]+)"`));
-    const copyMatch = trimmed.match(/^copy="([^"]+)"/);
-
-    if (actorMatch || copyMatch) {
-      current = { name: (actorMatch || copyMatch)[1], overrides: {} };
-      actors.push(current);
-      continue;
-    }
-
-    if (!current) continue;
-
-    for (const key of ["class_talents", "spec_talents", "hero_talents"]) {
-      const m = trimmed.match(new RegExp(`^${key}=(.+)`));
-      if (m) {
-        current.overrides[key] = m[1];
-        break;
-      }
-    }
-  }
-
-  // Resolve copy inheritance
-  const byName = new Map(actors.map((a) => [a.name, a]));
-  for (const actor of actors) {
-    const copyLine = content.match(
-      new RegExp(`copy="${actor.name}","([^"]+)"`),
-    );
-    if (!copyLine) continue;
-    const source = byName.get(copyLine[1]);
-    if (!source) continue;
-    for (const key of ["class_talents", "spec_talents", "hero_talents"]) {
-      if (!actor.overrides[key] && source.overrides[key]) {
-        actor.overrides[key] = source.overrides[key];
-      }
-    }
-  }
-
-  const newBuilds = actors
-    .filter((a) => a.overrides.hero_talents === secondaryTree)
-    .map((a) => ({
-      id: a.name,
-      archetype:
-        a.name
-          .replace(/^Anni_/, "")
-          .split("_")
-          .join("+") || a.name,
-      heroTree: secondaryTree,
-      hash: null,
-      overrides: a.overrides,
-    }));
-
-  console.log(
-    `Importing ${newBuilds.length} multi-build actors from multi-build.simc...`,
-  );
-  const result = addBuilds(roster, newBuilds, { source: "multi-build" });
-  if (result.added > 0) saveRoster(roster);
-  return result;
-}
-
-// --- Import from profile.simc ---
-
-export function importFromProfile(roster) {
-  if (!roster) roster = loadRoster() || createEmptyRoster();
-
-  if (!existsSync(PROFILE_PATH)) {
-    console.error(`profile.simc not found at ${PROFILE_PATH}`);
-    return { added: 0, skipped: 0, invalid: 0 };
-  }
-
-  const specConfig = getSpecAdapter().getSpecConfig();
-  const [primaryTree] = Object.keys(specConfig.heroTrees);
-
-  const content = readFileSync(PROFILE_PATH, "utf8");
-  const hashMatch = content.match(/^talents=(.+)$/m);
-  if (!hashMatch) {
-    console.error("No talents= line found in profile.simc");
-    return { added: 0, skipped: 0, invalid: 0 };
-  }
-
-  const hash = hashMatch[1].trim();
-  const prefix = primaryTree
-    .split("_")
-    .map((w) => w[0].toUpperCase())
-    .join("");
-
-  const newBuilds = [
-    {
-      id: `${prefix}_Profile_Reference`,
-      archetype: "Profile Reference",
-      heroTree: primaryTree,
-      hash,
-      overrides: null,
-    },
-  ];
-
-  console.log("Importing profile reference build...");
-  const result = addBuilds(roster, newBuilds, { source: "profile" });
   if (result.added > 0) saveRoster(roster);
   return result;
 }
@@ -458,7 +321,7 @@ export function showRoster() {
   const roster = loadRoster();
   if (!roster) {
     console.log(
-      "No roster found. Run: node src/sim/build-roster.js migrate  (or import-doe/import-multi-build)",
+      "No roster found. Run: node src/sim/build-roster.js migrate  (or import-doe)",
     );
     return;
   }
@@ -529,19 +392,7 @@ export function migrate() {
     `  DoE: ${doeResult.added} added, ${doeResult.skipped} existing, ${doeResult.invalid} invalid`,
   );
 
-  // 2. Import from multi-build.simc
-  const mbResult = importFromMultiBuild(roster);
-  console.log(
-    `  Multi-build: ${mbResult.added} added, ${mbResult.skipped} existing, ${mbResult.invalid} invalid`,
-  );
-
-  // 3. Import from profile.simc
-  const profResult = importFromProfile(roster);
-  console.log(
-    `  Profile: ${profResult.added} added, ${profResult.skipped} existing, ${profResult.invalid} invalid`,
-  );
-
-  // 4. Validate all
+  // 2. Validate all
   const valResult = validateAll(roster);
   console.log(
     `\nValidation: ${valResult.valid} valid, ${valResult.invalid} invalid out of ${valResult.total} builds`,
@@ -615,7 +466,7 @@ function sanitizeId(name) {
 // --- CLI ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const [cmd, ...args] = process.argv.slice(2);
 
   switch (cmd) {
@@ -625,22 +476,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
     case "import-doe": {
       const result = importFromDoe();
-      console.log(
-        `Done: ${result.added} added, ${result.skipped} existing, ${result.invalid} invalid`,
-      );
-      break;
-    }
-
-    case "import-multi-build": {
-      const result = importFromMultiBuild();
-      console.log(
-        `Done: ${result.added} added, ${result.skipped} existing, ${result.invalid} invalid`,
-      );
-      break;
-    }
-
-    case "import-profile": {
-      const result = importFromProfile();
       console.log(
         `Done: ${result.added} added, ${result.skipped} existing, ${result.invalid} invalid`,
       );
@@ -723,8 +558,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 Usage:
   node src/sim/build-roster.js show                              Show roster
   node src/sim/build-roster.js import-doe                        Import from builds.json
-  node src/sim/build-roster.js import-multi-build                Import from multi-build.simc
-  node src/sim/build-roster.js import-profile                    Import from profile.simc
   node src/sim/build-roster.js add <hash> --archetype "N" --hero <tree>  Add manually
   node src/sim/build-roster.js validate                          Re-validate all builds
   node src/sim/build-roster.js prune [--threshold 1.0]           Prune redundant builds

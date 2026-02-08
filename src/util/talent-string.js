@@ -206,7 +206,7 @@ export function decode(str, nodes) {
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { SPEC_ID as CONFIG_SPEC_ID, HERO_SUBTREES } from "../engine/startup.js";
+import { getSpecId, HERO_SUBTREES } from "../engine/startup.js";
 import { dataDir, dataFile } from "../engine/paths.js";
 import { normalizeSimcName } from "./validate-build.js";
 
@@ -448,12 +448,15 @@ export function overridesToHash(overrides, opts = {}) {
   );
   const fullNodes = loadFullNodeList();
   const selections = overridesToSelections(overrides, data, opts);
-  return encode(CONFIG_SPEC_ID, fullNodes, selections);
+  return encode(getSpecId(), fullNodes, selections);
 }
 
 // --- CLI ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  const { parseSpecArg } = await import("./parse-spec-arg.js");
+  const { initSpec } = await import("../engine/startup.js");
+  await initSpec(parseSpecArg());
   const data = JSON.parse(
     readFileSync(dataFile("raidbots-talents.json"), "utf8"),
   );
@@ -675,7 +678,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       sel.set(n.id, entry);
     }
 
-    const encoded = encode(CONFIG_SPEC_ID, nodes, sel);
+    const encoded = encode(getSpecId(), nodes, sel);
     console.log(`Encoded: ${encoded}`);
     console.log(`Length: ${encoded.length} chars`);
 

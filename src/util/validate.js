@@ -4,7 +4,8 @@
 import { readFileSync, existsSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { checkSync } from "../engine/startup.js";
+import { checkSync, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "./parse-spec-arg.js";
 import { dataFile, REFERENCE_DIR } from "../engine/paths.js";
 
 // Schema definitions: filename → required type or validator
@@ -159,6 +160,7 @@ export function checkStaleness() {
 
 // CLI
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  await initSpec(parseSpecArg());
   console.log("=== Data Validation ===\n");
 
   const validation = validateAll();

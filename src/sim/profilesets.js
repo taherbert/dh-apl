@@ -7,11 +7,14 @@ import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
-import { SIMC_BIN, DATA_ENV } from "../engine/startup.js";
+import { SIMC_BIN, DATA_ENV, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, resultsFile, dataFile } from "../engine/paths.js";
 
 const SIMC = SIMC_BIN;
-const GOLDEN_DIR = join(resultsDir(), "golden");
+function goldenDir() {
+  return join(resultsDir(), "golden");
+}
 
 export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
   return content
@@ -214,12 +217,19 @@ export function generateRosterProfilesetContent(roster, aplPath) {
   const resolved = resolveInputDirectives(rawApl, dirname(resolvedAplPath));
 
   const first = builds[0];
+  let foundTalents = false;
   const lines = resolved.split("\n").map((line) => {
     if (!line.trim().startsWith("#") && line.match(/^\s*talents\s*=/)) {
+      foundTalents = true;
       return `talents=${first.hash}`;
     }
     return line;
   });
+
+  // If no talents= line existed (e.g., profile.simc has no talents), append one
+  if (!foundTalents) {
+    lines.push(`talents=${first.hash}`);
+  }
 
   const output = [];
   output.push(`# Profileset comparison (auto-generated)`);
@@ -275,14 +285,14 @@ export function compareResults(baselineDPS, results) {
 }
 
 export function saveGolden(label, results) {
-  mkdirSync(GOLDEN_DIR, { recursive: true });
-  const path = join(GOLDEN_DIR, `${label}.json`);
+  mkdirSync(goldenDir(), { recursive: true });
+  const path = join(goldenDir(), `${label}.json`);
   writeFileSync(path, JSON.stringify(results, null, 2));
   console.log(`Golden results saved to ${path}`);
 }
 
 export function loadGolden(label) {
-  const path = join(GOLDEN_DIR, `${label}.json`);
+  const path = join(goldenDir(), `${label}.json`);
   if (!existsSync(path)) {
     return null;
   }
@@ -368,6 +378,7 @@ export function printProfilesetResults(results) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const profilePath = process.argv[2];
   const scenario = process.argv[3] || "st";
 

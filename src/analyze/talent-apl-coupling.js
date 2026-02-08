@@ -4,7 +4,8 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { config } from "../engine/startup.js";
+import { config, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, aplsDir } from "../engine/paths.js";
 
 // --- Coupling Categories ---
@@ -283,6 +284,7 @@ export function printCouplingReport(report) {
 
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const talentsPath = process.argv[2] || dataFile("talents.json");
   const aplPath =
     process.argv[3] || join(aplsDir(), `${config.spec.specName}.simc`);

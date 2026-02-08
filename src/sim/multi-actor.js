@@ -7,10 +7,9 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { resolveInputDirectives } from "./profilesets.js";
-import { DATA_ENV, config } from "../engine/startup.js";
+import { DATA_ENV, config, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { aplsDir, dataFile } from "../engine/paths.js";
-
-const PROFILE_PATH = join(aplsDir(), "profile.simc");
 
 // Lines from profile.simc that define the character (not gear, not talents)
 const CHAR_META_KEYS = [
@@ -62,6 +61,7 @@ function emitTalentOverrides(output, build) {
 // roster: { builds: [{ id, heroTree, hash?, overrides? }] }
 // aplPath: path to APL .simc file
 export function generateMultiActorContent(roster, aplPath) {
+  const PROFILE_PATH = join(aplsDir(), "profile.simc");
   const profileContent = readFileSync(PROFILE_PATH, "utf8");
   const profileLines = profileContent.split("\n");
 
@@ -157,6 +157,7 @@ export function generateMultiActorContent(roster, aplPath) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const aplPath =
     process.argv[2] || join(aplsDir(), `${config.spec.specName}.simc`);
   const rosterPath = process.argv[3] || dataFile("build-roster.json");

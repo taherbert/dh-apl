@@ -1,0 +1,10 @@
+{
+  "spec": {
+    "className": "demonhunter",
+    "specName": "devourer",
+    "specId": 1480
+  },
+  "data": {
+    "env": "beta"
+  }
+}

@@ -4,10 +4,11 @@
 // Usage: node src/spec/validate-spec-data.js
 
 import { readFileSync, existsSync } from "node:fs";
-import { loadSpecAdapter, getSpecAdapter } from "../engine/startup.js";
+import { initSpec, getSpecAdapter } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
-await loadSpecAdapter();
+await initSpec(parseSpecArg());
 const adapter = getSpecAdapter();
 const { SPEC_CONFIG, BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = adapter;
 

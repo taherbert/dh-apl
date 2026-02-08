@@ -5,11 +5,13 @@ import { join } from "node:path";
 import {
   DATA_ENV,
   RAIDBOTS_TALENTS,
-  SPEC_ID,
+  getSpecId,
   HERO_SUBTREES,
   SIMC_DIR,
+  initSpec,
   loadSpecAdapter,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir, dataFile, ensureSpecDirs } from "../engine/paths.js";
 
 function simplifyNode(n) {
@@ -129,11 +131,12 @@ async function fetchRaidbotsTalents() {
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
 
   const allTrees = await res.json();
-  const vdh = allTrees.find((t) => t.specId === SPEC_ID);
+  const specId = getSpecId();
+  const vdh = allTrees.find((t) => t.specId === specId);
   if (!vdh) {
     const available = allTrees.map((t) => `${t.specName} (${t.specId})`);
     throw new Error(
-      `specId ${SPEC_ID} not found. Available: ${available.join(", ")}`,
+      `specId ${specId} not found. Available: ${available.join(", ")}`,
     );
   }
 
@@ -214,4 +217,7 @@ async function fetchRaidbotsTalents() {
   console.log(`  Total talent entries: ${totalEntries}`);
 }
 
-fetchRaidbotsTalents();
+(async () => {
+  await initSpec(parseSpecArg());
+  await fetchRaidbotsTalents();
+})();

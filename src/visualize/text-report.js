@@ -3,14 +3,14 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import {
   config,
-  loadSpecAdapter,
+  initSpec,
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
 async function generateReport() {
-  await loadSpecAdapter();
   const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = getSpecAdapter();
 
   const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf-8"));
@@ -290,7 +290,9 @@ async function generateReport() {
   console.log(`Wrote data/ability-report.md (${lines.length} lines)`);
 }
 
-generateReport().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+initSpec(parseSpecArg())
+  .then(() => generateReport())
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  });

@@ -4,7 +4,8 @@
 
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import "./startup.js"; // ensures setSpecName() is called
+import { initSpec } from "./startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "./paths.js";
 
 const REQUIRED_INPUTS = {
@@ -32,6 +33,7 @@ export function checkInputs() {
 
 // CLI entry point
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  await initSpec(parseSpecArg());
   const inputs = checkInputs();
   console.log("Model pipeline status:");
   for (const [step, info] of Object.entries(inputs)) {

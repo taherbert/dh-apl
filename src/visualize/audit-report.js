@@ -1,7 +1,8 @@
 // Generates a comprehensive interaction audit report in Markdown.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import "../engine/startup.js";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
 function generateAuditReport() {
@@ -234,4 +235,5 @@ function generateAuditReport() {
   }
 }
 
+await initSpec(parseSpecArg());
 generateAuditReport();

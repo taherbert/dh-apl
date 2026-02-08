@@ -9,13 +9,15 @@ import { resolveAllDescriptions } from "./template-resolver.js";
 import {
   SIMC_BIN,
   config,
+  initSpec,
   loadSpecAdapter,
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir, dataFile, ensureSpecDirs } from "../engine/paths.js";
 
-const RAW_DIR = join(dataDir(), "raw");
+let RAW_DIR;
 
 function runSpellQuery(query) {
   try {
@@ -55,6 +57,7 @@ function runBatchSpellQuery(ids) {
 
 async function extractSpells() {
   await loadSpecAdapter();
+  RAW_DIR = join(dataDir(), "raw");
   const adapter = getSpecAdapter();
   const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = adapter;
   const classSpellQuery = adapter.getClassSpellQuery();
@@ -234,7 +237,10 @@ async function extractSpells() {
   }
 }
 
-extractSpells().catch((e) => {
+(async () => {
+  await initSpec(parseSpecArg());
+  await extractSpells();
+})().catch((e) => {
   console.error(e);
   process.exit(1);
 });

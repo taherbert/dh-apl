@@ -8,12 +8,13 @@ import {
   SIMC_DIR,
   SIMC_CPP,
   HERO_SUBTREES,
-  loadSpecAdapter,
+  initSpec,
   getSpecAdapter,
 } from "./engine/startup.js";
+import { parseSpecArg } from "./util/parse-spec-arg.js";
 import { dataFile } from "./engine/paths.js";
 
-await loadSpecAdapter();
+await initSpec(parseSpecArg());
 const { BASE_SPELL_IDS, SET_BONUS_SPELL_IDS } = getSpecAdapter();
 
 const src = readFileSync(SIMC_CPP, "utf-8");

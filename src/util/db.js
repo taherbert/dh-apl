@@ -5,7 +5,8 @@
 import { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { existsSync, readFileSync } from "node:fs";
-import "../engine/startup.js";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "./parse-spec-arg.js";
 import { resultsFile } from "../engine/paths.js";
 
 // --- Schema definitions ---
@@ -416,6 +417,7 @@ export function importFindingsFromJson(jsonPath) {
 // --- CLI ---
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  await initSpec(parseSpecArg());
   const cmd = process.argv[2];
 
   if (cmd === "migrate") {

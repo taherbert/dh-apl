@@ -16,10 +16,12 @@ import {
   inferCategories,
 } from "./interaction-types.js";
 import {
+  initSpec,
   loadSpecAdapter,
   getSpecAdapter,
   getDisplayNames,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir } from "../engine/paths.js";
 
 function buildInteractions() {
@@ -733,4 +735,7 @@ function sortCounts(countsObj) {
   return Object.entries(countsObj).sort((a, b) => b[1] - a[1]);
 }
 
-loadSpecAdapter().then(() => buildInteractions());
+(async () => {
+  await initSpec(parseSpecArg());
+  buildInteractions();
+})();

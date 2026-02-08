@@ -6,8 +6,10 @@ import { join } from "node:path";
 import {
   HERO_SUBTREES,
   getDisplayNames,
+  initSpec,
   loadSpecAdapter,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir } from "../engine/paths.js";
 
 function buildTalentTrees() {
@@ -147,4 +149,7 @@ function categorizeTalent(spell) {
   return "other";
 }
 
-loadSpecAdapter().then(() => buildTalentTrees());
+(async () => {
+  await initSpec(parseSpecArg());
+  buildTalentTrees();
+})();
