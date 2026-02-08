@@ -145,7 +145,7 @@ actions.anni+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
 actions.anni+=/immolation_aura,if=talent.charred_flesh&dot.fiery_brand.ticking
 actions.anni+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
 actions.anni+=/soul_carver,if=talent.soul_carver&soul_fragments<=3
-# FelDev: don't channel during Voidfall spending (wastes meteor triggers)
+# FelDev: channeling doesn't consume Voidfall stacks, but delays Soul Cleave meteor triggers
 actions.anni+=/fel_devastation,if=!buff.voidfall_spending.up
 # Fracture charge management — keep recharging but not when fragment-saturated
 actions.anni+=/fracture,if=cooldown.fracture.charges>=2&soul_fragments<variable.spb_threshold
