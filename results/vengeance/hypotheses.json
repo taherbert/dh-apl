@@ -9,7 +9,10 @@
       "source": "spell_data_specialist",
       "generated": "2026-02-05",
       "priority": 9,
-      "tested": false,
+      "tested": true,
+      "testedDate": "2026-02-08",
+      "result": "rejected",
+      "resultDetail": "Mean +0.108% but worst -1.063%. Fails worst-build criterion. SoulCarver Anni builds hurt by reordering — empowered cycle timing interacts with Soul Carver fragment generation.",
       "mechanism": "Fiery Demise amplifies fire damage during Fiery Brand. AR empowerment payload is physical (Reaver's Glaive strikes). Prioritizing fire-school abilities during Brand window may yield higher total damage.",
       "proposedChange": "Reorder ar_brand_window to prioritize fire abilities over empowerment triggers"
     },
@@ -20,7 +23,10 @@
       "source": "resource_flow_specialist",
       "generated": "2026-02-05",
       "priority": 8,
-      "tested": false,
+      "tested": true,
+      "testedDate": "2026-02-08",
+      "result": "accepted",
+      "resultDetail": "Mean +0.049%, worst -0.902%. Universal gain across both hero trees. Near noise at quick fidelity — needs confirm validation.",
       "mechanism": "Spirit Bomb applies Frailty debuff (damage taken increase). Casting before burst window ensures all subsequent damage is amplified. Current APL doesn't sequence Spirit Bomb relative to burst windows.",
       "proposedChange": "Add Spirit Bomb priority before major cooldown sequences"
     },
@@ -31,7 +37,10 @@
       "source": "resource_flow_specialist",
       "generated": "2026-02-05",
       "priority": 7,
-      "tested": false,
+      "tested": true,
+      "testedDate": "2026-02-08",
+      "result": "rejected",
+      "resultDetail": "Mean -0.121%, worst -1.529%. Adding fury>=60 on top of fragment guard makes the delay too long. AR -0.334% hurt by excessive Meta delay.",
       "mechanism": "Metamorphosis increases Fracture fragment generation. Having fury available immediately allows instant fragment generation for Spirit Bomb combos. Current APL doesn't pool before Meta.",
       "proposedChange": "Add fury>=60 guard to Meta activation condition"
     },
@@ -42,9 +51,40 @@
       "source": "resource_flow_specialist",
       "generated": "2026-02-05",
       "priority": 7,
-      "tested": false,
+      "tested": true,
+      "testedDate": "2026-02-08",
+      "result": "accepted (AR-only)",
+      "resultDetail": "Both-tree: mean -0.143%, worst -1.489% (rejected — Anni -0.590%). AR-only: mean +0.177%, worst -0.554% (accepted — AR +0.454%, Anni neutral -0.089%). Fragment readiness enables instant SBomb→Fracture(3)→SBomb chain.",
       "mechanism": "Untethered Rage procs from fragment consumption during Meta. Having fragments ready at Meta start maximizes proc opportunities in the extended Meta window.",
       "proposedChange": "Add soul_fragments>=3 guard to Meta activation"
+    },
+    {
+      "id": "spite-guard-relaxation-st",
+      "summary": "Remove Sigil of Spite fragment guard in single target for more AotG procs",
+      "category": "RESOURCE_FLOW",
+      "source": "community_research",
+      "generated": "2026-02-08",
+      "priority": 6,
+      "tested": true,
+      "testedDate": "2026-02-08",
+      "result": "rejected",
+      "resultDetail": "Mean -0.190%, worst -1.398%. Fragment waste when Spite fires at high frag counts pushes past cap and wastes future Fracture generation.",
+      "mechanism": "Sigil of Spite has soul_fragments<=3 guard to prevent fragment overflow. In ST, fragments are abundant so the guard may be too conservative. Relaxing allows more Spite casts and AotG procs.",
+      "proposedChange": "Add active_enemies=1 bypass to Spite fragment guard"
+    },
+    {
+      "id": "anni-meta-burst-sequence",
+      "summary": "SBomb→Soul Carver→SBomb sandwich during early Meta for Anni",
+      "category": "TIMING",
+      "source": "community_research",
+      "generated": "2026-02-08",
+      "priority": 7,
+      "tested": true,
+      "testedDate": "2026-02-08",
+      "result": "rejected",
+      "resultDetail": "Mean -0.063%, worst -0.782%. The existing priority ordering already naturally produces the burst sequence. Explicit sub-list adds overhead without benefit.",
+      "mechanism": "Discord theorycraft suggests deliberate SBomb→Soul Carver→SBomb sequence during Meta opener for maximum fragment throughput in Annihilator builds.",
+      "proposedChange": "Create anni_meta_burst sub-list called during early Meta (remains>12s)"
     }
   ]
 }
