@@ -1,6 +1,6 @@
 {
   "_schema": "roster-v2",
-  "_updated": "2026-02-08T02:06:57.393Z",
+  "_updated": "2026-02-08T05:00:29.809Z",
   "builds": [
     {
       "id": "V_EradicateStarFragmentsMidnight_1",
@@ -12,12 +12,12 @@
       "addedAt": "2026-02-08T00:33:53.344Z",
       "validated": true,
       "lastDps": {
-        "st": 79376,
-        "small_aoe": 307436,
-        "big_aoe": 582816,
-        "weighted": 248482
+        "st": 79280,
+        "small_aoe": 308480,
+        "big_aoe": 584889,
+        "weighted": 249161.8
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsMidnight_2",
@@ -29,12 +29,12 @@
       "addedAt": "2026-02-08T00:33:53.345Z",
       "validated": true,
       "lastDps": {
-        "st": 72793,
-        "small_aoe": 307132,
-        "big_aoe": 591005,
-        "weighted": 246737.09999999998
+        "st": 72932,
+        "small_aoe": 308564,
+        "big_aoe": 591613,
+        "weighted": 247357.8
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsMidnight_3",
@@ -46,12 +46,12 @@
       "addedAt": "2026-02-08T00:33:53.345Z",
       "validated": true,
       "lastDps": {
-        "st": 72909,
-        "small_aoe": 293810,
-        "big_aoe": 548769,
-        "weighted": 234351.3
+        "st": 72853,
+        "small_aoe": 295483,
+        "big_aoe": 550192,
+        "weighted": 235109.8
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragments_1",
@@ -63,12 +63,12 @@
       "addedAt": "2026-02-08T00:33:53.346Z",
       "validated": true,
       "lastDps": {
-        "st": 81195,
-        "small_aoe": 322934,
-        "big_aoe": 588083,
-        "weighted": 255094.30000000002
+        "st": 80959,
+        "small_aoe": 322059,
+        "big_aoe": 590739,
+        "weighted": 255245
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragments_2",
@@ -80,12 +80,12 @@
       "addedAt": "2026-02-08T00:33:53.346Z",
       "validated": true,
       "lastDps": {
-        "st": 81149,
-        "small_aoe": 310040,
-        "big_aoe": 560670,
-        "weighted": 245720.5
+        "st": 81327,
+        "small_aoe": 308804,
+        "big_aoe": 560891,
+        "weighted": 245482.90000000002
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragments_3",
@@ -97,12 +97,12 @@
       "addedAt": "2026-02-08T00:33:53.347Z",
       "validated": true,
       "lastDps": {
-        "st": 76429,
-        "small_aoe": 303148,
-        "big_aoe": 554936,
-        "weighted": 240146.1
+        "st": 76376,
+        "small_aoe": 303824,
+        "big_aoe": 555100,
+        "weighted": 240355.2
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinct_1",
@@ -114,12 +114,12 @@
       "addedAt": "2026-02-08T00:33:53.347Z",
       "validated": true,
       "lastDps": {
-        "st": 75298,
-        "small_aoe": 290850,
-        "big_aoe": 565209,
-        "weighted": 237945.8
+        "st": 75110,
+        "small_aoe": 291343,
+        "big_aoe": 566359,
+        "weighted": 238229.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinct_2",
@@ -131,12 +131,12 @@
       "addedAt": "2026-02-08T00:33:53.348Z",
       "validated": true,
       "lastDps": {
-        "st": 68655,
-        "small_aoe": 284001,
-        "big_aoe": 562177,
-        "weighted": 231963.2
+        "st": 68647,
+        "small_aoe": 283938,
+        "big_aoe": 562869,
+        "weighted": 232078.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinct_3",
@@ -148,12 +148,12 @@
       "addedAt": "2026-02-08T00:33:53.348Z",
       "validated": true,
       "lastDps": {
-        "st": 68475,
-        "small_aoe": 297454,
-        "big_aoe": 538163,
-        "weighted": 231106.3
+        "st": 68553,
+        "small_aoe": 296829,
+        "big_aoe": 538073,
+        "weighted": 230939.8
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinctMid_1",
@@ -165,12 +165,12 @@
       "addedAt": "2026-02-08T00:33:53.349Z",
       "validated": true,
       "lastDps": {
-        "st": 69653,
-        "small_aoe": 291822,
-        "big_aoe": 553975,
-        "weighted": 233168.09999999998
+        "st": 69583,
+        "small_aoe": 292520,
+        "big_aoe": 553641,
+        "weighted": 233275.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinctMid_2",
@@ -182,12 +182,12 @@
       "addedAt": "2026-02-08T00:33:53.349Z",
       "validated": true,
       "lastDps": {
-        "st": 69114,
-        "small_aoe": 256691,
-        "big_aoe": 492406,
-        "weighted": 210045.5
+        "st": 69193,
+        "small_aoe": 257864,
+        "big_aoe": 493347,
+        "weighted": 210625.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinctMid_3",
@@ -199,12 +199,12 @@
       "addedAt": "2026-02-08T00:33:53.350Z",
       "validated": true,
       "lastDps": {
-        "st": 65392,
-        "small_aoe": 250369,
-        "big_aoe": 448515,
-        "weighted": 197509.7
+        "st": 65393,
+        "small_aoe": 250729,
+        "big_aoe": 449475,
+        "weighted": 197810.2
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsMidnight_1",
@@ -216,12 +216,12 @@
       "addedAt": "2026-02-08T00:33:53.350Z",
       "validated": true,
       "lastDps": {
-        "st": 75592,
-        "small_aoe": 286440,
-        "big_aoe": 530812,
-        "weighted": 229890.40000000002
+        "st": 75584,
+        "small_aoe": 286309,
+        "big_aoe": 529920,
+        "weighted": 229668.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsMidnight_2",
@@ -233,12 +233,12 @@
       "addedAt": "2026-02-08T00:33:53.351Z",
       "validated": true,
       "lastDps": {
-        "st": 66838,
-        "small_aoe": 263546,
-        "big_aoe": 506177,
-        "weighted": 213718.2
+        "st": 66884,
+        "small_aoe": 263800,
+        "big_aoe": 504698,
+        "weighted": 213521.6
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsMidnight_3",
@@ -250,12 +250,12 @@
       "addedAt": "2026-02-08T00:33:53.351Z",
       "validated": true,
       "lastDps": {
-        "st": 67051,
-        "small_aoe": 264378,
-        "big_aoe": 476814,
-        "weighted": 208201.7
+        "st": 66963,
+        "small_aoe": 264756,
+        "big_aoe": 477849,
+        "weighted": 208478.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsDemonicInstinctMid_1",
@@ -267,12 +267,12 @@
       "addedAt": "2026-02-08T00:33:53.352Z",
       "validated": true,
       "lastDps": {
-        "st": 65430,
-        "small_aoe": 274469,
-        "big_aoe": 502873,
-        "weighted": 215630.3
+        "st": 65277,
+        "small_aoe": 274317,
+        "big_aoe": 503485,
+        "weighted": 215630.59999999998
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsDemonicInstinctMid_2",
@@ -284,12 +284,12 @@
       "addedAt": "2026-02-08T00:33:53.352Z",
       "validated": true,
       "lastDps": {
-        "st": 69014,
-        "small_aoe": 258873,
-        "big_aoe": 477081,
-        "weighted": 207585.1
+        "st": 69015,
+        "small_aoe": 259536,
+        "big_aoe": 476674,
+        "weighted": 207703.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsDemonicInstinctMid_3",
@@ -301,12 +301,12 @@
       "addedAt": "2026-02-08T00:33:53.352Z",
       "validated": true,
       "lastDps": {
-        "st": 60384,
-        "small_aoe": 237848,
-        "big_aoe": 429122,
-        "weighted": 187370.8
+        "st": 60293,
+        "small_aoe": 237747,
+        "big_aoe": 428617,
+        "weighted": 187194
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragments_1",
@@ -318,12 +318,12 @@
       "addedAt": "2026-02-08T00:33:53.353Z",
       "validated": true,
       "lastDps": {
-        "st": 62853,
-        "small_aoe": 241781,
-        "big_aoe": 454782,
-        "weighted": 194917.2
+        "st": 63119,
+        "small_aoe": 242463,
+        "big_aoe": 457442,
+        "weighted": 195786.8
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragments_2",
@@ -335,12 +335,12 @@
       "addedAt": "2026-02-08T00:33:53.353Z",
       "validated": true,
       "lastDps": {
-        "st": 65806,
-        "small_aoe": 245595,
-        "big_aoe": 443621,
-        "weighted": 195305.7
+        "st": 65862,
+        "small_aoe": 247181,
+        "big_aoe": 447849,
+        "weighted": 196655.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragments_3",
@@ -352,12 +352,12 @@
       "addedAt": "2026-02-08T00:33:53.354Z",
       "validated": true,
       "lastDps": {
-        "st": 61300,
-        "small_aoe": 243750,
-        "big_aoe": 456359,
-        "weighted": 195046.8
+        "st": 61192,
+        "small_aoe": 245224,
+        "big_aoe": 457236,
+        "weighted": 195610.40000000002
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsDemonicInstinct_1",
@@ -369,12 +369,12 @@
       "addedAt": "2026-02-08T00:33:53.354Z",
       "validated": true,
       "lastDps": {
-        "st": 62973,
-        "small_aoe": 234233,
-        "big_aoe": 445256,
-        "weighted": 190807.6
+        "st": 63038,
+        "small_aoe": 234539,
+        "big_aoe": 446110,
+        "weighted": 191102.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsDemonicInstinct_2",
@@ -386,12 +386,12 @@
       "addedAt": "2026-02-08T00:33:53.354Z",
       "validated": true,
       "lastDps": {
-        "st": 59238,
-        "small_aoe": 229983,
-        "big_aoe": 427376,
-        "weighted": 184089.1
+        "st": 59510,
+        "small_aoe": 230084,
+        "big_aoe": 426795,
+        "weighted": 184139.2
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "A_EradicateStarFragmentsDemonicInstinct_3",
@@ -403,12 +403,12 @@
       "addedAt": "2026-02-08T00:33:53.355Z",
       "validated": true,
       "lastDps": {
-        "st": 59598,
-        "small_aoe": 229642,
-        "big_aoe": 435781,
-        "weighted": 185847.8
+        "st": 59766,
+        "small_aoe": 229671,
+        "big_aoe": 435249,
+        "weighted": 185834.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragments_1",
@@ -420,12 +420,12 @@
       "addedAt": "2026-02-08T00:33:53.355Z",
       "validated": true,
       "lastDps": {
-        "st": 82077,
-        "small_aoe": 213454,
-        "big_aoe": 343160,
-        "weighted": 173706.7
+        "st": 82146,
+        "small_aoe": 214035,
+        "big_aoe": 342279,
+        "weighted": 173739.3
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragments_2",
@@ -437,12 +437,12 @@
       "addedAt": "2026-02-08T00:33:53.356Z",
       "validated": true,
       "lastDps": {
-        "st": 82200,
-        "small_aoe": 215865,
-        "big_aoe": 329658,
-        "weighted": 171791.1
+        "st": 82393,
+        "small_aoe": 216938,
+        "big_aoe": 330020,
+        "weighted": 172281.9
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragments_3",
@@ -454,12 +454,12 @@
       "addedAt": "2026-02-08T00:33:53.356Z",
       "validated": true,
       "lastDps": {
-        "st": 80389,
-        "small_aoe": 208122,
-        "big_aoe": 340835,
-        "weighted": 170798.1
+        "st": 80346,
+        "small_aoe": 208300,
+        "big_aoe": 340310,
+        "weighted": 170725
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinct_1",
@@ -471,12 +471,12 @@
       "addedAt": "2026-02-08T00:33:53.356Z",
       "validated": true,
       "lastDps": {
-        "st": 80655,
-        "small_aoe": 220278,
-        "big_aoe": 366357,
-        "weighted": 179682.3
+        "st": 80788,
+        "small_aoe": 220555,
+        "big_aoe": 366553,
+        "weighted": 179871.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinct_2",
@@ -488,12 +488,12 @@
       "addedAt": "2026-02-08T00:33:53.357Z",
       "validated": true,
       "lastDps": {
-        "st": 84185,
-        "small_aoe": 215935,
-        "big_aoe": 340939,
-        "weighted": 175060.8
+        "st": 84112,
+        "small_aoe": 216354,
+        "big_aoe": 340170,
+        "weighted": 174996.2
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinct_3",
@@ -505,12 +505,12 @@
       "addedAt": "2026-02-08T00:33:53.357Z",
       "validated": true,
       "lastDps": {
-        "st": 82857,
-        "small_aoe": 214578,
-        "big_aoe": 334814,
-        "weighted": 172764.7
+        "st": 82885,
+        "small_aoe": 214405,
+        "big_aoe": 334060,
+        "weighted": 172576
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragmentsMidnight_1",
@@ -522,12 +522,12 @@
       "addedAt": "2026-02-08T00:33:53.358Z",
       "validated": true,
       "lastDps": {
-        "st": 78466,
-        "small_aoe": 218871,
-        "big_aoe": 338781,
-        "weighted": 172650.5
+        "st": 78542,
+        "small_aoe": 219406,
+        "big_aoe": 339254,
+        "weighted": 172943.6
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragmentsMidnight_2",
@@ -539,12 +539,12 @@
       "addedAt": "2026-02-08T00:33:53.358Z",
       "validated": true,
       "lastDps": {
-        "st": 71042,
-        "small_aoe": 219971,
-        "big_aoe": 350150,
-        "weighted": 171542.3
+        "st": 71208,
+        "small_aoe": 219962,
+        "big_aoe": 350469,
+        "weighted": 171686.4
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_StarFragmentsMidnight_3",
@@ -556,12 +556,12 @@
       "addedAt": "2026-02-08T00:33:53.358Z",
       "validated": true,
       "lastDps": {
-        "st": 77277,
-        "small_aoe": 213543,
-        "big_aoe": 333875,
-        "weighted": 169476.4
+        "st": 77399,
+        "small_aoe": 213426,
+        "big_aoe": 333936,
+        "weighted": 169514.5
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_Midnight_1",
@@ -573,12 +573,12 @@
       "addedAt": "2026-02-08T00:33:53.359Z",
       "validated": true,
       "lastDps": {
-        "st": 74775,
-        "small_aoe": 231325,
-        "big_aoe": 359839,
-        "weighted": 178752.8
+        "st": 75050,
+        "small_aoe": 231343,
+        "big_aoe": 358885,
+        "weighted": 178704.9
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.808Z"
     },
     {
       "id": "V_Midnight_2",
@@ -590,12 +590,12 @@
       "addedAt": "2026-02-08T00:33:53.359Z",
       "validated": true,
       "lastDps": {
-        "st": 77883,
-        "small_aoe": 229489,
-        "big_aoe": 357324,
-        "weighted": 179253
+        "st": 77689,
+        "small_aoe": 230094,
+        "big_aoe": 358475,
+        "weighted": 179567.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_Midnight_3",
@@ -607,12 +607,12 @@
       "addedAt": "2026-02-08T00:33:53.360Z",
       "validated": true,
       "lastDps": {
-        "st": 75775,
-        "small_aoe": 220530,
-        "big_aoe": 368361,
-        "weighted": 177718.7
+        "st": 75923,
+        "small_aoe": 219712,
+        "big_aoe": 365988,
+        "weighted": 177072.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinctMidnight_1",
@@ -624,12 +624,12 @@
       "addedAt": "2026-02-08T00:33:53.360Z",
       "validated": true,
       "lastDps": {
-        "st": 78526,
-        "small_aoe": 210663,
-        "big_aoe": 335031,
-        "weighted": 169468.09999999998
+        "st": 78669,
+        "small_aoe": 210611,
+        "big_aoe": 335191,
+        "weighted": 169556
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinctMidnight_2",
@@ -641,12 +641,12 @@
       "addedAt": "2026-02-08T00:33:53.360Z",
       "validated": true,
       "lastDps": {
-        "st": 68110,
-        "small_aoe": 200411,
-        "big_aoe": 337602,
-        "weighted": 161698.7
+        "st": 68060,
+        "small_aoe": 200043,
+        "big_aoe": 337120,
+        "weighted": 161466.9
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinctMidnight_3",
@@ -658,12 +658,12 @@
       "addedAt": "2026-02-08T00:33:53.361Z",
       "validated": true,
       "lastDps": {
-        "st": 68743,
-        "small_aoe": 196023,
-        "big_aoe": 338731,
-        "weighted": 160924.59999999998
+        "st": 68758,
+        "small_aoe": 195708,
+        "big_aoe": 338014,
+        "weighted": 160694.2
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsMidnight_1",
@@ -675,12 +675,12 @@
       "addedAt": "2026-02-08T00:33:53.361Z",
       "validated": true,
       "lastDps": {
-        "st": 79934,
-        "small_aoe": 235325,
-        "big_aoe": 403492,
-        "weighted": 191262.90000000002
+        "st": 80309,
+        "small_aoe": 234939,
+        "big_aoe": 401905,
+        "weighted": 191017.2
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsMidnight_2",
@@ -692,12 +692,12 @@
       "addedAt": "2026-02-08T00:33:53.361Z",
       "validated": true,
       "lastDps": {
-        "st": 74945,
-        "small_aoe": 241305,
-        "big_aoe": 395655,
-        "weighted": 188995
+        "st": 74949,
+        "small_aoe": 241707,
+        "big_aoe": 395822,
+        "weighted": 189151
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsMidnight_3",
@@ -709,12 +709,12 @@
       "addedAt": "2026-02-08T00:33:53.362Z",
       "validated": true,
       "lastDps": {
-        "st": 76997,
-        "small_aoe": 238176,
-        "big_aoe": 393516,
-        "weighted": 188654.5
+        "st": 76952,
+        "small_aoe": 237535,
+        "big_aoe": 393249,
+        "weighted": 188386.3
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_voidscarred_1",
@@ -726,12 +726,12 @@
       "addedAt": "2026-02-08T00:33:53.362Z",
       "validated": true,
       "lastDps": {
-        "st": 83463,
-        "small_aoe": 181441,
-        "big_aoe": 282076,
-        "weighted": 152579
+        "st": 83658,
+        "small_aoe": 181016,
+        "big_aoe": 282208,
+        "weighted": 152575.4
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_voidscarred_2",
@@ -743,12 +743,12 @@
       "addedAt": "2026-02-08T00:33:53.363Z",
       "validated": true,
       "lastDps": {
-        "st": 70673,
-        "small_aoe": 171481,
-        "big_aoe": 277824,
-        "weighted": 142345.59999999998
+        "st": 70489,
+        "small_aoe": 171141,
+        "big_aoe": 277541,
+        "weighted": 142095
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_voidscarred_3",
@@ -760,12 +760,12 @@
       "addedAt": "2026-02-08T00:33:53.363Z",
       "validated": true,
       "lastDps": {
-        "st": 73189,
-        "small_aoe": 173523,
-        "big_aoe": 263294,
-        "weighted": 141310.2
+        "st": 73082,
+        "small_aoe": 172965,
+        "big_aoe": 263276,
+        "weighted": 141085.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsDemonicInstinctMidnight_1",
@@ -777,12 +777,12 @@
       "addedAt": "2026-02-08T00:33:53.363Z",
       "validated": true,
       "lastDps": {
-        "st": 66495,
-        "small_aoe": 212942,
-        "big_aoe": 362235,
-        "weighted": 169577.1
+        "st": 66749,
+        "small_aoe": 213373,
+        "big_aoe": 362658,
+        "weighted": 169918
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsDemonicInstinctMidnight_2",
@@ -794,12 +794,12 @@
       "addedAt": "2026-02-08T00:33:53.364Z",
       "validated": true,
       "lastDps": {
-        "st": 66149,
-        "small_aoe": 215986,
-        "big_aoe": 370164,
-        "weighted": 171903.09999999998
+        "st": 66371,
+        "small_aoe": 215398,
+        "big_aoe": 371382,
+        "weighted": 172081.3
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsDemonicInstinctMidnight_3",
@@ -811,12 +811,12 @@
       "addedAt": "2026-02-08T00:33:53.364Z",
       "validated": true,
       "lastDps": {
-        "st": 68206,
-        "small_aoe": 214413,
-        "big_aoe": 368087,
-        "weighted": 172044.3
+        "st": 68090,
+        "small_aoe": 213775,
+        "big_aoe": 367738,
+        "weighted": 171725.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_DemonicInstinct_1",
@@ -828,12 +828,12 @@
       "addedAt": "2026-02-08T00:33:53.365Z",
       "validated": true,
       "lastDps": {
-        "st": 78875,
-        "small_aoe": 184699,
-        "big_aoe": 295465,
-        "weighted": 153940.2
+        "st": 78774,
+        "small_aoe": 184575,
+        "big_aoe": 295269,
+        "weighted": 153813.3
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_DemonicInstinct_2",
@@ -845,12 +845,12 @@
       "addedAt": "2026-02-08T00:33:53.365Z",
       "validated": true,
       "lastDps": {
-        "st": 80278,
-        "small_aoe": 181067,
-        "big_aoe": 286996,
-        "weighted": 151858.30000000002
+        "st": 80085,
+        "small_aoe": 181691,
+        "big_aoe": 286980,
+        "weighted": 151945.8
       },
-      "lastTestedAt": "2026-02-08T02:06:57.392Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "V_DemonicInstinct_3",
@@ -862,12 +862,12 @@
       "addedAt": "2026-02-08T00:33:53.365Z",
       "validated": true,
       "lastDps": {
-        "st": 81030,
-        "small_aoe": 181761,
-        "big_aoe": 287123,
-        "weighted": 152467.9
+        "st": 80965,
+        "small_aoe": 181615,
+        "big_aoe": 286573,
+        "weighted": 152281.6
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_Midnight_1",
@@ -879,12 +879,12 @@
       "addedAt": "2026-02-08T00:33:53.366Z",
       "validated": true,
       "lastDps": {
-        "st": 67144,
-        "small_aoe": 212485,
-        "big_aoe": 361239,
-        "weighted": 169565.3
+        "st": 67090,
+        "small_aoe": 212023,
+        "big_aoe": 361784,
+        "weighted": 169508.7
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_Midnight_2",
@@ -896,12 +896,12 @@
       "addedAt": "2026-02-08T00:33:53.366Z",
       "validated": true,
       "lastDps": {
-        "st": 67846,
-        "small_aoe": 204660,
-        "big_aoe": 355023,
-        "weighted": 166325.6
+        "st": 68038,
+        "small_aoe": 204284,
+        "big_aoe": 355037,
+        "weighted": 166311.6
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_Midnight_3",
@@ -913,12 +913,12 @@
       "addedAt": "2026-02-08T00:33:53.367Z",
       "validated": true,
       "lastDps": {
-        "st": 67696,
-        "small_aoe": 201717,
-        "big_aoe": 342117,
-        "weighted": 162786.5
+        "st": 67822,
+        "small_aoe": 201413,
+        "big_aoe": 341245,
+        "weighted": 162583.9
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsDemonicInstinct_1",
@@ -930,12 +930,12 @@
       "addedAt": "2026-02-08T00:33:53.367Z",
       "validated": true,
       "lastDps": {
-        "st": 66108,
-        "small_aoe": 188801,
-        "big_aoe": 322315,
-        "weighted": 154157.3
+        "st": 66170,
+        "small_aoe": 189090,
+        "big_aoe": 322362,
+        "weighted": 154284.4
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsDemonicInstinct_2",
@@ -947,12 +947,12 @@
       "addedAt": "2026-02-08T00:33:53.367Z",
       "validated": true,
       "lastDps": {
-        "st": 65770,
-        "small_aoe": 189608,
-        "big_aoe": 322870,
-        "weighted": 154341.4
+        "st": 65726,
+        "small_aoe": 190834,
+        "big_aoe": 326768,
+        "weighted": 155466.8
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_StarFragmentsDemonicInstinct_3",
@@ -964,12 +964,12 @@
       "addedAt": "2026-02-08T00:33:53.368Z",
       "validated": true,
       "lastDps": {
-        "st": 64577,
-        "small_aoe": 187504,
-        "big_aoe": 329562,
-        "weighted": 154452.1
+        "st": 64453,
+        "small_aoe": 187642,
+        "big_aoe": 330387,
+        "weighted": 154596.5
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_annihilator_1",
@@ -981,12 +981,12 @@
       "addedAt": "2026-02-08T00:33:53.368Z",
       "validated": true,
       "lastDps": {
-        "st": 66656,
-        "small_aoe": 173641,
-        "big_aoe": 281190,
-        "weighted": 141658.3
+        "st": 66675,
+        "small_aoe": 173450,
+        "big_aoe": 280788,
+        "weighted": 141530.1
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_annihilator_2",
@@ -998,12 +998,12 @@
       "addedAt": "2026-02-08T00:33:53.369Z",
       "validated": true,
       "lastDps": {
-        "st": 63514,
-        "small_aoe": 170394,
-        "big_aoe": 287817,
-        "weighted": 140438.6
+        "st": 63609,
+        "small_aoe": 170201,
+        "big_aoe": 286457,
+        "weighted": 140156.19999999998
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     },
     {
       "id": "A_annihilator_3",
@@ -1015,12 +1015,12 @@
       "addedAt": "2026-02-08T00:33:53.369Z",
       "validated": true,
       "lastDps": {
-        "st": 64037,
-        "small_aoe": 170674,
-        "big_aoe": 282793,
-        "weighted": 139779.3
+        "st": 64077,
+        "small_aoe": 170414,
+        "big_aoe": 282219,
+        "weighted": 139606.5
       },
-      "lastTestedAt": "2026-02-08T02:06:57.393Z"
+      "lastTestedAt": "2026-02-08T05:00:29.809Z"
     }
   ]
 }

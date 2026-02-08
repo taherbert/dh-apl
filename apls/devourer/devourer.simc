@@ -44,6 +44,8 @@ actions+=/collapsing_star,if=buff.dark_matter.up&buff.metamorphosis.up&talent.da
 actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)
 # Cast Void Ray: always with Eradicate (triggers MoC+Eradicate buff), otherwise need Meta/talents/AoE
 actions+=/void_ray,if=(buff.metamorphosis.up|talent.sweet_release|talent.voidfall|talent.eradicate|active_enemies>1)&(!buff.eradicate.up|active_enemies=1)
+# DB builds: ensure Voidblade debuff is applied before CStar/Reap burst
+actions+=/voidblade,if=talent.devourers_bite&!talent.voidsurge&!debuff.devourers_bite.up
 # Use CStar after Predators Wake for VS, do not waste Voidblade CDR if possible
 actions+=/collapsing_star,if=(!cooldown.predators_wake.up&talent.voidrush&!buff.hungering_slash.up&cooldown.voidblade.remains>=6|!talent.voidrush)&variable.should_use_star
 # Reap to generate a Collapsing Star quicker or to get in Meta quicker
