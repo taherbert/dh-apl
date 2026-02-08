@@ -73,10 +73,10 @@ actions.ar+=/call_action_list,name=ar_cooldowns
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.fallout_aoe
 # WQ Physical feed: Fracture when Reaver's Mark is up to maximize WQ accumulation in ST
 actions.ar+=/fracture,if=debuff.reavers_mark.up&active_enemies=1&soul_fragments<variable.spb_threshold
-# Fracture charge management — keep recharging but not when fragment-saturated
+# Fracture charge management — fire when second charge is about to cap (within 1 GCD)
 # In ST during FD, skip: SBomb at 3 per-GCD (3.9×) > Fracture→SBomb at 5 per-GCD (3.75×)
 # In AoE during FD, keep: AoE SBomb damage scales with frags, building to 5 is worth the Fracture GCD
-actions.ar+=/fracture,if=cooldown.fracture.charges>=2&soul_fragments<variable.spb_threshold&(!variable.fiery_demise_active|active_enemies>=3)
+actions.ar+=/fracture,if=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold&(!variable.fiery_demise_active|active_enemies>=3)
 # Spirit Bomb — drop threshold to 3 during Fiery Demise (30% fire amp makes 3-frag casts worthwhile)
 actions.ar+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active
 actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
@@ -99,8 +99,8 @@ actions.ar_empowered+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up
 actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
 actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
 
-# === AR Cooldowns — Brand first enables Fiery Demise window ===
-actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|!dot.fiery_brand.ticking)
+# === AR Cooldowns — Brand synced to fire CD availability for denser FD windows ===
+actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&(cooldown.soul_carver.remains<6|cooldown.fel_devastation.remains<6|cooldown.sigil_of_spite.remains<6)))
 actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=5
 actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
@@ -147,8 +147,8 @@ actions.anni+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
 actions.anni+=/soul_carver,if=talent.soul_carver&soul_fragments<=3
 # FelDev: channeling doesn't consume Voidfall stacks, but delays Soul Cleave meteor triggers
 actions.anni+=/fel_devastation,if=!buff.voidfall_spending.up
-# Fracture charge management — keep recharging but not when fragment-saturated
-actions.anni+=/fracture,if=cooldown.fracture.charges>=2&soul_fragments<variable.spb_threshold
+# Fracture charge management — fire when second charge is about to cap (within 1 GCD)
+actions.anni+=/fracture,if=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold
 # Spirit Bomb — uses variable threshold (lowered during UR fishing)
 actions.anni+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 # Core rotation
