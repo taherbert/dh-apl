@@ -37,6 +37,7 @@
     "discover": "node src/discover/build-discovery.js",
     "roster": "node src/sim/build-roster.js",
     "dashboard": "cat results/dashboard.md",
+    "showcase": "node src/visualize/showcase.js",
     "refresh": "bash scripts/refresh.sh"
   }
 }
