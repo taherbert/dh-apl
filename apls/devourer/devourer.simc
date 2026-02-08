@@ -40,14 +40,14 @@ actions+=/void_ray,if=talent.eradicate&active_enemies>1&!buff.eradicate.up
 actions+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate|active_enemies=1
 # Meta Cull Line
 actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)
-# Do not waste Eradicate on AOE
-actions+=/void_ray,if=(buff.metamorphosis.up|talent.sweet_release|talent.voidfall|active_enemies>1)&(!buff.eradicate.up|active_enemies=1)
+# Cast Void Ray: always with Eradicate (triggers MoC+Eradicate buff), otherwise need Meta/talents/AoE
+actions+=/void_ray,if=(buff.metamorphosis.up|talent.sweet_release|talent.voidfall|talent.eradicate|active_enemies>1)&(!buff.eradicate.up|active_enemies=1)
 # Use CStar after Predators Wake for VS, do not waste Voidblade CDR if possible
 actions+=/collapsing_star,if=(!cooldown.predators_wake.up&talent.voidrush&!buff.hungering_slash.up&cooldown.voidblade.remains>=6|!talent.voidrush)&variable.should_use_star
 # Reap to generate a Collapsing Star quicker or to get in Meta quicker
 actions+=/call_action_list,name=reaps,if=!talent.voidfall&action.reap.souls_consumed>=4&(!buff.metamorphosis.up&(buff.void_metamorphosis_stack.stack+action.reap.souls_consumed)>=buff.void_metamorphosis_stack.max_stack|buff.metamorphosis.up&!buff.collapsing_star_ready.up&(buff.collapsing_star_stacking.stack+action.reap.souls_consumed>=30)&variable.should_use_star)
-# Annihilator Reap Line
-actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.react|buff.eradicate.up&active_enemies>1
+# Annihilator Reap Line — pool to max stacks for concentrated Voidfall burst
+actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.at_max_stacks|buff.eradicate.up&active_enemies>1
 actions+=/call_action_list,name=melee_combo
 actions+=/soul_immolation,if=active_dot.soul_immolation=0&!buff.metamorphosis.up
 # Fall through Star — better than Devour
