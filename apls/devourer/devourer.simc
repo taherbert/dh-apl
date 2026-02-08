@@ -34,14 +34,17 @@ actions=/call_action_list,name=math_for_wizards
 actions+=/call_action_list,name=illicit_doping
 actions+=/voidblade,if=buff.void_metamorphosis_stack.at_max_stacks&talent.voidsurge
 actions+=/the_hunt,if=buff.void_metamorphosis_stack.at_max_stacks&talent.voidsurge
-# Smuggle an Eradicate into Meta if on AOE (+0.5%)
-actions+=/void_ray,if=talent.eradicate&active_enemies>1&!buff.eradicate.up
+# Smuggle Eradicate before Meta — +31.74% DoE factor worth 1 GCD pre-Meta
+actions+=/void_ray,if=talent.eradicate&!buff.eradicate.up
 actions+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate|active_enemies=1
 # Dark Matter CStar urgency — fire CStar immediately after Meta to trigger meteor shower
 actions+=/collapsing_star,if=buff.dark_matter.up&buff.metamorphosis.up
 # Meta Cull Line
 actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)
+# VR during Meta at low fury — channel reduces fury drain to 15%, extending burst window
+actions+=/void_ray,if=buff.metamorphosis.up&fury<=50
 # Cast Void Ray: always with Eradicate (triggers MoC+Eradicate buff), otherwise need Meta/talents/AoE
+# Guard: skip in multi-target if Eradicate already active (line 38 handles that case)
 actions+=/void_ray,if=(buff.metamorphosis.up|talent.sweet_release|talent.voidfall|talent.eradicate|active_enemies>1)&(!buff.eradicate.up|active_enemies=1)
 # DB builds: ensure Voidblade debuff is applied before CStar/Reap burst
 actions+=/voidblade,if=talent.devourers_bite&!talent.voidsurge&!debuff.devourers_bite.up
