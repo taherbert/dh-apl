@@ -12,7 +12,7 @@ import {
   loadFullNodeList,
 } from "../util/talent-string.js";
 import { dataDir, aplsDir, ROOT } from "../engine/paths.js";
-import { getSpecAdapter } from "../engine/startup.js";
+import { getSpecAdapter, SPEC_ID } from "../engine/startup.js";
 
 const CLASS_POINTS = 34;
 const SPEC_POINTS = 34;
@@ -190,7 +190,12 @@ export function classifyNodes(nodes, nodeMap, budget, overrides = {}) {
   const effectiveExclusions = buildEffectiveExclusions(overrides);
 
   // Force-require nodes: move from factors to locked
-  const requireNames = new Set(overrides.require || []);
+  // Sources: explicit overrides + SPEC_CONFIG.requiredTalents
+  const config = getSpecAdapter().getSpecConfig();
+  const requireNames = new Set([
+    ...(overrides.require || []),
+    ...(config.requiredTalents || []),
+  ]);
   for (const node of nodes) {
     if (requireNames.has(node.name) && !locked.has(node.id)) {
       locked.add(node.id);
@@ -809,14 +814,14 @@ export function toTalentString(build, data) {
 // Encode a DoE build into a base64 talent hash string.
 // Must use the full DH node list (all specs, all hero trees) for correct
 // bit alignment — the game client encodes against C_Traits.GetTreeNodes().
-export function buildToHash(build, data, specId = 581) {
+export function buildToHash(build, data, specId = SPEC_ID) {
   const selections = buildToSelections(build, data);
   const nodes = loadFullNodeList();
   return encode(specId, nodes, selections);
 }
 
 // Return a profileset variant object for a DoE build.
-export function buildToVariant(build, data, specId = 581) {
+export function buildToVariant(build, data, specId = SPEC_ID) {
   const hash = buildToHash(build, data, specId);
   return { name: build.name, overrides: [`talents=${hash}`] };
 }

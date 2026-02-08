@@ -283,9 +283,16 @@ export function buildToSelections(build, data) {
 
   // Hero tree selector node — "subtree" type node in the full node list that
   // activates the chosen hero tree. Without this, SimC won't enable hero abilities.
+  // Multiple subtree nodes exist (one per spec), so find the one whose entries
+  // all match the current spec's hero trees (from HERO_SUBTREES).
   if (build.heroTree) {
     const fullNodes = loadFullNodeList();
-    const selectorNode = fullNodes.find((n) => n.type === "subtree");
+    const specHeroNames = new Set(Object.values(HERO_SUBTREES));
+    const selectorNode = fullNodes.find(
+      (n) =>
+        n.type === "subtree" &&
+        n.entries?.every((e) => specHeroNames.has(e.name)),
+    );
     if (selectorNode?.entries) {
       const choiceIdx = selectorNode.entries.findIndex(
         (e) => e.name === build.heroTree,
@@ -413,9 +420,14 @@ export function overridesToSelections(
       selections.set(node.id, sel);
     }
 
-    // Subtree selector node
+    // Subtree selector node — find the one whose entries all match the spec's hero trees
     const fullNodes = loadFullNodeList();
-    const selectorNode = fullNodes.find((n) => n.type === "subtree");
+    const specHeroNames = new Set(Object.values(HERO_SUBTREES));
+    const selectorNode = fullNodes.find(
+      (n) =>
+        n.type === "subtree" &&
+        n.entries?.every((e) => specHeroNames.has(e.name)),
+    );
     if (selectorNode?.entries) {
       const choiceIdx = selectorNode.entries.findIndex(
         (e) => normalizeSimcName(e.name) === normalizeSimcName(heroTreeName),

@@ -165,11 +165,14 @@ export function importFromDoe(roster) {
   const data = JSON.parse(readFileSync(BUILDS_PATH, "utf8"));
   const archetypes = data.discoveredArchetypes || [];
   const specConfig = getSpecAdapter().getSpecConfig();
-  const doeTrees = new Set(
-    Object.entries(specConfig.heroTrees)
-      .filter(([, cfg]) => cfg.buildMethod === "doe")
-      .map(([name]) => name),
-  );
+  // Build DoE tree set with both config key and normalized forms for matching
+  const doeTrees = new Set();
+  for (const [name, cfg] of Object.entries(specConfig.heroTrees)) {
+    if (cfg.buildMethod === "doe") {
+      doeTrees.add(name); // e.g., "void_scarred"
+      doeTrees.add(name.replace(/_/g, "-")); // e.g., "void-scarred"
+    }
+  }
 
   if (doeTrees.size === 0) {
     console.error("No DoE hero trees configured");
