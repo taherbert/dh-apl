@@ -9,7 +9,7 @@ race=night_elf
 timeofday=night
 role=attack
 position=back
-talents=CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMmZYmZmZGjZG0yCAAAYGmZ2mZmmtZ2GYGmB
+talents=CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMmZYmZmZGjZG0CAAAwMjZmtZmpZbmtBmhZA
 
 # Consumables disabled — no Midnight consumables in SimC yet
 flask=disabled

@@ -1,1206 +1,1026 @@
 {
   "_schema": "roster-v2",
-  "_updated": "2026-02-07T23:37:41.046Z",
+  "_updated": "2026-02-08T00:39:58.483Z",
   "builds": [
-    {
-      "id": "A_EradicateStarFragmentsMidnight_1",
-      "archetype": "Eradicate + Star Fragments + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZGzsMzMsolNmZmZWaZmZGAGAA4BGDGGA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.696Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 73354,
-        "small_aoe": 281096,
-        "big_aoe": 513173,
-        "weighted": 223640.55965445895
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsMidnight_2",
-      "archetype": "Eradicate + Star Fragments + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMzYmZmZmlZmhFttwMzMzSLzMzAwAAAPwYwwA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.697Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65847,
-        "small_aoe": 263890,
-        "big_aoe": 497280,
-        "weighted": 211546.4765599237
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsMidnight_3",
-      "archetype": "Eradicate + Star Fragments + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZmZmtZmhFtsxMzMzSLzMzAAAA4BGDGGA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.698Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65018,
-        "small_aoe": 256979,
-        "big_aoe": 466085,
-        "weighted": 202819.63592509658
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsDemonicInstinctMid_1",
-      "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZGzYegxDYRLLMzMzs0yMzMAAAAmxYmhB",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.698Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 64133,
-        "small_aoe": 260815,
-        "big_aoe": 479149,
-        "weighted": 206140.8809121344
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsDemonicInstinctMid_2",
-      "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMjZGjZmZmlZm5BsotFmZmZWaZmZGAAAAzYwwA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.699Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 66932,
-        "small_aoe": 251097,
-        "big_aoe": 463671,
-        "weighted": 201529.54731618438
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsDemonicInstinctMid_3",
-      "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMjZGjZmZmtZGPgFttwMzMzSLzMzAwAAAzYwwA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.699Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 59682,
-        "small_aoe": 228766,
-        "big_aoe": 408836,
-        "weighted": 180237.75830926176
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragments_1",
-      "archetype": "Eradicate + Star Fragments",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZmZsMPAjFttwMzMzSLzMzMAPAAA4BmZYmZA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.700Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 62278,
-        "small_aoe": 241412,
-        "big_aoe": 455224,
-        "weighted": 194607.74527737015
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragments_2",
-      "archetype": "Eradicate + Star Fragments",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMzYmZGzsMDjFtsxMzMzSLzMzAYGAA4BYMzMDA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.700Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 63624,
-        "small_aoe": 244822,
-        "big_aoe": 446615,
-        "weighted": 194581.57632698762
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragments_3",
-      "archetype": "Eradicate + Star Fragments",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZMzsMPAjFtsxMzMzSLzMzMAPAAA4BmZYmZA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.701Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65327,
-        "small_aoe": 245496,
-        "big_aoe": 443548,
-        "weighted": 195022.0932725041
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsDemonicInstinct_1",
-      "archetype": "Eradicate + Star Fragments + Demonic Instinct",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMzYmZGzsMzgFttxMzMzSLzMzMAPwAAAzwMmZA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.701Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 62594,
-        "small_aoe": 233419,
-        "big_aoe": 444698,
-        "weighted": 190262.4506529807
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsDemonicInstinct_2",
-      "archetype": "Eradicate + Star Fragments + Demonic Instinct",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZGzMzYmtZGjFttxMzMzSLzMzAYGAAYYYmZA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.702Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 58930,
-        "small_aoe": 228527,
-        "big_aoe": 434842,
-        "weighted": 184991.37609372553
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_EradicateStarFragmentsDemonicInstinct_3",
-      "archetype": "Eradicate + Star Fragments + Demonic Instinct",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZGzsMMjFttxMzMzSLzMzAYGAAYYYmZA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.702Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 58660,
-        "small_aoe": 230144,
-        "big_aoe": 427199,
-        "weighted": 183813.1311917428
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsMidnight_1",
-      "archetype": "Star Fragments + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMjFDjFttwMzMzSLzMzAYAAAPwYwYGA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.703Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 76715,
-        "small_aoe": 221373,
-        "big_aoe": 385231,
-        "weighted": 181815.43910091842
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsMidnight_2",
-      "archetype": "Star Fragments + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMDzsZGjFttwMzMzSLzMzAYAAAPwYwYGA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.703Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 73259,
-        "small_aoe": 219401,
-        "big_aoe": 370023,
-        "weighted": 176454.3475731174
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsMidnight_3",
-      "archetype": "Star Fragments + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzYsZGjFtsxMzMzSLzMzAYAAAPwYwYGA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.704Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 74623,
-        "small_aoe": 218028,
-        "big_aoe": 366788,
-        "weighted": 176077.5933577377
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsDemonicInstinctMidnight_1",
-      "archetype": "Star Fragments + Demonic Instinct + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMjZYMzMzYmxYRbbMzMzs0yMzMAMAAwMjZMMA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.704Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 64494,
-        "small_aoe": 202781,
-        "big_aoe": 345572,
-        "weighted": 162196.1457994138
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsDemonicInstinctMidnight_2",
-      "archetype": "Star Fragments + Demonic Instinct + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMjZYMzMzYmxYRLLMzMzs0yMzMAeAAAwMjZMMA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.704Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 64576,
-        "small_aoe": 201653,
-        "big_aoe": 347620,
-        "weighted": 162307.58210685724
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsDemonicInstinctMidnight_3",
-      "archetype": "Star Fragments + Demonic Instinct + Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzYGzYeALabjZmZmlWmZmBAAAwMGzMMA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.705Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65932,
-        "small_aoe": 200537,
-        "big_aoe": 340897,
-        "weighted": 161306.3798957345
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_Midnight_1",
-      "archetype": "Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmxMzsMj5BsolNmZmZWaZmZGADAAYMMjxA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.705Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 66070,
-        "small_aoe": 197412,
-        "big_aoe": 340355,
-        "weighted": 160329.60596980387
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_Midnight_2",
-      "archetype": "Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmZmZml5BMjFttxMzMzSLzMzMADAAAzYMGA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.706Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65228,
-        "small_aoe": 199385,
-        "big_aoe": 343921,
-        "weighted": 161213.61777990957
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_Midnight_3",
-      "archetype": "Midnight",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzMDzMGLabhZmZmlWmZmBwDAAAmZMGMA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.706Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65859,
-        "small_aoe": 194556,
-        "big_aoe": 330002,
-        "weighted": 157296.66039782178
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsDemonicInstinct_1",
-      "archetype": "Star Fragments + Demonic Instinct",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzYml5BmZsotFmZmZWaZmZmBYAAAzwYmBA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.706Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 63786,
-        "small_aoe": 186707,
-        "big_aoe": 329367,
-        "weighted": 153778.3805141167
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsDemonicInstinct_2",
-      "archetype": "Star Fragments + Demonic Instinct",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzYml5BmZsotFmZmZWaZmZmBAAAYmZYmZA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.707Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65416,
-        "small_aoe": 188439,
-        "big_aoe": 322605,
-        "weighted": 153760.9588308424
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_StarFragmentsDemonicInstinct_3",
-      "archetype": "Star Fragments + Demonic Instinct",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzYml5BGjFtsxMzMzSLzMzMAzAAAzwYmBA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.707Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 65592,
-        "small_aoe": 187974,
-        "big_aoe": 321852,
-        "weighted": 153558.68286133627
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_annihilator_1",
-      "archetype": "annihilator",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzYmxDYRbbMzMzs0yMzMAGAAwMzYGDA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.708Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 66037,
-        "small_aoe": 171458,
-        "big_aoe": 278308,
-        "weighted": 140117.20151490835
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_annihilator_2",
-      "archetype": "annihilator",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzsMzMjFtswMzMzSLzMzAYAAADMDDA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.708Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 63376,
-        "small_aoe": 168693,
-        "big_aoe": 285893,
-        "weighted": 139474.05257437512
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
-    {
-      "id": "A_annihilator_3",
-      "archetype": "annihilator",
-      "heroTree": "annihilator",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzYmlZMjFtsxMzMzSLzMzAwAAAjZmhZA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T23:35:13.708Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
-      "lastDps": {
-        "st": 63369,
-        "small_aoe": 167974,
-        "big_aoe": 280636,
-        "weighted": 138203.8763099188
-      },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
-    },
     {
       "id": "V_EradicateStarFragmentsMidnight_1",
       "archetype": "Eradicate + Star Fragments + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZGzsMzMsplNAAAghZmlZmpZZmlHYMYYA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZGzsMzMsplNAAAgZMzsMzMNLzs8AjBDD",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.594Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.344Z",
+      "validated": true,
       "lastDps": {
-        "st": 77719,
-        "small_aoe": 307379,
-        "big_aoe": 584278,
-        "weighted": 247929.06581450425
+        "st": 77632,
+        "small_aoe": 307000,
+        "big_aoe": 584040,
+        "weighted": 247724
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsMidnight_2",
       "archetype": "Eradicate + Star Fragments + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMzYmZmZmlZmhNttAAAAMMzsMzMNLzs8AjBDD",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMzYmZmZmlZmhNttAAAAMjZmlZmpZZmlHYMYYA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.596Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.345Z",
+      "validated": true,
       "lastDps": {
-        "st": 70805,
-        "small_aoe": 308304,
-        "big_aoe": 590053,
-        "weighted": 245904.2703662748
+        "st": 70932,
+        "small_aoe": 308988,
+        "big_aoe": 590345,
+        "weighted": 246231.4
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsMidnight_3",
       "archetype": "Eradicate + Star Fragments + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZmZmtZmhNtsBAAAgZmlZmpZZmlHYMYYA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZmZmtZmhNtsBAAAYMzsMzMNLzs8AjBDD",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.596Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.345Z",
+      "validated": true,
       "lastDps": {
-        "st": 69358,
-        "small_aoe": 295055,
-        "big_aoe": 549518,
-        "weighted": 233098.98631491896
+        "st": 69272,
+        "small_aoe": 294334,
+        "big_aoe": 548668,
+        "weighted": 232669.8
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragments_1",
       "archetype": "Eradicate + Star Fragments",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZmZsMPAjNttAAADwDgZmlZmpZZmlHYmhZmB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZmZsMPAjNttAAADwDYMzsMzMNLzs8AzMMzMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.597Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.346Z",
+      "validated": true,
       "lastDps": {
-        "st": 78511,
-        "small_aoe": 321632,
-        "big_aoe": 588005,
-        "weighted": 253346.31708858925
+        "st": 80867,
+        "small_aoe": 321300,
+        "big_aoe": 589518,
+        "weighted": 254727.1
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragments_2",
       "archetype": "Eradicate + Star Fragments",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZMzsMPAjNtsBAADwDgZmlZmpZZmlHYmhZmB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZMzsMPAjNtsBAADwDYMzsMzMNLzs8AzMMzMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.597Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.346Z",
+      "validated": true,
       "lastDps": {
-        "st": 81015,
-        "small_aoe": 309446,
-        "big_aoe": 562365,
-        "weighted": 245814.41150981316
+        "st": 81303,
+        "small_aoe": 308924,
+        "big_aoe": 559926,
+        "weighted": 245313.90000000002
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragments_3",
       "archetype": "Eradicate + Star Fragments",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMzYmZGzsMPwYsptFAAYAmhZmlZmpZZmlHYYMzA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMzYmZGzsMPwYsptFAAYAmZMzsMzMNLzs8ADjZGA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.598Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.347Z",
+      "validated": true,
       "lastDps": {
-        "st": 74922,
-        "small_aoe": 303282,
-        "big_aoe": 553037,
-        "weighted": 239052.74820249656
+        "st": 76348,
+        "small_aoe": 303575,
+        "big_aoe": 553095,
+        "weighted": 239865.5
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinct_1",
       "archetype": "Eradicate + Star Fragments + Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMzYmZGzsMzgNttBAADwDMMzsMzMNLzsMDzYmB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMzYmZGzsMzgNttBAADwDMjZmlZmpZZmlZYGzMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.598Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.347Z",
+      "validated": true,
       "lastDps": {
-        "st": 74330,
-        "small_aoe": 290938,
-        "big_aoe": 565959,
-        "weighted": 237638.1982976431
+        "st": 74479,
+        "small_aoe": 290307,
+        "big_aoe": 565105,
+        "weighted": 237352.59999999998
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinct_2",
       "archetype": "Eradicate + Star Fragments + Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZmZsMjhNttBAADwDgZmlZmpZZmlZYGzMA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZmZsMjhNttBAADwDYMzsMzMNLzsMDzYmB",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.599Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.348Z",
+      "validated": true,
       "lastDps": {
-        "st": 66923,
-        "small_aoe": 283998,
-        "big_aoe": 562995,
-        "weighted": 231259.81431841064
+        "st": 67066,
+        "small_aoe": 283775,
+        "big_aoe": 563685,
+        "weighted": 231402.5
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinct_3",
       "archetype": "Eradicate + Star Fragments + Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMzYmZGzsNjhNtsAAADwDMMzsMzMNLzsMDzYmB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMzYmZGzsNjhNtsAAADwDMjZmlZmpZZmlZYGzMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.600Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.348Z",
+      "validated": true,
       "lastDps": {
-        "st": 63404,
-        "small_aoe": 297174,
-        "big_aoe": 537249,
-        "weighted": 228304.09543076844
+        "st": 64105,
+        "small_aoe": 297104,
+        "big_aoe": 537097,
+        "weighted": 228603.1
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinctMid_1",
       "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMzYmZGzYegxDYTLLAAAAYmZZmZaWmZZGjZGGA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZGzYegxDYTLLAAAAGzMLzMTzyMLzYMzwA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.600Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.349Z",
+      "validated": true,
       "lastDps": {
-        "st": 67750,
-        "small_aoe": 292600,
-        "big_aoe": 553606,
-        "weighted": 232376.58552159788
+        "st": 69603,
+        "small_aoe": 292712,
+        "big_aoe": 552411,
+        "weighted": 233097.3
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinctMid_2",
       "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMjZGjZmZmlZm5BsptFAAAAMzsMzMNLzsMjBDD",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMjZGjZmZmlZm5BsptFAAAAjZmlZmpZZmlZMYYA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.600Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.349Z",
+      "validated": true,
       "lastDps": {
-        "st": 68440,
-        "small_aoe": 257454,
-        "big_aoe": 492566,
-        "weighted": 209969.636446514
+        "st": 69146,
+        "small_aoe": 256957,
+        "big_aoe": 492168,
+        "weighted": 210093.7
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
     },
     {
       "id": "V_EradicateStarFragmentsDemonicInstinctMid_3",
       "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMjZGjZmZmtZGPgNttAAAAMMzsMzMNLzsMjBDD",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMjZGjZmZmtZGPgNttAAAAMjZmlZmpZZmlZMYYA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.601Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.350Z",
+      "validated": true,
       "lastDps": {
-        "st": 64519,
-        "small_aoe": 250697,
-        "big_aoe": 448663,
-        "weighted": 197200.86574318085
+        "st": 65334,
+        "small_aoe": 250415,
+        "big_aoe": 448223,
+        "weighted": 197436.1
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsMidnight_1",
+      "archetype": "Eradicate + Star Fragments + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZGzsMzMsolNmZmZWaZmZGAmBAAPwYwwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.350Z",
+      "validated": true,
+      "lastDps": {
+        "st": 73257,
+        "small_aoe": 279985,
+        "big_aoe": 512749,
+        "weighted": 223173.8
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsMidnight_2",
+      "archetype": "Eradicate + Star Fragments + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMzYmZmZmlZmhFttwMzMzSLzMzAwMAA4BGDGGA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.351Z",
+      "validated": true,
+      "lastDps": {
+        "st": 65177,
+        "small_aoe": 263723,
+        "big_aoe": 499819,
+        "weighted": 211669.2
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsMidnight_3",
+      "archetype": "Eradicate + Star Fragments + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZmZmtZmhFtsxMzMzSLzMzAgBAAPwYwwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.351Z",
+      "validated": true,
+      "lastDps": {
+        "st": 65057,
+        "small_aoe": 257433,
+        "big_aoe": 467158,
+        "weighted": 203190
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.482Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsDemonicInstinctMid_1",
+      "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZGzYegxDYRLLMzMzs0yMzMAYAAwMGzMMA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.352Z",
+      "validated": true,
+      "lastDps": {
+        "st": 63634,
+        "small_aoe": 261152,
+        "big_aoe": 479537,
+        "weighted": 206070
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsDemonicInstinctMid_2",
+      "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMjZGjZmZmlZm5BsotFmZmZWaZmZGAMAAYGDGGA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.352Z",
+      "validated": true,
+      "lastDps": {
+        "st": 67228,
+        "small_aoe": 250517,
+        "big_aoe": 465564,
+        "weighted": 201881.9
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsDemonicInstinctMid_3",
+      "archetype": "Eradicate + Star Fragments + Demonic Instinct + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMjZGjZmZmtZGPgFttwMzMzSLzMzAwMAAYGDGGA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.352Z",
+      "validated": true,
+      "lastDps": {
+        "st": 59139,
+        "small_aoe": 229232,
+        "big_aoe": 408422,
+        "weighted": 180023.5
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragments_1",
+      "archetype": "Eradicate + Star Fragments",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZmZsMPAjFttwMzMzSLzMzMAPgBAAPwMDzMDA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.353Z",
+      "validated": true,
+      "lastDps": {
+        "st": 62587,
+        "small_aoe": 240829,
+        "big_aoe": 455080,
+        "weighted": 194558.2
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragments_2",
+      "archetype": "Eradicate + Star Fragments",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZMzsMPAjFtsxMzMzSLzMzMAPgBAAPwMDzMDA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.353Z",
+      "validated": true,
+      "lastDps": {
+        "st": 65225,
+        "small_aoe": 245876,
+        "big_aoe": 441924,
+        "weighted": 194760.1
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragments_3",
+      "archetype": "Eradicate + Star Fragments",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZGzMzYmlZMjFttwMzMzSLzMzAYmBAAPAjZmZA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.354Z",
+      "validated": true,
+      "lastDps": {
+        "st": 60932,
+        "small_aoe": 243470,
+        "big_aoe": 456166,
+        "weighted": 194740.2
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsDemonicInstinct_1",
+      "archetype": "Eradicate + Star Fragments + Demonic Instinct",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMzYmZGzsMzgFttxMzMzSLzMzMAPwMAAYGmxMDA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.354Z",
+      "validated": true,
+      "lastDps": {
+        "st": 62755,
+        "small_aoe": 234410,
+        "big_aoe": 445148,
+        "weighted": 190730.1
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsDemonicInstinct_2",
+      "archetype": "Eradicate + Star Fragments + Demonic Instinct",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMzYmZGzsMMjFttxMzMzSLzMzAYmBAADDzMDA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.354Z",
+      "validated": true,
+      "lastDps": {
+        "st": 58630,
+        "small_aoe": 230654,
+        "big_aoe": 426697,
+        "weighted": 183850.6
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_EradicateStarFragmentsDemonicInstinct_3",
+      "archetype": "Eradicate + Star Fragments + Demonic Instinct",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZGzMzYmtZGjFttxMzMzSLzMzAYmBAADDzMDA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.355Z",
+      "validated": true,
+      "lastDps": {
+        "st": 58927,
+        "small_aoe": 229025,
+        "big_aoe": 434472,
+        "weighted": 185065.40000000002
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragments_1",
       "archetype": "Star Fragments",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzMzsMzMjNttBAADwgZmlZmpZZmFDzYGA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzMzsMzMjNttBAADwYMzsMzMNLzsYYGzA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.601Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.355Z",
+      "validated": true,
       "lastDps": {
-        "st": 82356,
-        "small_aoe": 213658,
-        "big_aoe": 342934,
-        "weighted": 173861.98617175056
+        "st": 82500,
+        "small_aoe": 214335,
+        "big_aoe": 343062,
+        "weighted": 174162.90000000002
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragments_2",
       "archetype": "Star Fragments",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzYmtZmhNtsBAADwMMzsMzMNLzs8AzMMzA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzYmtZmhNtsBAADwMjZmlZmpZZmlHYmhZGA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.602Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.356Z",
+      "validated": true,
       "lastDps": {
-        "st": 82326,
-        "small_aoe": 216017,
-        "big_aoe": 328500,
-        "weighted": 171667.933482664
+        "st": 82378,
+        "small_aoe": 216243,
+        "big_aoe": 329313,
+        "weighted": 171924.5
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragments_3",
       "archetype": "Star Fragments",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzMzsMzMjNttBAADwDgZmlZmpZZmFDzYmB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzMzsMzMjNttBAADwDYMzsMzMNLzsYYGzMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.602Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.356Z",
+      "validated": true,
       "lastDps": {
-        "st": 80384,
-        "small_aoe": 208009,
-        "big_aoe": 341024,
-        "weighted": 170799.30454930523
+        "st": 80246,
+        "small_aoe": 207921,
+        "big_aoe": 339950,
+        "weighted": 170489.3
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinct_1",
       "archetype": "Star Fragments + Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzYml5BmZsptFAAYAgZmlZmpZZmlZmhZmB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzYml5BmZsptFAAYAYMzsMzMNLzsMzMMzMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.603Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.356Z",
+      "validated": true,
       "lastDps": {
-        "st": 79305,
-        "small_aoe": 220272,
-        "big_aoe": 366229,
-        "weighted": 178979.76809648192
+        "st": 80656,
+        "small_aoe": 219748,
+        "big_aoe": 365798,
+        "weighted": 179412
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinct_2",
       "archetype": "Star Fragments + Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMjZml5BYsplNAAYAMMzsMzMNLzsMzMMzMA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMjZml5BYsplNAAYAMjZmlZmpZZmlZmhZmB",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.603Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.357Z",
+      "validated": true,
       "lastDps": {
-        "st": 84317,
-        "small_aoe": 216299,
-        "big_aoe": 341710,
-        "weighted": 175390.1031876373
+        "st": 84227,
+        "small_aoe": 216038,
+        "big_aoe": 341600,
+        "weighted": 175244.9
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinct_3",
       "archetype": "Star Fragments + Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMzMDzMzYmtZMjNtsBAADAMzsMzMNLzsMzMMzMA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzYmtZMjNtsBAADAjZmlZmpZZmlZmhZmB",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.604Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.357Z",
+      "validated": true,
       "lastDps": {
-        "st": 82982,
-        "small_aoe": 214953,
-        "big_aoe": 334075,
-        "weighted": 172791.7099919005
+        "st": 82813,
+        "small_aoe": 215087,
+        "big_aoe": 333789,
+        "weighted": 172690.40000000002
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsMidnight_1",
       "archetype": "Star Fragments + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMjZYMzMjth5BsptFAAYAGMzsMzMNLzs8AmxMzYA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmZMzYMeAbabBAAGgZGzMLzMTzyMLPgZMzMGA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.604Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.358Z",
+      "validated": true,
       "lastDps": {
-        "st": 69499,
-        "small_aoe": 220057,
-        "big_aoe": 350406,
-        "weighted": 170847.65528368158
+        "st": 78259,
+        "small_aoe": 219016,
+        "big_aoe": 339438,
+        "weighted": 172721.90000000002
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsMidnight_2",
       "archetype": "Star Fragments + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmZMzYMeAbabBAAGgZYmZZmZaWmZ5BMjZmxA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMjZYMzMjth5BsptFAAYAGjZmlZmpZZmlHwMmZGD",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.605Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.358Z",
+      "validated": true,
       "lastDps": {
-        "st": 75448,
-        "small_aoe": 219135,
-        "big_aoe": 338659,
-        "weighted": 171195.9565423343
+        "st": 71098,
+        "small_aoe": 219955,
+        "big_aoe": 351489,
+        "weighted": 171833.3
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsMidnight_3",
       "archetype": "Star Fragments + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmZMzYMGbabBAAGADzMLzMTzyMLPgZMzMzA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmZMzYMGbabBAAGAzYmZZmZaWmZ5BMjZmZGA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.605Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.358Z",
+      "validated": true,
       "lastDps": {
-        "st": 76065,
-        "small_aoe": 213809,
-        "big_aoe": 334029,
-        "weighted": 168980.85471223353
+        "st": 77300,
+        "small_aoe": 213753,
+        "big_aoe": 334481,
+        "weighted": 169672.09999999998
       },
-      "lastTestedAt": "2026-02-07T23:37:41.045Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_Midnight_1",
       "archetype": "Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmZmZml5BMjNttBAADwgZmlZmpZZmFMjxYA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmxMjtxMjNttAAADwDYMzsMzMNLzsMGmxMD",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.605Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.359Z",
+      "validated": true,
       "lastDps": {
-        "st": 75908,
-        "small_aoe": 215709,
-        "big_aoe": 352691,
-        "weighted": 173204.71218831663
+        "st": 74716,
+        "small_aoe": 230956,
+        "big_aoe": 359248,
+        "weighted": 178494.40000000002
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_Midnight_2",
       "archetype": "Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMDzsMPw4BsptNAAYAeghZmlZmpZZmFMjxMD",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmZmZsNm5BsptFAAYAGjZmlZmpZZmlxwMGD",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.606Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.359Z",
+      "validated": true,
       "lastDps": {
-        "st": 75807,
-        "small_aoe": 208710,
-        "big_aoe": 342796,
-        "weighted": 169075.77353099931
+        "st": 77861,
+        "small_aoe": 230047,
+        "big_aoe": 356072,
+        "weighted": 179159
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_Midnight_3",
       "archetype": "Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMPwMjZYMzMzsMjZsplFAAYAGMzsMzMNLzsgZMGD",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmZmZsMPgZsplFAAYAeAjZmlZmpZZmlxgxMD",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.606Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.360Z",
+      "validated": true,
       "lastDps": {
-        "st": 64665,
-        "small_aoe": 209677,
-        "big_aoe": 351244,
-        "weighted": 165484.34562365038
+        "st": 75783,
+        "small_aoe": 220380,
+        "big_aoe": 367152,
+        "weighted": 177435.90000000002
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinctMidnight_1",
       "archetype": "Star Fragments + Demonic Instinct + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmxMjtxMjNttAAADwDgZmlZmpZZmlxwMmZA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmZMzYeAGbabDAAGAzYmZZmZaWmZZMDzMzA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.607Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.360Z",
+      "validated": true,
       "lastDps": {
-        "st": 74657,
-        "small_aoe": 230986,
-        "big_aoe": 359333,
-        "weighted": 178491.1309528827
+        "st": 78389,
+        "small_aoe": 210727,
+        "big_aoe": 334203,
+        "weighted": 169253.2
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinctMidnight_2",
       "archetype": "Star Fragments + Demonic Instinct + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmZmZsNm5BsptFAAYAGMzsMzMNLzsMGmxYA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMDzYegxDYTbbAAwAwYmZZmZaWmZZYGzMzA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.607Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.360Z",
+      "validated": true,
       "lastDps": {
-        "st": 75607,
-        "small_aoe": 229813,
-        "big_aoe": 357418,
-        "weighted": 178230.84986639902
+        "st": 68109,
+        "small_aoe": 199589,
+        "big_aoe": 336657,
+        "weighted": 161262.6
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_StarFragmentsDemonicInstinctMidnight_3",
       "archetype": "Star Fragments + Demonic Instinct + Midnight",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMmZmZYmZmZsMPgZsplFAAYAeAMzsMzMNLzsMGMmZA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMjZYMzMzYmxYTLLAAAgHwYmZZmZaWmZZmxMGGA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.607Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.361Z",
+      "validated": true,
       "lastDps": {
-        "st": 73096,
-        "small_aoe": 220170,
-        "big_aoe": 366503,
-        "weighted": 175899.3892195835
+        "st": 68625,
+        "small_aoe": 196546,
+        "big_aoe": 338765,
+        "weighted": 161029.3
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsMidnight_1",
+      "archetype": "Star Fragments + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMjFDjFttwMzMzSLzMzAYMAA4BGDGzA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.361Z",
+      "validated": true,
+      "lastDps": {
+        "st": 77547,
+        "small_aoe": 221245,
+        "big_aoe": 385475,
+        "weighted": 182242
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsMidnight_2",
+      "archetype": "Star Fragments + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMDzsZGjFttwMzMzSLzMzAYMAA4BGDGzA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.361Z",
+      "validated": true,
+      "lastDps": {
+        "st": 72759,
+        "small_aoe": 219425,
+        "big_aoe": 370903,
+        "weighted": 176387.6
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsMidnight_3",
+      "archetype": "Star Fragments + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzYsZGjFtsxMzMzSLzMzAYMAA4BGDGzA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.362Z",
+      "validated": true,
+      "lastDps": {
+        "st": 74560,
+        "small_aoe": 218599,
+        "big_aoe": 365518,
+        "weighted": 175963.3
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_voidscarred_1",
       "archetype": "void-scarred",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzsNzMjNttBAAAmhZmlZmpZZmFjZgB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzsNzMjNttBAAAmZMzsMzMNLzsYMDMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.608Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.362Z",
+      "validated": true,
       "lastDps": {
-        "st": 83183,
-        "small_aoe": 181423,
-        "big_aoe": 281408,
-        "weighted": 152300.16992963888
+        "st": 83465,
+        "small_aoe": 181732,
+        "big_aoe": 281950,
+        "weighted": 152642.1
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_voidscarred_2",
       "archetype": "void-scarred",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzYmZGbabBAAAMYmZZmZaWmZ5BYMjZA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzYmZGbabBAAAMGzMLzMTzyMLPAjZMDA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.608Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.363Z",
+      "validated": true,
       "lastDps": {
-        "st": 70011,
-        "small_aoe": 171496,
-        "big_aoe": 277436,
-        "weighted": 141941.77986435167
+        "st": 70707,
+        "small_aoe": 171005,
+        "big_aoe": 277904,
+        "weighted": 142235.8
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_voidscarred_3",
       "archetype": "void-scarred",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzsNzMjNtsAAAAmhZmlZmpZZmlHAmhB",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzsNzMjNtsAAAAmZMzsMzMNLzs8AwMMA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.609Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.363Z",
+      "validated": true,
       "lastDps": {
-        "st": 72727,
-        "small_aoe": 173163,
-        "big_aoe": 263369,
-        "weighted": 140986.3354725954
+        "st": 73044,
+        "small_aoe": 172925,
+        "big_aoe": 263080,
+        "weighted": 141015.5
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsDemonicInstinctMidnight_1",
+      "archetype": "Star Fragments + Demonic Instinct + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMjZYMzMzYmxYRLLMzMzs0yMzMAeADAAmZMjhB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.363Z",
+      "validated": true,
+      "lastDps": {
+        "st": 64605,
+        "small_aoe": 201567,
+        "big_aoe": 346775,
+        "weighted": 162127.6
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsDemonicInstinctMidnight_2",
+      "archetype": "Star Fragments + Demonic Instinct + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMjZYMzMzYmxYRbbMzMzs0yMzMAMDAAmZMjhB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.364Z",
+      "validated": true,
+      "lastDps": {
+        "st": 64431,
+        "small_aoe": 202978,
+        "big_aoe": 345538,
+        "weighted": 162216.5
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsDemonicInstinctMidnight_3",
+      "archetype": "Star Fragments + Demonic Instinct + Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzYGzYeALabjZmZmlWmZmBADAAmxYmhB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.364Z",
+      "validated": true,
+      "lastDps": {
+        "st": 66084,
+        "small_aoe": 200385,
+        "big_aoe": 339907,
+        "weighted": 161138.90000000002
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_DemonicInstinct_1",
       "archetype": "Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzYmxDYTbbAAAgBzMLzMTzyMLzMjZMA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzYmxDYTbbAAAgxYmZZmZaWmZZmZMjBA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.609Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.365Z",
+      "validated": true,
       "lastDps": {
-        "st": 78771,
-        "small_aoe": 184568,
-        "big_aoe": 294613,
-        "weighted": 153678.25480868007
+        "st": 78898,
+        "small_aoe": 184779,
+        "big_aoe": 295319,
+        "weighted": 153946.5
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_DemonicInstinct_2",
       "archetype": "Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzYGGbabDAAAYYmZZmZaWmZZmZMjZA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzYmxYTLbAAAAzYmZZmZaWmZZmZYMDA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.609Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.365Z",
+      "validated": true,
       "lastDps": {
-        "st": 81127,
-        "small_aoe": 181864,
-        "big_aoe": 285730,
-        "weighted": 152268.7382525992
+        "st": 80181,
+        "small_aoe": 181167,
+        "big_aoe": 286464,
+        "weighted": 151733.40000000002
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     },
     {
       "id": "V_DemonicInstinct_3",
       "archetype": "Demonic Instinct",
       "heroTree": "void-scarred",
-      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwCzMmZmZmZmZMAAAAAAALMwMzAAAAAAAAgZMMzMzMDzMzMzYmxYTLbAAAADzMLzMTzyMLzMDjZA",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzYGGbabDAAAYGzMLzMTzyMLzMjZMDA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T23:36:33.610Z",
-      "validated": false,
-      "validationErrors": [
-        "Class tree: 30 points spent, expected 34"
-      ],
+      "addedAt": "2026-02-08T00:33:53.365Z",
+      "validated": true,
       "lastDps": {
-        "st": 80213,
-        "small_aoe": 181520,
-        "big_aoe": 286744,
-        "weighted": 151911.22663123067
+        "st": 81056,
+        "small_aoe": 181950,
+        "big_aoe": 286471,
+        "weighted": 152407.2
       },
-      "lastTestedAt": "2026-02-07T23:37:41.046Z"
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_Midnight_1",
+      "archetype": "Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmZmZml5BMjFttxMzMzSLzMzMAjBAAYGjxA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.366Z",
+      "validated": true,
+      "lastDps": {
+        "st": 65188,
+        "small_aoe": 199608,
+        "big_aoe": 343240,
+        "weighted": 161124.4
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_Midnight_2",
+      "archetype": "Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMmZmZYmxMzsMj5BsolNmZmZWaZmZGAjBAAjhZMGA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.366Z",
+      "validated": true,
+      "lastDps": {
+        "st": 66026,
+        "small_aoe": 196687,
+        "big_aoe": 339549,
+        "weighted": 159928.90000000002
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_Midnight_3",
+      "archetype": "Midnight",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzMDzMGLabhZmZmlWmZmBwDYAAwMjxgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.367Z",
+      "validated": true,
+      "lastDps": {
+        "st": 65523,
+        "small_aoe": 194091,
+        "big_aoe": 330319,
+        "weighted": 157052.59999999998
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsDemonicInstinct_1",
+      "archetype": "Star Fragments + Demonic Instinct",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzYml5BGjFtsxMzMzSLzMzMAzMAAYGGzMA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.367Z",
+      "validated": true,
+      "lastDps": {
+        "st": 65574,
+        "small_aoe": 187920,
+        "big_aoe": 321299,
+        "weighted": 153422.8
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsDemonicInstinct_2",
+      "archetype": "Star Fragments + Demonic Instinct",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzYml5BmZsotFmZmZWaZmZmBgBAAzMDzMDA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.367Z",
+      "validated": true,
+      "lastDps": {
+        "st": 65219,
+        "small_aoe": 188827,
+        "big_aoe": 322496,
+        "weighted": 153756.80000000002
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_StarFragmentsDemonicInstinct_3",
+      "archetype": "Star Fragments + Demonic Instinct",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMPwMzMDzMzYml5BmZsotFmZmZWaZmZmBYMAAYGGzMA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.368Z",
+      "validated": true,
+      "lastDps": {
+        "st": 64244,
+        "small_aoe": 187106,
+        "big_aoe": 329696,
+        "weighted": 154193
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_annihilator_1",
+      "archetype": "annihilator",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzYmxDYRbbMzMzs0yMzMAGDAAmZGzYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.368Z",
+      "validated": true,
+      "lastDps": {
+        "st": 66117,
+        "small_aoe": 171619,
+        "big_aoe": 278487,
+        "weighted": 140241.6
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_annihilator_2",
+      "archetype": "annihilator",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzMzsMzMjFtswMzMzSLzMzAYMAAYgZYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.369Z",
+      "validated": true,
+      "lastDps": {
+        "st": 63099,
+        "small_aoe": 168735,
+        "big_aoe": 285408,
+        "weighted": 139251.6
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
+    },
+    {
+      "id": "A_annihilator_3",
+      "archetype": "annihilator",
+      "heroTree": "annihilator",
+      "hash": "CgcBAAAAAAAAAAAAAAAAAAAAAMAwyYmxMzMzMzMjBAAAAAAYhZwMzAAAAAAAAgZMMzMzMDzMzYmlZMjFtsxMzMzSLzMzAwMAAYMzMMDA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-08T00:33:53.369Z",
+      "validated": true,
+      "lastDps": {
+        "st": 63527,
+        "small_aoe": 168490,
+        "big_aoe": 280979,
+        "weighted": 138506.3
+      },
+      "lastTestedAt": "2026-02-08T00:39:58.483Z"
     }
   ]
 }

@@ -49,7 +49,7 @@ actions+=/call_action_list,name=reaps,if=!talent.voidfall&action.reap.souls_cons
 # Annihilator Reap Line
 actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.react|buff.eradicate.up&active_enemies>1
 actions+=/call_action_list,name=melee_combo
-actions+=/soul_immolation,if=active_dot.soul_immolation=0&!buff.metamorphosis.up&active_enemies>1
+actions+=/soul_immolation,if=active_dot.soul_immolation=0&!buff.metamorphosis.up
 # Fall through Star — better than Devour
 actions+=/collapsing_star,if=variable.should_use_star
 actions+=/devour
