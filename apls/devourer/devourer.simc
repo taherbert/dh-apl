@@ -52,6 +52,8 @@ actions+=/voidblade,if=talent.devourers_bite&!talent.voidsurge&!debuff.devourers
 actions+=/collapsing_star,if=(!cooldown.predators_wake.up&talent.voidrush&!buff.hungering_slash.up&cooldown.voidblade.remains>=6|!talent.voidrush)&variable.should_use_star
 # Reap to generate a Collapsing Star quicker or to get in Meta quicker
 actions+=/call_action_list,name=reaps,if=!talent.voidfall&action.reap.souls_consumed>=4&(!buff.metamorphosis.up&(buff.void_metamorphosis_stack.stack+action.reap.souls_consumed)>=buff.void_metamorphosis_stack.max_stack|buff.metamorphosis.up&!buff.collapsing_star_ready.up&(buff.collapsing_star_stacking.stack+action.reap.souls_consumed>=30)&variable.should_use_star)
+# Rolling Torment: Reap during RT to fast-track next Meta
+actions+=/call_action_list,name=reaps,if=buff.rolling_torment.up&!buff.metamorphosis.up&action.reap.souls_consumed>=4
 # Annihilator Reap Line — pool to max stacks for concentrated Voidfall burst
 actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.at_max_stacks|buff.eradicate.up&active_enemies>1
 actions+=/call_action_list,name=melee_combo
