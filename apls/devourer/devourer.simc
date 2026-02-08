@@ -38,6 +38,8 @@ actions+=/the_hunt,if=buff.void_metamorphosis_stack.at_max_stacks&talent.voidsur
 # Smuggle an Eradicate into Meta if on AOE (+0.5%)
 actions+=/void_ray,if=talent.eradicate&active_enemies>1&!buff.eradicate.up
 actions+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate|active_enemies=1
+# Dark Matter CStar urgency — fire CStar immediately after Meta to trigger meteor shower
+actions+=/collapsing_star,if=buff.dark_matter.up&buff.metamorphosis.up&talent.dark_matter
 # Meta Cull Line
 actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)
 # Cast Void Ray: always with Eradicate (triggers MoC+Eradicate buff), otherwise need Meta/talents/AoE
