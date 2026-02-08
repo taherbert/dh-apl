@@ -12,7 +12,7 @@ actions.precombat+=/immolation_aura
 # === Default (runs every cycle) ===
 # Fiery Demise window flag — used in both hero trees
 actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
-# Spirit Bomb fragment threshold — 5 is the mechanical cap of SBomb consumption
+# Spirit Bomb fragment threshold — SBomb consumes up to 5 (inventory cap is 6; 6th slot is overflow buffer)
 actions+=/variable,name=spb_threshold,value=5
 # Meta fragment acceleration: Fracture generates 3 frags in Meta (not 2), so SBomb at 4
 # fires faster (~1.5 GCDs) with better per-GCD efficiency than pooling to 5 (~2 GCDs)
@@ -77,7 +77,7 @@ actions.ar+=/fracture,if=debuff.reavers_mark.up&active_enemies=1&soul_fragments<
 # In ST during FD, skip: SBomb at 3 per-GCD (3.9×) > Fracture→SBomb at 5 per-GCD (3.75×)
 # In AoE during FD, keep: AoE SBomb damage scales with frags, building to 5 is worth the Fracture GCD
 actions.ar+=/fracture,if=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold&(!variable.fiery_demise_active|active_enemies>=3)
-# Spirit Bomb — drop threshold to 3 during Fiery Demise (30% fire amp makes 3-frag casts worthwhile)
+# Spirit Bomb — drop threshold to 3 during Fiery Demise (fire amp makes 3-frag casts worthwhile)
 actions.ar+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active
 actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 # Fracture — no overflow guard; uncapped Fracture +10.4% over guard<=4
@@ -102,7 +102,7 @@ actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
 
 # === AR Cooldowns — Brand synced to fire CD availability for denser FD windows ===
 actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&(cooldown.soul_carver.remains<6|cooldown.fel_devastation.remains<6|cooldown.sigil_of_spite.remains<6)))
-actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=5
+actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=3
 actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
 
@@ -121,7 +121,7 @@ actions.ar_aoe+=/call_action_list,name=fillers
 # Charred Flesh: ImmAura fire ticks extend Brand duration — top priority when talented
 actions.ar_brand_window=/immolation_aura,if=talent.charred_flesh&!buff.immolation_aura.up
 actions.ar_brand_window+=/soul_carver
-actions.ar_brand_window+=/sigil_of_spite,if=soul_fragments<=5
+actions.ar_brand_window+=/sigil_of_spite,if=soul_fragments<=3
 actions.ar_brand_window+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
 # Without Charred Flesh: ImmAura is still fire school, benefits from FD, but lower priority
 actions.ar_brand_window+=/immolation_aura,if=!talent.charred_flesh
@@ -165,6 +165,9 @@ actions.anni+=/call_action_list,name=fillers
 
 # === Anni Voidfall — Voidfall cycle state machine ===
 actions.anni_voidfall=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&(buff.voidfall_building.stack=2|buff.voidfall_spending.stack=3)
+# FelDev at 3 spending stacks when fragment-starved: channel generates 3 frags via Meteoric Rise,
+# enabling SBomb for Meteoric Fall burst instead of falling through to single Soul Cleave meteors
+actions.anni_voidfall+=/fel_devastation,if=buff.voidfall_spending.stack=3&soul_fragments<variable.spb_threshold
 actions.anni_voidfall+=/spirit_bomb,if=buff.voidfall_spending.stack=3&soul_fragments>=variable.spb_threshold
 actions.anni_voidfall+=/soul_cleave,if=buff.voidfall_spending.up&buff.voidfall_spending.stack<3
 actions.anni_voidfall+=/fracture,if=buff.voidfall_building.stack=2&fury>=70
