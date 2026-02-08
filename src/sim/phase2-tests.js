@@ -11,11 +11,16 @@ import {
 } from "./profilesets.js";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import { config } from "../engine/startup.js";
-import { resultsDir, aplsDir } from "../engine/paths.js";
+import { config, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
+import { resultsDir, aplsDir, getSpecName } from "../engine/paths.js";
 
-const RESULTS_DIR = resultsDir();
-const APL_PATH = join(aplsDir(), `${config.spec.specName}.simc`);
+function getResultsDir() {
+  return resultsDir();
+}
+function getAplPath() {
+  return join(aplsDir(), `${getSpecName()}.simc`);
+}
 
 // Shared AR list prefix (trinkets, potion, externals, sub-list calls)
 const AR_PREFIX = [
@@ -298,12 +303,12 @@ function runTest(testName, scenario, simOverrides) {
   console.log(`TEST: ${testName} (${variants.length} variants, ${scenario})`);
   console.log("=".repeat(60));
 
-  const simcContent = generateProfileset(APL_PATH, variants);
+  const simcContent = generateProfileset(getAplPath(), variants);
   const results = runProfileset(simcContent, scenario, label, { simOverrides });
   printProfilesetResults(results);
 
   // Save results
-  const outPath = join(RESULTS_DIR, `phase2_${label}_${scenario}.json`);
+  const outPath = join(getResultsDir(), `phase2_${label}_${scenario}.json`);
   writeFileSync(outPath, JSON.stringify(results, null, 2));
 
   return results;
@@ -311,13 +316,14 @@ function runTest(testName, scenario, simOverrides) {
 
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const testName = process.argv[2] || "all";
   const scenario = process.argv[3] || "st";
 
   // Quick mode: faster iterations for discovery
   const simOverrides = { target_error: 1.0, iterations: 1000000 };
 
-  mkdirSync(RESULTS_DIR, { recursive: true });
+  mkdirSync(getResultsDir(), { recursive: true });
 
   const allResults = {};
 

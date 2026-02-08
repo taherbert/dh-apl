@@ -3,15 +3,14 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { SIMC_DIR, config } from "../engine/startup.js";
+import { SIMC_DIR, config, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { REFERENCE_DIR } from "../engine/paths.js";
 
 const APL_CPP = join(
   SIMC_DIR,
   config.simc.aplModule || "engine/class_modules/apl/apl_demon_hunter.cpp",
 );
-const specName = config.spec.specName;
-const OUTPUT = join(REFERENCE_DIR, `${specName}-apl.simc`);
 
 // Extract content between markers
 function extractBetweenMarkers(content, startMarker, endMarker) {
@@ -89,6 +88,9 @@ function addListHeaders(simc) {
 }
 
 function main() {
+  const specName = config.spec.specName;
+  const OUTPUT = join(REFERENCE_DIR, `${specName}-apl.simc`);
+
   console.log(`Reading APL from: ${APL_CPP}`);
 
   const cpp = readFileSync(APL_CPP, "utf-8");
@@ -125,4 +127,7 @@ function main() {
   console.log(`Action lists: ${[...lists].join(", ")}`);
 }
 
-main();
+(async () => {
+  await initSpec(parseSpecArg());
+  main();
+})();

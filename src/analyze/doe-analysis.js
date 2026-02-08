@@ -2,6 +2,8 @@
 // 2-way interactions, predicts optimal builds, and generates diagnostics.
 
 import { readFileSync, writeFileSync } from "node:fs";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, resultsFile } from "../engine/paths.js";
 
 // --- OLS regression ---
@@ -328,6 +330,7 @@ export function diagnostics(model) {
 // --- CLI entry point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   // Load talent combos data
   const combosData = JSON.parse(
     readFileSync(dataFile("talent-combos.json"), "utf8"),

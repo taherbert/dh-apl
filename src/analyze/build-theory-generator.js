@@ -4,7 +4,8 @@
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { dataFile } from "../engine/paths.js";
-import { getSpecAdapter } from "../engine/startup.js";
+import { getSpecAdapter, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 
 // --- Cluster Detection ---
 
@@ -309,8 +310,7 @@ export function printTheorySummary(theory) {
 
 // CLI
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const { loadSpecAdapter } = await import("../engine/startup.js");
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const outputPath = process.argv[2] || null;
 
   try {

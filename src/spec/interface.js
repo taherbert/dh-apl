@@ -4,9 +4,9 @@
 //
 // To add a new spec:
 // 1. Create src/spec/{specname}.js exporting these symbols
-// 2. Set spec.specName in config.json
-// 3. Run `npm run build-data` to generate data for the new spec
-// 4. Run `node src/spec/validate-spec-data.js` to verify constants
+// 2. Create config.{specname}.json with spec identity (className, specName, specId)
+// 3. Run `SPEC={specname} npm run build-data` to generate data for the new spec
+// 4. Run `SPEC={specname} node src/spec/validate-spec-data.js` to verify constants
 //
 // Spec file structure — three sections:
 //

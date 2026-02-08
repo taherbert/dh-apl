@@ -3,6 +3,8 @@
 // Leaves unresolvable variables as raw template text.
 
 import { readFileSync } from "node:fs";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
 // Build a lookup map from spell ID → spell object
@@ -451,6 +453,7 @@ export function resolveAllDescriptions(spells) {
 
 // CLI entry point — resolve and report
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const spells = JSON.parse(readFileSync(dataFile("spells.json"), "utf8"));
   const stats = resolveAllDescriptions(spells);
 

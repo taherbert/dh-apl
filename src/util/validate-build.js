@@ -8,7 +8,6 @@
 
 import { readFileSync } from "node:fs";
 import { decode, loadFullNodeList } from "./talent-string.js";
-import { SPEC_ID } from "../engine/startup.js";
 import { dataFile } from "../engine/paths.js";
 
 const BUDGETS = { class: 34, spec: 34, hero: 13 };

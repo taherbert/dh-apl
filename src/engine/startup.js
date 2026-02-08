@@ -1,5 +1,11 @@
-// Engine startup: loads config.json, derives paths, checks simc sync.
+// Engine startup: loads config.json (global) + config.{spec}.json (per-spec).
 // Single source of truth for all configuration values.
+//
+// Config is loaded in two phases:
+//   1. loadConfig() at import time — global settings (simc, data, simulation)
+//   2. initSpec(specName) at runtime — merges per-spec overrides, sets spec name
+//
+// Entry points call initSpec() with the spec name from --spec flag or SPEC env var.
 
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
@@ -17,15 +23,12 @@ function loadConfig() {
   }
   const raw = readFileSync(CONFIG_PATH, "utf-8");
   const config = JSON.parse(raw);
-  validate(config);
+  validateGlobal(config);
   return config;
 }
 
-function validate(config) {
+function validateGlobal(config) {
   const required = [
-    ["spec.className", config.spec?.className],
-    ["spec.specName", config.spec?.specName],
-    ["spec.specId", config.spec?.specId],
     ["simc.dir", config.simc?.dir],
     ["simc.branch", config.simc?.branch],
     ["data.env", config.data?.env],
@@ -49,12 +52,77 @@ function validate(config) {
   }
 }
 
+function validateSpec(config) {
+  const required = [
+    ["spec.className", config.spec?.className],
+    ["spec.specName", config.spec?.specName],
+    ["spec.specId", config.spec?.specId],
+  ];
+  for (const [path, value] of required) {
+    if (value === undefined || value === null || value === "") {
+      throw new Error(`config: missing required field "${path}" after merge`);
+    }
+  }
+}
+
+// Deep-merge source into target (mutates target)
+function deepMerge(target, source) {
+  for (const key of Object.keys(source)) {
+    if (
+      source[key] &&
+      typeof source[key] === "object" &&
+      !Array.isArray(source[key]) &&
+      target[key] &&
+      typeof target[key] === "object" &&
+      !Array.isArray(target[key])
+    ) {
+      deepMerge(target[key], source[key]);
+    } else {
+      target[key] = source[key];
+    }
+  }
+  return target;
+}
+
 const config = loadConfig();
-setSpecName(config.spec.specName);
+
+// --- initSpec: merge per-spec config and initialize spec context ---
+
+let _specInitialized = false;
+
+export async function initSpec(specName) {
+  if (_specInitialized) return getSpecAdapter();
+
+  const specConfigPath = join(ROOT, `config.${specName}.json`);
+  if (!existsSync(specConfigPath)) {
+    throw new Error(
+      `Missing per-spec config: config.${specName}.json\n` +
+        `Create it with at minimum: { "spec": { "className": "...", "specName": "${specName}", "specId": ... } }`,
+    );
+  }
+
+  const specConfig = JSON.parse(readFileSync(specConfigPath, "utf-8"));
+  deepMerge(config, specConfig);
+  validateSpec(config);
+
+  // Re-derive DATA_ENV in case per-spec config overrode it
+  DATA_ENV = config.data.env;
+  RAIDBOTS_BASE = `${config.data.raidbots}/${DATA_ENV}`;
+  RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
+
+  setSpecName(config.spec.specName);
+  _specInitialized = true;
+
+  return loadSpecAdapter(specName);
+}
+
+export function isSpecInitialized() {
+  return _specInitialized;
+}
 
 // --- Derived values ---
 
-export const DATA_ENV = config.data.env;
+export let DATA_ENV = config.data.env;
 export const SIMC_DIR = config.simc.dir;
 export const SIMC_BRANCH = config.simc.branch;
 
@@ -73,10 +141,15 @@ export const SIMC_APL_CPP = join(
   config.simc.aplModule || "engine/class_modules/apl/apl_demon_hunter.cpp",
 );
 
-export const RAIDBOTS_BASE = `${config.data.raidbots}/${DATA_ENV}`;
-export const RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
+let RAIDBOTS_BASE = `${config.data.raidbots}/${DATA_ENV}`;
+export let RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
 
-export const SPEC_ID = config.spec.specId;
+export function getSpecId() {
+  if (!_specInitialized) {
+    throw new Error("Spec not initialized. Call initSpec() first.");
+  }
+  return config.spec.specId;
+}
 
 export function toTitleCase(s) {
   return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -110,8 +183,17 @@ export function getDisplayNames() {
 
 let _specAdapter = null;
 
-export async function loadSpecAdapter(specName = config.spec.specName) {
+export async function loadSpecAdapter(specName) {
   if (_specAdapter) return _specAdapter;
+
+  if (!specName) {
+    if (!_specInitialized) {
+      throw new Error(
+        "loadSpecAdapter() requires specName or initSpec() to be called first.",
+      );
+    }
+    specName = config.spec.specName;
+  }
 
   const adapterPath = join(ROOT, "src", "spec", `${specName}.js`);
   if (!existsSync(adapterPath)) {
@@ -147,7 +229,7 @@ export async function loadSpecAdapter(specName = config.spec.specName) {
 
 export function getSpecAdapter() {
   if (!_specAdapter) {
-    throw new Error("Spec adapter not loaded. Call loadSpecAdapter() first.");
+    throw new Error("Spec adapter not loaded. Call initSpec() first.");
   }
   return _specAdapter;
 }
@@ -211,8 +293,11 @@ export function checkSync() {
 
 export function reportStatus() {
   const sync = checkSync();
+  const specLine = _specInitialized
+    ? `Spec: ${config.spec.className} / ${config.spec.specName}`
+    : "Spec: (not selected)";
   const lines = [
-    `Spec: ${config.spec.className} / ${config.spec.specName}`,
+    specLine,
     `Data env: ${DATA_ENV}`,
     `SimC: ${SIMC_DIR} (${SIMC_BRANCH})`,
     `Binary: ${SIMC_BIN}${existsSync(SIMC_BIN) ? "" : " (NOT FOUND)"}`,
@@ -221,8 +306,10 @@ export function reportStatus() {
   return lines.join("\n");
 }
 
-// CLI: node src/engine/startup.js
+// CLI: node src/engine/startup.js --spec <name>
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  const { parseSpecArg } = await import("../util/parse-spec-arg.js");
+  await initSpec(parseSpecArg());
   console.log(reportStatus());
   const sync = checkSync();
   if (!sync.synced) {

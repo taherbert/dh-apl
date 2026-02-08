@@ -4,7 +4,8 @@
 // Usage: node src/analyze/archetypes.js [talents.json]
 
 import { readFileSync, existsSync } from "node:fs";
-import "../engine/startup.js";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, resultsFile } from "../engine/paths.js";
 
 // --- Build theory loader ---
@@ -276,6 +277,7 @@ export function getUntestedHypotheses() {
 // --- CLI entry point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const talentsPath = process.argv[2] || dataFile("talents.json");
   const archetypes = loadArchetypes();
 

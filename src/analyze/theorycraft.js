@@ -5,7 +5,12 @@
 import { readFileSync, existsSync } from "node:fs";
 import { MUTATION_OPS } from "../apl/mutator.js";
 import { parse, getActionLists } from "../apl/parser.js";
-import { getSpecAdapter, loadSpecAdapter, config } from "../engine/startup.js";
+import {
+  getSpecAdapter,
+  loadSpecAdapter,
+  initSpec,
+} from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
 // --- Temporal hypothesis categories ---
@@ -20,7 +25,7 @@ const TEMPORAL_CATEGORIES = {
 
 // --- Spec Configuration ---
 // Spec ID can be overridden for multi-spec support
-let currentSpecId = config.spec.specName;
+let currentSpecId = null;
 
 export function setSpecId(specId) {
   currentSpecId = specId;
@@ -991,7 +996,7 @@ export function printTemporalHypotheses(hypotheses) {
 // --- CLI Entry Point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const resultsPath = process.argv[2];
   const aplPath = process.argv[3];
 

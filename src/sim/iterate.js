@@ -25,7 +25,12 @@ import { join, dirname, basename, resolve, relative } from "node:path";
 import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
 import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
-import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
+import {
+  getSpecAdapter,
+  loadSpecAdapter,
+  initSpec,
+} from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { loadRoster, updateDps, saveRosterDps } from "./build-roster.js";
 import { generateMultiActorContent } from "./multi-actor.js";
 import {
@@ -64,6 +69,8 @@ import {
   dataFile,
   ensureSpecDirs,
 } from "../engine/paths.js";
+
+await initSpec(parseSpecArg());
 
 const RESULTS_DIR = resultsDir();
 const STATE_PATH = resultsFile("iteration-state.json");
@@ -944,8 +951,7 @@ async function cmdInit(aplPath) {
       "No build roster found. The roster is required for multi-build iteration.\n" +
         "Populate the roster first:\n" +
         "  node src/sim/build-roster.js migrate            # One-time migration from existing data\n" +
-        "  node src/sim/build-roster.js import-doe          # Import from builds.json\n" +
-        "  node src/sim/build-roster.js import-multi-build  # Import from multi-build.simc\n",
+        "  node src/sim/build-roster.js import-doe          # Import from builds.json\n",
     );
     process.exit(1);
   }
@@ -2379,8 +2385,6 @@ if (bsIdx !== -1 && rawArgs[bsIdx + 1]) {
     process.exit(1);
   }
 }
-
-await loadSpecAdapter();
 
 switch (cmd) {
   case "init":

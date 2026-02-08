@@ -22,6 +22,8 @@ import {
   removeClause,
   extractSemantics,
 } from "./condition-parser.js";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 // Mutation operation types — extended for sophisticated APL patterns
 export const MUTATION_OPS = {
   // Basic operations (existing)
@@ -751,6 +753,7 @@ export function validateMutation(ast, mutation) {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const aplPath = process.argv[2];
   const mutationJson = process.argv[3];
 

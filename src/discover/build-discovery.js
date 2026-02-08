@@ -14,10 +14,11 @@ import { SCENARIOS } from "../sim/runner.js";
 import {
   HERO_SUBTREES,
   config,
-  loadSpecAdapter,
+  initSpec,
   getSpecAdapter,
   SCENARIO_WEIGHTS,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, resultsDir, resultsFile, aplsDir } from "../engine/paths.js";
 
 const WEIGHTS = SCENARIO_WEIGHTS;
@@ -733,7 +734,7 @@ async function discover(opts = {}) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const args = process.argv.slice(2);
   // Derive hero tree CLI flags from adapter
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const heroTrees = getSpecAdapter().getSpecConfig().heroTrees;
   let heroTreeFilter = null;
   for (const [treeName, treeData] of Object.entries(heroTrees)) {

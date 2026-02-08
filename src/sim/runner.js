@@ -9,7 +9,9 @@ import {
   DATA_ENV,
   SCENARIOS,
   SIM_DEFAULTS as _SIM_DEFAULTS,
+  initSpec,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, resultsFile } from "../engine/paths.js";
 
 const SIMC = SIMC_BIN;
@@ -251,6 +253,7 @@ export async function runMultiActorAsync(
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const args = process.argv.slice(2);
   const htmlFlag = args.includes("--html");
   const positionalArgs = args.filter((a) => !a.startsWith("--"));

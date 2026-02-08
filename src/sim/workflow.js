@@ -6,7 +6,12 @@ import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, basename } from "node:path";
 import { runSimAsync, SCENARIOS } from "./runner.js";
 import { cpus } from "node:os";
-import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
+import {
+  getSpecAdapter,
+  loadSpecAdapter,
+  initSpec,
+} from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, resultsFile } from "../engine/paths.js";
 
 const ALL_SCENARIOS = Object.keys(SCENARIOS);
@@ -167,7 +172,7 @@ function analyzeCrossScenario(results) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const aplPath = process.argv[2];
   const scenarioArg = process.argv[3];
 

@@ -4,7 +4,12 @@
 
 import { readFileSync } from "node:fs";
 import { dataFile } from "../engine/paths.js";
-import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
+import {
+  getSpecAdapter,
+  loadSpecAdapter,
+  initSpec,
+} from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 
 function loadInteractions() {
   return JSON.parse(readFileSync(dataFile("interactions.json"), "utf-8"));
@@ -273,7 +278,7 @@ export function printHypotheses(hypotheses) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const resultsPath = process.argv[2];
 
   if (!resultsPath) {

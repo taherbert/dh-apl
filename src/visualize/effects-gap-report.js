@@ -2,7 +2,8 @@
 // gaps in coverage: effects declared in C++ but missing from the interaction model.
 
 import { readFileSync, existsSync } from "node:fs";
-import "../engine/startup.js";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
 function runGapReport() {
@@ -220,6 +221,7 @@ function normalizeName(name) {
   return (name || "").toLowerCase().replace(/_/g, "").replace(/\s+/g, "");
 }
 
+await initSpec(parseSpecArg());
 const result = runGapReport();
 if (result.missing > 0) {
   console.log(`\n${result.missing} gaps found.`);

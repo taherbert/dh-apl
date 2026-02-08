@@ -8,9 +8,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   SIMC_CPP,
+  initSpec,
   loadSpecAdapter,
   getSpecAdapter,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir, REFERENCE_DIR } from "../engine/paths.js";
 
 let _structToAbility = null;
@@ -312,4 +314,7 @@ function validateAgainstSeedList(talentAbilityRefs) {
   }
 }
 
-loadSpecAdapter().then(() => extractCppInteractions());
+(async () => {
+  await initSpec(parseSpecArg());
+  extractCppInteractions();
+})();

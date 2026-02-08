@@ -17,7 +17,8 @@
 // PrevGcd: { type: "PrevGcd", position: number, ability: string }
 
 // Dynamic resource names — loaded from spec adapter when available
-import { getSpecAdapter } from "../engine/startup.js";
+import { getSpecAdapter, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 
 let _knownResources = null;
 function getKnownResources() {
@@ -503,6 +504,7 @@ export function removeClause(ast, predicate) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const condition = process.argv[2];
 
   if (!condition) {

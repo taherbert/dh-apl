@@ -7,9 +7,9 @@
 //   Section 3 — Auto-derived functions (generated from SPEC_CONFIG by common.js)
 //
 // After filling in:
-//   1. Set spec.specName in config.json to match specId below
-//   2. Run `npm run build-data` to generate data files
-//   3. Run `node src/spec/validate-spec-data.js` to verify constants
+//   1. Create config.{specid}.json with spec identity (className, specName, specId)
+//   2. Run `SPEC={specid} npm run build-data` to generate data files
+//   3. Run `SPEC={specid} node src/spec/validate-spec-data.js` to verify constants
 //   4. Run `/bootstrap` to generate APL scaffold and build theory
 
 import {

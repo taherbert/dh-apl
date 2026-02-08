@@ -1,9 +1,4 @@
 {
-  "spec": {
-    "className": "demonhunter",
-    "specName": "devourer",
-    "specId": 1480
-  },
   "simc": {
     "dir": "/Users/tom/Documents/GitHub/simc",
     "branch": "midnight",

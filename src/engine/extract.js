@@ -4,7 +4,8 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { SIMC_CPP } from "./startup.js";
+import { SIMC_CPP, initSpec } from "./startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "./paths.js";
 
 // Cache the C++ source for all scanners to share
@@ -90,6 +91,7 @@ export function checkOutputs() {
 
 // CLI entry point
 if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
+  await initSpec(parseSpecArg());
   const outputs = checkOutputs();
   console.log("Extraction pipeline status:");
   for (const [name, info] of Object.entries(outputs)) {

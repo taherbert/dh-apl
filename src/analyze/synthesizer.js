@@ -5,7 +5,8 @@
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import "../engine/startup.js";
+import { initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir } from "../engine/paths.js";
 
 // Specialist output files
@@ -449,6 +450,7 @@ function writeSynthesisJson(result, aplHash) {
 // --- CLI Entry Point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const dir = process.argv[2] || resultsDir();
 
   console.log("Loading specialist outputs from", dir, "...");

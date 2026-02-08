@@ -9,9 +9,11 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   SIMC_CPP,
+  initSpec,
   loadSpecAdapter,
   getSpecAdapter,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir } from "../engine/paths.js";
 
 export function extractEffectsInventory(preloadedSource) {
@@ -329,4 +331,7 @@ function extractBuffChecks(body) {
   return results;
 }
 
-loadSpecAdapter().then(() => extractEffectsInventory());
+(async () => {
+  await initSpec(parseSpecArg());
+  extractEffectsInventory();
+})();

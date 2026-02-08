@@ -4,10 +4,13 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { SCENARIOS } from "./runner.js";
-import { getSpecAdapter, loadSpecAdapter } from "../engine/startup.js";
+import {
+  getSpecAdapter,
+  loadSpecAdapter,
+  initSpec,
+} from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir } from "../engine/paths.js";
-
-const RESULTS_DIR = resultsDir();
 
 function analyze(summaryPath) {
   const results = JSON.parse(readFileSync(summaryPath, "utf-8"));
@@ -118,7 +121,8 @@ function analyzeGCDUsage(result) {
 
 // CLI entry point
 if (import.meta.url === `file://${process.argv[1]}`) {
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
+  const RESULTS_DIR = resultsDir();
   const path = process.argv[2];
   if (!path) {
     console.log("Usage: node src/sim/analyze.js <summary.json>");

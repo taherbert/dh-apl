@@ -5,7 +5,8 @@
 
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { SIMC_CPP, config } from "../engine/startup.js";
+import { SIMC_CPP, config, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir } from "../engine/paths.js";
 
 export function extractProcMechanics(preloadedSource) {
@@ -417,4 +418,7 @@ function extractFunctionBody(lines, startLine) {
   return body;
 }
 
-extractProcMechanics();
+(async () => {
+  await initSpec(parseSpecArg());
+  extractProcMechanics();
+})();

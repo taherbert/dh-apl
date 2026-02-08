@@ -12,18 +12,19 @@ import {
   loadFullNodeList,
 } from "../util/talent-string.js";
 import { dataDir, aplsDir, ROOT } from "../engine/paths.js";
-import { getSpecAdapter, SPEC_ID } from "../engine/startup.js";
+import { getSpecAdapter, getSpecId, initSpec } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 
 const CLASS_POINTS = 34;
 const SPEC_POINTS = 34;
 
-// Extract class tree selections from profile.simc talent hash.
+// Extract class tree selections from baseline.simc talent hash.
 // Returns { selected, rankMap, pointsSpent } matching bfsFillSimple output shape.
-function classTreeFromProfile(classNodes) {
-  const profilePath = join(aplsDir(), "profile.simc");
-  const lines = readFileSync(profilePath, "utf8").split("\n");
+function classTreeFromBaseline(classNodes) {
+  const baselinePath = join(aplsDir(), "baseline.simc");
+  const lines = readFileSync(baselinePath, "utf8").split("\n");
   const talentLine = lines.find((l) => l.trim().startsWith("talents="));
-  if (!talentLine) throw new Error("No talents= line in profile.simc");
+  if (!talentLine) throw new Error("No talents= line in baseline.simc");
 
   const hash = talentLine.trim().split("=")[1];
   const fullNodes = loadFullNodeList();
@@ -814,14 +815,14 @@ export function toTalentString(build, data) {
 // Encode a DoE build into a base64 talent hash string.
 // Must use the full DH node list (all specs, all hero trees) for correct
 // bit alignment — the game client encodes against C_Traits.GetTreeNodes().
-export function buildToHash(build, data, specId = SPEC_ID) {
+export function buildToHash(build, data, specId = getSpecId()) {
   const selections = buildToSelections(build, data);
   const nodes = loadFullNodeList();
   return encode(specId, nodes, selections);
 }
 
 // Return a profileset variant object for a DoE build.
-export function buildToVariant(build, data, specId = SPEC_ID) {
+export function buildToVariant(build, data, specId = getSpecId()) {
   const hash = buildToHash(build, data, specId);
   return { name: build.name, overrides: [`talents=${hash}`] };
 }
@@ -896,8 +897,8 @@ export function generateCombos(opts = {}) {
   const classMap = buildNodeMap(data.classNodes);
   const specMap = buildNodeMap(data.specNodes);
 
-  // Class tree: use profile.simc selections (DPS-optimized, not BFS utility fill)
-  const classResult = classTreeFromProfile(data.classNodes);
+  // Class tree: use baseline.simc selections (DPS-optimized, not BFS utility fill)
+  const classResult = classTreeFromBaseline(data.classNodes);
 
   // Spec tree: DoE approach
   const {
@@ -1270,6 +1271,7 @@ function generatePinnedBuilds(data, specMap, classResult) {
 // --- CLI entry point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
+  await initSpec(parseSpecArg());
   const result = generateCombos();
 
   const valid = result.builds.filter((b) => b.valid);
