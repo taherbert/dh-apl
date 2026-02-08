@@ -20,9 +20,10 @@ import {
   SCENARIOS,
   SCENARIO_WEIGHTS,
   FIDELITY_TIERS,
-  loadSpecAdapter,
+  initSpec,
   getSpecAdapter,
 } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import {
   resultsDir,
   resultsFile,
@@ -730,7 +731,7 @@ footer {
 // --- Main ---
 
 async function main() {
-  await loadSpecAdapter();
+  await initSpec(parseSpecArg());
   const specConfig = getSpecAdapter().getSpecConfig();
   const specName = config.spec.specName;
   const opts = parseArgs();
