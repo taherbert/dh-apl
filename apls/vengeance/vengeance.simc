@@ -165,6 +165,9 @@ actions.anni+=/call_action_list,name=fillers
 
 # === Anni Voidfall — Voidfall cycle state machine ===
 actions.anni_voidfall=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&(buff.voidfall_building.stack=2|buff.voidfall_spending.stack=3)
+# FelDev at 3 spending stacks when fragment-starved: channel generates 3 frags via Meteoric Rise,
+# enabling SBomb for Meteoric Fall burst instead of falling through to single Soul Cleave meteors
+actions.anni_voidfall+=/fel_devastation,if=buff.voidfall_spending.stack=3&soul_fragments<variable.spb_threshold
 actions.anni_voidfall+=/spirit_bomb,if=buff.voidfall_spending.stack=3&soul_fragments>=variable.spb_threshold
 actions.anni_voidfall+=/soul_cleave,if=buff.voidfall_spending.up&buff.voidfall_spending.stack<3
 actions.anni_voidfall+=/fracture,if=buff.voidfall_building.stack=2&fury>=70
