@@ -899,7 +899,10 @@ export function upsertArchetype(archetype) {
     jsonCol(archetype.keyTalents || archetype.key_talents),
     jsonCol(archetype.aplFocus || archetype.apl_focus),
     archetype.tensions || null,
-    archetype.bestBuild?.hash || archetype.best_build_hash || null,
+    archetype.bestBuildHash ||
+      archetype.bestBuild?.hash ||
+      archetype.best_build_hash ||
+      null,
     archetype.buildCount ?? archetype.build_count ?? 0,
   );
 }

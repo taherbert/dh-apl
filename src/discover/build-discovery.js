@@ -104,9 +104,20 @@ async function simBuilds(builds, aplPath, fidelity, data) {
     threads: threadsPerScenario,
   };
 
+  // Inject first build's talent hash into base actor to prevent segfault
+  // when profile.simc has no talents (Midnight SimC crashes on talent-less actors)
+  const baselineHash = builds[0]?.hash;
+
   // Run scenarios in parallel, splitting threads across them
   const promises = scenarios.map(async (scenario) => {
-    const content = generateProfileset(aplPath, variants);
+    let content = generateProfileset(aplPath, variants);
+    if (baselineHash && !content.match(/^\s*talents\s*=/m)) {
+      // Insert talents= before first actions line
+      content = content.replace(
+        /^(actions\.precombat)/m,
+        `talents=${baselineHash}\n\n$1`,
+      );
+    }
     const result = await runProfilesetAsync(
       content,
       scenario,
