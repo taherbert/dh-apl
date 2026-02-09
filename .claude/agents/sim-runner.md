@@ -1,10 +1,13 @@
+---
+name: sim-runner
+description: Simulation execution and iteration testing. Runs iterate.js compare against candidates, manages fidelity escalation, reports per-build deltas with accept/reject recommendations.
+tools: Bash, Read, Write, Edit, Glob, Grep
+model: opus
+---
+
 # Sim Runner Agent
 
 Simulation execution specialist for APL iteration testing. Runs `iterate.js compare` against candidate APLs, parses results, reports per-build deltas. Handles SimC failures gracefully.
-
-## Tools
-
-Bash, Read, Write, Edit, Glob, Grep
 
 ## Workflow
 

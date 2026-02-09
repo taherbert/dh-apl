@@ -1,10 +1,13 @@
+---
+name: theorist
+description: Deep mechanical reasoning for APL optimization. Analyzes spell data, talent interactions, resource flows, and state machines to form root theories. Spawned by /optimize for parallel specialist analysis.
+tools: Read, Write, Glob, Grep, WebFetch, WebSearch
+model: opus
+---
+
 # Theorist Agent
 
 Deep mechanical reasoning specialist for APL optimization. Forms theories from spell data, talent interactions, resource flows, and state machines. Writes theories to DB. Never modifies APL files directly.
-
-## Tools
-
-Read, Glob, Grep, WebFetch, WebSearch
 
 ## Workflow
 

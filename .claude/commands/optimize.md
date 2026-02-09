@@ -1,3 +1,9 @@
+---
+description: The ONE command for all APL and build optimization. Runs everything autonomously — discovers archetypes, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, and reporting.
+argument-hint: "[focus directive or 'test: hypothesis']"
+model: opus
+---
+
 The ONE command for all APL and build optimization. Runs everything autonomously: discover archetypes, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, APL branching, and reporting.
 
 If `$ARGUMENTS` is provided (e.g., `/optimize Check soul fragment economy`), treat it as a **focus directive** -- prioritize that area while still analyzing the full system.
@@ -163,7 +169,14 @@ Set session phase: `setSessionState('phase', '1_specialists')`
 
 ### 1b. Parallel Specialist Launch
 
-Launch 4 specialists IN PARALLEL using Task tool (`subagent_type: "general-purpose"`, `model: "opus"`). All 4 in a SINGLE message. Always use opus model for specialist agents — never haiku or sonnet. Include root theories and archetype results.
+Launch 4 specialists **IN PARALLEL** using the Task tool. All 4 calls in a **SINGLE message** — never sequentially. Each specialist uses `subagent_type: "theorist"`, `model: "opus"` to inherit the full theorist methodology (resource flow, DPGCD, cooldown optimization, etc.). Run all in background with `run_in_background: true` for maximum parallelism.
+
+Each specialist prompt MUST include:
+
+- The root theories you formed in 1a (verbatim)
+- Archetype results from discovery
+- The spec name and data paths
+- Which focus area to analyze and which output file to write
 
 | Specialist          | Focus                                                | Key Data                                                | Output                        |
 | ------------------- | ---------------------------------------------------- | ------------------------------------------------------- | ----------------------------- |
@@ -171,6 +184,8 @@ Launch 4 specialists IN PARALLEL using Task tool (`subagent_type: "general-purpo
 | Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | talents, interactions, DB clusters/archetypes/synergies | `analysis_talent.json`        |
 | Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | spells-summary, cpp-proc-mechanics, APL                 | `analysis_resource_flow.json` |
 | State Machine       | Hero tree rhythms, variable correctness, dead code   | APL, DB clusters/archetypes, spells-summary             | `analysis_state_machine.json` |
+
+While specialists run in background, continue reading the knowledge base or begin Phase 2 preparation. Check specialist output files when they complete.
 
 ---
 
@@ -290,9 +305,12 @@ node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
 When independent hypotheses exist (use `src/analyze/hypothesis-independence.js`):
 
 1. Group by independence (`groupIndependent()`)
-2. Launch 2-3 parallel subagents (`model: "opus"`), each testing one candidate at `--quick`
-3. Promote best to standard fidelity
-4. Re-baseline before next group
+2. For each independent hypothesis, use `subagent_type: "apl-engineer"` (`model: "opus"`) to generate the candidate APL in parallel
+3. Launch parallel `subagent_type: "sim-runner"` agents (`model: "opus"`) with `run_in_background: true`, each testing one candidate at `--quick`
+4. Promote best to standard fidelity
+5. Re-baseline before next group
+
+For sequential iteration (the common case), you can still parallelize: generate the next candidate while reviewing the current sim results.
 
 ### Stop Conditions
 

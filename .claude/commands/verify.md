@@ -1,3 +1,7 @@
+---
+description: Run npm run verify and analyze the results. Fix issues, rebuild, and re-verify until clean.
+---
+
 Run `npm run verify` and analyze the results.
 
 ## Setup

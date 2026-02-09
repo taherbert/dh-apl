@@ -1,3 +1,8 @@
+---
+description: Manage theories in the theorycrafting database. List, show, create, revise, or summarize theories.
+argument-hint: "[list|show <id>|create|revise <id>|summary]"
+---
+
 # Theory Management
 
 Manage theories in the theorycrafting database. Theories are high-level mechanical insights with causal reasoning that drive hypothesis generation.

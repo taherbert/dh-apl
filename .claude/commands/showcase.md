@@ -1,3 +1,8 @@
+---
+description: Generate a self-contained HTML showcase report comparing baseline vs optimized APL across all roster builds.
+argument-hint: "[--fidelity quick|standard|confirm]"
+---
+
 # Showcase Report
 
 Generate a self-contained HTML showcase report comparing the baseline SimC APL against our optimized APL across all roster builds.
