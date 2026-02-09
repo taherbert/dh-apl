@@ -15,6 +15,7 @@
 //   node src/sim/build-roster.js import-baseline
 //   node src/sim/build-roster.js add <hash> --archetype "Name" --hero <tree>
 //   node src/sim/build-roster.js validate
+//   node src/sim/build-roster.js audit
 //   node src/sim/build-roster.js prune [--threshold 1.0]
 //   node src/sim/build-roster.js update-dps [--fidelity quick|standard|confirm]
 //   node src/sim/build-roster.js generate-hashes
@@ -32,6 +33,8 @@ import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, resultsFile, aplsDir } from "../engine/paths.js";
 import { validateBuild, validateHash } from "../util/validate-build.js";
 import {
+  decode,
+  loadFullNodeList,
   overridesToHash,
   normalizeClassTree,
   getBaselineClassSelections,
@@ -356,9 +359,18 @@ export function importFromDoe() {
     return { added: 0, skipped: 0, invalid: 0 };
   }
 
-  // Get existing roster hashes for dedup
+  // Clear stale DoE roster entries so we only keep current archetypes
   const existingBuilds = getRosterBuilds();
-  const existingHashes = new Set(existingBuilds.map((b) => b.hash));
+  const currentArchNames = new Set(dbArchetypes.map((a) => a.name));
+  for (const b of existingBuilds) {
+    if (b.source === "doe" && !currentArchNames.has(b.archetype)) {
+      setRosterMembership(b.hash, false);
+    }
+  }
+
+  // Refresh after cleanup, dedup by hash
+  const freshBuilds = getRosterBuilds();
+  const existingHashes = new Set(freshBuilds.map((b) => b.hash));
 
   let added = 0;
   let skipped = 0;
@@ -374,11 +386,11 @@ export function importFromDoe() {
       if (!bestHash) continue;
 
       // Get builds for this archetype from DB
-      const archBuilds = queryBuilds({ archetype: arch.name, limit: 3 });
+      const archBuilds = queryBuilds({ archetype: arch.name, limit: 5 });
       const candidates =
         archBuilds.length > 0 ? archBuilds : [{ hash: bestHash }];
 
-      for (const candidate of candidates.slice(0, 3)) {
+      for (const candidate of candidates.slice(0, 5)) {
         if (!candidate.hash) continue;
         if (existingHashes.has(candidate.hash)) {
           skipped++;
@@ -786,12 +798,20 @@ export function pruneBuilds({ threshold = 1.0 } = {}) {
     const bestW = groupBuilds[0].weighted || 0;
     if (bestW === 0) continue;
 
+    const minKeep = 2;
+    let retained = 1; // best build is always kept
     for (let i = 1; i < groupBuilds.length; i++) {
       const w = groupBuilds[i].weighted || 0;
+      if (w === 0) continue;
+
       const deltaPercent = ((bestW - w) / bestW) * 100;
-      if (w > 0 && deltaPercent > threshold) {
+      const shouldPrune = deltaPercent > threshold && retained >= minKeep;
+
+      if (shouldPrune) {
         setRosterMembership(groupBuilds[i].hash, false);
         pruned++;
+      } else {
+        retained++;
       }
     }
   }
@@ -969,6 +989,185 @@ function sanitizeId(name) {
   return name.replace(/[^a-zA-Z0-9]+/g, "").slice(0, 40);
 }
 
+// --- Audit: validate builds + analyze talent/hero coverage ---
+
+export function auditRoster() {
+  const builds = getRosterBuilds();
+  if (!builds || builds.length === 0) {
+    console.error("No roster builds found.");
+    return;
+  }
+
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const nodes = loadFullNodeList();
+  const total = builds.length;
+
+  // 1. Validate all builds
+  console.log("=== Build Validation ===\n");
+  let valid = 0;
+  let invalid = 0;
+  for (const build of builds) {
+    const result = validateBuild({ hash: build.hash });
+    if (result.valid) {
+      valid++;
+    } else {
+      invalid++;
+      console.log(`  FAIL: ${build.name} — ${result.errors.join("; ")}`);
+    }
+  }
+  console.log(`${valid} valid, ${invalid} invalid out of ${total}`);
+
+  // 2. Hero tree distribution
+  const byTree = {};
+  for (const b of builds) {
+    const tree = b.hero_tree || b.heroTree || "unknown";
+    (byTree[tree] ||= []).push(b);
+  }
+
+  console.log("\n=== Hero Tree Distribution ===\n");
+  for (const [tree, treeBuilds] of Object.entries(byTree)) {
+    console.log(`${tree}: ${treeBuilds.length} builds`);
+  }
+
+  // 3. Archetype coverage
+  const byArch = {};
+  for (const b of builds) {
+    const arch = b.archetype || "untagged";
+    byArch[arch] = (byArch[arch] || 0) + 1;
+  }
+  const archCount = Object.keys(byArch).length;
+  const minPerArch = Math.min(...Object.values(byArch));
+
+  console.log(`\n=== Archetype Coverage (${archCount} archetypes) ===\n`);
+  const archEntries = Object.entries(byArch).sort((a, b) => b[1] - a[1]);
+  for (const [arch, count] of archEntries) {
+    const flag = count < 2 ? " ← LOW" : "";
+    console.log(`  ${count}x ${arch}${flag}`);
+  }
+  console.log(`\nMin per archetype: ${minPerArch}`);
+
+  // 4. Hero choice node coverage (decode hashes)
+  // Use raidbots data for hero subtree nodes (fullNodeList lacks subTreeId)
+  const rbData = JSON.parse(
+    readFileSync(dataFile("raidbots-talents.json"), "utf8"),
+  );
+
+  console.log("\n=== Hero Choice Coverage ===\n");
+  for (const [treeName, treeConfig] of Object.entries(specConfig.heroTrees)) {
+    const locks = treeConfig.choiceLocks || {};
+    const treeBuilds = builds.filter(
+      (b) =>
+        (b.hero_tree || b.heroTree) === treeName ||
+        (b.hero_tree || b.heroTree) ===
+          treeConfig.displayName?.toLowerCase().replace(/\s+/g, "_"),
+    );
+    if (treeBuilds.length === 0) continue;
+
+    // Hero subtrees in raidbots data are keyed by display name
+    const subtreeNodes =
+      rbData.heroSubtrees[treeConfig.displayName] ||
+      rbData.heroSubtrees[treeName];
+    if (!subtreeNodes) continue;
+
+    const choiceNodes = subtreeNodes.filter(
+      (n) => n.type === "choice" && n.entries?.length > 1,
+    );
+
+    for (const cNode of choiceNodes) {
+      const counts = {};
+      let missing = 0;
+      for (const b of treeBuilds) {
+        const { selections } = decode(b.hash, nodes);
+        const sel = selections.get(cNode.id);
+        if (!sel || sel.rank === 0) {
+          missing++;
+          continue;
+        }
+        const idx = sel.choiceIndex || 0;
+        const entryName = cNode.entries[idx]?.name || `entry${idx}`;
+        counts[entryName] = (counts[entryName] || 0) + 1;
+      }
+
+      const isLocked = cNode.id in locks;
+      const status = isLocked ? "LOCKED" : "unlocked";
+      const entries = cNode.entries
+        .map((e, i) => {
+          const c = counts[e.name] || 0;
+          return `${e.name}=${c}`;
+        })
+        .join(", ");
+
+      console.log(
+        `  ${treeConfig.displayName} ${cNode.id} [${status}]: ${entries}`,
+      );
+    }
+  }
+
+  // 5. Spec talent frequency
+  console.log("\n=== Spec Talent Frequency ===\n");
+  const talentFreq = {};
+  for (const b of builds) {
+    const { selections } = decode(b.hash, nodes);
+    for (const [nodeId, sel] of selections) {
+      if (sel.rank <= 0) continue;
+      const node = nodes.find((n) => n.id === nodeId);
+      if (!node) continue;
+      let name;
+      if (sel.choiceIndex !== undefined && node.entries?.[sel.choiceIndex]) {
+        name = node.entries[sel.choiceIndex].name;
+      } else if (node.entries?.length >= 1 && node.entries[0]?.name) {
+        name = node.entries[0].name;
+      } else {
+        name = node.name;
+      }
+      if (!name) continue;
+      talentFreq[name] = (talentFreq[name] || 0) + 1;
+    }
+  }
+
+  const excluded = new Set(specConfig.excludedTalents || []);
+  const sorted = Object.entries(talentFreq).sort((a, b) => b[1] - a[1]);
+
+  const alwaysOn = sorted.filter(([, c]) => c === total);
+  const varied = sorted.filter(([, c]) => c > 0 && c < total);
+
+  console.log(
+    `Always present (${alwaysOn.length} talents at ${total}/${total}):`,
+  );
+  for (const [name] of alwaysOn) {
+    const note = excluded.has(name) ? " ← in excludedTalents?" : "";
+    console.log(`  ${name}${note}`);
+  }
+
+  console.log(`\nVaried (${varied.length} talents):`);
+  for (const [name, count] of varied) {
+    const pct = Math.round((count / total) * 100);
+    const note = excluded.has(name) ? " [excluded]" : "";
+    console.log(`  ${name}: ${count}/${total} (${pct}%)${note}`);
+  }
+
+  // 6. Check excluded talents that appear in roster
+  const excludedInRoster = varied
+    .filter(([name]) => excluded.has(name))
+    .map(([name, count]) => `${name} (${count}/${total})`);
+  if (excludedInRoster.length > 0) {
+    console.log(
+      "\nWARNING: Excluded (non-DPS) talents appearing in roster builds:",
+    );
+    console.log(`  ${excludedInRoster.join(", ")}`);
+    console.log(
+      "  (Expected: excluded talents appear as BFS connectivity fillers)",
+    );
+  }
+
+  // Summary
+  console.log("\n=== Summary ===\n");
+  console.log(`Builds: ${total} (${valid} valid, ${invalid} invalid)`);
+  console.log(`Hero trees: ${Object.keys(byTree).join(", ")}`);
+  console.log(`Archetypes: ${archCount} (min ${minPerArch} per archetype)`);
+  console.log(`Talents: ${alwaysOn.length} always-on, ${varied.length} varied`);
+}
+
 // --- CLI ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {
@@ -1051,6 +1250,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       break;
     }
 
+    case "audit":
+      auditRoster();
+      break;
+
     case "prune": {
       const thIdx = args.indexOf("--threshold");
       const threshold = thIdx !== -1 ? parseFloat(args[thIdx + 1]) : 1.0;
@@ -1104,6 +1307,7 @@ Usage:
   node src/sim/build-roster.js import-baseline                   Import baseline.simc build
   node src/sim/build-roster.js add <hash> --archetype "N" --hero <tree>  Add manually
   node src/sim/build-roster.js validate                          Re-validate all builds
+  node src/sim/build-roster.js audit                             Full coverage audit (validate + talent + hero)
   node src/sim/build-roster.js prune [--threshold 1.0]           Prune redundant builds
   node src/sim/build-roster.js update-dps [--fidelity quick|standard|confirm]  Sim all builds
   node src/sim/build-roster.js generate-hashes                   Generate hashes for override-only builds

@@ -112,8 +112,11 @@ export const SPEC_CONFIG = {
       ],
       aplBranch: "ar",
       profileKeywords: ["aldrachi", "reaver"],
-      // DPS-optimal hero choice locks (determined by profileset sim)
-      choiceLocks: { 94911: 1, 94896: 0, 94910: 0 },
+      // Hero choice locks: defensive-only choices locked to 0, DPS-relevant unlocked for DoE
+      // 94911: Locked to Unhindered Assault (DPS via Felblade reset)
+      // 94896: Locked to 0 (Army Unto Oneself / Incorruptible Spirit both defensive)
+      // 94910: Unlocked (Keen Engagement vs Preemptive Strike — both have DPS value)
+      choiceLocks: { 94911: 1, 94896: 0 },
     },
     annihilator: {
       displayName: "Annihilator",
@@ -123,8 +126,9 @@ export const SPEC_CONFIG = {
       keyBuffs: ["voidfall_building", "voidfall_spending", "catastrophe"],
       aplBranch: "anni",
       profileKeywords: ["annihilator", "anni"],
-      // DPS-optimal hero choice locks (determined by profileset sim)
-      choiceLocks: { 109448: 1, 109450: 1 },
+      // 109448: Locked to State of Matter (both options are pure utility, zero DPS)
+      // 109450: Unlocked (Doomsayer opener burst vs Harness the Cosmos +15% meteor — let DoE decide)
+      choiceLocks: { 109448: 1 },
     },
   },
 
