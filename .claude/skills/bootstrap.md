@@ -136,14 +136,15 @@ npm run sim -- apls/{spec}/{spec}-scaffold.simc st
 node src/sim/iterate.js init apls/{spec}/{spec}-scaffold.simc
 ```
 
-### Phase 7: Build Discovery (Optional)
+### Phase 7: Generate Build Roster
 
 ```bash
-# Run build discovery to find optimal talent combinations
-npm run discover -- --quick
+# Generate cluster-based roster from SPEC_CONFIG templates
+npm run roster generate
+npm run roster show                   # Verify coverage
 ```
 
-This populates the DB with ranked builds, archetypes, and factors.
+This generates builds from SPEC_CONFIG `rosterTemplates` × hero tree × variant. Each template specifies an apex rank and which talent clusters to include/exclude.
 
 ## Expected Outputs
 
@@ -152,12 +153,12 @@ After bootstrap, you should have:
 - `data/{spec}/spells-summary.json` — spell data
 - `data/{spec}/talents.json` — talent tree
 - `data/{spec}/interactions-summary.json` — interactions
-- `results/{spec}/theorycraft.db` — talent clusters, archetypes, builds (if discovery ran)
+- `results/{spec}/theorycraft.db` — builds, roster membership, talent clusters
 - `apls/{spec}/{spec}-scaffold.simc` — starting point
 
 ## Next Steps
 
-1. **Curate DB knowledge** — review clusters, archetypes, synergies via `/theory` and `npm run db:dump`
+1. **Verify roster** — `npm run roster show` to confirm template × hero tree coverage
 2. **Refine APL** — add talent gates, hero tree routing, conditions
 3. **Run /optimize** — start the full optimization loop (deep reasoning + iteration)
 

@@ -54,9 +54,9 @@ When fixing an error, trace downstream: what variables reference the corrected v
 ## Post-Iteration Review
 
 1. Read comparison results
-2. Analyze per-build differentials: which archetypes benefited, which were hurt, is branching needed?
+2. Analyze per-build differentials: which templates/clusters benefited, which were hurt, is branching needed?
 3. Check resource waste (fury overcap, fragment overflow) and cooldown utilization (% time ready but unused)
-4. Compare across archetypes for branching opportunities
+4. Compare across builds for branching opportunities (cluster presence, apex rank, hero tree)
 
 ## Theory Revision
 
@@ -110,6 +110,6 @@ default -> [precombat] -> [externals] -> hero tree branch
 
 ## Actionable vs Noise
 
-**Actionable:** Dead code (condition always false), stale threshold (talent changed cap), cooldown wasted >10%, resource overcap >5%, clear archetype regression.
+**Actionable:** Dead code (condition always false), stale threshold (talent changed cap), cooldown wasted >10%, resource overcap >5%, clear per-build regression.
 
 **Noise (ignore):** <0.1% DPS at confirm fidelity, single-iteration cast sequence anomalies, stat-weight micro-optimization, defensive uptime concerns.
