@@ -75,8 +75,9 @@ export const SPEC_CONFIG = {
     reavers_glaive: { apCoeff: 3.45 },
   },
 
-  // Non-DPS spec talents excluded from DoE factor space.
+  // Non-DPS spec talents excluded from roster generation.
   // Pure defensive, utility, or healing-only — never contribute to damage output.
+  // Used as BFS connectivity fillers when needed (e.g., Void Reaver for Focused Cleave prereq).
   excludedTalents: [
     "Calcified Spikes",
     "Sigil of Silence",
@@ -87,14 +88,189 @@ export const SPEC_CONFIG = {
     "Fel Flame Fortification",
     "Last Resort",
     "Soulmonger",
-    "Focused Cleave",
-    "Quickened Sigils",
     "Sigil of Chains",
-    "Chains of Anger",
     "Feed the Demon",
     "Roaring Fire",
     "Painbringer",
     "Void Reaver",
+  ],
+
+  // S3 DPS talents taken by every build (no variation).
+  lockedTalents: [
+    "Spirit Bomb",
+    "Fiery Brand",
+    "Burning Blood",
+    "Tempered Steel",
+    "Ascending Flame",
+    "Fiery Demise",
+  ],
+
+  // Talent clusters: groups of related S3 DPS talents that create meaningful
+  // playstyle variation. Each cluster has core (minimum investment) and optional
+  // extended talents. Builds include or exclude entire clusters.
+  talentClusters: {
+    brand: {
+      core: ["Burning Alive"],
+      extended: ["Charred Flesh", "Down in Flames"],
+    },
+    sigil: { core: ["Cycle of Binding"] },
+    harvest: { core: ["Vulnerability"], extended: ["Soulcrush"] },
+    feldev: {
+      core: ["Stoke the Flames"],
+      extended: ["Vengeful Beast", "Darkglare Boon"],
+    },
+    sc: { core: ["Soul Carver"] },
+  },
+
+  // Roster templates: each specifies an Apex rank (0-4) and which clusters to
+  // include. Crossed with hero tree × variant to produce the full roster.
+  // Clusters not in `include` are excluded (their talents are added to the
+  // exclusion set so BFS won't auto-select them).
+  //
+  // Two groups:
+  //   1. APL Coverage (Apex 0-1): test APL with/without clusters at both apex levels
+  //   2. Apex Scaling (Apex 2-4): focus-driven — what to skip flows from build identity
+  rosterTemplates: [
+    // --- APL Coverage: Apex 0 (no apex, 14 S3 budget, 13 demand — 1 spare) ---
+    {
+      name: "Full Stack",
+      apexRank: 0,
+      include: {
+        brand: "full",
+        sigil: "full",
+        harvest: "full",
+        feldev: "full",
+        sc: "full",
+      },
+    },
+    {
+      name: "No Brand",
+      apexRank: 0,
+      include: { sigil: "full", harvest: "full", feldev: "full", sc: "full" },
+    },
+    {
+      name: "No Harvest",
+      apexRank: 0,
+      include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
+    },
+    {
+      name: "No FelDev",
+      apexRank: 0,
+      include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
+    },
+
+    // --- APL Coverage: Apex 1 (same cluster coverage, apex.1 active) ---
+    {
+      name: "Full Stack",
+      apexRank: 1,
+      include: {
+        brand: "full",
+        sigil: "full",
+        harvest: "full",
+        feldev: "full",
+        sc: "full",
+      },
+    },
+    {
+      name: "No Brand",
+      apexRank: 1,
+      include: { sigil: "full", harvest: "full", feldev: "full", sc: "full" },
+    },
+    {
+      name: "No Harvest",
+      apexRank: 1,
+      include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
+    },
+    {
+      name: "No FelDev",
+      apexRank: 1,
+      include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
+    },
+
+    // --- Apex 2 (skip 1 pt) — two meaningful 1-pt standalone drops ---
+    {
+      name: "Drop SC",
+      apexRank: 2,
+      include: {
+        brand: "full",
+        sigil: "full",
+        harvest: "full",
+        feldev: "full",
+      },
+    },
+    {
+      name: "Drop Sigil",
+      apexRank: 2,
+      include: { brand: "full", harvest: "full", feldev: "full", sc: "full" },
+    },
+
+    // --- Apex 3 (skip 2 pts) — focus determines what to sacrifice ---
+    // Balanced: drop two cheapest standalones, keep all three major clusters full
+    {
+      name: "Drop SC+Sigil",
+      apexRank: 3,
+      include: { brand: "full", harvest: "full", feldev: "full" },
+    },
+    // Brand+Harvest focus: narrow FelDev to core, keep soul + fire economy intact
+    {
+      name: "Trim FelDev",
+      apexRank: 3,
+      include: {
+        brand: "full",
+        sigil: "full",
+        harvest: "full",
+        feldev: "core",
+        sc: "full",
+      },
+    },
+    // Brand+FelDev focus: narrow Harvest to core (Vuln only), drop SC
+    {
+      name: "Trim Harvest",
+      apexRank: 3,
+      include: {
+        brand: "full",
+        sigil: "full",
+        harvest: "core",
+        feldev: "full",
+      },
+    },
+
+    // --- Apex 4 (skip 3 pts) — focus defines which cluster to sacrifice ---
+    // Brand+Harvest: sacrifice FelDev entirely
+    {
+      name: "Brand+Harvest",
+      apexRank: 4,
+      include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
+    },
+    // Brand+FelDev: sacrifice Harvest entirely
+    {
+      name: "Brand+FelDev",
+      apexRank: 4,
+      include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
+    },
+    // Harvest+FelDev: sacrifice Brand extended (keep BA for fire synergy)
+    {
+      name: "Harvest+FelDev",
+      apexRank: 4,
+      include: {
+        brand: "core",
+        sigil: "full",
+        harvest: "full",
+        feldev: "full",
+        sc: "full",
+      },
+    },
+    // Balanced: sacrifice FelDev extended + SC, keep all cluster cores
+    {
+      name: "Balanced",
+      apexRank: 4,
+      include: {
+        brand: "full",
+        sigil: "full",
+        harvest: "full",
+        feldev: "core",
+      },
+    },
   ],
 
   heroTrees: {

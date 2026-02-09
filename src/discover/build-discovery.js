@@ -849,16 +849,9 @@ async function discover(opts = {}) {
     console.warn(`  DB sync warning: ${e.message}`);
   }
 
-  // Auto-import new discoveries into persistent build roster
-  try {
-    const { importFromDoe } = await import("../sim/build-roster.js");
-    const rosterResult = importFromDoe();
-    console.log(
-      `  Roster: ${rosterResult.added} added, ${rosterResult.skipped} existing`,
-    );
-  } catch {
-    // Roster import is optional — may fail if roster not yet initialized
-  }
+  // Discovery writes builds/archetypes/factors to DB but does NOT touch roster.
+  // Roster generation is a separate step: npm run roster generate
+  console.log(`  Roster not auto-updated. Run: npm run roster generate`);
 
   printSummary(output);
 

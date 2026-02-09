@@ -848,6 +848,11 @@ export function setRosterMembership(hash, inRoster, s) {
   );
 }
 
+export function clearAllRosterMembership(s) {
+  const db = getDb();
+  db.prepare("UPDATE builds SET in_roster = 0 WHERE spec = ?").run(s || spec());
+}
+
 export function updateBuildDps(hash, dps, s) {
   const db = getDb();
   const weighted =

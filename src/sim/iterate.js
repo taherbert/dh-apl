@@ -903,10 +903,13 @@ async function cmdInit(aplPath) {
   if (!roster || roster.builds.length === 0) {
     console.error(
       "No build roster found. The roster is required for multi-build iteration.\n" +
-        "Populate the roster first:\n" +
+        "Generate the roster first:\n" +
+        "  npm run roster generate                          # Build full layered roster\n" +
+        "Or populate incrementally:\n" +
         "  npm run discover                                 # Run DoE build discovery\n" +
+        "  npm run roster import-baseline                   # Import SimC default\n" +
         "  npm run roster import-community                  # Import community builds\n" +
-        "  npm run roster import-baseline                   # Import SimC default\n",
+        "  npm run roster import-doe                        # Import DoE builds\n",
     );
     process.exit(1);
   }
