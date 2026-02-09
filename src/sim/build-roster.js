@@ -359,9 +359,18 @@ export function importFromDoe() {
     return { added: 0, skipped: 0, invalid: 0 };
   }
 
-  // Get existing roster hashes for dedup
+  // Clear stale DoE roster entries so we only keep current archetypes
   const existingBuilds = getRosterBuilds();
-  const existingHashes = new Set(existingBuilds.map((b) => b.hash));
+  const currentArchNames = new Set(dbArchetypes.map((a) => a.name));
+  for (const b of existingBuilds) {
+    if (b.source === "doe" && !currentArchNames.has(b.archetype)) {
+      setRosterMembership(b.hash, false);
+    }
+  }
+
+  // Refresh after cleanup, dedup by hash
+  const freshBuilds = getRosterBuilds();
+  const existingHashes = new Set(freshBuilds.map((b) => b.hash));
 
   let added = 0;
   let skipped = 0;
@@ -377,11 +386,11 @@ export function importFromDoe() {
       if (!bestHash) continue;
 
       // Get builds for this archetype from DB
-      const archBuilds = queryBuilds({ archetype: arch.name, limit: 3 });
+      const archBuilds = queryBuilds({ archetype: arch.name, limit: 5 });
       const candidates =
         archBuilds.length > 0 ? archBuilds : [{ hash: bestHash }];
 
-      for (const candidate of candidates.slice(0, 3)) {
+      for (const candidate of candidates.slice(0, 5)) {
         if (!candidate.hash) continue;
         if (existingHashes.has(candidate.hash)) {
           skipped++;

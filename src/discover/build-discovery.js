@@ -21,6 +21,7 @@ import {
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, resultsDir, resultsFile, aplsDir } from "../engine/paths.js";
 import {
+  getDb,
   upsertBuild,
   upsertArchetype,
   upsertFactor,
@@ -278,7 +279,7 @@ function discoverArchetypes(
   meanDPS,
   data,
 ) {
-  const MAX_FORMING_FACTORS = 4;
+  const MAX_FORMING_FACTORS = 2;
   const threshold = meanDPS * 0.005;
   const mergeThreshold = meanDPS * 0.01;
 
@@ -822,6 +823,10 @@ async function discover(opts = {}) {
           runId,
         );
       }
+      // Clear stale archetypes before writing new ones
+      getDb()
+        .prepare("DELETE FROM archetypes WHERE spec = ?")
+        .run(config.specId);
       for (const arch of output.discoveredArchetypes) {
         upsertArchetype({
           name: arch.name,
