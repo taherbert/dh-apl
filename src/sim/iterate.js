@@ -285,42 +285,46 @@ function recordIteration(state, comparison, reason, hypothesisHint, decision) {
 
   const hypothesis = popHypothesis(state, hypothesisHint);
 
+  const iterEntry = {
+    id: iterNum,
+    timestamp: new Date().toISOString(),
+    hypothesis: hypothesis.description,
+    category: hypothesis.category,
+    mutation: reason,
+    decision,
+    reason,
+  };
+
   if (comparison.multiBuild) {
-    // Multi-build: store full comparison object for rollback/reporting
-    state.iterations.push({
-      id: iterNum,
-      timestamp: new Date().toISOString(),
-      hypothesis: hypothesis.description,
-      category: hypothesis.category,
-      mutation: reason,
-      comparison: {
-        aggregates: comparison.aggregate,
-        buildResults: comparison.buildResults,
-      },
-      decision,
-      reason,
-    });
+    // Accepted: keep per-build candidate DPS (needed for rollback replay).
+    // Rejected: aggregates only (per-build details not needed).
+    const compactComparison = { aggregates: comparison.aggregate };
+    if (decision === "accepted") {
+      const compactBuilds = {};
+      for (const [buildId, br] of Object.entries(comparison.buildResults)) {
+        compactBuilds[buildId] = {
+          scenarios: Object.fromEntries(
+            Object.entries(br.scenarios || {}).map(([s, sd]) => [
+              s,
+              { candidate: sd.candidate },
+            ]),
+          ),
+        };
+      }
+      compactComparison.buildResults = compactBuilds;
+    }
+    iterEntry.comparison = compactComparison;
   } else {
     // Single-build: flat per-scenario results
-    const iterResults = {};
-    for (const [scenario, r] of Object.entries(comparison.results || {})) {
-      iterResults[scenario] = {
-        current: r.current,
-        candidate: r.candidate,
-        delta_pct: r.deltaPct,
-      };
-    }
-    state.iterations.push({
-      id: iterNum,
-      timestamp: new Date().toISOString(),
-      hypothesis: hypothesis.description,
-      category: hypothesis.category,
-      mutation: reason,
-      results: iterResults,
-      decision,
-      reason,
-    });
+    iterEntry.results = Object.fromEntries(
+      Object.entries(comparison.results || {}).map(([scenario, r]) => [
+        scenario,
+        { current: r.current, candidate: r.candidate, delta_pct: r.deltaPct },
+      ]),
+    );
   }
+
+  state.iterations.push(iterEntry);
 
   return { iterNum, hypothesis };
 }
@@ -1173,7 +1177,12 @@ async function cmdAccept(reason, hypothesisHint) {
 
   // For multi-build comparisons, wrap in the format recordIteration expects
   const iterComparison = comparison.multiBuild
-    ? { results: {}, multiBuild: true, aggregate: comparison.aggregate }
+    ? {
+        results: {},
+        multiBuild: true,
+        aggregate: comparison.aggregate,
+        buildResults: comparison.buildResults,
+      }
     : comparison;
 
   const { iterNum, hypothesis } = recordIteration(
@@ -1822,7 +1831,7 @@ async function cmdTheorycraft() {
   const aplText = readFileSync(CURRENT_APL, "utf-8");
 
   // Load spell data
-  const spellDataPath = dataFile("spells.json");
+  const spellDataPath = dataFile("spells-summary.json");
   const spellData = existsSync(spellDataPath)
     ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
     : [];
@@ -1944,7 +1953,7 @@ async function cmdSynthesize() {
 
   console.log("Generating temporal hypotheses...");
   if (aplText) {
-    const spellDataPath = dataFile("spells.json");
+    const spellDataPath = dataFile("spells-summary.json");
     const spellData = existsSync(spellDataPath)
       ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
       : [];
