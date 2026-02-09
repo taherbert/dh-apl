@@ -272,8 +272,7 @@ export function buildToSelections(build, data) {
       // Find the index of the chosen entry
       if (node.entries) {
         const idx = node.entries.findIndex(
-          (e) =>
-            e.name === chosenEntry.name || e.entryId === chosenEntry.entryId,
+          (e) => e.name === chosenEntry.name || e.id === chosenEntry.id,
         );
         if (idx >= 0) sel.choiceIndex = idx;
       }

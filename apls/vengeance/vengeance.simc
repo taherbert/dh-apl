@@ -113,8 +113,10 @@ actions.anni+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 actions.anni+=/potion,use_off_gcd=1,if=buff.voidfall_spending.stack=3
 actions.anni+=/call_action_list,name=externals,if=buff.voidfall_spending.stack=3
 actions.anni+=/call_action_list,name=anni_voidfall
-# Allow Meta during building phase — Mass Acceleration overwrites building stacks
-actions.anni+=/metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up
+# Hold Meta at 2 building stacks — let natural cycle complete for double Voidfall burst
+# At 2 stacks, one Fracture proc completes natural spending, then Mass Acceleration
+# provides a second immediate 3-stack spending phase. At 0-1 stacks, not worth waiting.
+actions.anni+=/metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up&buff.voidfall_building.stack<2
 actions.anni+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
 actions.anni+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
 # Charred Flesh: ImmAura ticks extend Brand duration
