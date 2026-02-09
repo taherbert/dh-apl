@@ -9,7 +9,7 @@ Bootstrap workflow for fresh spec optimization. This skill orchestrates the full
 - Starting optimization for a **new spec**
 - After a **major game patch** that invalidates existing knowledge
 - When you want to **rebuild everything from scratch**
-- When the existing APL, build-theory, or findings are corrupt/stale
+- When the existing APL, DB knowledge, or findings are corrupt/stale
 
 ## Prerequisites
 
@@ -98,18 +98,18 @@ Enhance the scaffold using techniques learned in Phase 2 — add hero tree branc
 ### Phase 4: Build Theory Generation
 
 ```bash
-# Generate initial build theory from talent data
-node src/analyze/build-theory-generator.js data/{spec}/build-theory-generated.json
+# Generate initial build theory and write to DB
+node src/analyze/build-theory-generator.js
 ```
 
-Review the generated theory:
+Review the generated theory via `npm run db:status` and `npm run db:dump`:
 
 - Clusters may be incomplete or miscategorized
 - Hero trees need manual verification
 - Synergies are detected by co-reference, not simulation
 - Archetypes are combinatorial, not optimal
 
-**Important:** Copy to `data/{spec}/build-theory.json` only after manual curation.
+Review and curate the talent clusters and archetypes in the DB. Use `/theory` to manage theories.
 
 ### Phase 5: Talent-APL Coupling Analysis
 
@@ -142,7 +142,7 @@ node src/sim/iterate.js init apls/{spec}/{spec}-scaffold.simc
 npm run discover -- --quick
 ```
 
-This generates `results/{spec}/builds.json` with ranked builds.
+This populates the DB with ranked builds, archetypes, and factors.
 
 ## Expected Outputs
 
@@ -151,13 +151,12 @@ After bootstrap, you should have:
 - `data/{spec}/spells-summary.json` — spell data
 - `data/{spec}/talents.json` — talent tree
 - `data/{spec}/interactions-summary.json` — interactions
-- `data/{spec}/build-theory.json` — needs curation
+- `results/{spec}/theorycraft.db` — talent clusters, archetypes, builds (if discovery ran)
 - `apls/{spec}/{spec}-scaffold.simc` — starting point
-- `results/{spec}/builds.json` — if discovery ran
 
 ## Next Steps
 
-1. **Curate build-theory.json** — review clusters, archetypes, synergies
+1. **Curate DB knowledge** — review clusters, archetypes, synergies via `/theory` and `npm run db:dump`
 2. **Refine APL** — add talent gates, hero tree routing, conditions
 3. **Run /optimize** — start the full optimization loop (deep reasoning + iteration)
 

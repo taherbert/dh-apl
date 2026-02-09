@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS builds (
   hash TEXT PRIMARY KEY,
   spec TEXT NOT NULL,
   name TEXT,
+  display_name TEXT,
   hero_tree TEXT,
   archetype TEXT,
   overrides TEXT,
@@ -111,6 +112,9 @@ CREATE TABLE IF NOT EXISTS archetypes (
   defining_talents TEXT,
   description TEXT,
   core_loop TEXT,
+  key_talents TEXT,
+  apl_focus TEXT,
+  tensions TEXT,
   best_build_hash TEXT,
   build_count INTEGER DEFAULT 0
 );
@@ -134,6 +138,38 @@ CREATE TABLE IF NOT EXISTS synergies (
   interaction REAL,
   run_id TEXT,
   PRIMARY KEY (talent_a, talent_b, spec)
+);
+
+-- ═══════════════════════════════════════════════════════════
+-- KNOWLEDGE: TALENT STRUCTURE
+-- ═══════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS talent_clusters (
+  id TEXT PRIMARY KEY,
+  spec TEXT NOT NULL,
+  name TEXT NOT NULL,
+  talents TEXT NOT NULL,
+  core_loop TEXT,
+  key_mechanics TEXT,
+  role TEXT
+);
+
+CREATE TABLE IF NOT EXISTS cluster_synergies (
+  cluster TEXT NOT NULL,
+  hero_tree TEXT NOT NULL,
+  spec TEXT NOT NULL,
+  synergy_rating TEXT,
+  notes TEXT,
+  PRIMARY KEY (cluster, hero_tree, spec)
+);
+
+CREATE TABLE IF NOT EXISTS tension_points (
+  id TEXT PRIMARY KEY,
+  spec TEXT NOT NULL,
+  description TEXT NOT NULL,
+  explanation TEXT,
+  affected_archetypes TEXT,
+  resolution TEXT
 );
 
 -- ═══════════════════════════════════════════════════════════
@@ -185,16 +221,40 @@ CREATE TABLE IF NOT EXISTS schema_info (
 -- INDEXES
 -- ═══════════════════════════════════════════════════════════
 
-CREATE INDEX IF NOT EXISTS idx_theories_status ON theories(status);
-CREATE INDEX IF NOT EXISTS idx_theories_category ON theories(category);
-CREATE INDEX IF NOT EXISTS idx_hypotheses_status ON hypotheses(status, priority DESC);
+-- Every query filters by spec first — spec must be leading column in composite indexes.
+
+-- theories: filtered by spec, then status or category
+CREATE INDEX IF NOT EXISTS idx_theories_spec_status ON theories(spec, status);
+CREATE INDEX IF NOT EXISTS idx_theories_spec_category ON theories(spec, category);
+
+-- hypotheses: filtered by spec, then status+priority or theory_id
+CREATE INDEX IF NOT EXISTS idx_hypotheses_spec_status ON hypotheses(spec, status, priority DESC);
 CREATE INDEX IF NOT EXISTS idx_hypotheses_theory ON hypotheses(theory_id);
-CREATE INDEX IF NOT EXISTS idx_iterations_session ON iterations(session_id);
-CREATE INDEX IF NOT EXISTS idx_iterations_decision ON iterations(decision);
-CREATE INDEX IF NOT EXISTS idx_builds_weighted ON builds(weighted DESC);
-CREATE INDEX IF NOT EXISTS idx_builds_roster ON builds(in_roster) WHERE in_roster = 1;
-CREATE INDEX IF NOT EXISTS idx_findings_status ON findings(status);
-CREATE INDEX IF NOT EXISTS idx_factors_talent ON factors(talent);
+
+-- findings: filtered by spec, then status; also by scope for mechanics queries
+CREATE INDEX IF NOT EXISTS idx_findings_spec_status ON findings(spec, status);
+CREATE INDEX IF NOT EXISTS idx_findings_spec_scope ON findings(spec, scope);
+
+-- builds: PK is hash (single lookup), but list queries filter by spec + hero_tree or in_roster
+CREATE INDEX IF NOT EXISTS idx_builds_spec_weighted ON builds(spec, weighted DESC);
+CREATE INDEX IF NOT EXISTS idx_builds_spec_hero ON builds(spec, hero_tree);
+CREATE INDEX IF NOT EXISTS idx_builds_spec_roster ON builds(spec, in_roster) WHERE in_roster = 1;
+
+-- iterations: filtered by spec, then session_id or decision
+CREATE INDEX IF NOT EXISTS idx_iterations_spec_session ON iterations(spec, session_id);
+CREATE INDEX IF NOT EXISTS idx_iterations_spec_decision ON iterations(spec, decision);
+
+-- factors/synergies: filtered by spec, sorted by effect magnitude
+CREATE INDEX IF NOT EXISTS idx_factors_spec_talent ON factors(spec, talent);
+CREATE INDEX IF NOT EXISTS idx_synergies_spec ON synergies(spec);
+
+-- archetypes: filtered by spec (PK is name, but list queries use spec)
+CREATE INDEX IF NOT EXISTS idx_archetypes_spec ON archetypes(spec);
+
+-- structural knowledge: filtered by spec
+CREATE INDEX IF NOT EXISTS idx_clusters_spec ON talent_clusters(spec);
+CREATE INDEX IF NOT EXISTS idx_cluster_syn_spec ON cluster_synergies(spec);
+CREATE INDEX IF NOT EXISTS idx_tensions_spec ON tension_points(spec);
 `;
 
 // --- Database access ---
@@ -210,13 +270,34 @@ export function getDb(spec) {
   _db.exec("PRAGMA foreign_keys = ON");
   _db.exec(SCHEMA);
 
-  // Track schema version
+  // Track schema version and run migrations
   const existing = _db
     .prepare("SELECT value FROM schema_info WHERE key = 'version'")
     .get();
+  const existingVersion = existing ? parseInt(existing.value) : 0;
+
   if (!existing) {
     _db
       .prepare("INSERT INTO schema_info (key, value) VALUES ('version', ?)")
+      .run(String(SCHEMA_VERSION));
+  } else if (existingVersion < SCHEMA_VERSION) {
+    // Schema v1 → v2: add display_name to builds
+    if (existingVersion < 2) {
+      try {
+        _db.exec("ALTER TABLE builds ADD COLUMN display_name TEXT");
+      } catch {
+        // Column may already exist
+      }
+      try {
+        _db.exec("ALTER TABLE archetypes ADD COLUMN key_talents TEXT");
+        _db.exec("ALTER TABLE archetypes ADD COLUMN apl_focus TEXT");
+        _db.exec("ALTER TABLE archetypes ADD COLUMN tensions TEXT");
+      } catch {
+        // Columns may already exist
+      }
+    }
+    _db
+      .prepare("UPDATE schema_info SET value = ? WHERE key = 'version'")
       .run(String(SCHEMA_VERSION));
   }
 
@@ -227,6 +308,21 @@ export function closeAll() {
   if (_db) {
     _db.close();
     _db = null;
+  }
+}
+
+// --- Transaction helper ---
+
+export function withTransaction(fn) {
+  const db = getDb();
+  db.exec("BEGIN");
+  try {
+    const result = fn();
+    db.exec("COMMIT");
+    return result;
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
   }
 }
 
@@ -276,22 +372,15 @@ export function updateTheory(id, updates) {
   const db = getDb();
   const fields = [];
   const params = [];
+  const jsonFields = new Set(["evidence", "tags"]);
+  const keyMap = { parentId: "parent_id", updatedAt: "updated_at" };
 
   for (const [key, val] of Object.entries(updates)) {
-    const col =
-      key === "parentId"
-        ? "parent_id"
-        : key === "updatedAt"
-          ? "updated_at"
-          : key;
-    if (["evidence", "tags"].includes(col)) {
-      fields.push(`${col} = ?`);
-      params.push(jsonCol(val));
-    } else {
-      fields.push(`${col} = ?`);
-      params.push(val);
-    }
+    const col = keyMap[key] || key;
+    fields.push(`${col} = ?`);
+    params.push(jsonFields.has(col) ? jsonCol(val) : val);
   }
+
   fields.push("updated_at = datetime('now')");
   params.push(id);
   db.prepare(`UPDATE theories SET ${fields.join(", ")} WHERE id = ?`).run(
@@ -373,18 +462,14 @@ export function updateHypothesis(id, updates) {
   const db = getDb();
   const fields = [];
   const params = [];
+  const keyMap = { theoryId: "theory_id", testedAt: "tested_at" };
 
   for (const [key, val] of Object.entries(updates)) {
-    const col =
-      key === "theoryId" ? "theory_id" : key === "testedAt" ? "tested_at" : key;
-    if (col === "mutation") {
-      fields.push(`${col} = ?`);
-      params.push(jsonCol(val));
-    } else {
-      fields.push(`${col} = ?`);
-      params.push(val);
-    }
+    const col = keyMap[key] || key;
+    fields.push(`${col} = ?`);
+    params.push(col === "mutation" ? jsonCol(val) : val);
   }
+
   params.push(id);
   db.prepare(`UPDATE hypotheses SET ${fields.join(", ")} WHERE id = ?`).run(
     ...params,
@@ -686,13 +771,14 @@ export function upsertBuild(build) {
   const db = getDb();
   db.prepare(
     `
-    INSERT OR REPLACE INTO builds (hash, spec, name, hero_tree, archetype, overrides, dps_st, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT OR REPLACE INTO builds (hash, spec, name, display_name, hero_tree, archetype, overrides, dps_st, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     build.hash,
     build.spec || spec(),
     build.name || null,
+    build.displayName || build.display_name || null,
     build.heroTree || build.hero_tree || null,
     build.archetype || null,
     jsonCol(build.overrides),
@@ -703,7 +789,7 @@ export function upsertBuild(build) {
     build.rank ?? null,
     build.source || "doe",
     build.pinned ? 1 : 0,
-    build.inRoster ?? build.in_roster ?? 0,
+    (build.inRoster ?? build.in_roster ?? 0) ? 1 : 0,
     build.validated ? 1 : 0,
     jsonCol(build.validationErrors || build.validation_errors),
     build.lastTestedAt || build.last_tested_at || null,
@@ -784,6 +870,7 @@ export function updateBuildDps(hash, dps, s) {
 function rowToBuild(r) {
   return {
     ...r,
+    displayName: r.display_name,
     heroTree: r.hero_tree,
     overrides: parseJson(r.overrides),
     inRoster: !!r.in_roster,
@@ -799,8 +886,8 @@ export function upsertArchetype(archetype) {
   const db = getDb();
   db.prepare(
     `
-    INSERT OR REPLACE INTO archetypes (name, spec, hero_tree, defining_talents, description, core_loop, best_build_hash, build_count)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT OR REPLACE INTO archetypes (name, spec, hero_tree, defining_talents, description, core_loop, key_talents, apl_focus, tensions, best_build_hash, build_count)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `,
   ).run(
     archetype.name,
@@ -809,6 +896,9 @@ export function upsertArchetype(archetype) {
     jsonCol(archetype.definingTalents || archetype.defining_talents),
     archetype.description || null,
     archetype.coreLoop || archetype.core_loop || null,
+    jsonCol(archetype.keyTalents || archetype.key_talents),
+    jsonCol(archetype.aplFocus || archetype.apl_focus),
+    archetype.tensions || null,
     archetype.bestBuild?.hash || archetype.best_build_hash || null,
     archetype.buildCount ?? archetype.build_count ?? 0,
   );
@@ -825,6 +915,8 @@ export function getArchetypes(s) {
       ...r,
       heroTree: r.hero_tree,
       definingTalents: parseJson(r.defining_talents),
+      keyTalents: parseJson(r.key_talents),
+      aplFocus: parseJson(r.apl_focus),
       coreLoop: r.core_loop,
       bestBuildHash: r.best_build_hash,
       buildCount: r.build_count,
@@ -897,6 +989,187 @@ export function getSynergies({ runId, limit = 100, spec: s } = {}) {
   return db.prepare(sql).all(...params);
 }
 
+// --- Talent Cluster Operations ---
+
+export function upsertTalentCluster(cluster) {
+  const db = getDb();
+  db.prepare(
+    `INSERT OR REPLACE INTO talent_clusters (id, spec, name, talents, core_loop, key_mechanics, role)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    cluster.id,
+    cluster.spec || spec(),
+    cluster.name,
+    jsonCol(cluster.talents),
+    cluster.coreLoop || cluster.core_loop || null,
+    jsonCol(cluster.keyMechanics || cluster.key_mechanics),
+    cluster.role || null,
+  );
+}
+
+export function getTalentClusters(s) {
+  const db = getDb();
+  return db
+    .prepare("SELECT * FROM talent_clusters WHERE spec = ? ORDER BY id")
+    .all(s || spec())
+    .map((r) => ({
+      ...r,
+      talents: parseJson(r.talents),
+      coreLoop: r.core_loop,
+      keyMechanics: parseJson(r.key_mechanics),
+    }));
+}
+
+// --- Cluster Synergy Operations ---
+
+export function upsertClusterSynergy(syn) {
+  const db = getDb();
+  db.prepare(
+    `INSERT OR REPLACE INTO cluster_synergies (cluster, hero_tree, spec, synergy_rating, notes)
+     VALUES (?, ?, ?, ?, ?)`,
+  ).run(
+    syn.cluster,
+    syn.heroTree || syn.hero_tree,
+    syn.spec || spec(),
+    syn.rating || syn.synergy_rating || null,
+    syn.notes || syn.reason || null,
+  );
+}
+
+export function getClusterSynergies(s) {
+  const db = getDb();
+  return db
+    .prepare(
+      "SELECT * FROM cluster_synergies WHERE spec = ? ORDER BY cluster, hero_tree",
+    )
+    .all(s || spec())
+    .map((r) => ({
+      ...r,
+      heroTree: r.hero_tree,
+      rating: r.synergy_rating,
+    }));
+}
+
+// --- Tension Point Operations ---
+
+export function upsertTensionPoint(tp) {
+  const db = getDb();
+  db.prepare(
+    `INSERT OR REPLACE INTO tension_points (id, spec, description, explanation, affected_archetypes, resolution)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+  ).run(
+    tp.id,
+    tp.spec || spec(),
+    tp.description,
+    tp.explanation || null,
+    jsonCol(tp.affectedArchetypes || tp.affected_archetypes),
+    tp.resolution || null,
+  );
+}
+
+export function getTensionPoints(s) {
+  const db = getDb();
+  return db
+    .prepare("SELECT * FROM tension_points WHERE spec = ? ORDER BY id")
+    .all(s || spec())
+    .map((r) => ({
+      ...r,
+      affectedArchetypes: parseJson(r.affected_archetypes),
+    }));
+}
+
+// --- Build Theory Migration ---
+
+export function migrateBuildTheory(theoryData, s) {
+  const specName = s || spec();
+  const db = getDb();
+  let stats = { clusters: 0, synergies: 0, archetypes: 0, tensions: 0 };
+
+  db.exec("BEGIN");
+  try {
+    if (theoryData.specClusters) {
+      for (const c of theoryData.specClusters) {
+        upsertTalentCluster({ ...c, spec: specName });
+        stats.clusters++;
+      }
+    }
+
+    if (theoryData.clusterSynergies) {
+      for (const s of theoryData.clusterSynergies) {
+        upsertClusterSynergy({ ...s, spec: specName });
+        stats.synergies++;
+      }
+    }
+
+    if (theoryData.buildArchetypes) {
+      for (const a of theoryData.buildArchetypes) {
+        upsertArchetype({
+          name: a.id,
+          spec: specName,
+          heroTree: a.heroTree,
+          definingTalents: a.clusters || [],
+          description: a.strengths,
+          coreLoop: a.coreLoop,
+          keyTalents: a.keyTalents,
+          aplFocus: a.aplFocus,
+          tensions: a.tensions,
+        });
+        stats.archetypes++;
+      }
+    }
+
+    if (theoryData.tensionPoints) {
+      for (const tp of theoryData.tensionPoints) {
+        upsertTensionPoint({ ...tp, spec: specName });
+        stats.tensions++;
+      }
+    }
+
+    db.exec("COMMIT");
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
+  }
+
+  return stats;
+}
+
+// --- Mechanics Migration ---
+
+export function migrateMechanics(mechanicsData, s) {
+  const specName = s || spec();
+  let count = 0;
+
+  for (const [topic, mech] of Object.entries(mechanicsData.mechanics || {})) {
+    addFinding({
+      spec: specName,
+      insight: mech.summary,
+      evidence: JSON.stringify({
+        facts: mech.facts,
+        simcExpressions: mech.simcExpressions,
+        aplImplications: mech.aplImplications,
+      }),
+      confidence: "high",
+      scope: "mechanic",
+      mechanism: topic,
+      status: "validated",
+      tags: ["mechanic", topic],
+    });
+    count++;
+  }
+
+  return count;
+}
+
+// --- Update display name for a build ---
+
+export function updateBuildDisplayName(hash, displayName, s) {
+  const db = getDb();
+  db.prepare(
+    "UPDATE builds SET display_name = ? WHERE hash = ? AND spec = ?",
+  ).run(displayName, hash, s || spec());
+}
+
 // --- Legacy compatibility aliases ---
 
 // Old API: getPendingHypotheses(limit)
@@ -920,146 +1193,59 @@ export function getFindingsDb() {
   return getDb();
 }
 
-// --- JSON Export ---
+// --- Dump (stdout only, no file writes) ---
 
-export function exportToJson(s) {
+export function dumpSummary(s) {
   const specName = s || spec();
-  ensureSpecDirs(specName);
-
-  // Export builds.json
   const allBuilds = queryBuilds({ limit: 500, spec: specName });
-  const factorsList = getFactors({ spec: specName });
-  const archetypesList = getArchetypes(specName);
-  const synergiesList = getSynergies({ spec: specName });
-
-  const buildsExport = {
-    _schema: "builds-v1",
-    _generated: new Date().toISOString(),
-    _source: "theorycraft.db",
-    allBuilds: allBuilds.map((b) => ({
-      hash: b.hash,
-      name: b.name,
-      heroTree: b.heroTree,
-      archetype: b.archetype,
-      dps: { st: b.dps_st, small_aoe: b.dps_small_aoe, big_aoe: b.dps_big_aoe },
-      weighted: b.weighted,
-      rank: b.rank,
-      pinned: !!b.pinned,
-    })),
-    factorImpacts: factorsList.map((f) => ({
-      talent: f.talent,
-      nodeId: f.nodeId,
-      factorType: f.factorType,
-      mainEffect: f.mainEffect,
-      pct: f.pct,
-    })),
-    discoveredArchetypes: archetypesList.map((a) => ({
-      name: a.name,
-      heroTree: a.heroTree,
-      definingTalents: a.definingTalents,
-      description: a.description,
-      bestBuild: a.bestBuildHash ? { hash: a.bestBuildHash } : null,
-      buildCount: a.buildCount,
-    })),
-    synergyPairs: synergiesList.map((s) => ({
-      talents: [s.talent_a, s.talent_b],
-      interaction: s.interaction,
-    })),
-  };
-  writeFileSync(
-    resultsFile("builds.json", specName),
-    JSON.stringify(buildsExport, null, 2),
-  );
-
-  // Export findings.json
-  const findingsList = getFindings({
-    status: "active",
-    limit: 500,
-    spec: specName,
-  }).concat(getFindings({ status: "validated", limit: 500, spec: specName }));
-  const findingsExport = {
-    _schema: "findings-v1",
-    _generated: new Date().toISOString(),
-    findings: findingsList.map((f) => ({
-      date: f.createdAt?.slice(0, 10),
-      insight: f.insight,
-      evidence: f.evidence,
-      confidence: f.confidence,
-      scope: f.scope,
-      archetype: f.archetype,
-      heroTree: f.heroTree,
-      impact: f.impact,
-      mechanism: f.mechanism,
-      aplVersion: f.apl_version,
-      status: f.status,
-      tags: f.tags,
-    })),
-  };
-  writeFileSync(
-    resultsFile("findings.json", specName),
-    JSON.stringify(findingsExport, null, 2),
-  );
-
-  // Export hypotheses.json
-  const hypothesesList = getHypotheses({ limit: 500, spec: specName });
-  const hypothesesExport = {
-    _schema: "hypotheses-v1",
-    _generated: new Date().toISOString(),
-    hypotheses: hypothesesList.map((h) => ({
-      id: h.id,
-      theoryId: h.theoryId,
-      summary: h.summary,
-      implementation: h.implementation,
-      mutation: h.mutation,
-      category: h.category,
-      priority: h.priority,
-      status: h.status,
-      source: h.source,
-      archetype: h.archetype,
-      reason: h.reason,
-    })),
-  };
-  writeFileSync(
-    resultsFile("hypotheses.json", specName),
-    JSON.stringify(hypothesesExport, null, 2),
-  );
-
-  // Export build-roster.json (to data/ dir)
   const rosterBuilds = getRosterBuilds(specName);
-  const rosterExport = {
-    _schema: "roster-v2",
-    _updated: new Date().toISOString(),
-    _source: "theorycraft.db",
-    builds: rosterBuilds.map((b) => ({
-      id: b.name || b.hash.slice(0, 12),
-      archetype: b.archetype,
-      heroTree: b.heroTree,
-      hash: b.hash,
-      overrides: b.overrides,
-      source: b.source,
-      addedAt: b.discoveredAt,
-      validated: !!b.validated,
-      validationErrors: b.validationErrors,
-      lastDps: {
-        st: b.dps_st,
-        small_aoe: b.dps_small_aoe,
-        big_aoe: b.dps_big_aoe,
-        weighted: b.weighted,
-      },
-      lastTestedAt: b.lastTestedAt,
-    })),
-  };
-  writeFileSync(
-    dataFile("build-roster.json", specName),
-    JSON.stringify(rosterExport, null, 2),
-  );
+  const archetypesList = getArchetypes(specName);
+  const findingsList = getFindings({ limit: 500, spec: specName });
+  const hypothesesList = getHypotheses({ limit: 50, spec: specName });
+  const clusters = getTalentClusters(specName);
+  const tensions = getTensionPoints(specName);
 
-  return {
-    builds: allBuilds.length,
-    findings: findingsList.length,
-    hypotheses: hypothesesList.length,
-    roster: rosterBuilds.length,
-  };
+  console.log(
+    `\n=== Builds (${allBuilds.length} total, ${rosterBuilds.length} in roster) ===\n`,
+  );
+  for (const b of rosterBuilds.slice(0, 20)) {
+    const name = b.displayName || b.name || b.hash?.slice(0, 16);
+    const w = b.weighted ? Math.round(b.weighted).toLocaleString() : "—";
+    console.log(
+      `  ${name?.padEnd(30)} ${(b.heroTree || "").padEnd(18)} ${(b.source || "").padEnd(20)} ${w.padStart(10)}`,
+    );
+  }
+  if (rosterBuilds.length > 20)
+    console.log(`  ... and ${rosterBuilds.length - 20} more`);
+
+  console.log(`\n=== Archetypes (${archetypesList.length}) ===\n`);
+  for (const a of archetypesList) {
+    console.log(`  ${a.name} (${a.heroTree || "?"}) — ${a.buildCount} builds`);
+  }
+
+  console.log(`\n=== Talent Clusters (${clusters.length}) ===\n`);
+  for (const c of clusters) {
+    console.log(`  ${c.id} — ${c.name} (${c.role || "?"})`);
+  }
+
+  console.log(`\n=== Tension Points (${tensions.length}) ===\n`);
+  for (const tp of tensions) {
+    console.log(`  ${tp.id}: ${tp.description}`);
+  }
+
+  console.log(`\n=== Findings (${findingsList.length}) ===\n`);
+  for (const f of findingsList.slice(0, 10)) {
+    console.log(`  [${f.confidence}] ${f.insight?.slice(0, 80)}`);
+  }
+  if (findingsList.length > 10)
+    console.log(`  ... and ${findingsList.length - 10} more`);
+
+  console.log(`\n=== Hypotheses (${hypothesesList.length}) ===\n`);
+  for (const h of hypothesesList.slice(0, 10)) {
+    console.log(`  [${h.status}] ${h.summary?.slice(0, 80)}`);
+  }
+  if (hypothesesList.length > 10)
+    console.log(`  ... and ${hypothesesList.length - 10} more`);
 }
 
 // --- Migration from old DB + JSON files ---
@@ -1319,11 +1505,30 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       `Imported: ${stats.builds} builds, ${stats.factors} factors, ${stats.archetypes} archetypes, ${stats.synergies} synergies, ${stats.findings} findings`,
     );
     closeAll();
-  } else if (cmd === "export") {
-    const counts = exportToJson();
-    console.log(
-      `Exported: ${counts.builds} builds, ${counts.findings} findings, ${counts.hypotheses} hypotheses, ${counts.roster} roster builds`,
-    );
+  } else if (cmd === "dump") {
+    dumpSummary();
+    closeAll();
+  } else if (cmd === "migrate-theory") {
+    const theoryPath = dataFile("build-theory.json");
+    if (!existsSync(theoryPath)) {
+      console.log("No build-theory.json found — nothing to migrate.");
+    } else {
+      const data = JSON.parse(readFileSync(theoryPath, "utf-8"));
+      const stats = migrateBuildTheory(data);
+      console.log(
+        `Migrated: ${stats.clusters} clusters, ${stats.synergies} synergies, ${stats.archetypes} archetypes, ${stats.tensions} tensions`,
+      );
+    }
+    closeAll();
+  } else if (cmd === "migrate-mechanics") {
+    const mechPath = dataFile("mechanics.json");
+    if (!existsSync(mechPath)) {
+      console.log("No mechanics.json found — nothing to migrate.");
+    } else {
+      const data = JSON.parse(readFileSync(mechPath, "utf-8"));
+      const count = migrateMechanics(data);
+      console.log(`Migrated ${count} mechanics entries to findings table.`);
+    }
     closeAll();
   } else if (cmd === "status") {
     const db = getDb();
@@ -1338,6 +1543,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       ["Synergies", "synergies"],
       ["Iterations", "iterations"],
       ["Session state", "session_state"],
+      ["Talent clusters", "talent_clusters"],
+      ["Cluster synergies", "cluster_synergies"],
+      ["Tension points", "tension_points"],
     ];
     console.log(`Database: ${resultsFile("theorycraft.db")}\n`);
     for (const [label, table] of tables) {
@@ -1355,6 +1563,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
     }
     closeAll();
   } else {
-    console.log("Usage: node src/util/db.js <migrate|export|status|top [n]>");
+    console.log(
+      "Usage: node src/util/db.js <migrate|migrate-theory|migrate-mechanics|dump|status|top [n]>",
+    );
   }
 }

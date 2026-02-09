@@ -207,7 +207,7 @@ export function decode(str, nodes) {
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { getSpecId, HERO_SUBTREES } from "../engine/startup.js";
-import { dataDir, dataFile } from "../engine/paths.js";
+import { dataDir, dataFile, aplsDir } from "../engine/paths.js";
 import { normalizeSimcName } from "./validate-build.js";
 
 // Load the full DH node list from dh-all-nodes.json (all specs, all hero trees).
@@ -449,6 +449,49 @@ export function overridesToHash(overrides, opts = {}) {
   const fullNodes = loadFullNodeList();
   const selections = overridesToSelections(overrides, data, opts);
   return encode(getSpecId(), fullNodes, selections);
+}
+
+// --- Class tree normalization ---
+
+// Replace class talent selections in a hash with a canonical set.
+// Preserves spec and hero selections. Used to ensure fair DPS comparison
+// across community/DoE/baseline builds that may differ only in utility choices.
+export function normalizeClassTree(hash, canonicalClassSelections) {
+  const fullNodes = loadFullNodeList();
+  const data = JSON.parse(
+    readFileSync(dataFile("raidbots-talents.json"), "utf8"),
+  );
+  const specId = getSpecId();
+
+  const { selections } = decode(hash, fullNodes);
+  const classNodeIds = new Set(data.classNodes.map((n) => n.id));
+
+  for (const id of classNodeIds) selections.delete(id);
+  for (const [id, sel] of canonicalClassSelections) {
+    if (classNodeIds.has(id)) selections.set(id, sel);
+  }
+
+  return encode(specId, fullNodes, selections);
+}
+
+// Extract canonical class selections from baseline.simc talent hash.
+export function getBaselineClassSelections() {
+  const content = readFileSync(join(aplsDir(), "baseline.simc"), "utf8");
+  const match = content.match(/^\s*talents\s*=\s*([A-Za-z0-9+/]+)/m);
+  if (!match) throw new Error("No talents= line found in baseline.simc");
+
+  const fullNodes = loadFullNodeList();
+  const data = JSON.parse(
+    readFileSync(dataFile("raidbots-talents.json"), "utf8"),
+  );
+  const { selections } = decode(match[1], fullNodes);
+  const classNodeIds = new Set(data.classNodes.map((n) => n.id));
+
+  const classSelections = new Map();
+  for (const [id, sel] of selections) {
+    if (classNodeIds.has(id)) classSelections.set(id, sel);
+  }
+  return classSelections;
 }
 
 // --- CLI ---

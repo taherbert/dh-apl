@@ -1,198 +1,353 @@
 // Persistent build roster for multi-build evaluation.
-// Version-controlled at data/{spec}/build-roster.json alongside build-theory.json.
-// Builds are imported from multiple sources and validated against talent tree rules.
+// DB-first: all reads/writes go through theorycraft.db via db.js.
+// No JSON file I/O — the DB is the single source of truth.
 //
 // Sources:
-//   1. DoE discovery: results/builds.json → hash-based builds per archetype
-//   2. Manual: add <hash> --archetype "Name" --hero <tree>
+//   1. DoE discovery: archetypes + builds written by build-discovery.js
+//   2. Community: config.{spec}.json communityBuilds → Wowhead/Icy-Veins hashes
+//   3. Baseline: apls/{spec}/baseline.simc → SimC default APL talent hash
+//   4. Manual: add <hash> --archetype "Name" --hero <tree>
 //
 // Usage:
 //   node src/sim/build-roster.js show
 //   node src/sim/build-roster.js import-doe
+//   node src/sim/build-roster.js import-community
+//   node src/sim/build-roster.js import-baseline
 //   node src/sim/build-roster.js add <hash> --archetype "Name" --hero <tree>
 //   node src/sim/build-roster.js validate
 //   node src/sim/build-roster.js prune [--threshold 1.0]
-//   node src/sim/build-roster.js migrate
+//   node src/sim/build-roster.js update-dps [--fidelity quick|standard|confirm]
+//   node src/sim/build-roster.js generate-hashes
+//   node src/sim/build-roster.js generate-names
 
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import {
-  readFileSync,
-  writeFileSync,
-  existsSync,
-  renameSync,
-  copyFileSync,
-} from "node:fs";
-import { getSpecAdapter, initSpec } from "../engine/startup.js";
+  getSpecAdapter,
+  initSpec,
+  config,
+  SCENARIOS,
+} from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import { dataFile, resultsFile, ensureSpecDirs } from "../engine/paths.js";
+import { dataFile, resultsFile, aplsDir } from "../engine/paths.js";
 import { validateBuild, validateHash } from "../util/validate-build.js";
-import { overridesToHash } from "../util/talent-string.js";
+import {
+  overridesToHash,
+  normalizeClassTree,
+  getBaselineClassSelections,
+} from "../util/talent-string.js";
+import {
+  specHeroFingerprint,
+  detectHeroTree,
+  decodeTalentNames,
+  abbrev,
+} from "../util/talent-fingerprint.js";
 import { getHeroChoiceLocks } from "../model/talent-combos.js";
 import {
   upsertBuild,
   setRosterMembership,
   updateBuildDps as dbUpdateBuildDps,
+  updateBuildDisplayName,
   getRosterBuilds,
+  queryBuilds,
+  getArchetypes,
+  getFactors,
+  withTransaction,
+  closeAll,
 } from "../util/db.js";
 
-function rosterPath() {
-  return dataFile("build-roster.json");
-}
-function buildsPath() {
-  return resultsFile("builds.json");
-}
-// --- Roster I/O ---
+// --- Hero tree name normalization ---
 
-export function loadRoster() {
-  if (!existsSync(rosterPath())) return null;
+function normalizeTreeName(tree) {
+  if (!tree) return tree;
+  return tree.replace(/\s+/g, "_").toLowerCase();
+}
+
+// --- Hero tree abbreviations ---
+
+function heroAbbrev(tree) {
+  const abbrevs = {
+    aldrachi_reaver: "AR",
+    "Aldrachi Reaver": "AR",
+    annihilator: "Anni",
+    Annihilator: "Anni",
+    void_scarred: "VS",
+    "Void Scarred": "VS",
+  };
+  if (abbrevs[tree]) return abbrevs[tree];
+  if (!tree) return "??";
+  return tree
+    .split(/[\s_]+/)
+    .map((w) => w[0]?.toUpperCase())
+    .join("");
+}
+
+// --- Display name generation ---
+
+function sourcePrefix(source) {
+  if (source === "community:wowhead") return "WH";
+  if (source === "community:icy-veins") return "IV";
+  if (source === "baseline") return null;
+  if (source === "doe") return null;
+  return source;
+}
+
+// Regenerate ALL displayNames from talent diffs.
+// Names depend on which OTHER builds exist in the same hero tree group,
+// so we always regenerate everything rather than naming incrementally.
+export function generateDisplayNames(builds) {
+  if (!builds?.length) return;
+
+  // Load DoE factor impacts for ranking varying talents
+  const factorsByName = new Map();
   try {
-    return JSON.parse(readFileSync(rosterPath(), "utf8"));
-  } catch (e) {
-    console.error(`Failed to read roster: ${e.message}`);
+    const factors = getFactors({ limit: 200 });
+    for (const f of factors) {
+      if (!factorsByName.has(f.talent)) {
+        factorsByName.set(f.talent, Math.abs(f.pct));
+      }
+    }
+  } catch {
+    // Non-fatal
+  }
+
+  // Decode all hashes into spec talent sets
+  const decoded = new Map();
+  for (const b of builds) {
+    if (!b.hash) continue;
+    try {
+      const result = decodeTalentNames(b.hash);
+      decoded.set(b.hash, {
+        specTalents: new Set(result.specTalents),
+        heroTree: result.heroTree,
+      });
+    } catch {
+      // Skip builds that fail to decode
+    }
+  }
+
+  // Group builds by heroTree
+  const groups = {};
+  for (const b of builds) {
+    const tree = b.heroTree || b.hero_tree || "unknown";
+    if (!groups[tree]) groups[tree] = [];
+    groups[tree].push(b);
+  }
+
+  // For each group, find varying talents and generate names
+  for (const [tree, treeBuilds] of Object.entries(groups)) {
+    const decodedBuilds = treeBuilds.filter((b) => decoded.has(b.hash));
+    if (decodedBuilds.length === 0) {
+      for (const b of treeBuilds) {
+        const name =
+          b.source === "baseline"
+            ? "SimC Default"
+            : `${heroAbbrev(tree)} #${treeBuilds.indexOf(b) + 1}`;
+        b.displayName = name;
+      }
+      continue;
+    }
+
+    // Universal = present in ALL builds; varying = present in SOME
+    const allTalentSets = decodedBuilds.map(
+      (b) => decoded.get(b.hash).specTalents,
+    );
+    const universalTalents = new Set(
+      [...allTalentSets[0]].filter((t) => allTalentSets.every((s) => s.has(t))),
+    );
+
+    const varyingTalentSet = new Set();
+    for (const s of allTalentSets) {
+      for (const t of s) {
+        if (!universalTalents.has(t)) varyingTalentSet.add(t);
+      }
+    }
+
+    const ha = heroAbbrev(tree);
+
+    function buildSignature(hash, selectedTalents) {
+      const d = decoded.get(hash);
+      return d ? selectedTalents.filter((t) => d.specTalents.has(t)) : null;
+    }
+
+    function signatureKey(sig, source) {
+      const talentStr = sig.length > 0 ? sig.map(abbrev).join(" + ") : "Base";
+      const prefix = sourcePrefix(source);
+      return prefix ? `${prefix} ${ha}: ${talentStr}` : `${ha}: ${talentStr}`;
+    }
+
+    function countCollisions(selectedTalents) {
+      const nameGroups = new Map();
+      for (const b of treeBuilds) {
+        if (b.source === "baseline" || !decoded.has(b.hash)) continue;
+        const sig = buildSignature(b.hash, selectedTalents);
+        const key = signatureKey(sig, b.source);
+        if (!nameGroups.has(key)) nameGroups.set(key, []);
+        nameGroups.get(key).push(b);
+      }
+      let collisions = 0;
+      for (const arr of nameGroups.values()) {
+        if (arr.length > 1) collisions += arr.length - 1;
+      }
+      return collisions;
+    }
+
+    // Greedy talent selection for minimum unique signatures
+    const selectedTalents = [];
+    const remainingTalents = new Set(varyingTalentSet);
+    const MAX_TALENTS = 4;
+
+    while (selectedTalents.length < MAX_TALENTS && remainingTalents.size > 0) {
+      let bestTalent = null;
+      let bestReduction = 0;
+      let bestImpact = 0;
+
+      const currentCollisions = countCollisions(selectedTalents);
+      if (currentCollisions === 0) break;
+
+      for (const t of remainingTalents) {
+        const candidate = [...selectedTalents, t];
+        const newCollisions = countCollisions(candidate);
+        const reduction = currentCollisions - newCollisions;
+        const impact = factorsByName?.get(t) || 0;
+
+        if (
+          reduction > bestReduction ||
+          (reduction === bestReduction && impact > bestImpact)
+        ) {
+          bestTalent = t;
+          bestReduction = reduction;
+          bestImpact = impact;
+        }
+      }
+
+      if (!bestTalent || bestReduction === 0) break;
+      selectedTalents.push(bestTalent);
+      remainingTalents.delete(bestTalent);
+    }
+
+    // Sort by factor impact for consistent display order
+    selectedTalents.sort((a, b) => {
+      const impA = factorsByName?.get(a) || 0;
+      const impB = factorsByName?.get(b) || 0;
+      return impB - impA;
+    });
+
+    // Assign names
+    const nameMap = new Map();
+    for (const b of treeBuilds) {
+      if (b.source === "baseline") {
+        b.displayName = "SimC Default";
+        continue;
+      }
+
+      const d = decoded.get(b.hash);
+      if (!d) {
+        const prefix = sourcePrefix(b.source);
+        const label = b.archetype || "Unknown";
+        b.displayName = prefix
+          ? `${prefix} ${ha}: ${label}`
+          : `${ha}: ${label}`;
+        continue;
+      }
+
+      const sig = buildSignature(b.hash, selectedTalents);
+      b.displayName = signatureKey(sig, b.source);
+
+      if (!nameMap.has(b.displayName)) nameMap.set(b.displayName, []);
+      nameMap.get(b.displayName).push(b);
+    }
+
+    // Disambiguate collisions with #N
+    for (const [name, dupes] of nameMap) {
+      if (dupes.length <= 1) continue;
+      for (let i = 0; i < dupes.length; i++) {
+        dupes[i].displayName = `${name} #${i + 1}`;
+      }
+    }
+  }
+
+  // Write display names back to DB
+  for (const b of builds) {
+    if (b.displayName && b.hash) {
+      try {
+        updateBuildDisplayName(b.hash, b.displayName);
+      } catch {
+        // Non-fatal
+      }
+    }
+  }
+}
+
+// --- Roster read (DB-first) ---
+
+// Returns a roster-shaped object for backward compat with iterate.js and showcase.js.
+// Reads from the DB — no JSON file involved.
+export function loadRoster() {
+  try {
+    const builds = getRosterBuilds();
+    if (!builds || builds.length === 0) return null;
+
+    return {
+      _schema: "roster-db",
+      builds: builds.map((b) => ({
+        id: b.name || b.hash?.slice(0, 20),
+        displayName: b.displayName || b.display_name || null,
+        archetype: b.archetype || "Unknown",
+        heroTree: b.heroTree || b.hero_tree,
+        hash: b.hash,
+        overrides: b.overrides || null,
+        source: b.source || "doe",
+        validated: !!b.validated,
+        validationErrors: b.validationErrors || null,
+        lastDps: b.weighted
+          ? {
+              st: b.dps_st || 0,
+              small_aoe: b.dps_small_aoe || 0,
+              big_aoe: b.dps_big_aoe || 0,
+              weighted: b.weighted || 0,
+            }
+          : null,
+        lastTestedAt: b.lastTestedAt || b.last_tested_at || null,
+      })),
+    };
+  } catch {
     return null;
   }
 }
 
-function saveRoster(roster) {
-  ensureSpecDirs();
-  roster._updated = new Date().toISOString();
+// --- Spec+hero fingerprint dedup ---
 
-  const content = JSON.stringify(roster, null, 2);
-  const path = rosterPath();
-  const tmpPath = path + ".tmp";
-  writeFileSync(tmpPath, content);
-
-  // Backup existing file before overwriting
-  if (existsSync(path)) {
-    const backupPath = path + ".bak";
-    try {
-      copyFileSync(path, backupPath);
-    } catch {
-      // Non-fatal: backup failed, proceed anyway
-    }
-  }
-
-  renameSync(tmpPath, path);
-}
-
-function createEmptyRoster() {
-  return {
-    _schema: "roster-v2",
-    _updated: new Date().toISOString(),
-    builds: [],
-  };
-}
-
-// --- Deduplication ---
-
-// Canonical key for a build — used to detect duplicates.
-function buildKey(build) {
-  if (build.hash) return `hash:${build.hash}`;
-  if (build.overrides) {
-    const parts = ["class_talents", "spec_talents", "hero_talents"]
-      .filter((key) => build.overrides[key])
-      .map((key) => `${key}=${build.overrides[key]}`);
-    return `overrides:${parts.sort().join("&")}`;
-  }
-  return `id:${build.id}`;
-}
-
-function isDuplicate(roster, build) {
-  const key = buildKey(build);
-  return roster.builds.some((b) => buildKey(b) === key);
-}
-
-// --- Import: Add builds to roster ---
-
-// Add builds to roster with deduplication and validation.
-// Returns { added, skipped, invalid }
-export function addBuilds(roster, newBuilds, { source = "manual" } = {}) {
-  let added = 0;
-  let skipped = 0;
-  let invalid = 0;
-
-  for (const build of newBuilds) {
-    const key = buildKey(build);
-    const existing = roster.builds.find((b) => buildKey(b) === key);
-
-    if (existing) {
-      if (build.lastDps) {
-        existing.lastDps = build.lastDps;
-        existing.lastTestedAt = build.lastTestedAt || new Date().toISOString();
-      }
-      skipped++;
-      continue;
-    }
-
-    const validation = validateBuild(build);
-    if (!validation.valid) {
-      console.warn(
-        `  WARNING: Build ${build.id} has validation errors: ${validation.errors.join("; ")}`,
-      );
-      invalid++;
-    }
-
-    const rosterBuild = {
-      id: build.id,
-      archetype: build.archetype || "Unknown",
-      heroTree: build.heroTree,
-      hash: build.hash || null,
-      overrides: build.overrides || null,
-      source,
-      addedAt: new Date().toISOString(),
-      validated: validation.valid,
-      validationErrors: validation.valid ? undefined : validation.errors,
-      lastDps: build.lastDps || null,
-      lastTestedAt: build.lastTestedAt || null,
-    };
-    roster.builds.push(rosterBuild);
-
-    // Sync to DB
-    if (rosterBuild.hash) {
+function isDuplicateBySpecHero(existingHashes, hash) {
+  try {
+    const fp = specHeroFingerprint(hash);
+    return existingHashes.some((h) => {
       try {
-        upsertBuild({
-          hash: rosterBuild.hash,
-          name: rosterBuild.id,
-          heroTree: rosterBuild.heroTree,
-          archetype: rosterBuild.archetype,
-          overrides: rosterBuild.overrides,
-          source,
-          inRoster: true,
-          validated: rosterBuild.validated ? 1 : 0,
-          dps_st: rosterBuild.lastDps?.st,
-          dps_small_aoe: rosterBuild.lastDps?.small_aoe,
-          dps_big_aoe: rosterBuild.lastDps?.big_aoe,
-          weighted: rosterBuild.lastDps?.weighted,
-        });
+        return specHeroFingerprint(h) === fp;
       } catch {
-        // DB sync is non-fatal
+        return false;
       }
-    }
-
-    added++;
+    });
+  } catch {
+    return false;
   }
-
-  return { added, skipped, invalid };
 }
 
-// --- Import from DoE discovery (builds.json) ---
+// --- Import from DoE discovery ---
 
-export function importFromDoe(roster) {
-  if (!roster) roster = loadRoster() || createEmptyRoster();
-
-  if (!existsSync(buildsPath())) {
-    console.error(`builds.json not found at ${buildsPath()}`);
+export function importFromDoe() {
+  const dbArchetypes = getArchetypes();
+  if (!dbArchetypes || dbArchetypes.length === 0) {
+    console.error("No archetypes found in DB. Run build discovery first.");
     return { added: 0, skipped: 0, invalid: 0 };
   }
 
-  const data = JSON.parse(readFileSync(buildsPath(), "utf8"));
-  const archetypes = data.discoveredArchetypes || [];
   const specConfig = getSpecAdapter().getSpecConfig();
-  // Build DoE tree set with both config key and normalized forms for matching
   const doeTrees = new Set();
   for (const [name, cfg] of Object.entries(specConfig.heroTrees)) {
     if (cfg.buildMethod === "doe") {
-      doeTrees.add(name); // e.g., "void_scarred"
-      doeTrees.add(name.replace(/_/g, "-")); // e.g., "void-scarred"
+      doeTrees.add(name);
+      doeTrees.add(name.replace(/_/g, "-"));
     }
   }
 
@@ -201,61 +356,388 @@ export function importFromDoe(roster) {
     return { added: 0, skipped: 0, invalid: 0 };
   }
 
-  const newBuilds = [];
-  const usedIds = new Set(roster.builds.map((b) => b.id));
+  // Get existing roster hashes for dedup
+  const existingBuilds = getRosterBuilds();
+  const existingHashes = new Set(existingBuilds.map((b) => b.hash));
 
-  for (const arch of archetypes) {
-    if (!doeTrees.has(arch.heroTree)) continue;
+  let added = 0;
+  let skipped = 0;
+  let invalid = 0;
 
-    // bestBuild + up to 2 alternates
-    const candidates = [arch.bestBuild, ...(arch.alternateBuilds || [])].slice(
-      0,
-      3,
-    );
-    let added = 0;
+  withTransaction(() => {
+    for (const arch of dbArchetypes) {
+      if (!doeTrees.has(arch.heroTree) && !doeTrees.has(arch.hero_tree))
+        continue;
 
-    for (const candidate of candidates) {
-      if (!candidate?.hash) continue;
+      const heroTree = arch.heroTree || arch.hero_tree;
+      const bestHash = arch.bestBuildHash || arch.best_build_hash;
+      if (!bestHash) continue;
 
-      const prefix = arch.heroTree
-        .split("_")
-        .map((w) => w[0].toUpperCase())
-        .join("");
-      let id = `${prefix}_${sanitizeId(arch.name)}_${added + 1}`;
-      while (usedIds.has(id)) id += "_2";
-      usedIds.add(id);
+      // Get builds for this archetype from DB
+      const archBuilds = queryBuilds({ archetype: arch.name, limit: 3 });
+      const candidates =
+        archBuilds.length > 0 ? archBuilds : [{ hash: bestHash }];
 
-      const dps = candidate.dps || {};
-      newBuilds.push({
-        id,
-        archetype: arch.name,
-        heroTree: arch.heroTree,
-        hash: candidate.hash,
-        overrides: null,
-        lastDps: {
-          st: Math.round(dps.st || 0),
-          small_aoe: Math.round(dps.small_aoe || 0),
-          big_aoe: Math.round(dps.big_aoe || 0),
-          weighted: candidate.weighted || 0,
-        },
-        lastTestedAt: data._generated || new Date().toISOString(),
+      for (const candidate of candidates.slice(0, 3)) {
+        if (!candidate.hash) continue;
+        if (existingHashes.has(candidate.hash)) {
+          skipped++;
+          continue;
+        }
+
+        const validation = validateBuild({ hash: candidate.hash });
+        if (!validation.valid) {
+          console.warn(
+            `  WARNING: Build ${candidate.hash.slice(0, 20)}... has validation errors: ${validation.errors.join("; ")}`,
+          );
+          invalid++;
+        }
+
+        const prefix = heroTree
+          .split("_")
+          .map((w) => w[0].toUpperCase())
+          .join("");
+        const name = `${prefix}_${sanitizeId(arch.name)}_${added + 1}`;
+
+        upsertBuild({
+          hash: candidate.hash,
+          name,
+          heroTree,
+          archetype: arch.name,
+          source: "doe",
+          inRoster: true,
+          validated: validation.valid ? 1 : 0,
+          validationErrors: validation.valid ? null : validation.errors,
+          dps_st: candidate.dps_st,
+          dps_small_aoe: candidate.dps_small_aoe,
+          dps_big_aoe: candidate.dps_big_aoe,
+          weighted: candidate.weighted,
+        });
+        existingHashes.add(candidate.hash);
+        added++;
+      }
+    }
+
+    // Generate display names for all roster builds
+    if (added > 0) {
+      const allRoster = getRosterBuilds();
+      generateDisplayNames(allRoster);
+    }
+  });
+
+  console.log(`Imported ${added} DoE builds to roster.`);
+  return { added, skipped, invalid };
+}
+
+// --- Import from community builds (config.{spec}.json) ---
+
+export function importCommunity() {
+  const communityBuilds = config.communityBuilds;
+  if (!communityBuilds || communityBuilds.length === 0) {
+    console.error("No communityBuilds found in config");
+    return { added: 0, skipped: 0, invalid: 0 };
+  }
+
+  console.log(
+    `Processing ${communityBuilds.length} community builds from config...`,
+  );
+
+  const baselineClassSelections = getBaselineClassSelections();
+
+  // Get existing roster hashes for fingerprint dedup
+  const existingBuilds = getRosterBuilds();
+  const existingHashes = existingBuilds.map((b) => b.hash).filter(Boolean);
+
+  const variantCounters = {};
+  let added = 0;
+  let skipped = 0;
+  const batchHashes = []; // Track hashes added in this batch
+
+  withTransaction(() => {
+    for (const cb of communityBuilds) {
+      const rawHash = cb.hash;
+      const sourceName = cb.source;
+
+      let heroTree;
+      try {
+        heroTree = detectHeroTree(rawHash);
+      } catch (e) {
+        console.warn(
+          `  SKIP: Cannot detect hero tree for hash ${rawHash.slice(0, 20)}...: ${e.message}`,
+        );
+        skipped++;
+        continue;
+      }
+
+      if (!heroTree) {
+        console.warn(
+          `  SKIP: No hero tree detected for hash ${rawHash.slice(0, 20)}...`,
+        );
+        skipped++;
+        continue;
+      }
+
+      heroTree = normalizeTreeName(heroTree);
+
+      // Normalize class tree to canonical baseline
+      let normalizedHash;
+      try {
+        normalizedHash = normalizeClassTree(rawHash, baselineClassSelections);
+      } catch (e) {
+        console.warn(
+          `  SKIP: Class tree normalization failed for ${rawHash.slice(0, 20)}...: ${e.message}`,
+        );
+        skipped++;
+        continue;
+      }
+
+      // Deduplicate by spec+hero fingerprint against existing roster
+      if (isDuplicateBySpecHero(existingHashes, normalizedHash)) {
+        console.log(
+          `  SKIP (dup): ${sourceName} ${heroAbbrev(heroTree)} hash ${rawHash.slice(0, 20)}...`,
+        );
+        skipped++;
+        continue;
+      }
+
+      // Also check against builds added in this batch
+      if (isDuplicateBySpecHero(batchHashes, normalizedHash)) {
+        console.log(
+          `  SKIP (batch dup): ${sourceName} ${heroAbbrev(heroTree)} hash ${rawHash.slice(0, 20)}...`,
+        );
+        skipped++;
+        continue;
+      }
+
+      const fullSource = `community:${sourceName}`;
+      const ha = heroAbbrev(heroTree);
+
+      const counterKey = `${sourceName}|${heroTree}`;
+      variantCounters[counterKey] = (variantCounters[counterKey] || 0) + 1;
+      const n = variantCounters[counterKey];
+
+      const srcPrefix =
+        sourceName === "wowhead"
+          ? "WH"
+          : sourceName === "icy-veins"
+            ? "IV"
+            : sourceName.toUpperCase().slice(0, 2);
+
+      const name = `${srcPrefix}_${ha}_${n}`;
+
+      const validation = validateBuild({ hash: normalizedHash });
+
+      upsertBuild({
+        hash: normalizedHash,
+        name,
+        heroTree,
+        archetype: `Community ${ha}`,
+        source: fullSource,
+        inRoster: true,
+        validated: validation.valid ? 1 : 0,
+        validationErrors: validation.valid ? null : validation.errors,
       });
+
+      batchHashes.push(normalizedHash);
       added++;
+      console.log(`  ADD: ${srcPrefix} ${ha} #${n} (${heroTree})`);
+    }
+
+    // Generate display names for all roster builds
+    if (added > 0) {
+      const allRoster = getRosterBuilds();
+      generateDisplayNames(allRoster);
+    }
+  });
+
+  console.log(
+    added > 0
+      ? `Added ${added} community builds to roster.`
+      : "No new community builds to add (all duplicates).",
+  );
+  return { added, skipped, invalid: 0 };
+}
+
+// --- Import from baseline.simc ---
+
+export function importBaseline() {
+  const baselinePath = join(aplsDir(), "baseline.simc");
+  if (!existsSync(baselinePath)) {
+    console.error(`baseline.simc not found at ${baselinePath}`);
+    return { added: 0, skipped: 0, invalid: 0 };
+  }
+
+  const content = readFileSync(baselinePath, "utf8");
+  const match = content.match(/^\s*talents\s*=\s*([A-Za-z0-9+/]+)/m);
+  if (!match) {
+    console.error("No talents= line found in baseline.simc");
+    return { added: 0, skipped: 0, invalid: 0 };
+  }
+
+  const hash = match[1];
+
+  let heroTree;
+  try {
+    heroTree = detectHeroTree(hash);
+  } catch (e) {
+    console.error(`Cannot detect hero tree from baseline hash: ${e.message}`);
+    return { added: 0, skipped: 0, invalid: 0 };
+  }
+
+  if (!heroTree) {
+    console.error("No hero tree detected in baseline hash");
+    return { added: 0, skipped: 0, invalid: 0 };
+  }
+
+  heroTree = normalizeTreeName(heroTree);
+
+  // Check for existing baseline build in DB
+  const existingRoster = getRosterBuilds();
+  const existingBaseline = existingRoster.find((b) => b.source === "baseline");
+
+  if (existingBaseline) {
+    // Update the existing baseline
+    upsertBuild({
+      hash,
+      name: existingBaseline.name,
+      displayName: "SimC Default",
+      heroTree,
+      archetype: "SimC Default",
+      source: "baseline",
+      inRoster: true,
+      validated: 1,
+    });
+    console.log(`Updated existing baseline build (${heroAbbrev(heroTree)})`);
+    return { added: 0, skipped: 1, invalid: 0 };
+  }
+
+  const ha = heroAbbrev(heroTree);
+  const name = `baseline_${ha}`;
+
+  upsertBuild({
+    hash,
+    name,
+    displayName: "SimC Default",
+    heroTree,
+    archetype: "SimC Default",
+    source: "baseline",
+    inRoster: true,
+    validated: 1,
+  });
+
+  console.log(`Imported baseline build (${ha})`);
+  return { added: 1, skipped: 0, invalid: 0 };
+}
+
+// --- Update DPS for all roster builds ---
+
+export async function updateAllDps({ fidelity = "quick" } = {}) {
+  const builds = getRosterBuilds();
+  if (!builds || builds.length === 0) {
+    console.error("No roster builds found in DB.");
+    return;
+  }
+
+  const { generateMultiActorContent } = await import("./multi-actor.js");
+  const { runMultiActorAsync } = await import("./runner.js");
+
+  const SCENARIO_WEIGHTS = { st: 0.5, small_aoe: 0.3, big_aoe: 0.2 };
+  const FIDELITY_TIERS = {
+    quick: { target_error: 1.0 },
+    standard: { target_error: 0.3 },
+    confirm: { target_error: 0.1 },
+  };
+
+  const tierConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.quick;
+
+  // Build a roster-shaped object for multi-actor
+  const roster = loadRoster();
+  if (!roster) {
+    console.error("Failed to load roster.");
+    return;
+  }
+
+  const specName = config.spec.specName;
+  const specAplPath = join(aplsDir(), `${specName}.simc`);
+  const baselineAplPath = join(aplsDir(), "baseline.simc");
+  const aplPath = existsSync(specAplPath) ? specAplPath : baselineAplPath;
+
+  console.log(
+    `Updating DPS for ${roster.builds.length} builds (${fidelity} fidelity)...`,
+  );
+  console.log(`APL: ${aplPath}\n`);
+
+  const simcContent = generateMultiActorContent(roster, aplPath);
+
+  const buildDps = {};
+  for (const b of roster.builds) {
+    buildDps[b.id] = { st: 0, small_aoe: 0, big_aoe: 0 };
+  }
+
+  const scenarioKeys = Object.keys(SCENARIOS);
+  for (const scenario of scenarioKeys) {
+    console.log(`  Scenario: ${scenario}...`);
+    try {
+      const results = await runMultiActorAsync(
+        simcContent,
+        scenario,
+        "roster-dps",
+        {
+          simOverrides: { target_error: tierConfig.target_error },
+        },
+      );
+
+      for (const [actorId, data] of results) {
+        if (buildDps[actorId]) {
+          buildDps[actorId][scenario] = Math.round(data.dps);
+        }
+      }
+      console.log(`    Done (${results.size} actors)`);
+    } catch (e) {
+      console.error(`    FAILED: ${e.message}`);
     }
   }
 
-  console.log(`Importing ${newBuilds.length} DoE builds from builds.json...`);
-  const result = addBuilds(roster, newBuilds, { source: "doe" });
-  if (result.added > 0) saveRoster(roster);
-  return result;
+  // Write DPS to DB for each build
+  for (const b of roster.builds) {
+    const dps = buildDps[b.id];
+    if (!dps || !b.hash) continue;
+
+    const weighted = scenarioKeys.reduce(
+      (sum, s) => sum + (dps[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
+      0,
+    );
+
+    dbUpdateBuildDps(b.hash, {
+      st: dps.st || 0,
+      small_aoe: dps.small_aoe || 0,
+      big_aoe: dps.big_aoe || 0,
+      weighted: Math.round(weighted),
+    });
+  }
+
+  console.log(`\nDPS updated for ${roster.builds.length} builds.`);
+
+  // Print summary table
+  const updatedBuilds = getRosterBuilds();
+  console.log(
+    `\n${"Build".padEnd(30)} ${"1T".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(10)}`,
+  );
+  console.log("-".repeat(68));
+  for (const b of updatedBuilds) {
+    const name = (b.displayName || b.name || b.hash?.slice(0, 20)).slice(0, 29);
+    console.log(
+      `${name.padEnd(30)} ${(b.dps_st || 0).toLocaleString().padStart(8)} ${(b.dps_small_aoe || 0).toLocaleString().padStart(8)} ${(b.dps_big_aoe || 0).toLocaleString().padStart(8)} ${(b.weighted || 0).toLocaleString().padStart(10)}`,
+    );
+  }
 }
 
 // --- Validate all builds ---
 
-export function validateAll(roster) {
-  if (!roster) roster = loadRoster();
-  if (!roster) {
-    console.error("No roster found.");
+export function validateAll() {
+  const builds = getRosterBuilds();
+  if (!builds || builds.length === 0) {
+    console.error("No roster builds found.");
     return { total: 0, valid: 0, invalid: 0, errors: [] };
   }
 
@@ -263,72 +745,64 @@ export function validateAll(roster) {
   let invalid = 0;
   const errors = [];
 
-  for (const build of roster.builds) {
-    const result = validateBuild(build);
-    build.validated = result.valid;
+  for (const build of builds) {
+    const result = validateBuild({ hash: build.hash });
     if (result.valid) {
-      delete build.validationErrors;
+      upsertBuild({ ...build, validated: 1, validationErrors: null });
       valid++;
     } else {
-      build.validationErrors = result.errors;
-      errors.push({ id: build.id, errors: result.errors });
+      upsertBuild({ ...build, validated: 0, validationErrors: result.errors });
+      errors.push({
+        id: build.name || build.hash?.slice(0, 20),
+        errors: result.errors,
+      });
       invalid++;
     }
   }
 
-  saveRoster(roster);
-  return { total: roster.builds.length, valid, invalid, errors };
+  return { total: builds.length, valid, invalid, errors };
 }
 
 // --- Prune redundant builds ---
 
-export function pruneBuilds(roster, { threshold = 1.0 } = {}) {
-  if (!roster) roster = loadRoster();
-  if (!roster) {
-    console.error("No roster found.");
+export function pruneBuilds({ threshold = 1.0 } = {}) {
+  const builds = getRosterBuilds();
+  if (!builds || builds.length === 0) {
+    console.error("No roster builds found.");
     return { pruned: 0, remaining: 0 };
   }
 
   const groups = {};
-  for (const build of roster.builds) {
-    const key = `${build.heroTree}|${build.archetype}`;
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(build);
+  for (const build of builds) {
+    const key = `${build.heroTree || build.hero_tree}|${build.archetype}`;
+    (groups[key] ||= []).push(build);
   }
 
-  const toPrune = new Set();
-  for (const builds of Object.values(groups)) {
-    if (builds.length <= 1) continue;
+  let pruned = 0;
+  for (const groupBuilds of Object.values(groups)) {
+    if (groupBuilds.length <= 1) continue;
 
-    builds.sort(
-      (a, b) => (b.lastDps?.weighted || 0) - (a.lastDps?.weighted || 0),
-    );
-
-    const bestW = builds[0].lastDps?.weighted || 0;
+    groupBuilds.sort((a, b) => (b.weighted || 0) - (a.weighted || 0));
+    const bestW = groupBuilds[0].weighted || 0;
     if (bestW === 0) continue;
 
-    for (let i = 1; i < builds.length; i++) {
-      const w = builds[i].lastDps?.weighted || 0;
-      if (w === 0 || ((bestW - w) / bestW) * 100 <= threshold) continue;
-      toPrune.add(builds[i].id);
+    for (let i = 1; i < groupBuilds.length; i++) {
+      const w = groupBuilds[i].weighted || 0;
+      const deltaPercent = ((bestW - w) / bestW) * 100;
+      if (w > 0 && deltaPercent > threshold) {
+        setRosterMembership(groupBuilds[i].hash, false);
+        pruned++;
+      }
     }
   }
 
-  const before = roster.builds.length;
-  roster.builds = roster.builds.filter((b) => !toPrune.has(b.id));
-  const pruned = before - roster.builds.length;
-
-  if (pruned > 0) saveRoster(roster);
-  return { pruned, remaining: roster.builds.length };
+  return { pruned, remaining: getRosterBuilds().length };
 }
 
-// --- Update DPS for a build ---
+// --- Update DPS for a single build (called by iterate.js) ---
 
 export function updateDps(roster, buildId, dpsMap) {
-  if (!roster) roster = loadRoster();
-  if (!roster) return;
-
-  const build = roster.builds.find((b) => b.id === buildId);
+  const build = roster?.builds.find((b) => b.id === buildId);
   if (!build) return;
 
   build.lastDps = {
@@ -339,132 +813,35 @@ export function updateDps(roster, buildId, dpsMap) {
   };
   build.lastTestedAt = new Date().toISOString();
 
-  // Sync DPS to DB
   if (build.hash) {
     try {
       dbUpdateBuildDps(build.hash, build.lastDps);
     } catch {
-      // DB sync is non-fatal
+      // Non-fatal
     }
   }
 }
 
-// Save roster after batch DPS updates.
-export function saveRosterDps(roster) {
-  if (roster) saveRoster(roster);
-}
-
-// --- Show ---
-
-export function showRoster() {
-  const roster = loadRoster();
-  if (!roster) {
-    console.log(
-      "No roster found. Run: node src/sim/build-roster.js migrate  (or import-doe)",
-    );
-    return;
-  }
-
-  console.log(`Build Roster (${roster.builds.length} builds)`);
-  console.log(`Updated: ${roster._updated}\n`);
-
-  const hasAnyDps = roster.builds.some((b) => b.lastDps);
-  if (hasAnyDps) {
-    console.log(
-      `${"ID".padEnd(28)} ${"V".padEnd(2)} ${"Hero".padEnd(12)} ${"Archetype".padEnd(30)} ${"Source".padEnd(14)} ${"Weighted".padStart(10)}`,
-    );
-    console.log("-".repeat(100));
-    for (const b of roster.builds) {
-      const v = b.validated ? "Y" : "N";
-      const w = b.lastDps?.weighted
-        ? Math.round(b.lastDps.weighted).toLocaleString()
-        : "—";
-      console.log(
-        `${b.id.padEnd(28)} ${v.padEnd(2)} ${b.heroTree.padEnd(12)} ${(b.archetype || "").padEnd(30)} ${b.source.padEnd(14)} ${w.padStart(10)}`,
-      );
-    }
-  } else {
-    console.log(
-      `${"ID".padEnd(28)} ${"V".padEnd(2)} ${"Hero".padEnd(12)} ${"Archetype".padEnd(30)} ${"Source".padEnd(14)}`,
-    );
-    console.log("-".repeat(90));
-    for (const b of roster.builds) {
-      const v = b.validated ? "Y" : "N";
-      console.log(
-        `${b.id.padEnd(28)} ${v.padEnd(2)} ${b.heroTree.padEnd(12)} ${(b.archetype || "").padEnd(30)} ${b.source.padEnd(14)}`,
-      );
-    }
-  }
-
-  // Group by hero tree
-  const treeCounts = {};
-  for (const b of roster.builds) {
-    treeCounts[b.heroTree] = (treeCounts[b.heroTree] || 0) + 1;
-  }
-  const summary = Object.entries(treeCounts)
-    .map(([tree, count]) => `${count} ${tree}`)
-    .join(" + ");
-  console.log(`\nSummary: ${summary} = ${roster.builds.length} total`);
-
-  // Show validation status
-  const invalidBuilds = roster.builds.filter((b) => !b.validated);
-  if (invalidBuilds.length > 0) {
-    console.log(`\nWARNING: ${invalidBuilds.length} invalid build(s):`);
-    for (const b of invalidBuilds) {
-      console.log(
-        `  ${b.id}: ${(b.validationErrors || ["unknown error"]).join("; ")}`,
-      );
-    }
-  }
-}
-
-// --- Migration from v1 (results/build-roster.json) to v2 (data/build-roster.json) ---
-
-export function migrate() {
-  console.log("Migrating to persistent build roster (v2)...\n");
-
-  const roster = createEmptyRoster();
-
-  // 1. Import from DoE (builds.json)
-  const doeResult = importFromDoe(roster);
-  console.log(
-    `  DoE: ${doeResult.added} added, ${doeResult.skipped} existing, ${doeResult.invalid} invalid`,
-  );
-
-  // 2. Validate all
-  const valResult = validateAll(roster);
-  console.log(
-    `\nValidation: ${valResult.valid} valid, ${valResult.invalid} invalid out of ${valResult.total} builds`,
-  );
-
-  if (valResult.errors.length > 0) {
-    for (const e of valResult.errors) {
-      console.log(`  ${e.id}: ${e.errors.join("; ")}`);
-    }
-  }
-
-  console.log(
-    `\nRoster saved to data/build-roster.json (${roster.builds.length} builds)`,
-  );
-  return roster;
-}
+// No-op: DPS is already written to DB by updateDps.
+// Kept for backward compat with iterate.js.
+export function saveRosterDps() {}
 
 // --- Generate hashes for override-only builds ---
 
-export function generateHashes(roster) {
-  if (!roster) roster = loadRoster();
-  if (!roster) {
-    console.error("No roster found.");
+export function generateHashes() {
+  const builds = getRosterBuilds();
+  if (!builds || builds.length === 0) {
+    console.error("No roster builds found.");
     return { generated: 0, failed: 0 };
   }
 
   let generated = 0;
   let failed = 0;
 
-  for (const build of roster.builds) {
+  for (const build of builds) {
     if (build.hash) continue;
     if (!build.overrides) {
-      console.warn(`  SKIP: ${build.id} — no hash and no overrides`);
+      console.warn(`  SKIP: ${build.name || "?"} — no hash and no overrides`);
       continue;
     }
 
@@ -475,25 +852,115 @@ export function generateHashes(roster) {
       const validation = validateHash(hash);
       if (!validation.valid) {
         console.error(
-          `  FAIL: ${build.id} — hash validation: ${validation.errors.join("; ")}`,
+          `  FAIL: ${build.name || "?"} — hash validation: ${validation.errors.join("; ")}`,
         );
         failed++;
         continue;
       }
-      build.hash = hash;
-      delete build.overrides;
-      build.validated = true;
-      delete build.validationErrors;
+      // Write the generated hash back to DB
+      upsertBuild({
+        hash,
+        name: build.name,
+        heroTree: build.heroTree || build.hero_tree,
+        archetype: build.archetype,
+        source: build.source,
+        inRoster: true,
+        validated: 1,
+      });
       generated++;
-      console.log(`  OK: ${build.id} → ${hash.slice(0, 20)}...`);
+      console.log(`  OK: ${build.name || "?"} → ${hash.slice(0, 20)}...`);
     } catch (e) {
-      console.error(`  FAIL: ${build.id} — ${e.message}`);
+      console.error(`  FAIL: ${build.name || "?"} — ${e.message}`);
       failed++;
     }
   }
 
-  if (generated > 0) saveRoster(roster);
   return { generated, failed };
+}
+
+// --- Show ---
+
+export function showRoster() {
+  const builds = getRosterBuilds();
+  if (!builds || builds.length === 0) {
+    console.log(
+      "No roster builds found. Run: npm run roster import-doe (or import-community)",
+    );
+    return;
+  }
+
+  console.log(`Build Roster (${builds.length} builds, DB-first)\n`);
+
+  const hasAnyDps = builds.some((b) => b.weighted);
+
+  if (hasAnyDps) {
+    console.log(
+      `${"Name".padEnd(30)} ${"V".padEnd(2)} ${"Hero".padEnd(18)} ${"Archetype".padEnd(24)} ${"Source".padEnd(20)} ${"Weighted".padStart(10)}`,
+    );
+    console.log("-".repeat(108));
+    for (const b of builds) {
+      const v = b.validated ? "Y" : "N";
+      const w = b.weighted ? Math.round(b.weighted).toLocaleString() : "\u2014";
+      const name = (b.displayName || b.name || b.hash?.slice(0, 16)).slice(
+        0,
+        29,
+      );
+      const heroTree = (b.heroTree || b.hero_tree || "").slice(0, 17);
+      console.log(
+        `${name.padEnd(30)} ${v.padEnd(2)} ${heroTree.padEnd(18)} ${(b.archetype || "").padEnd(24)} ${(b.source || "").padEnd(20)} ${w.padStart(10)}`,
+      );
+    }
+  } else {
+    console.log(
+      `${"Name".padEnd(30)} ${"V".padEnd(2)} ${"Hero".padEnd(18)} ${"Archetype".padEnd(24)} ${"Source".padEnd(20)}`,
+    );
+    console.log("-".repeat(98));
+    for (const b of builds) {
+      const v = b.validated ? "Y" : "N";
+      const name = (b.displayName || b.name || b.hash?.slice(0, 16)).slice(
+        0,
+        29,
+      );
+      const heroTree = (b.heroTree || b.hero_tree || "").slice(0, 17);
+      console.log(
+        `${name.padEnd(30)} ${v.padEnd(2)} ${heroTree.padEnd(18)} ${(b.archetype || "").padEnd(24)} ${(b.source || "").padEnd(20)}`,
+      );
+    }
+  }
+
+  // Group by hero tree
+  const treeCounts = {};
+  for (const b of builds) {
+    const tree = b.heroTree || b.hero_tree || "unknown";
+    treeCounts[tree] = (treeCounts[tree] || 0) + 1;
+  }
+  const summary = Object.entries(treeCounts)
+    .map(([tree, count]) => `${count} ${tree}`)
+    .join(" + ");
+  console.log(`\nSummary: ${summary} = ${builds.length} total`);
+
+  // Group by source
+  const sourceCounts = {};
+  for (const b of builds) {
+    sourceCounts[b.source] = (sourceCounts[b.source] || 0) + 1;
+  }
+  const sourceBreakdown = Object.entries(sourceCounts)
+    .map(([src, count]) => `${count} ${src}`)
+    .join(", ");
+  console.log(`Sources: ${sourceBreakdown}`);
+
+  // Show validation status
+  const invalidBuilds = builds.filter((b) => !b.validated);
+  if (invalidBuilds.length > 0) {
+    console.log(`\nWARNING: ${invalidBuilds.length} invalid build(s):`);
+    for (const b of invalidBuilds) {
+      const errs = b.validationErrors ||
+        b.validation_errors || ["unknown error"];
+      console.log(
+        `  ${b.name || b.hash?.slice(0, 20)}: ${(Array.isArray(errs) ? errs : [errs]).join("; ")}`,
+      );
+    }
+  }
 }
 
 // --- Utilities ---
@@ -516,8 +983,20 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     case "import-doe": {
       const result = importFromDoe();
       console.log(
-        `Done: ${result.added} added, ${result.skipped} existing, ${result.invalid} invalid`,
+        `Done: ${result.added} added, ${result.skipped} skipped, ${result.invalid} invalid`,
       );
+      break;
+    }
+
+    case "import-community": {
+      const result = importCommunity();
+      console.log(`Done: ${result.added} added, ${result.skipped} skipped`);
+      break;
+    }
+
+    case "import-baseline": {
+      const result = importBaseline();
+      console.log(`Done: ${result.added} added, ${result.skipped} skipped`);
       break;
     }
 
@@ -539,22 +1018,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         process.exit(1);
       }
 
-      const roster = loadRoster() || createEmptyRoster();
       const prefix = heroTree
         .split("_")
         .map((w) => w[0].toUpperCase())
         .join("");
-      const id = `${prefix}_${sanitizeId(archetype)}_manual`;
+      const name = `${prefix}_${sanitizeId(archetype)}_manual`;
 
-      const result = addBuilds(
-        roster,
-        [{ id, archetype, heroTree, hash, overrides: null }],
-        { source: "manual" },
-      );
-      if (result.added > 0) saveRoster(roster);
-      console.log(
-        `Done: ${result.added} added, ${result.skipped} existing, ${result.invalid} invalid`,
-      );
+      const validation = validateBuild({ hash });
+      upsertBuild({
+        hash,
+        name,
+        heroTree,
+        archetype,
+        source: "manual",
+        inRoster: true,
+        validated: validation.valid ? 1 : 0,
+        validationErrors: validation.valid ? null : validation.errors,
+      });
+
+      console.log(`Added: ${name} (${heroTree})`);
       break;
     }
 
@@ -572,10 +1054,23 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     case "prune": {
       const thIdx = args.indexOf("--threshold");
       const threshold = thIdx !== -1 ? parseFloat(args[thIdx + 1]) : 1.0;
-      const result = pruneBuilds(null, { threshold });
+      const result = pruneBuilds({ threshold });
       console.log(
         `Pruned ${result.pruned} builds, ${result.remaining} remaining`,
       );
+      break;
+    }
+
+    case "update-dps": {
+      const fidIdx = args.indexOf("--fidelity");
+      const fidelity = fidIdx !== -1 ? args[fidIdx + 1] : "quick";
+      if (!["quick", "standard", "confirm"].includes(fidelity)) {
+        console.error(
+          `Invalid fidelity: ${fidelity}. Must be quick, standard, or confirm.`,
+        );
+        process.exit(1);
+      }
+      await updateAllDps({ fidelity });
       break;
     }
 
@@ -587,21 +1082,34 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       break;
     }
 
-    case "migrate":
-      migrate();
+    case "generate-names": {
+      const builds = getRosterBuilds();
+      if (!builds || builds.length === 0) {
+        console.error("No roster builds found.");
+        process.exit(1);
+      }
+      generateDisplayNames(builds);
+      const named = builds.filter((b) => b.displayName).length;
+      console.log(`Generated display names for ${named} builds.`);
       break;
+    }
 
     default:
-      console.log(`Build Roster Manager (persistent)
+      console.log(`Build Roster Manager (DB-first)
 
 Usage:
   node src/sim/build-roster.js show                              Show roster
-  node src/sim/build-roster.js import-doe                        Import from builds.json
+  node src/sim/build-roster.js import-doe                        Import from DB archetypes (DoE)
+  node src/sim/build-roster.js import-community                  Import community builds from config
+  node src/sim/build-roster.js import-baseline                   Import baseline.simc build
   node src/sim/build-roster.js add <hash> --archetype "N" --hero <tree>  Add manually
   node src/sim/build-roster.js validate                          Re-validate all builds
   node src/sim/build-roster.js prune [--threshold 1.0]           Prune redundant builds
+  node src/sim/build-roster.js update-dps [--fidelity quick|standard|confirm]  Sim all builds
   node src/sim/build-roster.js generate-hashes                   Generate hashes for override-only builds
-  node src/sim/build-roster.js migrate                           One-time migration from v1`);
+  node src/sim/build-roster.js generate-names                    Retroactively assign display names`);
       break;
   }
+
+  closeAll();
 }

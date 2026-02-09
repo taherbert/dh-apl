@@ -75,7 +75,6 @@ import {
   getBaselineDps,
   updateBaselineDpsCurrent,
   getSessionSummary,
-  exportToJson as dbExportJson,
 } from "../util/db.js";
 import {
   ROOT,
@@ -90,7 +89,6 @@ import { randomUUID } from "node:crypto";
 await initSpec(parseSpecArg());
 
 const RESULTS_DIR = resultsDir();
-const STATE_PATH = resultsFile("iteration-state.json");
 // Iteration working copy — created by `init`, updated by `accept`.
 const CURRENT_APL = join(aplsDir(), "current.simc");
 
@@ -126,81 +124,16 @@ function getAggregateDps(stateSection) {
   return agg;
 }
 
-// --- State Management ---
+// --- State Management (DB-first) ---
 
 function loadState() {
-  if (!existsSync(STATE_PATH)) return null;
-  try {
-    const state = JSON.parse(readFileSync(STATE_PATH, "utf-8"));
-    return migrateState(state);
-  } catch (e) {
-    console.error(
-      `State file corrupted: ${e.message}. Attempting backup recovery...`,
-    );
-    return recoverFromBackup();
-  }
-}
-
-function recoverFromBackup() {
-  const backups = readdirSync(RESULTS_DIR)
-    .filter(
-      (f) => f.startsWith("iteration-state.backup.") && f.endsWith(".json"),
-    )
-    .sort()
-    .reverse();
-  for (const f of backups) {
-    try {
-      const state = JSON.parse(readFileSync(join(RESULTS_DIR, f), "utf-8"));
-      console.error(`Recovered from backup: ${f}`);
-      writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
-      return migrateState(state);
-    } catch (err) {
-      console.error(`Backup ${f} corrupt: ${err.message}`);
-      // corrupt backup, try next
-    }
-  }
-  console.error("No valid backups found.");
-  return null;
-}
-
-function migrateState(state) {
-  if (state.version >= STATE_VERSION) return state;
-  throw new Error(
-    `Iteration state version ${state.version || "unknown"} is too old. ` +
-      `Expected version ${STATE_VERSION}. Delete results/iteration-state.json and re-init.`,
-  );
+  return getSessionState("iteration_state");
 }
 
 function saveState(state) {
-  ensureSpecDirs();
   state.version = STATE_VERSION;
   state.lastUpdated = new Date().toISOString();
-
-  const content = JSON.stringify(state, null, 2);
-  const tmpPath = STATE_PATH + ".tmp";
-
-  // Atomic write: write to .tmp, rotate backups, rename
-  writeFileSync(tmpPath, content);
-
-  if (existsSync(STATE_PATH)) {
-    // Rotate backups (keep 5)
-    const backups = readdirSync(RESULTS_DIR)
-      .filter(
-        (f) => f.startsWith("iteration-state.backup.") && f.endsWith(".json"),
-      )
-      .sort()
-      .map((f) => join(RESULTS_DIR, f));
-    while (backups.length >= 5) {
-      unlinkSync(backups.shift());
-    }
-    const backupPath = join(
-      RESULTS_DIR,
-      `iteration-state.backup.${Date.now()}.json`,
-    );
-    copyFileSync(STATE_PATH, backupPath);
-  }
-
-  renameSync(tmpPath, STATE_PATH);
+  setSessionState("iteration_state", state);
 }
 
 // Strip numbers/percentages for hypothesis deduplication.
@@ -967,8 +900,9 @@ async function cmdInit(aplPath) {
     console.error(
       "No build roster found. The roster is required for multi-build iteration.\n" +
         "Populate the roster first:\n" +
-        "  node src/sim/build-roster.js migrate            # One-time migration from existing data\n" +
-        "  node src/sim/build-roster.js import-doe          # Import from builds.json\n",
+        "  npm run discover                                 # Run DoE build discovery\n" +
+        "  npm run roster import-community                  # Import community builds\n" +
+        "  npm run roster import-baseline                   # Import SimC default\n",
     );
     process.exit(1);
   }
@@ -1044,7 +978,7 @@ async function cmdInit(aplPath) {
     multiBuild: true,
     sessionId,
     roster: {
-      path: relative(ROOT, dataFile("build-roster.json")),
+      source: "db",
       buildCount: roster.builds.length,
     },
     originalBaseline: {

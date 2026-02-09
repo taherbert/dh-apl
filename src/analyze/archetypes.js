@@ -1,49 +1,45 @@
-// Archetype definitions for Vengeance Demon Hunter builds.
-// Archetypes are strategic build directions that inform hypothesis generation.
-// Loaded from data/build-theory.json (curated) + results/builds.json (discovered).
-// Usage: node src/analyze/archetypes.js [talents.json]
+// Archetype definitions for spec builds.
+// DB-first: all reads go through theorycraft.db via db.js.
+// No JSON file I/O — the DB is the single source of truth.
 
-import { readFileSync, existsSync } from "node:fs";
 import { initSpec } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import { dataFile, resultsFile } from "../engine/paths.js";
+import { dataFile } from "../engine/paths.js";
+import { readFileSync } from "node:fs";
+import {
+  getArchetypes as dbGetArchetypes,
+  getTalentClusters,
+  getClusterSynergies as dbGetClusterSynergies,
+  getTensionPoints as dbGetTensionPoints,
+  getFindings,
+  getHypotheses,
+  getFactors,
+  getSynergies,
+  queryBuilds,
+  closeAll,
+} from "../util/db.js";
 
-// --- Build theory loader ---
+// --- Archetype loading (DB-first) ---
 
-let _theoryCache = null;
-
-function loadBuildTheory() {
-  if (_theoryCache) return _theoryCache;
-  try {
-    _theoryCache = JSON.parse(
-      readFileSync(dataFile("build-theory.json"), "utf8"),
-    );
-    return _theoryCache;
-  } catch (e) {
-    throw new Error(`Failed to load build-theory.json: ${e.message}`);
-  }
-}
-
-// Convert build-theory archetypes to the keyed format existing APIs expect.
-// Maps buildArchetypes[] → { "ar-fragment-frailty": { heroTree, keyTalents, keyBuffs, ... }, ... }
 function loadArchetypes() {
-  const theory = loadBuildTheory();
-  const result = {};
-  for (const arch of theory.buildArchetypes) {
-    result[arch.id] = {
-      heroTree: arch.heroTree,
-      description: arch.strengths,
-      coreLoop: arch.coreLoop,
-      keyTalents: arch.keyTalents || [],
-      keyBuffs: arch.keyBuffs || [],
-      keyAbilities: arch.keyAbilities || [],
-      tradeoffs: arch.tradeoffs || arch.tensions,
-      aplFocus: arch.aplFocus || [],
-      clusters: arch.clusters || [],
-      tensions: arch.tensions,
-    };
-  }
-  return result;
+  const dbArchetypes = dbGetArchetypes();
+  return Object.fromEntries(
+    dbArchetypes.map((arch) => [
+      arch.name,
+      {
+        heroTree: arch.heroTree || arch.hero_tree,
+        description: arch.description,
+        coreLoop: arch.coreLoop || arch.core_loop,
+        keyTalents: arch.keyTalents || arch.key_talents || [],
+        keyBuffs: [],
+        keyAbilities: [],
+        tradeoffs: arch.tensions,
+        aplFocus: arch.aplFocus || arch.apl_focus || [],
+        clusters: arch.definingTalents || arch.defining_talents || [],
+        tensions: arch.tensions,
+      },
+    ]),
+  );
 }
 
 // --- Core archetype detection ---
@@ -55,8 +51,6 @@ export function detectArchetype(talents, heroTree = null) {
   for (const [id, archetype] of Object.entries(archetypes)) {
     if (heroTree && archetype.heroTree !== heroTree) continue;
 
-    // When talents is null but heroTree specified, return all archetypes for that tree
-    // with baseline confidence (allows strategic hypotheses to use archetype context)
     if (!talents && heroTree) {
       matches.push({
         id,
@@ -93,7 +87,6 @@ export function detectArchetype(talents, heroTree = null) {
 
 function hasTalent(talents, talentName) {
   if (!talents) return false;
-
   const normalizedName = normalize(talentName);
   const entries = Array.isArray(talents) ? talents : Object.keys(talents);
   return entries.some((t) => normalize(t.name || t) === normalizedName);
@@ -148,130 +141,115 @@ export function getAllArchetypes() {
   return { ...loadArchetypes() };
 }
 
-// --- Build theory knowledge exports ---
+// --- Build theory knowledge exports (DB-first) ---
 
 export function getSpecClusters() {
-  return loadBuildTheory().specClusters;
+  return getTalentClusters();
 }
 
 export function getHeroTreeMechanics(heroTree) {
-  return loadBuildTheory().heroTrees[heroTree] || null;
+  // Hero tree mechanics are part of the spec adapter, not the DB.
+  // Return null — callers should use getSpecAdapter().getSpecConfig().heroTrees[heroTree]
+  return null;
 }
 
 export function getClusterSynergies(clusterId, heroTree) {
-  const synergies = loadBuildTheory().clusterSynergies;
+  const synergies = dbGetClusterSynergies();
   if (clusterId && heroTree) {
     return (
       synergies.find(
-        (s) => s.cluster === clusterId && s.heroTree === heroTree,
+        (s) =>
+          s.cluster === clusterId && (s.heroTree || s.hero_tree) === heroTree,
       ) || null
     );
   }
   if (clusterId) return synergies.filter((s) => s.cluster === clusterId);
-  if (heroTree) return synergies.filter((s) => s.heroTree === heroTree);
+  if (heroTree)
+    return synergies.filter((s) => (s.heroTree || s.hero_tree) === heroTree);
   return synergies;
 }
 
 export function getTensionPoints() {
-  return loadBuildTheory().tensionPoints;
+  return dbGetTensionPoints();
 }
 
-// --- Discovered archetypes from build discovery pipeline ---
-
-let _discoveredCache = null;
-
-function loadBuildsJson() {
-  if (_discoveredCache) return _discoveredCache;
-  const path = resultsFile("builds.json");
-  if (!existsSync(path)) return null;
-  try {
-    _discoveredCache = JSON.parse(readFileSync(path, "utf8"));
-    return _discoveredCache;
-  } catch {
-    return null;
-  }
-}
+// --- Discovered archetypes from DB ---
 
 export function loadDiscoveredArchetypes() {
-  const data = loadBuildsJson();
-  return data?.discoveredArchetypes || null;
+  const archetypes = dbGetArchetypes();
+  if (!archetypes || archetypes.length === 0) return null;
+  return archetypes.map((a) => ({
+    name: a.name,
+    heroTree: a.heroTree || a.hero_tree,
+    definingTalents: a.definingTalents || a.defining_talents || [],
+    bestBuild: { hash: a.bestBuildHash || a.best_build_hash, weighted: 0 },
+    buildCount: a.buildCount || a.build_count || 0,
+  }));
 }
 
 export function getDiscoveredBuilds() {
-  const data = loadBuildsJson();
-  return data?.allBuilds || null;
+  return queryBuilds({ limit: 500 });
 }
 
 export function getFactorImpacts() {
-  const data = loadBuildsJson();
-  return data?.factorImpacts || null;
+  const factors = getFactors({ limit: 200 });
+  return factors.length > 0 ? factors : null;
 }
 
 export function getSynergyPairs() {
-  const data = loadBuildsJson();
-  return data?.synergyPairs || null;
+  const synergies = getSynergies({ limit: 100 });
+  return synergies.length > 0 ? synergies : null;
 }
 
 export function getBestBuildHash(heroTree) {
-  const archetypes = loadDiscoveredArchetypes();
+  const archetypes = dbGetArchetypes();
   if (!archetypes) return null;
   const normalizedTree = heroTree.toLowerCase().replace(/\s+/g, "_");
-  const match = archetypes.find((a) => a.heroTree === normalizedTree);
-  return match?.bestBuild?.hash || null;
+  const match = archetypes.find(
+    (a) => (a.heroTree || a.hero_tree) === normalizedTree,
+  );
+  return match?.bestBuildHash || match?.best_build_hash || null;
 }
 
-// --- Knowledge system helpers ---
+// --- Knowledge system helpers (DB-first) ---
 
-// Load validated findings only
 export function getValidatedFindings() {
-  const fp = resultsFile("findings.json");
-  if (!existsSync(fp)) return [];
-  try {
-    const data = JSON.parse(readFileSync(fp, "utf8"));
-    const findings = data.findings || data;
-    return (Array.isArray(findings) ? findings : []).filter(
-      (f) => f.status === "validated",
-    );
-  } catch {
-    return [];
-  }
+  return getFindings({ status: "validated" });
 }
 
-// Load mechanics for a topic
 export function getMechanics(topic) {
-  const mp = dataFile("mechanics.json");
-  if (!existsSync(mp)) return null;
+  const findings = getFindings({ status: "validated" });
+  const mechFindings = findings.filter(
+    (f) => f.scope === "mechanic" && f.mechanism === topic,
+  );
+  if (mechFindings.length === 0) return null;
+
+  const f = mechFindings[0];
+  let evidence;
   try {
-    const mechanics = JSON.parse(readFileSync(mp, "utf8"));
-    return mechanics.mechanics?.[topic] || null;
+    evidence =
+      typeof f.evidence === "string" ? JSON.parse(f.evidence) : f.evidence;
   } catch {
-    return null;
+    evidence = {};
   }
+
+  return {
+    summary: f.insight,
+    facts: evidence?.facts || [],
+    simcExpressions: evidence?.simcExpressions || [],
+    aplImplications: evidence?.aplImplications || [],
+    verified: f.createdAt || f.created_at,
+  };
 }
 
-// Check if hypothesis already tested
 export function isHypothesisTested(id) {
-  const hp = resultsFile("hypotheses.json");
-  if (!existsSync(hp)) return false;
-  try {
-    const hypotheses = JSON.parse(readFileSync(hp, "utf8"));
-    const h = hypotheses.hypotheses?.find((h) => h.id === id);
-    return h?.tested ?? false;
-  } catch {
-    return false;
-  }
+  const hypotheses = getHypotheses({ limit: 500 });
+  const h = hypotheses.find((h) => h.id === id);
+  return h ? h.status !== "pending" : false;
 }
 
-// Load all untested hypotheses
 export function getUntestedHypotheses() {
-  const hp = resultsFile("hypotheses.json");
-  if (!existsSync(hp)) return [];
-  try {
-    const hypotheses = JSON.parse(readFileSync(hp, "utf8"));
-    return (hypotheses.hypotheses || []).filter((h) => !h.tested);
-  } catch {
-    return [];
-  }
+  return getHypotheses({ status: "pending" });
 }
 
 // --- CLI entry point ---
@@ -282,22 +260,23 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const archetypes = loadArchetypes();
 
   console.log("=".repeat(60));
-  console.log("Archetype System");
+  console.log("Archetype System (DB-first)");
   console.log("=".repeat(60));
 
-  // Show discovered archetypes first (from builds.json)
+  // Show discovered archetypes
   const discovered = loadDiscoveredArchetypes();
   if (discovered) {
-    console.log("\n--- Discovered Archetypes (from builds.json) ---\n");
+    console.log("\n--- Discovered Archetypes ---\n");
     for (const arch of discovered) {
       console.log(`${arch.name} (${arch.heroTree})`);
       console.log(
-        `  Defining talents: ${arch.definingTalents.join(", ") || "none"}`,
+        `  Defining talents: ${(arch.definingTalents || []).join(", ") || "none"}`,
       );
-      console.log(
-        `  Best build: ${arch.bestBuild.name} — ${arch.bestBuild.weighted.toLocaleString()} weighted DPS`,
-      );
-      console.log(`  Hash: ${arch.bestBuild.hash?.slice(0, 40)}...`);
+      if (arch.bestBuild?.hash) {
+        console.log(
+          `  Best build hash: ${arch.bestBuild.hash.slice(0, 40)}...`,
+        );
+      }
       console.log(`  Builds: ${arch.buildCount}`);
       console.log();
     }
@@ -306,9 +285,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     if (impacts) {
       console.log("--- Top Factor Impacts ---\n");
       for (const fi of impacts.slice(0, 10)) {
-        const sign = fi.mainEffect >= 0 ? "+" : "";
+        const sign = (fi.mainEffect || fi.main_effect || 0) >= 0 ? "+" : "";
         console.log(
-          `  ${fi.talent.padEnd(25)} ${sign}${fi.mainEffect} (${sign}${fi.pct}%)`,
+          `  ${fi.talent.padEnd(25)} ${sign}${fi.mainEffect || fi.main_effect || 0} (${sign}${fi.pct}%)`,
         );
       }
     }
@@ -316,50 +295,62 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Show spec clusters
   const clusters = getSpecClusters();
-  console.log("\n--- Spec Clusters ---\n");
-  for (const cluster of clusters) {
-    console.log(`${cluster.id} — ${cluster.name} (${cluster.role})`);
-    console.log(`  Talents: ${cluster.talents.join(", ")}`);
-    console.log(`  Loop: ${cluster.coreLoop}`);
-    console.log();
+  if (clusters.length > 0) {
+    console.log("\n--- Spec Clusters ---\n");
+    for (const cluster of clusters) {
+      console.log(`${cluster.id} — ${cluster.name} (${cluster.role || "?"})`);
+      const talents = Array.isArray(cluster.talents)
+        ? cluster.talents.join(", ")
+        : cluster.talents;
+      console.log(`  Talents: ${talents}`);
+      console.log(`  Loop: ${cluster.coreLoop || cluster.core_loop || "?"}`);
+      console.log();
+    }
   }
 
   // Show cluster synergies summary
-  console.log("--- Cluster × Hero Tree Synergies ---\n");
   const synergies = getClusterSynergies();
-  const grouped = {};
-  for (const s of synergies) {
-    grouped[s.cluster] = grouped[s.cluster] || {};
-    grouped[s.cluster][s.heroTree] = s.rating;
-  }
-  console.log(`${"Cluster".padEnd(20)} ${"AR".padEnd(12)} Anni`);
-  console.log("-".repeat(44));
-  for (const [cluster, ratings] of Object.entries(grouped)) {
-    console.log(
-      `${cluster.padEnd(20)} ${(ratings.aldrachi_reaver || "-").padEnd(12)} ${ratings.annihilator || "-"}`,
-    );
+  if (synergies.length > 0) {
+    console.log("--- Cluster x Hero Tree Synergies ---\n");
+    const grouped = {};
+    for (const s of synergies) {
+      const tree = s.heroTree || s.hero_tree;
+      grouped[s.cluster] = grouped[s.cluster] || {};
+      grouped[s.cluster][tree] = s.rating || s.synergy_rating;
+    }
+    console.log(`${"Cluster".padEnd(20)} ${"AR".padEnd(12)} Anni`);
+    console.log("-".repeat(44));
+    for (const [cluster, ratings] of Object.entries(grouped)) {
+      console.log(
+        `${cluster.padEnd(20)} ${(ratings.aldrachi_reaver || "-").padEnd(12)} ${ratings.annihilator || "-"}`,
+      );
+    }
   }
 
   // Show theoretical archetypes
-  console.log("\n--- Build Archetypes (from build-theory.json) ---\n");
-
+  console.log("\n--- Build Archetypes ---\n");
   for (const [id, arch] of Object.entries(archetypes)) {
     console.log(`${id} (${arch.heroTree})`);
-    console.log(`  Core loop: ${arch.coreLoop}`);
+    console.log(`  Core loop: ${arch.coreLoop || "?"}`);
     console.log(`  Key talents: ${arch.keyTalents?.join(", ") || "none"}`);
-    console.log(`  Key buffs: ${arch.keyBuffs?.join(", ") || "none"}`);
-    console.log(`  Tradeoffs: ${arch.tradeoffs}`);
+    console.log(`  Tradeoffs: ${arch.tradeoffs || "?"}`);
     console.log();
   }
 
   // Show tension points
   const tensions = getTensionPoints();
-  console.log("--- Tension Points ---\n");
-  for (const tp of tensions) {
-    console.log(`${tp.id}: ${tp.description}`);
-    console.log(`  ${tp.explanation}`);
-    console.log(`  Affects: ${tp.affectedArchetypes.join(", ")}`);
-    console.log();
+  if (tensions.length > 0) {
+    console.log("--- Tension Points ---\n");
+    for (const tp of tensions) {
+      console.log(`${tp.id}: ${tp.description}`);
+      console.log(`  ${tp.explanation || ""}`);
+      const affected = tp.affectedArchetypes || tp.affected_archetypes;
+      if (affected) {
+        const list = Array.isArray(affected) ? affected.join(", ") : affected;
+        console.log(`  Affects: ${list}`);
+      }
+      console.log();
+    }
   }
 
   // If talents file provided, try to detect archetype
@@ -386,4 +377,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   } catch (e) {
     console.log(`(Could not load talents from ${talentsPath})`);
   }
+
+  closeAll();
 }

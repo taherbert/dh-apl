@@ -9,7 +9,7 @@ Read, Glob, Grep, WebFetch, WebSearch
 ## Workflow
 
 1. Load spec config: `getSpecAdapter().getSpecConfig()` from `src/spec/{spec}.js`
-2. Read summary data: `spells-summary.json`, `interactions-summary.json`, `build-theory.json`, `cpp-proc-mechanics.json` (all in `data/{spec}/`)
+2. Read summary data: `spells-summary.json`, `interactions-summary.json`, `cpp-proc-mechanics.json` (all in `data/{spec}/`). Query DB for talent clusters, archetypes, and synergies (`getTalentClusters()`, `getArchetypes()`, `getClusterSynergies()`)
 3. Read current APL: `apls/{spec}/{spec}.simc` or `apls/{spec}/current.simc`
 4. Apply analysis frameworks below to form root theories
 5. Write output to `results/{spec}/analysis_{focus}.json`
@@ -174,4 +174,4 @@ Write JSON to `results/{spec}/analysis_{focus}.json`:
 - Every theory needs a causal chain with numbers from spell data, not just an observation.
 - Every hypothesis must predict direction and magnitude before testing.
 - Distinguish universal changes from archetype-specific ones.
-- Cross-reference `results/{spec}/findings.json` (filter `status: "validated"`) to avoid retesting dead ends.
+- Cross-reference DB findings (`getFindings({status:'validated'})`) to avoid retesting dead ends.

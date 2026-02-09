@@ -15,4 +15,4 @@ After sim completes, run `npm run analyze` and report key metrics:
 - Key buff uptimes
 - Resource efficiency
 
-Compare against baseline if available in `results/{spec}/findings.json` or iteration state via `node src/sim/iterate.js status`.
+Compare against baseline if available in the DB (`getFindings()`) or iteration state via `node src/sim/iterate.js status`.
