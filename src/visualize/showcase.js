@@ -3,7 +3,6 @@
 //
 // Usage: node src/visualize/showcase.js [options]
 //   --skip-sims           Generate from cached roster DPS only (no SimC HTML reports)
-//   --community <path>    Path to community builds JSON
 //   --fidelity <tier>     quick|standard|confirm (default: standard)
 //   --builds <N>          Builds per hero tree for showcase sims (default: 3)
 
@@ -24,13 +23,7 @@ import {
   getSpecAdapter,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import {
-  resultsDir,
-  resultsFile,
-  dataFile,
-  aplsDir,
-  ROOT,
-} from "../engine/paths.js";
+import { resultsDir, resultsFile, aplsDir, ROOT } from "../engine/paths.js";
 import { loadRoster } from "../sim/build-roster.js";
 import { generateMultiActorContent } from "../sim/multi-actor.js";
 import { parseMultiActorResults } from "../sim/runner.js";
@@ -46,7 +39,6 @@ function parseArgs() {
   const args = process.argv.slice(2);
   const opts = {
     skipSims: false,
-    communityPath: null,
     fidelity: "standard",
     buildsPerTree: 3,
   };
@@ -55,9 +47,6 @@ function parseArgs() {
     switch (args[i]) {
       case "--skip-sims":
         opts.skipSims = true;
-        break;
-      case "--community":
-        opts.communityPath = args[++i];
         break;
       case "--fidelity":
         opts.fidelity = args[++i];
@@ -68,10 +57,6 @@ function parseArgs() {
     }
   }
 
-  if (!opts.communityPath) {
-    opts.communityPath = dataFile("community-builds.json");
-  }
-
   return opts;
 }
 
@@ -80,22 +65,16 @@ function parseArgs() {
 function selectShowcaseBuilds(roster, communityBuilds, buildsPerTree) {
   const byTree = {};
   for (const build of roster.builds) {
-    if (!byTree[build.heroTree]) byTree[build.heroTree] = [];
-    byTree[build.heroTree].push(build);
+    (byTree[build.heroTree] ||= []).push(build);
   }
 
   // Sort each tree by weighted DPS descending, pick top N
   const selected = [];
-  const selectedIds = new Set();
-
-  for (const [tree, builds] of Object.entries(byTree)) {
+  for (const builds of Object.values(byTree)) {
     builds.sort(
       (a, b) => (b.lastDps?.weighted || 0) - (a.lastDps?.weighted || 0),
     );
-    for (const build of builds.slice(0, buildsPerTree)) {
-      selected.push(build);
-      selectedIds.add(build.id);
-    }
+    selected.push(...builds.slice(0, buildsPerTree));
   }
 
   // Add community builds (skip duplicates by hash)
@@ -113,7 +92,6 @@ function selectShowcaseBuilds(roster, communityBuilds, buildsPerTree) {
     selectedHashes.add(cb.hash);
   }
 
-  // Cap at ~12 total
   return selected.slice(0, 12);
 }
 
@@ -258,17 +236,15 @@ function computeRankings(roster) {
 
   const topByScenario = {};
   for (const scenario of Object.keys(SCENARIOS)) {
-    const sorted = [...builds]
+    topByScenario[scenario] = [...builds]
       .filter((b) => b.lastDps?.[scenario])
-      .sort((a, b) => b.lastDps[scenario] - a.lastDps[scenario]);
-    topByScenario[scenario] = sorted.slice(0, 3);
+      .sort((a, b) => b.lastDps[scenario] - a.lastDps[scenario])
+      .slice(0, 3);
   }
 
   const topByTree = {};
   for (const build of builds) {
-    if (!topByTree[build.heroTree]) {
-      topByTree[build.heroTree] = build;
-    }
+    topByTree[build.heroTree] ||= build;
   }
 
   return { topOverall, topByScenario, topByTree };
@@ -277,50 +253,26 @@ function computeRankings(roster) {
 // --- Iteration changelog ---
 
 function loadChangelog() {
-  // Try DB first (unified theorycraft.db)
   try {
     const iterations = getIterations({ decision: "accepted", limit: 200 });
-    if (iterations.length > 0) {
-      return iterations.map((it) => {
-        const entry = {
-          id: it.id,
-          date: it.createdAt,
-          hypothesis: it.reason || it.aplDiff || "",
-          meanWeighted: it.aggregate?.meanWeighted ?? null,
-        };
-        // Add theory attribution if hypothesis is linked to a theory
-        if (it.hypothesisId) {
-          try {
-            // Look up theory via hypothesis → theory chain
-            const theory = getTheory(it.hypothesisId);
-            if (theory) entry.theory = theory.title;
-          } catch {
-            // Theory lookup is optional
-          }
-        }
-        return entry;
-      });
-    }
-  } catch {
-    // DB not available, fall through to legacy
-  }
-
-  // Fallback: legacy iteration-state.json
-  const statePath = resultsFile("iteration-state.json");
-  if (!existsSync(statePath)) return null;
-
-  try {
-    const state = JSON.parse(readFileSync(statePath, "utf-8"));
-    if (!state.iterations) return null;
-
-    return state.iterations
-      .filter((it) => it.decision === "accepted")
-      .map((it) => ({
+    if (iterations.length === 0) return null;
+    return iterations.map((it) => {
+      const entry = {
         id: it.id,
-        date: it.timestamp,
-        hypothesis: it.hypothesis,
-        meanWeighted: it.comparison?.aggregates?.meanWeighted,
-      }));
+        date: it.createdAt,
+        hypothesis: it.reason || it.aplDiff || "",
+        meanWeighted: it.aggregate?.meanWeighted ?? null,
+      };
+      if (it.hypothesisId) {
+        try {
+          const theory = getTheory(it.hypothesisId);
+          if (theory) entry.theory = theory.title;
+        } catch {
+          // Theory lookup is optional
+        }
+      }
+      return entry;
+    });
   } catch {
     return null;
   }
@@ -775,16 +727,12 @@ async function main() {
     process.exit(1);
   }
 
-  // Load community builds
-  let communityBuilds = [];
-  if (existsSync(opts.communityPath)) {
-    try {
-      const data = JSON.parse(readFileSync(opts.communityPath, "utf-8"));
-      communityBuilds = data.builds || [];
-      console.log(`  Loaded ${communityBuilds.length} community builds`);
-    } catch (e) {
-      console.warn(`  Failed to load community builds: ${e.message}`);
-    }
+  // Extract community builds from roster (source starts with "community:")
+  const communityBuilds = roster.builds.filter(
+    (b) => b.source && b.source.startsWith("community"),
+  );
+  if (communityBuilds.length > 0) {
+    console.log(`  Found ${communityBuilds.length} community builds in roster`);
   }
 
   // APL paths

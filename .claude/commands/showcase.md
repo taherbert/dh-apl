@@ -28,7 +28,7 @@ SPEC=$SPEC node src/visualize/showcase.js --fidelity $FIDELITY
 - **APL structural diff**: Added/removed/modified action lists and variables
 - **Build rankings**: Overall, per hero tree, per scenario
 - **Optimization changelog**: Accepted iterations with theory attribution and DPS deltas
-- **Community builds**: Included from `data/{spec}/community-builds.json` if available
+- **Community builds**: Included from roster (source `community:*`)
 
 ## Notes
 

@@ -25,7 +25,7 @@ node src/sim/iterate.js status        # Progress, consecutive rejections, per-bu
 node src/sim/iterate.js rollback <iteration-id>
 node src/sim/iterate.js summary
 node src/sim/iterate.js hypotheses
-node src/sim/iterate.js strategic     # Archetype-aware, from build-theory
+node src/sim/iterate.js strategic     # Archetype-aware, from DB archetypes/clusters
 node src/sim/iterate.js theorycraft   # Temporal resource flow analysis
 node src/sim/iterate.js synthesize    # Cross-reference all sources
 node src/sim/iterate.js generate      # Auto-generate candidate from top hypothesis

@@ -54,7 +54,7 @@ actions+=/...
 
 1. Run `SPEC=vengeance node src/engine/startup.js` to check config and simc sync status (use appropriate spec)
 2. Check `MULTI-SPEC-PLAN.md` for any ongoing multi-phase work
-3. Read `data/{spec}/build-theory.json` for structural context
+3. Run `npm run db:status` to check theorycraft DB contents
 4. Update this file if new commands, patterns, or architectural decisions emerge
 
 ## Data Sources
@@ -145,8 +145,6 @@ data/
     interactions.json     # Talent → spell interaction map (full)
     interactions-summary.json  # Context-efficient interactions — use this for analysis
     cpp-proc-mechanics.json    # Auto-extracted C++ proc rates, ICDs, constants
-    build-theory.json          # Curated: talent clusters, hero trees, archetype theory
-    build-roster.json          # Persistent build roster (version-controlled)
     raidbots-talents.json      # Raidbots talent data
   havoc/                  # Future: another DH spec
 apls/
@@ -157,10 +155,7 @@ apls/
     current.simc          # Iteration working copy (gitignored)
 results/
   vengeance/              # Per-spec simulation output and persistent state
-    builds.json           # Discovered archetypes + ranked builds
-    builds.db             # SQLite: queryable builds, factors, archetypes
-    findings.json         # Accumulated analytical insights
-    findings.db           # SQLite: queryable findings and hypotheses
+    theorycraft.db        # Unified SQLite: builds, archetypes, findings, hypotheses, iterations, roster
     SCHEMA.md             # Schema documentation
 reference/                # Shared (cross-spec C++ source)
   vengeance-apl.simc
@@ -213,11 +208,14 @@ npm run discover -- --anni-only              # Annihilator builds only
 
 # === Build Roster (persistent, version-controlled) ===
 npm run roster show                          # Show roster with validation status
-npm run roster import-doe                    # Import from builds.json (DoE discovery)
+npm run roster import-doe                    # Import DoE-discovered builds to roster
+npm run roster import-community              # Import community builds from config
+npm run roster import-baseline               # Import SimC default build
 npm run roster validate                      # Re-validate all builds
 npm run roster prune                         # Remove redundant builds within threshold
 npm run roster generate-hashes               # Generate hashes for override-only builds
-npm run roster migrate                       # One-time v1→v2 migration from existing data
+npm run roster generate-names                # Generate talent-diff display names
+npm run roster update-dps                    # Refresh DPS from latest sim results
 
 # === Simulation ===
 node src/sim/runner.js apls/vengeance/baseline.simc  # Run simulation
@@ -228,8 +226,11 @@ SPEC=vengeance node src/engine/startup.js    # Check config + simc sync status
 SPEC=vengeance node src/engine/extract.js    # Check extraction pipeline status
 SPEC=vengeance node src/engine/model.js      # Check model pipeline status
 SPEC=vengeance node src/util/validate.js     # Validate all data + staleness check
-npm run db:migrate                           # Import builds.json/findings.json → SQLite
+npm run db:migrate                           # One-time import of legacy JSON → SQLite
+npm run db:migrate-theory                    # Migrate build-theory.json → DB tables
+npm run db:migrate-mechanics                 # Migrate mechanics.json → findings table
 npm run db:status                            # Show SQLite record counts
+npm run db:dump                              # Print formatted DB summary to stdout
 node src/util/db.js top 10                   # Top 10 builds by weighted DPS
 npm run synthesize                           # Run hypothesis synthesizer standalone
 
@@ -279,18 +280,25 @@ node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
 
 Targeting **Midnight** expansion. The simc `midnight` branch may have new abilities, talent changes, or mechanic reworks compared to TWW (The War Within). Always check the midnight branch for current spell data.
 
-## Persistence — Build Knowledge & Findings
+## Persistence — DB-First Architecture
 
-Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` track state across sessions:
+All mutable state lives in a single unified SQLite database per spec: **`results/{spec}/theorycraft.db`**. JSON files are only used for extraction pipeline outputs (regenerated from external sources, not mutable state). No JSON snapshots — if you need to inspect data, query the DB via `npm run db:dump` or `npm run db:status`.
 
-- **`data/{spec}/build-theory.json`** — Curated mechanical knowledge: talent clusters, hero tree interactions, cluster×hero synergies, build archetypes, and tension points. Not auto-generated — edited by hand when analysis reveals new structural insights. Used by `archetypes.js` and skill prompts.
-- **`data/{spec}/build-roster.json`** — Persistent build roster for multi-build evaluation. Version-controlled alongside build-theory.json. Contains validated builds from all hero trees with DPS history. Auto-updated by `npm run discover` and `iterate.js`. Manage via `npm run roster`.
-- **`results/{spec}/builds.json`** — Discovered archetypes and ranked talent builds from `npm run discover`. Contains factor impacts, synergy pairs, archetype groupings, and per-build DPS across all scenarios. Re-run after APL changes to update rankings.
-- **`results/{spec}/findings.json`** — Accumulated analytical insights across sessions. Each finding is a discrete insight with evidence, confidence level, and tags.
-- **`results/{spec}/builds.db`** — SQLite mirror of builds.json (queryable). Run `npm run db:migrate` to import.
-- **`results/{spec}/findings.db`** — SQLite for findings + hypothesis tracking. Accepted iterations auto-record here.
+**Database tables:**
 
-**Session startup protocol:** Read `data/{spec}/build-theory.json` for structural context, `results/{spec}/builds.json` (or `builds.db`) for quantitative rankings, and `findings.json` (filtered to `status: "validated"`) for calibration.
+- **builds** — All talent builds (DoE-discovered, community, baseline) with hashes, DPS, display names, roster membership
+- **archetypes** — DoE-discovered build archetypes with defining talents, core loops, key talents
+- **factors** — DoE factor impacts (talent → DPS effect)
+- **synergies** — Talent synergy pairs
+- **findings** — Validated analytical insights (including migrated mechanics)
+- **hypotheses** — Optimization hypotheses (pending, tested, accepted, rejected)
+- **iterations** — APL iteration history (accept/reject decisions with DPS deltas)
+- **session_state** — Key-value store for iteration state
+- **talent_clusters** — Spec talent cluster definitions (migrated from build-theory)
+- **cluster_synergies** — Cluster × hero tree synergy ratings
+- **tension_points** — Build tension/tradeoff definitions
+
+**Session startup protocol:** Run `npm run db:status` to check DB contents. Query archetypes, findings, and builds via the DB — not JSON files.
 
 **After accepting APL changes:** Re-run `npm run discover -- --quick` to re-rank builds under the new APL.
 

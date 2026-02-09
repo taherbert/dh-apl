@@ -3,5 +3,59 @@
     "className": "demonhunter",
     "specName": "vengeance",
     "specId": 581
-  }
+  },
+  "communityBuilds": [
+    {
+      "source": "wowhead",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB"
+    },
+    {
+      "source": "wowhead",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMzwMmZsxMGDAAAAYMDGGwEGmZGLAAAAYwAQAmZAGAAAA"
+    },
+    {
+      "source": "wowhead",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMjZwMjZGz8AzMzYYmtZGbMjxYGAAAAsNDGG2YCDzMjFAAAAMwAIAmBYAAAAA"
+    },
+    {
+      "source": "wowhead",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMmxMmZsxMGDAAAAYMDGGwEGmZGLAAAAYwAQAmZAGAAAA"
+    },
+    {
+      "source": "wowhead",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMzwMmZsxMGDAAAAAAAEwMzYDAAAADGzwMabmZGAYAAAAA"
+    },
+    {
+      "source": "wowhead",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMjZwMjZGz8AzMzYYmtZGbMjxYGAAAAAAABMzM2AAAAwAzMMj2mZmBAGAAAA"
+    },
+    {
+      "source": "wowhead",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMmxMmZsxMGDAAAAAAAEwMzYDAAAADGzwMabmZGAYAAAAA"
+    },
+    {
+      "source": "icy-veins",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAMjZmZMmZkZmBziZmZMYMzYGzYmZYmlZGbmZ2GDAAAAYMDGGwEGmxYBAAAADAAAzMADAAAA"
+    },
+    {
+      "source": "icy-veins",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAMjxMjhZkZmBziZMDmZMzYGzMzYYmtZGbMz2YYAAAAYMDGGwEGmxMLAAAAYgBAAzMADAAAA"
+    },
+    {
+      "source": "icy-veins",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAMjxMjhZkZmBziZMDmZMzYGzMzYYmtZGbMz2YYAAAAw2MYYYhJMMjZWAAAAwADAAMDwAAAAA"
+    },
+    {
+      "source": "icy-veins",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAMjZmZMmZkZmZYWMzMjhZMzYGzYmZYGmxmZmtxAAAAAAAAAmxYDAAAADYmxMabmxAADAAAA"
+    },
+    {
+      "source": "icy-veins",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAMjxMjhZkZmBziZMDmZMzYGzMzYYmtZGbMz2YYAAAAAAAAYGzsBAAAgBmZGzotZGDAMAAAA"
+    },
+    {
+      "source": "icy-veins",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAMjxMjhZkZmBziZMDmZMzYGzMzYYmtZGbMz2YYAAAAAAAAYGzsBAAAgBmhZmt2MzMAwAAAAA"
+    }
+  ]
 }

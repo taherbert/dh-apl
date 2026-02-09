@@ -42,9 +42,6 @@ const SCHEMAS = {
   "cpp-proc-mechanics.json": {
     type: "object",
   },
-  "build-theory.json": {
-    type: "object",
-  },
 };
 
 function validateFile(filename) {

@@ -23,7 +23,7 @@ If `$ARGUMENTS` is provided (e.g., `/optimize Check soul fragment economy`), tre
 
 ## State Management
 
-All state flows through `results/{spec}/theorycraft.db`. JSON files are export snapshots only.
+All state flows through `results/{spec}/theorycraft.db`. No JSON snapshots — the DB is the single source of truth.
 
 ```javascript
 import {
@@ -36,7 +36,6 @@ import {
   addFinding,
   getIterations,
   getRosterBuilds,
-  exportToJson,
 } from "../util/db.js";
 import { createTheory, getTheorySummary } from "../analyze/theory.js";
 import { reviseFromIteration } from "../analyze/theory-revision.js";
@@ -81,7 +80,7 @@ npm run roster show                   # Verify coverage
 npm run roster generate-hashes        # Enable profileset mode
 ```
 
-Skip discovery if builds.json exists and is < 24h old. Just verify roster.
+Skip discovery if DB has archetypes from < 24h ago. Just verify roster.
 
 ### 0d. Establish Multi-Build Baseline
 
@@ -95,9 +94,9 @@ node src/sim/iterate.js init apls/{spec}/{spec}.simc
 
 **Tier 1 -- Mechanical Blueprint (always load):** spec adapter (`src/spec/{spec}.js` SPEC_CONFIG), current APL, `spells-summary.json`
 
-**Tier 2 -- Interaction & Proc Data:** `interactions-summary.json`, `cpp-proc-mechanics.json`, `build-theory.json`
+**Tier 2 -- Interaction & Proc Data:** `interactions-summary.json`, `cpp-proc-mechanics.json`, DB talent clusters/archetypes (`getTalentClusters()`, `getArchetypes()`)
 
-**Tier 3 -- Accumulated Knowledge:** `findings.json` (filter `status: "validated"`), `hypotheses.json`, `builds.json` (archetypes, factors, synergies)
+**Tier 3 -- Accumulated Knowledge:** DB findings (`getFindings({status:'validated'})`), DB hypotheses (`getHypotheses()`), DB builds/archetypes/factors/synergies
 
 **Tier 4 -- External:** Wowhead/Icy Veins when internal data has gaps (treat as hypotheses).
 
@@ -166,12 +165,12 @@ Set session phase: `setSessionState('phase', '1_specialists')`
 
 Launch 4 specialists IN PARALLEL using Task tool (`subagent_type: "general-purpose"`). All 4 in a SINGLE message. Include root theories and archetype results.
 
-| Specialist          | Focus                                                | Key Data                                         | Output                        |
-| ------------------- | ---------------------------------------------------- | ------------------------------------------------ | ----------------------------- |
-| Spell Data          | DPGCD rankings, modifier stacking, proc mechanics    | spells-summary, cpp-proc-mechanics, interactions | `analysis_spell_data.json`    |
-| Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | talents, interactions, build-theory, builds      | `analysis_talent.json`        |
-| Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | spells-summary, cpp-proc-mechanics, APL          | `analysis_resource_flow.json` |
-| State Machine       | Hero tree rhythms, variable correctness, dead code   | APL, build-theory, spells-summary                | `analysis_state_machine.json` |
+| Specialist          | Focus                                                | Key Data                                                | Output                        |
+| ------------------- | ---------------------------------------------------- | ------------------------------------------------------- | ----------------------------- |
+| Spell Data          | DPGCD rankings, modifier stacking, proc mechanics    | spells-summary, cpp-proc-mechanics, interactions        | `analysis_spell_data.json`    |
+| Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | talents, interactions, DB clusters/archetypes/synergies | `analysis_talent.json`        |
+| Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | spells-summary, cpp-proc-mechanics, APL                 | `analysis_resource_flow.json` |
+| State Machine       | Hero tree rhythms, variable correctness, dead code   | APL, DB clusters/archetypes, spells-summary             | `analysis_state_machine.json` |
 
 ---
 
@@ -216,7 +215,7 @@ Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `chang
 
 ### Session Resilience
 
-If resuming: `node src/sim/iterate.js status`, read `dashboard.md`/`changelog.md`, check `git log --oneline -10`, read `current.simc`, read `findings.json` (validated). Resume from Step 1.
+If resuming: `node src/sim/iterate.js status`, read `dashboard.md`/`changelog.md`, check `git log --oneline -10`, read `current.simc`, query DB findings (`getFindings({status:'validated'})`). Resume from Step 1.
 
 ### Iteration Loop
 
@@ -272,7 +271,7 @@ node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
 #### Step 5b: Record
 
 1. Update theory confidence via `reviseFromIteration(iterationId)` (+0.15 accept, -0.10 reject, refute at 0.2)
-2. Record finding to `findings.json`
+2. Record finding to DB via `addFinding()`
 3. Update `plan.md`, `dashboard.md`
 4. After accept: commit with `iterate: <hypothesis> (<+/-X.XX%> weighted)`
 
@@ -324,7 +323,7 @@ Every archetype has appropriate branching, no dead branches, branch comments exp
 
 ### 4c. Record Findings
 
-Append to `findings.json`: id, timestamp, hypothesis, status, scope, archetype, impact, mechanism, aplBranch.
+Record via `addFinding()`: id, timestamp, hypothesis, status, scope, archetype, impact, mechanism, aplBranch.
 
 ### 4d. Generate Showcase Report
 
@@ -332,11 +331,11 @@ Append to `findings.json`: id, timestamp, hypothesis, status, scope, archetype, 
 SPEC=$SPEC node src/visualize/showcase.js --fidelity standard
 ```
 
-### 4e. Export + Reports
+### 4e. Reports
 
 ```bash
-npm run db:export
 node src/sim/iterate.js summary
+npm run db:dump                  # Verify DB state
 ```
 
 ### 4f. Session Summary
@@ -346,7 +345,7 @@ Archetypes discovered, hypotheses tested/accepted/rejected, theories validated/r
 ### 4g. Commit
 
 ```bash
-git add apls/{spec}/{spec}.simc results/{spec}/ data/{spec}/build-roster.json
+git add apls/{spec}/{spec}.simc results/{spec}/
 git commit -m "optimize: {spec} -- N iterations, M accepted, +X.XX% mean weighted DPS"
 ```
 

@@ -2,14 +2,15 @@
 // Each build in the roster becomes a separate actor sharing the same APL and gear.
 // First actor gets full profile; subsequent actors use copy= with talent overrides.
 //
-// Usage: node src/sim/multi-actor.js [apl-path] [roster-path]
+// Usage: node src/sim/multi-actor.js [apl-path]
 
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { resolveInputDirectives } from "./profilesets.js";
 import { DATA_ENV, config, initSpec } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import { aplsDir, dataFile } from "../engine/paths.js";
+import { aplsDir } from "../engine/paths.js";
+import { loadRoster } from "./build-roster.js";
 
 // Lines from profile.simc that define the character (not gear, not talents)
 const CHAR_META_KEYS = [
@@ -160,16 +161,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   await initSpec(parseSpecArg());
   const aplPath =
     process.argv[2] || join(aplsDir(), `${config.spec.specName}.simc`);
-  const rosterPath = process.argv[3] || dataFile("build-roster.json");
 
-  if (!existsSync(rosterPath)) {
+  const roster = loadRoster();
+  if (!roster || roster.builds.length === 0) {
     console.error(
-      `Roster not found: ${rosterPath}\nRun: node src/sim/build-roster.js migrate`,
+      "No roster builds found in DB.\nRun: npm run roster import-doe",
     );
     process.exit(1);
   }
 
-  const roster = JSON.parse(readFileSync(rosterPath, "utf8"));
   const content = generateMultiActorContent(roster, aplPath);
 
   console.log(content);

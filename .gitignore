@@ -5,13 +5,10 @@ apls/*/candidate.simc
 apls/*/current.simc
 bin/
 
-# Results: ignore all output, track knowledge files per spec.
+# Results: ignore all output, track schema docs per spec.
 results/*
 !results/*/
 results/*/*
-!results/*/builds.json
-!results/*/findings.json
-!results/*/hypotheses.json
 !results/*/SCHEMA.md
 
 # Logs
