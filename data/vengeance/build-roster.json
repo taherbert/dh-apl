@@ -1,16 +1,18 @@
 {
   "_schema": "roster-v2",
-  "_updated": "2026-02-08T22:54:04.051Z",
+  "_updated": "2026-02-09T01:41:41.898Z",
+  "_source": "theorycraft.db",
   "builds": [
     {
-      "id": "A_BurningAliveDowninFlames_1",
+      "id": "Annihilator_d29_StateofMatter_HarnesstheCosmos",
       "archetype": "Burning Alive + Down in Flames",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzMGzwMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.364Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 29658,
         "small_aoe": 140140,
@@ -20,14 +22,33 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_BurningAliveCycleofBindingDowninFlamesSo_1",
+      "id": "Annihilator_d157_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Down in Flames",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzwYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 28939,
+        "small_aoe": 138595,
+        "big_aoe": 254106,
+        "weighted": 106869.20000000001
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d133_StateofMatter_HarnesstheCosmos",
       "archetype": "Burning Alive + Cycle of Binding + Down in Flames + Soul Carver",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMwmZmZGMjZmhZGzMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.369Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 25557,
         "small_aoe": 126456,
@@ -37,99 +58,15 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_BurningAliveCycleofBindingDowninFlamesSo_2",
-      "archetype": "Burning Alive + Cycle of Binding + Down in Flames + Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzMMzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.371Z",
-      "validated": true,
-      "lastDps": {
-        "st": 25319,
-        "small_aoe": 125759,
-        "big_aoe": 227545,
-        "weighted": 95896.2
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAliveCycleofBindingDowninFlames_1",
-      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGGjZmhZGzYGzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.374Z",
-      "validated": true,
-      "lastDps": {
-        "st": 24233,
-        "small_aoe": 121282,
-        "big_aoe": 224576,
-        "weighted": 93416.3
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAliveCycleofBindingDowninFlames_2",
-      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZmZGGjZmhZGzYMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.375Z",
-      "validated": true,
-      "lastDps": {
-        "st": 24068,
-        "small_aoe": 121548,
-        "big_aoe": 222197,
-        "weighted": 92937.8
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAliveCycleofBindingDowninFlames_3",
-      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGMzMzMMzYGjZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.376Z",
-      "validated": true,
-      "lastDps": {
-        "st": 24268,
-        "small_aoe": 121581,
-        "big_aoe": 220275,
-        "weighted": 92663.29999999999
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAliveSoulCarver_1",
-      "archetype": "Burning Alive + Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZGDGjZmhZGzMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.377Z",
-      "validated": true,
-      "lastDps": {
-        "st": 25008,
-        "small_aoe": 121831,
-        "big_aoe": 218766,
-        "weighted": 92806.5
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAlive_1",
+      "id": "Annihilator_d213_StateofMatter_HarnesstheCosmos",
       "archetype": "Burning Alive",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZGDMjZmhZGGjZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.382Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 27297,
         "small_aoe": 126102,
@@ -139,14 +76,33 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_BurningAlive_2",
+      "id": "Annihilator_d250_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Cycle of Binding + Down in Flames + Soul Carver",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzMMzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 25319,
+        "small_aoe": 125759,
+        "big_aoe": 227545,
+        "weighted": 95896.2
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d212_StateofMatter_HarnesstheCosmos",
       "archetype": "Burning Alive",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGDGjZmhZGGjxsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAYA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.383Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 27166,
         "small_aoe": 126089,
@@ -156,14 +112,15 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_BurningAliveCycleofBindingSoulCarver_1",
+      "id": "Annihilator_d185_StateofMatter_HarnesstheCosmos",
       "archetype": "Burning Alive + Cycle of Binding + Soul Carver",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGzAjZmhZGmZGzwMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.385Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 27633,
         "small_aoe": 122836,
@@ -173,14 +130,105 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_BurningAliveCycleofBindingSoulCarver_2",
+      "id": "Annihilator_d35_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGGjZmhZGzYGzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 24233,
+        "small_aoe": 121282,
+        "big_aoe": 224576,
+        "weighted": 93416.3
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d180_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZmZGGjZmhZGzYMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 24068,
+        "small_aoe": 121548,
+        "big_aoe": 222197,
+        "weighted": 92937.8
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d235_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Soul Carver",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZGDGjZmhZGzMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 25008,
+        "small_aoe": 121831,
+        "big_aoe": 218766,
+        "weighted": 92806.5
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d181_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGMzMzMMzYGjZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 24268,
+        "small_aoe": 121581,
+        "big_aoe": 220275,
+        "weighted": 92663.29999999999
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d199_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Cycle of Binding",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwyMzYGzMjZGYGYGzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 25207,
+        "small_aoe": 113705,
+        "big_aoe": 209148,
+        "weighted": 88544.6
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d252_StateofMatter_HarnesstheCosmos",
       "archetype": "Burning Alive + Cycle of Binding + Soul Carver",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGzwYMzMMzYmZGzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.386Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 24079,
         "small_aoe": 115753,
@@ -190,99 +238,15 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_BurningAliveCycleofBinding_1",
-      "archetype": "Burning Alive + Cycle of Binding",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMMziZGzwMzMzMMzYeAzYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.388Z",
-      "validated": true,
-      "lastDps": {
-        "st": 22564,
-        "small_aoe": 107816,
-        "big_aoe": 199400,
-        "weighted": 83506.8
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAliveCycleofBinding_2",
-      "archetype": "Burning Alive + Cycle of Binding",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMY2MzYGzMjZmZMzYeAzYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.390Z",
-      "validated": true,
-      "lastDps": {
-        "st": 22735,
-        "small_aoe": 110422,
-        "big_aoe": 200549,
-        "weighted": 84603.9
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_SoulCarver_1",
-      "archetype": "Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWMGgZmZmZMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.392Z",
-      "validated": true,
-      "lastDps": {
-        "st": 26732,
-        "small_aoe": 107447,
-        "big_aoe": 190109,
-        "weighted": 83621.9
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_SoulCarver_2",
-      "archetype": "Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWmxAMzMzMMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.393Z",
-      "validated": true,
-      "lastDps": {
-        "st": 26736,
-        "small_aoe": 107930,
-        "big_aoe": 190820,
-        "weighted": 83911
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_SoulCarver_3",
-      "archetype": "Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMzmxAMzMzMMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.394Z",
-      "validated": true,
-      "lastDps": {
-        "st": 26956,
-        "small_aoe": 107195,
-        "big_aoe": 191151,
-        "weighted": 83866.70000000001
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_CycleofBindingDowninFlamesSoulCarver_1",
+      "id": "Annihilator_d114_StateofMatter_HarnesstheCosmos",
       "archetype": "Cycle of Binding + Down in Flames + Soul Carver",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxMzAjZmhZGzwMzwMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.396Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 28603,
         "small_aoe": 113050,
@@ -292,31 +256,15 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_CycleofBindingSoulCarver_1",
-      "archetype": "Cycle of Binding + Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxYGYMzMMzwMzMzwMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.399Z",
-      "validated": true,
-      "lastDps": {
-        "st": 27606,
-        "small_aoe": 107076,
-        "big_aoe": 193966,
-        "weighted": 84719
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_CycleofBindingSoulCarver_2",
+      "id": "Annihilator_d210_StateofMatter_HarnesstheCosmos",
       "archetype": "Cycle of Binding + Soul Carver",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmx4BGYMzMMzYmxMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.400Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 27898,
         "small_aoe": 108103,
@@ -326,48 +274,69 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "AR_BurningAliveDowninFlamesSoulCarver_1",
-      "archetype": "Burning Alive + Down in Flames + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzwYGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "id": "Annihilator_d86_StateofMatter_HarnesstheCosmos",
+      "archetype": "Cycle of Binding + Soul Carver",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxYGYMzMMzwMzMzwMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.406Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
-        "st": 29837,
-        "small_aoe": 96152,
-        "big_aoe": 166555,
-        "weighted": 77075.1
+        "st": 27606,
+        "small_aoe": 107076,
+        "big_aoe": 193966,
+        "weighted": 84719
       },
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "AR_BurningAliveDowninFlamesSoulCarver_2",
-      "archetype": "Burning Alive + Down in Flames + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzMGzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "id": "Annihilator_d135_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Cycle of Binding",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMY2MzYGzMjZmZMzYeAzYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.406Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
-        "st": 31003,
-        "small_aoe": 91708,
-        "big_aoe": 150430,
-        "weighted": 73099.9
+        "st": 22735,
+        "small_aoe": 110422,
+        "big_aoe": 200549,
+        "weighted": 84603.9
       },
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_CycleofBinding_1",
+      "id": "Annihilator_d192_StateofMatter_HarnesstheCosmos",
+      "archetype": "Soul Carver",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2mxAMjZmZMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 26954,
+        "small_aoe": 107921,
+        "big_aoe": 192106,
+        "weighted": 84274.5
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d82_StateofMatter_HarnesstheCosmos",
       "archetype": "Cycle of Binding",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmx4BGMjZmhZGzwMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.408Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 27002,
         "small_aoe": 106848,
@@ -377,14 +346,87 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_annihilator_1",
+      "id": "Annihilator_d193_StateofMatter_HarnesstheCosmos",
+      "archetype": "Soul Carver",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWmxAMzMzMMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 26736,
+        "small_aoe": 107930,
+        "big_aoe": 190820,
+        "weighted": 83911
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d63_StateofMatter_HarnesstheCosmos",
+      "archetype": "Soul Carver",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMzmxAMzMzMMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 26956,
+        "small_aoe": 107195,
+        "big_aoe": 191151,
+        "weighted": 83866.70000000001
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d62_StateofMatter_HarnesstheCosmos",
+      "archetype": "Soul Carver",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWMGgZmZmZMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 26732,
+        "small_aoe": 107447,
+        "big_aoe": 190109,
+        "weighted": 83621.9
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d134_StateofMatter_HarnesstheCosmos",
+      "archetype": "Burning Alive + Cycle of Binding",
+      "heroTree": "annihilator",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMMziZGzwMzMzMMzYeAzYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmlWmZmBAGAAAAA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 22564,
+        "small_aoe": 107816,
+        "big_aoe": 199400,
+        "weighted": 83506.8
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "Annihilator_d190_StateofMatter_HarnesstheCosmos",
       "archetype": "annihilator",
       "heroTree": "annihilator",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMzixAMzMzMjZGzAzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.411Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 26138,
         "small_aoe": 102505,
@@ -394,291 +436,20 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "AR_BurningAliveCycleofBindingDowninFlamesSo_1",
-      "archetype": "Burning Alive + Cycle of Binding + Down in Flames + Soul Carver",
+      "id": "AldrachiReaver_d157_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Down in Flames + Soul Carver",
       "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZmZGYMzMMzwDMjZGmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzwYGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.414Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
-        "st": 28185,
-        "small_aoe": 87120,
-        "big_aoe": 148260,
-        "weighted": 69880.5
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveCycleofBindingDowninFlames_1",
-      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZmZGYMzMMzwYMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.417Z",
-      "validated": true,
-      "lastDps": {
-        "st": 27854,
-        "small_aoe": 89426,
-        "big_aoe": 155765,
-        "weighted": 71907.8
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveSoulCarver_1",
-      "archetype": "Burning Alive + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGDGjZmhZGGjxsMzYZMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.423Z",
-      "validated": true,
-      "lastDps": {
-        "st": 27912,
-        "small_aoe": 87696,
-        "big_aoe": 149456,
-        "weighted": 70156
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_SoulCarver_1",
-      "archetype": "Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2mxAMjZmZMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.428Z",
-      "validated": true,
-      "lastDps": {
-        "st": 28814,
-        "small_aoe": 73863,
-        "big_aoe": 117112,
-        "weighted": 59988.299999999996
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_SoulCarver_2",
-      "archetype": "Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMzmxAMzMzMMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.428Z",
-      "validated": true,
-      "lastDps": {
-        "st": 28882,
-        "small_aoe": 73752,
-        "big_aoe": 117323,
-        "weighted": 60031.2
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_SoulCarver_3",
-      "archetype": "Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWmxAMzMzMMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.429Z",
-      "validated": true,
-      "lastDps": {
-        "st": 28059,
-        "small_aoe": 72376,
-        "big_aoe": 115448,
-        "weighted": 58831.90000000001
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveCycleofBindingSoulCarver_1",
-      "archetype": "Burning Alive + Cycle of Binding + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzYGMzMzAzgZmZGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.430Z",
-      "validated": true,
-      "lastDps": {
-        "st": 27935,
-        "small_aoe": 83290,
-        "big_aoe": 138447,
-        "weighted": 66643.9
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveCycleofBindingSoulCarver_2",
-      "archetype": "Burning Alive + Cycle of Binding + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGzAjZmhZGmZGzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.461Z",
-      "validated": true,
-      "lastDps": {
-        "st": 28915,
-        "small_aoe": 80013,
-        "big_aoe": 133947,
-        "weighted": 65250.799999999996
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveCycleofBinding_1",
-      "archetype": "Burning Alive + Cycle of Binding",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwyMzYGzMjZGYGYGzsMzYZMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.462Z",
-      "validated": true,
-      "lastDps": {
-        "st": 25874,
-        "small_aoe": 75529,
-        "big_aoe": 130494,
-        "weighted": 61694.5
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveCycleofBinding_2",
-      "archetype": "Burning Alive + Cycle of Binding",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWMzYGzMjZGYGYGzsMzYZMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.462Z",
-      "validated": true,
-      "lastDps": {
-        "st": 25866,
-        "small_aoe": 75623,
-        "big_aoe": 132011,
-        "weighted": 62022.09999999999
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveCycleofBinding_3",
-      "archetype": "Burning Alive + Cycle of Binding",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGGMzMzMMzYGGzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.463Z",
-      "validated": true,
-      "lastDps": {
-        "st": 26952,
-        "small_aoe": 73162,
-        "big_aoe": 121245,
-        "weighted": 59673.6
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_CycleofBindingDowninFlamesSoulCarver_1",
-      "archetype": "Cycle of Binding + Down in Flames + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxMzAjZmhZGmxMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.474Z",
-      "validated": true,
-      "lastDps": {
-        "st": 29097,
-        "small_aoe": 74759,
-        "big_aoe": 122079,
-        "weighted": 61392
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_aldrachireaver_1",
-      "archetype": "aldrachi reaver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMzixAMzMzMjZGzAzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.476Z",
-      "validated": true,
-      "lastDps": {
-        "st": 26881,
-        "small_aoe": 71151,
-        "big_aoe": 116857,
-        "weighted": 58157.200000000004
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_CycleofBindingSoulCarver_1",
-      "archetype": "Cycle of Binding + Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmx4BGYMzMMzYmxMzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.480Z",
-      "validated": true,
-      "lastDps": {
-        "st": 29125,
-        "small_aoe": 76601,
-        "big_aoe": 122388,
-        "weighted": 62020.40000000001
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_CycleofBindingDowninFlames_1",
-      "archetype": "Cycle of Binding + Down in Flames",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxMzAjZmhZGzwMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.481Z",
-      "validated": true,
-      "lastDps": {
-        "st": 29408,
-        "small_aoe": 76637,
-        "big_aoe": 126113,
-        "weighted": 62917.7
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_CycleofBindingDowninFlames_2",
-      "archetype": "Cycle of Binding + Down in Flames",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxMzAjZmhZGGzMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.483Z",
-      "validated": true,
-      "lastDps": {
-        "st": 28360,
-        "small_aoe": 77029,
-        "big_aoe": 127193,
-        "weighted": 62727.3
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_CycleofBinding_1",
-      "archetype": "Cycle of Binding",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmx4BGMjZmhZGzwMzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:45.485Z",
-      "validated": true,
-      "lastDps": {
-        "st": 27640,
-        "small_aoe": 72023,
-        "big_aoe": 120124,
-        "weighted": 59451.7
+        "st": 29837,
+        "small_aoe": 96152,
+        "big_aoe": 166555,
+        "weighted": 77075.1
       },
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
@@ -689,8 +460,9 @@
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMzMPAYMzYmZGzMjZmtZGbjZWGjZAAAAYWmBDjlFmwwMzYBAAAADMAAYmBYAAAAMA",
       "overrides": null,
       "source": "profile",
-      "addedAt": "2026-02-07T18:35:51.316Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 31913,
         "small_aoe": 93668,
@@ -700,82 +472,15 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "A_SoulCarver_1_2",
-      "archetype": "Soul Carver",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2mxAMjZmZMzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZplZmZAgBAAAwA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:55.179Z",
-      "validated": true,
-      "lastDps": {
-        "st": 26954,
-        "small_aoe": 107921,
-        "big_aoe": 192106,
-        "weighted": 84274.5
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_SoulCarver_3_2",
-      "archetype": "Soul Carver",
-      "heroTree": "aldrachi_reaver",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWMGgZmZmZMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T18:35:55.181Z",
-      "validated": true,
-      "lastDps": {
-        "st": 27828,
-        "small_aoe": 71720,
-        "big_aoe": 115735,
-        "weighted": 58577
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAliveDowninFlames_2",
-      "archetype": "Burning Alive + Down in Flames",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzwYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMLtMzMDAMAAAAG",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T19:13:23.474Z",
-      "validated": true,
-      "lastDps": {
-        "st": 28939,
-        "small_aoe": 138595,
-        "big_aoe": 254106,
-        "weighted": 106869.20000000001
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "A_BurningAliveCycleofBinding_3",
-      "archetype": "Burning Alive + Cycle of Binding",
-      "heroTree": "annihilator",
-      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwyMzYGzMjZGYGYGzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs0yMzMAwAAAAYA",
-      "overrides": null,
-      "source": "doe",
-      "addedAt": "2026-02-07T19:13:23.477Z",
-      "validated": true,
-      "lastDps": {
-        "st": 25207,
-        "small_aoe": 113705,
-        "big_aoe": 209148,
-        "weighted": 88544.6
-      },
-      "lastTestedAt": "2026-02-08T22:54:04.051Z"
-    },
-    {
-      "id": "AR_BurningAliveDowninFlames_3",
+      "id": "AldrachiReaver_d230_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
       "archetype": "Burning Alive + Down in Flames",
       "heroTree": "aldrachi_reaver",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMz2MzMDMzMzAzAzYGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T19:13:23.479Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 27818,
         "small_aoe": 91266,
@@ -785,19 +490,362 @@
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     },
     {
-      "id": "AR_BurningAlive_2",
+      "id": "AldrachiReaver_d29_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Down in Flames + Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZmhZGzMGzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 31003,
+        "small_aoe": 91708,
+        "big_aoe": 150430,
+        "weighted": 73099.9
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d245_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Cycle of Binding + Down in Flames",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZmZGYMzMMzwYMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 27854,
+        "small_aoe": 89426,
+        "big_aoe": 155765,
+        "weighted": 71907.8
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d212_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGDGjZmhZGGjxsMzYZMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 27912,
+        "small_aoe": 87696,
+        "big_aoe": 149456,
+        "weighted": 70156
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d117_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Cycle of Binding + Down in Flames + Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZmZGYMzMMzwDMjZGmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 28185,
+        "small_aoe": 87120,
+        "big_aoe": 148260,
+        "weighted": 69880.5
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d213_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
       "archetype": "Burning Alive",
       "heroTree": "aldrachi_reaver",
       "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwiZGDMjZmhZGGjZGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
       "overrides": null,
       "source": "doe",
-      "addedAt": "2026-02-07T19:13:23.485Z",
+      "addedAt": "2026-02-09 01:41:34",
       "validated": true,
+      "validationErrors": null,
       "lastDps": {
         "st": 27469,
         "small_aoe": 85728,
         "big_aoe": 145237,
         "weighted": 68500.29999999999
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d57_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Cycle of Binding + Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzYGMzMzAzgZmZGzMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 27935,
+        "small_aoe": 83290,
+        "big_aoe": 138447,
+        "weighted": 66643.9
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d185_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Cycle of Binding + Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGzAjZmhZGmZGzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 28915,
+        "small_aoe": 80013,
+        "big_aoe": 133947,
+        "weighted": 65250.799999999996
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d114_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Cycle of Binding + Down in Flames",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxMzAjZmhZGzwMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 29408,
+        "small_aoe": 76637,
+        "big_aoe": 126113,
+        "weighted": 62917.7
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d118_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Cycle of Binding + Down in Flames",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxMzAjZmhZGGzMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 28360,
+        "small_aoe": 77029,
+        "big_aoe": 127193,
+        "weighted": 62727.3
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d56_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Cycle of Binding",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWMzYGzMjZGYGYGzsMzYZMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 25866,
+        "small_aoe": 75623,
+        "big_aoe": 132011,
+        "weighted": 62022.09999999999
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d210_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Cycle of Binding + Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmx4BGYMzMMzYmxMzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 29125,
+        "small_aoe": 76601,
+        "big_aoe": 122388,
+        "weighted": 62020.40000000001
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d199_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Cycle of Binding",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwyMzYGzMjZGYGYGzsMzYZMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 25874,
+        "small_aoe": 75529,
+        "big_aoe": 130494,
+        "weighted": 61694.5
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d242_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Cycle of Binding + Down in Flames + Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmxMzAjZmhZGmxMzwMWGzsMGzAAAAwsMDGGLLMhhZmxCAAAAGYAAwMDwAAAAYA",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 29097,
+        "small_aoe": 74759,
+        "big_aoe": 122079,
+        "weighted": 61392
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d63_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMzmxAMzMzMMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 28882,
+        "small_aoe": 73752,
+        "big_aoe": 117323,
+        "weighted": 60031.2
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d192_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2mxAMjZmZMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 28814,
+        "small_aoe": 73863,
+        "big_aoe": 117112,
+        "weighted": 59988.299999999996
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d189_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Burning Alive + Cycle of Binding",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGGMzMzMMzYGGzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 26952,
+        "small_aoe": 73162,
+        "big_aoe": 121245,
+        "weighted": 59673.6
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d82_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Cycle of Binding",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmx4BGMjZmhZGzwMzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 27640,
+        "small_aoe": 72023,
+        "big_aoe": 120124,
+        "weighted": 59451.7
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d193_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWmxAMzMzMMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 28059,
+        "small_aoe": 72376,
+        "big_aoe": 115448,
+        "weighted": 58831.90000000001
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d62_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "Soul Carver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzYWMGgZmZmZMzYmBzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 27828,
+        "small_aoe": 71720,
+        "big_aoe": 115735,
+        "weighted": 58577
+      },
+      "lastTestedAt": "2026-02-08T22:54:04.051Z"
+    },
+    {
+      "id": "AldrachiReaver_d190_ArmyUntoOneself_KeenEngagement_UnhinderedAssault",
+      "archetype": "aldrachi reaver",
+      "heroTree": "aldrachi_reaver",
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzMzixAMzMzMjZGzAzYmxyYmlxYGAAAAmlZwwYZhJMMzMWAAAAwADAAmZAGAAAAD",
+      "overrides": null,
+      "source": "doe",
+      "addedAt": "2026-02-09 01:41:34",
+      "validated": true,
+      "validationErrors": null,
+      "lastDps": {
+        "st": 26881,
+        "small_aoe": 71151,
+        "big_aoe": 116857,
+        "weighted": 58157.200000000004
       },
       "lastTestedAt": "2026-02-08T22:54:04.051Z"
     }

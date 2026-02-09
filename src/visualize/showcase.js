@@ -36,6 +36,7 @@ import { generateMultiActorContent } from "../sim/multi-actor.js";
 import { parseMultiActorResults } from "../sim/runner.js";
 import { resolveInputDirectives } from "../sim/profilesets.js";
 import { parse, getActionLists } from "../apl/parser.js";
+import { getIterations, getTheory } from "../util/db.js";
 
 const execFileAsync = promisify(execFile);
 
@@ -276,6 +277,35 @@ function computeRankings(roster) {
 // --- Iteration changelog ---
 
 function loadChangelog() {
+  // Try DB first (unified theorycraft.db)
+  try {
+    const iterations = getIterations({ decision: "accepted", limit: 200 });
+    if (iterations.length > 0) {
+      return iterations.map((it) => {
+        const entry = {
+          id: it.id,
+          date: it.createdAt,
+          hypothesis: it.reason || it.aplDiff || "",
+          meanWeighted: it.aggregate?.meanWeighted ?? null,
+        };
+        // Add theory attribution if hypothesis is linked to a theory
+        if (it.hypothesisId) {
+          try {
+            // Look up theory via hypothesis → theory chain
+            const theory = getTheory(it.hypothesisId);
+            if (theory) entry.theory = theory.title;
+          } catch {
+            // Theory lookup is optional
+          }
+        }
+        return entry;
+      });
+    }
+  } catch {
+    // DB not available, fall through to legacy
+  }
+
+  // Fallback: legacy iteration-state.json
   const statePath = resultsFile("iteration-state.json");
   if (!existsSync(statePath)) return null;
 
@@ -284,7 +314,7 @@ function loadChangelog() {
     if (!state.iterations) return null;
 
     return state.iterations
-      .filter((it) => it.status === "accepted")
+      .filter((it) => it.decision === "accepted")
       .map((it) => ({
         id: it.id,
         date: it.timestamp,

@@ -27,6 +27,12 @@ import { dataFile, resultsFile, ensureSpecDirs } from "../engine/paths.js";
 import { validateBuild, validateHash } from "../util/validate-build.js";
 import { overridesToHash } from "../util/talent-string.js";
 import { getHeroChoiceLocks } from "../model/talent-combos.js";
+import {
+  upsertBuild,
+  setRosterMembership,
+  updateBuildDps as dbUpdateBuildDps,
+  getRosterBuilds,
+} from "../util/db.js";
 
 function rosterPath() {
   return dataFile("build-roster.json");
@@ -125,7 +131,7 @@ export function addBuilds(roster, newBuilds, { source = "manual" } = {}) {
       invalid++;
     }
 
-    roster.builds.push({
+    const rosterBuild = {
       id: build.id,
       archetype: build.archetype || "Unknown",
       heroTree: build.heroTree,
@@ -137,7 +143,31 @@ export function addBuilds(roster, newBuilds, { source = "manual" } = {}) {
       validationErrors: validation.valid ? undefined : validation.errors,
       lastDps: build.lastDps || null,
       lastTestedAt: build.lastTestedAt || null,
-    });
+    };
+    roster.builds.push(rosterBuild);
+
+    // Sync to DB
+    if (rosterBuild.hash) {
+      try {
+        upsertBuild({
+          hash: rosterBuild.hash,
+          name: rosterBuild.id,
+          heroTree: rosterBuild.heroTree,
+          archetype: rosterBuild.archetype,
+          overrides: rosterBuild.overrides,
+          source,
+          inRoster: true,
+          validated: rosterBuild.validated ? 1 : 0,
+          dps_st: rosterBuild.lastDps?.st,
+          dps_small_aoe: rosterBuild.lastDps?.small_aoe,
+          dps_big_aoe: rosterBuild.lastDps?.big_aoe,
+          weighted: rosterBuild.lastDps?.weighted,
+        });
+      } catch {
+        // DB sync is non-fatal
+      }
+    }
+
     added++;
   }
 
@@ -308,6 +338,15 @@ export function updateDps(roster, buildId, dpsMap) {
     weighted: dpsMap.weighted || 0,
   };
   build.lastTestedAt = new Date().toISOString();
+
+  // Sync DPS to DB
+  if (build.hash) {
+    try {
+      dbUpdateBuildDps(build.hash, build.lastDps);
+    } catch {
+      // DB sync is non-fatal
+    }
+  }
 }
 
 // Save roster after batch DPS updates.

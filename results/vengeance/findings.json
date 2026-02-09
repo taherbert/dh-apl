@@ -1,373 +1,35 @@
 {
   "_schema": "findings-v1",
-  "_doc": "Accumulated analytical insights across sessions. Skills read at startup and append new findings at completion. Replaces hardcoded known-result tables in skill prompts.",
+  "_generated": "2026-02-09T01:41:41.897Z",
   "findings": [
-    {
-      "date": "2026-01-15",
-      "insight": "Fracture overflow guard costs DPS",
-      "evidence": "+10.4% DPS without fragment overflow guard on Fracture in ST",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "baseline.simc",
-      "status": "validated",
-      "tags": ["fragment-economy", "resource-gating"]
-    },
-    {
-      "date": "2026-01-15",
-      "insight": "Sigil of Spite fragment guard too restrictive at <=3",
-      "evidence": "+0.3% DPS with soul_fragments<=5 vs soul_fragments<=3",
-      "confidence": "medium",
-      "build": "ar-baseline",
-      "aplVersion": "baseline.simc",
-      "status": "validated",
-      "tags": ["fragment-economy", "resource-gating"]
-    },
-    {
-      "date": "2026-01-15",
-      "insight": "Spirit Bomb pooling (guarding Soul Cleave to save fragments) hurts DPS",
-      "evidence": "-1.3% to -2.8% DPS when restricting Soul Cleave to preserve fragments for Spirit Bomb",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "baseline.simc",
-      "status": "validated",
-      "tags": ["fragment-economy", "resource-competition"]
-    },
-    {
-      "date": "2026-01-15",
-      "insight": "Meta-priority Fracture (extra fragment generation during Metamorphosis) gains DPS",
-      "evidence": "+5.2% DPS when prioritizing Fracture during Meta for the extra fragment",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "baseline.simc",
-      "status": "validated",
-      "tags": ["burst-window", "fragment-economy", "metamorphosis"]
-    },
-    {
-      "date": "2026-01-15",
-      "insight": "Fiery Brand-first cooldown ordering gains DPS",
-      "evidence": "+0.6% DPS when Fiery Brand fires before other cooldowns to establish the damage amp window",
-      "confidence": "medium",
-      "build": "ar-baseline",
-      "aplVersion": "baseline.simc",
-      "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Spirit Bomb threshold 5 optimal, supersedes 3/4/5 noise claim",
-      "evidence": "+0.21% weighted at confirm fidelity (ST +0.36%, 10T +0.44%, 5T -0.20%). Threshold 3 is -0.51% (5T: -1.50%), threshold 6 is -0.95%. Sweet spot confirmed at 5.",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["fragment-economy", "threshold-tuning", "spirit-bomb"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "call_action_list has zero overhead vs inline actions",
-      "evidence": "Flat AR list (all actions inline) vs sub-list structure: -0.01% weighted at confirm fidelity. No performance difference.",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["apl-structure", "simc-internals"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "FelDev before Brand is a loss — Brand-first CD ordering critical",
-      "evidence": "FelDev above cooldowns: -0.58% weighted, -1.18% ST. 2s channel delays FD window opening.",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise", "fel-devastation"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Holding CDs for Fiery Demise window costs more than it gains",
-      "evidence": "Adding Brand-alignment conditions (hold <=15s) to Spite/FelDev: -0.32% weighted. Delayed casts outweigh the +30% FD bonus.",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Brand-Meta alignment (holding Brand for Meta) is a loss",
-      "evidence": "Brand hold <=5s for Meta: -0.45% weighted, -0.96% ST. FD window value exceeds Meta overlap bonus.",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["cooldown-sequencing", "fiery-demise", "metamorphosis"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "SC consuming fragments before SBomb threshold catastrophic in AoE",
-      "evidence": "SC Fury dump at fury>=100 before Fracture: -2.70% at 10T. Fragment consumption prevents SBomb pooling.",
-      "confidence": "high",
-      "build": "ar-baseline",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["fragment-economy", "soul-cleave", "aoe"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "5 talent swaps yield +8-10% DPS across all scenarios",
-      "evidence": "Adding Down in Flames, Soul Carver, Darkglare Boon, Soulcrush, Ascending Flame while dropping Last Resort, Calcified Spikes, Feed the Demon, Stoke the Flames, and reducing Charred Flesh to rank 1: ST +8.0% (29218→31555), 5T +10.3% (91978→101451), 10T +10.0% (163116→179395).",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v7-coopt",
-      "status": "validated",
-      "tags": ["build-optimization", "talent-swaps", "co-optimization"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "2-charge Fiery Brand condition gains only +0.07% weighted",
-      "evidence": "With Down in Flames (2 charges, 48s CD), using charges>=2|!dot.ticking instead of !dot.ticking: +0.22% at 10T, negligible ST/5T. The old 1-charge condition already works well because 48s CD means Brand is usually available when dot expires.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v7-coopt",
-      "status": "validated",
-      "tags": ["fiery-brand", "down-in-flames", "apl-coupling"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Soul Carver FD gate is free with 2-charge Brand",
-      "evidence": "Removing FD gate from Soul Carver: +0.02% weighted at confirm fidelity. With 2 Brand charges providing ~40-50% FD uptime, the gate barely delays Soul Carver casts.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v7-coopt",
-      "status": "validated",
-      "tags": ["soul-carver", "fiery-demise", "condition-gating"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Soulcrush does not change optimal Spirit Bomb threshold",
-      "evidence": "SBomb threshold 4 vs 5 with Soulcrush (doubled Frailty): -0.01% weighted, within noise. Threshold 5 remains optimal.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v7-coopt",
-      "status": "validated",
-      "tags": ["spirit-bomb", "threshold-tuning", "soulcrush"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Spec tree has zero slack for DPS-neutral drops beyond 2 points in S3",
-      "evidence": "Gate constraint (S1+S2 >= 20 points) forces at least 3 drops from Section 3, where only Last Resort has zero DPS value. Stoke the Flames and Charred Flesh rank were the lowest-impact available S3 drops.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v7-coopt",
-      "status": "validated",
-      "tags": ["build-optimization", "tree-constraints", "gate-requirements"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "IA priority during Brand window (Charred Flesh extension) is noise",
-      "evidence": "+0.08% weighted at standard fidelity, not significant. Charred Flesh Brand extension doesn't translate to measurable DPS gain — Brand duration already sufficient without IA priority boost.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v8-iterate",
-      "status": "rejected",
-      "tags": ["charred-flesh", "fiery-brand", "immolation-aura"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "FelDev empowered-window gate is load-bearing",
-      "evidence": "Removing !buff.rending_strike.up&!buff.glaive_flurry.up from FelDev: -0.21% weighted at quick. Channeling during empowered window costs more than the gate's delayed casts.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v8-iterate",
-      "status": "rejected",
-      "tags": ["fel-devastation", "ar-empowered-cycle", "condition-gating"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "DoE factor impacts are population averages, not swap-equivalent values",
-      "evidence": "Fallout shows -3.17% DoE impact but removing it causes -4.37% weighted regression. DoE measures average effect across all test builds (some without SBomb). In a SBomb build, Fallout is critical for AoE fragment economy.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v8-iterate",
-      "status": "validated",
-      "tags": ["build-optimization", "doe-methodology", "fragment-economy"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Retaliation + Felfire Fist add minimal value when dropping Darkglare Boon + Vuln r2",
-      "evidence": "+0.12% weighted at quick fidelity, not significant. Despite DoE showing +12%/+10% for Retal/FF, these factor impacts include other correlated talent differences. Net swap is roughly neutral.",
-      "confidence": "medium",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v8-iterate",
-      "status": "rejected",
-      "tags": [
-        "build-optimization",
-        "talent-swaps",
-        "retaliation",
-        "felfire-fist"
-      ]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Current APL is near local optimum for the co-optimized build",
-      "evidence": "9 consecutive rejections across APL changes (IA priority, SoF priority, FelDev ungating) and build swaps (Retal+FF). No significant improvement found. PARTIALLY SUPERSEDED: 2026-02-06 deep analysis found +0.18% via dynamic SBomb threshold during FD. But the plateau was real for the approaches tested — surface-level analysis exhausted the obvious moves.",
-      "confidence": "high",
-      "build": "ar-cooptimized-v1",
-      "aplVersion": "vengeance-v8-iterate",
-      "status": "validated",
-      "tags": ["local-optimum", "optimization-plateau"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni Meta building guard wastes cooldown — allow Meta during building phase",
-      "evidence": "Mass Acceleration overwrites building stacks. Removing building guard contributes to +2.85% weighted (part of combined condition changes)",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["annihilator", "voidfall", "metamorphosis", "condition-change"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni FelDev should not channel during Voidfall spending phase",
-      "evidence": "Channeling wastes meteor triggers from Soul Cleave/SBomb. Part of +2.85% weighted combined condition changes",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["annihilator", "voidfall", "fel-devastation", "condition-change"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni missing Felblade and ImmAura filler — massive bug",
-      "evidence": "Adding Felblade + ImmAura filler to Anni branch: +4.38% weighted on top build (CF+DiF+SC+FO), +12.30% on FO-only build",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["annihilator", "felblade", "immolation-aura", "bug-fix"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni static SBomb threshold 5 better than dynamic 3/5",
-      "evidence": "Part of +2.85% weighted combined condition changes. Dynamic 3 during Brand was too eager — wasting fragments on small SBombs",
-      "confidence": "medium",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["annihilator", "spirit-bomb", "threshold", "condition-change"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Combined Anni APL fixes: +7.35% weighted on top build, +15.82% on FO-only",
-      "evidence": "Multi-build comparison: baseline (28,897 ST) vs optimized (32,098 ST) for CF+DiF+SC+FO build. AR unaffected (+0.15%)",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["annihilator", "combined-optimization"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni_CF_DiF_SC_FO is best Anni archetype — all 4 defining talents",
-      "evidence": "Weighted DPS 112,044 vs next best 106,900 (CF+DiF+SC). Tested across 7 archetypes with valid 34/34 builds",
-      "confidence": "high",
-      "build": "anni-cf-dif-sc-fo",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["annihilator", "archetype-ranking", "build-discovery"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Meta bug: Meta in default list fires before hero tree routing",
-      "evidence": "Reference APL has Meta inside each hero branch, not in default. For Anni, premature Meta wastes Voidfall stacks. Fixed by moving to per-branch. AR unchanged after fix.",
-      "confidence": "high",
-      "build": "all",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["metamorphosis", "bug-fix", "hero-tree-routing"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni Fracture-in-Meta priority does not help (unlike AR)",
-      "evidence": "H6: Adding fracture,if=buff.metamorphosis.up before normal Fracture shows -0.34% on top build. Voidfall cycle already dictates Fracture timing.",
-      "confidence": "medium",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": ["annihilator", "fracture", "metamorphosis"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni Soul Carver guard <=3 vs <=5 is noise",
-      "evidence": "H7: Relaxing guard from <=3 to <=5 shows no meaningful change across archetypes",
-      "confidence": "medium",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": ["annihilator", "soul-carver", "fragment-economy"]
-    },
-    {
-      "date": "2026-02-04",
-      "insight": "Anni Brand charge management (charges>=2) is noise",
-      "evidence": "H8: Using charges>=2 like AR shows no meaningful change. Anni Brand is less about charge management and more about Voidfall alignment.",
-      "confidence": "medium",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": ["annihilator", "fiery-brand", "down-in-flames"]
-    },
-    {
-      "date": "2026-02-05",
-      "insight": "AR empowerment 'Fracture-first' fix was a no-op — old APL already correct via fall-through",
-      "evidence": "Plan claimed line 'soul_cleave,if=!rending.up&glaive.up' was impossible, but it correctly fires AFTER Fracture consumes rending_strike. Old APL: SC check FALSE → falls through → Fracture matches → fires. After Fracture: SC check TRUE → fires. Both old and new APL execute Fracture-first. Quick fidelity test: -0.14% weighted (82,148→82,036), within noise.",
-      "confidence": "high",
-      "build": "ar-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": [
-        "aldrachi-reaver",
-        "ar-empowered-cycle",
-        "false-positive",
-        "fall-through-logic"
-      ]
-    },
-    {
-      "date": "2026-02-05",
-      "insight": "Voidfall fury pooling (fury>=105 guard) needs confirm-fidelity validation",
-      "evidence": "Added fury>=105 guard before building→spending transition. SUPERSEDED: Iteration #5 confirmed fury>=70 is optimal (+0.198% weighted). See 2026-02-06 finding 'Voidfall fury pooling threshold: 70 confirmed better than 105'.",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["annihilator", "voidfall", "fury-pooling", "superseded"]
-    },
-    {
-      "date": "2026-02-05",
-      "insight": "Knowledge system helps prevent wasted analysis — check mechanics.json first",
-      "evidence": "Session discovered AR empowerment 'fix' was based on incorrect mechanical analysis. Had mechanics.json existed with correct fall-through behavior documentation, the false positive would have been caught before implementation.",
-      "confidence": "high",
-      "build": "all",
-      "aplVersion": "vengeance.simc",
-      "status": "validated",
-      "tags": ["knowledge-system", "process-improvement"]
-    },
     {
       "date": "2026-02-06",
       "insight": "GCDs are the binding constraint, not fury or fragments",
       "evidence": "Economy model: fury surplus ~100-200/min (generation 200-300, spending 100-200), fragment surplus ~12-24/min. Fragment overflow 34% (17/50 in 30s). Both resources over-produced — GCD allocation is what determines DPS. Priority optimization must focus on which abilities get GCDs, not resource management.",
       "confidence": "high",
-      "build": "all",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["economy-model", "resource-analysis", "deep-analysis"]
+      "tags": [
+        "economy-model",
+        "resource-analysis",
+        "deep-analysis"
+      ]
     },
     {
       "date": "2026-02-06",
       "insight": "Dynamic SBomb threshold during Fiery Demise: 3 for AR, 5 default",
       "evidence": "Fiery Demise +30% fire amp makes 3-frag SBomb worthwhile: 3×base×1.3=3.9×base > 5×base×0.78 break-even. +0.181% weighted (AR +0.297%, Anni -0.184% noise). Confirmed at standard fidelity. Does NOT help Anni — Voidfall cycle already handles SBomb timing, and Anni SBomb threshold=3 regresses worst archetype -1.19%.",
       "confidence": "high",
-      "build": "ar-all-archetypes",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
       "aplVersion": "vengeance.simc",
       "status": "validated",
       "tags": [
@@ -376,93 +38,6 @@
         "threshold-tuning",
         "deep-analysis",
         "aldrachi-reaver"
-      ]
-    },
-    {
-      "date": "2026-02-06",
-      "insight": "Removing SBomb from AR ST is a large loss",
-      "evidence": "H-2: spirit_bomb,if=active_enemies>=2 instead of unconditional: -0.692% weighted. SBomb is strictly better DPET than Soul Cleave even at 1T — consumes 5 fragments for massive damage vs SC consuming 2 for less. Reference APL uses spell_targets>=12 for AR SBomb, but our approach is superior.",
-      "confidence": "high",
-      "build": "ar-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": [
-        "spirit-bomb",
-        "single-target",
-        "deep-analysis",
-        "aldrachi-reaver"
-      ]
-    },
-    {
-      "date": "2026-02-06",
-      "insight": "FelDev priority elevation outside Brand window is a loss",
-      "evidence": "H-3: Moving FelDev above core rotation (unconditional, not just Brand window): -0.081% weighted. Brand window targeting (current approach) is better — FelDev fires during Fiery Demise for +30% amp. Unconditional wastes channels outside amp windows.",
-      "confidence": "high",
-      "build": "ar-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": ["fel-devastation", "cooldown-sequencing", "deep-analysis"]
-    },
-    {
-      "date": "2026-02-06",
-      "insight": "Anni FelDev unconditional (removing Voidfall spending guard) is noise",
-      "evidence": "H-5: Removing !buff.voidfall_spending.up guard from FelDev: -0.040% weighted. The guard is correct (channeling wastes meteor triggers) but rarely triggers — spending phase is brief.",
-      "confidence": "medium",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": ["annihilator", "fel-devastation", "voidfall", "deep-analysis"]
-    },
-    {
-      "date": "2026-02-06",
-      "insight": "Anni dynamic SBomb threshold during Fiery Demise does not help",
-      "evidence": "H-6: Unlike AR, Anni SBomb threshold=3 during FD: -0.020% weighted. Voidfall cycle already handles SBomb timing (fires at spending=3 with 5 frags). Lowering threshold outside Voidfall disrupts the cycle.",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": [
-        "annihilator",
-        "spirit-bomb",
-        "fiery-demise",
-        "threshold-tuning",
-        "deep-analysis"
-      ]
-    },
-    {
-      "date": "2026-02-06",
-      "insight": "Anni Brand charge management re-confirmed as loss (2nd test)",
-      "evidence": "H-7 re-test: charges>=2|!dot.ticking for Anni: -0.226% weighted (-0.51% worst Anni archetype). Voidfall alignment more important than raw Fiery Demise uptime. Previous session also rejected this (-0.00%).",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": ["annihilator", "fiery-brand", "down-in-flames", "deep-analysis"]
-    },
-    {
-      "date": "2026-02-06",
-      "insight": "Anni SBomb unconditional at Voidfall spending=3 is noise",
-      "evidence": "H-8: Removing fragment guard from SBomb at max spending stacks: -0.003% weighted. Fragments are almost always available from building phase — the guard rarely blocks. Not worth the added complexity.",
-      "confidence": "medium",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": ["annihilator", "spirit-bomb", "voidfall", "deep-analysis"]
-    },
-    {
-      "date": "2026-02-06",
-      "insight": "Anni SBomb threshold=3 outside Voidfall causes archetype regressions",
-      "evidence": "H-9: Global Anni SBomb threshold 3: mean +0.093% but worst archetype (Anni_CF) regresses -1.19%. The Charred Flesh archetype relies on high-fragment SBombs for Brand extension value. Cannot lower threshold without branching by archetype.",
-      "confidence": "high",
-      "build": "anni-all-archetypes",
-      "aplVersion": "vengeance.simc",
-      "status": "rejected",
-      "tags": [
-        "annihilator",
-        "spirit-bomb",
-        "threshold-tuning",
-        "archetype-regression",
-        "deep-analysis"
       ]
     },
     {
@@ -470,17 +45,30 @@
       "insight": "Voidfall fury pooling threshold: 70 confirmed better than 105",
       "evidence": "Iteration #5: Relaxing fury guard from 105→70 before building→spending transition: +0.198% weighted (AR +0.221%, Anni +0.127%). Natural fury gen during spending phase covers the 3rd Soul Cleave — 70 fury is sufficient for 2 upfront + natural gen for 3rd.",
       "confidence": "high",
-      "build": "anni-all-archetypes",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["annihilator", "voidfall", "fury-pooling", "deep-analysis"]
+      "tags": [
+        "annihilator",
+        "voidfall",
+        "fury-pooling",
+        "deep-analysis"
+      ]
     },
     {
       "date": "2026-02-06",
       "insight": "AR AoE was missing empowered cycle call and Brand window call",
       "evidence": "Iteration #1 (+0.163%) and #9 (+0.105%): ar_aoe sub-list was missing call_action_list,name=ar_empowered (skipping entire hero tree mechanic in AoE) and call_action_list,name=ar_brand_window (no Brand extension during AoE). Combined +0.27% weighted.",
       "confidence": "high",
-      "build": "ar-all-archetypes",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
       "aplVersion": "vengeance.simc",
       "status": "validated",
       "tags": [
@@ -496,7 +84,11 @@
       "insight": "Anni Voidfall SBomb missing fragment guard — bug fix",
       "evidence": "Iteration #2 (+0.185%): spirit_bomb in Voidfall spending was missing soul_fragments>=spb_threshold guard, could fire with insufficient fragments. Adding the guard: AR +0.183%, Anni +0.192%.",
       "confidence": "high",
-      "build": "all",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
       "aplVersion": "vengeance.simc",
       "status": "validated",
       "tags": [
@@ -512,7 +104,11 @@
       "insight": "Fragment overflow is 34% — structural waste, not fixable by APL",
       "evidence": "Combat log analysis: 17 of 50 fragment creation events overflow in 30s (AR actor). Fragment cap is 6, auto-consume on travel (85% pickup chance, ~1s travel time) means fragments rarely accumulate to 5+ active simultaneously. This is inherent to the mechanic, not an APL deficiency.",
       "confidence": "high",
-      "build": "all",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
       "aplVersion": "vengeance.simc",
       "status": "validated",
       "tags": [
@@ -527,10 +123,501 @@
       "insight": "Untethered Rage proc rate nerfed to ~3.75% per SBomb",
       "evidence": "SimC upstream commit: formula changed from 0.1*(1+stack_value)*souls to souls*0.0075*1.35^seething_anger_up. At 5 souls consumed with seething_anger_up=1: 5*0.0075*1.35 = 5.06% per cast. Previous rate was ~50%. UR Meta condition in APL line 40 is now near-dead code but removing it showed no significant change.",
       "confidence": "high",
-      "build": "ar-all-archetypes",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
       "aplVersion": "vengeance.simc",
       "status": "validated",
-      "tags": ["untethered-rage", "proc-rate", "simc-upstream", "deep-analysis"]
+      "tags": [
+        "untethered-rage",
+        "proc-rate",
+        "simc-upstream",
+        "deep-analysis"
+      ]
+    },
+    {
+      "date": "2026-02-05",
+      "insight": "Voidfall fury pooling (fury>=105 guard) needs confirm-fidelity validation",
+      "evidence": "Added fury>=105 guard before building→spending transition. SUPERSEDED: Iteration #5 confirmed fury>=70 is optimal (+0.198% weighted). See 2026-02-06 finding 'Voidfall fury pooling threshold: 70 confirmed better than 105'.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "voidfall",
+        "fury-pooling",
+        "superseded"
+      ]
+    },
+    {
+      "date": "2026-02-05",
+      "insight": "Knowledge system helps prevent wasted analysis — check mechanics.json first",
+      "evidence": "Session discovered AR empowerment 'fix' was based on incorrect mechanical analysis. Had mechanics.json existed with correct fall-through behavior documentation, the false positive would have been caught before implementation.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "knowledge-system",
+        "process-improvement"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Spirit Bomb threshold 5 optimal, supersedes 3/4/5 noise claim",
+      "evidence": "+0.21% weighted at confirm fidelity (ST +0.36%, 10T +0.44%, 5T -0.20%). Threshold 3 is -0.51% (5T: -1.50%), threshold 6 is -0.95%. Sweet spot confirmed at 5.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "fragment-economy",
+        "threshold-tuning",
+        "spirit-bomb"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "call_action_list has zero overhead vs inline actions",
+      "evidence": "Flat AR list (all actions inline) vs sub-list structure: -0.01% weighted at confirm fidelity. No performance difference.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "apl-structure",
+        "simc-internals"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "FelDev before Brand is a loss — Brand-first CD ordering critical",
+      "evidence": "FelDev above cooldowns: -0.58% weighted, -1.18% ST. 2s channel delays FD window opening.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise",
+        "fel-devastation"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Holding CDs for Fiery Demise window costs more than it gains",
+      "evidence": "Adding Brand-alignment conditions (hold <=15s) to Spite/FelDev: -0.32% weighted. Delayed casts outweigh the +30% FD bonus.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Brand-Meta alignment (holding Brand for Meta) is a loss",
+      "evidence": "Brand hold <=5s for Meta: -0.45% weighted, -0.96% ST. FD window value exceeds Meta overlap bonus.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise",
+        "metamorphosis"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "SC consuming fragments before SBomb threshold catastrophic in AoE",
+      "evidence": "SC Fury dump at fury>=100 before Fracture: -2.70% at 10T. Fragment consumption prevents SBomb pooling.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "fragment-economy",
+        "soul-cleave",
+        "aoe"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "5 talent swaps yield +8-10% DPS across all scenarios",
+      "evidence": "Adding Down in Flames, Soul Carver, Darkglare Boon, Soulcrush, Ascending Flame while dropping Last Resort, Calcified Spikes, Feed the Demon, Stoke the Flames, and reducing Charred Flesh to rank 1: ST +8.0% (29218→31555), 5T +10.3% (91978→101451), 10T +10.0% (163116→179395).",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance-v7-coopt",
+      "status": "validated",
+      "tags": [
+        "build-optimization",
+        "talent-swaps",
+        "co-optimization"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "2-charge Fiery Brand condition gains only +0.07% weighted",
+      "evidence": "With Down in Flames (2 charges, 48s CD), using charges>=2|!dot.ticking instead of !dot.ticking: +0.22% at 10T, negligible ST/5T. The old 1-charge condition already works well because 48s CD means Brand is usually available when dot expires.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance-v7-coopt",
+      "status": "validated",
+      "tags": [
+        "fiery-brand",
+        "down-in-flames",
+        "apl-coupling"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Soul Carver FD gate is free with 2-charge Brand",
+      "evidence": "Removing FD gate from Soul Carver: +0.02% weighted at confirm fidelity. With 2 Brand charges providing ~40-50% FD uptime, the gate barely delays Soul Carver casts.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance-v7-coopt",
+      "status": "validated",
+      "tags": [
+        "soul-carver",
+        "fiery-demise",
+        "condition-gating"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Soulcrush does not change optimal Spirit Bomb threshold",
+      "evidence": "SBomb threshold 4 vs 5 with Soulcrush (doubled Frailty): -0.01% weighted, within noise. Threshold 5 remains optimal.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance-v7-coopt",
+      "status": "validated",
+      "tags": [
+        "spirit-bomb",
+        "threshold-tuning",
+        "soulcrush"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Spec tree has zero slack for DPS-neutral drops beyond 2 points in S3",
+      "evidence": "Gate constraint (S1+S2 >= 20 points) forces at least 3 drops from Section 3, where only Last Resort has zero DPS value. Stoke the Flames and Charred Flesh rank were the lowest-impact available S3 drops.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance-v7-coopt",
+      "status": "validated",
+      "tags": [
+        "build-optimization",
+        "tree-constraints",
+        "gate-requirements"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "DoE factor impacts are population averages, not swap-equivalent values",
+      "evidence": "Fallout shows -3.17% DoE impact but removing it causes -4.37% weighted regression. DoE measures average effect across all test builds (some without SBomb). In a SBomb build, Fallout is critical for AoE fragment economy.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance-v8-iterate",
+      "status": "validated",
+      "tags": [
+        "build-optimization",
+        "doe-methodology",
+        "fragment-economy"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Current APL is near local optimum for the co-optimized build",
+      "evidence": "9 consecutive rejections across APL changes (IA priority, SoF priority, FelDev ungating) and build swaps (Retal+FF). No significant improvement found. PARTIALLY SUPERSEDED: 2026-02-06 deep analysis found +0.18% via dynamic SBomb threshold during FD. But the plateau was real for the approaches tested — surface-level analysis exhausted the obvious moves.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance-v8-iterate",
+      "status": "validated",
+      "tags": [
+        "local-optimum",
+        "optimization-plateau"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni Meta building guard wastes cooldown — allow Meta during building phase",
+      "evidence": "Mass Acceleration overwrites building stacks. Removing building guard contributes to +2.85% weighted (part of combined condition changes)",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "voidfall",
+        "metamorphosis",
+        "condition-change"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni FelDev should not channel during Voidfall spending phase",
+      "evidence": "Channeling wastes meteor triggers from Soul Cleave/SBomb. Part of +2.85% weighted combined condition changes",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "voidfall",
+        "fel-devastation",
+        "condition-change"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni missing Felblade and ImmAura filler — massive bug",
+      "evidence": "Adding Felblade + ImmAura filler to Anni branch: +4.38% weighted on top build (CF+DiF+SC+FO), +12.30% on FO-only build",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "felblade",
+        "immolation-aura",
+        "bug-fix"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni static SBomb threshold 5 better than dynamic 3/5",
+      "evidence": "Part of +2.85% weighted combined condition changes. Dynamic 3 during Brand was too eager — wasting fragments on small SBombs",
+      "confidence": "medium",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "spirit-bomb",
+        "threshold",
+        "condition-change"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Combined Anni APL fixes: +7.35% weighted on top build, +15.82% on FO-only",
+      "evidence": "Multi-build comparison: baseline (28,897 ST) vs optimized (32,098 ST) for CF+DiF+SC+FO build. AR unaffected (+0.15%)",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "combined-optimization"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Anni_CF_DiF_SC_FO is best Anni archetype — all 4 defining talents",
+      "evidence": "Weighted DPS 112,044 vs next best 106,900 (CF+DiF+SC). Tested across 7 archetypes with valid 34/34 builds",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "annihilator",
+        "archetype-ranking",
+        "build-discovery"
+      ]
+    },
+    {
+      "date": "2026-02-04",
+      "insight": "Meta bug: Meta in default list fires before hero tree routing",
+      "evidence": "Reference APL has Meta inside each hero branch, not in default. For Anni, premature Meta wastes Voidfall stacks. Fixed by moving to per-branch. AR unchanged after fix.",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "vengeance.simc",
+      "status": "validated",
+      "tags": [
+        "metamorphosis",
+        "bug-fix",
+        "hero-tree-routing"
+      ]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Fracture overflow guard costs DPS",
+      "evidence": "+10.4% DPS without fragment overflow guard on Fracture in ST",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": [
+        "fragment-economy",
+        "resource-gating"
+      ]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Sigil of Spite fragment guard too restrictive at <=3",
+      "evidence": "+0.3% DPS with soul_fragments<=5 vs soul_fragments<=3",
+      "confidence": "medium",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": [
+        "fragment-economy",
+        "resource-gating"
+      ]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Spirit Bomb pooling (guarding Soul Cleave to save fragments) hurts DPS",
+      "evidence": "-1.3% to -2.8% DPS when restricting Soul Cleave to preserve fragments for Spirit Bomb",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": [
+        "fragment-economy",
+        "resource-competition"
+      ]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Meta-priority Fracture (extra fragment generation during Metamorphosis) gains DPS",
+      "evidence": "+5.2% DPS when prioritizing Fracture during Meta for the extra fragment",
+      "confidence": "high",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": [
+        "burst-window",
+        "fragment-economy",
+        "metamorphosis"
+      ]
+    },
+    {
+      "date": "2026-01-15",
+      "insight": "Fiery Brand-first cooldown ordering gains DPS",
+      "evidence": "+0.6% DPS when Fiery Brand fires before other cooldowns to establish the damage amp window",
+      "confidence": "medium",
+      "scope": "universal",
+      "archetype": null,
+      "heroTree": null,
+      "impact": null,
+      "mechanism": null,
+      "aplVersion": "baseline.simc",
+      "status": "validated",
+      "tags": [
+        "cooldown-sequencing",
+        "fiery-demise"
+      ]
     }
   ]
 }

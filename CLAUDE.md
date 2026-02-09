@@ -300,15 +300,13 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 
 **Utility commands:** `/bootstrap`, `/sim`, `/build`, `/verify`, `/audit`, `/simc-reference` — simple single-purpose tools.
 
-**Internal methodology** (NOT user-facing — referenced by `/optimize` internally):
+**Internal methodology** is embedded directly in the agent and skill definitions:
 
-- `prompts/apl-analysis-guide.md` — canonical knowledge base + calculation frameworks
-- `prompts/full-analysis-methodology.md` — economy modeling, systemic tensions
-- `prompts/iterate-apl-methodology.md` — iteration loop protocol
-- `prompts/theorycraft-methodology.md` — temporal resource flow
-- `prompts/talent-analysis-methodology.md` — talent interaction graphs
-- `prompts/analyze-apl-methodology.md` — APL comprehension walkthrough
-- `prompts/apl-iteration-guide.md` — iteration tactics and escape strategies
+- `.claude/agents/theorist.md` — resource flow, DPGCD, cooldown, talent interaction, proc analysis frameworks
+- `.claude/agents/apl-engineer.md` — SimC APL mechanics, off-GCD weaving, mutation operations
+- `.claude/agents/reviewer.md` — APL comprehension, verification, theory revision
+- `.claude/agents/sim-runner.md` — iteration protocol, fidelity tiers, failure handling
+- `.claude/commands/optimize.md` — full pipeline orchestration with inlined methodology
 
 ## Conventions
 
@@ -318,6 +316,6 @@ Per-spec JSON files + SQLite databases in `data/{spec}/` and `results/{spec}/` t
 - Keep the default action list short — delegate to sub-lists via `run_action_list` (mutually exclusive branches) or `call_action_list` (optional sub-routines that fall through).
 - **Always test against ALL archetypes.** The APL is shared by all talent builds. Verify the build roster covers all archetypes: `npm run roster show`. The roster is persistent and auto-updated by `npm run discover`. `iterate.js` requires the roster and refuses single-build mode. If a change helps some archetypes but hurts others, create a sub-action-list gated by talent/hero-tree check, then re-test against the full roster.
 - **Theory before simulation.** Before changing any ability's placement, conditions, or priority, read it in context. Understand _why_ it is where it is, what role it plays in the resource/GCD/cooldown economy, and what downstream effects a change would cause. Form a clear theory — "this change should improve X because Y" — before creating a candidate or running a sim. Never shotgun changes to see what sticks.
-- **Deep reasoning drives automation.** Every analysis session must start with deep mechanical reasoning using the full knowledge base (`prompts/apl-analysis-guide.md` Section 0 is the single canonical list of all data sources). Automated hypothesis generators (`strategic`, `theorycraft`, `workflow`) are heuristic screeners that serve the deep theory, not replacements for it. A shallow observation like "buff uptime is low" is only useful when paired with reasoning about _why_ it's low and what the real fix costs. Never run automated screeners in isolation — always frame their output within a deeper understanding of the system.
+- **Deep reasoning drives automation.** Every analysis session must start with deep mechanical reasoning using the full knowledge base (the canonical data source list is in `/optimize` Phase 0e). Automated hypothesis generators (`strategic`, `theorycraft`, `synthesize`) are heuristic screeners that serve the deep theory, not replacements for it. A shallow observation like "buff uptime is low" is only useful when paired with reasoning about _why_ it's low and what the real fix costs. Never run automated screeners in isolation — always frame their output within a deeper understanding of the system.
 - **Audit existing logic for errors.** APL variables and conditions encode assumptions about game mechanics — caps, thresholds, talent interactions. These assumptions can become wrong when talents change the rules (e.g., an apex talent raising the soul fragment cap from 5 to 6). Actively look for hardcoded values or implicit assumptions that don't account for the current talent build. When you find one, trace the downstream effects: a corrected cap may change fragment thresholds, spender conditions, and target-count breakpoints.
 - All JS uses ESM (`import`/`export`), Node.js 23+.

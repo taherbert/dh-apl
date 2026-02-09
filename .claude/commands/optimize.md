@@ -1,158 +1,185 @@
-The ONE command for all APL and build optimization. Runs everything autonomously: discover archetypes, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, APL branching, and reporting. No user interaction required.
+The ONE command for all APL and build optimization. Runs everything autonomously: discover archetypes, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, APL branching, and reporting.
 
-If `$ARGUMENTS` is provided (e.g., `/optimize Check soul fragment economy`), treat it as a **focus directive** — prioritize that area while still analyzing the full system. If no arguments, analyze the full rotation holistically.
+If `$ARGUMENTS` is provided (e.g., `/optimize Check soul fragment economy`), treat it as a **focus directive** -- prioritize that area while still analyzing the full system.
+
+**Invocation modes:**
+
+- `/optimize` -- Full pipeline (Phases 0-4)
+- `/optimize Check soul fragment economy` -- Focused analysis (same phases, prioritize area)
+- `/optimize test: Lower SBomb threshold to 4 during Meta` -- Direct hypothesis (skip Phases 1-2, go to Phase 3)
+- `/optimize test: Hyp A; Hyp B; Hyp C` -- Batch hypothesis testing
 
 ## Architecture
 
 ```
 /optimize (you are here)
     |
-    +-- Phase 0: Setup + Build Discovery
-    |     Startup, discover archetypes, generate build roster
-    |
+    +-- Phase 0: Setup + Build Discovery + Session Recovery
     +-- Phase 1: Deep Reasoning + Parallel Specialists
-    |     Load ALL data, model economy, form root theories
-    |     Launch 4 specialist subagents in parallel
-    |
     +-- Phase 2: Synthesis + Hypothesis Ranking
-    |     Cross-reference findings, rank hypotheses
-    |     Proceed directly to testing (no confirmation gate)
-    |
-    +-- Phase 3: Multi-Build Iteration Loop
-    |     Test against ALL roster builds simultaneously
-    |     Create APL branches for archetypes/hero trees
-    |     Accept/reject based on aggregate + per-build results
-    |
-    +-- Phase 4: Cross-Build Analysis + Final Report
-          Re-rank builds, document build-specific APL paths, commit
+    +-- Phase 3: Multi-Build Iteration Loop + Theory Revision
+    +-- Phase 4: Showcase Report + Commit
 ```
 
-## Internal Methodology References
+## State Management
 
-Read these once at session start — not every iteration:
+All state flows through `results/{spec}/theorycraft.db`. JSON files are export snapshots only.
 
-- `prompts/apl-analysis-guide.md` — Canonical knowledge base (Section 0) + calculation frameworks
-- `prompts/full-analysis-methodology.md` — Economy modeling, systemic tensions, hypothesis generation
-- `prompts/iterate-apl-methodology.md` — Iteration loop: modify, test, decide, record
-- `prompts/theorycraft-methodology.md` — Temporal resource flow analysis
-- `prompts/talent-analysis-methodology.md` — Talent interaction graphs, synergy clusters
-- `prompts/analyze-apl-methodology.md` — APL comprehension walkthrough
-- `prompts/apl-iteration-guide.md` — Iteration tactics and escape strategies
+```javascript
+import {
+  getDb,
+  setSessionState,
+  getSessionState,
+  addTheory,
+  addHypothesis,
+  addIteration,
+  addFinding,
+  getIterations,
+  getRosterBuilds,
+  exportToJson,
+} from "../util/db.js";
+import { createTheory, getTheorySummary } from "../analyze/theory.js";
+import { reviseFromIteration } from "../analyze/theory-revision.js";
+```
+
+**Recovery after context compaction:**
+
+1. `getSessionState('phase')` -- current phase
+2. `getSessionState('session_id')` -- session UUID
+3. `getIterations({ sessionId })` -- full iteration history
+4. `getHypotheses({ status: 'pending' })` -- remaining work
+5. Read `results/{spec}/plan.md` -- human-readable progress
+
+Update `results/{spec}/plan.md` after every phase transition and iteration.
+
+---
 
 ## Phase 0: Setup + Build Discovery
 
 ### 0a. Determine Active Spec
 
-Run `node src/engine/startup.js` to determine the active spec. All paths below use `{spec}`.
+Run `node src/engine/startup.js`.
 
-### 0b. Check for Checkpoint / Existing State
+### 0b. Session Recovery
 
-```bash
-node src/sim/iterate.js status
+Check DB for existing session:
+
+```javascript
+const phase = getSessionState("phase");
+const sessionId = getSessionState("session_id");
 ```
 
-If iteration state exists, check `results/{spec}/checkpoint.md` and `results/{spec}/dashboard.md` to determine whether to resume or start fresh. If resuming, follow the warm restart protocol in `prompts/iterate-apl-methodology.md`.
+If a session exists, read `results/{spec}/plan.md` and query `getIterations({ sessionId })`. Resume from where we left off.
+
+If no DB session, check legacy: `node src/sim/iterate.js status`. If iteration state exists, check `results/{spec}/checkpoint.md`.
 
 ### 0c. Discover Archetypes and Generate Build Roster
 
-**This is foundational.** Before any analysis, establish the build landscape:
-
 ```bash
-# Run DoE-based build discovery (quick fidelity for speed)
-# This auto-imports new discoveries into the persistent build roster
-npm run discover -- --quick
-
-# Verify the roster covers all archetypes
-npm run roster show
+npm run discover -- --quick           # DoE-based archetype discovery (~2-5 min)
+npm run roster show                   # Verify coverage
+npm run roster generate-hashes        # Enable profileset mode
 ```
 
-Build discovery uses Design of Experiments (DoE) to:
-
-1. Generate fractional factorial talent combinations
-2. Simulate all combinations across ST/5T/10T scenarios
-3. Compute factor impacts (which talents matter most for DPS)
-4. Cluster builds into archetypes based on forming factors (top differentiating talents)
-5. Identify 2-factor synergy interactions
-
-Output: `results/{spec}/builds.json` with `discoveredArchetypes[]`, `allBuilds[]`, `factorImpacts[]`, `synergyPairs[]`
-
-The persistent build roster (`data/{spec}/build-roster.json`) is auto-updated by discovery and tracks builds across sessions. ALL subsequent simulation testing uses this roster.
-
-**If builds.json already exists and is < 24h old**, skip discovery and verify the roster with `npm run roster show`.
-
-After verifying the roster, ensure all builds have talent hashes for profileset mode:
-
-```bash
-npm run roster generate-hashes    # Converts override-only builds to hashes
-```
-
-This enables profileset simulation (constant 2-actor memory) instead of batched multi-actor mode.
+Skip discovery if builds.json exists and is < 24h old. Just verify roster.
 
 ### 0d. Establish Multi-Build Baseline
+
+Only if no active iteration session:
 
 ```bash
 node src/sim/iterate.js init apls/{spec}/{spec}.simc
 ```
 
-With a build roster present, `init` automatically runs multi-build baseline simulation across all roster builds and scenarios. This establishes per-build DPS numbers that all subsequent comparisons test against.
-
 ### 0e. Load the Full Knowledge Base
 
-**Read `prompts/apl-analysis-guide.md` Section 0** — the single canonical list of all data sources. Load all 4 tiers:
+**Tier 1 -- Mechanical Blueprint (always load):** spec adapter (`src/spec/{spec}.js` SPEC_CONFIG), current APL, `spells-summary.json`
 
-- **Tier 1 (Mechanical Blueprint):** Spec adapter (`src/spec/{spec}.js`), APL, spell data (`data/{spec}/spells-summary.json`)
-- **Tier 2 (Interactions):** `data/{spec}/interactions-summary.json`, `data/{spec}/cpp-proc-mechanics.json`, `data/{spec}/build-theory.json`
-- **Tier 3 (Accumulated Knowledge):** `results/{spec}/findings.json` (filter `status: "validated"`), `results/{spec}/hypotheses.json`, `results/{spec}/builds.json` (especially `discoveredArchetypes` and `factorImpacts`)
-- **Tier 4 (External):** Wowhead/Icy Veins when internal data has gaps (treat as hypotheses, not truth)
+**Tier 2 -- Interaction & Proc Data:** `interactions-summary.json`, `cpp-proc-mechanics.json`, `build-theory.json`
 
-Also read methodology: `prompts/full-analysis-methodology.md` and `prompts/apl-iteration-guide.md`.
+**Tier 3 -- Accumulated Knowledge:** `findings.json` (filter `status: "validated"`), `hypotheses.json`, `builds.json` (archetypes, factors, synergies)
+
+**Tier 4 -- External:** Wowhead/Icy Veins when internal data has gaps (treat as hypotheses).
+
+All data paths in `data/{spec}/` and `results/{spec}/`. See CLAUDE.md "Data File Selection" for full path reference.
+
+**In direct hypothesis mode (`test:`):** Load Tiers 1-3 only. Skip Phases 1-2.
+
+---
 
 ## Phase 1: Deep Reasoning + Parallel Specialists
 
+> **Skipped in direct hypothesis mode.** Jump to Phase 3.
+
 ### 1a. Deep Reasoning (REQUIRED before specialists)
 
-**This is the most important step.** Before launching any specialists, form your own understanding using ALL available data INCLUDING the archetype discovery results:
+**This is the most important step.**
 
-1. **Study the archetypes** — What talent clusters define each archetype? What factor impacts are largest? Which synergy pairs create compound value? How do archetypes differ in their rotation needs?
-2. **Model the economy** — Resource generation/spending equilibrium, GCD budget, marginal values per spender (see `prompts/full-analysis-methodology.md` Phase 1)
-3. **Identify systemic tensions** — Resource competition, cooldown misalignment, burst window waste, state machine incoherence
-4. **Map archetype-specific tensions** — Where do different archetypes need different APL behavior? Which talents fundamentally change the rotation?
-5. **Study reference APL** — Read `reference/{spec}-apl.simc` for SimC syntax patterns (NOT priorities)
+#### Study the Archetypes
 
-**Form 2-3 root theories** — these GUIDE everything that follows:
+What talent clusters define each archetype? What factor impacts are largest? Which synergy pairs create compound value? How do archetypes differ in rotation needs?
 
-- "The biggest opportunity is X because Y, supported by Z from the data"
-- "Archetypes A and B need different treatment of ability X because..."
-- "The APL treats all builds the same for X, but archetype C needs..."
+#### Model the Economy
+
+**Primary resource** -- Compute equilibrium: resource in/out per minute, marginal damage value per unit on each spender, burst window shifts.
+
+**Secondary resource** -- Steady-state generation rate by target count, waste sources, consumption value per unit.
+
+**GCD budget** -- ~48 GCDs/min at 20% haste. Map mandatory, discretionary, and negative-value abilities.
+
+#### Identify Systemic Tensions
+
+- **Resource competition** -- two consumers, same pool. Is APL arbitration correct?
+- **Cooldown misalignment** -- map periods, multiplicative overlaps, holding costs, LCM supercycle
+- **Burst window utilization** -- GCDs in window, filled with highest-DPGCD? Pre-pooling?
+- **State machine incoherence** -- hero tree cycles vs APL rhythm
+- **Second-order chains** -- indirect value chains invisible in single-ability analysis
+
+#### Map Archetype-Specific Tensions
+
+Where do different archetypes need different APL behavior?
+
+#### Study Reference APL
+
+Read `reference/{spec}-apl.simc` for SimC syntax patterns (NOT priorities): variable patterns, trinket handling, state machine encoding, delegation, AoE breakpoints, cooldown sync.
+
+#### Form Root Theories
+
+2-3 theories that GUIDE everything. **Persist to DB** via `createTheory()`.
+
+Set session phase: `setSessionState('phase', '1_specialists')`
+
+#### Non-Obvious Discovery Techniques
+
+- **Inverse optimization** -- remove conditions one by one, measure delta. Builds "condition value map."
+- **Sensitivity analysis** -- vary numeric thresholds, plot DPS response for optimal breakpoints.
+- **Cross-scenario divergence** -- same APL at different target counts. Look for rank inversions, wasted casts.
+- **Execute phase detection** -- test `target.time_to_die` thresholds for cooldown/resource dumping.
+
+#### Target Count Regimes
+
+- **ST** -- cooldown alignment primary, resource pooling for burst, deterministic secondary resource
+- **Cleave (3-5T)** -- AoE spender DPGCD dominates, quadratic scaling loops, `active_enemies>=N` breakpoints
+- **Heavy AoE (8-10T)** -- GCD budget is binding, secondary resource abundant, passive ticking dominates
 
 ### 1b. Parallel Specialist Launch
 
-Launch 4 specialist analyses IN PARALLEL using the Task tool with `subagent_type: "general-purpose"`.
+Launch 4 specialists IN PARALLEL using Task tool (`subagent_type: "general-purpose"`). All 4 in a SINGLE message. Include root theories and archetype results.
 
-**IMPORTANT:** Launch all 4 in a SINGLE message. Include your root theories and the archetype discovery results in each prompt.
+| Specialist          | Focus                                                | Key Data                                         | Output                        |
+| ------------------- | ---------------------------------------------------- | ------------------------------------------------ | ----------------------------- |
+| Spell Data          | DPGCD rankings, modifier stacking, proc mechanics    | spells-summary, cpp-proc-mechanics, interactions | `analysis_spell_data.json`    |
+| Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | talents, interactions, build-theory, builds      | `analysis_talent.json`        |
+| Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | spells-summary, cpp-proc-mechanics, APL          | `analysis_resource_flow.json` |
+| State Machine       | Hero tree rhythms, variable correctness, dead code   | APL, build-theory, spells-summary                | `analysis_state_machine.json` |
 
-**Specialist 1: Spell Data** — DPGCD rankings, modifier stacking, school clusters, proc mechanics
-Reads: `data/{spec}/spells-summary.json`, `data/{spec}/cpp-proc-mechanics.json`, `data/{spec}/interactions-summary.json`
-Writes to: `results/{spec}/analysis_spell_data.json`
-
-**Specialist 2: Talent Interactions** — Synergy clusters, anti-synergies, build-APL coupling, archetype-specific talent value
-Reads: `data/{spec}/talents.json`, `data/{spec}/interactions-summary.json`, `data/{spec}/build-theory.json`, `results/{spec}/builds.json`
-Writes to: `results/{spec}/analysis_talent.json`
-Methodology: `prompts/talent-analysis-methodology.md`
-
-**Specialist 3: Resource Flow** — Resource equilibrium per archetype, GCD budget, cooldown cycles, burst windows
-Reads: `data/{spec}/spells-summary.json`, `data/{spec}/cpp-proc-mechanics.json`, APL, `data/{spec}/build-theory.json`
-Writes to: `results/{spec}/analysis_resource_flow.json`
-Methodology: `prompts/theorycraft-methodology.md`
-
-**Specialist 4: State Machine / APL Coherence** — Hero tree rhythms, variable correctness, dead code, missing talent gates, archetype branching gaps
-Reads: APL, `data/{spec}/build-theory.json`, `data/{spec}/spells-summary.json`
-Writes to: `results/{spec}/analysis_state_machine.json`
-Methodology: `prompts/analyze-apl-methodology.md`
+---
 
 ## Phase 2: Synthesis
 
-### 2a. Read Specialist Outputs + Run Synthesis
+> **Skipped in direct hypothesis mode.** Jump to Phase 3.
+
+### 2a. Synthesize
 
 ```bash
 node src/sim/iterate.js synthesize
@@ -160,261 +187,181 @@ node src/sim/iterate.js synthesize
 
 Read all four `results/{spec}/analysis_*.json` files. Cross-reference with root theories.
 
-### 2b. Evaluate and Rank Hypotheses
+### 2b. Rank Hypotheses
 
-Filter through root theories:
+1. **Your theories that specialists missed** -- highest priority (deep insights)
+2. **Specialist findings aligned with theories** -- high priority
+3. **Specialist findings with no causal backing** -- lower priority
 
-- Specialist findings aligned with theories → high priority
-- Your theories that specialists missed → highest priority (these are the deep insights)
-- Specialist findings with no causal backing → lower priority
+**Scope ranking:** Universal > Archetype-specific > Hero-tree-specific > Build-specific
 
-**Categorize hypotheses by scope:**
+### 2c. Generate Summary
 
-1. **Universal** — should help ALL builds (resource economy, core rotation logic)
-2. **Archetype-specific** — help builds with talent X but not builds without it
-3. **Hero-tree-specific** — help one hero tree's builds
-4. **Build-specific** — narrow improvements for one build configuration
+Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `changelog.md`.
 
-### 2c. Generate Analysis Summary
+**Proceed directly to testing.**
 
-Write `results/{spec}/analysis_summary.md` with economic models, tensions, hypotheses, archetype analysis.
-
-Initialize `results/{spec}/dashboard.md` and `results/{spec}/changelog.md`.
-
-**Proceed directly to testing.** Do not wait for user confirmation — sim compute is not a concern.
+---
 
 ## Phase 3: Multi-Build Iteration Loop
 
-**Every test runs against ALL roster builds simultaneously.** This is non-negotiable — an improvement that helps one archetype but hurts another is only valuable if the APL can branch to apply it selectively.
+**Every test runs against ALL roster builds simultaneously.**
 
-### Iteration Protocol
+### Build Roster Requirement
 
-For each hypothesis:
+1. Verify roster: `npm run roster show` -- must cover all archetypes from both hero trees
+2. If empty: `npm run roster migrate` or re-run discovery
+3. Generate hashes: `npm run roster generate-hashes`
+4. `iterate.js init` requires the roster. Profileset mode auto-activates when all builds have hashes.
+
+### Session Resilience
+
+If resuming: `node src/sim/iterate.js status`, read `dashboard.md`/`changelog.md`, check `git log --oneline -10`, read `current.simc`, read `findings.json` (validated). Resume from Step 1.
+
+### Iteration Loop
+
+#### Step 1: Analyze
+
+Read current APL. Load Tiers 1-3. Form 1-3 causal theories with specific numbers. Then check screeners:
 
 ```bash
-# 1. Generate candidate APL
-# Apply the change to apls/{spec}/current.simc, save as apls/{spec}/candidate.simc
+node src/sim/iterate.js hypotheses
+```
 
-# 2. Quick screen against all builds
+Use screener output to validate or quantify your theories, not replace them.
+
+#### Step 2: Choose
+
+Pick highest-value hypothesis. Priority: your deep theories > aligned screener findings > high-confidence on high-DPS-share abilities > multi-part coherent changes.
+
+**Never test a hypothesis you can't explain causally.**
+
+If exhausted: `node src/sim/iterate.js strategic` and `theorycraft` -- but reason about the APL FIRST.
+
+#### Step 3: Modify
+
+Read `current.simc`. Make ONE targeted change. Save as `candidate.simc`.
+
+Before any change: locate the ability, understand its priority placement, trace resource/cooldown impact, check cross-references, check all hero tree branches, predict direction and magnitude.
+
+#### Step 4: Test
+
+```bash
 node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick
-
-# 3. Evaluate multi-build results:
-#    - Check per-build deltas (which archetypes gain, which lose)
-#    - Check aggregate: mean weighted, worst weighted, per-tree averages
-#    - If ANY archetype regresses >1%, check if APL branching can isolate the change
-
-# 4. If promising, confirm at higher fidelity
+# If any scenario regresses >1% -> reject immediately
+# If promising:
 node src/sim/iterate.js compare apls/{spec}/candidate.simc
-
-# 5. Accept or reject
-node src/sim/iterate.js accept "reason" --hypothesis "fragment"
-node src/sim/iterate.js reject "reason" --hypothesis "fragment"
+# If marginal (0.1-0.3%):
+node src/sim/iterate.js compare apls/{spec}/candidate.simc --confirm
 ```
 
-### Decision Criteria (Multi-Build)
+SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ crashes -> stop loop.
 
-**Accept if:**
+#### Step 5: Decide
 
-- Mean weighted improvement > 0 AND statistically significant
-- No build regresses > 0.5% (weighted) without compensating gains
-- OR: improvement is build-specific AND can be gated with an APL branch
+- **Accept if:** mean weighted > 0 AND worst build > -1%
+- **Archetype-gate if:** helps some (>+0.1%) but hurts others (>-0.3%). Create gated sub-list, re-test.
+- **Reject if:** mean weighted <= 0 OR regressions without branching path
+- **Inconclusive:** within noise after confirm -> log and move on
 
-**Accept with branching if:**
-
-- Some archetypes gain, others lose
-- The change can be gated behind a talent/hero tree condition
-- Create an APL branch: `call_action_list,name=X,if=talent.Y.enabled` or `if=hero_tree.Z`
-
-**Reject if:**
-
-- No significant improvement across any build
-- Regressions in multiple archetypes without clear branching path
-
-### APL Branching Strategy
-
-When a hypothesis helps some builds but hurts others, **create targeted APL branches** instead of rejecting:
-
-**By hero tree:**
-
-```
-actions+=/run_action_list,name=ar_core,if=hero_tree.aldrachi_reaver
-actions+=/run_action_list,name=anni_core,if=hero_tree.annihilator
+```bash
+node src/sim/iterate.js accept "reason" --hypothesis "description fragment"
+node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
 ```
 
-**By talent choice:**
+#### Step 5b: Record
 
-```
-actions+=/call_action_list,name=spirit_bomb_priority,if=talent.spirit_bomb.enabled
-```
+1. Update theory confidence via `reviseFromIteration(iterationId)` (+0.15 accept, -0.10 reject, refute at 0.2)
+2. Record finding to `findings.json`
+3. Update `plan.md`, `dashboard.md`
+4. After accept: commit with `iterate: <hypothesis> (<+/-X.XX%> weighted)`
 
-**By target count:**
+#### Step 6: Repeat
 
-```
-actions+=/call_action_list,name=aoe,if=spell_targets.sigil_of_flame>=3
-```
+### Escape Strategies (3+ consecutive rejections)
 
-**By archetype (talent combination):**
-
-```
-# Use variables to detect archetype
-variable,name=is_sbomb_fallout,value=talent.spirit_bomb.enabled&talent.fallout.enabled
-actions+=/call_action_list,name=sbomb_rotation,if=variable.is_sbomb_fallout
-```
-
-**Document every branch** with a comment explaining which archetype/build it serves and why the branch exists:
-
-```
-# Spirit Bomb + Fallout archetype: pool fragments to 5 before SBomb
-# because Fallout generates extra fragments on Immolation Aura tick
-actions.sbomb_rotation=...
-```
-
-### After Each Accept
-
-1. Record to `results/{spec}/findings.json` with scope (universal/archetype/hero-tree/build)
-2. Update `results/{spec}/dashboard.md` with per-build deltas
-3. Update `results/{spec}/changelog.md`
-4. Commit the accepted change
-5. Check for second-order effects: did resource equilibrium shift? Did a new ability become valuable for certain builds?
+1. **Compound mutation** -- try two individually-rejected changes that might synergize
+2. **Reversal test** -- reverse a previously accepted change
+3. **Radical reorder** -- swap top 3-5 priority actions in a sub-list
+4. **Reference import** -- compare against simc default APL in `reference/`
+5. **Category rotation** -- switch from threshold sweeps to reordering to conditions
 
 ### Parallelism in Iteration
 
-When multiple independent hypotheses exist:
+When independent hypotheses exist (use `src/analyze/hypothesis-independence.js`):
 
-1. Launch 2-3 Task subagents, each testing a different candidate with `--quick`
-2. Each subagent writes a unique candidate file and reports per-build deltas
-3. Promote the best candidate to standard fidelity
+1. Group by independence (`groupIndependent()`)
+2. Launch 2-3 parallel subagents, each testing one candidate at `--quick`
+3. Promote best to standard fidelity
+4. Re-baseline before next group
 
 ### Stop Conditions
 
-- 3 consecutive rejections with no new hypotheses → try escape strategies per `prompts/apl-iteration-guide.md`
-- 10 consecutive rejections → stop
-- All hypothesis categories exhausted AND escape strategies tried → stop
-- Context approaching limits → save checkpoint, suggest re-running `/optimize`
+- 3 consecutive rejections with no new hypotheses -> escape strategies
+- 10 consecutive rejections -> stop
+- All categories + escape strategies exhausted -> stop
+- Context approaching ~180k tokens -> checkpoint and suggest restart
+
+### Context Window Management
+
+- Don't read full sim JSON -- use `iterate.js status` and `compare` for summaries
+- Don't re-read guides every iteration -- once at startup
+- Short reasons in accept/reject -- one sentence
+
+---
 
 ## Phase 4: Cross-Build Analysis + Final Report
 
-### 4a. Re-rank Builds Under Updated APL
+### 4a. Re-rank Builds
 
 ```bash
 npm run discover -- --quick
 ```
 
-Compare archetype rankings before vs after. Did the optimization change which builds are strongest?
-
 ### 4b. Audit APL Branch Coverage
 
-Review the final APL and verify:
-
-- Every archetype has appropriate branching where needed
-- No dead branches (talent conditions that no roster build satisfies)
-- Branch comments document which archetypes they serve
-- Shared logic (used by all archetypes) is in the default/core list, not duplicated in branches
+Every archetype has appropriate branching, no dead branches, branch comments explain purpose, shared logic not duplicated.
 
 ### 4c. Record Findings
 
-Append all insights to `results/{spec}/findings.json`:
+Append to `findings.json`: id, timestamp, hypothesis, status, scope, archetype, impact, mechanism, aplBranch.
 
-```json
-{
-  "id": "finding_id",
-  "timestamp": "ISO8601",
-  "hypothesis": "description",
-  "status": "validated",
-  "scope": "universal|archetype|hero-tree|build",
-  "archetype": "archetype_name (if scope != universal)",
-  "builds": ["affected_build_ids"],
-  "impact": { "st": "+X%", "small_aoe": "+Y%", "big_aoe": "+Z%" },
-  "mechanism": "explanation of why this worked",
-  "aplBranch": "name of APL branch if applicable"
-}
-```
-
-### 4d. Generate Final Reports
+### 4d. Generate Showcase Report
 
 ```bash
+SPEC=$SPEC node src/visualize/showcase.js --fidelity standard
+```
+
+### 4e. Export + Reports
+
+```bash
+npm run db:export
 node src/sim/iterate.js summary
 ```
 
-Update `results/{spec}/dashboard.md` with:
+### 4f. Session Summary
 
-- Per-archetype DPS improvements
-- Per-build DPS improvements
-- APL branches created and their impact
+Archetypes discovered, hypotheses tested/accepted/rejected, theories validated/refuted, per-archetype DPS improvement, APL branches created, remaining untested ideas, showcase location.
 
-### 4e. Print Session Summary
-
-- Archetypes discovered and builds tested
-- Hypotheses tested / accepted / rejected
-- Universal vs archetype-specific improvements
-- Total DPS improvement per archetype (weighted)
-- APL branches created
-- Remaining untested ideas
-
-### 4f. Commit
+### 4g. Commit
 
 ```bash
-git add apls/{spec}/current.simc results/{spec}/
-git commit -m "optimize: {spec} — N iterations, M accepted, +X.XX% mean weighted DPS"
+git add apls/{spec}/{spec}.simc results/{spec}/ data/{spec}/build-roster.json
+git commit -m "optimize: {spec} -- N iterations, M accepted, +X.XX% mean weighted DPS"
 ```
+
+---
 
 ## Checkpoint Protocol
 
-On context limits or interruption, save to `results/{spec}/checkpoint.md`:
-
-- Current phase, hypothesis, per-build progress
-- Archetypes analyzed, APL branches created
-- Remaining work
-- Resume: "Run `/optimize` — startup will detect this checkpoint"
-
-## Multi-Build Infrastructure Reference
-
-### Build Discovery
-
-```bash
-npm run discover -- --quick        # DoE-based: ~2-5 min
-npm run discover -- --ar-only      # Filter by hero tree
-npm run discover                   # Standard fidelity: ~10-20 min
-```
-
-### Build Roster
-
-```bash
-npm run roster show                    # Show roster with validation status
-npm run roster validate                # Re-validate all builds
-npm run roster generate-hashes         # Generate hashes for override-only builds
-npm run roster import-doe              # Import from builds.json (DoE discovery)
-npm run roster import-multi-build      # Import from multi-build.simc (Anni builds)
-npm run roster prune                   # Remove redundant builds within threshold
-```
-
-### Talent Hashing
-
-```bash
-node src/util/talent-string.js <hash>                           # Decode to talent list
-node src/util/talent-string.js --modify <hash> +Talent -Talent  # Modify build
-node src/util/talent-string.js --test                           # Round-trip validation
-```
-
-### Multi-Build Iteration
-
-```bash
-node src/sim/iterate.js init <apl>                          # Multi-build baseline (auto-detects roster)
-node src/sim/iterate.js compare <candidate> [--batch-size N] # Tests against ALL roster builds
-node src/sim/iterate.js status                               # Shows per-build DPS + aggregate
-```
-
-Profileset mode auto-activates when all roster builds have talent hashes (constant 2-actor memory). Falls back to batched multi-actor mode otherwise (batch sizes: quick=12, standard=8, confirm=4). Use `--batch-size N` to override.
+On context limits or interruption, save to `results/{spec}/checkpoint.md`: current phase, hypothesis, per-build progress, archetypes analyzed, APL branches created, remaining work.
 
 ## Anti-Patterns
 
-- **Single-build testing** — ALWAYS test against the full roster. An improvement that helps one build but hurts others is only useful if you branch the APL.
-- **Specialists without theory** — form root theories BEFORE launching specialists.
-- **Sequential specialist execution** — ALWAYS launch all 4 in parallel.
-- **Flat APL for diverse builds** — if archetypes have meaningfully different rotations, the APL MUST branch. A single priority list cannot optimally serve builds with different talent interactions.
-- **Undocumented branches** — every APL branch must have a comment explaining which archetype it serves and why.
-- **Trusting screener output without reasoning** — "buff uptime is low" is an observation, not an insight.
-- **Grinding thresholds without theory** — test values derived from mechanical reasoning, not arbitrary sweeps.
-- **Testing talent swaps with unadapted APL** — coupled hypotheses need both build AND APL changes.
-- **Hardcoding spec-specific knowledge** — read from the spec adapter, not from memory.
-- **Ignoring per-build results** — the aggregate mean can hide regressions in specific archetypes. Always check per-build deltas.
+- **Single-build testing** -- ALWAYS test against the full roster
+- **Specialists without theory** -- form root theories BEFORE launching specialists
+- **Sequential specialists** -- ALWAYS launch all 4 in parallel
+- **Flat APL for diverse builds** -- if archetypes differ, the APL MUST branch
+- **Trusting screener output without reasoning** -- observations are not insights
+- **Grinding thresholds without theory** -- test values from mechanical reasoning, not sweeps
+- **Ignoring per-build results** -- aggregate mean hides archetype regressions
