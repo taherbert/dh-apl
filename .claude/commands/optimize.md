@@ -163,7 +163,7 @@ Set session phase: `setSessionState('phase', '1_specialists')`
 
 ### 1b. Parallel Specialist Launch
 
-Launch 4 specialists IN PARALLEL using Task tool (`subagent_type: "general-purpose"`). All 4 in a SINGLE message. Include root theories and archetype results.
+Launch 4 specialists IN PARALLEL using Task tool (`subagent_type: "general-purpose"`, `model: "opus"`). All 4 in a SINGLE message. Always use opus model for specialist agents — never haiku or sonnet. Include root theories and archetype results.
 
 | Specialist          | Focus                                                | Key Data                                                | Output                        |
 | ------------------- | ---------------------------------------------------- | ------------------------------------------------------- | ----------------------------- |
@@ -290,7 +290,7 @@ node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
 When independent hypotheses exist (use `src/analyze/hypothesis-independence.js`):
 
 1. Group by independence (`groupIndependent()`)
-2. Launch 2-3 parallel subagents, each testing one candidate at `--quick`
+2. Launch 2-3 parallel subagents (`model: "opus"`), each testing one candidate at `--quick`
 3. Promote best to standard fidelity
 4. Re-baseline before next group
 

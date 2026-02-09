@@ -316,6 +316,8 @@ All mutable state lives in a single unified SQLite database per spec: **`results
 - `.claude/agents/sim-runner.md` — iteration protocol, fidelity tiers, failure handling
 - `.claude/commands/optimize.md` — full pipeline orchestration with inlined methodology
 
+**Subagent model policy:** Always use `model: "opus"` for ALL subagents — specialist analysis, iteration runners, and any Task tool invocations. Never use haiku or sonnet for this project's domain work.
+
 ## Conventions
 
 - APL files use `.simc` extension.

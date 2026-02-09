@@ -112,8 +112,11 @@ export const SPEC_CONFIG = {
       ],
       aplBranch: "ar",
       profileKeywords: ["aldrachi", "reaver"],
-      // DPS-optimal hero choice locks (determined by profileset sim)
-      choiceLocks: { 94911: 1, 94896: 0, 94910: 0 },
+      // Hero choice locks: lock defensive-only choices, unlock DPS-relevant ones
+      // 94911: Unhindered Assault (DPS via Felblade reset) > Evasive Action (defensive)
+      // 94896: Army Unto Oneself / Incorruptible Spirit (both defensive, no DPS)
+      // 94910: Keen Engagement (Fury gen) vs Preemptive Strike (AoE dmg) — unlocked, DPS tradeoff
+      choiceLocks: { 94911: 1, 94896: 0 },
     },
     annihilator: {
       displayName: "Annihilator",

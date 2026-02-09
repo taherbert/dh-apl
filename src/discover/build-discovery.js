@@ -261,6 +261,9 @@ function analyzeFactors(builds, factors) {
 }
 
 // --- Step 5: Archetype discovery ---
+// Discovers archetypes PER hero tree independently. Each tree gets its own
+// forming factors based on adoption rates within that tree's builds, preventing
+// one tree's dominant factors from collapsing the other tree into a single archetype.
 
 function discoverArchetypes(
   builds,
@@ -269,9 +272,9 @@ function discoverArchetypes(
   meanDPS,
   data,
 ) {
+  const MAX_FORMING_FACTORS = 4;
   const threshold = meanDPS * 0.005;
-  const sorted = [...builds].sort((a, b) => b.weighted - a.weighted);
-  const topHalf = sorted.slice(0, Math.ceil(sorted.length / 2));
+  const mergeThreshold = meanDPS * 0.01;
 
   function hasFactor(build, fi) {
     if (fi.factorType === "choice") {
@@ -286,170 +289,204 @@ function discoverArchetypes(
     return build.specNodes?.includes(fi.nodeId);
   }
 
-  const candidateFactors = factorImpacts
-    .filter((fi) => Math.abs(fi.mainEffect) > threshold)
-    .map((fi) => {
-      const topAdoption =
-        topHalf.filter((b) => hasFactor(b, fi)).length / topHalf.length;
-      return { ...fi, topAdoption };
-    })
-    .filter((fi) => fi.topAdoption >= 0.15 && fi.topAdoption <= 0.85)
-    .sort((a, b) => Math.abs(b.mainEffect) - Math.abs(a.mainEffect));
-
-  const seenTalents = new Set();
-  const dedupedFactors = candidateFactors.filter((fi) => {
-    if (seenTalents.has(fi.talent)) {
-      return false;
-    }
-    seenTalents.add(fi.talent);
-    return true;
-  });
-
-  const MAX_FORMING_FACTORS = 4;
-  const formingFactorNames = new Set(
-    dedupedFactors.slice(0, MAX_FORMING_FACTORS).map((f) => f.talent),
-  );
-
-  for (const sp of synergyPairs) {
-    if (formingFactorNames.size >= MAX_FORMING_FACTORS) {
-      break;
-    }
-    const combined =
-      Math.abs(sp.interaction) +
-      Math.abs(
-        factorImpacts.find((f) => f.talent === sp.talents[0])?.mainEffect || 0,
-      ) +
-      Math.abs(
-        factorImpacts.find((f) => f.talent === sp.talents[1])?.mainEffect || 0,
-      );
-    if (combined > threshold) {
-      for (const t of sp.talents) {
-        const fi = dedupedFactors.find((f) => f.talent === t);
-        if (fi && formingFactorNames.size < MAX_FORMING_FACTORS) {
-          formingFactorNames.add(t);
-        }
-      }
-    }
+  // Split builds by hero tree
+  const byTree = {};
+  for (const b of builds) {
+    const tree = b.heroTree.toLowerCase().replace(/\s+/g, "_");
+    (byTree[tree] ||= []).push(b);
   }
 
-  if (formingFactorNames.size === 0) {
-    return groupByHeroTreeOnly(builds, data);
-  }
+  // Discover archetypes within each hero tree independently
+  const allArchetypes = [];
+  for (const [treeName, treeBuilds] of Object.entries(byTree)) {
+    const sorted = [...treeBuilds].sort((a, b) => b.weighted - a.weighted);
+    const topHalf = sorted.slice(0, Math.ceil(sorted.length / 2));
 
-  const formingFactorSeen = new Set();
-  const formingFactors = factorImpacts.filter((f) => {
-    if (!formingFactorNames.has(f.talent) || formingFactorSeen.has(f.talent)) {
-      return false;
-    }
-    formingFactorSeen.add(f.talent);
-    return true;
-  });
-
-  function buildSignature(build) {
-    return formingFactors
-      .map((f) => {
-        if (f.factorType === "choice") {
-          return build.specChoices?.[f.nodeId] || 0;
-        }
-        if (f.factorType === "multi_rank_r2") {
-          return (build.specRanks?.[f.nodeId] || 0) >= 2 ? 1 : 0;
-        }
-        if (f.factorType === "multi_rank_r1") {
-          return (build.specRanks?.[f.nodeId] || 0) >= 1 ? 1 : 0;
-        }
-        return build.specNodes?.includes(f.nodeId) ? 1 : 0;
+    // Compute adoption rates within THIS tree's top builds
+    const candidateFactors = factorImpacts
+      .filter((fi) => Math.abs(fi.mainEffect) > threshold)
+      .map((fi) => {
+        const topAdoption =
+          topHalf.filter((b) => hasFactor(b, fi)).length / topHalf.length;
+        return { ...fi, topAdoption };
       })
-      .join(",");
-  }
+      .filter((fi) => fi.topAdoption >= 0.15 && fi.topAdoption <= 0.85)
+      .sort((a, b) => Math.abs(b.mainEffect) - Math.abs(a.mainEffect));
 
-  const groups = new Map();
-  for (const build of builds) {
-    const key = `${build.heroTree}|${buildSignature(build)}`;
-    if (!groups.has(key)) {
-      groups.set(key, []);
-    }
-    groups.get(key).push(build);
-  }
-
-  let archetypes = [];
-  for (const [key, groupBuilds] of groups) {
-    const [heroTree] = key.split("|");
-    const sig = key.split("|")[1].split(",").map(Number);
-
-    groupBuilds.sort((a, b) => b.weighted - a.weighted);
-    const best = groupBuilds[0];
-
-    const definingTalents = formingFactors
-      .filter((_, i) => sig[i] === 1)
-      .map((f) => f.talent);
-
-    const avgWeighted =
-      groupBuilds.reduce((s, b) => s + b.weighted, 0) / groupBuilds.length;
-
-    archetypes.push({
-      heroTree: heroTree.toLowerCase().replace(/\s+/g, "_"),
-      definingTalents,
-      signature: key,
-      bestBuild: best,
-      builds: groupBuilds,
-      avgWeighted,
-      count: groupBuilds.length,
+    const seenTalents = new Set();
+    const dedupedFactors = candidateFactors.filter((fi) => {
+      if (seenTalents.has(fi.talent)) return false;
+      seenTalents.add(fi.talent);
+      return true;
     });
-  }
 
-  const mergeThreshold = meanDPS * 0.01;
-  archetypes.sort((a, b) => b.avgWeighted - a.avgWeighted);
+    const formingFactorNames = new Set(
+      dedupedFactors.slice(0, MAX_FORMING_FACTORS).map((f) => f.talent),
+    );
 
-  function sigDistance(a, b) {
-    const aSig = a.signature.split("|")[1].split(",");
-    const bSig = b.signature.split("|")[1].split(",");
-    let diff = 0;
-    for (let k = 0; k < aSig.length; k++) {
-      if (aSig[k] !== bSig[k]) {
-        diff++;
+    // Boost from synergy pairs
+    for (const sp of synergyPairs) {
+      if (formingFactorNames.size >= MAX_FORMING_FACTORS) break;
+      const combined =
+        Math.abs(sp.interaction) +
+        Math.abs(
+          factorImpacts.find((f) => f.talent === sp.talents[0])?.mainEffect ||
+            0,
+        ) +
+        Math.abs(
+          factorImpacts.find((f) => f.talent === sp.talents[1])?.mainEffect ||
+            0,
+        );
+      if (combined > threshold) {
+        for (const t of sp.talents) {
+          const fi = dedupedFactors.find((f) => f.talent === t);
+          if (fi && formingFactorNames.size < MAX_FORMING_FACTORS) {
+            formingFactorNames.add(t);
+          }
+        }
       }
     }
-    return diff;
-  }
 
-  const merged = [];
-  const consumed = new Set();
-  for (let i = 0; i < archetypes.length; i++) {
-    if (consumed.has(i)) {
+    if (formingFactorNames.size === 0) {
+      // No differentiating factors — single archetype for this tree
+      treeBuilds.sort((a, b) => b.weighted - a.weighted);
+      allArchetypes.push(
+        formatArchetype(
+          {
+            heroTree: treeName,
+            definingTalents: [],
+            bestBuild: treeBuilds[0],
+            builds: treeBuilds,
+            avgWeighted:
+              treeBuilds.reduce((s, b) => s + b.weighted, 0) /
+              treeBuilds.length,
+            count: treeBuilds.length,
+          },
+          builds,
+          data,
+        ),
+      );
+      console.log(`  ${treeName}: 0 forming factors → 1 archetype (fallback)`);
       continue;
     }
-    const base = archetypes[i];
-    const mergeGroup = [base];
-    for (let j = i + 1; j < archetypes.length; j++) {
-      if (consumed.has(j)) {
-        continue;
-      }
-      const candidate = archetypes[j];
+
+    const formingFactorSeen = new Set();
+    const formingFactors = factorImpacts.filter((f) => {
       if (
-        base.heroTree === candidate.heroTree &&
-        Math.abs(base.avgWeighted - candidate.avgWeighted) < mergeThreshold &&
-        sigDistance(base, candidate) <= 1
+        !formingFactorNames.has(f.talent) ||
+        formingFactorSeen.has(f.talent)
       ) {
-        mergeGroup.push(candidate);
-        consumed.add(j);
+        return false;
       }
+      formingFactorSeen.add(f.talent);
+      return true;
+    });
+
+    console.log(
+      `  ${treeName}: ${formingFactors.length} forming factors: ${formingFactors.map((f) => f.talent).join(", ")}`,
+    );
+
+    function buildSignature(build) {
+      return formingFactors
+        .map((f) => {
+          if (f.factorType === "choice") {
+            return build.specChoices?.[f.nodeId] || 0;
+          }
+          if (f.factorType === "multi_rank_r2") {
+            return (build.specRanks?.[f.nodeId] || 0) >= 2 ? 1 : 0;
+          }
+          if (f.factorType === "multi_rank_r1") {
+            return (build.specRanks?.[f.nodeId] || 0) >= 1 ? 1 : 0;
+          }
+          return build.specNodes?.includes(f.nodeId) ? 1 : 0;
+        })
+        .join(",");
     }
 
-    const allBuilds = mergeGroup.flatMap((a) => a.builds);
-    allBuilds.sort((a, b) => b.weighted - a.weighted);
+    // Group builds by signature within this tree
+    const groups = new Map();
+    for (const build of treeBuilds) {
+      const key = `${treeName}|${buildSignature(build)}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(build);
+    }
 
-    merged.push({
-      heroTree: base.heroTree,
-      definingTalents: base.definingTalents,
-      bestBuild: allBuilds[0],
-      builds: allBuilds,
-      avgWeighted:
-        allBuilds.reduce((s, b) => s + b.weighted, 0) / allBuilds.length,
-      count: allBuilds.length,
-    });
+    let archetypes = [];
+    for (const [key, groupBuilds] of groups) {
+      const sig = key.split("|")[1].split(",").map(Number);
+      groupBuilds.sort((a, b) => b.weighted - a.weighted);
+
+      const definingTalents = formingFactors
+        .filter((_, i) => sig[i] === 1)
+        .map((f) => f.talent);
+
+      archetypes.push({
+        heroTree: treeName,
+        definingTalents,
+        signature: key,
+        bestBuild: groupBuilds[0],
+        builds: groupBuilds,
+        avgWeighted:
+          groupBuilds.reduce((s, b) => s + b.weighted, 0) / groupBuilds.length,
+        count: groupBuilds.length,
+      });
+    }
+
+    // Merge close archetypes within this tree
+    archetypes.sort((a, b) => b.avgWeighted - a.avgWeighted);
+
+    function sigDistance(a, b) {
+      const aSig = a.signature.split("|")[1].split(",");
+      const bSig = b.signature.split("|")[1].split(",");
+      let diff = 0;
+      for (let k = 0; k < aSig.length; k++) {
+        if (aSig[k] !== bSig[k]) diff++;
+      }
+      return diff;
+    }
+
+    const merged = [];
+    const consumed = new Set();
+    for (let i = 0; i < archetypes.length; i++) {
+      if (consumed.has(i)) continue;
+      const base = archetypes[i];
+      const mergeGroup = [base];
+      for (let j = i + 1; j < archetypes.length; j++) {
+        if (consumed.has(j)) continue;
+        const candidate = archetypes[j];
+        if (
+          Math.abs(base.avgWeighted - candidate.avgWeighted) < mergeThreshold &&
+          sigDistance(base, candidate) <= 1
+        ) {
+          mergeGroup.push(candidate);
+          consumed.add(j);
+        }
+      }
+
+      const mergedBuilds = mergeGroup.flatMap((a) => a.builds);
+      mergedBuilds.sort((a, b) => b.weighted - a.weighted);
+
+      merged.push({
+        heroTree: base.heroTree,
+        definingTalents: base.definingTalents,
+        bestBuild: mergedBuilds[0],
+        builds: mergedBuilds,
+        avgWeighted:
+          mergedBuilds.reduce((s, b) => s + b.weighted, 0) /
+          mergedBuilds.length,
+        count: mergedBuilds.length,
+      });
+    }
+
+    console.log(
+      `  ${treeName}: ${groups.size} raw → ${merged.length} after merge`,
+    );
+    for (const arch of merged) {
+      allArchetypes.push(formatArchetype(arch, builds, data));
+    }
   }
 
-  return merged.map((arch) => formatArchetype(arch, builds, data));
+  return allArchetypes;
 }
 
 function groupByHeroTreeOnly(builds, data) {
@@ -477,10 +514,12 @@ function groupByHeroTreeOnly(builds, data) {
 }
 
 function formatArchetype(arch, allBuilds, data) {
-  const name =
-    arch.definingTalents.length > 0
-      ? arch.definingTalents.join(" + ")
-      : arch.heroTree.replace(/_/g, " ");
+  // Prefix with hero tree to prevent DB collisions when different trees share
+  // the same forming factors (e.g., both AR and Anni have "Down in Flames")
+  const treeLabel = arch.heroTree.replace(/_/g, " ");
+  const talentPart =
+    arch.definingTalents.length > 0 ? arch.definingTalents.join(" + ") : "base";
+  const name = `${treeLabel}: ${talentPart}`;
 
   const globalBest = allBuilds[0];
   const best = arch.bestBuild;
