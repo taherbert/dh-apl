@@ -51,7 +51,7 @@ Quick screen first (target_error=1.0, detects >1.0% deltas). Never accept on qui
 
 ## Simulation Modes
 
-**Profileset mode** (constant 2-actor memory): auto-activates when ALL roster builds have talent hashes. Run `npm run roster generate-hashes` to enable.
+**Profileset mode** (constant 2-actor memory): auto-activates when ALL roster builds have talent hashes. Cluster-generated builds always have hashes.
 
 **Batched multi-actor mode** (fallback): batch sizes -- quick=12, standard=8, confirm=4. Override with `--batch-size N`.
 

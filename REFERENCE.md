@@ -148,14 +148,13 @@ npm run discover -- --confirm                # High fidelity (~30-60 min)
 npm run discover -- --ar-only                # Aldrachi Reaver builds only
 npm run discover -- --anni-only              # Annihilator builds only
 
-# === Build Roster (persistent, version-controlled) ===
+# === Build Roster (cluster-based, from SPEC_CONFIG templates) ===
+npm run roster generate                      # Generate full roster from templates (recommended)
 npm run roster show                          # Show roster with validation status
-npm run roster import-doe                    # Import DoE-discovered builds to roster
 npm run roster import-community              # Import community builds from config
 npm run roster import-baseline               # Import SimC default build
 npm run roster validate                      # Re-validate all builds
 npm run roster prune                         # Remove redundant builds within threshold
-npm run roster generate-hashes               # Generate hashes for override-only builds
 npm run roster generate-names                # Generate talent-diff display names
 npm run roster update-dps                    # Refresh DPS from latest sim results
 
@@ -214,9 +213,9 @@ Embedded directly in agent and skill definitions:
 
 ## Database Tables
 
-- **builds** — All talent builds (DoE-discovered, community, baseline) with hashes, DPS, display names, roster membership
-- **archetypes** — DoE-discovered build archetypes with defining talents, core loops, key talents
-- **factors** — DoE factor impacts (talent → DPS effect)
+- **builds** — All talent builds (cluster-generated, community, baseline) with hashes, DPS, display names, roster membership
+- **archetypes** — Legacy DoE-discovered build archetypes (retained for history)
+- **factors** — Legacy DoE factor impacts (retained for history)
 - **synergies** — Talent synergy pairs
 - **findings** — Validated analytical insights (including migrated mechanics)
 - **hypotheses** — Optimization hypotheses (pending, tested, accepted, rejected)
@@ -226,4 +225,4 @@ Embedded directly in agent and skill definitions:
 - **cluster_synergies** — Cluster × hero tree synergy ratings
 - **tension_points** — Build tension/tradeoff definitions
 
-**After accepting APL changes:** Re-run `npm run discover -- --quick` to re-rank builds under the new APL.
+**After accepting APL changes:** Re-run `npm run roster generate` to refresh the roster.

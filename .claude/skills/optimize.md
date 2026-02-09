@@ -1,10 +1,10 @@
 ---
-description: The ONE command for all APL and build optimization. Runs everything autonomously — discovers archetypes, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, and reporting.
+description: The ONE command for all APL and build optimization. Runs everything autonomously — generates cluster roster, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, and reporting.
 argument-hint: "[focus directive or 'test: hypothesis']"
 model: opus
 ---
 
-The ONE command for all APL and build optimization. Runs everything autonomously: discover archetypes, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, APL branching, and reporting.
+The ONE command for all APL and build optimization. Runs everything autonomously: generate cluster roster, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, APL branching, and reporting.
 
 If `$ARGUMENTS` is provided (e.g., `/optimize Check soul fragment economy`), treat it as a **focus directive** -- prioritize that area while still analyzing the full system.
 
@@ -78,15 +78,14 @@ If a session exists, read `results/{spec}/plan.md` and query `getIterations({ se
 
 If no DB session, check legacy: `node src/sim/iterate.js status`. If iteration state exists, check `results/{spec}/checkpoint.md`.
 
-### 0c. Discover Archetypes and Generate Build Roster
+### 0c. Generate Build Roster
 
 ```bash
-npm run discover -- --quick           # DoE-based archetype discovery (~2-5 min)
+npm run roster generate               # Cluster-based roster from SPEC_CONFIG templates
 npm run roster show                   # Verify coverage
-npm run roster generate-hashes        # Enable profileset mode
 ```
 
-Skip discovery if DB has archetypes from < 24h ago. Just verify roster.
+Templates are defined in SPEC_CONFIG (`rosterTemplates`). Each template specifies an apex rank and which talent clusters to include/exclude. Crossed with hero tree × variant = full roster. Hashes are generated automatically.
 
 ### 0d. Establish Multi-Build Baseline
 
@@ -100,9 +99,9 @@ node src/sim/iterate.js init apls/{spec}/{spec}.simc
 
 **Tier 1 -- Mechanical Blueprint (always load):** spec adapter (`src/spec/{spec}.js` SPEC_CONFIG), current APL, `spells-summary.json`
 
-**Tier 2 -- Interaction & Proc Data:** `interactions-summary.json`, `cpp-proc-mechanics.json`, DB talent clusters/archetypes (`getTalentClusters()`, `getArchetypes()`)
+**Tier 2 -- Interaction & Proc Data:** `interactions-summary.json`, `cpp-proc-mechanics.json`, SPEC_CONFIG talent clusters (`talentClusters`, `rosterTemplates`)
 
-**Tier 3 -- Accumulated Knowledge:** DB findings (`getFindings({status:'validated'})`), DB hypotheses (`getHypotheses()`), DB builds/archetypes/factors/synergies
+**Tier 3 -- Accumulated Knowledge:** DB findings (`getFindings({status:'validated'})`), DB hypotheses (`getHypotheses()`), DB builds/synergies
 
 **Tier 4 -- External:** Wowhead/Icy Veins when internal data has gaps (treat as hypotheses).
 
@@ -120,9 +119,9 @@ All data paths in `data/{spec}/` and `results/{spec}/`. See CLAUDE.md "Data File
 
 **This is the most important step.**
 
-#### Study the Archetypes
+#### Study the Build Roster
 
-What talent clusters define each archetype? What factor impacts are largest? Which synergy pairs create compound value? How do archetypes differ in rotation needs?
+What talent clusters define each template? Which cluster combinations create compound value? How do different builds (apex ranks, cluster presence/absence) differ in rotation needs? Read SPEC_CONFIG `talentClusters` and `rosterTemplates` for the full roster structure.
 
 #### Model the Economy
 
@@ -140,9 +139,9 @@ What talent clusters define each archetype? What factor impacts are largest? Whi
 - **State machine incoherence** -- hero tree cycles vs APL rhythm
 - **Second-order chains** -- indirect value chains invisible in single-ability analysis
 
-#### Map Archetype-Specific Tensions
+#### Map Build-Specific Tensions
 
-Where do different archetypes need different APL behavior?
+Where do different builds need different APL behavior? Cluster presence/absence and apex rank create the primary variation axes.
 
 #### Study Reference APL
 
@@ -174,16 +173,16 @@ Launch 4 specialists **IN PARALLEL** using the Task tool. All 4 calls in a **SIN
 Each specialist prompt MUST include:
 
 - The root theories you formed in 1a (verbatim)
-- Archetype results from discovery
+- Roster template structure (clusters, apex ranks)
 - The spec name and data paths
 - Which focus area to analyze and which output file to write
 
-| Specialist          | Focus                                                | Key Data                                                | Output                        |
-| ------------------- | ---------------------------------------------------- | ------------------------------------------------------- | ----------------------------- |
-| Spell Data          | DPGCD rankings, modifier stacking, proc mechanics    | spells-summary, cpp-proc-mechanics, interactions        | `analysis_spell_data.json`    |
-| Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | talents, interactions, DB clusters/archetypes/synergies | `analysis_talent.json`        |
-| Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | spells-summary, cpp-proc-mechanics, APL                 | `analysis_resource_flow.json` |
-| State Machine       | Hero tree rhythms, variable correctness, dead code   | APL, DB clusters/archetypes, spells-summary             | `analysis_state_machine.json` |
+| Specialist          | Focus                                                | Key Data                                              | Output                        |
+| ------------------- | ---------------------------------------------------- | ----------------------------------------------------- | ----------------------------- |
+| Spell Data          | DPGCD rankings, modifier stacking, proc mechanics    | spells-summary, cpp-proc-mechanics, interactions      | `analysis_spell_data.json`    |
+| Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | talents, interactions, SPEC_CONFIG clusters/templates | `analysis_talent.json`        |
+| Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | spells-summary, cpp-proc-mechanics, APL               | `analysis_resource_flow.json` |
+| State Machine       | Hero tree rhythms, variable correctness, dead code   | APL, SPEC_CONFIG clusters, spells-summary             | `analysis_state_machine.json` |
 
 While specialists run in background, continue reading the knowledge base or begin Phase 2 preparation. Check specialist output files when they complete.
 
@@ -207,7 +206,7 @@ Read all four `results/{spec}/analysis_*.json` files. Cross-reference with root 
 2. **Specialist findings aligned with theories** -- high priority
 3. **Specialist findings with no causal backing** -- lower priority
 
-**Scope ranking:** Universal > Archetype-specific > Hero-tree-specific > Build-specific
+**Scope ranking:** Universal > Template-specific > Hero-tree-specific > Build-specific
 
 ### 2c. Generate Summary
 
@@ -223,10 +222,9 @@ Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `chang
 
 ### Build Roster Requirement
 
-1. Verify roster: `npm run roster show` -- must cover all archetypes from both hero trees
-2. If empty: `npm run roster migrate` or re-run discovery
-3. Generate hashes: `npm run roster generate-hashes`
-4. `iterate.js init` requires the roster. Profileset mode auto-activates when all builds have hashes.
+1. Verify roster: `npm run roster show` -- must cover templates from both hero trees
+2. If empty: `npm run roster generate` -- cluster-based generation from SPEC_CONFIG
+3. `iterate.js init` requires the roster. Profileset mode auto-activates (all cluster builds have hashes).
 
 ### Session Resilience
 
@@ -274,7 +272,7 @@ SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ cras
 #### Step 5: Decide
 
 - **Accept if:** mean weighted > 0 AND worst build > -1%
-- **Archetype-gate if:** helps some (>+0.1%) but hurts others (>-0.3%). Create gated sub-list, re-test.
+- **Build-gate if:** helps some (>+0.1%) but hurts others (>-0.3%). Create gated sub-list, re-test.
 - **Reject if:** mean weighted <= 0 OR regressions without branching path
 - **Inconclusive:** within noise after confirm -> log and move on
 
@@ -332,12 +330,12 @@ For sequential iteration (the common case), you can still parallelize: generate 
 ### 4a. Re-rank Builds
 
 ```bash
-npm run discover -- --quick
+npm run roster generate               # Regenerate roster with latest SPEC_CONFIG
 ```
 
 ### 4b. Audit APL Branch Coverage
 
-Every archetype has appropriate branching, no dead branches, branch comments explain purpose, shared logic not duplicated.
+Every build template has appropriate branching, no dead branches, branch comments explain purpose, shared logic not duplicated.
 
 ### 4c. Record Findings
 
@@ -358,7 +356,7 @@ npm run db:dump                  # Verify DB state
 
 ### 4f. Session Summary
 
-Archetypes discovered, hypotheses tested/accepted/rejected, theories validated/refuted, per-archetype DPS improvement, APL branches created, remaining untested ideas, showcase location.
+Build roster coverage, hypotheses tested/accepted/rejected, theories validated/refuted, per-build DPS improvement, APL branches created, remaining untested ideas, showcase location.
 
 ### 4g. Commit
 
@@ -371,14 +369,14 @@ git commit -m "optimize: {spec} -- N iterations, M accepted, +X.XX% mean weighte
 
 ## Checkpoint Protocol
 
-On context limits or interruption, save to `results/{spec}/checkpoint.md`: current phase, hypothesis, per-build progress, archetypes analyzed, APL branches created, remaining work.
+On context limits or interruption, save to `results/{spec}/checkpoint.md`: current phase, hypothesis, per-build progress, templates analyzed, APL branches created, remaining work.
 
 ## Anti-Patterns
 
 - **Single-build testing** -- ALWAYS test against the full roster
 - **Specialists without theory** -- form root theories BEFORE launching specialists
 - **Sequential specialists** -- ALWAYS launch all 4 in parallel
-- **Flat APL for diverse builds** -- if archetypes differ, the APL MUST branch
+- **Flat APL for diverse builds** -- if builds differ (cluster presence, apex rank), the APL MUST branch
 - **Trusting screener output without reasoning** -- observations are not insights
 - **Grinding thresholds without theory** -- test values from mechanical reasoning, not sweeps
-- **Ignoring per-build results** -- aggregate mean hides archetype regressions
+- **Ignoring per-build results** -- aggregate mean hides per-template regressions
