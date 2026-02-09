@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -294,6 +294,21 @@ export function getDb(spec) {
         _db.exec("ALTER TABLE archetypes ADD COLUMN tensions TEXT");
       } catch {
         // Columns may already exist
+      }
+    }
+    // Schema v2 → v3: add simc baseline DPS columns to builds
+    if (existingVersion < 3) {
+      for (const col of [
+        "simc_dps_st",
+        "simc_dps_small_aoe",
+        "simc_dps_big_aoe",
+        "simc_weighted",
+      ]) {
+        try {
+          _db.exec(`ALTER TABLE builds ADD COLUMN ${col} REAL`);
+        } catch {
+          // Column may already exist
+        }
       }
     }
     _db
@@ -872,6 +887,25 @@ export function updateBuildDps(hash, dps, s) {
   );
 }
 
+export function updateBuildSimcDps(hash, dps, s) {
+  const db = getDb();
+  const weighted =
+    (dps.st || 0) * 0.5 + (dps.small_aoe || 0) * 0.3 + (dps.big_aoe || 0) * 0.2;
+  db.prepare(
+    `
+    UPDATE builds SET simc_dps_st = ?, simc_dps_small_aoe = ?, simc_dps_big_aoe = ?, simc_weighted = ?
+    WHERE hash = ? AND spec = ?
+  `,
+  ).run(
+    dps.st ?? null,
+    dps.small_aoe ?? null,
+    dps.big_aoe ?? null,
+    weighted,
+    hash,
+    s || spec(),
+  );
+}
+
 function rowToBuild(r) {
   return {
     ...r,
@@ -882,6 +916,14 @@ function rowToBuild(r) {
     validationErrors: parseJson(r.validation_errors),
     lastTestedAt: r.last_tested_at,
     discoveredAt: r.discovered_at,
+    simcDps: r.simc_weighted
+      ? {
+          st: r.simc_dps_st || 0,
+          small_aoe: r.simc_dps_small_aoe || 0,
+          big_aoe: r.simc_dps_big_aoe || 0,
+          weighted: r.simc_weighted || 0,
+        }
+      : null,
   };
 }
 
