@@ -132,6 +132,10 @@ export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
 
 function parseResults(data, scenario) {
   const player = data.sim.players[0];
+  const combatLength =
+    player.collected_data.fight_length?.mean ||
+    SCENARIOS[scenario]?.maxTime ||
+    300;
 
   const result = {
     scenario,
@@ -140,14 +144,16 @@ function parseResults(data, scenario) {
     dps: player.collected_data.dps.mean,
     hps: player.collected_data.hps?.mean || 0,
     dtps: player.collected_data.dtps?.mean || 0,
+    combatLength,
     abilities: [],
     buffs: [],
+    resourceWaste: {},
   };
 
-  // Parse ability breakdown
+  // Parse ability breakdown with cooldown + execute time data
   for (const stat of player.stats) {
     if (stat.type === "damage" || stat.type === "heal") {
-      result.abilities.push({
+      const entry = {
         name: stat.spell_name || stat.name,
         id: stat.id,
         type: stat.type,
@@ -155,7 +161,19 @@ function parseResults(data, scenario) {
         fraction: stat.portion_amount || 0,
         executes: stat.num_executes?.mean || 0,
         school: stat.school,
-      });
+      };
+      // Cooldown info for utilization analysis
+      if (stat.cooldown) {
+        entry.cooldown = {
+          duration: stat.cooldown.duration || 0,
+          wasteSec: stat.cooldown.wasted_seconds?.mean || 0,
+        };
+      }
+      // Total execute time for GCD analysis
+      if (stat.total_execute_time?.mean) {
+        entry.totalExecuteTime = stat.total_execute_time.mean;
+      }
+      result.abilities.push(entry);
     }
   }
   result.abilities.sort((a, b) => b.dps - a.dps);
@@ -170,6 +188,20 @@ function parseResults(data, scenario) {
     }
   }
   result.buffs.sort((a, b) => b.uptime - a.uptime);
+
+  // Resource waste from collected_data (SimC tracks resource_lost per type)
+  if (player.collected_data.resource_lost) {
+    for (const [resType, resData] of Object.entries(
+      player.collected_data.resource_lost,
+    )) {
+      if (resData?.mean > 0) {
+        result.resourceWaste[resType] = {
+          totalLost: resData.mean,
+          perSecond: resData.mean / combatLength,
+        };
+      }
+    }
+  }
 
   return result;
 }

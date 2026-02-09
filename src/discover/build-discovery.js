@@ -20,6 +20,12 @@ import {
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, resultsDir, resultsFile, aplsDir } from "../engine/paths.js";
+import {
+  upsertBuild,
+  upsertArchetype,
+  upsertFactor,
+  upsertSynergy,
+} from "../util/db.js";
 
 const WEIGHTS = SCENARIO_WEIGHTS;
 
@@ -712,6 +718,56 @@ async function discover(opts = {}) {
   const outPath = resultsFile("builds.json");
   writeFileSync(outPath, JSON.stringify(output, null, 2));
   console.log(`  Wrote ${outPath}`);
+
+  // Sync discovery results to unified DB
+  const runId = output._generated;
+  try {
+    for (const b of output.allBuilds) {
+      if (!b.hash) continue;
+      upsertBuild({
+        hash: b.hash,
+        name: b.name,
+        heroTree: b.heroTree,
+        source: "doe",
+        dps_st: b.dps?.st,
+        dps_small_aoe: b.dps?.small_aoe,
+        dps_big_aoe: b.dps?.big_aoe,
+        weighted: b.weighted,
+        rank: b.rank,
+      });
+    }
+    for (const fi of output.factorImpacts) {
+      upsertFactor(
+        {
+          talent: fi.talent,
+          nodeId: fi.nodeId,
+          factorType: fi.type,
+          mainEffect: fi.mainEffect,
+          pct: fi.pct,
+        },
+        runId,
+      );
+    }
+    for (const arch of output.discoveredArchetypes) {
+      upsertArchetype({
+        name: arch.name,
+        heroTree: arch.heroTree,
+        definingTalents: arch.definingTalents,
+        description: arch.description,
+        coreLoop: arch.coreLoop,
+        bestBuildHash: arch.bestBuild?.hash,
+        buildCount: arch.buildCount,
+      });
+    }
+    for (const sp of output.synergyPairs) {
+      if (sp.talents?.length >= 2) {
+        upsertSynergy(sp.talents[0], sp.talents[1], sp.interaction, runId);
+      }
+    }
+    console.log(`  Synced to theorycraft.db`);
+  } catch (e) {
+    console.warn(`  DB sync warning: ${e.message}`);
+  }
 
   // Auto-import new discoveries into persistent build roster
   try {

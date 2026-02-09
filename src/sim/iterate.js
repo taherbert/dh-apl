@@ -60,7 +60,23 @@ import {
   synthesize as synthesizeHypotheses,
   saveSpecialistOutput,
 } from "../analyze/synthesizer.js";
-import { addFinding as dbAddFinding } from "../util/db.js";
+import {
+  addFinding as dbAddFinding,
+  addIteration as dbAddIteration,
+  addHypothesis as dbAddHypothesis,
+  updateHypothesis as dbUpdateHypothesis,
+  getHypotheses as dbGetHypotheses,
+  getIterations as dbGetIterations,
+  setSessionState,
+  getSessionState,
+  getAllSessionState,
+  clearSession,
+  setBaselineDps,
+  getBaselineDps,
+  updateBaselineDpsCurrent,
+  getSessionSummary,
+  exportToJson as dbExportJson,
+} from "../util/db.js";
 import {
   ROOT,
   resultsDir,
@@ -69,6 +85,7 @@ import {
   dataFile,
   ensureSpecDirs,
 } from "../engine/paths.js";
+import { randomUUID } from "node:crypto";
 
 await initSpec(parseSpecArg());
 
@@ -980,11 +997,52 @@ async function cmdInit(aplPath) {
 
   const hypotheses = generateHypotheses(workflowResults);
 
+  // --- Write session state to DB ---
+  const sessionId = randomUUID();
+  clearSession(); // Clear any stale session state
+  setSessionState("session_id", sessionId);
+  setSessionState("phase", "iteration");
+  setSessionState("started_at", new Date().toISOString());
+  setSessionState("multi_build", true);
+  setSessionState("roster_build_count", roster.builds.length);
+  setSessionState("original_apl", basename(aplPath));
+  setSessionState("current_apl_path", relative(ROOT, CURRENT_APL));
+  setSessionState("consecutive_rejections", 0);
+
+  // Write baseline DPS per build per scenario
+  for (const [buildId, b] of Object.entries(baseline.builds)) {
+    for (const scenario of SCENARIO_KEYS) {
+      if (b.dps[scenario] !== undefined) {
+        setBaselineDps(buildId, scenario, b.dps[scenario], {
+          sessionId,
+          isCurrent: false,
+        });
+        setBaselineDps(buildId, scenario, b.dps[scenario], {
+          sessionId,
+          isCurrent: true,
+        });
+      }
+    }
+  }
+
+  // Write initial hypotheses to DB
+  for (const h of hypotheses) {
+    dbAddHypothesis({
+      summary: h.description,
+      category: h.category,
+      priority: h.priority || 5.0,
+      status: "pending",
+      source: "workflow",
+    });
+  }
+
+  // --- Legacy JSON state (kept for backward compat during transition) ---
   const state = {
     version: STATE_VERSION,
     startedAt: new Date().toISOString(),
     lastUpdated: new Date().toISOString(),
     multiBuild: true,
+    sessionId,
     roster: {
       path: relative(ROOT, dataFile("build-roster.json")),
       buildCount: roster.builds.length,
@@ -1184,13 +1242,41 @@ async function cmdAccept(reason, hypothesisHint) {
     ? { results: {}, multiBuild: true, aggregate: comparison.aggregate }
     : comparison;
 
-  const { iterNum } = recordIteration(
+  const { iterNum, hypothesis } = recordIteration(
     state,
     iterComparison,
     reason,
     hypothesisHint,
     "accepted",
   );
+
+  // --- Record iteration to DB ---
+  const sessionId = state.sessionId || getSessionState("session_id");
+  const dbIterResults = comparison.multiBuild
+    ? comparison.buildResults
+    : comparison.results || {};
+  const dbIterAggregate = comparison.multiBuild
+    ? comparison.aggregate
+    : computeWeightedDelta(comparison.results || {});
+  const dbIterationId = dbAddIteration({
+    hypothesisId: hypothesis.dbId || null,
+    sessionId,
+    fidelity: comparison.tier || "standard",
+    aplDiff: reason,
+    results: dbIterResults,
+    aggregate: dbIterAggregate,
+    decision: "accepted",
+    reason,
+  });
+
+  // Update hypothesis status in DB if we can match it
+  if (hypothesis.dbId) {
+    dbUpdateHypothesis(hypothesis.dbId, {
+      status: "accepted",
+      reason,
+      tested_at: new Date().toISOString(),
+    });
+  }
 
   if (state.multiBuild && comparison.multiBuild) {
     // Update per-build DPS from multi-build comparison
@@ -1216,6 +1302,21 @@ async function cmdAccept(reason, hypothesisHint) {
         );
         updateDps(rosterForDps, buildId, dps);
       }
+
+      // Update current baseline DPS in DB
+      if (sessionId) {
+        for (const scenario of SCENARIO_KEYS) {
+          const candidateDps = br.scenarios[scenario]?.candidate;
+          if (candidateDps !== undefined) {
+            updateBaselineDpsCurrent(
+              buildId,
+              scenario,
+              candidateDps,
+              sessionId,
+            );
+          }
+        }
+      }
     }
     if (rosterForDps) saveRosterDps(rosterForDps);
   }
@@ -1231,10 +1332,13 @@ async function cmdAccept(reason, hypothesisHint) {
 
   state.pendingHypotheses = generateHypotheses(workflowResults);
   state.consecutiveRejections = 0;
+  setSessionState("consecutive_rejections", 0);
+  setSessionState("last_iteration", dbIterationId);
 
-  // Track significant findings (state + SQLite)
+  // Track significant findings (state + DB)
+  const findingThreshold = 0.5;
   if (comparison.multiBuild) {
-    if (Math.abs(comparison.aggregate.meanWeighted) > 0.5) {
+    if (Math.abs(comparison.aggregate.meanWeighted) > findingThreshold) {
       const finding = {
         iteration: iterNum,
         timestamp: new Date().toISOString(),
@@ -1244,22 +1348,19 @@ async function cmdAccept(reason, hypothesisHint) {
         aggregate: comparison.aggregate,
       };
       state.findings.push(finding);
-      try {
-        dbAddFinding({
-          insight: reason,
-          evidence: `${comparison.aggregate.meanWeighted > 0 ? "+" : ""}${comparison.aggregate.meanWeighted.toFixed(2)}% weighted (multi-build)`,
-          confidence:
-            Math.abs(comparison.aggregate.meanWeighted) > 1 ? "high" : "medium",
-          status: "validated",
-          tags: ["iteration", "accepted"],
-        });
-      } catch {
-        /* SQLite optional */
-      }
+      dbAddFinding({
+        insight: reason,
+        evidence: `${comparison.aggregate.meanWeighted > 0 ? "+" : ""}${comparison.aggregate.meanWeighted.toFixed(2)}% weighted (multi-build)`,
+        confidence:
+          Math.abs(comparison.aggregate.meanWeighted) > 1 ? "high" : "medium",
+        status: "validated",
+        tags: ["iteration", "accepted"],
+        iterationId: dbIterationId,
+      });
     }
   } else {
     const weighted = computeWeightedDelta(comparison.results);
-    if (Math.abs(weighted.delta) > 0.5) {
+    if (Math.abs(weighted.delta) > findingThreshold) {
       const finding = {
         iteration: iterNum,
         timestamp: new Date().toISOString(),
@@ -1270,17 +1371,14 @@ async function cmdAccept(reason, hypothesisHint) {
         ),
       };
       state.findings.push(finding);
-      try {
-        dbAddFinding({
-          insight: reason,
-          evidence: `${weighted.delta > 0 ? "+" : ""}${weighted.delta.toFixed(2)}% weighted`,
-          confidence: Math.abs(weighted.delta) > 1 ? "high" : "medium",
-          status: "validated",
-          tags: ["iteration", "accepted"],
-        });
-      } catch {
-        /* SQLite optional */
-      }
+      dbAddFinding({
+        insight: reason,
+        evidence: `${weighted.delta > 0 ? "+" : ""}${weighted.delta.toFixed(2)}% weighted`,
+        confidence: Math.abs(weighted.delta) > 1 ? "high" : "medium",
+        status: "validated",
+        tags: ["iteration", "accepted"],
+        iterationId: dbIterationId,
+      });
     }
   }
 
@@ -1312,8 +1410,37 @@ function cmdReject(reason, hypothesisHint) {
     "rejected",
   );
 
+  // --- Record rejection to DB ---
+  const sessionId = state.sessionId || getSessionState("session_id");
+  const dbIterResults = comparison.multiBuild
+    ? comparison.buildResults || {}
+    : comparison.results || {};
+  const dbIterAggregate = comparison.multiBuild
+    ? comparison.aggregate || {}
+    : computeWeightedDelta(comparison.results || {});
+  dbAddIteration({
+    hypothesisId: hypothesis.dbId || null,
+    sessionId,
+    fidelity: comparison.tier || "standard",
+    aplDiff: reason,
+    results: dbIterResults,
+    aggregate: dbIterAggregate,
+    decision: "rejected",
+    reason,
+  });
+
+  // Update hypothesis status in DB
+  if (hypothesis.dbId) {
+    dbUpdateHypothesis(hypothesis.dbId, {
+      status: "rejected",
+      reason,
+      tested_at: new Date().toISOString(),
+    });
+  }
+
   state.exhaustedHypotheses.push(hypothesis);
   state.consecutiveRejections = (state.consecutiveRejections || 0) + 1;
+  setSessionState("consecutive_rejections", state.consecutiveRejections);
   saveState(state);
   writeDashboard(state);
 
@@ -1696,15 +1823,27 @@ async function cmdStrategicHypotheses() {
       ),
   );
 
-  // Update state with strategic hypotheses
-  state.pendingHypotheses = fresh.map((h) => ({
-    category: h.category,
-    description: h.hypothesis || h.observation,
-    strategicGoal: h.strategicGoal,
-    priority: h.priority || 0,
-    scenario: h.scenario,
-    aplMutation: h.aplMutation,
-  }));
+  // Update state with strategic hypotheses + write to DB
+  state.pendingHypotheses = fresh.map((h) => {
+    const mapped = {
+      category: h.category,
+      description: h.hypothesis || h.observation,
+      strategicGoal: h.strategicGoal,
+      priority: h.priority || 0,
+      scenario: h.scenario,
+      aplMutation: h.aplMutation,
+    };
+    // Write to DB and store the DB id for later linkage
+    mapped.dbId = dbAddHypothesis({
+      summary: mapped.description,
+      category: h.category,
+      priority: h.priority || 5.0,
+      status: "pending",
+      source: "strategic",
+      mutation: h.aplMutation || null,
+    });
+    return mapped;
+  });
 
   saveState(state);
 
@@ -1771,21 +1910,32 @@ async function cmdTheorycraft() {
       ),
   );
 
-  // Update state with temporal hypotheses
-  state.pendingHypotheses = fresh.map((h) => ({
-    category: h.category,
-    description: h.hypothesis,
-    hypothesis: h.hypothesis,
-    strategicGoal: h.hypothesis,
-    observation: h.observation,
-    priority: h.priority || 0,
-    confidence: h.confidence,
-    scenario: h.scenario,
-    aplMutation: h.aplMutation,
-    temporalAnalysis: h.temporalAnalysis,
-    prediction: h.prediction,
-    counterArgument: h.counterArgument,
-  }));
+  // Update state with temporal hypotheses + write to DB
+  state.pendingHypotheses = fresh.map((h) => {
+    const mapped = {
+      category: h.category,
+      description: h.hypothesis,
+      hypothesis: h.hypothesis,
+      strategicGoal: h.hypothesis,
+      observation: h.observation,
+      priority: h.priority || 0,
+      confidence: h.confidence,
+      scenario: h.scenario,
+      aplMutation: h.aplMutation,
+      temporalAnalysis: h.temporalAnalysis,
+      prediction: h.prediction,
+      counterArgument: h.counterArgument,
+    };
+    mapped.dbId = dbAddHypothesis({
+      summary: h.hypothesis,
+      category: h.category,
+      priority: h.priority || 5.0,
+      status: "pending",
+      source: "theorycraft",
+      mutation: h.aplMutation || null,
+    });
+    return mapped;
+  });
 
   saveState(state);
 
@@ -1898,15 +2048,28 @@ async function cmdSynthesize() {
       ),
   );
 
-  // Map synthesized hypotheses back to iteration format
-  state.pendingHypotheses = fresh.map((h) => ({
-    description: h.systemicIssue || h.hypothesis || h.id,
-    hypothesis: h.systemicIssue || h.hypothesis || h.id,
-    priority: h.aggregatePriority || h.priority || 0,
-    consensusCount: h.consensusCount || 1,
-    specialists: h.specialists || [],
-    aplMutation: h.proposedChanges?.[0]?.aplMutation || h.aplMutation || null,
-  }));
+  // Map synthesized hypotheses back to iteration format + write to DB
+  state.pendingHypotheses = fresh.map((h) => {
+    const mutation =
+      h.proposedChanges?.[0]?.aplMutation || h.aplMutation || null;
+    const mapped = {
+      description: h.systemicIssue || h.hypothesis || h.id,
+      hypothesis: h.systemicIssue || h.hypothesis || h.id,
+      priority: h.aggregatePriority || h.priority || 0,
+      consensusCount: h.consensusCount || 1,
+      specialists: h.specialists || [],
+      aplMutation: mutation,
+    };
+    mapped.dbId = dbAddHypothesis({
+      summary: mapped.description,
+      category: h.category || "synthesized",
+      priority: mapped.priority,
+      status: "pending",
+      source: "synthesized",
+      mutation: mutation || null,
+    });
+    return mapped;
+  });
 
   saveState(state);
 
@@ -2102,6 +2265,9 @@ function cmdCheckpoint(options = {}) {
     notes,
   };
   saveState(state);
+
+  // Persist checkpoint to DB for compaction resilience
+  setSessionState("checkpoint", state.checkpoint);
 
   console.log("Checkpoint saved to results/checkpoint.md");
   console.log(`\nSession summary:`);
