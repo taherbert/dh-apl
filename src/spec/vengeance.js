@@ -126,8 +126,9 @@ export const SPEC_CONFIG = {
       keyBuffs: ["voidfall_building", "voidfall_spending", "catastrophe"],
       aplBranch: "anni",
       profileKeywords: ["annihilator", "anni"],
-      // DPS-optimal hero choice locks (determined by profileset sim)
-      choiceLocks: { 109448: 1, 109450: 1 },
+      // 109448: Locked to State of Matter (both options are pure utility, zero DPS)
+      // 109450: Unlocked (Doomsayer opener burst vs Harness the Cosmos +15% meteor — let DoE decide)
+      choiceLocks: { 109448: 1 },
     },
   },
 
