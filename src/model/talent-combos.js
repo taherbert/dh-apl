@@ -1103,26 +1103,73 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
 
   const locked = new Set();
   const lockedRanks = new Map();
+  const maxRankOverrides = new Map();
 
-  // Lock entry/free nodes
+  // Build name-based lookup for profile exclude/require before locking
+  const excludeNames = new Set(profile.exclude || []);
+  const requireByName = new Map();
+  for (const req of profile.require || []) {
+    const name = typeof req === "string" ? req : req.name;
+    requireByName.set(name, req);
+  }
+
+  // Lock entry/free nodes (respecting profile exclude/require for multi-rank entry nodes)
   for (const n of data.specNodes) {
-    if (n.entryNode || n.freeNode) {
+    if (n.freeNode) {
       locked.add(n.id);
-      if (!n.freeNode) lockedRanks.set(n.id, n.maxRanks || 1);
+      continue;
+    }
+    if (n.entryNode) {
+      // Check if any entry name or node name is excluded
+      const entryNames = n.entries ? n.entries.map((e) => e.name) : [];
+      const allNames = [n.name, ...entryNames].filter(Boolean);
+      const isExcluded = allNames.some((nm) => excludeNames.has(nm));
+
+      // Check if any entry name has a maxRank override in require
+      let overrideRank = null;
+      for (const nm of allNames) {
+        const req = requireByName.get(nm);
+        if (req && typeof req === "object" && req.maxRank !== undefined) {
+          overrideRank = req.maxRank;
+          break;
+        }
+      }
+
+      if (isExcluded && overrideRank === null) {
+        // Excluded entry node: don't lock, don't add to selected
+        continue;
+      }
+
+      locked.add(n.id);
+      const rank = overrideRank !== null ? overrideRank : n.maxRanks || 1;
+      lockedRanks.set(n.id, rank);
+      if (overrideRank !== null) maxRankOverrides.set(n.id, overrideRank);
+      continue;
     }
   }
 
-  // Lock required nodes from profile
-  for (const name of profile.require || []) {
+  // Lock required nodes from profile, respecting maxRank overrides
+  for (const req of profile.require || []) {
+    // Support { name, maxRank } objects for partial-rank locking
+    const name = typeof req === "string" ? req : req.name;
+    const rankOverride = typeof req === "object" ? req.maxRank : undefined;
     const node = nameToNode.get(name);
     if (node && !locked.has(node.id)) {
       locked.add(node.id);
-      lockedRanks.set(node.id, node.maxRanks || 1);
+      const rank =
+        rankOverride !== undefined ? rankOverride : node.maxRanks || 1;
+      lockedRanks.set(node.id, rank);
+      if (rankOverride !== undefined)
+        maxRankOverrides.set(node.id, rankOverride);
     }
   }
 
+  // Flatten require names (may be strings or { name, maxRank } objects)
+  const requireNames = (profile.require || []).map((r) =>
+    typeof r === "string" ? r : r.name,
+  );
   const effectiveExclusions = buildEffectiveExclusions({
-    include: [...(profile.include || []), ...(profile.require || [])],
+    include: [...(profile.include || []), ...requireNames],
     exclude: profile.exclude || [],
   });
 
@@ -1197,19 +1244,114 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
       fillChanged = true;
     }
 
-    // Bump multi-rank nodes
+    // Bump multi-rank nodes (respecting maxRank overrides)
     if (pts < SPEC_POINTS) {
       for (const node of data.specNodes) {
         if (pts >= SPEC_POINTS) break;
         if (!selected.has(node.id)) continue;
-        const maxR = node.maxRanks || 1;
+        const cap = maxRankOverrides.has(node.id)
+          ? maxRankOverrides.get(node.id)
+          : node.maxRanks || 1;
         const curR = rankMap.get(node.id) || 1;
-        if (curR < maxR && pts + (maxR - curR) <= SPEC_POINTS) {
-          pts += maxR - curR;
-          rankMap.set(node.id, maxR);
+        if (curR < cap && pts + (cap - curR) <= SPEC_POINTS) {
+          pts += cap - curR;
+          rankMap.set(node.id, cap);
           fillChanged = true;
         }
       }
+    }
+  }
+
+  // Gate repair: if locked S3 nodes pushed past the gate, swap removable post-gate
+  // nodes for pre-gate nodes to satisfy the 20-pt gate requirement.
+  const excludedNodeIds = new Set();
+  for (const n of data.specNodes) {
+    if (effectiveExclusions.has(n.name)) excludedNodeIds.add(n.id);
+  }
+
+  for (let gatePass = 0; gatePass < 15; gatePass++) {
+    const violated = [...selected].find((id) => {
+      const n = specMap.get(id);
+      return n && n.reqPoints && !passesGate(n, selected, specMap, rankMap);
+    });
+    if (!violated) break;
+
+    const violatedNode = specMap.get(violated);
+    const gateThreshold = violatedNode.reqPoints;
+
+    // Find a removable post-gate node (not locked, not orphaning others)
+    const removable = [...selected]
+      .filter((id) => {
+        const n = specMap.get(id);
+        if (!n || n.entryNode || n.freeNode || locked.has(id)) return false;
+        return n.reqPoints && n.reqPoints >= gateThreshold;
+      })
+      .map((id) => ({ id, node: specMap.get(id) }))
+      .filter(({ id }) => !wouldOrphan(id, selected, specMap))
+      .sort((a, b) => (b.node.posY || 0) - (a.node.posY || 0));
+
+    const addable = data.specNodes
+      .filter((n) => {
+        if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+        if (n.reqPoints >= gateThreshold) return false;
+        if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
+          return false;
+        return true;
+      })
+      .sort((a, b) => {
+        const exA = excludedNodeIds.has(a.id) ? 1 : 0;
+        const exB = excludedNodeIds.has(b.id) ? 1 : 0;
+        if (exA !== exB) return exA - exB;
+        return (a.posY || 0) - (b.posY || 0);
+      });
+
+    if (removable.length === 0 || addable.length === 0) break;
+
+    // Swap: remove 1 point from post-gate, add 1 point to pre-gate
+    const rem = removable[0];
+    const remRank = rankMap.get(rem.id) || 1;
+    if (remRank > 1) {
+      rankMap.set(rem.id, remRank - 1);
+    } else {
+      selected.delete(rem.id);
+      rankMap.delete(rem.id);
+    }
+    pts--;
+
+    const add = addable[0];
+    if (selected.has(add.id)) {
+      const curRank = rankMap.get(add.id) || 1;
+      rankMap.set(add.id, Math.min(curRank + 1, add.maxRanks || 1));
+    } else {
+      selected.add(add.id);
+      rankMap.set(add.id, 1);
+    }
+    pts++;
+  }
+
+  // Fix choice node entries: if entry 0 is excluded but entry 1 is not, select entry 1.
+  // Also handle required talents that match a specific choice entry.
+  const specChoices = {};
+  const reqSet = new Set(requireNames);
+  for (const id of selected) {
+    const node = specMap.get(id);
+    if (
+      !node ||
+      node.type !== "choice" ||
+      !node.entries ||
+      node.entries.length < 2
+    )
+      continue;
+
+    const entry0Excluded = effectiveExclusions.has(node.entries[0]?.name);
+    const entry1Excluded = effectiveExclusions.has(node.entries[1]?.name);
+    const entry0Required = reqSet.has(node.entries[0]?.name);
+    const entry1Required = reqSet.has(node.entries[1]?.name);
+
+    if (entry1Required && !entry0Required) {
+      specChoices[id] = 1;
+    } else if (entry0Excluded && !entry1Excluded) {
+      specChoices[id] = 1;
     }
   }
 
@@ -1225,7 +1367,7 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     profile: profile.name,
     specNodes: [...selected],
     specRanks: Object.fromEntries(rankMap),
-    specChoices: {},
+    specChoices,
     specPoints: pts,
     classNodes: classResult.selected,
     classRanks: Object.fromEntries(classResult.rankMap),
@@ -1266,6 +1408,150 @@ function generatePinnedBuilds(data, specMap, classResult) {
   }
 
   return pinnedBuilds;
+}
+
+// --- Cluster-based roster generation ---
+
+// Generate builds from SPEC_CONFIG.rosterTemplates × hero tree × variant.
+// Each template specifies an apex rank and which talent clusters to include/exclude.
+// Returns [{ hash, template, heroTree, variant, specBuild, valid, errors }]
+export function generateClusterRoster() {
+  const data = loadData();
+  const specMap = buildNodeMap(data.specNodes);
+  const classResult = classTreeFromBaseline(data.classNodes);
+  const config = getSpecAdapter().getSpecConfig();
+
+  const { talentClusters, rosterTemplates, lockedTalents } = config;
+  if (!rosterTemplates || rosterTemplates.length === 0) {
+    throw new Error("No rosterTemplates defined in SPEC_CONFIG");
+  }
+  if (!talentClusters) {
+    throw new Error("No talentClusters defined in SPEC_CONFIG");
+  }
+
+  // Find the apex talent node (tiered entry node with maxRanks > 1)
+  const apexNode = data.specNodes.find(
+    (n) => n.entryNode && n.type === "tiered" && (n.maxRanks || 1) > 1,
+  );
+  const apexName = apexNode?.name?.split(" / ")[0] || "Untethered Rage";
+
+  const results = [];
+  const fingerprints = new Set();
+
+  function buildFingerprint(specNodes, specChoices, heroTreeName, heroCombo) {
+    const specKey = [...specNodes].sort((a, b) => a - b).join(",");
+    const choiceKey = Object.entries(specChoices || {})
+      .map(([k, v]) => `${k}:${v}`)
+      .join(",");
+    const heroKey = Object.entries(heroCombo)
+      .map(([k, v]) => `${k}:${v.name || v}`)
+      .join(",");
+    return `${specKey}|${heroTreeName}|${choiceKey}|${heroKey}`;
+  }
+
+  for (const template of rosterTemplates) {
+    const require = [...(lockedTalents || [])];
+    const exclude = [];
+
+    // Build require/exclude from cluster inclusion map.
+    // Not included: exclude all. "core": require core, exclude extended. "full": require both.
+    for (const [clusterName, cluster] of Object.entries(talentClusters)) {
+      const depth = template.include?.[clusterName];
+      if (!depth) {
+        for (const name of cluster.core || []) exclude.push(name);
+        for (const name of cluster.extended || []) exclude.push(name);
+      } else {
+        for (const name of cluster.core || []) require.push(name);
+        if (depth === "full") {
+          for (const name of cluster.extended || []) require.push(name);
+        } else {
+          for (const name of cluster.extended || []) exclude.push(name);
+        }
+      }
+    }
+
+    // Handle apex rank
+    if (template.apexRank > 0) {
+      require.push({ name: apexName, maxRank: template.apexRank });
+    } else {
+      exclude.push(apexName);
+    }
+
+    const profile = {
+      name: template.name,
+      require,
+      exclude,
+      include: [],
+    };
+
+    const specBuild = buildPinnedBuild(profile, data, specMap, classResult);
+
+    // Cross with hero trees and variants
+    for (const [heroTreeName, heroNodes] of Object.entries(data.heroSubtrees)) {
+      const heroCombos = heroChoiceCombos(heroNodes, {});
+      for (const heroCombo of heroCombos) {
+        const build = {
+          ...specBuild,
+          heroTree: heroTreeName,
+          heroNodes: heroNodes.map((n) => n.id),
+          heroChoices: heroCombo,
+        };
+
+        const variantDesc = Object.values(heroCombo)
+          .map((e) => e.name)
+          .join("_")
+          .replace(/\s+/g, "");
+
+        build.name = [
+          heroTreeName.replace(/\s+/g, ""),
+          template.name.replace(/\s+/g, "_"),
+          variantDesc || "default",
+        ].join("_");
+
+        let hash;
+        try {
+          hash = buildToHash(build, data);
+        } catch (e) {
+          results.push({
+            hash: null,
+            template: template.name,
+            apexRank: template.apexRank,
+            heroTree: heroTreeName,
+            variant: variantDesc || null,
+            valid: false,
+            errors: [
+              ...(specBuild.errors || []),
+              `Hash encoding failed: ${e.message}`,
+            ],
+          });
+          continue;
+        }
+
+        const fp = buildFingerprint(
+          specBuild.specNodes,
+          build.specChoices,
+          heroTreeName,
+          heroCombo,
+        );
+
+        if (fingerprints.has(fp)) continue;
+        fingerprints.add(fp);
+
+        results.push({
+          hash,
+          template: template.name,
+          apexRank: template.apexRank,
+          heroTree: heroTreeName,
+          variant: variantDesc || null,
+          specBuild: build,
+          valid: specBuild.valid,
+          errors: specBuild.errors,
+        });
+      }
+    }
+  }
+
+  return results;
 }
 
 // --- CLI entry point ---

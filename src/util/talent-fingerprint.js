@@ -92,6 +92,42 @@ export function abbrev(name) {
   return TALENT_ABBREVS[name] || name;
 }
 
+// Detect which hero choice variant a build uses for unlocked choice nodes.
+// Returns { variant: string|null, choices: { [nodeId]: entryName } }
+// Only reports unlocked choice nodes (those NOT in choiceLocks).
+export function detectHeroVariant(hash, heroSubtrees, choiceLocks = {}) {
+  const fullNodes = getFullNodes();
+  const data = getRaidbots();
+
+  const { selections } = decode(hash, fullNodes);
+  const nodeSets = selectionsToNodeSets(selections, data);
+
+  if (!nodeSets.heroTree) return { variant: null, choices: {} };
+
+  const treeName = nodeSets.heroTree;
+  const treeNodes = heroSubtrees?.[treeName] || data.heroSubtrees?.[treeName];
+  if (!treeNodes) return { variant: null, choices: {} };
+
+  const locks = choiceLocks || {};
+  const choices = {};
+  let variant = null;
+
+  for (const cNode of treeNodes) {
+    if (cNode.type !== "choice" || !cNode.entries || cNode.entries.length <= 1)
+      continue;
+    if (cNode.id in locks) continue; // Skip locked choices
+
+    const heroChoice = nodeSets.heroChoices[cNode.id];
+    if (heroChoice?.name) {
+      choices[cNode.id] = heroChoice.name;
+      // First unlocked choice determines the variant name
+      if (!variant) variant = heroChoice.name;
+    }
+  }
+
+  return { variant, choices };
+}
+
 // Decode a talent hash into spec talent names and hero tree.
 // Returns { specTalents: string[], heroTree: string|null }
 export function decodeTalentNames(hash) {

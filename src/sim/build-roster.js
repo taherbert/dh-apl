@@ -3,12 +3,13 @@
 // No JSON file I/O — the DB is the single source of truth.
 //
 // Sources:
-//   1. DoE discovery: archetypes + builds written by build-discovery.js
+//   1. Cluster roster: systematic cluster permutations × hero tree × variant
 //   2. Community: config.{spec}.json communityBuilds → Wowhead/Icy-Veins hashes
 //   3. Baseline: apls/{spec}/baseline.simc → SimC default APL talent hash
 //   4. Manual: add <hash> --archetype "Name" --hero <tree>
 //
 // Usage:
+//   node src/sim/build-roster.js generate                          Build full layered roster (recommended)
 //   node src/sim/build-roster.js show
 //   node src/sim/build-roster.js import-doe
 //   node src/sim/build-roster.js import-community
@@ -42,13 +43,18 @@ import {
 import {
   specHeroFingerprint,
   detectHeroTree,
+  detectHeroVariant,
   decodeTalentNames,
   abbrev,
 } from "../util/talent-fingerprint.js";
-import { getHeroChoiceLocks } from "../model/talent-combos.js";
+import {
+  getHeroChoiceLocks,
+  generateClusterRoster,
+} from "../model/talent-combos.js";
 import {
   upsertBuild,
   setRosterMembership,
+  clearAllRosterMembership,
   updateBuildDps as dbUpdateBuildDps,
   updateBuildDisplayName,
   getRosterBuilds,
@@ -59,40 +65,52 @@ import {
   closeAll,
 } from "../util/db.js";
 
-// --- Hero tree name normalization ---
-
 function normalizeTreeName(tree) {
   if (!tree) return tree;
   return tree.replace(/\s+/g, "_").toLowerCase();
 }
 
-// --- Hero tree abbreviations ---
+const HERO_ABBREVS = {
+  aldrachi_reaver: "AR",
+  "Aldrachi Reaver": "AR",
+  annihilator: "Anni",
+  Annihilator: "Anni",
+  void_scarred: "VS",
+  "Void Scarred": "VS",
+};
 
 function heroAbbrev(tree) {
-  const abbrevs = {
-    aldrachi_reaver: "AR",
-    "Aldrachi Reaver": "AR",
-    annihilator: "Anni",
-    Annihilator: "Anni",
-    void_scarred: "VS",
-    "Void Scarred": "VS",
-  };
-  if (abbrevs[tree]) return abbrevs[tree];
   if (!tree) return "??";
+  if (HERO_ABBREVS[tree]) return HERO_ABBREVS[tree];
   return tree
     .split(/[\s_]+/)
     .map((w) => w[0]?.toUpperCase())
     .join("");
 }
 
-// --- Display name generation ---
-
 function sourcePrefix(source) {
-  if (source === "community:wowhead") return "WH";
-  if (source === "community:icy-veins") return "IV";
-  if (source === "baseline") return null;
-  if (source === "doe") return null;
-  return source;
+  switch (source) {
+    case "community:wowhead":
+      return "WH";
+    case "community:icy-veins":
+      return "IV";
+    case "baseline":
+    case "doe":
+      return null;
+    default:
+      return source;
+  }
+}
+
+function sourceAbbrev(sourceName) {
+  switch (sourceName) {
+    case "wowhead":
+      return "WH";
+    case "icy-veins":
+      return "IV";
+    default:
+      return sourceName.toUpperCase().slice(0, 2);
+  }
 }
 
 // Regenerate ALL displayNames from talent diffs.
@@ -336,7 +354,280 @@ function isDuplicateBySpecHero(existingHashes, hash) {
   }
 }
 
-// --- Import from DoE discovery ---
+// --- Fingerprint-based dedup helper ---
+
+function isDuplicateByFingerprint(existingFingerprints, hash) {
+  try {
+    return existingFingerprints.has(specHeroFingerprint(hash));
+  } catch {
+    return false;
+  }
+}
+
+function addFingerprint(fingerprintSet, hash) {
+  try {
+    fingerprintSet.add(specHeroFingerprint(hash));
+  } catch {
+    // Non-fatal: fingerprint computation can fail for malformed hashes
+  }
+}
+
+// --- Classify community builds into DoE archetypes ---
+
+// Match a build against DoE-discovered archetypes by checking defining talents.
+// Returns the best-matching archetype name, or a fallback like "Community AR".
+function classifyBuildArchetype(hash, archetypes, heroTree) {
+  if (!archetypes || archetypes.length === 0) {
+    return `Community ${heroAbbrev(heroTree)}`;
+  }
+
+  let specTalents;
+  try {
+    const decoded = decodeTalentNames(hash);
+    specTalents = new Set(decoded.specTalents);
+  } catch {
+    return `Community ${heroAbbrev(heroTree)}`;
+  }
+
+  // Filter archetypes to same hero tree
+  const normalizedTree = normalizeTreeName(heroTree);
+  const treeArchetypes = archetypes.filter((a) => {
+    const aTree = normalizeTreeName(a.heroTree || a.hero_tree);
+    return aTree === normalizedTree;
+  });
+
+  if (treeArchetypes.length === 0) {
+    return `Community ${heroAbbrev(heroTree)}`;
+  }
+
+  let bestMatch = null;
+  let bestCount = 0;
+
+  for (const arch of treeArchetypes) {
+    const defining =
+      typeof arch.definingTalents === "string"
+        ? JSON.parse(arch.definingTalents)
+        : arch.definingTalents || [];
+    if (defining.length === 0) continue;
+
+    // All defining talents must be present
+    const allPresent = defining.every((t) => specTalents.has(t));
+    if (allPresent && defining.length > bestCount) {
+      bestMatch = arch.name;
+      bestCount = defining.length;
+    }
+  }
+
+  return bestMatch || `${normalizedTree}: unclassified`;
+}
+
+// --- Unified import: baseline (fingerprint-aware) ---
+
+function importBaselineUnified(existingFingerprints) {
+  const baselinePath = join(aplsDir(), "baseline.simc");
+  if (!existsSync(baselinePath)) {
+    console.log("  No baseline.simc found — skipping");
+    return { added: 0, hash: null };
+  }
+
+  const content = readFileSync(baselinePath, "utf8");
+  const match = content.match(/^\s*talents\s*=\s*([A-Za-z0-9+/]+)/m);
+  if (!match) {
+    console.log("  No talents= line in baseline.simc — skipping");
+    return { added: 0, hash: null };
+  }
+
+  const hash = match[1];
+  let heroTree;
+  try {
+    heroTree = normalizeTreeName(detectHeroTree(hash));
+  } catch {
+    console.log("  Cannot detect hero tree from baseline — skipping");
+    return { added: 0, hash: null };
+  }
+
+  const ha = heroAbbrev(heroTree);
+  upsertBuild({
+    hash,
+    name: `baseline_${ha}`,
+    displayName: "SimC Default",
+    heroTree,
+    archetype: "SimC Default",
+    source: "baseline",
+    inRoster: true,
+    validated: 1,
+  });
+
+  addFingerprint(existingFingerprints, hash);
+
+  console.log(`  Baseline: ${ha} (1 build)`);
+  return { added: 1, hash };
+}
+
+// --- Unified import: community (fingerprint-aware) ---
+
+function importCommunityUnified(existingFingerprints, archetypes) {
+  const communityBuilds = config.communityBuilds;
+  if (!communityBuilds || communityBuilds.length === 0) {
+    console.log("  No community builds configured — skipping");
+    return { added: 0, skipped: 0 };
+  }
+
+  const baselineClassSelections = getBaselineClassSelections();
+  let added = 0;
+  let skipped = 0;
+  const variantCounters = {};
+
+  for (const cb of communityBuilds) {
+    const rawHash = cb.hash;
+    const sourceName = cb.source;
+
+    let heroTree;
+    try {
+      heroTree = normalizeTreeName(detectHeroTree(rawHash));
+    } catch {
+      skipped++;
+      continue;
+    }
+    if (!heroTree) {
+      skipped++;
+      continue;
+    }
+
+    let normalizedHash;
+    try {
+      normalizedHash = normalizeClassTree(rawHash, baselineClassSelections);
+    } catch {
+      skipped++;
+      continue;
+    }
+
+    if (isDuplicateByFingerprint(existingFingerprints, normalizedHash)) {
+      skipped++;
+      continue;
+    }
+
+    const fullSource = `community:${sourceName}`;
+    const ha = heroAbbrev(heroTree);
+    const counterKey = `${sourceName}|${heroTree}`;
+    variantCounters[counterKey] = (variantCounters[counterKey] || 0) + 1;
+    const n = variantCounters[counterKey];
+    const srcPrefix = sourceAbbrev(sourceName);
+    const name = `${srcPrefix}_${ha}_${n}`;
+
+    // Classify into DoE archetype
+    const archetype = classifyBuildArchetype(
+      normalizedHash,
+      archetypes,
+      heroTree,
+    );
+
+    const validation = validateBuild({ hash: normalizedHash });
+    upsertBuild({
+      hash: normalizedHash,
+      name,
+      heroTree,
+      archetype,
+      source: fullSource,
+      inRoster: true,
+      validated: validation.valid ? 1 : 0,
+      validationErrors: validation.valid ? null : validation.errors,
+    });
+
+    addFingerprint(existingFingerprints, normalizedHash);
+    added++;
+  }
+
+  console.log(`  Community: ${added} added, ${skipped} skipped`);
+  return { added, skipped };
+}
+
+// --- Unified import: DoE (fingerprint-aware, variant-aware) ---
+// For each archetype, ensures coverage of all hero variants (unlocked choice nodes).
+// Picks 1 representative build per variant per archetype. DPS is used only as a
+// --- Unified generate command ---
+
+export function generate() {
+  console.log("=== Generating Build Roster ===\n");
+
+  const archetypes = getArchetypes();
+
+  withTransaction(() => {
+    // Phase 0: Clear roster membership (preserves build records + DPS data)
+    clearAllRosterMembership();
+    console.log("Phase 0: Cleared roster membership\n");
+
+    // Build fingerprint cache for cross-source dedup
+    const fingerprints = new Set();
+
+    // Phase 1: Import baseline
+    console.log("Phase 1: Baseline");
+    importBaselineUnified(fingerprints);
+
+    // Phase 2: Import community (dedup against baseline)
+    console.log("\nPhase 2: Community builds");
+    importCommunityUnified(fingerprints, archetypes);
+
+    // Phase 3: Generate cluster roster
+    // Systematic exploration of cluster permutations × hero tree × variant
+    console.log("\nPhase 3: Cluster roster");
+    const clusterBuilds = generateClusterRoster();
+    let clusterAdded = 0;
+    let clusterSkipped = 0;
+    let clusterInvalid = 0;
+
+    for (const cb of clusterBuilds) {
+      if (!cb.hash) {
+        clusterInvalid++;
+        continue;
+      }
+
+      if (isDuplicateByFingerprint(fingerprints, cb.hash)) {
+        clusterSkipped++;
+        continue;
+      }
+
+      const heroTree = normalizeTreeName(cb.heroTree);
+      const ha = heroAbbrev(heroTree);
+      const variantTag = cb.variant ? `_${cb.variant}` : "";
+      const name = `${ha}_${sanitizeId(cb.template)}${variantTag}_${clusterAdded + 1}`;
+      const archetype = `Apex ${cb.apexRank}: ${cb.template}`;
+
+      const validation = validateBuild({ hash: cb.hash });
+      if (!validation.valid) clusterInvalid++;
+
+      upsertBuild({
+        hash: cb.hash,
+        name,
+        heroTree,
+        archetype,
+        source: "cluster",
+        inRoster: true,
+        validated: validation.valid ? 1 : 0,
+        validationErrors: validation.valid ? null : validation.errors,
+      });
+
+      addFingerprint(fingerprints, cb.hash);
+      clusterAdded++;
+    }
+
+    console.log(
+      `  Cluster: ${clusterAdded} added, ${clusterSkipped} duplicates${clusterInvalid ? `, ${clusterInvalid} invalid` : ""}`,
+    );
+
+    // Phase 4: Generate display names
+    console.log("\nPhase 4: Display names");
+    const allRoster = getRosterBuilds();
+    generateDisplayNames(allRoster);
+    console.log(`  Generated names for ${allRoster.length} builds`);
+  });
+
+  // Phase 5: Show structured summary
+  console.log("");
+  showRoster();
+}
+
+// --- Import from DoE discovery (standalone, incremental) ---
 
 export function importFromDoe() {
   const dbArchetypes = getArchetypes();
@@ -903,73 +1194,140 @@ export function generateHashes() {
 export function showRoster() {
   const builds = getRosterBuilds();
   if (!builds || builds.length === 0) {
-    console.log(
-      "No roster builds found. Run: npm run roster import-doe (or import-community)",
-    );
+    console.log("No roster builds found. Run: npm run roster generate");
     return;
   }
 
-  console.log(`Build Roster (${builds.length} builds, DB-first)\n`);
-
   const hasAnyDps = builds.some((b) => b.weighted);
 
-  if (hasAnyDps) {
-    console.log(
-      `${"Name".padEnd(30)} ${"V".padEnd(2)} ${"Hero".padEnd(18)} ${"Archetype".padEnd(24)} ${"Source".padEnd(20)} ${"Weighted".padStart(10)}`,
-    );
-    console.log("-".repeat(108));
-    for (const b of builds) {
-      const v = b.validated ? "Y" : "N";
-      const w = b.weighted ? Math.round(b.weighted).toLocaleString() : "\u2014";
-      const name = (b.displayName || b.name || b.hash?.slice(0, 16)).slice(
-        0,
-        29,
-      );
-      const heroTree = (b.heroTree || b.hero_tree || "").slice(0, 17);
-      console.log(
-        `${name.padEnd(30)} ${v.padEnd(2)} ${heroTree.padEnd(18)} ${(b.archetype || "").padEnd(24)} ${(b.source || "").padEnd(20)} ${w.padStart(10)}`,
-      );
-    }
-  } else {
-    console.log(
-      `${"Name".padEnd(30)} ${"V".padEnd(2)} ${"Hero".padEnd(18)} ${"Archetype".padEnd(24)} ${"Source".padEnd(20)}`,
-    );
-    console.log("-".repeat(98));
-    for (const b of builds) {
-      const v = b.validated ? "Y" : "N";
-      const name = (b.displayName || b.name || b.hash?.slice(0, 16)).slice(
-        0,
-        29,
-      );
-      const heroTree = (b.heroTree || b.hero_tree || "").slice(0, 17);
-      console.log(
-        `${name.padEnd(30)} ${v.padEnd(2)} ${heroTree.padEnd(18)} ${(b.archetype || "").padEnd(24)} ${(b.source || "").padEnd(20)}`,
-      );
+  let specConfig;
+  try {
+    specConfig = getSpecAdapter().getSpecConfig();
+  } catch {
+    specConfig = null;
+  }
+
+  // Detect hero variant for each build
+  for (const b of builds) {
+    if (!b.hash) continue;
+    const tree = b.heroTree || b.hero_tree;
+    const treeCfg = specConfig?.heroTrees?.[tree];
+    const choiceLocks = treeCfg?.choiceLocks || {};
+    try {
+      const { variant } = detectHeroVariant(b.hash, null, choiceLocks);
+      b._variant = variant;
+    } catch {
+      // Non-fatal
     }
   }
 
-  // Group by hero tree
-  const treeCounts = {};
+  // Group builds by hero tree
+  const byTree = {};
   for (const b of builds) {
     const tree = b.heroTree || b.hero_tree || "unknown";
-    treeCounts[tree] = (treeCounts[tree] || 0) + 1;
+    (byTree[tree] ||= []).push(b);
   }
-  const summary = Object.entries(treeCounts)
-    .map(([tree, count]) => `${count} ${tree}`)
-    .join(" + ");
-  console.log(`\nSummary: ${summary} = ${builds.length} total`);
 
-  // Group by source
+  console.log(`=== Build Roster (${builds.length} builds) ===`);
+
+  for (const [tree, treeBuilds] of Object.entries(byTree)) {
+    const displayTree =
+      specConfig?.heroTrees?.[tree]?.displayName ||
+      tree.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
+    console.log(`\n--- ${displayTree} (${treeBuilds.length} builds) ---`);
+
+    // Check if this tree has multiple variants in the roster
+    const variantNames = new Set(
+      treeBuilds.map((b) => b._variant).filter(Boolean),
+    );
+    const showVariantTag = variantNames.size > 1;
+
+    // Group by archetype (primary organizational unit)
+    const byArchetype = {};
+    for (const b of treeBuilds) {
+      const arch = b.archetype || "unclassified";
+      (byArchetype[arch] ||= []).push(b);
+    }
+
+    // Sort archetypes: baseline first, then by apex rank extracted from name
+    const sortedArchKeys = Object.keys(byArchetype).sort((a, b) => {
+      if (a === "SimC Default") return -1;
+      if (b === "SimC Default") return 1;
+      const apexA = a.match(/^Apex (\d+)/)?.[1] ?? "99";
+      const apexB = b.match(/^Apex (\d+)/)?.[1] ?? "99";
+      return Number(apexA) - Number(apexB) || a.localeCompare(b);
+    });
+
+    for (const arch of sortedArchKeys) {
+      const archBuilds = byArchetype[arch];
+      // Sort: baseline first, then by variant for consistent display
+      archBuilds.sort((a, b) => {
+        if (a.source === "baseline") return -1;
+        if (b.source === "baseline") return 1;
+        const va = a._variant || "";
+        const vb = b._variant || "";
+        return va.localeCompare(vb);
+      });
+
+      console.log(`\n  ${arch} (${archBuilds.length}):`);
+
+      for (const b of archBuilds) {
+        const name = (b.displayName || b.name || b.hash?.slice(0, 16)).slice(
+          0,
+          28,
+        );
+        const src = (b.source || "cluster").padEnd(12);
+        const vTag =
+          showVariantTag && b._variant
+            ? `[${b._variant}]`.padEnd(22)
+            : "".padEnd(22);
+        const w =
+          hasAnyDps && b.weighted
+            ? Math.round(b.weighted).toLocaleString().padStart(10)
+            : "";
+        console.log(`    ${name.padEnd(29)} ${src}${vTag}${w}`);
+      }
+    }
+  }
+
+  // Summary
+  const treeSummary = Object.entries(byTree)
+    .map(([tree, treeBuilds]) => `${treeBuilds.length} ${heroAbbrev(tree)}`)
+    .join(" + ");
+  console.log(`\nSummary: ${treeSummary} = ${builds.length} total`);
+
+  // Template/archetype count
+  const archSet = new Set(builds.map((b) => b.archetype).filter(Boolean));
+  console.log(`Templates: ${archSet.size}`);
+
+  // Apex rank breakdown
+  const apexCounts = {};
+  for (const b of builds) {
+    const apexMatch = b.archetype?.match(/^Apex (\d+)/);
+    let rank = "other";
+    if (apexMatch) rank = `Apex ${apexMatch[1]}`;
+    else if (b.source === "baseline") rank = "baseline";
+    apexCounts[rank] = (apexCounts[rank] || 0) + 1;
+  }
+  const apexBreakdown = Object.entries(apexCounts)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([rank, count]) => `${count} ${rank}`)
+    .join(", ");
+  console.log(`Apex ranks: ${apexBreakdown}`);
+
+  // Source breakdown
   const sourceCounts = {};
   for (const b of builds) {
-    sourceCounts[b.source] = (sourceCounts[b.source] || 0) + 1;
+    const src = b.source?.startsWith("community:") ? "community" : b.source;
+    sourceCounts[src] = (sourceCounts[src] || 0) + 1;
   }
   const sourceBreakdown = Object.entries(sourceCounts)
     .map(([src, count]) => `${count} ${src}`)
     .join(", ");
   console.log(`Sources: ${sourceBreakdown}`);
 
-  // Show validation status
+  // Validation warnings
   const invalidBuilds = builds.filter((b) => !b.validated);
   if (invalidBuilds.length > 0) {
     console.log(`\nWARNING: ${invalidBuilds.length} invalid build(s):`);
@@ -1175,6 +1533,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const [cmd, ...args] = process.argv.slice(2);
 
   switch (cmd) {
+    case "generate":
+      generate();
+      break;
+
     case "show":
       showRoster();
       break;
@@ -1301,7 +1663,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       console.log(`Build Roster Manager (DB-first)
 
 Usage:
-  node src/sim/build-roster.js show                              Show roster
+  node src/sim/build-roster.js generate                          Build full layered roster (recommended)
+  node src/sim/build-roster.js show                              Show roster (hierarchical)
   node src/sim/build-roster.js import-doe                        Import from DB archetypes (DoE)
   node src/sim/build-roster.js import-community                  Import community builds from config
   node src/sim/build-roster.js import-baseline                   Import baseline.simc build
