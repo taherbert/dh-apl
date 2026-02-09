@@ -1,3 +1,7 @@
+---
+description: Full cross-reference data verification audit. Cross-references Raidbots, simc C++, SpellDataDump, and our data files.
+---
+
 Full cross-reference data verification audit. Cross-references Raidbots, simc C++, SpellDataDump, and our data files. Reports findings and fixes what can be fixed.
 
 ## Verification Hierarchy

@@ -1,3 +1,7 @@
+---
+description: Run npm run build-data to regenerate all data files for the active spec.
+---
+
 Run `npm run build-data` to regenerate all data files for the active spec.
 
 ## Setup

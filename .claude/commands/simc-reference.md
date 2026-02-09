@@ -1,3 +1,8 @@
+---
+description: Look up SimC syntax, expressions, and mechanics from the wiki reference docs.
+argument-hint: "[topic: syntax|expressions|dh|equipment|overrides|profilesets|output|stats|enemies|characters|options|developer|all]"
+---
+
 Look up SimC syntax, expressions, and mechanics from the wiki reference docs.
 
 ## Topic Selection
