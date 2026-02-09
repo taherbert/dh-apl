@@ -1024,7 +1024,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     aplText = readFileSync(aplPath, "utf-8");
   }
 
-  const spellDataPath = dataFile("spells.json");
+  const spellDataPath = dataFile("spells-summary.json");
   const spellData = existsSync(spellDataPath)
     ? JSON.parse(readFileSync(spellDataPath, "utf-8"))
     : [];
@@ -1034,7 +1034,4 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   const hypotheses = generateTemporalHypotheses(resourceFlow, aplText);
   printTemporalHypotheses(hypotheses);
-
-  console.log("\n--- JSON Output (top 5) ---");
-  console.log(JSON.stringify(hypotheses.slice(0, 5), null, 2));
 }
