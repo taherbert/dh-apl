@@ -786,12 +786,20 @@ export function pruneBuilds({ threshold = 1.0 } = {}) {
     const bestW = groupBuilds[0].weighted || 0;
     if (bestW === 0) continue;
 
+    const minKeep = 2;
+    let retained = 1; // best build is always kept
     for (let i = 1; i < groupBuilds.length; i++) {
       const w = groupBuilds[i].weighted || 0;
+      if (w === 0) continue;
+
       const deltaPercent = ((bestW - w) / bestW) * 100;
-      if (w > 0 && deltaPercent > threshold) {
+      const shouldPrune = deltaPercent > threshold && retained >= minKeep;
+
+      if (shouldPrune) {
         setRosterMembership(groupBuilds[i].hash, false);
         pruned++;
+      } else {
+        retained++;
       }
     }
   }

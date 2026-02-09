@@ -112,10 +112,10 @@ export const SPEC_CONFIG = {
       ],
       aplBranch: "ar",
       profileKeywords: ["aldrachi", "reaver"],
-      // Hero choice locks: lock defensive-only choices, unlock DPS-relevant ones
-      // 94911: Unhindered Assault (DPS via Felblade reset) > Evasive Action (defensive)
-      // 94896: Army Unto Oneself / Incorruptible Spirit (both defensive, no DPS)
-      // 94910: Keen Engagement (Fury gen) vs Preemptive Strike (AoE dmg) — unlocked, DPS tradeoff
+      // Hero choice locks: defensive-only choices locked to 0, DPS-relevant unlocked for DoE
+      // 94911: Locked to Unhindered Assault (DPS via Felblade reset)
+      // 94896: Locked to 0 (Army Unto Oneself / Incorruptible Spirit both defensive)
+      // 94910: Unlocked (Keen Engagement vs Preemptive Strike — both have DPS value)
       choiceLocks: { 94911: 1, 94896: 0 },
     },
     annihilator: {

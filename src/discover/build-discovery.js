@@ -36,6 +36,20 @@ const FIDELITY = {
   confirm: { target_error: 0.2, label: "confirm" },
 };
 
+// --- Helpers ---
+
+function injectFallbackTalents(profileContent, fallbackHash) {
+  if (!fallbackHash || profileContent.match(/^\s*talents\s*=/m)) {
+    return profileContent;
+  }
+  // Midnight SimC crashes on talent-less actors. Inject first build's hash
+  // before actions to prevent segfault. Profileset variants override this.
+  return profileContent.replace(
+    /^(actions\.precombat)/m,
+    `talents=${fallbackHash}\n\n$1`,
+  );
+}
+
 // --- Step 1: Generate builds and encode hashes ---
 
 function generateBuilds(opts = {}) {
@@ -104,20 +118,12 @@ async function simBuilds(builds, aplPath, fidelity, data) {
     threads: threadsPerScenario,
   };
 
-  // Inject first build's talent hash into base actor to prevent segfault
-  // when profile.simc has no talents (Midnight SimC crashes on talent-less actors)
-  const baselineHash = builds[0]?.hash;
-
   // Run scenarios in parallel, splitting threads across them
   const promises = scenarios.map(async (scenario) => {
-    let content = generateProfileset(aplPath, variants);
-    if (baselineHash && !content.match(/^\s*talents\s*=/m)) {
-      // Insert talents= before first actions line
-      content = content.replace(
-        /^(actions\.precombat)/m,
-        `talents=${baselineHash}\n\n$1`,
-      );
-    }
+    const content = injectFallbackTalents(
+      generateProfileset(aplPath, variants),
+      builds[0]?.hash,
+    );
     const result = await runProfilesetAsync(
       content,
       scenario,
@@ -289,27 +295,23 @@ function discoverArchetypes(
     return build.specNodes?.includes(fi.nodeId);
   }
 
-  // Split builds by hero tree
-  const byTree = {};
-  for (const b of builds) {
-    const tree = b.heroTree.toLowerCase().replace(/\s+/g, "_");
-    (byTree[tree] ||= []).push(b);
-  }
-
-  // Discover archetypes within each hero tree independently
-  const allArchetypes = [];
-  for (const [treeName, treeBuilds] of Object.entries(byTree)) {
+  function computeFormingFactors(
+    treeBuilds,
+    factorImpacts,
+    synergyPairs,
+    threshold,
+    hasFactor,
+  ) {
     const sorted = [...treeBuilds].sort((a, b) => b.weighted - a.weighted);
     const topHalf = sorted.slice(0, Math.ceil(sorted.length / 2));
 
-    // Compute adoption rates within THIS tree's top builds
     const candidateFactors = factorImpacts
       .filter((fi) => Math.abs(fi.mainEffect) > threshold)
-      .map((fi) => {
-        const topAdoption =
-          topHalf.filter((b) => hasFactor(b, fi)).length / topHalf.length;
-        return { ...fi, topAdoption };
-      })
+      .map((fi) => ({
+        ...fi,
+        topAdoption:
+          topHalf.filter((b) => hasFactor(b, fi)).length / topHalf.length,
+      }))
       .filter((fi) => fi.topAdoption >= 0.15 && fi.topAdoption <= 0.85)
       .sort((a, b) => Math.abs(b.mainEffect) - Math.abs(a.mainEffect));
 
@@ -324,7 +326,6 @@ function discoverArchetypes(
       dedupedFactors.slice(0, MAX_FORMING_FACTORS).map((f) => f.talent),
     );
 
-    // Boost from synergy pairs
     for (const sp of synergyPairs) {
       if (formingFactorNames.size >= MAX_FORMING_FACTORS) break;
       const combined =
@@ -347,40 +348,57 @@ function discoverArchetypes(
       }
     }
 
-    if (formingFactorNames.size === 0) {
-      // No differentiating factors — single archetype for this tree
-      treeBuilds.sort((a, b) => b.weighted - a.weighted);
+    const formingFactorSeen = new Set();
+    return factorImpacts.filter((f) => {
+      if (!formingFactorNames.has(f.talent) || formingFactorSeen.has(f.talent))
+        return false;
+      formingFactorSeen.add(f.talent);
+      return true;
+    });
+  }
+
+  function createFallbackArchetype(treeName, treeBuilds, allBuilds, data) {
+    treeBuilds.sort((a, b) => b.weighted - a.weighted);
+    return formatArchetype(
+      {
+        heroTree: treeName,
+        definingTalents: [],
+        bestBuild: treeBuilds[0],
+        builds: treeBuilds,
+        avgWeighted:
+          treeBuilds.reduce((s, b) => s + b.weighted, 0) / treeBuilds.length,
+        count: treeBuilds.length,
+      },
+      allBuilds,
+      data,
+    );
+  }
+
+  // Split builds by hero tree
+  const byTree = {};
+  for (const b of builds) {
+    const tree = b.heroTree.toLowerCase().replace(/\s+/g, "_");
+    (byTree[tree] ||= []).push(b);
+  }
+
+  // Discover archetypes within each hero tree independently
+  const allArchetypes = [];
+  for (const [treeName, treeBuilds] of Object.entries(byTree)) {
+    const formingFactors = computeFormingFactors(
+      treeBuilds,
+      factorImpacts,
+      synergyPairs,
+      threshold,
+      hasFactor,
+    );
+
+    if (formingFactors.length === 0) {
       allArchetypes.push(
-        formatArchetype(
-          {
-            heroTree: treeName,
-            definingTalents: [],
-            bestBuild: treeBuilds[0],
-            builds: treeBuilds,
-            avgWeighted:
-              treeBuilds.reduce((s, b) => s + b.weighted, 0) /
-              treeBuilds.length,
-            count: treeBuilds.length,
-          },
-          builds,
-          data,
-        ),
+        createFallbackArchetype(treeName, treeBuilds, builds, data),
       );
       console.log(`  ${treeName}: 0 forming factors → 1 archetype (fallback)`);
       continue;
     }
-
-    const formingFactorSeen = new Set();
-    const formingFactors = factorImpacts.filter((f) => {
-      if (
-        !formingFactorNames.has(f.talent) ||
-        formingFactorSeen.has(f.talent)
-      ) {
-        return false;
-      }
-      formingFactorSeen.add(f.talent);
-      return true;
-    });
 
     console.log(
       `  ${treeName}: ${formingFactors.length} forming factors: ${formingFactors.map((f) => f.talent).join(", ")}`,
@@ -482,7 +500,12 @@ function discoverArchetypes(
       `  ${treeName}: ${groups.size} raw → ${merged.length} after merge`,
     );
     for (const arch of merged) {
-      allArchetypes.push(formatArchetype(arch, builds, data));
+      const formatted = formatArchetype(arch, builds, data);
+      // Tag all builds in this archetype for DB persistence
+      for (const b of arch.builds) {
+        b.archetype = formatted.name;
+      }
+      allArchetypes.push(formatted);
     }
   }
 
@@ -645,6 +668,7 @@ function buildOutput(
       weighted: Math.round(b.weighted),
       rank: b.rank,
       pinned: b.pinned || false,
+      archetype: b.archetype || null,
     })),
   };
 }
@@ -783,6 +807,7 @@ async function discover(opts = {}) {
           dps_big_aoe: b.dps?.big_aoe,
           weighted: b.weighted,
           rank: b.rank,
+          archetype: b.archetype,
         });
       }
       for (const fi of output.factorImpacts) {
