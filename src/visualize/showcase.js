@@ -1,21 +1,16 @@
 // Generates a self-contained HTML showcase report for sharing APL optimization results.
-// Compares our APL against the SimC default (baseline) across multiple talent builds.
+// Compares our APL against the SimC default (baseline) across the FULL roster.
+// Uses profileset mode for efficient batch simulation of all builds.
 //
 // Usage: node src/visualize/showcase.js [options]
-//   --skip-sims           Generate from cached roster DPS only (no SimC HTML reports)
+//   --skip-sims           Generate from cached DB DPS only (no sims)
 //   --fidelity <tier>     quick|standard|confirm (default: standard)
-//   --builds <N>          Builds per hero tree for showcase sims (default: 3)
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, resolve, dirname } from "node:path";
-import { execFile } from "node:child_process";
-import { promisify } from "node:util";
-import { cpus } from "node:os";
 
 import {
   config,
-  SIMC_BIN,
-  DATA_ENV,
   SCENARIOS,
   SCENARIO_WEIGHTS,
   FIDELITY_TIERS,
@@ -23,25 +18,27 @@ import {
   getSpecAdapter,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import { resultsDir, resultsFile, aplsDir, ROOT } from "../engine/paths.js";
+import { resultsDir, aplsDir } from "../engine/paths.js";
 import { loadRoster } from "../sim/build-roster.js";
-import { generateMultiActorContent } from "../sim/multi-actor.js";
-import { parseMultiActorResults } from "../sim/runner.js";
-import { resolveInputDirectives } from "../sim/profilesets.js";
+import {
+  generateRosterProfilesetContent,
+  runProfilesetAsync,
+  profilesetResultsToActorMap,
+  resolveInputDirectives,
+} from "../sim/profilesets.js";
 import { parse, getActionLists } from "../apl/parser.js";
-import { getIterations, getTheory } from "../util/db.js";
-
-const execFileAsync = promisify(execFile);
+import {
+  getIterations,
+  getTheory,
+  updateBuildDps,
+  updateBuildSimcDps,
+} from "../util/db.js";
 
 // --- CLI ---
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const opts = {
-    skipSims: false,
-    fidelity: "standard",
-    buildsPerTree: 3,
-  };
+  const opts = { skipSims: false, fidelity: "standard" };
 
   for (let i = 0; i < args.length; i++) {
     switch (args[i]) {
@@ -51,110 +48,20 @@ function parseArgs() {
       case "--fidelity":
         opts.fidelity = args[++i];
         break;
-      case "--builds":
-        opts.buildsPerTree = parseInt(args[++i], 10);
-        break;
     }
   }
 
   return opts;
 }
 
-// --- Build selection ---
+// --- Sim execution (profileset mode) ---
 
-function selectShowcaseBuilds(roster, communityBuilds, buildsPerTree) {
-  const byTree = {};
-  for (const build of roster.builds) {
-    (byTree[build.heroTree] ||= []).push(build);
-  }
-
-  // Sort each tree by weighted DPS descending, pick top N
-  const selected = [];
-  for (const builds of Object.values(byTree)) {
-    builds.sort(
-      (a, b) => (b.lastDps?.weighted || 0) - (a.lastDps?.weighted || 0),
-    );
-    selected.push(...builds.slice(0, buildsPerTree));
-  }
-
-  // Add community builds (skip duplicates by hash)
-  const selectedHashes = new Set(selected.map((b) => b.hash).filter(Boolean));
-  for (const cb of communityBuilds) {
-    if (selectedHashes.has(cb.hash)) continue;
-    selected.push({
-      id: `Community_${cb.name.replace(/[^a-zA-Z0-9]+/g, "_")}`,
-      archetype: cb.name,
-      heroTree: cb.heroTree,
-      hash: cb.hash,
-      source: cb.source || "community",
-      lastDps: null,
-    });
-    selectedHashes.add(cb.hash);
-  }
-
-  return selected.slice(0, 12);
-}
-
-// --- Sim execution ---
-
-async function runShowcaseSim(
-  miniRoster,
-  aplPath,
-  scenario,
-  label,
-  outputDir,
-  fidelityOpts,
-) {
-  const content = generateMultiActorContent({ builds: miniRoster }, aplPath);
-
-  mkdirSync(outputDir, { recursive: true });
-
-  const simcPath = join(outputDir, `${label}_${scenario}.simc`);
-  const jsonPath = join(outputDir, `${label}_${scenario}.json`);
-  const htmlPath = join(outputDir, `${label}_${scenario}.html`);
-
-  writeFileSync(simcPath, content);
-
-  const scenarioConfig = SCENARIOS[scenario];
-  const threads = cpus().length;
-
-  const args = [
-    simcPath,
-    `max_time=${scenarioConfig.maxTime}`,
-    `desired_targets=${scenarioConfig.desiredTargets}`,
-    `target_error=${fidelityOpts.target_error}`,
-    `iterations=5000000`,
-    `json2=${jsonPath}`,
-    `html=${htmlPath}`,
-    `threads=${threads}`,
-    "buff_uptime_timeline=0",
-    "buff_stack_uptime_timeline=0",
-  ];
-
-  if (DATA_ENV === "ptr" || DATA_ENV === "beta") {
-    args.unshift("ptr=1");
-  }
-
-  console.log(`  Running ${label} ${scenarioConfig.name}...`);
-  try {
-    await execFileAsync(SIMC_BIN, args, {
-      maxBuffer: 100 * 1024 * 1024,
-      timeout: 600000,
-    });
-  } catch (e) {
-    if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
-    throw new Error(`SimC failed for ${label}_${scenario}: ${e.message}`);
-  }
-
-  let data;
-  try {
-    data = JSON.parse(readFileSync(jsonPath, "utf-8"));
-  } catch (e) {
-    throw new Error(
-      `Failed to parse SimC output for ${label}_${scenario}: ${e.message}`,
-    );
-  }
-  return parseMultiActorResults(data);
+async function runRosterSim(roster, aplPath, scenario, label, fidelityOpts) {
+  const content = generateRosterProfilesetContent(roster, aplPath);
+  const results = await runProfilesetAsync(content, scenario, label, {
+    simOverrides: { target_error: fidelityOpts.target_error },
+  });
+  return profilesetResultsToActorMap(results, roster);
 }
 
 // --- APL diff ---
@@ -226,30 +133,6 @@ function readResolvedApl(aplPath) {
   return resolveInputDirectives(raw, dirname(resolved));
 }
 
-// --- Build rankings from roster ---
-
-function computeRankings(roster) {
-  const builds = roster.builds.filter((b) => b.lastDps?.weighted);
-  builds.sort((a, b) => b.lastDps.weighted - a.lastDps.weighted);
-
-  const topOverall = builds.slice(0, 5);
-
-  const topByScenario = {};
-  for (const scenario of Object.keys(SCENARIOS)) {
-    topByScenario[scenario] = [...builds]
-      .filter((b) => b.lastDps?.[scenario])
-      .sort((a, b) => b.lastDps[scenario] - a.lastDps[scenario])
-      .slice(0, 3);
-  }
-
-  const topByTree = {};
-  for (const build of builds) {
-    topByTree[build.heroTree] ||= build;
-  }
-
-  return { topOverall, topByScenario, topByTree };
-}
-
 // --- Iteration changelog ---
 
 function loadChangelog() {
@@ -278,60 +161,127 @@ function loadChangelog() {
   }
 }
 
+// --- Merge sim results into per-build data ---
+
+function mergeSimResults(roster, baselineMaps, oursMaps) {
+  const builds = [];
+
+  for (const build of roster.builds) {
+    const row = {
+      id: build.id,
+      displayName: build.displayName || build.id,
+      archetype: build.archetype || "",
+      heroTree: build.heroTree || "",
+      hash: build.hash,
+      source: build.source || "",
+      ours: {},
+      baseline: {},
+    };
+
+    for (const scenario of Object.keys(SCENARIOS)) {
+      const bMap = baselineMaps[scenario];
+      const oMap = oursMaps[scenario];
+      row.baseline[scenario] = bMap?.get(build.id)?.dps || 0;
+      row.ours[scenario] = oMap?.get(build.id)?.dps || 0;
+    }
+
+    // Compute weighted
+    row.baseline.weighted = Object.keys(SCENARIOS).reduce(
+      (sum, s) => sum + (row.baseline[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
+      0,
+    );
+    row.ours.weighted = Object.keys(SCENARIOS).reduce(
+      (sum, s) => sum + (row.ours[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
+      0,
+    );
+
+    builds.push(row);
+  }
+
+  return builds;
+}
+
+// Store sim results back to DB
+function persistSimResults(roster, buildData) {
+  for (const row of buildData) {
+    const build = roster.builds.find((b) => b.id === row.id);
+    if (!build?.hash) continue;
+
+    // Our APL DPS
+    if (row.ours.weighted > 0) {
+      updateBuildDps(build.hash, {
+        st: Math.round(row.ours.st || 0),
+        small_aoe: Math.round(row.ours.small_aoe || 0),
+        big_aoe: Math.round(row.ours.big_aoe || 0),
+      });
+    }
+
+    // SimC baseline DPS
+    if (row.baseline.weighted > 0) {
+      updateBuildSimcDps(build.hash, {
+        st: Math.round(row.baseline.st || 0),
+        small_aoe: Math.round(row.baseline.small_aoe || 0),
+        big_aoe: Math.round(row.baseline.big_aoe || 0),
+      });
+    }
+  }
+}
+
+// Load cached results from DB (for --skip-sims)
+function loadCachedResults(roster) {
+  const builds = [];
+  for (const build of roster.builds) {
+    const row = {
+      id: build.id,
+      displayName: build.displayName || build.id,
+      archetype: build.archetype || "",
+      heroTree: build.heroTree || "",
+      hash: build.hash,
+      source: build.source || "",
+      ours: {
+        st: build.lastDps?.st || 0,
+        small_aoe: build.lastDps?.small_aoe || 0,
+        big_aoe: build.lastDps?.big_aoe || 0,
+        weighted: build.lastDps?.weighted || 0,
+      },
+      baseline: { st: 0, small_aoe: 0, big_aoe: 0, weighted: 0 },
+    };
+
+    // simcDps comes from the DB rowToBuild
+    const rawBuilds = roster._rawBuilds;
+    const dbBuild = rawBuilds?.find((b) => b.hash === build.hash);
+    if (dbBuild?.simcDps) {
+      row.baseline = { ...dbBuild.simcDps };
+    }
+
+    builds.push(row);
+  }
+  return builds;
+}
+
 // --- HTML generation ---
 
-function generateHtml({
-  specName,
-  diff,
-  rankings,
-  communityBuilds,
-  simResults,
-  changelog,
-  skipSims,
-}) {
+function generateHtml({ specName, diff, buildData, changelog }) {
   const displaySpec = specName
     .replace(/_/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
   const date = new Date().toISOString().split("T")[0];
 
-  // Compute summary line
-  let summaryLine = "";
-  if (simResults && simResults.length > 0) {
-    const avgDelta = computeAvgDelta(simResults);
-    const buildCount = simResults[0].builds.length;
-    summaryLine = `Our APL improves DPS by ${avgDelta >= 0 ? "+" : ""}${avgDelta.toFixed(2)}% (weighted) across ${buildCount} builds.`;
-  } else if (rankings.topOverall.length > 0) {
-    summaryLine = `Ranked ${rankings.topOverall.length} builds. Top weighted DPS: ${fmt(rankings.topOverall[0].lastDps.weighted)}.`;
-  }
+  // Summary stats
+  const hasBaseline = buildData.some((b) => b.baseline.weighted > 0);
+  const stats = computeStats(buildData, hasBaseline);
 
   const sections = [];
 
-  // TL;DR
-  if (summaryLine) {
-    sections.push(`<section class="tldr"><p>${esc(summaryLine)}</p></section>`);
-  }
+  // Summary cards
+  sections.push(renderSummaryCards(stats, hasBaseline, buildData.length));
 
-  // DPS Comparison Table (from sims)
-  if (simResults && simResults.length > 0) {
-    sections.push(renderComparisonTable(simResults));
-  }
+  // Full roster table grouped by hero tree
+  sections.push(renderRosterTable(buildData, hasBaseline));
 
-  // APL Changes Summary
+  // APL diff
   if (diff) {
     sections.push(renderAplDiff(diff));
-  }
-
-  // Build Rankings (from cached roster)
-  sections.push(renderRankings(rankings));
-
-  // Community Builds
-  if (communityBuilds.length > 0) {
-    sections.push(renderCommunityBuilds(communityBuilds, rankings));
-  }
-
-  // SimC Reports links
-  if (!skipSims && simResults) {
-    sections.push(renderSimLinks());
   }
 
   // Changelog
@@ -352,81 +302,192 @@ ${CSS}
 <body>
 <header>
   <h1>${esc(displaySpec)} APL Showcase</h1>
-  <p class="meta">Generated ${date} &middot; Midnight &middot; DPS Optimization</p>
+  <p class="meta">Generated ${date} &middot; Midnight &middot; DPS Optimization &middot; ${buildData.length} builds</p>
 </header>
 <main>
 ${sections.join("\n")}
 </main>
 <footer>
-  <p>Generated by <a href="https://github.com/dh-apl">dh-apl</a> &middot; SimulationCraft</p>
+  <p>Generated by dh-apl &middot; SimulationCraft</p>
 </footer>
+<script>
+${JS}
+</script>
 </body>
 </html>
 `;
 }
 
-function computeAvgDelta(simResults) {
-  // Each simResult has { scenario, builds: [{ id, baseline, ours }] }
-  // Compute weighted average delta across scenarios
-  let totalWeight = 0;
-  let totalDelta = 0;
+function computeStats(buildData, hasBaseline) {
+  const scenarios = Object.keys(SCENARIOS);
+  const stats = {
+    avgDelta: 0,
+    bestBuild: null,
+    worstBuild: null,
+    perScenario: {},
+    scenarioWinners: {},
+  };
 
-  for (const sr of simResults) {
-    const weight = SCENARIO_WEIGHTS[sr.scenario] || 0;
-    for (const b of sr.builds) {
-      if (b.baseline > 0) {
-        totalDelta += ((b.ours - b.baseline) / b.baseline) * 100 * weight;
-        totalWeight += weight;
-      }
+  if (!hasBaseline) return stats;
+
+  let totalWeightedDelta = 0;
+  let count = 0;
+
+  for (const b of buildData) {
+    if (b.baseline.weighted <= 0) continue;
+    const delta =
+      ((b.ours.weighted - b.baseline.weighted) / b.baseline.weighted) * 100;
+    totalWeightedDelta += delta;
+    count++;
+
+    if (!stats.bestBuild || delta > stats.bestBuild.delta) {
+      stats.bestBuild = { name: b.displayName, delta };
+    }
+    if (!stats.worstBuild || delta < stats.worstBuild.delta) {
+      stats.worstBuild = { name: b.displayName, delta };
     }
   }
 
-  return totalWeight > 0 ? totalDelta / totalWeight : 0;
+  stats.avgDelta = count > 0 ? totalWeightedDelta / count : 0;
+
+  for (const s of scenarios) {
+    let total = 0;
+    let n = 0;
+    let best = null;
+
+    for (const b of buildData) {
+      if (b.baseline[s] <= 0) continue;
+      const delta = ((b.ours[s] - b.baseline[s]) / b.baseline[s]) * 100;
+      total += delta;
+      n++;
+
+      if (!best || b.ours[s] > best.dps) {
+        best = { name: b.displayName, dps: b.ours[s], delta };
+      }
+    }
+
+    stats.perScenario[s] = { avgDelta: n > 0 ? total / n : 0 };
+    stats.scenarioWinners[s] = best;
+  }
+
+  return stats;
 }
 
-function renderComparisonTable(simResults) {
-  const scenarios = simResults.map((sr) => sr.scenario);
-  const buildIds = simResults[0].builds.map((b) => b.id);
+function renderSummaryCards(stats, hasBaseline, buildCount) {
+  if (!hasBaseline) {
+    return `<section class="cards">
+  <div class="card"><div class="card-value">${buildCount}</div><div class="card-label">Roster builds</div></div>
+  <div class="card"><div class="card-value">No baseline</div><div class="card-label">Run sims to compare</div></div>
+</section>`;
+  }
 
-  let html = `<section>
-<h2>DPS Comparison: Our APL vs Baseline</h2>
-<table>
-<thead>
-<tr>
-  <th>Build</th>`;
+  const scenarios = Object.keys(SCENARIOS);
+  let html = `<section class="cards">
+  <div class="card accent"><div class="card-value ${stats.avgDelta >= 0 ? "positive" : "negative"}">${fmtDelta(stats.avgDelta)}</div><div class="card-label">Avg weighted improvement</div></div>
+  <div class="card"><div class="card-value">${buildCount}</div><div class="card-label">Roster builds</div></div>`;
 
   for (const s of scenarios) {
-    const name = SCENARIOS[s]?.name || s;
-    html += `<th colspan="3">${esc(name)}</th>`;
-  }
-  html += `</tr>
-<tr>
-  <th></th>`;
-  for (const s of scenarios) {
-    html += `<th>Baseline</th><th>Ours</th><th>Delta</th>`;
-  }
-  html += `</tr>
-</thead>
-<tbody>`;
-
-  for (const buildId of buildIds) {
-    html += `<tr><td class="build-id">${esc(buildId)}</td>`;
-    for (const sr of simResults) {
-      const b = sr.builds.find((x) => x.id === buildId);
-      if (!b) {
-        html += `<td>—</td><td>—</td><td>—</td>`;
-        continue;
-      }
-      const delta =
-        b.baseline > 0 ? ((b.ours - b.baseline) / b.baseline) * 100 : 0;
-      const cls = delta >= 0 ? "positive" : "negative";
-      html += `<td>${fmt(b.baseline)}</td><td>${fmt(b.ours)}</td><td class="${cls}">${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%</td>`;
-    }
-    html += `</tr>`;
+    const sd = stats.perScenario[s];
+    const name = SCENARIOS[s].name;
+    html += `\n  <div class="card"><div class="card-value ${sd.avgDelta >= 0 ? "positive" : "negative"}">${fmtDelta(sd.avgDelta)}</div><div class="card-label">${esc(name)} avg</div></div>`;
   }
 
-  html += `</tbody></table></section>`;
+  if (stats.bestBuild) {
+    html += `\n  <div class="card"><div class="card-value positive">${fmtDelta(stats.bestBuild.delta)}</div><div class="card-label">Best: ${esc(stats.bestBuild.name)}</div></div>`;
+  }
+  if (stats.worstBuild) {
+    html += `\n  <div class="card"><div class="card-value ${stats.worstBuild.delta >= 0 ? "positive" : "negative"}">${fmtDelta(stats.worstBuild.delta)}</div><div class="card-label">Worst: ${esc(stats.worstBuild.name)}</div></div>`;
+  }
+
+  html += `\n</section>`;
   return html;
+}
+
+function renderRosterTable(buildData, hasBaseline) {
+  // Group by hero tree
+  const byTree = {};
+  for (const b of buildData) {
+    const tree = b.heroTree || "Unknown";
+    (byTree[tree] ||= []).push(b);
+  }
+
+  const scenarios = Object.keys(SCENARIOS);
+  let html = `<section>\n<h2>Full Roster Comparison</h2>`;
+
+  for (const [tree, builds] of Object.entries(byTree)) {
+    const displayTree = tree
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+
+    // Sort by weighted DPS descending (ours)
+    builds.sort((a, b) => (b.ours.weighted || 0) - (a.ours.weighted || 0));
+
+    // Find per-scenario top builds within this tree
+    const topPerScenario = {};
+    for (const s of scenarios) {
+      let best = null;
+      for (const b of builds) {
+        if (!best || (b.ours[s] || 0) > (best.ours[s] || 0)) best = b;
+      }
+      if (best) topPerScenario[s] = best.id;
+    }
+    // Top weighted
+    const topWeighted = builds[0]?.id;
+
+    html += `\n<h3>${esc(displayTree)} <span class="build-count">(${builds.length} builds)</span></h3>`;
+    html += `\n<div class="table-wrap"><table class="roster-table" data-tree="${esc(tree)}">`;
+    html += `\n<thead><tr>
+  <th class="sortable" data-col="name">Build</th>
+  <th class="sortable" data-col="archetype">Template</th>`;
+
+    for (const s of scenarios) {
+      const name = SCENARIOS[s].name;
+      html += `\n  <th class="sortable num" data-col="${s}">${esc(name)}</th>`;
+    }
+
+    html += `\n  <th class="sortable num" data-col="weighted">Weighted</th>`;
+    html += `\n</tr></thead>\n<tbody>`;
+
+    for (const b of builds) {
+      html += `\n<tr>`;
+      html += `<td class="build-name">${esc(b.displayName)}</td>`;
+      html += `<td class="archetype-cell">${esc(b.archetype)}</td>`;
+
+      for (const s of scenarios) {
+        const isTop = topPerScenario[s] === b.id;
+        html += renderDpsCell(b.ours[s], b.baseline[s], hasBaseline, isTop);
+      }
+
+      const isTopW = topWeighted === b.id;
+      html += renderDpsCell(
+        b.ours.weighted,
+        b.baseline.weighted,
+        hasBaseline,
+        isTopW,
+      );
+
+      html += `</tr>`;
+    }
+
+    html += `\n</tbody></table></div>`;
+  }
+
+  html += `\n</section>`;
+  return html;
+}
+
+function renderDpsCell(ourDps, baselineDps, hasBaseline, isTop) {
+  const topClass = isTop ? " top-build" : "";
+  const badge = isTop ? '<span class="badge">TOP</span>' : "";
+
+  if (!hasBaseline || baselineDps <= 0) {
+    return `<td class="dps-cell${topClass}">${fmt(ourDps)}${badge}</td>`;
+  }
+
+  const delta = ((ourDps - baselineDps) / baselineDps) * 100;
+  const cls = delta >= 0 ? "positive" : "negative";
+
+  return `<td class="dps-cell${topClass}" title="Baseline: ${fmt(baselineDps)}" data-dps="${Math.round(ourDps)}" data-delta="${delta.toFixed(2)}">${fmt(ourDps)} <span class="${cls}">(${fmtDelta(delta)})</span>${badge}</td>`;
 }
 
 function renderAplDiff(diff) {
@@ -472,75 +533,6 @@ function renderAplDiff(diff) {
   return html;
 }
 
-function renderRankings(rankings) {
-  let html = `<section>
-<h2>Build Rankings</h2>
-<h3>Top 5 Overall (Weighted)</h3>
-<table>
-<thead><tr><th>#</th><th>Build</th><th>Hero Tree</th><th>Archetype</th>`;
-  for (const s of Object.keys(SCENARIOS)) {
-    html += `<th>${esc(SCENARIOS[s].name)}</th>`;
-  }
-  html += `<th>Weighted</th></tr></thead><tbody>`;
-
-  for (let i = 0; i < rankings.topOverall.length; i++) {
-    const b = rankings.topOverall[i];
-    html += `<tr><td>${i + 1}</td><td class="build-id">${esc(b.id)}</td><td>${esc(b.heroTree)}</td><td>${esc(b.archetype || "")}</td>`;
-    for (const s of Object.keys(SCENARIOS)) {
-      html += `<td>${fmt(b.lastDps?.[s] || 0)}</td>`;
-    }
-    html += `<td><strong>${fmt(b.lastDps?.weighted || 0)}</strong></td></tr>`;
-  }
-  html += `</tbody></table>`;
-
-  // Best per hero tree
-  html += `<h3>Best per Hero Tree</h3><table>
-<thead><tr><th>Hero Tree</th><th>Build</th><th>Archetype</th><th>Weighted</th></tr></thead><tbody>`;
-  for (const [tree, build] of Object.entries(rankings.topByTree)) {
-    html += `<tr><td>${esc(tree)}</td><td class="build-id">${esc(build.id)}</td><td>${esc(build.archetype || "")}</td><td>${fmt(build.lastDps?.weighted || 0)}</td></tr>`;
-  }
-  html += `</tbody></table></section>`;
-
-  return html;
-}
-
-function renderCommunityBuilds(communityBuilds, rankings) {
-  const allBuilds = rankings.topOverall;
-  const topWeighted =
-    allBuilds.length > 0 ? allBuilds[0].lastDps?.weighted || 0 : 0;
-
-  let html = `<section>
-<h2>Community Builds</h2>
-<table>
-<thead><tr><th>Name</th><th>Source</th><th>Hero Tree</th><th>Hash</th></tr></thead>
-<tbody>`;
-
-  for (const cb of communityBuilds) {
-    const hashDisplay = cb.hash ? cb.hash.slice(0, 20) + "..." : "—";
-    html += `<tr><td>${esc(cb.name)}</td><td>${esc(cb.source || "")}</td><td>${esc(cb.heroTree)}</td><td class="hash">${esc(hashDisplay)}</td></tr>`;
-  }
-
-  html += `</tbody></table></section>`;
-  return html;
-}
-
-function renderSimLinks() {
-  const scenarios = Object.keys(SCENARIOS);
-  let html = `<section>
-<h2>Detailed SimC Reports</h2>
-<table>
-<thead><tr><th>Scenario</th><th>Baseline</th><th>Our APL</th></tr></thead>
-<tbody>`;
-
-  for (const s of scenarios) {
-    const name = SCENARIOS[s]?.name || s;
-    html += `<tr><td>${esc(name)}</td><td><a href="baseline_${s}.html">baseline_${s}.html</a></td><td><a href="optimized_${s}.html">optimized_${s}.html</a></td></tr>`;
-  }
-
-  html += `</tbody></table></section>`;
-  return html;
-}
-
 function renderChangelog(changelog) {
   let html = `<section>
 <h2>Optimization Changelog</h2>
@@ -549,11 +541,11 @@ function renderChangelog(changelog) {
 <tbody>`;
 
   for (const entry of changelog) {
-    const date = entry.date ? entry.date.split("T")[0] : "—";
+    const date = entry.date ? entry.date.split("T")[0] : "\u2014";
     const impact =
       entry.meanWeighted != null
         ? `${entry.meanWeighted >= 0 ? "+" : ""}${entry.meanWeighted.toFixed(3)}%`
-        : "—";
+        : "\u2014";
     const cls = (entry.meanWeighted || 0) >= 0 ? "positive" : "negative";
     html += `<tr><td>${entry.id}</td><td>${date}</td><td>${esc(entry.hypothesis || "")}</td><td class="${cls}">${impact}</td></tr>`;
   }
@@ -566,6 +558,10 @@ function renderChangelog(changelog) {
 
 function fmt(n) {
   return Math.round(n).toLocaleString("en-US");
+}
+
+function fmtDelta(n) {
+  return `${n >= 0 ? "+" : ""}${n.toFixed(2)}%`;
 }
 
 function esc(s) {
@@ -581,75 +577,132 @@ function esc(s) {
 
 const CSS = `
 :root {
-  --bg: #fafafa;
-  --fg: #1a1a1a;
-  --accent: #2563eb;
-  --border: #e5e7eb;
-  --positive: #16a34a;
-  --negative: #dc2626;
-  --muted: #6b7280;
-  --code-bg: #f3f4f6;
-  --table-stripe: #f9fafb;
-  --header-bg: #1e293b;
-  --header-fg: #f8fafc;
+  --bg: #0f1117;
+  --surface: #181a24;
+  --surface-alt: #1e2030;
+  --border: #2a2d3e;
+  --fg: #e2e4ed;
+  --fg-muted: #8b8fa3;
+  --accent: #6c8aff;
+  --accent-dim: #3d4f8a;
+  --positive: #4ade80;
+  --positive-bg: rgba(74, 222, 128, 0.08);
+  --negative: #f87171;
+  --negative-bg: rgba(248, 113, 113, 0.08);
+  --gold: #fbbf24;
+  --gold-bg: rgba(251, 191, 36, 0.1);
+  --code-bg: #1e2030;
+  --radius: 8px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--fg);
   line-height: 1.6;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
 }
 
 header {
-  background: var(--header-bg);
-  color: var(--header-fg);
-  padding: 2rem;
-  margin: 0 -1rem 2rem;
-  border-radius: 0 0 8px 8px;
+  padding: 2.5rem 0 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
 }
 
-header h1 { font-size: 1.75rem; font-weight: 700; }
-header .meta { color: #94a3b8; margin-top: 0.25rem; font-size: 0.9rem; }
+header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+header .meta {
+  color: var(--fg-muted);
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
 
 main { padding-bottom: 3rem; }
 
 section { margin-bottom: 2.5rem; }
 
 h2 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  border-bottom: 2px solid var(--accent);
-  padding-bottom: 0.4rem;
+  color: var(--fg);
+  padding-bottom: 0.5rem;
   margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
 }
 
 h3 {
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 600;
-  margin: 1rem 0 0.5rem;
-  color: var(--muted);
+  margin: 1.25rem 0 0.5rem;
+  color: var(--fg-muted);
 }
 
-.tldr {
-  background: #eff6ff;
-  border-left: 4px solid var(--accent);
+.build-count {
+  font-weight: 400;
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+}
+
+/* Summary cards */
+.cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 1rem 1.25rem;
-  border-radius: 0 6px 6px 0;
-  font-size: 1.05rem;
-  font-weight: 500;
+  min-width: 140px;
+  flex: 1;
+}
+
+.card.accent {
+  border-color: var(--accent-dim);
+  background: linear-gradient(135deg, rgba(108, 138, 255, 0.06), transparent);
+}
+
+.card-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.card-label {
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
-  margin-bottom: 1rem;
+  font-size: 0.82rem;
 }
 
 th, td {
@@ -659,23 +712,60 @@ th, td {
 }
 
 th {
-  background: var(--code-bg);
+  background: var(--surface);
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: var(--muted);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-tbody tr:nth-child(even) { background: var(--table-stripe); }
-tbody tr:hover { background: #eef2ff; }
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--accent); }
+th.sortable.sorted-asc::after { content: " \\25B2"; font-size: 0.6em; }
+th.sortable.sorted-desc::after { content: " \\25BC"; font-size: 0.6em; }
+
+th.num, td.dps-cell { text-align: right; }
+
+tbody tr { background: var(--bg); }
+tbody tr:nth-child(even) { background: var(--surface-alt); }
+tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
 
 td { white-space: nowrap; }
-td:first-child { font-weight: 500; }
 
-.build-id { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.8rem; }
-.hash { font-family: "SF Mono", "Fira Code", monospace; font-size: 0.75rem; color: var(--muted); }
+.build-name {
+  font-weight: 500;
+  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.78rem;
+}
+
+.archetype-cell {
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+
+.dps-cell { font-variant-numeric: tabular-nums; }
+
+.dps-cell.top-build {
+  background: var(--gold-bg);
+}
+
+.badge {
+  display: inline-block;
+  background: var(--gold);
+  color: #000;
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35em;
+  letter-spacing: 0.05em;
+}
 
 .positive { color: var(--positive); font-weight: 600; }
 .negative { color: var(--negative); font-weight: 600; }
@@ -698,23 +788,68 @@ footer {
   border-top: 1px solid var(--border);
   padding: 1.5rem 0;
   text-align: center;
-  color: var(--muted);
-  font-size: 0.85rem;
+  color: var(--fg-muted);
+  font-size: 0.8rem;
 }
 
 @media (max-width: 768px) {
-  table { font-size: 0.75rem; }
+  table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
-  header { padding: 1.25rem; }
-  header h1 { font-size: 1.3rem; }
+  .cards { gap: 0.5rem; }
+  .card { min-width: 120px; padding: 0.75rem; }
+  .card-value { font-size: 1.1rem; }
 }
+`;
+
+// --- Interactive JS ---
+
+const JS = `
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const col = th.dataset.col;
+    const isNum = th.classList.contains('num');
+
+    // Determine sort direction
+    const wasAsc = th.classList.contains('sorted-asc');
+    table.querySelectorAll('th.sortable').forEach(h => {
+      h.classList.remove('sorted-asc', 'sorted-desc');
+    });
+    const dir = wasAsc ? 'desc' : 'asc';
+    th.classList.add('sorted-' + dir);
+
+    // Column index
+    const headers = Array.from(th.parentNode.children);
+    const colIdx = headers.indexOf(th);
+
+    rows.sort((a, b) => {
+      const cellA = a.children[colIdx];
+      const cellB = b.children[colIdx];
+      let va, vb;
+
+      if (isNum) {
+        va = parseFloat(cellA?.dataset?.dps || cellA?.textContent?.replace(/[^\\d.-]/g, '') || '0');
+        vb = parseFloat(cellB?.dataset?.dps || cellB?.textContent?.replace(/[^\\d.-]/g, '') || '0');
+      } else {
+        va = cellA?.textContent?.trim() || '';
+        vb = cellB?.textContent?.trim() || '';
+      }
+
+      if (dir === 'asc') return va > vb ? 1 : va < vb ? -1 : 0;
+      return va < vb ? 1 : va > vb ? -1 : 0;
+    });
+
+    for (const row of rows) tbody.appendChild(row);
+  });
+});
 `;
 
 // --- Main ---
 
 async function main() {
   await initSpec(parseSpecArg());
-  const specConfig = getSpecAdapter().getSpecConfig();
   const specName = config.spec.specName;
   const opts = parseArgs();
 
@@ -723,17 +858,15 @@ async function main() {
   // Load roster
   const roster = loadRoster();
   if (!roster || roster.builds.length === 0) {
-    console.error("No build roster found. Run: npm run roster migrate");
+    console.error("No build roster found. Run: npm run roster generate");
     process.exit(1);
   }
 
-  // Extract community builds from roster (source starts with "community:")
-  const communityBuilds = roster.builds.filter(
-    (b) => b.source && b.source.startsWith("community"),
-  );
-  if (communityBuilds.length > 0) {
-    console.log(`  Found ${communityBuilds.length} community builds in roster`);
-  }
+  // Keep raw DB builds for simcDps access in skip-sims mode
+  const { getRosterBuilds } = await import("../util/db.js");
+  roster._rawBuilds = getRosterBuilds();
+
+  console.log(`  Roster: ${roster.builds.length} builds`);
 
   // APL paths
   const baselinePath = join(aplsDir(), "baseline.simc");
@@ -746,7 +879,7 @@ async function main() {
     process.exit(1);
   }
 
-  // Compute APL diff (only if baseline exists)
+  // Compute APL diff
   let diff = null;
   if (hasBaseline) {
     console.log("  Computing APL diff...");
@@ -754,68 +887,60 @@ async function main() {
     console.log(
       `  Diff: +${diff.added.length} lists, -${diff.removed.length} lists, ~${diff.modified.length} modified`,
     );
-  } else {
-    console.log("  No baseline APL found — skipping diff and comparison sims");
   }
 
-  // Compute rankings from cached roster DPS
-  const rankings = computeRankings(roster);
-
-  // Run sims if not skipped (requires baseline)
-  let simResults = null;
+  // Run sims or load cached
+  let buildData;
   const showcaseDir = join(resultsDir(), "showcase");
 
   if (!opts.skipSims && hasBaseline) {
-    const miniRoster = selectShowcaseBuilds(
-      roster,
-      communityBuilds,
-      opts.buildsPerTree,
-    );
-
-    // Filter to builds with hashes (required for multi-actor)
-    const hashBuilds = miniRoster.filter((b) => b.hash);
-    if (hashBuilds.length === 0) {
-      console.error("No builds with talent hashes available for sims.");
-      console.error("Run: npm run roster generate-hashes");
-      process.exit(1);
-    }
-
-    console.log(`  Running showcase sims with ${hashBuilds.length} builds...`);
     const fidelityOpts =
       FIDELITY_TIERS[opts.fidelity] || FIDELITY_TIERS.standard;
 
-    simResults = [];
+    console.log(
+      `\n  Running sims: ${roster.builds.length} builds x 3 scenarios x 2 APLs (${opts.fidelity} fidelity)...`,
+    );
+
+    const baselineMaps = {};
+    const oursMaps = {};
+
     for (const scenario of Object.keys(SCENARIOS)) {
-      // Run baseline
-      const baselineResults = await runShowcaseSim(
-        hashBuilds,
+      console.log(`\n  --- ${SCENARIOS[scenario].name} ---`);
+
+      console.log(`  Baseline APL...`);
+      baselineMaps[scenario] = await runRosterSim(
+        roster,
         baselinePath,
         scenario,
-        "baseline",
-        showcaseDir,
+        "showcase_baseline",
         fidelityOpts,
       );
 
-      // Run ours
-      const oursResults = await runShowcaseSim(
-        hashBuilds,
+      console.log(`  Our APL...`);
+      oursMaps[scenario] = await runRosterSim(
+        roster,
         oursPath,
         scenario,
-        "optimized",
-        showcaseDir,
+        "showcase_ours",
         fidelityOpts,
       );
-
-      // Merge results
-      const builds = [];
-      for (const build of hashBuilds) {
-        const bDps = baselineResults.get(build.id)?.dps || 0;
-        const oDps = oursResults.get(build.id)?.dps || 0;
-        builds.push({ id: build.id, baseline: bDps, ours: oDps });
-      }
-
-      simResults.push({ scenario, builds });
     }
+
+    buildData = mergeSimResults(roster, baselineMaps, oursMaps);
+    persistSimResults(roster, buildData);
+    console.log(`\n  Results cached to DB.`);
+  } else if (opts.skipSims) {
+    console.log("  Loading cached DPS from DB...");
+    buildData = loadCachedResults(roster);
+    const withBaseline = buildData.filter(
+      (b) => b.baseline.weighted > 0,
+    ).length;
+    console.log(
+      `  ${buildData.length} builds loaded (${withBaseline} with baseline data)`,
+    );
+  } else {
+    console.log("  No baseline APL — running with roster DPS only");
+    buildData = loadCachedResults(roster);
   }
 
   // Load changelog
@@ -823,27 +948,13 @@ async function main() {
 
   // Generate HTML
   mkdirSync(showcaseDir, { recursive: true });
-  const html = generateHtml({
-    specName,
-    diff,
-    rankings,
-    communityBuilds,
-    simResults,
-    changelog,
-    skipSims: opts.skipSims,
-  });
+  const html = generateHtml({ specName, diff, buildData, changelog });
 
   const indexPath = join(showcaseDir, "index.html");
   writeFileSync(indexPath, html);
 
-  console.log(`\nShowcase report written to ${showcaseDir}/`);
-  console.log(`  index.html — summary report`);
-  if (!opts.skipSims) {
-    for (const s of Object.keys(SCENARIOS)) {
-      console.log(`  baseline_${s}.html — SimC baseline report`);
-      console.log(`  optimized_${s}.html — SimC our APL report`);
-    }
-  }
+  console.log(`\nShowcase report written to ${showcaseDir}/index.html`);
+  console.log(`  ${buildData.length} builds in report`);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
