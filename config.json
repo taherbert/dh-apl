@@ -29,8 +29,8 @@
     },
     "scenarioWeights": { "st": 0.5, "small_aoe": 0.3, "big_aoe": 0.2 },
     "fidelity": {
-      "quick": { "target_error": 1.0 },
-      "standard": { "target_error": 0.3 },
+      "quick": { "target_error": 0.5 },
+      "standard": { "target_error": 0.25 },
       "confirm": { "target_error": 0.1 }
     },
     "defaults": {

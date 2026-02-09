@@ -5,7 +5,7 @@
 // Subcommands:
 //   init <apl.simc>              Initialize iteration state with baseline
 //   status                       Print current iteration state
-//   compare <candidate.simc>     Run profileset comparison (--quick|--confirm)
+//   compare <candidate.simc>     Screen→standard staged comparison (--quick|--confirm)
 //   accept "reason"              Adopt candidate as new baseline
 //   reject "reason"              Log rejection and move on
 //   hypotheses                   Generate improvement hypotheses
@@ -29,6 +29,7 @@ import {
   getSpecAdapter,
   loadSpecAdapter,
   initSpec,
+  FIDELITY_TIERS,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { loadRoster, updateDps, saveRosterDps } from "./build-roster.js";
@@ -96,12 +97,6 @@ const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];
 const SCENARIO_LABELS = { st: "1T", small_aoe: "5T", big_aoe: "10T" };
 // ST weighted highest (hardest to improve, most common), 5T moderate, 10T lowest (rarest encounter type)
 const SCENARIO_WEIGHTS = { st: 0.5, small_aoe: 0.3, big_aoe: 0.2 };
-
-const FIDELITY_TIERS = {
-  quick: { target_error: 1.0 },
-  standard: { target_error: 0.3 },
-  confirm: { target_error: 0.1 },
-};
 
 const STATE_VERSION = 3;
 
@@ -501,6 +496,59 @@ function canUseProfilesets(roster) {
   return roster.builds.every((b) => b.hash != null);
 }
 
+// Run async task factories with bounded concurrency.
+// Each element in taskFactories is a () => Promise that starts the work when called.
+async function runWithConcurrency(taskFactories, maxConcurrency) {
+  const results = new Array(taskFactories.length);
+  let nextIndex = 0;
+
+  async function runNext() {
+    while (nextIndex < taskFactories.length) {
+      const i = nextIndex++;
+      results[i] = await taskFactories[i]();
+    }
+  }
+
+  const workers = [];
+  for (let w = 0; w < Math.min(maxConcurrency, taskFactories.length); w++) {
+    workers.push(runNext());
+  }
+  await Promise.all(workers);
+  return results;
+}
+
+const MIN_THREADS_PER_SIM = 4;
+
+// Calculate optimal concurrency and thread allocation for sim batching.
+function simConcurrency(simCount) {
+  const totalCores = cpus().length;
+  const maxConcurrency = Math.max(
+    1,
+    Math.floor(totalCores / MIN_THREADS_PER_SIM),
+  );
+  const concurrency = Math.min(maxConcurrency, simCount);
+  const threadsPerSim = Math.max(1, Math.floor(totalCores / concurrency));
+  return { concurrency, threadsPerSim };
+}
+
+// Assemble per-build DPS results from scenario-keyed actor Maps.
+// scenarioResults: [[scenarioKey, Map<buildId, {dps}>], ...]
+function assembleBuildsFromScenarios(roster, scenarioResults) {
+  const builds = {};
+  for (const build of roster.builds) {
+    builds[build.id] = {
+      heroTree: build.heroTree,
+      archetype: build.archetype,
+      dps: {},
+    };
+    for (const [scenario, actorDps] of scenarioResults) {
+      const actorResult = actorDps.get(build.id);
+      builds[build.id].dps[scenario] = actorResult ? actorResult.dps : 0;
+    }
+  }
+  return { builds };
+}
+
 // Run multi-actor sims for an APL file against the roster.
 // Returns { builds: { "<buildId>": { heroTree, dps: {st, small_aoe, big_aoe} } } }
 // Batches actors to avoid OOM at high fidelity.
@@ -565,56 +613,27 @@ async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
     mergeActorMaps(scenarioMaps[scenario]),
   ]);
 
-  // Combine into per-build results
-  const builds = {};
-  for (const build of roster.builds) {
-    builds[build.id] = {
-      heroTree: build.heroTree,
-      archetype: build.archetype,
-      dps: {},
-    };
-    for (const [scenario, actorDps] of scenarioResults) {
-      const actorResult = actorDps.get(build.id);
-      builds[build.id].dps[scenario] = actorResult ? actorResult.dps : 0;
-    }
-  }
-
-  return { builds };
+  return assembleBuildsFromScenarios(roster, scenarioResults);
 }
 
 // Profileset-based baseline: constant memory, uses talents= hash overrides.
 async function runMultiBuildBaselineProfileset(aplPath, roster, tierConfig) {
-  const totalCores = cpus().length;
-  const threadsPerSim = Math.max(
-    1,
-    Math.floor(totalCores / SCENARIO_KEYS.length),
-  );
+  const { concurrency, threadsPerSim } = simConcurrency(SCENARIO_KEYS.length);
 
   const content = generateRosterProfilesetContent(roster, aplPath);
 
-  const scenarioResults = await Promise.all(
-    SCENARIO_KEYS.map(async (scenario) => {
-      const psResults = await runProfilesetAsync(content, scenario, "mb_ps", {
+  const taskFactories = SCENARIO_KEYS.map(
+    (scenario) => () =>
+      runProfilesetAsync(content, scenario, "mb_ps", {
         simOverrides: { ...tierConfig, threads: threadsPerSim },
-      });
-      return [scenario, profilesetResultsToActorMap(psResults, roster)];
-    }),
+      }).then((psResults) => [
+        scenario,
+        profilesetResultsToActorMap(psResults, roster),
+      ]),
   );
 
-  const builds = {};
-  for (const build of roster.builds) {
-    builds[build.id] = {
-      heroTree: build.heroTree,
-      archetype: build.archetype,
-      dps: {},
-    };
-    for (const [scenario, actorDps] of scenarioResults) {
-      const actorResult = actorDps.get(build.id);
-      builds[build.id].dps[scenario] = actorResult ? actorResult.dps : 0;
-    }
-  }
-
-  return { builds };
+  const scenarioResults = await runWithConcurrency(taskFactories, concurrency);
+  return assembleBuildsFromScenarios(roster, scenarioResults);
 }
 
 // Run multi-build comparison: baseline APL + candidate APL against all roster builds.
@@ -720,11 +739,8 @@ async function runMultiBuildComparison(
 // Batched multi-actor comparison: splits roster into smaller groups to limit memory.
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonBatched(candidatePath, roster, tierConfig) {
-  const totalCores = cpus().length;
-  const threadsPerSim = Math.max(
-    1,
-    Math.floor(totalCores / (SCENARIO_KEYS.length * 2)),
-  );
+  const simCount = SCENARIO_KEYS.length * 2; // 3 scenarios × 2 APLs
+  const { concurrency, threadsPerSim } = simConcurrency(simCount);
 
   const batchSize = batchSizeForFidelity(tierConfig);
   const batches = chunkRoster(roster, batchSize);
@@ -751,22 +767,22 @@ async function runComparisonBatched(candidatePath, roster, tierConfig) {
     const baseContent = generateMultiActorContent(batch, CURRENT_APL);
     const candidateContent = generateMultiActorContent(batch, candidatePath);
 
-    // Run 6 sims (3 scenarios × 2 APLs) in parallel within this batch
-    const allPromises = [];
+    // Build task factories for bounded concurrency
+    const taskFactories = [];
     for (const scenario of SCENARIO_KEYS) {
-      allPromises.push(
+      taskFactories.push(() =>
         runMultiActorAsync(baseContent, scenario, `mb_current_b${bi}`, {
           simOverrides: { ...tierConfig, threads: threadsPerSim },
         }).then((r) => ({ scenario, type: "current", results: r })),
       );
-      allPromises.push(
+      taskFactories.push(() =>
         runMultiActorAsync(candidateContent, scenario, `mb_candidate_b${bi}`, {
           simOverrides: { ...tierConfig, threads: threadsPerSim },
         }).then((r) => ({ scenario, type: "candidate", results: r })),
       );
     }
 
-    const batchResults = await Promise.all(allPromises);
+    const batchResults = await runWithConcurrency(taskFactories, concurrency);
     for (const r of batchResults) {
       scenarioMaps[r.scenario][r.type].push(r.results);
     }
@@ -787,11 +803,8 @@ async function runComparisonBatched(candidatePath, roster, tierConfig) {
 // Profileset-based comparison: constant memory, uses talents= hash overrides.
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonProfileset(candidatePath, roster, tierConfig) {
-  const totalCores = cpus().length;
-  const threadsPerSim = Math.max(
-    1,
-    Math.floor(totalCores / (SCENARIO_KEYS.length * 2)),
-  );
+  const simCount = SCENARIO_KEYS.length * 2; // 3 scenarios × 2 APLs
+  const { concurrency, threadsPerSim } = simConcurrency(simCount);
 
   const currentContent = generateRosterProfilesetContent(roster, CURRENT_APL);
   const candidateContent = generateRosterProfilesetContent(
@@ -799,10 +812,13 @@ async function runComparisonProfileset(candidatePath, roster, tierConfig) {
     candidatePath,
   );
 
-  // Run 6 profileset sims (3 scenarios × 2 APLs) in parallel
-  const allPromises = [];
+  console.log(
+    `  Concurrency: ${concurrency} sims × ${threadsPerSim} threads (${simCount} total sims)`,
+  );
+
+  const taskFactories = [];
   for (const scenario of SCENARIO_KEYS) {
-    allPromises.push(
+    taskFactories.push(() =>
       runProfilesetAsync(currentContent, scenario, "mb_ps_current", {
         simOverrides: { ...tierConfig, threads: threadsPerSim },
       }).then((r) => ({
@@ -811,7 +827,7 @@ async function runComparisonProfileset(candidatePath, roster, tierConfig) {
         results: profilesetResultsToActorMap(r, roster),
       })),
     );
-    allPromises.push(
+    taskFactories.push(() =>
       runProfilesetAsync(candidateContent, scenario, "mb_ps_candidate", {
         simOverrides: { ...tierConfig, threads: threadsPerSim },
       }).then((r) => ({
@@ -822,11 +838,11 @@ async function runComparisonProfileset(candidatePath, roster, tierConfig) {
     );
   }
 
-  const allResults = await Promise.all(allPromises);
+  const allResults = await runWithConcurrency(taskFactories, concurrency);
 
   const byScenario = {};
   for (const r of allResults) {
-    if (!byScenario[r.scenario]) byScenario[r.scenario] = {};
+    byScenario[r.scenario] ??= {};
     byScenario[r.scenario][r.type] = r.results;
   }
 
@@ -875,6 +891,10 @@ function progressBar(fraction, width = 20) {
   let bar = "█".repeat(filled);
   if (bar.length < width && fraction * width - filled > 0.5) bar += "▒";
   return bar.padEnd(width, "░");
+}
+
+function elapsedSecs(startMs) {
+  return ((Date.now() - startMs) / 1000).toFixed(0);
 }
 
 function formatElapsed(startISO) {
@@ -1117,7 +1137,9 @@ function cmdStatus() {
   writeDashboard(state);
 }
 
-async function cmdCompare(candidatePath, tier) {
+const SCREEN_REJECT_THRESHOLD = -0.2; // weighted mean % below which quick screen rejects
+
+async function cmdCompare(candidatePath, tier, { staged = false } = {}) {
   const state = loadState();
   if (!state) {
     console.error("No iteration state. Run init first.");
@@ -1138,15 +1160,60 @@ async function cmdCompare(candidatePath, tier) {
       );
       process.exit(1);
     }
-    console.log(
-      `Multi-build comparison against ${roster.builds.length} builds (${tier} fidelity)...`,
-    );
-    const comparison = await runMultiBuildComparison(
-      resolvedPath,
-      roster,
-      tier,
-    );
-    printMultiBuildComparison(comparison);
+
+    if (staged) {
+      // Fidelity staging: screen at quick, escalate to standard if promising
+      const screenStart = Date.now();
+      console.log(
+        `Multi-build screen against ${roster.builds.length} builds (quick fidelity, te=${FIDELITY_TIERS.quick.target_error})...`,
+      );
+      const screenComparison = await runMultiBuildComparison(
+        resolvedPath,
+        roster,
+        "quick",
+      );
+      const screenSecs = elapsedSecs(screenStart);
+      printMultiBuildComparison(screenComparison);
+
+      const screenMean = screenComparison.aggregate.meanWeighted;
+      if (screenMean < SCREEN_REJECT_THRESHOLD) {
+        console.log(
+          `\nScreened out at quick fidelity (mean ${signedPct(screenMean)} < ${SCREEN_REJECT_THRESHOLD}%)`,
+        );
+        console.log(`Screen: ${screenSecs}s (rejected, skipped standard)`);
+        // Save with screening metadata
+        const comparisonPath = resultsFile("comparison_latest.json");
+        const saved = JSON.parse(readFileSync(comparisonPath, "utf-8"));
+        saved.screened = true;
+        saved.screenElapsed = +screenSecs;
+        writeFileSync(comparisonPath, JSON.stringify(saved, null, 2));
+        return;
+      }
+
+      // Escalate to standard
+      const standardStart = Date.now();
+      console.log(
+        `\nScreen passed (mean ${signedPct(screenMean)}). Escalating to standard fidelity (te=${FIDELITY_TIERS.standard.target_error})...`,
+      );
+      const comparison = await runMultiBuildComparison(
+        resolvedPath,
+        roster,
+        "standard",
+      );
+      const standardSecs = elapsedSecs(standardStart);
+      printMultiBuildComparison(comparison);
+      console.log(`\nScreen: ${screenSecs}s, Standard: ${standardSecs}s`);
+    } else {
+      console.log(
+        `Multi-build comparison against ${roster.builds.length} builds (${tier} fidelity, te=${FIDELITY_TIERS[tier]?.target_error ?? "?"})...`,
+      );
+      const comparison = await runMultiBuildComparison(
+        resolvedPath,
+        roster,
+        tier,
+      );
+      printMultiBuildComparison(comparison);
+    }
   } else {
     console.log(
       `Comparing candidate against current baseline (${tier} fidelity)...`,
@@ -2518,10 +2585,13 @@ switch (cmd) {
       );
       process.exit(1);
     }
+    const hasExplicitTier =
+      rawArgs.includes("--quick") || rawArgs.includes("--confirm");
     let tier = "standard";
     if (rawArgs.includes("--quick")) tier = "quick";
     else if (rawArgs.includes("--confirm")) tier = "confirm";
-    await cmdCompare(rawArgs[0], tier);
+    // Default (no flag): staged screening — quick first, then standard if promising
+    await cmdCompare(rawArgs[0], tier, { staged: !hasExplicitTier });
     break;
   }
 
@@ -2609,7 +2679,7 @@ switch (cmd) {
 Usage:
   node src/sim/iterate.js init <apl.simc>           Initialize with baseline
   node src/sim/iterate.js status                     Show current state
-  node src/sim/iterate.js compare <candidate.simc>   Compare candidate [--quick|--confirm] [--batch-size N]
+  node src/sim/iterate.js compare <candidate.simc>   Screen→standard staged comparison [--quick|--confirm]
   node src/sim/iterate.js accept "reason"            Accept candidate [--hypothesis "fragment"]
   node src/sim/iterate.js reject "reason"            Reject candidate [--hypothesis "fragment"]
   node src/sim/iterate.js hypotheses                 List improvement hypotheses
