@@ -48,8 +48,8 @@ actions+=/collapsing_star,if=(!cooldown.predators_wake.up&talent.voidrush&!buff.
 actions+=/call_action_list,name=reaps,if=!talent.voidfall&action.reap.souls_consumed>=4&(!buff.metamorphosis.up&(buff.void_metamorphosis_stack.stack+action.reap.souls_consumed)>=buff.void_metamorphosis_stack.max_stack|buff.metamorphosis.up&!buff.collapsing_star_ready.up&(buff.collapsing_star_stacking.stack+action.reap.souls_consumed>=30)&variable.should_use_star)
 # Anni: Reap during Voidfall spending or AoE Eradicate
 actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.react|buff.eradicate.up&active_enemies>1
-# Fragment overcap protection: Reap at 8+ frags to prevent waste from Entropy procs
-actions+=/call_action_list,name=reaps,if=soul_fragments>=8&action.reap.souls_consumed>=4
+# Fragment overcap protection: Reap at 8+ frags. During Voidfall building, delay to 9+ to allow Consume procs.
+actions+=/call_action_list,name=reaps,if=soul_fragments>=(8+buff.voidfall_building.react)&action.reap.souls_consumed>=4
 actions+=/call_action_list,name=melee_combo
 actions+=/soul_immolation,if=active_dot.soul_immolation=0&!buff.metamorphosis.up&active_enemies>1
 # Fall-through CStar is strictly better than Devour when available
