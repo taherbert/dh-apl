@@ -1,0 +1,331 @@
+{
+  "_schema": "externals-trinkets-analysis-v1",
+  "_generatedAt": "2026-02-06",
+  "_description": "Deep analysis of Power Infusion, Bloodlust, and Trinket logic for Vengeance DH APL",
+
+  "powerInfusion": {
+    "currentBehavior": "Unconditional: actions.externals=/invoke_external_buff,name=power_infusion — fires on CD with no alignment logic. Called during AR empowered window (buff.rending_strike.up&buff.glaive_flurry.up) or Anni Voidfall peak (buff.voidfall_spending.stack=3).",
+    "spellData": {
+      "effect": "+25% haste for 20s",
+      "cooldown": "120s (PI provider's CD, not ours)",
+      "gcdCompression": "Base 1.3s GCD -> ~1.04s = ~19 GCDs in 20s vs ~15 at base = 4 extra GCDs",
+      "fractureCdrEffect": "Fracture recharge: 6s / 1.25 = 4.8s (saves 1.2s per charge)",
+      "immAuraTickCompression": "IA ticks every 1s / 1.25 = 0.8s -> more Fallout procs per IA cast",
+      "felDevChannelCompression": "2s channel / 1.25 = 1.6s effective -> GCD savings"
+    },
+    "alignmentAnalysis": {
+      "piDuringMeta": {
+        "value": "HIGH",
+        "reasoning": "Meta gives +1 frag/Fracture (3 total) and +20% damage to all schools. PI compresses GCDs so you get ~4 extra casts in the Meta window. Each extra Fracture during Meta = 3 frags + 40 Fury (vs 2 frags + 25 normally). Over 20s of PI-during-Meta: ~4 extra Fractures = 12 extra frags + 160 extra Fury = 2-3 additional Spirit Bombs. The compound effect of more frags (more SBomb casts) + more SBombs (more UR proc attempts) + Meta 20% amp on everything makes this the strongest alignment.",
+        "estimatedGain": "4 extra GCDs * ~1.2 * Meta_amp(1.2) = ~5.76 effective GCD-equivalents of throughput over 20s window. Also accelerates AR cycle completion (more frag gen = faster Art of the Glaive proc).",
+        "cooldownAlignment": "Meta 120s CD, PI 120s CD — perfectly aligned. Every Meta can have PI."
+      },
+      "piDuringBrand": {
+        "value": "MODERATE",
+        "reasoning": "Brand with Fiery Demise = +15% Fire damage for 10-12s. PI (20s) outlasts Brand, so ~10s of overlap. The extra GCDs during Brand let you cast more fire-school abilities under the amp. But Brand's window is shorter than PI, so you waste 8-10s of PI outside the amp. Also, Brand CD is 48-60s vs PI 120s — PI covers at most 1 of 2-3 Brand windows.",
+        "estimatedGain": "~2 extra fire-school casts during Brand * 1.15 fire amp. Lower total value than Meta alignment.",
+        "cooldownAlignment": "Brand 48-60s vs PI 120s — misaligned. PI cannot cover every Brand."
+      },
+      "piOnCd": {
+        "value": "LOW",
+        "reasoning": "Without alignment, PI provides 4 extra GCDs of generic (un-amped) ability usage. Since VDH has no natural GCD starvation issue — Fracture always has something to press — the extra GCDs are filler-quality. No multiplicative benefit.",
+        "estimatedGain": "~4 extra GCDs of average ability value. Significantly less than aligned usage.",
+        "cooldownAlignment": "Maximum total PI casts over fight, but minimum per-cast value."
+      },
+      "piDuringMetaPlusBrand": {
+        "value": "HIGHEST (when available)",
+        "reasoning": "Triple compound: PI haste + Meta (20% all + extra frags) + Brand (15% fire). In practice, Meta (120s) and Brand (48-60s) overlap naturally ~1 in 2-3 Brand cycles. When they do overlap with PI: compressed GCDs casting fire abilities during both amps is the theoretical maximum.",
+        "estimatedGain": "Rare alignment (requires Meta+Brand same window). When it happens, ~2x value of PI-during-Meta alone for fire-school abilities."
+      }
+    },
+    "recommendation": "Align PI with Meta as primary target. This is the safest, highest-value alignment because Meta CD (120s) = PI CD (120s). Brand overlap is a bonus when it happens naturally, not worth holding PI for.",
+    "proposedConditions": {
+      "primary": "buff.metamorphosis.up — PI during active Meta",
+      "fallback": "cooldown.metamorphosis.remains<15 — PI if Meta coming soon (PI lasts 20s, so 15s wait = 5s of overlap minimum)",
+      "safety": "cooldown.metamorphosis.remains>60 — don't hold PI more than half its CD. If Meta is 60+ seconds away, just fire PI on CD rather than lose a full use."
+    },
+    "aplLines": {
+      "externals": [
+        "actions.externals=/invoke_external_buff,name=power_infusion,if=buff.metamorphosis.up|cooldown.metamorphosis.remains<15|(cooldown.metamorphosis.remains>60)"
+      ],
+      "explanation": "Three-tiered: (1) During Meta = best case. (2) Meta within 15s = PI will still be up when Meta pops. (3) Meta >60s away = don't waste a full PI cycle waiting; fire now for generic value."
+    }
+  },
+
+  "bloodlust": {
+    "currentBehavior": "No bloodlust awareness in the APL whatsoever. No variables, no conditions, no behavioral changes during BL.",
+    "spellData": {
+      "effect": "~30% haste for 40s (covers all variants: Bloodlust, Heroism, Time Warp, etc.)",
+      "simcExpression": "buff.bloodlust.up — SimC normalizes all variants into a single buff",
+      "remainsExpression": "buff.bloodlust.remains",
+      "gcdCompression": "1.3s -> ~1.0s = ~40 GCDs in 40s vs ~30 at base = ~10 extra GCDs",
+      "fractureRechargeCompression": "6s / 1.30 = 4.62s",
+      "overlapWithMeta": "BL + Meta = 1.3 * 1.2 = 1.56x haste × Meta's damage amp. Massively compressed GCDs."
+    },
+    "impactAnalysis": {
+      "fragmentGeneration": {
+        "impact": "HIGH",
+        "detail": "More GCDs = more Fracture casts = more fragments. With BL, ~10 extra Fracture casts over 40s = 20-30 extra fragments (depending on Meta overlap for +1/Fracture). Fragment cap (6) becomes the binding constraint rather than generation rate. Risk of significant fragment overflow if not spending aggressively."
+      },
+      "spbThreshold": {
+        "impact": "MODERATE",
+        "detail": "With compressed GCDs, you generate fragments faster but SBomb still has a 25s CD. More fragments available per SBomb window, but the CD is the real bottleneck. Threshold should remain at 5 (don't lower to 4 — the extra damage per SBomb cast matters more when you can't cast more of them). The UR fishing threshold of 4 during Meta-end is still correct.",
+        "recommendation": "No threshold change needed during BL. Fragment generation outpaces consumption regardless."
+      },
+      "abilityPriority": {
+        "impact": "LOW",
+        "detail": "The rotation priority doesn't fundamentally change during BL. The same abilities are still optimal to press in the same order. The extra GCDs mean fillers (Throw Glaive, non-Fallout ImmAura) get pressed more often, but they're already in the priority list. No ability becomes worth pressing that wasn't before.",
+        "recommendation": "No priority reorder needed."
+      },
+      "metaAlignment": {
+        "impact": "HIGH",
+        "detail": "Meta during BL is extremely valuable. Compound haste: BL(1.3) * Meta doesn't stack multiplicatively with haste — they add to the haste pool. But the damage amp (Meta 20% all) on compressed GCDs is the real win. If Meta is available when BL pops, use it immediately. BL is 40s, Meta is 15s, so even a delayed Meta still gets ~15s of BL overlap.",
+        "recommendation": "Use Meta during BL if available. Don't hold Meta waiting for BL (BL timing is uncontrollable)."
+      },
+      "brandAlignment": {
+        "impact": "MODERATE",
+        "detail": "Brand charges should not be saved for BL. BL is 40s; Brand duration is 10-12s; you can fit 1 Brand window entirely within BL. The extra GCDs during BL+Brand mean you can cast more fire-school abilities during the amp window, but Brand's charge-based system means holding a charge is costly (losing a full CD cycle).",
+        "recommendation": "Use Brand normally during BL. Don't hold charges."
+      },
+      "soulCleaveVsSpiritBomb": {
+        "impact": "MODERATE",
+        "detail": "During BL, the higher GCD density means Soul Cleave (which consumes only 2 frags) is relatively less efficient than usual — you have more fragments available from faster Fracture casts. Lean toward Spirit Bomb more aggressively. But SBomb CD (25s) is still the bottleneck, so this is marginal.",
+        "recommendation": "No explicit condition change. The existing priority (SBomb at threshold before SC) handles this correctly."
+      }
+    },
+    "proposedVariables": [
+      {
+        "name": "bloodlust_active",
+        "definition": "variable,name=bloodlust_active,value=buff.bloodlust.up",
+        "note": "SimC buff.bloodlust.up already covers ALL variants (BL, Hero, TW, Drums). No need for |buff.heroism.up."
+      }
+    ],
+    "proposedConditions": {
+      "metaDuringBl": {
+        "condition": "variable.bloodlust_active&!buff.metamorphosis.up&cooldown.metamorphosis.ready",
+        "action": "Use Meta immediately during BL if available",
+        "reasoning": "Compound haste + Meta damage amp is the highest-value window in the game. Don't sit on Meta during BL.",
+        "implementation": "Add to Meta cast conditions: |variable.bloodlust_active as additional trigger"
+      },
+      "soulCleaveEmergency": {
+        "condition": "Not needed",
+        "reasoning": "During BL, Fury generation outpaces consumption due to compressed Fracture casts. No Fury emergency. Fragment overflow is the risk, but existing SBomb threshold + priority handles it."
+      }
+    },
+    "aplChanges": {
+      "variableDefinition": "actions+=/variable,name=bloodlust_active,value=buff.bloodlust.up",
+      "metaConditionAR": "actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up|buff.untethered_rage.up|(variable.bloodlust_active&cooldown.metamorphosis.ready)",
+      "metaConditionAnni": "actions.anni+=/metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up|(variable.bloodlust_active&!buff.metamorphosis.up&!buff.voidfall_spending.up)",
+      "note": "The Meta conditions already include !buff.metamorphosis.up which covers 'use on CD'. BL awareness is primarily about ensuring Meta isn't held when BL is active. The existing conditions already fire Meta on CD, so the practical impact is minimal unless Meta was being delayed for some other reason. The main value is documentation + future-proofing."
+    },
+    "overallAssessment": "BL awareness has LOW marginal DPS impact for VDH because: (1) The rotation doesn't change during BL — same priority, same thresholds. (2) Meta is already used on CD. (3) Fragment overflow is handled by existing SBomb threshold. The primary value is conceptual correctness and a variable for future conditions. Don't over-engineer this."
+  },
+
+  "trinkets": {
+    "currentProblems": [
+      {
+        "issue": "Hardcoded tome_of_lights_devotion reference",
+        "severity": "HIGH",
+        "detail": "tome_of_lights_devotion was a TWW S1 trinket. In Midnight, this check is dead code — no one equips this trinket. The special-case line wastes APL evaluation time and confuses readers.",
+        "fix": "Remove the tome_of_lights_devotion exclusion and dedicated use_item line."
+      },
+      {
+        "issue": "No shared trinket CD handling for dual on-use",
+        "severity": "MODERATE",
+        "detail": "When a player has two on-use trinkets, there's a 20s shared cooldown between activations. Current logic tries to use both on Meta but doesn't account for the 20s lockout. The second trinket fires 20s after the first, potentially outside Meta (15s duration). Need to stagger: first to Meta, second 20s later.",
+        "fix": "Add variable to track whether first trinket was recently used and stagger the second."
+      },
+      {
+        "issue": "No max-hold anti-drift guard",
+        "severity": "MODERATE",
+        "detail": "Current logic syncs stat buff trinkets to Meta (120s CD). If Meta is delayed (death, mechanics), a 90s trinket could sit unused for 30+ extra seconds, losing a full cast over the fight. Need a safety valve: never hold more than ~15s past natural CD.",
+        "fix": "Add condition: use trinket if CD has been ready for more than 15s regardless of Meta alignment."
+      },
+      {
+        "issue": "Redundant conditions in trinket logic",
+        "severity": "LOW",
+        "detail": "The condition (buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10) — the second clause is a subset of the first (if Meta is up, Meta remains are irrelevant for the Meta.up check). This is from the SimC default APL and was never cleaned up.",
+        "fix": "Simplify to buff.metamorphosis.up|cooldown.metamorphosis.remains<10"
+      },
+      {
+        "issue": "Identical trinket logic for both hero trees",
+        "severity": "LOW",
+        "detail": "AR and Anni have the same trinket conditions. This is actually mostly correct — Meta is the sync target for both. The nuance is that Anni could potentially sync to Voidfall spending for short-buff trinkets, but Meta is still the dominant window.",
+        "fix": "Keep shared logic for now. Anni-specific sync is marginal."
+      }
+    ],
+    "designPhilosophy": {
+      "categories": {
+        "nonBuff": {
+          "description": "Trinkets that deal direct damage or proc damage (no stat buff). Examples: on-use damage, equip damage proc.",
+          "strategy": "Use on CD. No sync needed — these are fire-and-forget.",
+          "detection": "!variable.trinket_N_buffs"
+        },
+        "statBuff": {
+          "description": "Trinkets that grant a temporary stat buff (agility, haste, mastery, crit, vers).",
+          "strategy": "Sync to strongest available burst window within reasonable hold time. Primary sync: Meta. Secondary sync: Brand (for Fire-school stat buffs). Never hold more than 15s past CD.",
+          "detection": "variable.trinket_N_buffs"
+        },
+        "dualOnUse": {
+          "description": "Two on-use stat trinkets equipped simultaneously.",
+          "strategy": "Stagger by shared CD (20s). First trinket fires at Meta. Second fires 20s later (still benefits from stat-stick effect even if Meta has fallen off). Prioritize the higher-ilvl trinket for Meta alignment.",
+          "detection": "variable.trinket_1_buffs&variable.trinket_2_buffs&trinket.1.has_use_buff&trinket.2.has_use_buff"
+        }
+      },
+      "syncTargets": {
+        "aldrachi_reaver": {
+          "primary": "Metamorphosis (+20% all damage, 15s, 120s CD)",
+          "secondary": "Empowered cycle start (Reaver's Glaive + Rending Strike + Glaive Flurry — ensures stat buff covers the full empowered sequence)",
+          "tertiary": "Fiery Brand (if fire-school stat buffs specifically, but this is niche)"
+        },
+        "annihilator": {
+          "primary": "Metamorphosis (+20% all damage, 15s, 120s CD — also grants 3 Voidfall stacks via Mass Acceleration + SBomb reset)",
+          "secondary": "Voidfall spending peak (stack=3, meteor dump). But this is short and unpredictable — not a reliable sync target for 15-20s trinket buffs.",
+          "tertiary": "Fiery Brand (Shadowflame meteors amplified by Fiery Demise)"
+        }
+      },
+      "maxHoldTime": {
+        "value": 15,
+        "unit": "seconds",
+        "reasoning": "A 90s CD trinket held 15s loses 15/90 = 16.7% of a use cycle. A 120s CD trinket held 15s loses 15/120 = 12.5%. Beyond 15s, the lost total casts outweigh the sync benefit. At 20s hold, a 90s trinket loses almost 1 full cast over a 5-minute fight."
+      }
+    },
+    "proposedVariables": [
+      {
+        "name": "trinket_1_buffs",
+        "definition": "variable,name=trinket_1_buffs,value=trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery|trinket.1.has_buff.versatility|trinket.1.has_buff.haste|trinket.1.has_buff.crit)",
+        "note": "Already exists in precombat. No change needed."
+      },
+      {
+        "name": "trinket_2_buffs",
+        "definition": "variable,name=trinket_2_buffs,value=trinket.2.has_use_buff|(trinket.2.has_buff.agility|trinket.2.has_buff.mastery|trinket.2.has_buff.versatility|trinket.2.has_buff.haste|trinket.2.has_buff.crit)",
+        "note": "Already exists in precombat. No change needed."
+      },
+      {
+        "name": "trinket_1_sync",
+        "definition": "variable,name=trinket_1_sync,value=variable.trinket_1_buffs&(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.1.cooldown.duration-15)",
+        "note": "NEW. True when trinket1 should fire: during Meta, Meta coming in 10s, or Meta too far away (trinket would overcap by >15s). The 'trinket.1.cooldown.duration-15' handles the max-hold guard generically."
+      },
+      {
+        "name": "trinket_2_sync",
+        "definition": "variable,name=trinket_2_sync,value=variable.trinket_2_buffs&(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.2.cooldown.duration-15)",
+        "note": "NEW. Same logic for trinket2."
+      }
+    ],
+    "proposedSharedLines": {
+      "description": "Unified trinket logic that works for both hero trees. Moved to a call_action_list for deduplication.",
+      "lines": [
+        "# Non-buff trinkets: fire on CD (damage proc, on-use damage)",
+        "actions.trinkets=/use_item,slot=trinket1,if=!variable.trinket_1_buffs",
+        "actions.trinkets+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs",
+        "# Stat buff trinket 1: sync to Meta with max-hold guard",
+        "actions.trinkets+=/use_item,slot=trinket1,if=variable.trinket_1_buffs&(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.1.cooldown.duration-15|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains))",
+        "# Stat buff trinket 2: sync to Meta with max-hold guard",
+        "actions.trinkets+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.2.cooldown.duration-15|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains))"
+      ],
+      "callerIntegration": {
+        "ar": "actions.ar=/call_action_list,name=trinkets",
+        "anni": "actions.anni=/call_action_list,name=trinkets"
+      }
+    },
+    "removals": [
+      {
+        "line": "actions.ar=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&...",
+        "reason": "Replaced by shared trinkets list"
+      },
+      {
+        "line": "actions.ar+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&...",
+        "reason": "Replaced by shared trinkets list"
+      },
+      {
+        "line": "actions.ar+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up",
+        "reason": "tome_of_lights_devotion is a TWW S1 trinket, dead code in Midnight"
+      },
+      {
+        "line": "actions.anni=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&...",
+        "reason": "Replaced by shared trinkets list"
+      },
+      {
+        "line": "actions.anni+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&...",
+        "reason": "Replaced by shared trinkets list"
+      },
+      {
+        "line": "actions.anni+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up",
+        "reason": "tome_of_lights_devotion is a TWW S1 trinket, dead code in Midnight"
+      }
+    ],
+    "sharedTrinketCdHandling": {
+      "mechanism": "SimC automatically handles the 20s shared trinket lockout (category cooldown). When trinket1 fires, trinket2 cannot fire for 20s regardless of APL conditions. No explicit stagger logic needed in the APL — SimC's internal cooldown tracking prevents double-activation.",
+      "implication": "Our APL can safely 'try' to use both trinkets in the same conditions. SimC will fire trinket1, then the trinket2 line will be blocked by the category CD for 20s. When it comes off lockout 20s later, the conditions will re-evaluate. This means the max-hold guard is critical: if Meta is 15s duration and trinket2 fires at Meta+20s, Meta is already down. The trinket2 will fire at the first opportunity after lockout, which may not be during Meta. This is acceptable — holding trinket2 for the NEXT Meta (100+ seconds later) would lose a full use.",
+      "recommendation": "Accept that with dual on-use stat trinkets, trinket2 fires 20s after trinket1 and may miss Meta. The alternative (holding for next Meta) is worse. The max-hold guard prevents pathological drift."
+    },
+    "anniSpecificNotes": {
+      "voidfallSync": "Voidfall spending is too short and unpredictable (happens whenever 3 stacks proc from Fracture, 35% chance per cast) to be a reliable trinket sync target. A 15-20s stat buff trinket would be wasted trying to align with a ~3-GCD spending window.",
+      "metaIsStillBest": "Mass Acceleration (3 Voidfall stacks + SBomb reset) on Meta entry means Meta IS a Voidfall burst window for Anni. Syncing trinkets to Meta inherently syncs them to the biggest Voidfall dump cycle.",
+      "noTreeSpecificLogic": "Both AR and Anni should use identical trinket sync logic (Meta primary). The structural difference between trees doesn't affect trinket timing."
+    }
+  },
+
+  "implementationPlan": {
+    "priority": "trinkets > powerInfusion > bloodlust",
+    "reasoning": "Trinkets: fixes dead code (tome_of_lights_devotion), adds max-hold guard (prevents DPS loss from drift), and deduplicates 12 lines into 6. PI: adds alignment to Meta for ~1-3% value during PI windows. BL: minimal DPS impact (rotation doesn't change), mostly conceptual correctness.",
+    "proposedAplChanges": {
+      "precombat": {
+        "changes": "None — trinket_1_buffs and trinket_2_buffs variables already defined.",
+        "lines": []
+      },
+      "default": {
+        "changes": "Add bloodlust_active variable.",
+        "lines": [
+          "actions+=/variable,name=bloodlust_active,value=buff.bloodlust.up"
+        ]
+      },
+      "externals": {
+        "changes": "Add PI alignment conditions.",
+        "before": "actions.externals=/invoke_external_buff,name=power_infusion",
+        "after": "actions.externals=/invoke_external_buff,name=power_infusion,if=buff.metamorphosis.up|cooldown.metamorphosis.remains<15|cooldown.metamorphosis.remains>60"
+      },
+      "trinkets": {
+        "changes": "New shared trinkets action list replacing per-tree trinket blocks.",
+        "lines": [
+          "actions.trinkets=/use_item,slot=trinket1,if=!variable.trinket_1_buffs",
+          "actions.trinkets+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs",
+          "actions.trinkets+=/use_item,slot=trinket1,if=variable.trinket_1_buffs&(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.1.cooldown.duration-15|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains))",
+          "actions.trinkets+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.2.cooldown.duration-15|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains))"
+        ]
+      },
+      "ar": {
+        "changes": "Replace 3 trinket lines with call_action_list,name=trinkets.",
+        "removals": [
+          "use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion...",
+          "use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion...",
+          "use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up"
+        ],
+        "additions": [
+          "actions.ar=/call_action_list,name=trinkets"
+        ]
+      },
+      "anni": {
+        "changes": "Replace 3 trinket lines with call_action_list,name=trinkets.",
+        "removals": [
+          "use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion...",
+          "use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion...",
+          "use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up"
+        ],
+        "additions": [
+          "actions.anni=/call_action_list,name=trinkets"
+        ]
+      }
+    },
+    "netLineCount": {
+      "removed": 6,
+      "added": 7,
+      "note": "6 trinket lines removed (3 per tree), 4 shared trinket lines added, 2 call_action_list lines added, 1 PI condition added. Slightly more lines but eliminates duplication and dead code."
+    },
+    "riskAssessment": {
+      "trinketChanges": "LOW risk — removing dead code and simplifying conditions. Max-hold guard is strictly an improvement (prevents trinket drift). SimC handles shared CD automatically.",
+      "piChanges": "LOW risk — conditional PI is strictly >= unconditional PI. Worst case: PI fires on CD via the safety fallback (cooldown.metamorphosis.remains>60), same as current behavior.",
+      "blChanges": "MINIMAL risk — just a variable definition. No behavior changes gated on it yet. Future-proofing."
+    }
+  }
+}

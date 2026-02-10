@@ -9,7 +9,6 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
 import { ROOT, setSpecName, REFERENCE_DIR } from "./paths.js";
 
@@ -316,13 +315,5 @@ export function reportStatus() {
   return lines.join("\n");
 }
 
-// CLI: node src/engine/startup.js --spec <name>
-if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
-  const { parseSpecArg } = await import("../util/parse-spec-arg.js");
-  await initSpec(parseSpecArg());
-  console.log(reportStatus());
-  const sync = checkSync();
-  if (!sync.synced) {
-    console.log("\nRun `npm run refresh` to rebuild from upstream.");
-  }
-}
+// CLI: node src/engine/startup-cli.js --spec <name>
+// (CLI entry point moved to startup-cli.js to avoid TLA circular import deadlock)

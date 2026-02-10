@@ -6,7 +6,7 @@ Run `npm run verify` and analyze the results.
 
 ## Setup
 
-Run `node src/engine/startup.js` to determine the active spec.
+Run `node src/engine/startup-cli.js` to determine the active spec.
 
 ## Expected Baseline
 

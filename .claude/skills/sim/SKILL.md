@@ -7,7 +7,7 @@ Run simulations using `npm run sim`. Arguments: APL file path and optional scena
 
 ## Setup
 
-Run `node src/engine/startup.js` to determine the active spec.
+Run `node src/engine/startup-cli.js` to determine the active spec.
 
 ## Execution
 

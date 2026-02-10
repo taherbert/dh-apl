@@ -4,7 +4,7 @@ Detailed reference material for the dh-apl project. See [CLAUDE.md](CLAUDE.md) f
 
 ## Session Protocol
 
-1. Run `SPEC=vengeance node src/engine/startup.js` to check config and simc sync status (use appropriate spec)
+1. Run `node src/engine/startup-cli.js` to check config and simc sync status
 2. Check `MULTI-SPEC-PLAN.md` for any ongoing multi-phase work
 3. Run `npm run db:status` to check theorycraft DB contents
 4. Update CLAUDE.md if new commands, patterns, or architectural decisions emerge
@@ -163,7 +163,7 @@ node src/sim/runner.js apls/vengeance/baseline.simc  # Run simulation
 node src/sim/analyze.js                              # Analyze results
 
 # === Engine (all require SPEC env var or --spec flag) ===
-SPEC=vengeance node src/engine/startup.js    # Check config + simc sync status
+node src/engine/startup-cli.js               # Check config + simc sync status
 SPEC=vengeance node src/engine/extract.js    # Check extraction pipeline status
 SPEC=vengeance node src/engine/model.js      # Check model pipeline status
 SPEC=vengeance node src/util/validate.js     # Validate all data + staleness check

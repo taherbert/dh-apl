@@ -6,7 +6,7 @@ Run `npm run build-data` to regenerate all data files for the active spec.
 
 ## Setup
 
-Run `node src/engine/startup.js` to determine the active spec.
+Run `node src/engine/startup-cli.js` to determine the active spec.
 
 ## After the Build
 
