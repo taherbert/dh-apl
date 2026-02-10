@@ -108,7 +108,7 @@ const TALENT_ABBREVS = {
   "Soul Glutton": "SG",
   Eradicate: "Erad",
   // Devourer hero choice nodes
-  "Student of Suffering": "SoS",
+  "Student of Suffering": "StS",
   Flamebound: "FB",
 };
 
