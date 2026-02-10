@@ -46,7 +46,7 @@ actions.ar+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!v
 actions.ar+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 actions.ar+=/potion,use_off_gcd=1,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
 actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
-# Pool frags before Meta for instant SBomb→Fracture(3)→SBomb chain on entry
+# Pool frags before Meta for instant SBomb on entry
 actions.ar+=/metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up&soul_fragments>=3)|buff.untethered_rage.up
 actions.ar+=/call_action_list,name=ar_empowered
 actions.ar+=/call_action_list,name=ar_brand_window,if=variable.fiery_demise_active
@@ -68,13 +68,13 @@ actions.ar+=/soul_cleave
 actions.ar+=/call_action_list,name=fillers
 
 # === AR Empowered — Art of the Glaive cycle spending ===
-# ST: Fracture-first for 12 AoE FotA slashes via Bladecraft
-# AoE 3+: Cleave-first for 2 RM stacks — sustained 14% amp outweighs burst slash damage
+# AoE 3+: Fracture-first for 12 Bladecraft slashes hitting all targets
+# ST: Cleave-first for 2 RM stacks — sustained 14% single-target amp
 actions.ar_empowered=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up
-actions.ar_empowered+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up&active_enemies>=3
-actions.ar_empowered+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up
-actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
+actions.ar_empowered+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up&active_enemies>=3
+actions.ar_empowered+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up
 actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
+actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
 
 # === AR Cooldowns — Brand synced to fire CD availability for denser FD windows ===
 actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&(cooldown.soul_carver.remains<6|cooldown.fel_devastation.remains<6|cooldown.sigil_of_spite.remains<6)))
