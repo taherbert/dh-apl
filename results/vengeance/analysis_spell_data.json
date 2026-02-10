@@ -1,0 +1,598 @@
+{
+  "focus": "spell_data",
+  "generatedAt": "2026-02-09",
+  "dpgcd_rankings": {
+    "methodology": "Raw DPGCD = AP * apCoefficient * (1 + delta/2) / GCD_duration. GCD_duration = 1.5s / (1 + haste). At 20% haste, GCD = 1.25s. For multi-hit abilities, total coefficient is summed. Fragment-scaling abilities multiply base by fragment count. All delta values are 0.05 where present.",
+    "haste_assumption": "20% haste -> GCD = 1.25s, 48 GCDs/min",
+    "abilities": {
+      "fracture": {
+        "apCoefficients": {
+          "hit1": 1.035,
+          "hit2": 2.07,
+          "total": 3.105,
+          "note": "Two-part hit: 225919 (1.035) + 225921 (2.07)"
+        },
+        "gcd": 1.5,
+        "raw_dpgcd_normalized": 2.536,
+        "school": "Physical",
+        "resource_gen": { "fury": 25, "fury_meta": 40, "fragments": 2, "fragments_meta": 3 },
+        "charges": 2,
+        "recharge_cd": 4.5,
+        "modifiers_applicable": [
+          { "source": "Metamorphosis", "value": 0.20, "type": "multiplicative", "uptime": "~8.3% base, ~11.1% with VB" },
+          { "source": "Fiery Demise (2 ranks)", "value": 0.30, "type": "multiplicative", "conditional": "FB dot ticking" },
+          { "source": "Frailty", "value": 0.03, "type": "multiplicative", "conditional": "debuff up, doubled by Soulcrush to 0.06" },
+          { "source": "Vulnerability", "value": 0.03, "type": "via_frailty", "note": "Frailty also increases damage taken by 3%" },
+          { "source": "Reaver's Mark", "value": 0.07, "type": "multiplicative", "conditional": "AR hero only, stacks up to 2 (14%)" },
+          { "source": "Thrill of the Fight", "value": 0.20, "type": "multiplicative", "conditional": "AR hero, after cycle completion" },
+          { "source": "Celestial Echoes (passive)", "value": 0.30, "type": "multiplicative", "conditional": "Anni hero" },
+          { "source": "Celestial Echoes (buff)", "value": 0.25, "type": "multiplicative", "conditional": "Anni hero, after SBomb" },
+          { "source": "Vengeance 12.0 2pc", "value": 0.35, "type": "multiplicative", "always": true },
+          { "source": "Tempered Steel", "value": 0.12, "type": "multiplicative", "always": true },
+          { "source": "Keen Edge", "value": 0.10, "type": "multiplicative", "conditional": "AR hero only" }
+        ],
+        "effective_dpgcd_with_always_on": {
+          "base": "3.105 * 1.35 * 1.12 = 4.695 (2pc + Tempered Steel)",
+          "ar_with_marks": "4.695 * 1.10 * 1.14 * 1.20 = 7.06 (KE + 2xRM + TotF)",
+          "anni_with_echoes": "4.695 * 1.30 * 1.25 = 7.63 (CE passive + CE buff)",
+          "note": "Fracture is the highest effective DPGCD builder due to 2pc (+35%) and Celestial Echoes stacking"
+        },
+        "secondary_value": "2-3 soul fragments + 25-40 Fury per cast makes this the highest total value generator"
+      },
+      "spirit_bomb": {
+        "corrected_analysis": {
+          "base_ap_coeff": 2.0,
+          "per_fragment_bonus": "20% per fragment consumed (multiplicative with base)",
+          "at_3_fragments": "2.0 * (1 + 3*0.20) = 2.0 * 1.6 = 3.2",
+          "at_4_fragments": "2.0 * (1 + 4*0.20) = 2.0 * 1.8 = 3.6",
+          "at_5_fragments": "2.0 * (1 + 5*0.20) = 2.0 * 2.0 = 4.0"
+        },
+        "gcd": 1.5,
+        "cooldown": 25,
+        "cost": "40 Fury",
+        "raw_dpgcd_at_5_frags": 3.267,
+        "raw_dpgcd_at_4_frags": 2.94,
+        "raw_dpgcd_at_3_frags": 2.613,
+        "school": "Fire",
+        "aoe": { "radius": 8, "max_targets": 8, "scaling": "reduced_beyond_8" },
+        "modifiers_applicable": [
+          { "source": "Metamorphosis", "value": 0.20, "type": "multiplicative" },
+          { "source": "Vengeful Beast (during Meta)", "value": 0.20, "type": "multiplicative", "conditional": "Meta up + VB talented" },
+          { "source": "Fiery Demise (2 ranks)", "value": 0.30, "type": "multiplicative" },
+          { "source": "Frailty", "value": 0.03, "type": "multiplicative" },
+          { "source": "Burning Blood", "value": 0.08, "type": "multiplicative" },
+          { "source": "Reaver's Mark", "value": 0.07, "type": "multiplicative" },
+          { "source": "Thrill of the Fight", "value": 0.20, "type": "multiplicative" },
+          { "source": "Otherworldly Focus", "value": 0.35, "type": "multiplicative", "conditional": "1T only; -5% per additional target" }
+        ],
+        "effective_dpgcd_at_5_frags": {
+          "base_with_bb": "4.0 * 1.08 = 4.32",
+          "with_fd_2r": "4.32 * 1.30 = 5.616",
+          "with_meta_vb": "4.32 * 1.20 * 1.20 = 6.221",
+          "with_fd_meta_vb": "4.32 * 1.30 * 1.20 * 1.20 = 8.087",
+          "anni_st_owf": "4.32 * 1.35 = 5.832 (Otherworldly Focus at 1T)"
+        },
+        "dpgcd_per_gcd_investment": {
+          "note": "SBomb at 5 frags costs 1 GCD for 4.0 coeff. Producing 5 frags costs ~2.5 Fracture GCDs. Total DPGCD of SBomb+builders cycle: (4.0 + 2.5*3.105) / 3.5 = 3.36 coeff/GCD. At 3 frags: (3.2 + 1.5*3.105) / 2.5 = 3.148 coeff/GCD.",
+          "cycle_dpgcd_5_frags": 3.36,
+          "cycle_dpgcd_3_frags": 3.148,
+          "cycle_dpgcd_4_frags": 3.28,
+          "implication": "The per-GCD-investment gap between 3-frag and 5-frag SBomb is only 6.3%. Under FD (+30%), the 3-frag SBomb fires sooner, adding more casts under the window."
+        }
+      },
+      "soul_cleave": {
+        "apCoefficients": {
+          "base": 1.29,
+          "spell_228478_aoe": 2.08,
+          "note": "228477 costs 35 Fury. 228478 (ap 2.08) is the damage component. Consumes up to 2 frags for +20% each = up to +40%"
+        },
+        "gcd": 1.5,
+        "cost": "35 Fury",
+        "raw_dpgcd_0_frags": 1.699,
+        "raw_dpgcd_2_frags": 2.378,
+        "school": "Physical",
+        "aoe": { "radius": 8, "max_targets": 5, "scaling": "reduced_beyond_5" },
+        "modifiers_applicable": [
+          { "source": "Metamorphosis", "value": 0.20, "type": "multiplicative" },
+          { "source": "Vengeful Beast (during Meta)", "value": 0.20, "type": "multiplicative" },
+          { "source": "Incisive Blade (AR)", "value": 0.10, "type": "multiplicative" },
+          { "source": "Focused Cleave", "value": 0.50, "type": "multiplicative", "conditional": "primary target only" },
+          { "source": "Frailty", "value": 0.03, "type": "multiplicative" },
+          { "source": "Reaver's Mark", "value": 0.07, "type": "multiplicative" },
+          { "source": "Thrill of the Fight", "value": 0.20, "type": "multiplicative" }
+        ],
+        "note": "Soul Cleave is the Voidfall meteor trigger during spending phase. Its direct damage is secondary to the meteor proc value in Anni builds."
+      },
+      "immolation_aura": {
+        "apCoefficients": {
+          "initial_burst": 0.33,
+          "per_tick": 0.12317,
+          "ticks": 6,
+          "total_over_duration": "0.33 + 6 * 0.12317 = 1.069",
+          "note": "258921 initial burst (0.33), 258922 per-tick (0.12317). Duration 6s, ticks every 1s"
+        },
+        "gcd": 1.5,
+        "charges": 2,
+        "recharge_cd": 30,
+        "school": "Fire (or Chaos with A Fire Inside)",
+        "fury_gen": "20 initial + 6*3 = 38 total (VDH)",
+        "modifiers_applicable": [
+          { "source": "Agonizing Flames", "value": 0.10, "type": "multiplicative" },
+          { "source": "Burning Blood", "value": 0.08, "type": "multiplicative" },
+          { "source": "Fiery Demise", "value": 0.30, "type": "multiplicative" },
+          { "source": "Frailty", "value": 0.03, "type": "multiplicative" }
+        ],
+        "note": "IA primary DPS contribution is passive. GCD cost is 1 per 30s. Key secondary value: Fallout proc (60% per tick in AoE) for fragment generation, and Charred Flesh extending Fiery Brand duration.",
+        "charred_flesh_interaction": "Each IA tick extends FB and SoF by 0.25s. At 6 ticks, extends by 1.5s per aura. With 2 charges overlapping, potential 3s extension per 30s window."
+      },
+      "soul_carver": {
+        "apCoefficients": {
+          "initial_hit": 3.09,
+          "dot_per_tick": 0.67,
+          "dot_ticks": 3,
+          "total": "3.09 + 3 * 0.67 = 5.10",
+          "note": "207407: initial 3.09, dot 0.67/tick for 3s (3 ticks)"
+        },
+        "gcd": 1.5,
+        "cooldown": 60,
+        "school": "Fire",
+        "fragment_gen": "3 immediate + 1 per tick (3 ticks) = 6 total over 3s",
+        "raw_dpgcd_total": 4.163,
+        "modifiers_applicable": [
+          { "source": "Fiery Demise (2 ranks)", "value": 0.30, "type": "multiplicative" },
+          { "source": "Frailty", "value": 0.03, "type": "multiplicative" },
+          { "source": "Burning Blood", "value": 0.08, "type": "multiplicative" },
+          { "source": "Reaver's Mark", "value": 0.07, "type": "multiplicative" },
+          { "source": "Thrill of the Fight", "value": 0.20, "type": "multiplicative" }
+        ],
+        "effective_dpgcd": {
+          "with_bb": "5.10 * 1.08 = 5.508",
+          "with_bb_fd": "5.10 * 1.08 * 1.30 = 7.160",
+          "note": "Soul Carver is the highest single-GCD raw coefficient ability (5.10 total), making it the best candidate for FD window alignment"
+        },
+        "aoe_scaling": "ST only. Does NOT scale with target count.",
+        "aoe_note": "At 5+ targets, Soul Carver DPGCD falls behind IA (with Fallout) and SBomb. At 3T: SBomb 5-frag = 4.0*3 = 12.0 vs SC 5.10."
+      },
+      "fel_devastation": {
+        "apCoefficients": {
+          "per_tick": 0.411,
+          "ticks_estimated_at_20pct_haste": 5,
+          "total_estimated": "0.411 * 5 = 2.055",
+          "final_breath_bonus": "Last tick +300% = total ~3.288"
+        },
+        "effective_gcd_cost": 1.6,
+        "cooldown": 40,
+        "cost": "50 Fury",
+        "school": "Fire",
+        "aoe": { "radius": 13, "scaling": "frontal cone" },
+        "modifiers_applicable": [
+          { "source": "Stoke the Flames", "value": 0.30, "type": "multiplicative" },
+          { "source": "Meteoric Rise", "value": 0.15, "type": "multiplicative", "conditional": "Anni hero" },
+          { "source": "Fiery Demise (2 ranks)", "value": 0.30, "type": "multiplicative" },
+          { "source": "Frailty", "value": 0.03, "type": "multiplicative" },
+          { "source": "Burning Blood", "value": 0.08, "type": "multiplicative" },
+          { "source": "Final Breath", "value": "last_tick_300_pct", "type": "special" }
+        ],
+        "dpgcd_analysis": {
+          "base": 1.284,
+          "with_stoke": 1.670,
+          "with_stoke_mr": 1.921,
+          "with_stoke_fd": 2.171,
+          "with_stoke_mr_fd_bb": 2.696,
+          "with_final_breath_stoke_mr_fd_bb": 4.320,
+          "note": "FelDev without Stoke is weak (1.284 DPGCD) below Fracture base (2.536). With full talent investment it becomes competitive."
+        },
+        "meteoric_rise_frag_gen": "3 Soul Fragments over duration when fully channeled (Anni hero)"
+      },
+      "sigil_of_flame": {
+        "apCoefficients": {
+          "initial": 0.8,
+          "dot_per_tick": 0.5,
+          "dot_ticks": 4,
+          "total": "0.8 + 4 * 0.5 = 2.8",
+          "ascending_flame_bonus": "+50% to all SoF damage"
+        },
+        "gcd": 1.5,
+        "cooldown": 30,
+        "school": "Fire",
+        "fury_gen": 25,
+        "aoe": { "radius": 8, "scaling": "all targets in area, linear" },
+        "dpgcd_1t": 2.333,
+        "dpgcd_5t": 11.667,
+        "dpgcd_10t": 23.333
+      },
+      "sigil_of_spite": {
+        "apCoefficients": { "total": 6.92 },
+        "gcd": 1.5,
+        "cooldown": 60,
+        "school": "Chromatic",
+        "fragment_gen": "3 (+ 1 extra with Broken Spirit)",
+        "aoe": { "radius": 8, "max_targets": 5, "scaling": "reduced_beyond_5" },
+        "raw_dpgcd": 5.653,
+        "note": "Chromatic school: NO Burning Blood, NO Fiery Demise benefit. Best for fragment generation."
+      },
+      "reavers_glaive": {
+        "apCoefficients": {
+          "base": 3.45,
+          "fury_of_aldrachi_per_slash": 1.15,
+          "fota_3_slashes": 3.45,
+          "fota_12_slashes": 13.8
+        },
+        "gcd": 1.5,
+        "school": "Physical",
+        "fury_gen": "20 (Keen Engagement) or 0 (base)",
+        "trigger": "20 Soul Fragments consumed OR Sigil of Spite cast",
+        "effective_dpgcd_cycle_st_fracture_first": "23.16 over 3 GCDs = 7.72 per GCD"
+      },
+      "felblade": {
+        "apCoefficients": { "base": 1.2294 },
+        "gcd": 0.5,
+        "cooldown": 12,
+        "school": "Fire",
+        "fury_gen": 15,
+        "raw_dpgcd": 2.459,
+        "note": "Half-GCD cost makes effective DPGCD higher than raw coefficient suggests."
+      },
+      "throw_glaive": {
+        "apCoefficients": { "base": 0.492352 },
+        "gcd": 1.5,
+        "cost": "25 Fury",
+        "raw_dpgcd": 0.402,
+        "note": "Lowest DPGCD. Pure filler."
+      },
+      "voidfall_meteor": {
+        "apCoefficients": {
+          "base": 5.4,
+          "world_killer_3rd": 8.1,
+          "3_meteor_burst_total": 18.9
+        },
+        "gcd": 0,
+        "school": "Shadowflame",
+        "aoe": { "radius": 8, "max_targets": 8 },
+        "modifiers_applicable": [
+          { "source": "Harness the Cosmos", "value": 0.15, "type": "multiplicative" },
+          { "source": "Fiery Demise", "value": 0.30, "type": "multiplicative" },
+          { "source": "Burning Blood", "value": 0.08, "type": "multiplicative" },
+          { "source": "Otherworldly Focus", "value": 0.35, "type": "multiplicative", "conditional": "1T, -5%/target" }
+        ],
+        "note": "Zero-GCD procs attached to Soul Cleave. Damage is free on top of SC damage."
+      },
+      "explosion_of_the_soul": {
+        "apCoefficients": { "base": 1.8 },
+        "school": "Fire",
+        "trigger": "Fracture, 30% chance",
+        "icd": "0.5s (from SET_BONUS_INTERACTION_DATA)",
+        "aoe": { "radius": 12, "max_targets": 5 },
+        "expected_coeff_per_fracture": 0.54,
+        "note": "4pc set bonus. Adds 0.54 expected AP coeff per Fracture."
+      }
+    },
+    "rankings_1t": [
+      { "rank": 1, "ability": "Reaver's Glaive cycle (AR)", "effective_dpgcd": 7.72, "note": "3-GCD cycle average" },
+      { "rank": 2, "ability": "Sigil of Spite", "effective_dpgcd": 5.653, "note": "60s CD" },
+      { "rank": 3, "ability": "Soul Carver (with BB)", "effective_dpgcd": 4.50, "note": "Fire school" },
+      { "rank": 4, "ability": "Fracture (with 2pc+TS)", "effective_dpgcd": 3.83, "note": "Always-on modifiers" },
+      { "rank": 5, "ability": "Spirit Bomb (5 frags, with BB)", "effective_dpgcd": 3.53 },
+      { "rank": 6, "ability": "Spirit Bomb (3 frags, with BB)", "effective_dpgcd": 2.82 },
+      { "rank": 7, "ability": "Felblade", "effective_dpgcd": 2.66, "note": "0.5s GCD cost" },
+      { "rank": 8, "ability": "Sigil of Flame", "effective_dpgcd": 2.33, "note": "Total over duration" },
+      { "rank": 9, "ability": "Fel Devastation (with Stoke)", "effective_dpgcd": 1.67, "note": "2s channel" },
+      { "rank": 10, "ability": "Immolation Aura", "effective_dpgcd": 0.87, "note": "Total over 6s" },
+      { "rank": 11, "ability": "Throw Glaive", "effective_dpgcd": 0.40, "note": "Pure filler" }
+    ],
+    "rankings_5t": [
+      { "rank": 1, "ability": "Sigil of Spite", "effective_dpgcd": 28.27, "note": "Capped at 5T" },
+      { "rank": 2, "ability": "Spirit Bomb (5 frags)", "effective_dpgcd": 17.65 },
+      { "rank": 3, "ability": "Sigil of Flame", "effective_dpgcd": 11.67 },
+      { "rank": 4, "ability": "Soul Cleave", "effective_dpgcd": 8.50, "note": "Capped at 5T" },
+      { "rank": 5, "ability": "Fel Devastation (with Stoke)", "effective_dpgcd": 8.35 },
+      { "rank": 6, "ability": "Soul Carver", "effective_dpgcd": 4.50, "note": "ST only" },
+      { "rank": 7, "ability": "Immolation Aura", "effective_dpgcd": 4.35 },
+      { "rank": 8, "ability": "Fracture", "effective_dpgcd": 3.83, "note": "ST only" }
+    ],
+    "rankings_10t": [
+      { "rank": 1, "ability": "Sigil of Spite", "effective_dpgcd": 28.27, "note": "Capped at 5T" },
+      { "rank": 2, "ability": "Spirit Bomb (5 frags)", "effective_dpgcd": 26.67, "note": "Capped at 8T, sqrt beyond" },
+      { "rank": 3, "ability": "Sigil of Flame", "effective_dpgcd": 23.33, "note": "Linear scaling" },
+      { "rank": 4, "ability": "Fel Devastation (with Stoke)", "effective_dpgcd": 16.70, "note": "Frontal cone" },
+      { "rank": 5, "ability": "Immolation Aura", "effective_dpgcd": 8.70, "note": "Hits all targets" },
+      { "rank": 6, "ability": "Soul Cleave", "effective_dpgcd": 8.50, "note": "Capped at 5T" },
+      { "rank": 7, "ability": "Soul Carver", "effective_dpgcd": 4.50, "note": "ST only" },
+      { "rank": 8, "ability": "Fracture", "effective_dpgcd": 3.83, "note": "ST only" }
+    ]
+  },
+  "modifier_stacking": {
+    "methodology": "All modifiers listed as multiplicative stack multiplicatively. Compound multiplier = product of all (1 + mod_i).",
+    "fire_school_universal_modifiers": [
+      { "source": "Burning Blood", "value": 0.08, "always": true },
+      { "source": "Frailty (base)", "value": 0.03, "conditional": "debuff_up" },
+      { "source": "Vulnerability (via Frailty)", "value": 0.03, "conditional": "talent" },
+      { "source": "Soulcrush", "effect": "doubles_frailty_to_0.06", "conditional": "talent" }
+    ],
+    "burst_modifiers": [
+      { "source": "Fiery Demise (rank 2)", "value": 0.30, "conditional": "FB dot on target" },
+      { "source": "Metamorphosis", "value": 0.20, "applies_to": "Fracture, Soul Cleave, Spirit Bomb" }
+    ],
+    "hero_modifiers": {
+      "aldrachi_reaver": [
+        { "source": "Reaver's Mark", "value": "0.07/stack, max 2 = 0.14" },
+        { "source": "Thrill of the Fight", "value": 0.20, "duration_30s": true },
+        { "source": "Keen Edge", "value": "0.20 for RG, 0.10 for other Physical" },
+        { "source": "Incisive Blade", "value": 0.10, "applies_to": "Soul Cleave" }
+      ],
+      "annihilator": [
+        { "source": "Meteoric Rise", "value": 0.15, "applies_to": "Fel Devastation" },
+        { "source": "Harness the Cosmos", "value": 0.15, "applies_to": "Voidfall Meteors" },
+        { "source": "Otherworldly Focus", "value": 0.35, "applies_to": "SBomb + Meteors at 1T, -5%/target" },
+        { "source": "Celestial Echoes (passive)", "value": 0.30, "applies_to": "Fracture" },
+        { "source": "Celestial Echoes (buff)", "value": 0.25, "applies_to": "Fracture, after SBomb" }
+      ]
+    },
+    "deepest_modifier_stacks": {
+      "spirit_bomb": {
+        "max_sources": 8,
+        "list": ["Burning Blood", "Fiery Demise", "Frailty", "Vulnerability", "Soulcrush", "Metamorphosis", "Vengeful Beast", "RM/TotF or OWF"],
+        "peak_multiplier_ar": 3.12,
+        "peak_multiplier_anni": 2.38
+      },
+      "fracture": {
+        "max_sources": 7,
+        "list": ["2pc Set Bonus", "Tempered Steel", "Metamorphosis", "Celestial Echoes (2x)", "Fiery Demise", "RM", "TotF"],
+        "peak_multiplier_anni_meta": 2.95
+      },
+      "soul_carver": {
+        "max_sources": 5,
+        "list": ["Burning Blood", "Fiery Demise", "Frailty", "RM", "TotF"],
+        "peak_multiplier": 1.93
+      },
+      "fel_devastation": {
+        "max_sources": 6,
+        "list": ["Burning Blood", "Stoke the Flames", "Meteoric Rise", "Fiery Demise", "Frailty", "Final Breath"],
+        "peak_multiplier_with_fb": 3.34
+      }
+    },
+    "compound_multiplier_examples": {
+      "spirit_bomb_5frags_ar_full": "4.0 * 1.08 * 1.30 * 1.12 * 1.14 * 1.20 * 1.20 * 1.20 = 12.48 coeff",
+      "spirit_bomb_5frags_anni_1t": "4.0 * 1.08 * 1.35 * 1.12 * 1.20 * 1.20 = 9.50 coeff",
+      "soul_carver_fd_window": "5.10 * 1.08 * 1.30 * 1.06 = 7.59 coeff",
+      "fracture_anni_meta_ce": "3.105 * 1.35 * 1.12 * 1.30 * 1.25 * 1.20 = 9.15 coeff"
+    }
+  },
+  "proc_mechanics": {
+    "voidfall": {
+      "proc_source": "Fracture",
+      "proc_chance": 0.35,
+      "stacks_to_spending": 3,
+      "expected_fractures_to_3_stacks": 8.57,
+      "expected_time_between_spending": "~19.3s",
+      "mass_acceleration": "Meta grants 3 building stacks + resets SBomb CD",
+      "spending_mechanic": "SC consumes 1 stack (1 meteor). SBomb/SC at 3 stacks (Meteoric Fall) consumes all 3 for 3 rapid meteors.",
+      "meteor_coeff_per_cycle": {
+        "normal": 16.2,
+        "with_world_killer": 18.9
+      },
+      "cycles_per_minute": 3,
+      "dps_contribution_coeff_per_sec": 0.945
+    },
+    "untethered_rage": {
+      "formula": "souls_consumed * 0.0075 * pow(1.35, seething_anger.up)",
+      "per_sbomb_5frags": { "base": 0.0375, "with_sa": 0.050625 },
+      "per_sbomb_4frags": { "base": 0.03, "with_sa": 0.0405 },
+      "per_sbomb_3frags": { "base": 0.0225, "with_sa": 0.030375 },
+      "per_soul_cleave_2frags": { "base": 0.015, "with_sa": 0.020250 },
+      "expected_procs_per_minute": "~0.225 with 6 SBomb/min at 5 frags"
+    },
+    "wounded_quarry": {
+      "icd_seconds": 1,
+      "proc_chance_vengeance": 0.30,
+      "echo_damage_pct": 0.20,
+      "fragment_gen_max_per_sec": 1,
+      "duration_fragments_over_20s": "~6 extra"
+    },
+    "explosion_of_the_soul_4pc": {
+      "proc_chance": 0.30,
+      "icd_seconds": 0.5,
+      "ap_coeff": 1.8,
+      "aoe_radius": 12,
+      "max_targets": 5,
+      "expected_procs_per_minute": 3.6,
+      "dps_coeff_per_sec": 0.108
+    },
+    "fallout": {
+      "proc_chance_aoe": 0.60,
+      "st_guaranteed": true,
+      "frags_per_ia_st": 6,
+      "frags_per_ia_aoe": 3.6
+    },
+    "art_of_the_glaive_consumption_icd": {
+      "icd_seconds": 0.1
+    },
+    "soul_splitter": {
+      "proc_chance_per_rank": 0.02,
+      "max_ranks": 2,
+      "effective_fragment_throughput_increase": "4%"
+    }
+  },
+  "theory_validation": {
+    "theory_1_anni_meta_hold_building_2": {
+      "statement": "Anni Meta hold at building>=2 over-penalizes non-Vengeful Beast builds",
+      "with_vb_meta_duration": 20,
+      "without_vb_meta_duration": 15,
+      "with_vb_gcd_budget": { "available": 16, "needed": 12, "margin": 4 },
+      "without_vb_gcd_budget": { "available": 12, "needed": 12, "margin": 0 },
+      "hold_cost_coeff": 38.4,
+      "double_burst_gain_coeff": 27.6,
+      "net_without_vb": -10.8,
+      "verdict": "SUPPORTED. Non-VB builds lose ~10.8 coeff per hold. Relaxing to building<2|!talent.vengeful_beast recommended.",
+      "confidence": 0.75
+    },
+    "theory_2_ar_brand_window_aoe_reorder": {
+      "statement": "AR brand window lacks AoE-aware priority reordering",
+      "current_order": "IA(if CF) -> SC -> Spite -> FelDev -> IA(if !CF)",
+      "sc_dpgcd_3t": 7.16,
+      "ia_total_value_3t_with_cf_extension": 11.98,
+      "ia_value_3t_without_cf": 4.96,
+      "verdict": "WEAKLY SUPPORTED. Current APL already prioritizes CF-IA before SC. Without CF, SC correctly comes first. No change needed.",
+      "confidence": 0.35
+    },
+    "theory_3_anni_fd_aware_sbomb_threshold": {
+      "statement": "Anni lacks FD-aware SBomb threshold at 3 frags",
+      "ar_has_equivalent": true,
+      "sbomb_3frag_fd_coeff": 4.16,
+      "sbomb_5frag_fd_coeff": 5.20,
+      "extra_cast_value_per_fd_window": 4.49,
+      "estimated_dps_gain": "0.5-0.75% for FD Anni builds",
+      "guard_needed": "!buff.voidfall_spending.up",
+      "verdict": "SUPPORTED. Add spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active&!buff.voidfall_spending.up to anni list.",
+      "confidence": 0.70
+    },
+    "sbomb_3_vs_5_under_fd": {
+      "at_3_frags_fd": { "coeff": 4.16, "dpgcd": 3.467 },
+      "at_5_frags_fd": { "coeff": 5.20, "dpgcd": 4.333 },
+      "per_cast_delta": 1.04,
+      "timing_advantage": "3-frag fires 1 GCD sooner, enabling extra cast in 10s FD window"
+    },
+    "soul_carver_aoe_crossover": {
+      "sc_dpgcd_all_targets": 7.16,
+      "ia_dpgcd_per_target": 1.654,
+      "crossover_targets": 4.33,
+      "conclusion": "At 5+ targets, IA provides more total damage than SC."
+    },
+    "feldev_with_without_stoke_mr": {
+      "base_dpgcd": 1.284,
+      "with_stoke_dpgcd": 1.670,
+      "with_stoke_mr_dpgcd": 1.921,
+      "with_stoke_mr_fd_bb_dpgcd": 2.696,
+      "with_final_breath_full_dpgcd": 4.320,
+      "fracture_dpgcd_comparison": 3.83,
+      "conclusion": "FelDev without Stoke is below Fracture. With full talent investment and Final Breath, it becomes competitive."
+    }
+  },
+  "theories": [
+    {
+      "title": "Anni FD-aware SBomb threshold at 3 frags",
+      "reasoning": "The AR APL has spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active (line 61), lowering the threshold during FD windows to squeeze more SBomb casts into the 10s window. The Anni APL lacks this. Under FD, SBomb at 3 frags yields 4.16 coeff per cast. The extra cast during a 10s FD window adds ~4.49 effective coeff (with BB). Over 5 FD windows in 5 min: ~22.5 coeff gain = ~0.5-0.75% DPS for FD Anni builds. Must guard with !buff.voidfall_spending.up to avoid premature meteor consumption.",
+      "category": "cooldown_alignment",
+      "confidence": 0.70,
+      "evidence": [
+        "AR line 61: spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active exists",
+        "Anni main list has no equivalent FD-aware SBomb line",
+        "SBomb 3-frag under FD: 4.16 coeff vs 5-frag: 5.20 coeff per cast",
+        "FD window is 10s = 8 GCDs, enough for 2 SBomb cycles at 3-frag threshold"
+      ]
+    },
+    {
+      "title": "Non-VB Anni builds should relax Meta hold condition",
+      "reasoning": "Current APL holds Meta when building>=2 to enable double Voidfall burst via Mass Acceleration. Without Vengeful Beast, Meta is 15s (12 GCDs). Double burst needs 12 GCDs minimum with zero margin. Hold cost = ~12.8s of un-amplified Fractures = 38.4 lost coeff at 1.20x. Double burst meteor gain = 27.6 coeff. Net loss of ~10.8 coeff per hold. VB builds get 20s (16 GCDs) with 4 spare GCDs, making double burst comfortable.",
+      "category": "cooldown_alignment",
+      "confidence": 0.75,
+      "evidence": [
+        "Meta duration: 15s base, 20s with VB",
+        "GCD budget: 12/12 without VB, 12/16 with VB",
+        "Hold cost: ~8.57 Fractures * 1.5s avg * 3.105 coeff * 0.20 amp = 38.4 lost coeff",
+        "Double burst gain: 18.9 * 1.08 * 1.35 = 27.6 extra meteor coeff"
+      ]
+    },
+    {
+      "title": "Spirit Bomb dominates DPGCD at all target counts due to deepest modifier stack",
+      "reasoning": "Spirit Bomb benefits from 8 simultaneous multiplicative modifiers: BB, FD, Frailty, Vulnerability, Soulcrush, Meta, VB, and either RM/TotF (AR) or OWF (Anni). At 5 frags with full buffs, compound multiplier reaches 3.12x (AR) or 2.38x (Anni). No other ability matches this depth. This confirms SBomb priority is correct and no reordering is viable.",
+      "category": "talent_interaction",
+      "confidence": 0.90,
+      "evidence": [
+        "SBomb 5-frag AR full buffs: 12.48 coeff",
+        "SBomb 5-frag Anni 1T: 9.50 coeff",
+        "Next best: Fracture Anni Meta CE: 9.15 coeff (but builder, not spender)"
+      ]
+    },
+    {
+      "title": "Fracture is highest-value builder due to 2pc + Celestial Echoes triple-stacking",
+      "reasoning": "Fracture benefits from 12.0 2pc (+35%), Tempered Steel (+12%), and Celestial Echoes passive (+30%) + buff (+25%) in Anni. Always-on multiplier: 1.35*1.12 = 1.512. With CE in Anni: 1.512*1.30*1.25 = 2.457. Base 3.105 * 2.457 = 7.63 DPGCD. Exceeds SBomb 5-frag raw (4.0) before any burst windows. Secondary value (25-40 Fury + 2-3 frags) compounds this further.",
+      "category": "resource_flow",
+      "confidence": 0.85,
+      "evidence": [
+        "2pc: +35%, Tempered Steel: +12%, CE passive: +30%, CE buff: +25%",
+        "Combined Anni: 2.457x multiplier",
+        "Fracture DPGCD with all: 7.63",
+        "Also generates 25 Fury + 2 frags (40+3 in Meta)"
+      ]
+    },
+    {
+      "title": "FelDev without Stoke the Flames is below Fracture DPGCD",
+      "reasoning": "FelDev base DPGCD = 1.284 (2.055 total / 1.6 effective GCD). Fracture = 3.83 with 2pc+TS. FelDev without Stoke is 33.5% of Fracture DPGCD. Even with BB (+8%), FelDev reaches 1.387. FelDev value comes from: (1) FD synergy, (2) MR fragment gen in Anni, (3) Final Breath bonus. Without Stoke, FelDev is a net DPS loss per GCD vs Fracture.",
+      "category": "talent_interaction",
+      "confidence": 0.80,
+      "evidence": [
+        "FelDev base DPGCD: 1.284",
+        "Fracture effective DPGCD: 3.83",
+        "FelDev with Stoke: 1.670 (still below)",
+        "FelDev with full talents+FB: 4.320 (competitive)"
+      ]
+    },
+    {
+      "title": "Soul Carver AoE crossover at ~4.3 targets vs Immolation Aura",
+      "reasoning": "Soul Carver is ST-only (5.10 total coeff). IA scales linearly with targets (1.069*N total). With BB+FD: SC=7.16, IA/target=1.654. Crossover at 7.16/1.654 = 4.33 targets. At 5+, IA definitively superior. SC fragment gen (6 frags) provides value beyond damage in brand windows. Current APL correctly handles this via ar_brand_window ordering.",
+      "category": "resource_flow",
+      "confidence": 0.85,
+      "evidence": [
+        "SC: 5.10 coeff ST only",
+        "IA: 1.654 coeff per target with BB+AF+FD",
+        "Crossover: 4.33 targets"
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "summary": "Add FD-aware SBomb threshold to Anni main list",
+      "implementation": "Insert after anni_voidfall call: spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active&!buff.voidfall_spending.up",
+      "category": "window_efficiency",
+      "priority": 7.0,
+      "archetype": null,
+      "aplMutation": {
+        "op": "insert_after",
+        "target": "actions.anni+=/call_action_list,name=anni_voidfall",
+        "line": "actions.anni+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active&!buff.voidfall_spending.up"
+      },
+      "expected_impact": "+0.5-0.75% DPS for FD-talented Anni builds",
+      "risk": "May fire SBomb at 3 frags suboptimally. Guard with !buff.voidfall_spending.up mitigates."
+    },
+    {
+      "summary": "Relax Meta hold for non-VB Anni builds",
+      "implementation": "Change building<2 to: (buff.voidfall_building.stack<2|!talent.vengeful_beast)",
+      "category": "cooldown_alignment",
+      "priority": 6.5,
+      "archetype": null,
+      "aplMutation": {
+        "op": "modify_condition",
+        "target": "actions.anni+=/metamorphosis",
+        "from": "buff.voidfall_building.stack<2",
+        "to": "(buff.voidfall_building.stack<2|!talent.vengeful_beast)"
+      },
+      "expected_impact": "+0.3-0.5% DPS for non-VB Anni builds, neutral for VB builds",
+      "risk": "Non-VB builds lose double-burst opportunity but numbers show net positive."
+    },
+    {
+      "summary": "Investigate Final Breath impact on FelDev priority",
+      "implementation": "When Final Breath is talented, FelDev total coeff increases ~60% (2.055 to 3.288). With full modifiers, DPGCD reaches 4.32 — above Fracture base. May warrant higher priority when FB talented.",
+      "category": "talent_interaction",
+      "priority": 5.0,
+      "archetype": null,
+      "aplMutation": {
+        "op": "investigation",
+        "note": "Verify Final Breath talent presence in roster and channel completion rate"
+      },
+      "expected_impact": "Unknown"
+    },
+    {
+      "summary": "Consolidate Anni FD timing into voidfall sub-list",
+      "implementation": "The anni_voidfall sub-list brands at spending=3 or building=2. The main anni list also brands at !dot.fiery_brand.ticking (line 121). These may compete. Verify ordering prevents brand firing before voidfall can catch peak alignment.",
+      "category": "window_efficiency",
+      "priority": 4.5,
+      "archetype": null,
+      "aplMutation": {
+        "op": "investigation",
+        "note": "Check if main anni brand fires before anni_voidfall brand can intercept"
+      },
+      "expected_impact": "Small — brand already partially aligns via anni_voidfall line 141"
+    }
+  ]
+}

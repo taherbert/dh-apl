@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vengeance APL Showcase</title>
+<style>
+
+:root {
+  --bg: #0f1117;
+  --surface: #181a24;
+  --surface-alt: #1e2030;
+  --border: #2a2d3e;
+  --fg: #e2e4ed;
+  --fg-muted: #8b8fa3;
+  --accent: #6c8aff;
+  --accent-dim: #3d4f8a;
+  --positive: #4ade80;
+  --positive-bg: rgba(74, 222, 128, 0.08);
+  --negative: #f87171;
+  --negative-bg: rgba(248, 113, 113, 0.08);
+  --gold: #fbbf24;
+  --gold-bg: rgba(251, 191, 36, 0.1);
+  --code-bg: #1e2030;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+header {
+  padding: 2.5rem 0 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+header .meta {
+  color: var(--fg-muted);
+  margin-top: 0.35rem;
+  font-size: 0.85rem;
+}
+
+main { padding-bottom: 3rem; }
+
+section { margin-bottom: 2.5rem; }
+
+h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--fg);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.5rem;
+  color: var(--fg-muted);
+}
+
+.build-count {
+  font-weight: 400;
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+}
+
+/* Summary cards */
+.cards {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  min-width: 140px;
+  flex: 1;
+}
+
+.card.accent {
+  border-color: var(--accent-dim);
+  background: linear-gradient(135deg, rgba(108, 138, 255, 0.06), transparent);
+}
+
+.card-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.card-label {
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--accent); }
+th.sortable.sorted-asc::after { content: " \25B2"; font-size: 0.6em; }
+th.sortable.sorted-desc::after { content: " \25BC"; font-size: 0.6em; }
+
+th.num, td.dps-cell { text-align: right; }
+
+tbody tr { background: var(--bg); }
+tbody tr:nth-child(even) { background: var(--surface-alt); }
+tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
+
+.dps-cell { white-space: nowrap; }
+
+.build-name {
+  font-weight: 500;
+  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.78rem;
+  word-break: break-word;
+}
+
+.copy-hash {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 0.15em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35em;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+}
+.build-name:hover .copy-hash { opacity: 1; }
+.copy-hash:hover { color: var(--accent); border-color: var(--border); }
+.copy-hash.copied { color: var(--positive); opacity: 1; }
+.copy-hash svg { width: 13px; height: 13px; }
+
+.archetype-cell {
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+
+.dps-cell { font-variant-numeric: tabular-nums; }
+
+.dps-cell.top-build {
+  background: var(--gold-bg);
+}
+
+.badge {
+  display: inline-block;
+  background: var(--gold);
+  color: #000;
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35em;
+  letter-spacing: 0.05em;
+}
+
+.positive { color: var(--positive); font-weight: 600; }
+.negative { color: var(--negative); font-weight: 600; }
+
+code {
+  font-family: "SF Mono", "Fira Code", monospace;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+
+ul { margin-left: 1.5rem; margin-bottom: 0.75rem; }
+li { margin-bottom: 0.25rem; }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0;
+  text-align: center;
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  table { font-size: 0.72rem; }
+  th, td { padding: 0.35rem 0.5rem; }
+  .cards { gap: 0.5rem; }
+  .card { min-width: 120px; padding: 0.75rem; }
+  .card-value { font-size: 1.1rem; }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Vengeance APL Showcase</h1>
+  <p class="meta">Generated 2026-02-10 &middot; Midnight &middot; DPS Optimization &middot; 69 builds</p>
+</header>
+<main>
+<section class="cards">
+  <div class="card accent"><div class="card-value positive">+13.55%</div><div class="card-label">Avg weighted improvement</div></div>
+  <div class="card"><div class="card-value">69</div><div class="card-label">Roster builds</div></div>
+  <div class="card"><div class="card-value positive">+8.84%</div><div class="card-label">Patchwerk 1T avg</div></div>
+  <div class="card"><div class="card-value positive">+14.98%</div><div class="card-label">Patchwerk 5T avg</div></div>
+  <div class="card"><div class="card-value positive">+15.10%</div><div class="card-label">Patchwerk 10T avg</div></div>
+  <div class="card"><div class="card-value positive">+24.72%</div><div class="card-label">Best: DiF + Untethered Rage + Vengeful Beast (PS) #2</div></div>
+  <div class="card"><div class="card-value positive">+2.41%</div><div class="card-label">Worst: Fel Flame Fortification + DiF + Vengeful Beast (Doom)</div></div>
+</section>
+<section>
+<h2>Full Roster Comparison</h2>
+<h3>Annihilator <span class="build-count">(34 builds)</span></h3>
+<div class="table-wrap"><table class="roster-table" data-tree="annihilator">
+<thead><tr>
+  <th class="sortable" data-col="name">Build</th>
+  <th class="sortable" data-col="archetype">Template</th>
+  <th class="sortable num" data-col="st">Patchwerk 1T</th>
+  <th class="sortable num" data-col="small_aoe">Patchwerk 5T</th>
+  <th class="sortable num" data-col="big_aoe">Patchwerk 10T</th>
+  <th class="sortable num" data-col="weighted">Weighted</th>
+</tr></thead>
+<tbody>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (HtC) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop Sigil</td><td class="dps-cell" title="Baseline: 27,312" data-dps="29460" data-delta="7.86">29,460 <span class="positive">(+7.86%)</span></td><td class="dps-cell top-build" title="Baseline: 138,666" data-dps="142998" data-delta="3.12">142,998 <span class="positive">(+3.12%)</span><span class="badge">TOP</span></td><td class="dps-cell top-build" title="Baseline: 251,368" data-dps="257763" data-delta="2.54">257,763 <span class="positive">(+2.54%)</span><span class="badge">TOP</span></td><td class="dps-cell top-build" title="Baseline: 105,529" data-dps="109182" data-delta="3.46">109,182 <span class="positive">(+3.46%)</span><span class="badge">TOP</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (Doom) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop Sigil</td><td class="dps-cell" title="Baseline: 26,518" data-dps="28595" data-delta="7.83">28,595 <span class="positive">(+7.83%)</span></td><td class="dps-cell" title="Baseline: 137,736" data-dps="141308" data-delta="2.59">141,308 <span class="positive">(+2.59%)</span></td><td class="dps-cell" title="Baseline: 250,602" data-dps="256493" data-delta="2.35">256,493 <span class="positive">(+2.35%)</span></td><td class="dps-cell" title="Baseline: 104,700" data-dps="107988" data-delta="3.14">107,988 <span class="positive">(+3.14%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (HtC) #4<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzYmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Drop SC+Sigil</td><td class="dps-cell" title="Baseline: 26,628" data-dps="28895" data-delta="8.51">28,895 <span class="positive">(+8.51%)</span></td><td class="dps-cell" title="Baseline: 135,850" data-dps="141253" data-delta="3.98">141,253 <span class="positive">(+3.98%)</span></td><td class="dps-cell" title="Baseline: 246,620" data-dps="255111" data-delta="3.44">255,111 <span class="positive">(+3.44%)</span></td><td class="dps-cell" title="Baseline: 103,393" data-dps="107846" data-delta="4.31">107,846 <span class="positive">(+4.31%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (Doom) #4<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzYmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Drop SC+Sigil</td><td class="dps-cell" title="Baseline: 25,816" data-dps="27899" data-delta="8.07">27,899 <span class="positive">(+8.07%)</span></td><td class="dps-cell" title="Baseline: 134,478" data-dps="139505" data-delta="3.74">139,505 <span class="positive">(+3.74%)</span></td><td class="dps-cell" title="Baseline: 245,529" data-dps="252643" data-delta="2.90">252,643 <span class="positive">(+2.90%)</span></td><td class="dps-cell" title="Baseline: 102,357" data-dps="106329" data-delta="3.88">106,329 <span class="positive">(+3.88%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (HtC) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGGzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Balanced</td><td class="dps-cell" title="Baseline: 27,952" data-dps="30978" data-delta="10.83">30,978 <span class="positive">(+10.83%)</span></td><td class="dps-cell" title="Baseline: 130,003" data-dps="135999" data-delta="4.61">135,999 <span class="positive">(+4.61%)</span></td><td class="dps-cell" title="Baseline: 236,215" data-dps="248655" data-delta="5.27">248,655 <span class="positive">(+5.27%)</span></td><td class="dps-cell" title="Baseline: 100,220" data-dps="106020" data-delta="5.79">106,020 <span class="positive">(+5.79%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (HtC) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+Harvest</td><td class="dps-cell top-build" title="Baseline: 28,289" data-dps="31677" data-delta="11.97">31,677 <span class="positive">(+11.97%)</span><span class="badge">TOP</span></td><td class="dps-cell" title="Baseline: 129,706" data-dps="136422" data-delta="5.18">136,422 <span class="positive">(+5.18%)</span></td><td class="dps-cell" title="Baseline: 234,967" data-dps="243973" data-delta="3.83">243,973 <span class="positive">(+3.83%)</span></td><td class="dps-cell" title="Baseline: 100,050" data-dps="105560" data-delta="5.51">105,560 <span class="positive">(+5.51%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (Doom) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGGzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Balanced</td><td class="dps-cell" title="Baseline: 26,949" data-dps="29807" data-delta="10.61">29,807 <span class="positive">(+10.61%)</span></td><td class="dps-cell" title="Baseline: 128,518" data-dps="134064" data-delta="4.31">134,064 <span class="positive">(+4.31%)</span></td><td class="dps-cell" title="Baseline: 235,635" data-dps="245949" data-delta="4.38">245,949 <span class="positive">(+4.38%)</span></td><td class="dps-cell" title="Baseline: 99,157" data-dps="104312" data-delta="5.20">104,312 <span class="positive">(+5.20%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (Doom) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmBzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+Harvest</td><td class="dps-cell" title="Baseline: 27,338" data-dps="30489" data-delta="11.53">30,489 <span class="positive">(+11.53%)</span></td><td class="dps-cell" title="Baseline: 128,213" data-dps="134197" data-delta="4.67">134,197 <span class="positive">(+4.67%)</span></td><td class="dps-cell" title="Baseline: 233,407" data-dps="241630" data-delta="3.52">241,630 <span class="positive">(+3.52%)</span></td><td class="dps-cell" title="Baseline: 98,814" data-dps="103830" data-delta="5.08">103,830 <span class="positive">(+5.08%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (HtC) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop SC</td><td class="dps-cell" title="Baseline: 25,977" data-dps="28072" data-delta="8.06">28,072 <span class="positive">(+8.06%)</span></td><td class="dps-cell" title="Baseline: 128,778" data-dps="134060" data-delta="4.10">134,060 <span class="positive">(+4.10%)</span></td><td class="dps-cell" title="Baseline: 235,181" data-dps="243483" data-delta="3.53">243,483 <span class="positive">(+3.53%)</span></td><td class="dps-cell" title="Baseline: 98,658" data-dps="102951" data-delta="4.35">102,951 <span class="positive">(+4.35%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (HtC) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: Full Stack</td><td class="dps-cell" title="Baseline: 26,354" data-dps="28683" data-delta="8.83">28,683 <span class="positive">(+8.83%)</span></td><td class="dps-cell" title="Baseline: 129,248" data-dps="134573" data-delta="4.12">134,573 <span class="positive">(+4.12%)</span></td><td class="dps-cell" title="Baseline: 233,618" data-dps="240183" data-delta="2.81">240,183 <span class="positive">(+2.81%)</span></td><td class="dps-cell" title="Baseline: 98,675" data-dps="102750" data-delta="4.13">102,750 <span class="positive">(+4.13%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (Doom) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop SC</td><td class="dps-cell" title="Baseline: 25,165" data-dps="27077" data-delta="7.60">27,077 <span class="positive">(+7.60%)</span></td><td class="dps-cell" title="Baseline: 127,731" data-dps="132412" data-delta="3.67">132,412 <span class="positive">(+3.67%)</span></td><td class="dps-cell" title="Baseline: 234,318" data-dps="241598" data-delta="3.11">241,598 <span class="positive">(+3.11%)</span></td><td class="dps-cell" title="Baseline: 97,765" data-dps="101582" data-delta="3.90">101,582 <span class="positive">(+3.90%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (HtC) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzgZMzAzgZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+FelDev</td><td class="dps-cell" title="Baseline: 25,675" data-dps="28340" data-delta="10.38">28,340 <span class="positive">(+10.38%)</span></td><td class="dps-cell" title="Baseline: 126,315" data-dps="131764" data-delta="4.31">131,764 <span class="positive">(+4.31%)</span></td><td class="dps-cell" title="Baseline: 230,127" data-dps="239044" data-delta="3.88">239,044 <span class="positive">(+3.88%)</span></td><td class="dps-cell" title="Baseline: 96,757" data-dps="101508" data-delta="4.91">101,508 <span class="positive">(+4.91%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (Doom) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: Full Stack</td><td class="dps-cell" title="Baseline: 25,517" data-dps="27796" data-delta="8.93">27,796 <span class="positive">(+8.93%)</span></td><td class="dps-cell" title="Baseline: 128,220" data-dps="132924" data-delta="3.67">132,924 <span class="positive">(+3.67%)</span></td><td class="dps-cell" title="Baseline: 232,541" data-dps="238649" data-delta="2.63">238,649 <span class="positive">(+2.63%)</span></td><td class="dps-cell" title="Baseline: 97,733" data-dps="101505" data-delta="3.86">101,505 <span class="positive">(+3.86%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (HtC) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmxYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim FelDev</td><td class="dps-cell" title="Baseline: 25,849" data-dps="27845" data-delta="7.72">27,845 <span class="positive">(+7.72%)</span></td><td class="dps-cell" title="Baseline: 126,019" data-dps="130864" data-delta="3.84">130,864 <span class="positive">(+3.84%)</span></td><td class="dps-cell" title="Baseline: 230,475" data-dps="236389" data-delta="2.57">236,389 <span class="positive">(+2.57%)</span></td><td class="dps-cell" title="Baseline: 96,825" data-dps="100459" data-delta="3.75">100,459 <span class="positive">(+3.75%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (Doom) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzgZMzAzgZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+FelDev</td><td class="dps-cell" title="Baseline: 24,743" data-dps="27336" data-delta="10.48">27,336 <span class="positive">(+10.48%)</span></td><td class="dps-cell" title="Baseline: 125,082" data-dps="130305" data-delta="4.18">130,305 <span class="positive">(+4.18%)</span></td><td class="dps-cell" title="Baseline: 229,870" data-dps="237887" data-delta="3.49">237,887 <span class="positive">(+3.49%)</span></td><td class="dps-cell" title="Baseline: 95,870" data-dps="100337" data-delta="4.66">100,337 <span class="positive">(+4.66%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (Doom) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmxYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim FelDev</td><td class="dps-cell" title="Baseline: 24,992" data-dps="26959" data-delta="7.87">26,959 <span class="positive">(+7.87%)</span></td><td class="dps-cell" title="Baseline: 124,952" data-dps="129036" data-delta="3.27">129,036 <span class="positive">(+3.27%)</span></td><td class="dps-cell" title="Baseline: 230,207" data-dps="235110" data-delta="2.13">235,110 <span class="positive">(+2.13%)</span></td><td class="dps-cell" title="Baseline: 96,023" data-dps="99212" data-delta="3.32">99,212 <span class="positive">(+3.32%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (HtC) #5<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzwYmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim Harvest</td><td class="dps-cell" title="Baseline: 24,680" data-dps="26599" data-delta="7.77">26,599 <span class="positive">(+7.77%)</span></td><td class="dps-cell" title="Baseline: 123,495" data-dps="128341" data-delta="3.92">128,341 <span class="positive">(+3.92%)</span></td><td class="dps-cell" title="Baseline: 226,170" data-dps="234903" data-delta="3.86">234,903 <span class="positive">(+3.86%)</span></td><td class="dps-cell" title="Baseline: 94,622" data-dps="98782" data-delta="4.40">98,782 <span class="positive">(+4.40%)</span></td></tr>
+<tr><td class="build-name">DiF + Vengeful Beast (HtC)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGMjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: Full Stack</td><td class="dps-cell" title="Baseline: 25,835" data-dps="27551" data-delta="6.64">27,551 <span class="positive">(+6.64%)</span></td><td class="dps-cell" title="Baseline: 125,439" data-dps="128531" data-delta="2.46">128,531 <span class="positive">(+2.46%)</span></td><td class="dps-cell" title="Baseline: 227,868" data-dps="231260" data-delta="1.49">231,260 <span class="positive">(+1.49%)</span></td><td class="dps-cell" title="Baseline: 96,123" data-dps="98587" data-delta="2.56">98,587 <span class="positive">(+2.56%)</span></td></tr>
+<tr><td class="build-name">DiF + Vengeful Beast (Doom)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGMjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: Full Stack</td><td class="dps-cell" title="Baseline: 24,987" data-dps="26768" data-delta="7.13">26,768 <span class="positive">(+7.13%)</span></td><td class="dps-cell" title="Baseline: 125,032" data-dps="127960" data-delta="2.34">127,960 <span class="positive">(+2.34%)</span></td><td class="dps-cell" title="Baseline: 227,636" data-dps="231235" data-delta="1.58">231,235 <span class="positive">(+1.58%)</span></td><td class="dps-cell" title="Baseline: 95,530" data-dps="98019" data-delta="2.60">98,019 <span class="positive">(+2.60%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (Doom) #5<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzwYmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim Harvest</td><td class="dps-cell" title="Baseline: 23,893" data-dps="25709" data-delta="7.60">25,709 <span class="positive">(+7.60%)</span></td><td class="dps-cell" title="Baseline: 122,844" data-dps="127492" data-delta="3.78">127,492 <span class="positive">(+3.78%)</span></td><td class="dps-cell" title="Baseline: 225,542" data-dps="233871" data-delta="3.69">233,871 <span class="positive">(+3.69%)</span></td><td class="dps-cell" title="Baseline: 93,908" data-dps="97876" data-delta="4.23">97,876 <span class="positive">(+4.23%)</span></td></tr>
+<tr><td class="build-name">Untethered Rage + Vengeful Beast (HtC)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGGYMzYGzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Harvest+FelDev</td><td class="dps-cell" title="Baseline: 25,378" data-dps="30812" data-delta="21.41">30,812 <span class="positive">(+21.41%)</span></td><td class="dps-cell" title="Baseline: 108,771" data-dps="126200" data-delta="16.02">126,200 <span class="positive">(+16.02%)</span></td><td class="dps-cell" title="Baseline: 189,217" data-dps="221120" data-delta="16.86">221,120 <span class="positive">(+16.86%)</span></td><td class="dps-cell" title="Baseline: 83,164" data-dps="97490" data-delta="17.23">97,490 <span class="positive">(+17.23%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage (HtC)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No FelDev</td><td class="dps-cell" title="Baseline: 25,359" data-dps="27461" data-delta="8.29">27,461 <span class="positive">(+8.29%)</span></td><td class="dps-cell" title="Baseline: 123,060" data-dps="126705" data-delta="2.96">126,705 <span class="positive">(+2.96%)</span></td><td class="dps-cell" title="Baseline: 222,115" data-dps="225888" data-delta="1.70">225,888 <span class="positive">(+1.70%)</span></td><td class="dps-cell" title="Baseline: 94,020" data-dps="96920" data-delta="3.08">96,920 <span class="positive">(+3.08%)</span></td></tr>
+<tr><td class="build-name">Untethered Rage + Vengeful Beast (Doom)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGGYMzYGzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Harvest+FelDev</td><td class="dps-cell" title="Baseline: 24,544" data-dps="29855" data-delta="21.64">29,855 <span class="positive">(+21.64%)</span></td><td class="dps-cell" title="Baseline: 108,222" data-dps="124720" data-delta="15.24">124,720 <span class="positive">(+15.24%)</span></td><td class="dps-cell" title="Baseline: 190,041" data-dps="219714" data-delta="15.61">219,714 <span class="positive">(+15.61%)</span></td><td class="dps-cell" title="Baseline: 82,747" data-dps="96286" data-delta="16.36">96,286 <span class="positive">(+16.36%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF (HtC)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMGzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No FelDev</td><td class="dps-cell" title="Baseline: 24,994" data-dps="26805" data-delta="7.25">26,805 <span class="positive">(+7.25%)</span></td><td class="dps-cell" title="Baseline: 121,641" data-dps="124535" data-delta="2.38">124,535 <span class="positive">(+2.38%)</span></td><td class="dps-cell" title="Baseline: 220,173" data-dps="225580" data-delta="2.46">225,580 <span class="positive">(+2.46%)</span></td><td class="dps-cell" title="Baseline: 93,024" data-dps="95879" data-delta="3.07">95,879 <span class="positive">(+3.07%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage (Doom)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMYGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No FelDev</td><td class="dps-cell" title="Baseline: 24,525" data-dps="26615" data-delta="8.52">26,615 <span class="positive">(+8.52%)</span></td><td class="dps-cell" title="Baseline: 121,942" data-dps="124850" data-delta="2.38">124,850 <span class="positive">(+2.38%)</span></td><td class="dps-cell" title="Baseline: 222,101" data-dps="224956" data-delta="1.29">224,956 <span class="positive">(+1.29%)</span></td><td class="dps-cell" title="Baseline: 93,265" data-dps="95754" data-delta="2.67">95,754 <span class="positive">(+2.67%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF (Doom)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMGzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No FelDev</td><td class="dps-cell" title="Baseline: 24,248" data-dps="26025" data-delta="7.33">26,025 <span class="positive">(+7.33%)</span></td><td class="dps-cell" title="Baseline: 120,914" data-dps="123947" data-delta="2.51">123,947 <span class="positive">(+2.51%)</span></td><td class="dps-cell" title="Baseline: 221,354" data-dps="225109" data-delta="1.70">225,109 <span class="positive">(+1.70%)</span></td><td class="dps-cell" title="Baseline: 92,669" data-dps="95219" data-delta="2.75">95,219 <span class="positive">(+2.75%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (HtC) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Harvest</td><td class="dps-cell" title="Baseline: 23,788" data-dps="25825" data-delta="8.56">25,825 <span class="positive">(+8.56%)</span></td><td class="dps-cell" title="Baseline: 119,905" data-dps="124491" data-delta="3.82">124,491 <span class="positive">(+3.82%)</span></td><td class="dps-cell" title="Baseline: 218,402" data-dps="224332" data-delta="2.71">224,332 <span class="positive">(+2.71%)</span></td><td class="dps-cell" title="Baseline: 91,546" data-dps="95126" data-delta="3.91">95,126 <span class="positive">(+3.91%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (Doom) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Harvest</td><td class="dps-cell" title="Baseline: 23,094" data-dps="25009" data-delta="8.29">25,009 <span class="positive">(+8.29%)</span></td><td class="dps-cell" title="Baseline: 119,473" data-dps="123779" data-delta="3.60">123,779 <span class="positive">(+3.60%)</span></td><td class="dps-cell" title="Baseline: 218,684" data-dps="223543" data-delta="2.22">223,543 <span class="positive">(+2.22%)</span></td><td class="dps-cell" title="Baseline: 91,126" data-dps="94347" data-delta="3.53">94,347 <span class="positive">(+3.53%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Vengeful Beast (HtC)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGegZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Harvest</td><td class="dps-cell" title="Baseline: 23,867" data-dps="25548" data-delta="7.04">25,548 <span class="positive">(+7.04%)</span></td><td class="dps-cell" title="Baseline: 119,098" data-dps="122169" data-delta="2.58">122,169 <span class="positive">(+2.58%)</span></td><td class="dps-cell" title="Baseline: 216,893" data-dps="220364" data-delta="1.60">220,364 <span class="positive">(+1.60%)</span></td><td class="dps-cell" title="Baseline: 91,042" data-dps="93497" data-delta="2.70">93,497 <span class="positive">(+2.70%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Vengeful Beast (Doom)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGegZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Harvest</td><td class="dps-cell" title="Baseline: 23,242" data-dps="24878" data-delta="7.04">24,878 <span class="positive">(+7.04%)</span></td><td class="dps-cell" title="Baseline: 118,999" data-dps="121382" data-delta="2.00">121,382 <span class="positive">(+2.00%)</span></td><td class="dps-cell" title="Baseline: 217,847" data-dps="221142" data-delta="1.51">221,142 <span class="positive">(+1.51%)</span></td><td class="dps-cell" title="Baseline: 90,890" data-dps="93082" data-delta="2.41">93,082 <span class="positive">(+2.41%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Untethered Rage + Vengeful Beast (HtC)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzwMMjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Brand</td><td class="dps-cell" title="Baseline: 22,487" data-dps="26598" data-delta="18.28">26,598 <span class="positive">(+18.28%)</span></td><td class="dps-cell" title="Baseline: 103,053" data-dps="117385" data-delta="13.91">117,385 <span class="positive">(+13.91%)</span></td><td class="dps-cell" title="Baseline: 180,900" data-dps="205961" data-delta="13.85">205,961 <span class="positive">(+13.85%)</span></td><td class="dps-cell" title="Baseline: 78,340" data-dps="89706" data-delta="14.51">89,706 <span class="positive">(+14.51%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Untethered Rage + Vengeful Beast (Doom)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzwMMjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Brand</td><td class="dps-cell" title="Baseline: 21,757" data-dps="25825" data-delta="18.70">25,825 <span class="positive">(+18.70%)</span></td><td class="dps-cell" title="Baseline: 102,809" data-dps="116457" data-delta="13.28">116,457 <span class="positive">(+13.28%)</span></td><td class="dps-cell" title="Baseline: 181,718" data-dps="205526" data-delta="13.10">205,526 <span class="positive">(+13.10%)</span></td><td class="dps-cell" title="Baseline: 78,065" data-dps="88955" data-delta="13.95">88,955 <span class="positive">(+13.95%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Vengeful Beast (Doom)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2Mz4BmhZMzYGzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Brand</td><td class="dps-cell" title="Baseline: 22,927" data-dps="25324" data-delta="10.45">25,324 <span class="positive">(+10.45%)</span></td><td class="dps-cell" title="Baseline: 105,370" data-dps="114647" data-delta="8.80">114,647 <span class="positive">(+8.80%)</span></td><td class="dps-cell" title="Baseline: 185,231" data-dps="204913" data-delta="10.63">204,913 <span class="positive">(+10.63%)</span></td><td class="dps-cell" title="Baseline: 80,121" data-dps="88039" data-delta="9.88">88,039 <span class="positive">(+9.88%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Vengeful Beast (HtC)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2Mz4BmhZMzYGzYmZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Brand</td><td class="dps-cell" title="Baseline: 23,527" data-dps="26046" data-delta="10.70">26,046 <span class="positive">(+10.70%)</span></td><td class="dps-cell" title="Baseline: 105,341" data-dps="114630" data-delta="8.82">114,630 <span class="positive">(+8.82%)</span></td><td class="dps-cell" title="Baseline: 184,138" data-dps="202738" data-delta="10.10">202,738 <span class="positive">(+10.10%)</span></td><td class="dps-cell" title="Baseline: 80,194" data-dps="87960" data-delta="9.68">87,960 <span class="positive">(+9.68%)</span></td></tr>
+</tbody></table></div>
+<h3>Aldrachi Reaver <span class="build-count">(35 builds)</span></h3>
+<div class="table-wrap"><table class="roster-table" data-tree="aldrachi_reaver">
+<thead><tr>
+  <th class="sortable" data-col="name">Build</th>
+  <th class="sortable" data-col="archetype">Template</th>
+  <th class="sortable num" data-col="st">Patchwerk 1T</th>
+  <th class="sortable num" data-col="small_aoe">Patchwerk 5T</th>
+  <th class="sortable num" data-col="big_aoe">Patchwerk 10T</th>
+  <th class="sortable num" data-col="weighted">Weighted</th>
+</tr></thead>
+<tbody>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (PS) #4<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzYmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAA4DA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Drop SC+Sigil</td><td class="dps-cell" title="Baseline: 26,707" data-dps="28900" data-delta="8.21">28,900 <span class="positive">(+8.21%)</span></td><td class="dps-cell" title="Baseline: 88,277" data-dps="107805" data-delta="22.12">107,805 <span class="positive">(+22.12%)</span></td><td class="dps-cell top-build" title="Baseline: 155,501" data-dps="197589" data-delta="27.07">197,589 <span class="positive">(+27.07%)</span><span class="badge">TOP</span></td><td class="dps-cell top-build" title="Baseline: 70,937" data-dps="86309" data-delta="21.67">86,309 <span class="positive">(+21.67%)</span><span class="badge">TOP</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (KE) #4<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzYmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAA4DA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Drop SC+Sigil</td><td class="dps-cell" title="Baseline: 26,961" data-dps="29118" data-delta="8.00">29,118 <span class="positive">(+8.00%)</span></td><td class="dps-cell" title="Baseline: 87,647" data-dps="107740" data-delta="22.92">107,740 <span class="positive">(+22.92%)</span></td><td class="dps-cell" title="Baseline: 155,456" data-dps="196753" data-delta="26.56">196,753 <span class="positive">(+26.56%)</span></td><td class="dps-cell" title="Baseline: 70,866" data-dps="86231" data-delta="21.68">86,231 <span class="positive">(+21.68%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (PS) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAXA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop Sigil</td><td class="dps-cell" title="Baseline: 27,802" data-dps="29848" data-delta="7.36">29,848 <span class="positive">(+7.36%)</span></td><td class="dps-cell top-build" title="Baseline: 90,289" data-dps="108460" data-delta="20.12">108,460 <span class="positive">(+20.12%)</span><span class="badge">TOP</span></td><td class="dps-cell" title="Baseline: 155,681" data-dps="190174" data-delta="22.16">190,174 <span class="positive">(+22.16%)</span></td><td class="dps-cell" title="Baseline: 72,124" data-dps="85497" data-delta="18.54">85,497 <span class="positive">(+18.54%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (KE) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZAjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAXA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop Sigil</td><td class="dps-cell" title="Baseline: 28,126" data-dps="29867" data-delta="6.19">29,867 <span class="positive">(+6.19%)</span></td><td class="dps-cell" title="Baseline: 90,257" data-dps="107865" data-delta="19.51">107,865 <span class="positive">(+19.51%)</span></td><td class="dps-cell" title="Baseline: 154,660" data-dps="189049" data-delta="22.24">189,049 <span class="positive">(+22.24%)</span></td><td class="dps-cell" title="Baseline: 72,072" data-dps="85103" data-delta="18.08">85,103 <span class="positive">(+18.08%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (KE) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmBzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAD" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+Harvest</td><td class="dps-cell top-build" title="Baseline: 30,708" data-dps="32732" data-delta="6.59">32,732 <span class="positive">(+6.59%)</span><span class="badge">TOP</span></td><td class="dps-cell" title="Baseline: 81,750" data-dps="100619" data-delta="23.08">100,619 <span class="positive">(+23.08%)</span></td><td class="dps-cell" title="Baseline: 136,180" data-dps="170811" data-delta="25.43">170,811 <span class="positive">(+25.43%)</span></td><td class="dps-cell" title="Baseline: 67,115" data-dps="80714" data-delta="20.26">80,714 <span class="positive">(+20.26%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (PS) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmBzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAD" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+Harvest</td><td class="dps-cell" title="Baseline: 30,131" data-dps="32309" data-delta="7.23">32,309 <span class="positive">(+7.23%)</span></td><td class="dps-cell" title="Baseline: 81,249" data-dps="100694" data-delta="23.93">100,694 <span class="positive">(+23.93%)</span></td><td class="dps-cell" title="Baseline: 136,665" data-dps="171471" data-delta="25.47">171,471 <span class="positive">(+25.47%)</span></td><td class="dps-cell" title="Baseline: 66,773" data-dps="80657" data-delta="20.79">80,657 <span class="positive">(+20.79%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (PS) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzgZMzAzgZmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+FelDev</td><td class="dps-cell" title="Baseline: 25,892" data-dps="28420" data-delta="9.77">28,420 <span class="positive">(+9.77%)</span></td><td class="dps-cell" title="Baseline: 79,625" data-dps="102536" data-delta="28.77">102,536 <span class="positive">(+28.77%)</span></td><td class="dps-cell" title="Baseline: 139,703" data-dps="177903" data-delta="27.34">177,903 <span class="positive">(+27.34%)</span></td><td class="dps-cell" title="Baseline: 64,774" data-dps="80551" data-delta="24.36">80,551 <span class="positive">(+24.36%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (KE) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAXA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop SC</td><td class="dps-cell" title="Baseline: 26,316" data-dps="28392" data-delta="7.89">28,392 <span class="positive">(+7.89%)</span></td><td class="dps-cell" title="Baseline: 78,866" data-dps="99065" data-delta="25.61">99,065 <span class="positive">(+25.61%)</span></td><td class="dps-cell" title="Baseline: 139,264" data-dps="182974" data-delta="31.39">182,974 <span class="positive">(+31.39%)</span></td><td class="dps-cell" title="Baseline: 64,671" data-dps="80510" data-delta="24.49">80,510 <span class="positive">(+24.49%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (PS) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGzMzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAXA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 2: Drop SC</td><td class="dps-cell" title="Baseline: 26,064" data-dps="28266" data-delta="8.45">28,266 <span class="positive">(+8.45%)</span></td><td class="dps-cell" title="Baseline: 79,230" data-dps="99026" data-delta="24.99">99,026 <span class="positive">(+24.99%)</span></td><td class="dps-cell" title="Baseline: 138,455" data-dps="182966" data-delta="32.15">182,966 <span class="positive">(+32.15%)</span></td><td class="dps-cell" title="Baseline: 64,492" data-dps="80434" data-delta="24.72">80,434 <span class="positive">(+24.72%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (KE) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzgZMzAzgZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Brand+FelDev</td><td class="dps-cell" title="Baseline: 26,181" data-dps="28428" data-delta="8.58">28,428 <span class="positive">(+8.58%)</span></td><td class="dps-cell" title="Baseline: 79,584" data-dps="102670" data-delta="29.01">102,670 <span class="positive">(+29.01%)</span></td><td class="dps-cell" title="Baseline: 138,620" data-dps="176912" data-delta="27.62">176,912 <span class="positive">(+27.62%)</span></td><td class="dps-cell" title="Baseline: 64,690" data-dps="80397" data-delta="24.28">80,397 <span class="positive">(+24.28%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (KE) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGGzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAD" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Balanced</td><td class="dps-cell" title="Baseline: 29,913" data-dps="31657" data-delta="5.83">31,657 <span class="positive">(+5.83%)</span></td><td class="dps-cell" title="Baseline: 80,615" data-dps="97966" data-delta="21.52">97,966 <span class="positive">(+21.52%)</span></td><td class="dps-cell" title="Baseline: 139,382" data-dps="174209" data-delta="24.99">174,209 <span class="positive">(+24.99%)</span></td><td class="dps-cell" title="Baseline: 67,018" data-dps="80060" data-delta="19.46">80,060 <span class="positive">(+19.46%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (PS) #3<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYGGzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAD" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Balanced</td><td class="dps-cell" title="Baseline: 29,376" data-dps="31126" data-delta="5.95">31,126 <span class="positive">(+5.95%)</span></td><td class="dps-cell" title="Baseline: 80,427" data-dps="98028" data-delta="21.88">98,028 <span class="positive">(+21.88%)</span></td><td class="dps-cell" title="Baseline: 139,231" data-dps="174547" data-delta="25.36">174,547 <span class="positive">(+25.36%)</span></td><td class="dps-cell" title="Baseline: 66,663" data-dps="79881" data-delta="19.83">79,881 <span class="positive">(+19.83%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (PS) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmZmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: Full Stack</td><td class="dps-cell" title="Baseline: 26,251" data-dps="28645" data-delta="9.12">28,645 <span class="positive">(+9.12%)</span></td><td class="dps-cell" title="Baseline: 79,770" data-dps="100857" data-delta="26.43">100,857 <span class="positive">(+26.43%)</span></td><td class="dps-cell" title="Baseline: 138,116" data-dps="170409" data-delta="23.38">170,409 <span class="positive">(+23.38%)</span></td><td class="dps-cell" title="Baseline: 64,680" data-dps="78661" data-delta="21.62">78,661 <span class="positive">(+21.62%)</span></td></tr>
+<tr><td class="build-name">DiF + Vengeful Beast (PS)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGMjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: Full Stack</td><td class="dps-cell" title="Baseline: 26,154" data-dps="28406" data-delta="8.61">28,406 <span class="positive">(+8.61%)</span></td><td class="dps-cell" title="Baseline: 79,266" data-dps="100272" data-delta="26.50">100,272 <span class="positive">(+26.50%)</span></td><td class="dps-cell" title="Baseline: 137,587" data-dps="171860" data-delta="24.91">171,860 <span class="positive">(+24.91%)</span></td><td class="dps-cell" title="Baseline: 64,374" data-dps="78656" data-delta="22.19">78,656 <span class="positive">(+22.19%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (KE) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: Full Stack</td><td class="dps-cell" title="Baseline: 26,641" data-dps="28891" data-delta="8.45">28,891 <span class="positive">(+8.45%)</span></td><td class="dps-cell" title="Baseline: 79,631" data-dps="101022" data-delta="26.86">101,022 <span class="positive">(+26.86%)</span></td><td class="dps-cell" title="Baseline: 137,207" data-dps="169398" data-delta="23.46">169,398 <span class="positive">(+23.46%)</span></td><td class="dps-cell" title="Baseline: 64,651" data-dps="78632" data-delta="21.62">78,632 <span class="positive">(+21.62%)</span></td></tr>
+<tr><td class="build-name">DiF + Vengeful Beast (KE)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGMjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: Full Stack</td><td class="dps-cell" title="Baseline: 26,388" data-dps="28594" data-delta="8.36">28,594 <span class="positive">(+8.36%)</span></td><td class="dps-cell" title="Baseline: 79,177" data-dps="100244" data-delta="26.61">100,244 <span class="positive">(+26.61%)</span></td><td class="dps-cell" title="Baseline: 136,298" data-dps="170823" data-delta="25.33">170,823 <span class="positive">(+25.33%)</span></td><td class="dps-cell" title="Baseline: 64,207" data-dps="78535" data-delta="22.32">78,535 <span class="positive">(+22.32%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (KE) #5<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzwYmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAA4DA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim Harvest</td><td class="dps-cell" title="Baseline: 25,195" data-dps="26974" data-delta="7.06">26,974 <span class="positive">(+7.06%)</span></td><td class="dps-cell" title="Baseline: 76,439" data-dps="95983" data-delta="25.57">95,983 <span class="positive">(+25.57%)</span></td><td class="dps-cell" title="Baseline: 136,941" data-dps="178185" data-delta="30.12">178,185 <span class="positive">(+30.12%)</span></td><td class="dps-cell" title="Baseline: 62,918" data-dps="77919" data-delta="23.84">77,919 <span class="positive">(+23.84%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage + Vengeful Beast (PS) #5<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzwYmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAA4DA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim Harvest</td><td class="dps-cell" title="Baseline: 24,885" data-dps="26828" data-delta="7.81">26,828 <span class="positive">(+7.81%)</span></td><td class="dps-cell" title="Baseline: 77,138" data-dps="95916" data-delta="24.34">95,916 <span class="positive">(+24.34%)</span></td><td class="dps-cell" title="Baseline: 135,944" data-dps="178226" data-delta="31.10">178,226 <span class="positive">(+31.10%)</span></td><td class="dps-cell" title="Baseline: 62,773" data-dps="77834" data-delta="23.99">77,834 <span class="positive">(+23.99%)</span></td></tr>
+<tr><td class="build-name">Untethered Rage + Vengeful Beast (KE) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGGYMzYGzYmZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Harvest+FelDev</td><td class="dps-cell" title="Baseline: 30,314" data-dps="32071" data-delta="5.79">32,071 <span class="positive">(+5.79%)</span></td><td class="dps-cell" title="Baseline: 76,830" data-dps="96692" data-delta="25.85">96,692 <span class="positive">(+25.85%)</span></td><td class="dps-cell" title="Baseline: 126,214" data-dps="158488" data-delta="25.57">158,488 <span class="positive">(+25.57%)</span></td><td class="dps-cell" title="Baseline: 63,449" data-dps="76741" data-delta="20.95">76,741 <span class="positive">(+20.95%)</span></td></tr>
+<tr><td class="build-name">Untethered Rage + Vengeful Beast (PS)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZGGYMzYGzYmZmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 4: Harvest+FelDev</td><td class="dps-cell" title="Baseline: 29,815" data-dps="31808" data-delta="6.68">31,808 <span class="positive">(+6.68%)</span></td><td class="dps-cell" title="Baseline: 77,013" data-dps="96537" data-delta="25.35">96,537 <span class="positive">(+25.35%)</span></td><td class="dps-cell" title="Baseline: 127,323" data-dps="159351" data-delta="25.16">159,351 <span class="positive">(+25.16%)</span></td><td class="dps-cell" title="Baseline: 63,476" data-dps="76735" data-delta="20.89">76,735 <span class="positive">(+20.89%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (PS) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmxYGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAA4DA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim FelDev</td><td class="dps-cell" title="Baseline: 26,230" data-dps="28402" data-delta="8.28">28,402 <span class="positive">(+8.28%)</span></td><td class="dps-cell" title="Baseline: 77,215" data-dps="95849" data-delta="24.13">95,849 <span class="positive">(+24.13%)</span></td><td class="dps-cell" title="Baseline: 132,154" data-dps="165686" data-delta="25.37">165,686 <span class="positive">(+25.37%)</span></td><td class="dps-cell" title="Baseline: 62,711" data-dps="76093" data-delta="21.34">76,093 <span class="positive">(+21.34%)</span></td></tr>
+<tr><td class="build-name">DiF + Untethered Rage (KE) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzwmZmZGYMzYGzYmxYGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAA4DA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 3: Trim FelDev</td><td class="dps-cell" title="Baseline: 26,512" data-dps="28542" data-delta="7.66">28,542 <span class="positive">(+7.66%)</span></td><td class="dps-cell" title="Baseline: 77,411" data-dps="95313" data-delta="23.13">95,313 <span class="positive">(+23.13%)</span></td><td class="dps-cell" title="Baseline: 131,276" data-dps="164110" data-delta="25.01">164,110 <span class="positive">(+25.01%)</span></td><td class="dps-cell" title="Baseline: 62,734" data-dps="75687" data-delta="20.65">75,687 <span class="positive">(+20.65%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Vengeful Beast (PS)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGegZmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Harvest</td><td class="dps-cell" title="Baseline: 24,500" data-dps="26525" data-delta="8.26">26,525 <span class="positive">(+8.26%)</span></td><td class="dps-cell" title="Baseline: 76,914" data-dps="96707" data-delta="25.73">96,707 <span class="positive">(+25.73%)</span></td><td class="dps-cell" title="Baseline: 134,911" data-dps="166254" data-delta="23.23">166,254 <span class="positive">(+23.23%)</span></td><td class="dps-cell" title="Baseline: 62,306" data-dps="75525" data-delta="21.22">75,525 <span class="positive">(+21.22%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Vengeful Beast (KE)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGegZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Harvest</td><td class="dps-cell" title="Baseline: 24,789" data-dps="26716" data-delta="7.77">26,716 <span class="positive">(+7.77%)</span></td><td class="dps-cell" title="Baseline: 76,819" data-dps="96507" data-delta="25.63">96,507 <span class="positive">(+25.63%)</span></td><td class="dps-cell" title="Baseline: 134,021" data-dps="165772" data-delta="23.69">165,772 <span class="positive">(+23.69%)</span></td><td class="dps-cell" title="Baseline: 62,245" data-dps="75464" data-delta="21.24">75,464 <span class="positive">(+21.24%)</span></td></tr>
+<tr><td class="build-name">Untethered Rage + Vengeful Beast (KE) #1<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Baseline</td><td class="dps-cell" title="Baseline: 27,632" data-dps="29644" data-delta="7.28">29,644 <span class="positive">(+7.28%)</span></td><td class="dps-cell" title="Baseline: 73,696" data-dps="92812" data-delta="25.94">92,812 <span class="positive">(+25.94%)</span></td><td class="dps-cell" title="Baseline: 126,018" data-dps="163197" data-delta="29.50">163,197 <span class="positive">(+29.50%)</span></td><td class="dps-cell" title="Baseline: 61,128" data-dps="75305" data-delta="23.19">75,305 <span class="positive">(+23.19%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (PS) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGMzMzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Harvest</td><td class="dps-cell" title="Baseline: 24,095" data-dps="26068" data-delta="8.19">26,068 <span class="positive">(+8.19%)</span></td><td class="dps-cell" title="Baseline: 76,066" data-dps="95581" data-delta="25.66">95,581 <span class="positive">(+25.66%)</span></td><td class="dps-cell" title="Baseline: 134,225" data-dps="162717" data-delta="21.23">162,717 <span class="positive">(+21.23%)</span></td><td class="dps-cell" title="Baseline: 61,712" data-dps="74252" data-delta="20.32">74,252 <span class="positive">(+20.32%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage + Vengeful Beast (KE) #2<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGMzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Harvest</td><td class="dps-cell" title="Baseline: 24,333" data-dps="26253" data-delta="7.89">26,253 <span class="positive">(+7.89%)</span></td><td class="dps-cell" title="Baseline: 76,066" data-dps="95622" data-delta="25.71">95,622 <span class="positive">(+25.71%)</span></td><td class="dps-cell" title="Baseline: 132,958" data-dps="161488" data-delta="21.46">161,488 <span class="positive">(+21.46%)</span></td><td class="dps-cell" title="Baseline: 61,578" data-dps="74110" data-delta="20.35">74,110 <span class="positive">(+20.35%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF (KE)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMGzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No FelDev</td><td class="dps-cell" title="Baseline: 25,793" data-dps="28054" data-delta="8.76">28,054 <span class="positive">(+8.76%)</span></td><td class="dps-cell" title="Baseline: 75,560" data-dps="92562" data-delta="22.50">92,562 <span class="positive">(+22.50%)</span></td><td class="dps-cell" title="Baseline: 129,108" data-dps="158414" data-delta="22.70">158,414 <span class="positive">(+22.70%)</span></td><td class="dps-cell" title="Baseline: 61,386" data-dps="73478" data-delta="19.70">73,478 <span class="positive">(+19.70%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF (PS)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMGzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No FelDev</td><td class="dps-cell" title="Baseline: 25,514" data-dps="27691" data-delta="8.53">27,691 <span class="positive">(+8.53%)</span></td><td class="dps-cell" title="Baseline: 75,445" data-dps="92884" data-delta="23.11">92,884 <span class="positive">(+23.11%)</span></td><td class="dps-cell" title="Baseline: 129,743" data-dps="158697" data-delta="22.32">158,697 <span class="positive">(+22.32%)</span></td><td class="dps-cell" title="Baseline: 61,339" data-dps="73450" data-delta="19.74">73,450 <span class="positive">(+19.74%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage (PS)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMYGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No FelDev</td><td class="dps-cell" title="Baseline: 25,324" data-dps="27460" data-delta="8.44">27,460 <span class="positive">(+8.44%)</span></td><td class="dps-cell" title="Baseline: 74,316" data-dps="92497" data-delta="24.46">92,497 <span class="positive">(+24.46%)</span></td><td class="dps-cell" title="Baseline: 126,853" data-dps="155251" data-delta="22.39">155,251 <span class="positive">(+22.39%)</span></td><td class="dps-cell" title="Baseline: 60,328" data-dps="72530" data-delta="20.23">72,530 <span class="positive">(+20.23%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + DiF + Untethered Rage (KE)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzMzMMjZGzYGzMYGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No FelDev</td><td class="dps-cell" title="Baseline: 25,628" data-dps="27776" data-delta="8.38">27,776 <span class="positive">(+8.38%)</span></td><td class="dps-cell" title="Baseline: 74,367" data-dps="92232" data-delta="24.02">92,232 <span class="positive">(+24.02%)</span></td><td class="dps-cell" title="Baseline: 126,647" data-dps="154351" data-delta="21.87">154,351 <span class="positive">(+21.87%)</span></td><td class="dps-cell" title="Baseline: 60,453" data-dps="72428" data-delta="19.81">72,428 <span class="positive">(+19.81%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Vengeful Beast (KE)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2Mz4BmhZMzYGzYmZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Brand</td><td class="dps-cell" title="Baseline: 25,474" data-dps="27211" data-delta="6.82">27,211 <span class="positive">(+6.82%)</span></td><td class="dps-cell" title="Baseline: 70,661" data-dps="88128" data-delta="24.72">88,128 <span class="positive">(+24.72%)</span></td><td class="dps-cell" title="Baseline: 118,179" data-dps="149449" data-delta="26.46">149,449 <span class="positive">(+26.46%)</span></td><td class="dps-cell" title="Baseline: 57,571" data-dps="69934" data-delta="21.47">69,934 <span class="positive">(+21.47%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Vengeful Beast (PS)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2Mz4BmhZMzYGzYmZmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 0: No Brand</td><td class="dps-cell" title="Baseline: 25,218" data-dps="27029" data-delta="7.18">27,029 <span class="positive">(+7.18%)</span></td><td class="dps-cell" title="Baseline: 70,979" data-dps="88084" data-delta="24.10">88,084 <span class="positive">(+24.10%)</span></td><td class="dps-cell" title="Baseline: 119,244" data-dps="149013" data-delta="24.96">149,013 <span class="positive">(+24.96%)</span></td><td class="dps-cell" title="Baseline: 57,751" data-dps="69742" data-delta="20.76">69,742 <span class="positive">(+20.76%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Untethered Rage + Vengeful Beast (KE)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzwMMjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Brand</td><td class="dps-cell" title="Baseline: 25,351" data-dps="27153" data-delta="7.11">27,153 <span class="positive">(+7.11%)</span></td><td class="dps-cell" title="Baseline: 69,756" data-dps="87286" data-delta="25.13">87,286 <span class="positive">(+25.13%)</span></td><td class="dps-cell" title="Baseline: 116,435" data-dps="143332" data-delta="23.10">143,332 <span class="positive">(+23.10%)</span></td><td class="dps-cell" title="Baseline: 56,889" data-dps="68429" data-delta="20.28">68,429 <span class="positive">(+20.28%)</span></td></tr>
+<tr><td class="build-name">Fel Flame Fortification + Untethered Rage + Vengeful Beast (PS)<button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAMAAjZmZMMjMzMzY2MzwMMjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td><td class="archetype-cell">Apex 1: No Brand</td><td class="dps-cell" title="Baseline: 25,030" data-dps="26880" data-delta="7.39">26,880 <span class="positive">(+7.39%)</span></td><td class="dps-cell" title="Baseline: 69,928" data-dps="86956" data-delta="24.35">86,956 <span class="positive">(+24.35%)</span></td><td class="dps-cell" title="Baseline: 116,906" data-dps="144225" data-delta="23.37">144,225 <span class="positive">(+23.37%)</span></td><td class="dps-cell" title="Baseline: 56,874" data-dps="68372" data-delta="20.22">68,372 <span class="positive">(+20.22%)</span></td></tr>
+</tbody></table></div>
+</section>
+<section>
+<h2>APL Structure Changes</h2>
+<p>Baseline: 5 action lists &rarr; Ours: 12 action lists</p><h3>Added Lists</h3><ul><li><code>ur_fishing</code></li><li><code>fillers</code></li><li><code>ar_empowered</code></li><li><code>ar_cooldowns</code></li><li><code>ar_aoe</code></li><li><code>ar_brand_window</code></li><li><code>anni_voidfall</code></li></ul><h3>Modified Lists</h3><table>
+<thead><tr><th>List</th><th>Baseline Actions</th><th>Our Actions</th></tr></thead>
+<tbody><tr><td><code>precombat</code></td><td>9</td><td>5</td></tr><tr><td><code>default</code></td><td>12</td><td>11</td></tr><tr><td><code>ar</code></td><td>23</td><td>21</td></tr><tr><td><code>anni</code></td><td>22</td><td>22</td></tr></tbody></table></section>
+<section>
+<h2>Optimization Changelog</h2>
+<table>
+<thead><tr><th>#</th><th>Date</th><th>Change</th><th>Impact</th></tr></thead>
+<tbody><tr><td>12</td><td>2026-02-10 01:56:53</td><td>Swap AR empowered cycle: Bladecraft (12 slashes) in AoE, RM stacks (14% amp) in ST</td><td class="positive">+2.725%</td></tr></tbody></table></section>
+</main>
+<footer>
+  <p>Generated by dh-apl &middot; SimulationCraft</p>
+</footer>
+<script>
+
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const col = th.dataset.col;
+    const isNum = th.classList.contains('num');
+
+    // Determine sort direction
+    const wasAsc = th.classList.contains('sorted-asc');
+    table.querySelectorAll('th.sortable').forEach(h => {
+      h.classList.remove('sorted-asc', 'sorted-desc');
+    });
+    const dir = wasAsc ? 'desc' : 'asc';
+    th.classList.add('sorted-' + dir);
+
+    // Column index
+    const headers = Array.from(th.parentNode.children);
+    const colIdx = headers.indexOf(th);
+
+    rows.sort((a, b) => {
+      const cellA = a.children[colIdx];
+      const cellB = b.children[colIdx];
+      let va, vb;
+
+      if (isNum) {
+        va = parseFloat(cellA?.dataset?.dps || cellA?.textContent?.replace(/[^\d.-]/g, '') || '0');
+        vb = parseFloat(cellB?.dataset?.dps || cellB?.textContent?.replace(/[^\d.-]/g, '') || '0');
+      } else {
+        va = cellA?.textContent?.trim() || '';
+        vb = cellB?.textContent?.trim() || '';
+      }
+
+      if (dir === 'asc') return va > vb ? 1 : va < vb ? -1 : 0;
+      return va < vb ? 1 : va > vb ? -1 : 0;
+    });
+
+    for (const row of rows) tbody.appendChild(row);
+  });
+});
+
+// Copy talent hash to clipboard
+document.querySelectorAll('.copy-hash').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const hash = btn.dataset.hash;
+    if (!hash) return;
+
+    const doCopy = text => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      }
+      return fallbackCopy(text);
+    };
+
+    const fallbackCopy = text => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    };
+
+    function flash(el) {
+      el.classList.add('copied');
+      el.querySelector('svg').innerHTML = '<polyline points="4 8.5 6.5 11 12 5" stroke-width="2"/>';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        el.querySelector('svg').innerHTML = '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/>';
+      }, 1500);
+    }
+
+    const result = doCopy(hash);
+    if (result && result.then) {
+      result.then(() => flash(btn));
+    } else {
+      flash(btn);
+    }
+  });
+});
+
+</script>
+</body>
+</html>

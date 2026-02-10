@@ -1,0 +1,389 @@
+{
+  "focus": "talent",
+  "cluster_synergies": {
+    "summary": "Each cluster pair is evaluated for compound modifier stacking, resource enablement, and GCD budget interaction. Synergy strength rated 1-5.",
+    "pairs": [
+      {
+        "clusters": ["brand", "feldev"],
+        "synergy_strength": 5,
+        "mechanism": "Fiery Demise (brand cluster prerequisite) amplifies all fire-school damage by 30% (2-rank, 15% each multiplicative) during Fiery Brand window. Fel Devastation is Fire school with apCoeff=1.54, receiving: FD 30% + Stoke the Flames 30% + Burning Blood 8% + Ruinous Bulwark 10% + Roaring Fire 50% buff grant. The compound modifier stack is massive: base * 1.30 (FD) * 1.30 (StF) * 1.08 (BB) * 1.10 (RB) = ~2.01x during brand window. Charred Flesh (brand extended) extends Brand via ImmAura ticks, giving more GCDs for FelDev to land under amp.",
+        "apl_impact": "ar_brand_window already sequences FelDev during Brand. anni_voidfall has FD-aware Brand timing at building.stack=2 or spending.stack=3. Both paths exploit this synergy.",
+        "compound_value": "FelDev during FD window: 1.54 * AP * 2.01 = ~3.09 * AP effective. Outside window: 1.54 * AP * 1.30 * 1.10 = ~2.20 * AP. Delta = ~0.89 * AP per FelDev cast aligned vs unaligned."
+      },
+      {
+        "clusters": ["brand", "harvest"],
+        "synergy_strength": 5,
+        "mechanism": "Harvest cluster provides Vulnerability (Frailty applied by more abilities), Soulcrush (+8% Frailty debuff amp on all damage), and Focused Cleave (+50% Soul Cleave damage). Fiery Demise amps Spirit Bomb by 30% during Brand. Spirit Bomb applies Frailty, which Soulcrush amplifies from 3% to 11% per stack. SBomb during FD window receives: FD 30% + Burning Blood 8% + Meta 20% + Frailty 11% = multiplicative stack. The double-dip: SBomb benefits from FD amp AND applies the Frailty debuff that amps everything else during the window.",
+        "apl_impact": "ar_brand_window correctly fires SBomb first if Frailty is not up. The harvest cluster ensures Frailty uptime is higher (more application sources via Vulnerability), which means more damage from non-SBomb abilities during the window.",
+        "compound_value": "With Soulcrush, Frailty is 11% amp instead of 3%. Over a 10s Brand window with ~6 damaging GCDs, the extra 8% on all damage during the window is significant: approximately 8% * total_window_damage."
+      },
+      {
+        "clusters": ["brand", "sc"],
+        "synergy_strength": 4,
+        "mechanism": "Soul Carver (apCoeff=2.08) is Fire school and benefits from Fiery Demise 30% amp. Soul Carver also generates 3 soul fragments, feeding SBomb consumption during the Brand window. ar_cooldowns holds Soul Carver for Brand when FD is talented. The interaction is: Brand -> Soul Carver (2.08 * 1.30 FD * 1.08 BB = ~2.92 effective coeff) + 3 frags for immediate SBomb.",
+        "apl_impact": "ar_cooldowns has: soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active. This correctly holds SC for Brand window. ar_brand_window fires soul_carver unconditionally (Brand is already ticking). Well-handled.",
+        "compound_value": "SC during FD: 2.08 * 1.30 = 2.70 AP (just FD). Outside: 2.08 AP. Delta = 0.62 AP per SC aligned. Plus 3 frags enable immediate SBomb (0.4 * 5 * 1.30 = 2.60 AP) that would otherwise be delayed."
+      },
+      {
+        "clusters": ["feldev", "harvest"],
+        "synergy_strength": 3,
+        "mechanism": "Indirect synergy. FelDev does not directly benefit from harvest talents. However, Soulcrush's amplified Frailty (11% vs 3%) is a debuff that benefits FelDev damage. Additionally, FelDev generates fragments (via Meteoric Rise talent), and harvest's Focused Cleave makes Soul Cleave a stronger fragment consumer. The synergy is that FelDev provides fragment generation that feeds harvest-amplified consumption.",
+        "apl_impact": "No specific APL branch combines these. The generic rotation handles it: FelDev generates frags -> SBomb/SC consume them -> Frailty applied -> all damage amplified.",
+        "compound_value": "FelDev under Soulcrush Frailty: +8% multiplicative on FelDev channel damage. At apCoeff 1.54: 1.54 * 0.08 = 0.12 AP per FelDev cast. Modest."
+      },
+      {
+        "clusters": ["sigil", "brand"],
+        "synergy_strength": 3,
+        "mechanism": "Cycle of Binding reduces sigil CDs by -15s. Sigil of Flame is Fire school and benefits from Fiery Demise 30% amp + Ascending Flame 50% + Burning Blood 8%. More frequent SoF casts mean more fire damage during Brand windows. Also, SoF has Cycle of Binding interaction with Frailty duration.",
+        "apl_impact": "SoF is a low-priority filler in both AR and Anni lists. During Brand window it is not explicitly prioritized despite having high effective DPGCD under FD.",
+        "compound_value": "SoF during FD window: 0.792 * 1.30 * 1.50 * 1.08 = ~1.67 AP effective (with Ascending Flame). Outside: 0.792 * 1.50 * 1.08 = ~1.28 AP. Delta = 0.39 AP per SoF during brand."
+      },
+      {
+        "clusters": ["feldev", "sc"],
+        "synergy_strength": 2,
+        "mechanism": "Both are high-value cooldown abilities competing for GCDs. No direct modifier interaction. Soul Carver (30s CD) and Fel Devastation (45s CD, reduced by Darkglare Boon 15%) have natural alignment every 90s. Both benefit from Brand if present, but their mutual interaction is purely GCD competition.",
+        "apl_impact": "ar_brand_window sequences SC before FelDev (SC first because it generates frags for SBomb before FelDev channels). FelDev is gated on !buff.rending_strike.up&!buff.glaive_flurry.up in AR to avoid interrupting empowered cycle. No conflict in Anni since no empowered cycle.",
+        "compound_value": "No compound modifier. Pure additive value of having both abilities. GCD competition is a minor anti-synergy at 2-3 GCDs per minute."
+      },
+      {
+        "clusters": ["harvest", "sc"],
+        "synergy_strength": 3,
+        "mechanism": "Soul Carver generates 3 fragments. Harvest cluster's Focused Cleave (+50% Soul Cleave damage) and Soulcrush (amplified Frailty) benefit from the fragments SC generates. SC frags -> SBomb -> Frailty -> Soulcrush amp on all subsequent damage. The fragment generation is the enabler, the harvest modifiers are the amplifiers.",
+        "apl_impact": "Handled implicitly. SC frags flow into the standard SBomb/SC rotation.",
+        "compound_value": "3 SC frags -> SBomb (0.4 * 3 * 1.11 Frailty amp) = ~1.33 AP. Without harvest Frailty amp: 0.4 * 3 * 1.03 = ~1.24 AP. Delta from Soulcrush: 0.09 AP per SC-generated SBomb cycle."
+      },
+      {
+        "clusters": ["brand", "sigil", "harvest"],
+        "synergy_strength": 5,
+        "mechanism": "Triple compound: Brand window activates FD amp (30%), Cycle of Binding provides more SoF casts (fire damage under FD), and harvest's Soulcrush ensures 11% Frailty debuff on everything. SBomb under FD+Frailty: base * 1.30 * 1.11 = 1.44x multiplicative. The three-way combination maximizes both fire-school amp and debuff-school amp simultaneously.",
+        "apl_impact": "No explicit triple-synergy handling. The Brand window does fire SBomb for Frailty application, but does not explicitly time SoF within the window.",
+        "compound_value": "This triple combination creates the highest per-GCD-window value in the spec. Total window modifier: 1.30 (FD) * 1.11 (Soulcrush Frailty) * 1.08 (BB) = ~1.56x on all abilities during Brand."
+      }
+    ]
+  },
+  "anti_synergies": {
+    "summary": "Anti-synergies arise from GCD competition, resource overcapping, or behavioral contradictions between talent effects.",
+    "identified": [
+      {
+        "clusters": ["feldev", "sc"],
+        "severity": "mild",
+        "mechanism": "GCD competition. FelDev channels for 2s (off-GCD start, but occupies cast time). Soul Carver costs 1 GCD. During a Brand window, both want the same 10s window. With FelDev channel + SC cast + SBomb cast + ImmAura, the Brand window is nearly saturated at 4+ GCDs consumed by cooldowns alone, leaving minimal room for Fracture (fragment generation).",
+        "quantified_cost": "In a 10s Brand window at ~1.2s GCD: ~8 GCDs available. Cooldown casts (SC 1 GCD + FelDev 2s channel + ImmAura 0 GCD + SBomb 1 GCD + Frailty-SBomb 1 GCD) = 5 GCDs. Leaves 3 GCDs for Fracture/filler. Not problematic unless fragments are depleted.",
+        "apl_handling": "ar_brand_window correctly sequences these without explicit priority conflict."
+      },
+      {
+        "clusters": ["brand", "feldev"],
+        "severity": "potential",
+        "mechanism": "Down in Flames (brand extended) gives 2 charges of Fiery Brand (60s CD each -> effective 30s between brands). Vengeful Beast (feldev extended) adds 5s to Meta duration. The potential anti-synergy: more frequent Brand windows compete with Meta windows for burst timing. If Brand is on 30s CD and Meta is on 120s CD, only every 4th Brand aligns with Meta. Non-Meta Brand windows lack the 20% Meta amp, reducing their compound value.",
+        "quantified_cost": "Meta Brand window: FD 30% * Meta 20% = 1.30 * 1.20 = 1.56x. Non-Meta Brand: 1.30x only. The 4:1 ratio means 3 of 4 Brand windows miss Meta amp, losing ~0.26x per window on cooldown abilities.",
+        "apl_handling": "Not explicitly addressed. Brand fires when charges >= 2 or when fire CDs are available, regardless of Meta status. This is likely correct because holding Brand for Meta alignment would waste Brand casts."
+      },
+      {
+        "clusters": ["harvest", "feldev"],
+        "severity": "negligible",
+        "mechanism": "No behavioral contradiction. Focused Cleave (+50% Soul Cleave) competes with Spirit Bomb for fragment consumption, but SBomb dominance at 5 frags is unbreakable regardless. Soul Cleave is used only at low fragments or during Voidfall spending (Anni). No real anti-synergy.",
+        "quantified_cost": "Zero. The APL correctly uses SBomb at threshold and Soul Cleave below."
+      }
+    ]
+  },
+  "build_apl_coupling": {
+    "summary": "Maps which cluster presence/absence requires different APL behavior. High-coupling clusters change WHAT the APL does, not just damage magnitudes.",
+    "clusters": {
+      "brand": {
+        "coupling_strength": "high",
+        "changes_behavior": true,
+        "required_branches": [
+          "variable.fiery_demise_active computation (FD window detection)",
+          "ar_brand_window sub-list (fire CD sequencing during Brand)",
+          "ar_cooldowns: Soul Carver hold for Brand when FD talented",
+          "anni: fiery_brand cast and ImmAura timing for Charred Flesh extension",
+          "anni_voidfall: fiery_brand at peak building/spending for FD burst"
+        ],
+        "when_absent": "fiery_demise_active is always false. ar_brand_window never fires (call_action_list gated on variable.fiery_demise_active). Soul Carver fires freely without hold. FelDev fires without Brand alignment consideration. ~3 GCDs per minute freed from Brand management.",
+        "apl_gates": [
+          "variable.fiery_demise_active (line 11)",
+          "talent.fiery_demise (ar_cooldowns line 80)",
+          "talent.charred_flesh (ar_brand_window line 102, anni line 123)",
+          "talent.fiery_demise&!dot.fiery_brand.ticking (anni line 121, anni_voidfall line 141)"
+        ]
+      },
+      "feldev": {
+        "coupling_strength": "high",
+        "changes_behavior": true,
+        "required_branches": [
+          "fel_devastation cast in ar_cooldowns, ar_brand_window, anni, anni_voidfall",
+          "FelDev gating on !buff.rending_strike.up&!buff.glaive_flurry.up (AR empowered cycle protection)",
+          "FelDev gating on !buff.voidfall_spending.up (Anni - avoid delaying meteor triggers)"
+        ],
+        "when_absent": "FelDev lines become dead code (talent not taken, ability unavailable). ~1-2 GCDs per minute freed. No FelDev channel interruption risk for AR empowered cycle. In Anni, anni_voidfall FelDev at spending.stack=3 line is dead. Important: removing FelDev from anni_voidfall sub-list is critical -- project memory notes FelDev removal in Voidfall sub-list caused -3.16% worst build.",
+        "apl_gates": [
+          "No explicit talent.fel_devastation gate -- SimC handles ability availability automatically when talent is not taken. Lines with fel_devastation simply never execute."
+        ]
+      },
+      "harvest": {
+        "coupling_strength": "medium",
+        "changes_behavior": false,
+        "required_branches": [
+          "Frailty debuff application via Spirit Bomb (always available regardless of harvest)",
+          "Soulcrush amplifies Frailty damage modifier from 3% to 11% per stack"
+        ],
+        "when_absent": "Frailty still applied by SBomb (base 3% per stack). Soulcrush 8% amp lost. Focused Cleave 50% SC amp lost. No APL branching changes needed -- same rotation, just lower modifier values. Vulnerability is 'cpp_only' (application sources handled in engine, not APL-visible).",
+        "apl_gates": [
+          "No explicit harvest talent gates in APL. All harvest value flows through passive modifiers."
+        ]
+      },
+      "sc": {
+        "coupling_strength": "medium",
+        "changes_behavior": true,
+        "required_branches": [
+          "soul_carver casts in ar_cooldowns, ar_brand_window, anni, ur_fishing",
+          "soul_carver hold for Brand window (ar_cooldowns line 83)"
+        ],
+        "when_absent": "Soul Carver lines are dead code. Loses 3-fragment generation per 30s cycle. Fragment economy shifts: more reliance on Fracture + Fallout for fragment generation. No hold-for-Brand consideration needed. ~1 GCD per 30s freed.",
+        "apl_gates": [
+          "talent.soul_carver (anni line 125)",
+          "No explicit gate in AR -- but talent.fiery_demise gate on SC hold implicitly handles it"
+        ]
+      },
+      "sigil": {
+        "coupling_strength": "low",
+        "changes_behavior": false,
+        "required_branches": [
+          "Cycle of Binding reduces SoF CD by 15s -- passive effect, no APL branch"
+        ],
+        "when_absent": "SoF has longer CD (30s vs 15s effective). Fewer SoF casts per minute. Soul Sigils frag generation from sigils reduced. No APL branching change needed.",
+        "apl_gates": [
+          "No explicit sigil cluster gates in APL. talent.soul_sigils referenced once in anni (sigil_of_spite frag threshold)."
+        ]
+      }
+    }
+  },
+  "missing_branches": {
+    "summary": "APL branches that could benefit build subsets but are not currently implemented.",
+    "identified": [
+      {
+        "id": "MB-1",
+        "title": "Anni builds with Brand cluster lack FD-aware SBomb threshold reduction",
+        "description": "AR has spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active (line 61) which lowers the SBomb threshold from 5 to 3 during FD window. The reasoning: during FD, every SBomb does +30% damage, making a 3-frag SBomb (0.4 * 3 * 1.30 = 1.56 AP) competitive with waiting for 5 frags (0.4 * 5 * 1.30 / extra_GCDs). Anni lacks this entirely. The anni list gates SBomb only at >=spb_threshold with no FD-aware override.",
+        "affected_templates": "All Anni builds with brand cluster: Full Stack, No Harvest, No FelDev, No SC at Apex 0-1; Apex 2+ brand-including templates",
+        "estimated_impact": "During a 10s Brand window with ~2 SBomb casts possible, firing at 3 frags instead of waiting for 5 saves ~1 Fracture GCD per SBomb. At 2 extra SBomb-at-3 casts per Brand window, gain: 2 * (0.4 * 3 * 0.30) = 0.72 AP extra fire-amped damage per Brand window (net of the lost fragment efficiency).",
+        "implementation": "Add spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active before the spb_threshold SBomb line in anni, similar to AR line 61."
+      },
+      {
+        "id": "MB-2",
+        "title": "Anni Meta hold at building>=2 penalizes non-FelDev builds disproportionately",
+        "description": "The Meta hold condition (buff.voidfall_building.stack<2, line 119) holds Meta until Voidfall building stacks are below 2. The reasoning: at 2 stacks, one more Fracture completes the natural spending phase, then Mass Acceleration provides an immediate second 3-stack spending phase -- 'double Voidfall burst'. Vengeful Beast (feldev extended) adds +5s to Meta duration, giving more time for the double burst to complete. Without VB, Meta is only 15s. A double Voidfall burst requires: spend phase 1 (~3 GCDs) + Mass Acceleration reset + build to 3 (~3 Fractures) + spend phase 2 (~3 GCDs) = ~12-15 GCDs at 1.2s = 14-18s. Without VB's +5s, the 15s Meta barely covers this. With VB's 20s Meta, there is comfortable headroom.",
+        "affected_templates": "Anni No FelDev (Apex 0-1): no Stoke the Flames or Vengeful Beast. Also Apex 4 Brand+Harvest (no feldev). These builds have 15s Meta and the double-burst timing is razor-thin.",
+        "estimated_impact": "If the double burst fails to complete within 15s Meta, the second spending phase fires outside Meta, losing 20% Meta amp on 3-5 GCDs of damage. At ~2 AP per spending GCD: 5 * 2 * 0.20 = 2.0 AP lost per failed double burst. Over 300s fight with 2 Meta uses: 4.0 AP total damage lost, roughly 1.3% of Meta-window DPS.",
+        "implementation": "Gate the building.stack<2 hold on talent.vengeful_beast or talent.stoke_the_flames. Without feldev: metamorphosis,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up (no building stack hold)."
+      },
+      {
+        "id": "MB-3",
+        "title": "AR brand window lacks AoE-aware ImmAura+SoF priority during Charred Flesh extension",
+        "description": "At 3+ targets, ImmAura ticks hit multiple targets and generate Fallout fragments (60% per tick per target). During Brand with Charred Flesh, ImmAura ticks also extend Brand duration. At 3+ targets, the combined value of ImmAura (fire damage * N targets * FD 30% amp + Brand extension + Fallout frags) massively exceeds Soul Carver's single-target fire damage. Currently ar_brand_window fires SC before ImmAura unconditionally (line 103-104). At 3+ targets, ImmAura should precede SC.",
+        "affected_templates": "AR builds with brand+harvest (Focused Cleave makes AoE SC consumption more valuable). Specifically: Full Stack, No FelDev, Apex 2+ brand-including AR templates.",
+        "estimated_impact": "At 3 targets, ImmAura effective DPGCD during FD: 6 ticks * 3 targets * tick_coeff * 1.30 FD = high sustained value over 6s. SC at 3 targets: 2.08 * 1.30 = 2.70 AP (ST only, no AoE component). ImmAura total over duration exceeds SC per-cast at N>=3. Priority swap gains ~0.5-1.0 effective AP per Brand window at 3+ targets.",
+        "implementation": "In ar_brand_window, gate SC after ImmAura at 3+ targets: soul_carver,if=active_enemies<3 (above ImmAura), then soul_carver below ImmAura for fallback."
+      },
+      {
+        "id": "MB-4",
+        "title": "No Fallout-aware ImmAura priority for Anni AoE",
+        "description": "Anni has a generic immolation_aura,if=talent.fallout near the bottom of the list (line 132). Unlike AR which has a dedicated ar_aoe sub-list with ImmAura at the top for Fallout fragment generation at 3+ targets, Anni treats ImmAura as a low-priority filler. With Fallout at 3+ targets, each ImmAura tick has 60% chance per target to generate a fragment. At 3 targets: 6 ticks * 3 targets * 0.6 = ~10.8 expected frags per ImmAura cast. This dramatically changes the fragment economy and should elevate ImmAura priority.",
+        "affected_templates": "All Anni builds with Fallout talented (which is part of the base rotation, not a cluster talent). Specifically impacts AoE scenarios for all Anni templates.",
+        "estimated_impact": "Moving ImmAura higher in Anni at active_enemies>=3 could generate 10+ extra frags per ImmAura, enabling 2 additional SBomb casts (2 * 0.4 * 5 = 4.0 AP). Over 30s ImmAura CD: ~0.13 AP/s gain, or roughly 0.5-1% DPS in AoE.",
+        "implementation": "Add AoE sub-list for Anni similar to AR's ar_aoe, or inline: immolation_aura,if=talent.fallout&active_enemies>=3&!buff.immolation_aura.up before the main rotation."
+      }
+    ]
+  },
+  "theory_validation": {
+    "root_theory_1": {
+      "title": "Anni Meta hold at building>=2 over-penalizes non-Vengeful Beast builds",
+      "verdict": "SUPPORTED with caveats",
+      "analysis": "The data confirms Vengeful Beast adds 5000ms (5s) to Meta duration, extending it from 15s to 20s. The double Voidfall burst via Mass Acceleration requires completing two full build-spend cycles. Each cycle needs ~3 Fracture casts (building to 3) + 1-3 spending actions = ~5-8 GCDs per cycle. Two cycles = 10-16 GCDs at 1.2s effective GCD = 12-19s. Without VB (15s Meta), the upper bound of 19s exceeds Meta duration. With VB (20s Meta), even the worst case fits. Affected templates: Anni No FelDev (Apex 0, 1), Apex 4 Brand+Harvest, and Apex 4 Balanced (feldev:core only has Stoke the Flames, not VB). The Apex 4 Balanced template includes feldev:core (Stoke the Flames only, NOT Vengeful Beast), so it has 15s Meta despite having some feldev investment.",
+      "cluster_interaction": "feldev extended includes Vengeful Beast. Templates with feldev:core only get Stoke the Flames but NOT Vengeful Beast. The hold condition should gate on talent.vengeful_beast specifically, not just feldev cluster presence.",
+      "affected_builds": [
+        "Anni No FelDev (Apex 0) -- no VB, 15s Meta",
+        "Anni No FelDev (Apex 1) -- no VB, 15s Meta",
+        "Anni Brand+Harvest (Apex 4) -- no feldev at all, 15s Meta",
+        "Anni Balanced (Apex 4) -- feldev:core only = Stoke the Flames, no VB, 15s Meta",
+        "Anni Trim FelDev (Apex 3) -- feldev:core only = Stoke the Flames, no VB, 15s Meta"
+      ],
+      "counter_argument": "Mass Acceleration may not always require a full second build cycle. If the first spending phase ends with 1-2 building stacks already accumulated (from Fracture procs during spending), the second cycle is shorter. However, this is stochastic and cannot be relied upon. The safe design is to not hold Meta when VB is absent."
+    },
+    "root_theory_2": {
+      "title": "AR brand window lacks AoE-aware priority reordering",
+      "verdict": "SUPPORTED",
+      "analysis": "The interaction data confirms: ImmAura receives Fiery Demise 30% (15% * 2 ranks), Burning Blood 8%, Agonizing Flames 10%, Volatile Flameblood 10%. During Brand with Charred Flesh, ImmAura does triple duty: (1) fire damage amped by FD, (2) extends Brand duration per tick, (3) generates Fallout fragments at 60% per tick per target. Soul Carver receives Fiery Demise 30%, Burning Blood 8%, but is single-target only (apCoeff=2.08). At 3+ targets, ImmAura's effective value per GCD exceeds SC: ImmAura fires damage to N targets * multiple ticks, plus Brand extension value (each tick extends by 250ms per Charred Flesh rank, 2 ranks = 500ms per tick, 6 ticks = 3s extension), plus fragment generation. SC is 2.08 * 1.30 = 2.70 effective AP per cast, single target. ImmAura at 3 targets over 6s: far exceeds this.",
+      "cluster_interaction": "brand+harvest amplifies this further. With Soulcrush, the Frailty applied by the SBombs fed by Fallout fragments during Brand window gets 11% amp instead of 3%. The harvest cluster makes the AoE brand window even more valuable -- the fragments from Fallout feed SBombs that apply amplified Frailty.",
+      "affected_builds": [
+        "AR Full Stack (Apex 0, 1) -- brand+harvest present",
+        "AR No FelDev (Apex 0, 1) -- brand+harvest present, no FelDev competition",
+        "AR Brand+Harvest (Apex 4) -- maximum synergy",
+        "AR Drop SC (Apex 2) -- brand present, no SC to compete"
+      ]
+    },
+    "root_theory_3": {
+      "title": "Anni lacks FD-aware SBomb threshold",
+      "verdict": "STRONGLY SUPPORTED",
+      "analysis": "AR line 61 has: spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active. This lowers SBomb threshold to 3 during FD window because the 30% FD amp makes a 3-frag SBomb (effective: 0.4 * 3 * 1.30 = 1.56 AP) more valuable per GCD than waiting for 5 frags while the Brand window ticks down. Anni has NO equivalent. In the anni list, SBomb fires only at spb_threshold (5, or 4 during Meta). During a Brand window in Anni, the player waits for 5 frags while Brand ticks expire -- wasting FD amp GCDs on Fracture that generates fragments but does not benefit from the fire amp as much as an early SBomb would. The anni_voidfall sub-list has SBomb at spending.stack=3 gated on >=spb_threshold, which is correct for Voidfall timing but misses the FD opportunity.",
+      "cluster_interaction": "This matters for ALL Anni builds with brand cluster. The interaction data shows Spirit Bomb receives: Fiery Demise 30%, Burning Blood 8%, Meta 20%, Frailty 3-11% (Soulcrush dependent). The compound modifier stack on SBomb during Brand is high enough that 3-frag SBomb is clearly superior to waiting.",
+      "affected_builds": [
+        "Anni Full Stack (Apex 0, 1) -- brand cluster present",
+        "Anni No Harvest (Apex 0, 1) -- brand present",
+        "Anni No FelDev (Apex 0, 1) -- brand present",
+        "All Anni Apex 2+ templates with brand cluster"
+      ],
+      "quantified_gain": "Per Brand window (10s, ~8 GCDs): currently SBomb fires at 5 frags, requiring ~3 Fracture GCDs to reach threshold. With FD-aware threshold at 3: SBomb fires after ~2 Fractures, saving ~1 GCD per SBomb. Over 1-2 SBomb casts per Brand window: gain ~1-2 GCDs of FD-amped damage. At ~1.5 AP per reclaimed GCD: 1.5-3.0 AP per Brand window."
+    }
+  },
+  "theories": [
+    {
+      "title": "Brand+FelDev creates the highest compound modifier stack in the spec",
+      "reasoning": "Fiery Demise (30%) + Stoke the Flames (30%) + Burning Blood (8%) + Ruinous Bulwark (10%) = 1.30 * 1.30 * 1.08 * 1.10 = 2.01x on Fel Devastation during Brand window. This is the single highest compound modifier on any ability. The APL correctly sequences FelDev during Brand in both AR (ar_brand_window) and Anni (anni_voidfall). No change needed, but this establishes FelDev alignment as the highest-value timing constraint.",
+      "category": "talent_interaction",
+      "confidence": 0.95,
+      "evidence": [
+        "Stoke the Flames: +30% FelDev damage (byTalent 393827)",
+        "Fiery Demise: +15% per rank (2 ranks = 30%) on FelDev during Brand (byTalent 212818)",
+        "Burning Blood: +8% on fire abilities (byTalent 390213)",
+        "Ruinous Bulwark: +10% FelDev damage (byTalent 326853)",
+        "Compound: 1.30 * 1.30 * 1.08 * 1.10 = 2.01x"
+      ]
+    },
+    {
+      "title": "Soulcrush amplifies Frailty from 3% to 11% per stack, creating a global damage multiplier",
+      "reasoning": "Soulcrush (byTalent 389985) adds 8% multiplicative to Frailty debuff, raising it from 3% to 11% per stack. Frailty is applied by Spirit Bomb and affects ALL damage dealt to the target (interaction data shows Frailty modifies: Fracture, Soul Cleave, Spirit Bomb, Immolation Aura, Fel Devastation, Soul Carver, Sigil of Flame, Infernal Strike, Voidfall Meteor, Catastrophe, and more). This is a global amplifier that benefits every damaging ability. With Vulnerability (harvest core) providing more Frailty application sources, the uptime increases, making the 11% amp more valuable.",
+      "category": "talent_interaction",
+      "confidence": 0.90,
+      "evidence": [
+        "Soulcrush: +8% Frailty damage modifier (byTalent 389985)",
+        "Frailty base value: 3% per stack (byTalent 247456)",
+        "Frailty modified spells: 24+ abilities across all schools",
+        "Net Frailty with Soulcrush: 3% + 8% = 11% per stack"
+      ]
+    },
+    {
+      "title": "Anni non-VB builds pay a timing tax on Meta hold for double Voidfall burst",
+      "reasoning": "Meta hold at building.stack<2 assumes enough Meta duration for two full Voidfall cycles. Each cycle: build 3 stacks (~3 Fractures at 1.2s = 3.6s) + spend phase (~2-3 GCDs = 2.4-3.6s). Two cycles: 12-14.4s minimum. Without Vengeful Beast (+5s), Meta is 15s -- only 0.6-3.0s margin. With bad RNG (no Fracture procs giving extra stacks, resource-starved GCDs), the second burst can fall outside Meta, losing 20% amp on 3-5 high-value GCDs. The hold condition itself also delays Meta activation by 0-2 GCDs waiting for building stacks to drop below 2, further compressing the window.",
+      "category": "cooldown_alignment",
+      "confidence": 0.75,
+      "evidence": [
+        "Vengeful Beast: +5000ms Meta duration (byTalent 1265818)",
+        "Base Meta duration: 15s (spells-summary, id 187827)",
+        "With VB: 20s Meta duration",
+        "Voidfall build cycle: ~3.6s minimum per cycle",
+        "Double burst: ~12-14.4s minimum, within 20s but tight at 15s",
+        "Mass Acceleration: grants 3 building stacks on spending completion (byTalent 1256295)"
+      ]
+    },
+    {
+      "title": "Charred Flesh Brand extension creates compounding value with Fallout in AoE",
+      "reasoning": "Charred Flesh extends Brand by 250ms per rank (2 ranks = 500ms) per ImmAura tick on branded target. ImmAura ticks 6 times over 6s. At 2 ranks: 6 * 500ms = 3s Brand extension per ImmAura. With Fallout at 3+ targets: each tick has 60% * N_targets chance to generate a fragment. At 3 targets: 6 * 3 * 0.6 = 10.8 expected fragments per ImmAura. This floods the fragment economy, enabling rapid SBomb casts that apply/refresh Frailty. The Brand extension gives more time for these fragment-fueled SBombs to benefit from the 30% FD amp. The compound effect: longer Brand -> more ImmAura ticks -> more fragments -> more SBombs -> more Frailty uptime -> more total amp -> over a longer Brand window.",
+      "category": "talent_interaction",
+      "confidence": 0.85,
+      "evidence": [
+        "Charred Flesh: 250ms per rank Brand extension per ImmAura tick (byTalent 336639)",
+        "ImmAura: 6 ticks over 6s duration",
+        "Fallout: 60% proc rate per tick per target (SPEC_CONFIG.resourceFlow.fragGenerators)",
+        "At 3 targets: 10.8 expected frags per ImmAura, enough for 2 SBombs",
+        "Brand extension: 3s at 2 ranks, extending 10s base to 13s"
+      ]
+    },
+    {
+      "title": "Celestial Echoes makes Fracture the highest-modified ability in Anni",
+      "reasoning": "Fracture in Anni receives: Celestial Echoes 25-30% + 2pc set bonus 35% + Tempered Steel 12% + Metamorphosis 20% (during Meta) + Fiery Demise 30% (if Brand). The modifier stack on Fracture is deeper in Anni than AR (which gets Keen Edge 10% instead of Celestial Echoes 25-30%). This means Fracture represents a larger share of total damage in Anni, making the 4pc proc (Explosion of the Soul on Fracture) more valuable. APL implication: Anni should slightly favor Fracture over other filler GCDs even more than AR does.",
+      "category": "talent_interaction",
+      "confidence": 0.80,
+      "evidence": [
+        "Celestial Echoes: +25-30% Fracture damage (bySpell 225919, Annihilator hero)",
+        "2pc set bonus: +35% Fracture damage (bySetBonus 1264808)",
+        "Tempered Steel: +12% Fracture damage (byTalent 1265800)",
+        "Compound in Anni during Meta: 1.30 * 1.35 * 1.12 * 1.20 = 2.36x",
+        "Compound in AR during Meta: 1.10 * 1.35 * 1.12 * 1.20 = 2.00x",
+        "Delta: +18% higher Fracture value in Anni vs AR"
+      ]
+    },
+    {
+      "title": "Harness the Cosmos vs Doomsayer choice affects burst timing but not APL structure",
+      "reasoning": "Harness the Cosmos provides +15% Voidfall Meteor damage (passive amp). Doomsayer grants World Killer procs at combat start (3% modifier). HtC is a passive amplifier that scales all meteor damage by 15% multiplicatively. Doomsayer is a combat-start burst enabler. Neither changes WHAT the APL does -- both are passive effects. The choice node (109450) is unlocked for DoE to decide. APL needs no branching based on this choice. The only APL-relevant distinction would be if Doomsayer's opener burst justified different precombat sequencing, but the current precombat (SoF + ImmAura) is already optimal for both.",
+      "category": "talent_interaction",
+      "confidence": 0.90,
+      "evidence": [
+        "Harness the Cosmos: +15% Voidfall Meteor damage (bySpell 1256305/1256306)",
+        "Doomsayer: World Killer proc trigger (byTalent 1253676)",
+        "Choice node 109450 unlocked in SPEC_CONFIG",
+        "Neither requires APL branching"
+      ]
+    }
+  ],
+  "hypotheses": [
+    {
+      "summary": "Add FD-aware SBomb threshold (>=3) to Anni when fiery_demise_active",
+      "implementation": "Insert spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active before the spb_threshold SBomb line in the anni action list (before line 129). This mirrors AR line 61.",
+      "category": "window_efficiency",
+      "priority": 8.5,
+      "archetype": null,
+      "predicted_direction": "positive",
+      "predicted_magnitude": "0.2-0.5% DPS for Anni builds with brand cluster during fights with 1 Brand per 60s. Higher in multi-target scenarios where Fallout feeds rapid fragment generation.",
+      "affected_templates": ["Anni Full Stack", "Anni No Harvest", "Anni No FelDev", "Anni No SC"],
+      "aplMutation": {
+        "op": "insert_before",
+        "target": "anni",
+        "before": "spirit_bomb,if=soul_fragments>=variable.spb_threshold",
+        "line": "spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active",
+        "comment": "FD fire amp makes 3-frag SBomb casts worthwhile in Anni, matching AR behavior"
+      }
+    },
+    {
+      "summary": "Remove Meta hold at building>=2 for non-Vengeful Beast Anni builds",
+      "implementation": "Split the Meta condition to check for Vengeful Beast. With VB: keep building.stack<2 hold. Without VB: remove the building stack gate entirely. Change anni line 119 from buff.voidfall_building.stack<2 to (buff.voidfall_building.stack<2|!talent.vengeful_beast).",
+      "category": "cooldown_alignment",
+      "priority": 7.5,
+      "archetype": null,
+      "predicted_direction": "positive for non-VB builds, neutral for VB builds",
+      "predicted_magnitude": "0.1-0.3% DPS for non-VB Anni builds. Zero impact on VB builds (condition unchanged). Risk: if double burst still sometimes completes in 15s, the hold has residual value -- sim verification required.",
+      "affected_templates": ["Anni No FelDev", "Anni Brand+Harvest", "Anni Balanced", "Anni Trim FelDev"],
+      "aplMutation": {
+        "op": "replace",
+        "target": "anni",
+        "find": "metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up&buff.voidfall_building.stack<2",
+        "replace": "metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up&(buff.voidfall_building.stack<2|!talent.vengeful_beast)",
+        "comment": "Without VB +5s Meta, 15s is too tight for double Voidfall burst -- skip building hold"
+      }
+    },
+    {
+      "summary": "Reorder AR brand window to prioritize ImmAura over Soul Carver at 3+ targets",
+      "implementation": "In ar_brand_window, add active_enemies<3 gate to Soul Carver and move it after ImmAura for AoE. Specifically: gate soul_carver with active_enemies<3 above the ImmAura line, then add ungated soul_carver below ImmAura as fallback.",
+      "category": "priority_reorder",
+      "priority": 6.5,
+      "archetype": null,
+      "predicted_direction": "positive at 3+ targets, neutral at 1-2 targets",
+      "predicted_magnitude": "0.3-0.8% DPS at 3+ targets for AR builds with brand+harvest. Negligible at 1-2 targets where SC DPGCD exceeds ImmAura.",
+      "affected_templates": ["AR Full Stack", "AR No FelDev", "AR Brand+Harvest", "AR Drop SC"],
+      "aplMutation": {
+        "op": "replace",
+        "target": "ar_brand_window",
+        "find": "soul_carver",
+        "replace": "soul_carver,if=active_enemies<3",
+        "comment": "At 3+ targets, ImmAura fire damage * N targets + Charred Flesh extension + Fallout frags > SC single-target fire damage"
+      }
+    },
+    {
+      "summary": "Add AoE Fallout-aware ImmAura priority to Anni at 3+ targets",
+      "implementation": "Add immolation_aura,if=talent.fallout&active_enemies>=3&!buff.immolation_aura.up early in the anni list, after trinkets and Meta but before cooldowns. This ensures Fallout fragment generation is active during AoE before spending cooldowns.",
+      "category": "resource_alignment",
+      "priority": 6.0,
+      "archetype": null,
+      "predicted_direction": "positive at 3+ targets",
+      "predicted_magnitude": "0.3-0.7% DPS at 3+ targets by generating 10+ extra fragments per ImmAura enabling 2 additional SBomb casts per ImmAura CD.",
+      "affected_templates": ["All Anni templates"],
+      "aplMutation": {
+        "op": "insert_before",
+        "target": "anni",
+        "before": "fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking",
+        "line": "immolation_aura,if=talent.fallout&active_enemies>=3&!buff.immolation_aura.up",
+        "comment": "At 3+ targets, Fallout generates 10+ frags per ImmAura -- must be active before spending CDs"
+      }
+    }
+  ]
+}

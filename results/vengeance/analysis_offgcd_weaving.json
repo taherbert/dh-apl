@@ -1,0 +1,335 @@
+{
+  "vrFelbladeCombo": {
+    "mechanics": {
+      "vengefulRetreat": {
+        "gcd": 0,
+        "categoryCooldown": "25s (no Tactical Retreat for VDH — that is Havoc only)",
+        "movementDuration": "1s (from spell duration, creates movement_buff_t)",
+        "teleportDistance": "20 yards backward (VENGEFUL_RETREAT_DISTANCE constant in C++)",
+        "furyGeneration": "NONE for Vengeance. Tactical Retreat (389688) is talent.havoc.tactical_retreat — VDH does not have this talent. The 80 Fury over 10s mentioned in the task brief is INCORRECT for VDH.",
+        "damageDeal": "Minor AoE physical damage to nearby enemies on cast"
+      },
+      "unhindered_assault": {
+        "effect": "VR resets Felblade cooldown immediately on execute (cooldown.felblade->reset(true))",
+        "location": "AR hero tree choice node (94911) with Evasive Action",
+        "implementation": "In vengeful_retreat_t::execute(), after base_t::execute(), checks talent.aldrachi_reaver.unhindered_assault->ok() then resets felblade CD"
+      },
+      "felbladeLockout": {
+        "description": "VR triggers a shared cooldown lockout on Felblade for 0.6s (default)",
+        "implementation": "felblade_vengeful_retreat_movement_shared cooldown, started for options.felblade_lockout_from_vengeful_retreat seconds (default 0.6)",
+        "interaction": "Unhindered Assault resets the Felblade ABILITY cooldown, but the 0.6s shared movement lockout still applies. Net effect: Felblade becomes castable 0.6s after VR, not instantly."
+      },
+      "felbladeAfterVR": {
+        "gcd": "0.5s (mini-GCD from spell 232893)",
+        "furyGeneration": "15 Fury instant",
+        "chargeForward": "Felblade charges TO the target, counteracting VR's backward movement"
+      },
+      "combinedSequence": "VR (off-GCD, 0s) → 0.6s lockout → Felblade (0.5s mini-GCD) = 1.1s total before next GCD action. Net movement: backward 20yd then forward to target (Felblade charges). Net Fury: +15 instant (no Tactical Retreat for VDH)."
+    },
+    "furyGain": {
+      "totalFury": 15,
+      "source": "Felblade only (15 Fury instant). VDH does NOT have Tactical Retreat, so VR generates ZERO Fury for Vengeance.",
+      "correction": "The task brief stated 95 Fury (15+80). This is wrong. VDH only gets 15 Fury from this combo.",
+      "comparison": "A normal Felblade without VR also generates 15 Fury on a 12s CD. The combo only helps when Felblade is on CD and VR resets it."
+    },
+    "gcdCost": {
+      "vrGcdCost": "0s (off-GCD ability, gcd=0 in spell data 198793)",
+      "felbladeLockout": "0.6s (felblade_lockout_from_vengeful_retreat option)",
+      "felbladeGcd": "0.5s (mini-GCD)",
+      "totalDeadTime": "~1.1s from VR cast to next normal GCD action",
+      "movementCost": "1s movement buff (out of melee range). Felblade at 0.6s charges back, but there is ~0.6s of melee downtime where auto attacks and Fracture cannot be used.",
+      "note": "In patchwerk sims, SimC models movement via movement_buff_t. During VR movement (1s), the character is out_of_range and cannot perform melee actions. Felblade's charge at 0.6s would cancel the VR movement buff early."
+    },
+    "simcImplementation": {
+      "proposed": [
+        "# VR+Felblade fury emergency: use VR off-GCD when fury-starved and Felblade is on CD",
+        "vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault&fury<30&cooldown.felblade.remains>3&!buff.rending_strike.up&!buff.glaive_flurry.up",
+        "# Felblade immediately after VR resets its CD — the 0.6s lockout auto-delays this",
+        "felblade,if=talent.unhindered_assault&prev_off_gcd.vengeful_retreat"
+      ],
+      "syntaxNotes": {
+        "prev_off_gcd": "prev_off_gcd tracks all off-GCD actions since the last GCD action. Since VR is gcd=0, it registers as an off-GCD action and prev_off_gcd.vengeful_retreat will be true until the next GCD action fires.",
+        "use_off_gcd": "Enables VR to be evaluated during GCD windows. Since VR has gcd=0, this works correctly.",
+        "felbladeChaining": "Felblade has a 0.5s GCD. After VR's 0.6s lockout expires, Felblade can fire. The prev_off_gcd condition ensures it only fires right after VR, not at other times."
+      },
+      "alternativeApproach": {
+        "description": "Instead of prev_off_gcd, use cooldown state: Felblade's CD was just reset by VR, so cooldown.felblade.remains=0 when it normally wouldn't be.",
+        "line": "felblade,if=talent.unhindered_assault&cooldown.felblade.duration-cooldown.felblade.remains<1"
+      }
+    },
+    "risks": [
+      "VDH gets ZERO fury from VR itself — only 15 Fury from Felblade. The combo is a minor fury injection, not a panic button.",
+      "1.1s of effective dead time (0.6s lockout + 0.5s Felblade GCD) during which no other GCD action can fire.",
+      "Movement modeling: VR moves backward 20yd. In real gameplay this is very costly (boss cleave repositioning, add pickup issues). In SimC patchwerk this is modeled but Felblade charge-back mitigates most of it.",
+      "VR's 25s category cooldown means this can only be used once per ~25s. Using it reactively for fury means it's unavailable as a filler for that window.",
+      "If AR empowered cycle is active (rending_strike or glaive_flurry buffs up), VR interrupts the cycle by consuming GCD time on Felblade instead of empowered Fracture/SC.",
+      "Using VR off-GCD adds APL complexity with minimal gain — 15 Fury every 25s is ~0.6 Fury/sec, marginal vs ImmAura's 3 Fury/tick."
+    ],
+    "expectedImpact": {
+      "dpsEstimate": "Negligible to slightly negative for DPS. The 15 Fury injection saves at most one GCD of waiting, worth ~0.5-1% of a single GCD's damage. Over a fight, this is sub-0.05% DPS impact.",
+      "whenUseful": "Only when Fury < 30, no Fracture charges available, ImmAura not ticking, and Felblade is on CD. This confluence is rare in optimized play because Fracture has 2 charges with 4.5s recharge and ImmAura generates passive Fury.",
+      "recommendation": "LOW PRIORITY. The fury emergency it addresses is uncommon in practice. Current filler-position VR already captures value when nothing else is castable. Making it off-GCD adds complexity without meaningful DPS gain."
+    }
+  },
+
+  "offGcdAudit": [
+    {
+      "ability": "Infernal Strike",
+      "spellId": 189110,
+      "gcd": 0,
+      "currentUsage": "Off-GCD (line 26): actions+=/infernal_strike,use_off_gcd=1",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Already optimal. GCD=0, 15s recharge (2 charges with Blazing Path), deals Fire damage, triggers Felfire Fist SoF on pull. No conditions needed — fire on cooldown.",
+      "status": "OPTIMAL"
+    },
+    {
+      "ability": "Demon Spikes",
+      "spellId": 203720,
+      "gcd": 0,
+      "currentUsage": "Off-GCD (line 27): demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&!cooldown.pause_action.remains",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Already optimal for DPS purposes. GCD=0, purely defensive. The pause_action guard prevents spam. No DPS benefit to adjusting conditions.",
+      "status": "OPTIMAL"
+    },
+    {
+      "ability": "Metamorphosis",
+      "spellId": 187827,
+      "gcd": 0,
+      "currentUsage": "Off-GCD in both hero trees. AR line 44: metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up|buff.untethered_rage.up. Anni line 143: similar with Voidfall guard.",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Already optimal. GCD=0, 120s CD. Using off-GCD means zero DPS loss from activating it. Conditions correctly handle UR proc consumption and Voidfall cycle avoidance.",
+      "status": "OPTIMAL"
+    },
+    {
+      "ability": "Vengeful Retreat",
+      "spellId": 198793,
+      "gcd": 0,
+      "currentUsage": "Filler at bottom of action lists (AR line 73, Anni not present). NOT used off-GCD. Condition: if=talent.unhindered_assault",
+      "proposedChange": {
+        "description": "COULD be made off-GCD for Felblade CD reset when fury-starved, but analysis shows minimal benefit (see vrFelbladeCombo section).",
+        "recommendation": "NO CHANGE recommended. The combo provides only 15 Fury (not 95 — VDH lacks Tactical Retreat) and costs 1.1s of effective dead time. The scenario where this helps (fury <30, no Fracture charges, Felblade on CD) is rare enough that the APL complexity is not justified.",
+        "conditionalException": "If future talent changes add fury generation to VR for VDH (e.g., if Tactical Retreat becomes a class talent), this should be revisited. At that point VR becomes a significant fury generator (80 Fury/10s) and off-GCD usage would be high value."
+      },
+      "aplLines": [
+        "# IF implementing (not recommended currently):",
+        "vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault&fury<30&cooldown.felblade.remains>3&!buff.rending_strike.up&!buff.glaive_flurry.up"
+      ],
+      "rationale": "VR's primary DPS value for VDH is as a filler when nothing else is castable (bottom of priority). Moving it off-GCD for fury emergencies provides ~15 Fury per 25s, which is marginal. The movement displacement (20yd backward) is a real cost in non-patchwerk scenarios. Keep as filler.",
+      "status": "NO_CHANGE"
+    },
+    {
+      "ability": "Felblade",
+      "spellId": 232893,
+      "gcd": 0.5,
+      "currentUsage": "Normal GCD ability in core rotation (AR line 66, Anni line 160). Priority: after Fracture for AR, after core for Anni.",
+      "proposedChange": {
+        "description": "Felblade has a 0.5s mini-GCD. It CANNOT be used with use_off_gcd=1 because it DOES trigger a GCD (albeit a short one). SimC correctly treats 0.5s GCD abilities as GCD actions, not off-GCD. The use_off_gcd flag only works for actions that do not trigger GCD at all.",
+        "recommendation": "NO CHANGE. Felblade correctly occupies GCD time."
+      },
+      "aplLines": [],
+      "rationale": "0.5s GCD prevents off-GCD usage. SimC wiki: 'This only works for actions that do not trigger GCD.' Felblade triggers a mini-GCD, so use_off_gcd would have no effect.",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "ability": "Potion",
+      "spellId": null,
+      "gcd": 0,
+      "currentUsage": "Off-GCD (AR line 41, Anni line 137): potion,use_off_gcd=1,if=<burst_condition>",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Already optimal. Potions are off-GCD items that should be woven into burst windows. Current conditions sync to empowered window (AR) or Voidfall spending peak (Anni).",
+      "status": "OPTIMAL"
+    },
+    {
+      "ability": "Disrupt",
+      "spellId": 218903,
+      "gcd": 0,
+      "currentUsage": "Line 24: disrupt,if=target.debuff.casting.react. No use_off_gcd flag.",
+      "proposedChange": {
+        "description": "Disrupt is GCD=0 and should technically have use_off_gcd=1 for optimal interrupt timing. However, SimC wiki states: 'off-gcd interrupts do not need to be present in the actions list: they will be automatically used by the Simulationcraft.' SimC auto-uses interrupts regardless of APL placement.",
+        "recommendation": "NO CHANGE. SimC handles interrupt timing automatically. The APL line exists for documentation/control but adding use_off_gcd=1 would have no practical effect."
+      },
+      "aplLines": [],
+      "rationale": "SimC auto-interrupts. No APL change needed.",
+      "status": "NO_CHANGE"
+    },
+    {
+      "ability": "Fiery Brand",
+      "spellId": 204021,
+      "gcd": 1.5,
+      "currentUsage": "Normal GCD ability in cooldowns list.",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Has a 1.5s GCD. Cannot be used off-GCD. Not a candidate.",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "ability": "Sigil of Flame",
+      "spellId": 204596,
+      "gcd": 1.5,
+      "currentUsage": "Normal GCD ability in core rotation.",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Has a 1.5s GCD. Cannot be used off-GCD.",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "ability": "Soul Carver",
+      "spellId": 207407,
+      "gcd": 1.5,
+      "currentUsage": "Normal GCD ability in cooldowns.",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Has a 1.5s GCD. Cannot be used off-GCD.",
+      "status": "NOT_APPLICABLE"
+    },
+    {
+      "ability": "Fel Devastation",
+      "spellId": 212084,
+      "gcd": 1.5,
+      "currentUsage": "Normal GCD channeled ability.",
+      "proposedChange": null,
+      "aplLines": [],
+      "rationale": "Has a 1.5s GCD and is a channel. Cannot be used off-GCD. The domainOverrides incorrectly list gcd:false — the spell data shows gcd=1.5s. The 'gcd:false' in the adapter likely means 'does not benefit from haste GCD reduction' or is an error.",
+      "status": "NOT_APPLICABLE"
+    }
+  ],
+
+  "resourceEmergencies": {
+    "furyStarvation": {
+      "detection": {
+        "variable": "variable,name=fury_starved,value=fury<35&cooldown.fracture.charges_fractional<0.5&!buff.immolation_aura.up",
+        "meaning": "Cannot cast any spender (Spirit Bomb=40, Soul Cleave=35, FelDev=50) AND no Fracture charges available AND ImmAura not ticking for passive Fury. Felblade may or may not be available.",
+        "severity": "The GCD is wasted if no ability can be cast. Dead GCDs are the primary DPS loss from fury starvation."
+      },
+      "response": {
+        "existingMechanisms": [
+          "Felblade (15 Fury, 12s CD) is positioned in the rotation as a mid-priority generator — already serves as fury injection when Fracture charges are depleted",
+          "ImmAura ticks generate 3 Fury/tick passively over 6s, ensuring a baseline ~18 Fury per cast",
+          "Sigil of Flame generates 25 Fury on a 30s CD — already in rotation",
+          "VR+Unhindered Assault resets Felblade CD for emergency 15 Fury (current filler position)"
+        ],
+        "proposedAplLogic": {
+          "description": "No new APL logic needed. The current priority ordering already handles fury starvation correctly: when fury is low, Fracture/Felblade/ImmAura naturally rise in priority because spenders fail their fury check.",
+          "explanation": "SimC's priority list evaluation inherently handles resource starvation. Spirit Bomb requires 40 Fury — if you have 30, it's skipped. Soul Cleave requires 35 — skipped. The list falls through to generators (Fracture, Felblade, ImmAura, SoF). The only dead-GCD scenario is when ALL generators are on CD simultaneously, which is rare with Fracture's 2 charges (4.5s recharge) and ImmAura's 2 charges."
+        }
+      },
+      "frequency": {
+        "estimate": "Rare in optimized play. Fracture (2 charges, 4.5s recharge, 25 Fury each) and ImmAura (2 charges, 30s recharge, 18 total Fury) provide sufficient generation. Meta adds +15 Fury per Fracture. Dead GCDs from fury starvation occur primarily during: (1) consecutive Spirit Bomb + Soul Cleave + FelDev burst windows (125 Fury in 3 GCDs), (2) when ImmAura both charges are on CD and Fracture charges are depleted.",
+        "empirical": "Check iteration logs for 'wait' actions or idle time. In well-optimized APLs, fury starvation should be <2% of total GCDs."
+      }
+    },
+    "fragmentDrought": {
+      "detection": {
+        "variable": "variable,name=frag_drought,value=soul_fragments<3&cooldown.fracture.charges_fractional<0.5&cooldown.soul_carver.remains>5&cooldown.sigil_of_spite.remains>5",
+        "meaning": "Cannot reach Spirit Bomb's 5-fragment threshold AND all fragment generators are on cooldown. Soul Cleave with 0-1 fragments is very low value (no fragment damage bonus).",
+        "additionalCheck": "variable,name=frag_drought_severe,value=soul_fragments=0&cooldown.fracture.charges_fractional<0.5 — zero fragments means Soul Cleave consumes nothing, Spirit Bomb is impossible"
+      },
+      "response": {
+        "existingMechanisms": [
+          "Fracture (2 frags base, 3 in Meta) on 2 charges provides the primary fragment pipeline",
+          "Soul Carver (3 frags instantly + 1/sec over 3s) on 60s CD as a burst generator",
+          "Sigil of Spite (3 frags) on 60s CD as a burst generator",
+          "Fallout talent: ImmAura ticks generate fragments (100% ST, 60% AoE) — passive pipeline",
+          "Soul Sigils talent: Sigils generate fragments on application",
+          "Soul Splitter (2% chance for bonus fragment on any fragment generation)"
+        ],
+        "proposedAplLogic": {
+          "description": "The current APL already addresses this through priority ordering. Fragment-generating cooldowns (Soul Carver, Sigil of Spite) have fragment-ceiling guards (soul_fragments<=3, soul_fragments<=2+talent.soul_sigils) that PREVENT their use when fragments are high, but guarantee their use when fragments are low.",
+          "improvementOpportunity": "One potential improvement: when in severe fragment drought (0 fragments), consider lowering the Spirit Bomb threshold temporarily to 3 fragments instead of 5, to avoid sitting on fragments while waiting for the full 5. This is already implemented for Fiery Demise windows (AR line 59: spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active). A similar drought-triggered threshold could help general rotation flow.",
+          "proposedVariable": "variable,name=spb_drought_threshold,value=3,if=variable.frag_drought"
+        }
+      },
+      "frequency": {
+        "estimate": "Moderate. Fragment drought is more common than fury starvation because fragment generation is slower and less predictable. Fracture generates 2 fragments per charge, and at 4.5s recharge, that's ~0.44 frags/sec. Spirit Bomb consumes 5 at once. Without ImmAura Fallout ticks or cooldown generators, reaching 5 fragments takes ~11s of pure Fracture generation.",
+        "keyDriver": "Fallout talent is the primary mitigator. With Fallout at 3+ targets, ImmAura ticks generate 1.8+ frags/tick, making fragment drought extremely rare in AoE. In ST, the lower Fallout rate (100% chance but only 1 frag/tick) makes drought more likely between Soul Carver/Spite CDs."
+      }
+    }
+  },
+
+  "simcOffGcdReference": {
+    "syntax": {
+      "use_off_gcd": {
+        "flag": "use_off_gcd=1",
+        "effect": "Allows the action to be evaluated during GCD windows (while another GCD action is in progress). Only works for actions that do NOT trigger GCD (gcd=0).",
+        "default": 0,
+        "wikiQuote": "By default, the sim will only try to perform actions after GCD has elapsed and the actor isn't casting or channeling. Sometimes, it is desirable to use actions during GCD. This only works for actions that do not trigger GCD (such as interrupts)."
+      },
+      "use_while_casting": {
+        "flag": "use_while_casting=1",
+        "effect": "Allows the action to be used while casting or channeling. Only works for actions that support cast-while-casting.",
+        "interaction": "use_while_casting=1 does NOT imply use_off_gcd=1. They are independent flags. For an action to fire during a channel's GCD, you need BOTH flags."
+      }
+    },
+    "chaining": {
+      "canChainMultipleOffGcds": true,
+      "explanation": "SimC can execute multiple off-GCD actions within a single GCD window. When the sim checks for actions during a GCD (because use_off_gcd=1 actions exist), it evaluates the entire action list. Multiple gcd=0 actions with use_off_gcd=1 can all fire in the same GCD window if their conditions are met.",
+      "example": "In our APL, Infernal Strike (use_off_gcd=1), Demon Spikes (use_off_gcd=1), Metamorphosis (use_off_gcd=1), and Potion (use_off_gcd=1) can all potentially fire during a single GCD window. SimC resolves them in priority order during the off-GCD check.",
+      "limitation": "Off-GCD actions that trigger their own internal cooldowns or shared cooldowns will block subsequent off-GCD actions that share those cooldowns. E.g., VR triggers a 1s shared cooldown with Fel Rush."
+    },
+    "priorityResolution": {
+      "mechanism": "Off-GCD actions are evaluated in the same priority order as the action list. SimC scans the list from top to bottom during off-GCD checks, just like normal GCD checks. The first available off-GCD action fires.",
+      "frequency": "Off-GCD checks happen at specific events: GCD start, buff applications, resource changes. The sim does NOT continuously poll — it checks at discrete event boundaries.",
+      "interactionWithPrevOffGcd": "prev_off_gcd tracks ALL off-GCD actions executed since the last GCD action. Unlike prev_gcd which only tracks the single most recent GCD action, prev_off_gcd accumulates. So after VR fires off-GCD, prev_off_gcd.vengeful_retreat is true until the next GCD action (e.g., Felblade, Fracture) executes."
+    },
+    "vdhSpecificNotes": {
+      "currentOffGcdActions": [
+        { "ability": "infernal_strike", "line": 26, "conditions": "none (fire on CD)" },
+        { "ability": "demon_spikes", "line": 27, "conditions": "!buff.demon_spikes.up&!cooldown.pause_action.remains" },
+        { "ability": "metamorphosis", "line": "44 (AR) / 143 (Anni)", "conditions": "hero-tree specific" },
+        { "ability": "potion", "line": "41 (AR) / 137 (Anni)", "conditions": "burst window sync" }
+      ],
+      "offGcdCandidatesNotUsed": [
+        {
+          "ability": "vengeful_retreat",
+          "reason": "Currently used as filler. Could be off-GCD but provides minimal value (no fury gen for VDH). See vrFelbladeCombo analysis.",
+          "recommendation": "Keep as filler"
+        },
+        {
+          "ability": "disrupt",
+          "reason": "SimC auto-handles interrupts. APL line exists for documentation only.",
+          "recommendation": "No change needed"
+        }
+      ]
+    }
+  },
+
+  "summary": {
+    "keyFindings": [
+      "CRITICAL CORRECTION: VDH does NOT have Tactical Retreat. That talent is Havoc-only (talent.havoc.tactical_retreat in C++). VR generates ZERO Fury for Vengeance Demon Hunter. The 80 Fury / 95 total figure in the task brief is incorrect.",
+      "VR → Felblade combo provides only 15 Fury (Felblade alone) at the cost of 1.1s dead time and 20yd backward displacement. Not worth implementing as an off-GCD emergency.",
+      "Felblade's 0.6s lockout after VR (felblade_lockout_from_vengeful_retreat) means the combo is not instant even with Unhindered Assault resetting the CD.",
+      "All high-value off-GCD abilities are already used off-GCD (Infernal Strike, Demon Spikes, Metamorphosis, Potion). No missed opportunities exist.",
+      "Felblade CANNOT be used off-GCD despite its 0.5s mini-GCD. SimC's use_off_gcd only works for gcd=0 abilities.",
+      "Resource starvation is already well-handled by the priority list structure. Generators naturally rise when spenders fail resource checks.",
+      "Fragment drought is more impactful than fury starvation. The existing threshold-lowering for Fiery Demise (SBomb at 3 frags) could be extended to general drought situations as a minor optimization.",
+      "The current filler-position VR (end of action list) is correct — it fires when nothing else is available, which is exactly when it should."
+    ],
+    "recommendedChanges": [
+      {
+        "priority": "NONE",
+        "description": "No off-GCD changes recommended. Current off-GCD usage is already optimal.",
+        "rationale": "All gcd=0 abilities that matter for DPS are already flagged use_off_gcd=1. The remaining candidate (VR) provides insufficient value."
+      },
+      {
+        "priority": "LOW",
+        "description": "Consider a fragment drought variable (variable,name=frag_drought) and lower SBomb threshold to 3 during drought. This would be a minor iteration candidate.",
+        "rationale": "Fragment drought in ST causes dead GCDs more often than fury starvation. Lowering the SBomb threshold when fragments are scarce reduces waste. Already validated for Fiery Demise windows.",
+        "estimatedImpact": "Sub-0.1% DPS — fragment drought is uncommon in optimized play"
+      },
+      {
+        "priority": "LOW",
+        "description": "Add VR to Annihilator action list as filler (currently missing). Line: vengeful_retreat,if=talent.unhindered_assault",
+        "rationale": "Anni action list (line 168) ends with throw_glaive but lacks VR as a filler. AR has it (line 73). If Unhindered Assault is talented (AR hero tree only), this is irrelevant for Anni. But if it were a shared talent, it should be present. This is a consistency fix, not a DPS change.",
+        "estimatedImpact": "Zero for Anni builds (Unhindered Assault is AR hero tree)"
+      }
+    ],
+    "annotatedCorrections": {
+      "tacticalRetreatNotVDH": "Tactical Retreat (talent 389688) is ONLY in the Havoc specialization talent tree. The spell appears in VDH talent data as an 'affectedBy' reference on Vengeful Retreat's spell, but it is NOT a talent VDH can select. C++ confirms: talent.havoc.tactical_retreat. VDH builds will NEVER have this talent.",
+      "felbladeNotOffGcd": "Felblade has a 0.5s GCD (spell 232893). Despite being shorter than the standard 1.5s GCD, it IS a GCD action. use_off_gcd=1 would have no effect on it. SimC wiki explicitly states off-GCD only works for actions that 'do not trigger GCD'."
+    }
+  }
+}
