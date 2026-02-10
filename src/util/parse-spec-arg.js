@@ -20,7 +20,7 @@ export function parseSpecArg() {
 
   throw new Error(
     "Spec not specified. Use --spec <name> or set SPEC env var.\n" +
-      "  Example: SPEC=vengeance node src/engine/startup.js\n" +
-      "  Example: node src/engine/startup.js --spec vengeance",
+      "  Example: SPEC=vengeance node src/engine/startup-cli.js\n" +
+      "  Example: node src/engine/startup-cli.js --spec vengeance",
   );
 }

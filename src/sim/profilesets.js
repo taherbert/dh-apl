@@ -130,7 +130,7 @@ export function runProfileset(
     execSync([SIMC, ...args].join(" "), {
       encoding: "utf-8",
       maxBuffer: 100 * 1024 * 1024,
-      timeout: 600000,
+      timeout: 1800000,
     });
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
@@ -157,7 +157,7 @@ export async function runProfilesetAsync(
   try {
     await execFileAsync(SIMC, args, {
       maxBuffer: 100 * 1024 * 1024,
-      timeout: 600000,
+      timeout: 1800000,
     });
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));

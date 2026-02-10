@@ -20,7 +20,7 @@ Bootstrap workflow for fresh spec optimization. This skill orchestrates the full
 
 ## Setup
 
-Run `node src/engine/startup.js` to determine the active spec. Use the spec name for all `{spec}` path references below.
+Run `node src/engine/startup-cli.js` to determine the active spec. Use the spec name for all `{spec}` path references below.
 
 ## Workflow Steps
 

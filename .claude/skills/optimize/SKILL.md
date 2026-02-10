@@ -63,7 +63,7 @@ Update `results/{spec}/plan.md` after every phase transition and iteration.
 
 ### 0a. Determine Active Spec
 
-Run `node src/engine/startup.js`.
+Run `node src/engine/startup-cli.js`.
 
 ### 0b. Session Recovery
 

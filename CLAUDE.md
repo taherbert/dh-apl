@@ -52,7 +52,7 @@ actions+=/...
 
 ## Session Protocol
 
-1. Run `SPEC=vengeance node src/engine/startup.js` to check config and simc sync status
+1. Run `node src/engine/startup-cli.js` to check config and simc sync status
 2. Run `npm run db:status` to check theorycraft DB contents
 3. Check `MULTI-SPEC-PLAN.md` for any ongoing multi-phase work
 
