@@ -6,5 +6,35 @@
   },
   "data": {
     "env": "beta"
+  },
+  "communityBuilds": [],
+  "talents": {
+    "locked": [
+      "Void Ray",
+      "Void Metamorphosis",
+      "Feast of Souls",
+      "Collapsing Star",
+      "Moment of Craving",
+      "Entropy",
+      "Improved Consume",
+      "Soulshaper",
+      "Second Helping",
+      "Umbral Blade",
+      "Hungering Slash",
+      "Devourer's Edge",
+      "Eradicate",
+      "Predator's Thirst"
+    ],
+    "banned": [
+      "Illidari Knowledge",
+      "Soul Rending",
+      "Aldrachi Design",
+      "Shattered Restoration",
+      "Charred Warblades",
+      "Will of the Illidari",
+      "Lost in Darkness",
+      "Wings of Wrath"
+    ],
+    "excluded": ["Tempered Soul"]
   }
 }

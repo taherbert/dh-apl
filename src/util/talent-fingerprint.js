@@ -91,6 +91,25 @@ const TALENT_ABBREVS = {
   "Preemptive Strike": "PS",
   Doomsayer: "Doom",
   "Harness the Cosmos": "HtC",
+  // Devourer clusters
+  "Singular Strikes": "SS",
+  "Soulforged Blades": "SfB",
+  "Devourer's Bite": "DB",
+  "Demonic Instinct": "DI",
+  "Voidglare Boon": "VgB",
+  "Impending Apocalypse": "IA",
+  "Star Fragments": "StF",
+  Calamitous: "Cal",
+  "The Hunt": "Hunt",
+  "Rolling Torment": "RT",
+  Voidrush: "VR",
+  "Devourer's Edge": "DE",
+  Emptiness: "Emp",
+  "Soul Glutton": "SG",
+  Eradicate: "Erad",
+  // Devourer hero choice nodes
+  "Student of Suffering": "StS",
+  Flamebound: "FB",
 };
 
 export function abbrev(name) {
