@@ -77,6 +77,7 @@ const HERO_ABBREVS = {
   Annihilator: "Anni",
   void_scarred: "VS",
   "Void Scarred": "VS",
+  "Void-Scarred": "VS",
 };
 
 function heroAbbrev(tree) {

@@ -18,6 +18,7 @@ import {
   deriveKeySpellIds,
 } from "./common.js";
 import { dataDir } from "../engine/paths.js";
+import { config } from "../engine/startup.js";
 
 // ================================================================
 // SECTION 1: HUMAN DOMAIN KNOWLEDGE
@@ -76,24 +77,216 @@ export const SPEC_CONFIG = {
     hungering_slash: { furyGen: 15, combo: true },
   },
 
-  // Talents forced always-on in DoE factor space.
-  // Collapsing Star: SimC asserts when Void Metamorphosis triggers without it
-  // (buff.cpp:1793 — collapsing_star_stack->trigger(0) from midnight3 code path)
-  requiredTalents: ["Collapsing Star"],
+  // Talent locks/bans/exclusions live in config.devourer.json under "talents".
+  get lockedTalents() {
+    return config.talents?.locked || [];
+  },
+  get bannedTalents() {
+    return config.talents?.banned || [];
+  },
+  get excludedTalents() {
+    return config.talents?.excluded || [];
+  },
 
-  // Non-DPS spec talents excluded from DoE factor space.
-  excludedTalents: [
-    // Defensive / utility — zero DPS contribution
-    "Tempered Soul",
-    "Sigil of Silence",
-    "Sigil of Chains",
-    "Chains of Anger",
-    "Quickened Sigils",
-    "Illidari Knowledge",
-    "Soul Rending",
-    "Demonic",
-    "Pursuit of Angriness",
-    "Wave of Debilitation",
+  // Talent clusters: groups of related S3 DPS talents that create meaningful
+  // playstyle variation. Each cluster has core (minimum investment) and optional
+  // extended talents. Builds include or exclude entire clusters.
+  talentClusters: {
+    melee: {
+      core: ["Singular Strikes"],
+      extended: ["Soulforged Blades", "Devourer's Bite"],
+    },
+    voidray: {
+      core: ["Demonic Instinct"],
+      extended: ["Voidglare Boon"],
+    },
+    star: {
+      core: ["Impending Apocalypse"],
+      extended: ["Star Fragments", "Calamitous"],
+    },
+    hunt: {
+      core: ["The Hunt"],
+    },
+    sustain: {
+      core: ["Rolling Torment"],
+      extended: ["Voidrush"],
+    },
+  },
+
+  // Roster templates: apex rank × cluster inclusion → crossed with hero trees.
+  //
+  // S3 gate: total S3 ≤ 14 - apex (34 spec pts - 20 gate).
+  // Config-locked S3: DE(2) + Erad(1) = 3pt, PLUS Eradicate connectivity:
+  //   Erad → StarFrag(1) → [VgBoon(1) OR RollTorm(1)] = 2pt extra.
+  // Hidden cluster costs from S3 prereq chains:
+  //   hunt: The Hunt(1) forces Voidrush(+1) + melee gateway(+1 if melee absent)
+  //   melee full: DevBite forces Demonic Instinct(+2 if voidray absent)
+  // Key sharing that eliminates double-counting:
+  //   DevBite ↔ DI (voidray), Hunt ↔ Voidrush (sustain),
+  //   Erad ↔ StarFrag (star full) ↔ gateway (voidray full / sustain core+)
+  rosterTemplates: [
+    // --- Apex 0 (max S3 = 14) ---
+    {
+      name: "No Hunt",
+      apexRank: 0,
+      include: {
+        melee: "full",
+        voidray: "full",
+        star: "full",
+        sustain: "full",
+      },
+      // 3+3+3+2+3(config) = 14. DevBite↔DI, Voidrush↔melee, Erad↔StarFrag↔RT.
+    },
+    {
+      name: "No Sustain",
+      apexRank: 0,
+      include: { melee: "full", voidray: "full", star: "full", hunt: "full" },
+      // 3+3+3+1+3+1(Voidrush forced) = 14. Erad↔StarFrag↔VgBoon.
+    },
+    {
+      name: "No Star",
+      apexRank: 0,
+      include: {
+        melee: "full",
+        voidray: "full",
+        hunt: "full",
+        sustain: "full",
+      },
+      // 3+3+1+2+3+1(StarFrag forced) = 13. Hunt↔Voidrush(sustain), Erad↔StarFrag↔RT.
+    },
+    {
+      name: "Broad Core",
+      apexRank: 0,
+      include: {
+        melee: "full",
+        voidray: "core",
+        star: "full",
+        hunt: "full",
+        sustain: "core",
+      },
+      // 3+2+3+1+1+3+1(Voidrush) = 14. All 5 clusters at reduced investment.
+    },
+
+    // --- Apex 1 (max S3 = 13) ---
+    {
+      name: "No Hunt",
+      apexRank: 1,
+      include: {
+        melee: "full",
+        voidray: "core",
+        star: "full",
+        sustain: "full",
+      },
+      // 3+2+3+2+3 = 13. DevBite↔DI, Voidrush↔melee, Erad↔StarFrag↔RT.
+    },
+    {
+      name: "No Star",
+      apexRank: 1,
+      include: {
+        melee: "full",
+        voidray: "full",
+        hunt: "full",
+        sustain: "full",
+      },
+      // 3+3+1+2+3+1(StarFrag) = 13. Hunt↔Voidrush(sustain), Erad↔StarFrag↔RT.
+    },
+    {
+      name: "Balanced",
+      apexRank: 1,
+      include: {
+        melee: "core",
+        voidray: "core",
+        star: "full",
+        hunt: "full",
+        sustain: "core",
+      },
+      // 1+2+3+1+1+3+1(Voidrush) = 12. Lighter melee, all clusters represented.
+    },
+
+    // --- Apex 2 (max S3 = 12) ---
+    {
+      name: "Melee+VR+Star",
+      apexRank: 2,
+      include: { melee: "full", voidray: "full", star: "full" },
+      // 3+3+3+3 = 12. DevBite↔DI, Erad↔StarFrag↔VgBoon.
+    },
+    {
+      name: "Core+Sustain",
+      apexRank: 2,
+      include: {
+        melee: "full",
+        voidray: "core",
+        star: "full",
+        sustain: "core",
+      },
+      // 3+2+3+1+3 = 12. Erad↔StarFrag↔RT.
+    },
+    {
+      name: "Hunt Focus",
+      apexRank: 2,
+      include: {
+        melee: "full",
+        voidray: "core",
+        hunt: "full",
+        sustain: "core",
+      },
+      // 3+2+1+1+3+1(Voidrush)+1(StarFrag) = 12. Erad↔StarFrag↔RT.
+    },
+
+    // --- Apex 3 (max S3 = 11) ---
+    {
+      name: "VoidRay+Star",
+      apexRank: 3,
+      include: {
+        melee: "core",
+        voidray: "full",
+        star: "full",
+        sustain: "core",
+      },
+      // 1+3+3+1+3 = 11. Erad↔StarFrag↔VgBoon.
+    },
+    {
+      name: "Core Everything",
+      apexRank: 3,
+      include: {
+        melee: "core",
+        voidray: "core",
+        star: "core",
+        hunt: "full",
+        sustain: "core",
+      },
+      // 1+2+1+1+1+3+1(Voidrush)+1(StarFrag) = 11. All clusters at minimal cost.
+    },
+    {
+      name: "Melee Focus",
+      apexRank: 3,
+      include: { melee: "full", voidray: "core", sustain: "full" },
+      // 3+2+2+3+1(StarFrag) = 11. DevBite↔DI, Voidrush↔melee, Erad↔StarFrag↔RT.
+    },
+
+    // --- Apex 4 (max S3 = 10) ---
+    {
+      name: "Star+VR",
+      apexRank: 4,
+      include: {
+        melee: "core",
+        voidray: "full",
+        star: "core",
+        sustain: "core",
+      },
+      // 1+3+1+1+3+1(StarFrag) = 10. Midnight synergizes with CS (always crits).
+    },
+    {
+      name: "Core All",
+      apexRank: 4,
+      include: {
+        melee: "core",
+        voidray: "core",
+        star: "core",
+        sustain: "core",
+      },
+      // 1+2+1+1+3+1(StarFrag) = 9. BFS fills 1pt spare.
+    },
   ],
 
   // Hero trees — Devourer uses Void-Scarred + Annihilator (shared with VDH).
@@ -113,7 +306,9 @@ export const SPEC_CONFIG = {
       ],
       aplBranch: "vs",
       profileKeywords: ["void_scarred", "void-scarred", "voidscarred"],
-      choiceLocks: {},
+      // 110114: Wave of Debilitation vs Pursuit of Angriness — both pure utility, zero DPS
+      // 110117: Set Fire to the Pain vs Improved Soul Rending — both purely defensive
+      choiceLocks: { 110114: 0, 110117: 0 },
     },
     annihilator: {
       displayName: "Annihilator",
@@ -123,7 +318,8 @@ export const SPEC_CONFIG = {
       keyBuffs: ["voidfall_building", "voidfall_spending", "catastrophe"],
       aplBranch: "anni",
       profileKeywords: ["annihilator", "anni"],
-      choiceLocks: {},
+      // 109448: Path to Oblivion vs State of Matter — pure utility, zero DPS (same as VDH)
+      choiceLocks: { 109448: 1 },
     },
   },
 
