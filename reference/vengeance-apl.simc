@@ -1,5 +1,5 @@
 # Executed before combat begins. Accepts non-harmful actions only.
-actions.precombat=/snapshot_stats
+actions.precombat=snapshot_stats
 actions.precombat+=/variable,name=single_target,value=spell_targets.spirit_bomb=1
 actions.precombat+=/variable,name=small_aoe,value=spell_targets.spirit_bomb>=2&spell_targets.spirit_bomb<=5
 actions.precombat+=/variable,name=big_aoe,value=spell_targets.spirit_bomb>=6
@@ -9,9 +9,8 @@ actions.precombat+=/arcane_torrent
 actions.precombat+=/sigil_of_flame
 actions.precombat+=/immolation_aura
 
-
 # Executed every time the actor is available.
-actions=/variable,name=num_spawnable_souls,op=reset,default=0
+actions=variable,name=num_spawnable_souls,op=reset,default=0
 actions+=/variable,name=num_spawnable_souls,op=max,value=1,if=talent.soul_sigils&cooldown.sigil_of_flame.up
 actions+=/variable,name=num_spawnable_souls,op=max,value=2,if=cooldown.fracture.charges_fractional>=1&!buff.metamorphosis.up
 actions+=/variable,name=num_spawnable_souls,op=max,value=3,if=cooldown.fracture.charges_fractional>=1&buff.metamorphosis.up
@@ -24,9 +23,9 @@ actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&!cooldown.pause_ac
 actions+=/run_action_list,name=anni,if=hero_tree.annihilator
 actions+=/run_action_list,name=ar,if=hero_tree.aldrachi_reaver
 
-actions.externals=/invoke_external_buff,name=power_infusion
+actions.externals=invoke_external_buff,name=power_infusion
 
-actions.anni=/variable,name=spb_1t_souls,op=setif,condition=talent.fiery_demise&dot.fiery_demise.ticking,value=3,value_else=5
+actions.anni=variable,name=spb_1t_souls,op=setif,condition=talent.fiery_demise&dot.fiery_demise.ticking,value=3,value_else=5
 actions.anni+=/use_item,slot=trinket1,if=!variable.trinket_1_buffs|(variable.trinket_1_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.1.cooldown.duration)|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains)))
 actions.anni+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs|(variable.trinket_2_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.2.cooldown.duration)|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains)))
 actions.anni+=/potion,use_off_gcd=1,if=buff.voidfall_spending.stack=3
@@ -49,7 +48,7 @@ actions.anni+=/soul_cleave
 actions.anni+=/fracture
 actions.anni+=/throw_glaive
 
-actions.ar=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&(!variable.trinket_1_buffs|(variable.trinket_1_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.1.cooldown.duration)|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains))))
+actions.ar=use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&(!variable.trinket_1_buffs|(variable.trinket_1_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.1.cooldown.duration)|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains))))
 actions.ar+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!variable.trinket_2_buffs|(variable.trinket_2_buffs&((buff.metamorphosis.up)|(buff.metamorphosis.up&cooldown.metamorphosis.remains<10)|(cooldown.metamorphosis.remains>trinket.2.cooldown.duration)|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains))))
 actions.ar+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 actions.ar+=/potion,use_off_gcd=1,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive

@@ -784,31 +784,54 @@ export function updateBaselineDpsCurrent(
 
 export function upsertBuild(build) {
   const db = getDb();
+  const hasDps =
+    build.dps?.st != null || build.dps_st != null || build.weighted != null;
   db.prepare(
     `
-    INSERT OR REPLACE INTO builds (hash, spec, name, display_name, hero_tree, archetype, overrides, dps_st, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO builds (hash, spec, name, display_name, hero_tree, archetype, overrides, dps_st, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
+    VALUES ($hash, $spec, $name, $display_name, $hero_tree, $archetype, $overrides, $dps_st, $dps_small_aoe, $dps_big_aoe, $weighted, $rank, $source, $pinned, $in_roster, $validated, $validation_errors, $last_tested_at)
+    ON CONFLICT(hash) DO UPDATE SET
+      spec = excluded.spec,
+      name = excluded.name,
+      display_name = excluded.display_name,
+      hero_tree = excluded.hero_tree,
+      archetype = excluded.archetype,
+      overrides = excluded.overrides,
+      source = excluded.source,
+      pinned = excluded.pinned,
+      in_roster = excluded.in_roster,
+      validated = excluded.validated,
+      validation_errors = excluded.validation_errors,
+      last_tested_at = CASE WHEN excluded.last_tested_at IS NOT NULL THEN excluded.last_tested_at ELSE builds.last_tested_at END,
+      dps_st = CASE WHEN $hasDps THEN excluded.dps_st ELSE builds.dps_st END,
+      dps_small_aoe = CASE WHEN $hasDps THEN excluded.dps_small_aoe ELSE builds.dps_small_aoe END,
+      dps_big_aoe = CASE WHEN $hasDps THEN excluded.dps_big_aoe ELSE builds.dps_big_aoe END,
+      weighted = CASE WHEN $hasDps THEN excluded.weighted ELSE builds.weighted END,
+      rank = CASE WHEN $hasDps THEN excluded.rank ELSE builds.rank END
   `,
-  ).run(
-    build.hash,
-    build.spec || spec(),
-    build.name || null,
-    build.displayName || build.display_name || null,
-    build.heroTree || build.hero_tree || null,
-    build.archetype || null,
-    jsonCol(build.overrides),
-    build.dps?.st ?? build.dps_st ?? null,
-    build.dps?.small_aoe ?? build.dps_small_aoe ?? null,
-    build.dps?.big_aoe ?? build.dps_big_aoe ?? null,
-    build.weighted ?? null,
-    build.rank ?? null,
-    build.source || "doe",
-    build.pinned ? 1 : 0,
-    (build.inRoster ?? build.in_roster ?? 0) ? 1 : 0,
-    build.validated ? 1 : 0,
-    jsonCol(build.validationErrors || build.validation_errors),
-    build.lastTestedAt || build.last_tested_at || null,
-  );
+  ).run({
+    $hash: build.hash,
+    $spec: build.spec || spec(),
+    $name: build.name || null,
+    $display_name: build.displayName || build.display_name || null,
+    $hero_tree: build.heroTree || build.hero_tree || null,
+    $archetype: build.archetype || null,
+    $overrides: jsonCol(build.overrides),
+    $dps_st: build.dps?.st ?? build.dps_st ?? null,
+    $dps_small_aoe: build.dps?.small_aoe ?? build.dps_small_aoe ?? null,
+    $dps_big_aoe: build.dps?.big_aoe ?? build.dps_big_aoe ?? null,
+    $weighted: build.weighted ?? null,
+    $rank: build.rank ?? null,
+    $source: build.source || "doe",
+    $pinned: build.pinned ? 1 : 0,
+    $in_roster: (build.inRoster ?? build.in_roster ?? 0) ? 1 : 0,
+    $validated: build.validated ? 1 : 0,
+    $validation_errors: jsonCol(
+      build.validationErrors || build.validation_errors,
+    ),
+    $last_tested_at: build.lastTestedAt || build.last_tested_at || null,
+    $hasDps: hasDps ? 1 : 0,
+  });
 }
 
 export function queryBuilds({

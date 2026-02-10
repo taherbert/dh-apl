@@ -86,6 +86,11 @@ const TALENT_ABBREVS = {
   Retaliation: "Ret",
   Painbringer: "PB",
   "Soul Sigils": "SSig",
+  // Hero choice nodes (for variant disambiguation)
+  "Keen Engagement": "KE",
+  "Preemptive Strike": "PS",
+  Doomsayer: "Doom",
+  "Harness the Cosmos": "HtC",
 };
 
 export function abbrev(name) {

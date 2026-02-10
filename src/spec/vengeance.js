@@ -18,6 +18,7 @@ import {
   deriveKeySpellIds,
 } from "./common.js";
 import { dataDir } from "../engine/paths.js";
+import { config } from "../engine/startup.js";
 
 // ================================================================
 // SECTION 1: HUMAN DOMAIN KNOWLEDGE
@@ -75,35 +76,16 @@ export const SPEC_CONFIG = {
     reavers_glaive: { apCoeff: 3.45 },
   },
 
-  // Non-DPS spec talents excluded from roster generation.
-  // Pure defensive, utility, or healing-only — never contribute to damage output.
-  // Used as BFS connectivity fillers when needed (e.g., Void Reaver for Focused Cleave prereq).
-  excludedTalents: [
-    "Calcified Spikes",
-    "Sigil of Silence",
-    "Revel in Pain",
-    "Feast of Souls",
-    "Ruinous Bulwark",
-    "Soul Barrier",
-    "Fel Flame Fortification",
-    "Last Resort",
-    "Soulmonger",
-    "Sigil of Chains",
-    "Feed the Demon",
-    "Roaring Fire",
-    "Painbringer",
-    "Void Reaver",
-  ],
-
-  // S3 DPS talents taken by every build (no variation).
-  lockedTalents: [
-    "Spirit Bomb",
-    "Fiery Brand",
-    "Burning Blood",
-    "Tempered Steel",
-    "Ascending Flame",
-    "Fiery Demise",
-  ],
+  // Talent locks/bans/exclusions live in config.vengeance.json under "talents".
+  get lockedTalents() {
+    return config.talents?.locked || [];
+  },
+  get bannedTalents() {
+    return config.talents?.banned || [];
+  },
+  get excludedTalents() {
+    return config.talents?.excluded || [];
+  },
 
   // Talent clusters: groups of related S3 DPS talents that create meaningful
   // playstyle variation. Each cluster has core (minimum investment) and optional
@@ -114,7 +96,10 @@ export const SPEC_CONFIG = {
       extended: ["Charred Flesh", "Down in Flames"],
     },
     sigil: { core: ["Cycle of Binding"] },
-    harvest: { core: ["Vulnerability"], extended: ["Soulcrush"] },
+    harvest: {
+      core: ["Vulnerability"],
+      extended: ["Soulcrush", "Focused Cleave"],
+    },
     feldev: {
       core: ["Stoke the Flames"],
       extended: ["Vengeful Beast", "Darkglare Boon"],

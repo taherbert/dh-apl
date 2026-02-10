@@ -145,6 +145,13 @@ function getBaseExclusionSet() {
   return new Set(config.excludedTalents || []);
 }
 
+// Returns the hard-banned talent set from SPEC_CONFIG.bannedTalents.
+// BFS will never select these, even for connectivity.
+function getBannedSet() {
+  const config = getSpecAdapter().getSpecConfig();
+  return new Set(config.bannedTalents || []);
+}
+
 // Builds effective exclusion set from base SPEC_CONFIG + include/exclude overrides.
 function buildEffectiveExclusions(overrides = {}) {
   const exclusions = getBaseExclusionSet();
@@ -363,7 +370,7 @@ export function generateFractionalFactorial(K) {
 // --- Build mapping ---
 
 // Find path from any selected/entry node to target via prev links (BFS backwards)
-function findPath(nodeMap, selected, targetId) {
+function findPath(nodeMap, selected, targetId, bannedIds = null) {
   const target = nodeMap.get(targetId);
   if (!target) return null;
   if (selected.has(targetId)) return [targetId];
@@ -379,6 +386,7 @@ function findPath(nodeMap, selected, targetId) {
 
     for (const prevId of node.prev || []) {
       if (visited.has(prevId)) continue;
+      if (bannedIds?.has(prevId)) continue;
       visited.add(prevId);
       parentOf.set(prevId, currentId);
 
@@ -590,6 +598,16 @@ export function designRowToBuild(
     }
   }
 
+  // Hard-banned node IDs from SPEC_CONFIG
+  const banned = getBannedSet();
+  const bannedIds = new Set();
+  for (const n of nodes) {
+    const names = [n.name, ...(n.entries?.map((e) => e.name) || [])].filter(
+      Boolean,
+    );
+    if (names.some((nm) => banned.has(nm))) bannedIds.add(n.id);
+  }
+
   // Under budget: iteratively add highest-priority available nodes (top-down by posY).
   // Re-evaluate availability each pass since adding nodes opens up gated/connected nodes.
   let fillChanged = true;
@@ -600,6 +618,7 @@ export function designRowToBuild(
         if (selected.has(n.id)) return false;
         if (n.freeNode) return false;
         if (n.entryNode) return false;
+        if (bannedIds.has(n.id)) return false;
         if (n.prev && n.prev.length > 0 && !n.prev.some((p) => selected.has(p)))
           return false;
         if (!passesGate(n, selected, nodeMap, rankMap)) return false;
@@ -649,6 +668,70 @@ export function designRowToBuild(
     }
   }
 
+  // Ban fallback: if still under budget after ban-respecting fill, re-run without bans
+  if (pts < budget && bannedIds.size > 0) {
+    let fallbackChanged = true;
+    while (fallbackChanged && pts < budget) {
+      fallbackChanged = false;
+      const available = nodes
+        .filter((n) => {
+          if (selected.has(n.id)) return false;
+          if (n.freeNode || n.entryNode) return false;
+          if (
+            n.prev &&
+            n.prev.length > 0 &&
+            !n.prev.some((p) => selected.has(p))
+          )
+            return false;
+          if (!passesGate(n, selected, nodeMap, rankMap)) return false;
+          return true;
+        })
+        .sort((a, b) => {
+          const exA = excludedNodeIds.has(a.id) ? 1 : 0;
+          const exB = excludedNodeIds.has(b.id) ? 1 : 0;
+          if (exA !== exB) return exA - exB;
+          const banA = bannedIds.has(a.id) ? 1 : 0;
+          const banB = bannedIds.has(b.id) ? 1 : 0;
+          if (banA !== banB) return banA - banB;
+          const dy = (a.posY || 0) - (b.posY || 0);
+          if (dy !== 0) return dy;
+          return (a.posX || 0) - (b.posX || 0);
+        });
+
+      for (const node of available) {
+        if (pts >= budget) break;
+        const cost = node.maxRanks || 1;
+        if (pts + cost > budget) {
+          if (cost > 1 && pts + 1 <= budget) {
+            selected.add(node.id);
+            rankMap.set(node.id, 1);
+            pts += 1;
+            fallbackChanged = true;
+          }
+          continue;
+        }
+        selected.add(node.id);
+        rankMap.set(node.id, cost);
+        pts += cost;
+        fallbackChanged = true;
+      }
+
+      if (pts < budget) {
+        for (const node of nodes) {
+          if (pts >= budget) break;
+          if (!selected.has(node.id)) continue;
+          const maxR = node.maxRanks || 1;
+          const curR = rankMap.get(node.id) || 1;
+          if (curR < maxR && pts + (maxR - curR) <= budget) {
+            pts += maxR - curR;
+            rankMap.set(node.id, maxR);
+            fallbackChanged = true;
+          }
+        }
+      }
+    }
+  }
+
   // Gate repair: if at budget but a gate is violated (e.g., S1+S2 < 20),
   // swap a removable post-gate node for a pre-gate node to satisfy the gate.
   for (let gatePass = 0; gatePass < 10; gatePass++) {
@@ -676,9 +759,10 @@ export function designRowToBuild(
       .sort((a, b) => (b.node.posY || 0) - (a.node.posY || 0));
 
     // Find an addable pre-gate node
-    const addable = nodes
+    let addable = nodes
       .filter((n) => {
         if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+        if (bannedIds.has(n.id)) return false;
         if (!(!n.reqPoints || n.reqPoints < gateThreshold)) return false;
         if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
           return false;
@@ -690,6 +774,27 @@ export function designRowToBuild(
         if (exA !== exB) return exA - exB;
         return (a.posY || 0) - (b.posY || 0);
       });
+
+    // Ban fallback: if no addable without bans, allow banned nodes
+    if (addable.length === 0 && bannedIds.size > 0) {
+      addable = nodes
+        .filter((n) => {
+          if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+          if (!(!n.reqPoints || n.reqPoints < gateThreshold)) return false;
+          if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
+            return false;
+          return true;
+        })
+        .sort((a, b) => {
+          const banA = bannedIds.has(a.id) ? 1 : 0;
+          const banB = bannedIds.has(b.id) ? 1 : 0;
+          if (banA !== banB) return banA - banB;
+          const exA = excludedNodeIds.has(a.id) ? 1 : 0;
+          const exB = excludedNodeIds.has(b.id) ? 1 : 0;
+          if (exA !== exB) return exA - exB;
+          return (a.posY || 0) - (b.posY || 0);
+        });
+    }
 
     if (removable.length === 0 || addable.length === 0) break;
 
@@ -1173,7 +1278,18 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     exclude: profile.exclude || [],
   });
 
-  // Connectivity repair: ensure all locked nodes have a path from entry
+  // Hard-banned node IDs: BFS will never select these
+  const banned = getBannedSet();
+  const bannedNodeIds = new Set();
+  for (const n of data.specNodes) {
+    const names = [n.name, ...(n.entries?.map((e) => e.name) || [])].filter(
+      Boolean,
+    );
+    if (names.some((nm) => banned.has(nm))) bannedNodeIds.add(n.id);
+  }
+
+  // Connectivity repair: ensure all locked nodes have a path from entry.
+  // First pass avoids banned nodes; fallback allows them if no other path exists.
   let repairChanged = true;
   while (repairChanged) {
     repairChanged = false;
@@ -1182,9 +1298,11 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
       if (!node || node.entryNode || node.freeNode) continue;
       if (!node.prev || node.prev.length === 0) continue;
       if (node.prev.some((p) => locked.has(p))) continue;
-      // Find path from any locked/entry node
+      // Try ban-respecting path first
+      let found = false;
       for (const prevId of node.prev) {
-        const path = findPath(specMap, locked, prevId);
+        if (bannedNodeIds.has(prevId)) continue;
+        const path = findPath(specMap, locked, prevId, bannedNodeIds);
         if (path) {
           for (const pathId of path) {
             if (!locked.has(pathId)) {
@@ -1194,7 +1312,25 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
               repairChanged = true;
             }
           }
+          found = true;
           break;
+        }
+      }
+      // Fallback: allow banned nodes if no clean path exists
+      if (!found) {
+        for (const prevId of node.prev) {
+          const path = findPath(specMap, locked, prevId);
+          if (path) {
+            for (const pathId of path) {
+              if (!locked.has(pathId)) {
+                locked.add(pathId);
+                const pn = specMap.get(pathId);
+                lockedRanks.set(pathId, pn?.maxRanks || 1);
+                repairChanged = true;
+              }
+            }
+            break;
+          }
         }
       }
     }
@@ -1212,6 +1348,7 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     const available = data.specNodes
       .filter((n) => {
         if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+        if (bannedNodeIds.has(n.id)) return false;
         if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
           return false;
         if (!passesGate(n, selected, specMap, rankMap)) return false;
@@ -1262,6 +1399,65 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     }
   }
 
+  // Ban fallback: if still under budget after ban-respecting fill, re-run without bans
+  if (pts < SPEC_POINTS && bannedNodeIds.size > 0) {
+    let fallbackChanged = true;
+    while (fallbackChanged && pts < SPEC_POINTS) {
+      fallbackChanged = false;
+      const available = data.specNodes
+        .filter((n) => {
+          if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+          if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
+            return false;
+          if (!passesGate(n, selected, specMap, rankMap)) return false;
+          return true;
+        })
+        .sort((a, b) => {
+          const exA = effectiveExclusions.has(a.name) ? 1 : 0;
+          const exB = effectiveExclusions.has(b.name) ? 1 : 0;
+          if (exA !== exB) return exA - exB;
+          const banA = bannedNodeIds.has(a.id) ? 1 : 0;
+          const banB = bannedNodeIds.has(b.id) ? 1 : 0;
+          if (banA !== banB) return banA - banB;
+          return (a.posY || 0) - (b.posY || 0);
+        });
+
+      for (const node of available) {
+        if (pts >= SPEC_POINTS) break;
+        const cost = node.maxRanks || 1;
+        if (pts + cost > SPEC_POINTS) {
+          if (cost > 1 && pts + 1 <= SPEC_POINTS) {
+            selected.add(node.id);
+            rankMap.set(node.id, 1);
+            pts += 1;
+            fallbackChanged = true;
+          }
+          continue;
+        }
+        selected.add(node.id);
+        rankMap.set(node.id, cost);
+        pts += cost;
+        fallbackChanged = true;
+      }
+
+      if (pts < SPEC_POINTS) {
+        for (const node of data.specNodes) {
+          if (pts >= SPEC_POINTS) break;
+          if (!selected.has(node.id)) continue;
+          const cap = maxRankOverrides.has(node.id)
+            ? maxRankOverrides.get(node.id)
+            : node.maxRanks || 1;
+          const curR = rankMap.get(node.id) || 1;
+          if (curR < cap && pts + (cap - curR) <= SPEC_POINTS) {
+            pts += cap - curR;
+            rankMap.set(node.id, cap);
+            fallbackChanged = true;
+          }
+        }
+      }
+    }
+  }
+
   // Gate repair: if locked S3 nodes pushed past the gate, swap removable post-gate
   // nodes for pre-gate nodes to satisfy the 20-pt gate requirement.
   const excludedNodeIds = new Set();
@@ -1290,9 +1486,10 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
       .filter(({ id }) => !wouldOrphan(id, selected, specMap))
       .sort((a, b) => (b.node.posY || 0) - (a.node.posY || 0));
 
-    const addable = data.specNodes
+    let addable = data.specNodes
       .filter((n) => {
         if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+        if (bannedNodeIds.has(n.id)) return false;
         if (n.reqPoints >= gateThreshold) return false;
         if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
           return false;
@@ -1304,6 +1501,27 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
         if (exA !== exB) return exA - exB;
         return (a.posY || 0) - (b.posY || 0);
       });
+
+    // Ban fallback: if no addable without bans, allow banned nodes
+    if (addable.length === 0 && bannedNodeIds.size > 0) {
+      addable = data.specNodes
+        .filter((n) => {
+          if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+          if (n.reqPoints >= gateThreshold) return false;
+          if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
+            return false;
+          return true;
+        })
+        .sort((a, b) => {
+          const banA = bannedNodeIds.has(a.id) ? 1 : 0;
+          const banB = bannedNodeIds.has(b.id) ? 1 : 0;
+          if (banA !== banB) return banA - banB;
+          const exA = excludedNodeIds.has(a.id) ? 1 : 0;
+          const exB = excludedNodeIds.has(b.id) ? 1 : 0;
+          if (exA !== exB) return exA - exB;
+          return (a.posY || 0) - (b.posY || 0);
+        });
+    }
 
     if (removable.length === 0 || addable.length === 0) break;
 
@@ -1343,8 +1561,12 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     )
       continue;
 
-    const entry0Excluded = effectiveExclusions.has(node.entries[0]?.name);
-    const entry1Excluded = effectiveExclusions.has(node.entries[1]?.name);
+    const entry0Excluded =
+      effectiveExclusions.has(node.entries[0]?.name) ||
+      banned.has(node.entries[0]?.name);
+    const entry1Excluded =
+      effectiveExclusions.has(node.entries[1]?.name) ||
+      banned.has(node.entries[1]?.name);
     const entry0Required = reqSet.has(node.entries[0]?.name);
     const entry1Required = reqSet.has(node.entries[1]?.name);
 

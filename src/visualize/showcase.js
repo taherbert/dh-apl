@@ -450,7 +450,10 @@ function renderRosterTable(buildData, hasBaseline) {
 
     for (const b of builds) {
       html += `\n<tr>`;
-      html += `<td class="build-name">${esc(b.displayName)}</td>`;
+      const copyBtn = b.hash
+        ? `<button class="copy-hash" data-hash="${esc(b.hash)}" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button>`
+        : "";
+      html += `<td class="build-name">${esc(b.displayName)}${copyBtn}</td>`;
       html += `<td class="archetype-cell">${esc(b.archetype)}</td>`;
 
       for (const s of scenarios) {
@@ -735,13 +738,34 @@ tbody tr { background: var(--bg); }
 tbody tr:nth-child(even) { background: var(--surface-alt); }
 tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
 
-td { white-space: nowrap; }
+.dps-cell { white-space: nowrap; }
 
 .build-name {
   font-weight: 500;
   font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
   font-size: 0.78rem;
+  word-break: break-word;
 }
+
+.copy-hash {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 0.15em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35em;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+}
+.build-name:hover .copy-hash { opacity: 1; }
+.copy-hash:hover { color: var(--accent); border-color: var(--border); }
+.copy-hash.copied { color: var(--positive); opacity: 1; }
+.copy-hash svg { width: 13px; height: 13px; }
 
 .archetype-cell {
   color: var(--fg-muted);
@@ -842,6 +866,49 @@ document.querySelectorAll('th.sortable').forEach(th => {
     });
 
     for (const row of rows) tbody.appendChild(row);
+  });
+});
+
+// Copy talent hash to clipboard
+document.querySelectorAll('.copy-hash').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const hash = btn.dataset.hash;
+    if (!hash) return;
+
+    const doCopy = text => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      }
+      return fallbackCopy(text);
+    };
+
+    const fallbackCopy = text => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    };
+
+    function flash(el) {
+      el.classList.add('copied');
+      el.querySelector('svg').innerHTML = '<polyline points="4 8.5 6.5 11 12 5" stroke-width="2"/>';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        el.querySelector('svg').innerHTML = '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/>';
+      }, 1500);
+    }
+
+    const result = doCopy(hash);
+    if (result && result.then) {
+      result.then(() => flash(btn));
+    } else {
+      flash(btn);
+    }
   });
 });
 `;

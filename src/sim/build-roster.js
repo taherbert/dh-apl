@@ -96,6 +96,7 @@ function sourcePrefix(source) {
       return "IV";
     case "baseline":
     case "doe":
+    case "cluster":
       return null;
     default:
       return source;
@@ -160,10 +161,7 @@ export function generateDisplayNames(builds) {
     const decodedBuilds = treeBuilds.filter((b) => decoded.has(b.hash));
     if (decodedBuilds.length === 0) {
       for (const b of treeBuilds) {
-        const name =
-          b.source === "baseline"
-            ? "SimC Default"
-            : `${heroAbbrev(tree)} #${treeBuilds.indexOf(b) + 1}`;
+        const name = `${heroAbbrev(tree)} #${treeBuilds.indexOf(b) + 1}`;
         b.displayName = name;
       }
       continue;
@@ -194,7 +192,7 @@ export function generateDisplayNames(builds) {
     function signatureKey(sig, source) {
       const talentStr = sig.length > 0 ? sig.map(abbrev).join(" + ") : "Base";
       const prefix = sourcePrefix(source);
-      return prefix ? `${prefix} ${ha}: ${talentStr}` : `${ha}: ${talentStr}`;
+      return prefix ? `${prefix}: ${talentStr}` : talentStr;
     }
 
     function countCollisions(selectedTalents) {
@@ -257,18 +255,11 @@ export function generateDisplayNames(builds) {
     // Assign names
     const nameMap = new Map();
     for (const b of treeBuilds) {
-      if (b.source === "baseline") {
-        b.displayName = "SimC Default";
-        continue;
-      }
-
       const d = decoded.get(b.hash);
       if (!d) {
         const prefix = sourcePrefix(b.source);
         const label = b.archetype || "Unknown";
-        b.displayName = prefix
-          ? `${prefix} ${ha}: ${label}`
-          : `${ha}: ${label}`;
+        b.displayName = prefix ? `${prefix}: ${label}` : label;
         continue;
       }
 
@@ -279,11 +270,40 @@ export function generateDisplayNames(builds) {
       nameMap.get(b.displayName).push(b);
     }
 
-    // Disambiguate collisions with #N
+    // Disambiguate collisions using hero choice variant name
+    const specConfig = getSpecAdapter().getSpecConfig();
     for (const [name, dupes] of nameMap) {
       if (dupes.length <= 1) continue;
-      for (let i = 0; i < dupes.length; i++) {
-        dupes[i].displayName = `${name} #${i + 1}`;
+
+      // Try hero variant disambiguation
+      const variantNames = new Map();
+      for (const b of dupes) {
+        const treeCfg = specConfig?.heroTrees?.[tree];
+        const choiceLocks = treeCfg?.choiceLocks || {};
+        try {
+          const { variant } = detectHeroVariant(b.hash, null, choiceLocks);
+          if (variant) variantNames.set(b, abbrev(variant));
+        } catch {
+          // Non-fatal
+        }
+      }
+
+      // Always append variant when available, then #N within subgroups
+      const subgroups = new Map();
+      for (const b of dupes) {
+        const v = variantNames.get(b) || "";
+        if (!subgroups.has(v)) subgroups.set(v, []);
+        subgroups.get(v).push(b);
+      }
+      for (const [v, group] of subgroups) {
+        const suffix = v ? ` (${v})` : "";
+        if (group.length === 1) {
+          group[0].displayName = `${name}${suffix}`;
+        } else {
+          for (let i = 0; i < group.length; i++) {
+            group[i].displayName = `${name}${suffix} #${i + 1}`;
+          }
+        }
       }
     }
   }
@@ -450,9 +470,9 @@ function importBaselineUnified(existingFingerprints) {
   upsertBuild({
     hash,
     name: `baseline_${ha}`,
-    displayName: "SimC Default",
+    displayName: null,
     heroTree,
-    archetype: "SimC Default",
+    archetype: "Baseline",
     source: "baseline",
     inRoster: true,
     validated: 1,
@@ -903,9 +923,9 @@ export function importBaseline() {
     upsertBuild({
       hash,
       name: existingBaseline.name,
-      displayName: "SimC Default",
+      displayName: null,
       heroTree,
-      archetype: "SimC Default",
+      archetype: "Baseline",
       source: "baseline",
       inRoster: true,
       validated: 1,
@@ -920,9 +940,9 @@ export function importBaseline() {
   upsertBuild({
     hash,
     name,
-    displayName: "SimC Default",
+    displayName: null,
     heroTree,
-    archetype: "SimC Default",
+    archetype: "Baseline",
     source: "baseline",
     inRoster: true,
     validated: 1,
@@ -1252,8 +1272,8 @@ export function showRoster() {
 
     // Sort archetypes: baseline first, then by apex rank extracted from name
     const sortedArchKeys = Object.keys(byArchetype).sort((a, b) => {
-      if (a === "SimC Default") return -1;
-      if (b === "SimC Default") return 1;
+      if (a === "Baseline") return -1;
+      if (b === "Baseline") return 1;
       const apexA = a.match(/^Apex (\d+)/)?.[1] ?? "99";
       const apexB = b.match(/^Apex (\d+)/)?.[1] ?? "99";
       return Number(apexA) - Number(apexB) || a.localeCompare(b);

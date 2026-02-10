@@ -4,5 +4,41 @@
     "specName": "vengeance",
     "specId": 581
   },
-  "communityBuilds": []
+  "communityBuilds": [],
+  "talents": {
+    "locked": [
+      "Spirit Bomb",
+      "Fiery Brand",
+      "Burning Blood",
+      "Tempered Steel",
+      "Ascending Flame",
+      "Fiery Demise",
+      "Fel Devastation",
+      "Perfectly Balanced Glaive",
+      "Quickened Sigils",
+      "Sigil of Spite",
+      "Volatile Flameblood",
+      "Felfire Fist",
+      "Agonizing Flames",
+      "Fallout"
+    ],
+    "banned": [
+      "Soulmonger",
+      "Ruinous Bulwark",
+      "Revel in Pain",
+      "Painbringer",
+      "Last Resort",
+      "Roaring Fire",
+      "Sigil of Silence",
+      "Feed the Demon",
+      "Sigil of Chains",
+      "Feast of Souls"
+    ],
+    "excluded": [
+      "Calcified Spikes",
+      "Soul Barrier",
+      "Fel Flame Fortification",
+      "Void Reaver"
+    ]
+  }
 }

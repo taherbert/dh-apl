@@ -110,6 +110,17 @@ export async function initSpec(specName) {
   RAIDBOTS_BASE = `${config.data.raidbots}/${DATA_ENV}`;
   RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
 
+  // Derive SimC source paths from className/specName
+  const classSnake =
+    SIMC_CLASS_NAMES[config.spec.className] || config.spec.className;
+  SIMC_CPP = join(SIMC_DIR, "engine/class_modules", `sc_${classSnake}.cpp`);
+  SIMC_APL_PATH = join(
+    SIMC_DIR,
+    "engine/class_modules/apl",
+    classSnake,
+    `${config.spec.specName}.simc`,
+  );
+
   setSpecName(config.spec.specName);
   _specInitialized = true;
 
@@ -131,15 +142,14 @@ export const SIMC_BIN = existsSync(LOCAL_BIN)
   ? LOCAL_BIN
   : join(SIMC_DIR, "engine", "simc");
 
-export const SIMC_CPP = join(
-  SIMC_DIR,
-  config.simc.cppModule || "engine/class_modules/sc_demon_hunter.cpp",
-);
+// SimC uses snake_case for multi-word class names
+const SIMC_CLASS_NAMES = {
+  demonhunter: "demon_hunter",
+  deathknight: "death_knight",
+};
 
-export const SIMC_APL_CPP = join(
-  SIMC_DIR,
-  config.simc.aplModule || "engine/class_modules/apl/apl_demon_hunter.cpp",
-);
+export let SIMC_CPP;
+export let SIMC_APL_PATH;
 
 let RAIDBOTS_BASE = `${config.data.raidbots}/${DATA_ENV}`;
 export let RAIDBOTS_TALENTS = `${RAIDBOTS_BASE}/talents.json`;
