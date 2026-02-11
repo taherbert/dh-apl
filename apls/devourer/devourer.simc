@@ -35,7 +35,10 @@ actions+=/the_hunt,if=buff.void_metamorphosis_stack.at_max_stacks&talent.voidsur
 actions+=/run_action_list,name=aoe,if=active_enemies>1
 # Execute: fire Meta immediately regardless of Eradicate or stacks
 actions+=/metamorphosis,if=variable.in_execute
-actions+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate|active_enemies=1
+# Anni: delay Meta during Voidfall spending to preserve Mass Acceleration stacks
+actions+=/metamorphosis,if=(buff.eradicate.up|!talent.eradicate|active_enemies=1)&(!talent.voidfall|!buff.voidfall_spending.react)
+# Fury extension: VR channel prevents Meta from ending and slows fury drain by 85%
+actions+=/void_ray,if=buff.metamorphosis.up&fury<20&cooldown.void_ray.up
 # Meta Cull Line: Reap/Cull in Meta fires BEFORE Void Ray. Delay during Voidfall building to let Consume proc stacks.
 actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)&(!buff.voidfall_building.react|buff.voidfall_building.stack>=2)
 # Anni: Dark Matter meteor shower on first CS after Meta entry — fire before VR eats the window
@@ -56,15 +59,17 @@ actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.react|buff.eradi
 actions+=/call_action_list,name=reaps,if=soul_fragments>=(7+buff.voidfall_building.react*2)&action.reap.souls_consumed>=4
 actions+=/call_action_list,name=melee_combo
 actions+=/soul_immolation,if=active_dot.soul_immolation=0&!buff.metamorphosis.up
-# Fall-through CStar is strictly better than Devour when available
-actions+=/collapsing_star,if=variable.should_use_star
+# Fall-through CStar: avoid in last 3s of Meta if Rolling Torment converts stacks to damage buff
+actions+=/collapsing_star,if=variable.should_use_star&(!talent.rolling_torment|!buff.metamorphosis.up|buff.metamorphosis.remains>3)
 actions+=/devour
+# VS Burning Blades: TG + 30% Cosmic echo + Mastery scaling as filler outside Meta
+actions+=/throw_glaive,if=talent.burning_blades&!buff.metamorphosis.up
 actions+=/consume
 
 # AoE: separate priority ordering for multi-target. Conditions derived from baseline with
 # active_enemies>1 (always true) and active_enemies=1 (always false) substituted.
 actions.aoe=void_ray,if=talent.eradicate&!buff.eradicate.up
-actions.aoe+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate
+actions.aoe+=/metamorphosis,if=(buff.eradicate.up|!talent.eradicate)&(!talent.voidfall|!buff.voidfall_spending.react)
 # AoE: fire Eradicate cone ASAP — 25yd cone x5+ targets outvalues waiting for Soulshaper fragments
 actions.aoe+=/eradicate
 actions.aoe+=/collapsing_star,if=buff.dark_matter.up&variable.should_use_star
