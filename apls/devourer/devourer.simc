@@ -1,5 +1,5 @@
 # Devourer Demon Hunter APL
-# Synced from SimC midnight branch: engine/class_modules/apl/demon_hunter/devourer.simc
+# Synced from SimC midnight branch: engine/class_modules/apl/apl_demon_hunter.cpp
 # Both hero trees (Void-Scarred / Annihilator) handled via inline talent checks
 
 input=apls/devourer/profile.simc
@@ -28,30 +28,53 @@ actions.precombat+=/consume
 # Executed every time the actor is available.
 actions=call_action_list,name=math_for_wizards
 actions+=/call_action_list,name=illicit_doping
-actions+=/voidblade,if=buff.void_metamorphosis_stack.at_max_stacks
-actions+=/the_hunt,if=buff.void_metamorphosis_stack.at_max_stacks
-actions+=/metamorphosis
-actions+=/void_ray
-# DB+Voidrush: CStar when PtV ready, PW on CD, not in HS chain. Non-DB: always. DB+no-Voidrush: when not in HS chain.
-actions+=/collapsing_star,if=(!buff.hungering_slash.up&(talent.voidrush&cooldown.pierce_the_veil.up&cooldown.predators_wake.remains|!talent.voidrush)|!talent.devourers_bite)&variable.should_use_star&(!talent.voidrush|cooldown.voidblade.remains>=6|buff.collapsing_star_stacking.stack>=38)
-# In AoE, Eradicate's 25yd cone outprioritizes DB debuff application
-actions+=/eradicate,if=active_enemies>1
-actions+=/call_action_list,name=melee_combo,if=talent.devourers_bite
-# Voidfall spending Eradicate in ST
-actions+=/eradicate,if=buff.voidfall_spending.react
+# VS builds: pre-fire VB/Hunt at max stacks before Meta for DB debuff
+actions+=/voidblade,if=buff.void_metamorphosis_stack.at_max_stacks&talent.voidsurge
+actions+=/the_hunt,if=buff.void_metamorphosis_stack.at_max_stacks&talent.voidsurge
+# AoE branch: factored out for separate tuning
+actions+=/run_action_list,name=aoe,if=active_enemies>1
+actions+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate|active_enemies=1
+# Meta Cull Line: Reap/Cull in Meta fires BEFORE Void Ray. Delay during Voidfall building to let Consume proc stacks.
+actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)&(!buff.voidfall_building.react|buff.voidfall_building.stack>=2)
+# Anni: Dark Matter meteor shower on first CS after Meta entry — fire before VR eats the window
+actions+=/collapsing_star,if=buff.dark_matter.up&variable.should_use_star
+# IA rush: Reap to build CS stacking faster during Meta with IA buff
+actions+=/call_action_list,name=reaps,if=variable.rush_star_stacks&soul_fragments>=4
+# Gate VR outside Meta to sweet_release/voidfall/AoE. Don't waste Eradicate on AoE.
+actions+=/void_ray,if=(buff.metamorphosis.up|talent.sweet_release|talent.voidfall|active_enemies>1)&(!buff.eradicate.up|active_enemies=1)
+# CStar after PW for VS, avoid wasting VB CDR
+actions+=/collapsing_star,if=(!cooldown.predators_wake.up&talent.voidrush&!buff.hungering_slash.up&cooldown.voidblade.remains>=6|!talent.voidrush)&variable.should_use_star
+# VS: Reap to build Meta stacks or generate CStar faster
+actions+=/call_action_list,name=reaps,if=!talent.voidfall&action.reap.souls_consumed>=4&(!buff.metamorphosis.up&(buff.void_metamorphosis_stack.stack+action.reap.souls_consumed)>=buff.void_metamorphosis_stack.max_stack|buff.metamorphosis.up&!buff.collapsing_star_ready.up&(buff.collapsing_star_stacking.stack+action.reap.souls_consumed>=30)&variable.should_use_star)
+# Anni: Reap during Voidfall spending or AoE Eradicate
+actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.react|buff.eradicate.up&active_enemies>1
+# Fragment overcap protection: Reap at 8+ frags. During Voidfall building, delay to 9+ to allow Consume procs.
+actions+=/call_action_list,name=reaps,if=soul_fragments>=(8+buff.voidfall_building.react)&action.reap.souls_consumed>=4
 actions+=/call_action_list,name=melee_combo
-actions+=/call_action_list,name=reaps,if=buff.voidfall_spending.react
-# Reap to generate a Collapsing Star quicker
-actions+=/call_action_list,name=reaps,if=soul_fragments>=4&(!buff.metamorphosis.up&(buff.void_metamorphosis_stack.stack+action.reap.souls_consumed)>=buff.void_metamorphosis_stack.max_stack|!talent.voidfall&buff.metamorphosis.up&!buff.collapsing_star_ready.up&(buff.collapsing_star_stacking.stack+action.reap.souls_consumed>=30)&variable.should_use_star)
-# Reap good in meta for VS
-actions+=/call_action_list,name=reaps,if=action.reap.souls_consumed>=4&!talent.voidfall&buff.metamorphosis.up&(!buff.moment_of_craving.up|action.reap.souls_consumed>=9|!variable.should_use_star)
-# Consume Eradicate proc before VR overwrites it
-actions+=/call_action_list,name=reaps,if=buff.eradicate.up
-# Voidfall: reap in ST during Meta when spending phase has ended
-actions+=/call_action_list,name=reaps,if=talent.voidfall&buff.metamorphosis.up&active_enemies=1&!buff.voidfall_spending.react&action.reap.souls_consumed>=4
-actions+=/soul_immolation,if=refreshable&!buff.metamorphosis.up
+actions+=/soul_immolation,if=active_dot.soul_immolation=0&!buff.metamorphosis.up
+# Fall-through CStar is strictly better than Devour when available
+actions+=/collapsing_star,if=variable.should_use_star
 actions+=/devour
 actions+=/consume
+
+# AoE: separate priority ordering for multi-target. Conditions derived from baseline with
+# active_enemies>1 (always true) and active_enemies=1 (always false) substituted.
+actions.aoe=void_ray,if=talent.eradicate&!buff.eradicate.up
+actions.aoe+=/metamorphosis,if=buff.eradicate.up|!talent.eradicate
+# AoE: fire Eradicate cone ASAP — 25yd cone x5+ targets outvalues waiting for Soulshaper fragments
+actions.aoe+=/eradicate
+actions.aoe+=/collapsing_star,if=buff.dark_matter.up&variable.should_use_star
+actions.aoe+=/call_action_list,name=reaps,if=variable.rush_star_stacks&soul_fragments>=4
+actions.aoe+=/void_ray
+actions.aoe+=/collapsing_star,if=(!cooldown.predators_wake.up&talent.voidrush&!buff.hungering_slash.up&cooldown.voidblade.remains>=6|!talent.voidrush)&variable.should_use_star
+actions.aoe+=/call_action_list,name=reaps,if=!talent.voidfall&action.reap.souls_consumed>=4&(!buff.metamorphosis.up&(buff.void_metamorphosis_stack.stack+action.reap.souls_consumed)>=buff.void_metamorphosis_stack.max_stack|buff.metamorphosis.up&!buff.collapsing_star_ready.up&(buff.collapsing_star_stacking.stack+action.reap.souls_consumed>=30)&variable.should_use_star)
+actions.aoe+=/call_action_list,name=reaps,if=buff.voidfall_spending.react
+actions.aoe+=/call_action_list,name=reaps,if=soul_fragments>=(8+buff.voidfall_building.react)&action.reap.souls_consumed>=4
+actions.aoe+=/call_action_list,name=melee_combo
+actions.aoe+=/soul_immolation,if=active_dot.soul_immolation=0&!buff.metamorphosis.up
+actions.aoe+=/collapsing_star,if=variable.should_use_star
+actions.aoe+=/devour
+actions.aoe+=/consume
 
 actions.illicit_doping=invoke_external_buff,name=power_infusion,if=buff.metamorphosis.up&!buff.power_infusion.up
 actions.illicit_doping+=/potion,if=buff.metamorphosis.up|fight_remains<=30
@@ -63,16 +86,20 @@ actions.illicit_doping+=/use_item,use_off_gcd=1,slot=trinket2,if=!variable.trink
 actions.illicit_doping+=/use_item,slot=trinket1,if=!variable.trinket_1_buffs&!variable.trinket_1_manual&(variable.damage_trinket_priority=1|trinket.2.cooldown.remains|trinket.2.is.spymasters_web|trinket.2.cooldown.duration=0)&(!variable.trinket_1_ogcd_cast)
 actions.illicit_doping+=/use_item,slot=trinket2,if=!variable.trinket_2_buffs&!variable.trinket_2_manual&(variable.damage_trinket_priority=2|trinket.1.cooldown.remains|trinket.1.is.spymasters_web|trinket.1.cooldown.duration=0)&(!variable.trinket_2_ogcd_cast)
 
-actions.math_for_wizards=variable,name=should_use_star,op=set,value=active_enemies>1|apex.1|buff.dark_matter.up|talent.star_fragments&talent.emptiness,if=talent.collapsing_star
+actions.math_for_wizards=variable,name=should_use_star,op=set,value=(active_enemies>1|apex.1|buff.dark_matter.up|talent.star_fragments&talent.emptiness),if=talent.collapsing_star
+# IA rush: during Meta with IA stacks, rush Reap to build CS stacking faster
+actions.math_for_wizards+=/variable,name=rush_star_stacks,op=set,value=talent.impending_apocalypse&buff.impending_apocalypse.stack>=1&buff.metamorphosis.up&buff.metamorphosis.remains>=3&!buff.collapsing_star_ready.up&variable.should_use_star
 
-actions.melee_combo=vengeful_retreat,if=buff.voidstep.up
+# Melee combo: VR stationary gate prevents movement when close to CS channel threshold
+actions.melee_combo=vengeful_retreat,if=buff.voidstep.up&(cooldown.voidblade.up|cooldown.predators_wake.up|buff.collapsing_star_stacking.stack<=38)
+# VS Meta: VB early for Voidrush drain reduction (85%) before HS/RT chain
+actions.melee_combo+=/voidblade,if=talent.voidsurge&buff.metamorphosis.up
 actions.melee_combo+=/hungering_slash
 actions.melee_combo+=/reapers_toll
-actions.melee_combo+=/the_hunt,if=active_enemies>1
+actions.melee_combo+=/the_hunt,if=!talent.voidsurge
 actions.melee_combo+=/pierce_the_veil
 actions.melee_combo+=/predators_wake
-# Allow VB during Meta in ST for DB builds — Violent Transformation reset the CD
-actions.melee_combo+=/voidblade,if=(talent.duty_eternal&active_enemies=1|talent.hungering_slash)&(!talent.devourers_bite|active_enemies>1|buff.metamorphosis.up)
+actions.melee_combo+=/voidblade,if=talent.duty_eternal&active_enemies=1|talent.hungering_slash
 
 actions.reaps=eradicate
 actions.reaps+=/cull
