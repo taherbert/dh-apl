@@ -148,7 +148,7 @@
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12529,
+      "line": 12539,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.metamorphosis )"
@@ -157,7 +157,7 @@
       "buff": "blur",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12530,
+      "line": 12540,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.blur )"
@@ -166,7 +166,7 @@
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12536,
+      "line": 12546,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.metamorphosis )"
@@ -175,7 +175,7 @@
       "buff": "blur",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12537,
+      "line": 12547,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.blur )"
@@ -184,7 +184,7 @@
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12543,
+      "line": 12553,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.metamorphosis )"
@@ -193,7 +193,7 @@
       "buff": "demon_spikes",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12544,
+      "line": 12554,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.demon_spikes )"
@@ -202,7 +202,7 @@
       "buff": "seething_anger",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12545,
+      "line": 12555,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.seething_anger )"
@@ -211,7 +211,7 @@
       "buff": "fel_blood_rank_2",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12546,
+      "line": 12556,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( mastery.fel_blood_rank_2 )"
@@ -220,7 +220,7 @@
       "buff": "thrill_of_the_fight_haste",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12550,
+      "line": 12560,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.thrill_of_the_fight_haste )"
@@ -229,7 +229,7 @@
       "buff": "voidfall_building",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12553,
+      "line": 12563,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_building )"
@@ -238,7 +238,7 @@
       "buff": "voidfall_spending",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12554,
+      "line": 12564,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_spending )"
@@ -247,7 +247,7 @@
       "buff": "voidfall_final_hour",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12555,
+      "line": 12565,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_final_hour )"
@@ -326,7 +326,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 3271,
+      "line": 3272,
       "context": "otherworldly_focus_benefit_t",
       "contextType": "struct",
       "talentChecks": [
@@ -339,7 +339,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 5745,
+      "line": 5747,
       "context": "surge_base_t",
       "contextType": "struct",
       "talentChecks": [
@@ -352,7 +352,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 6271,
+      "line": 6272,
       "context": "reap_t",
       "contextType": "struct",
       "talentChecks": [
@@ -365,7 +365,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 6668,
+      "line": 6680,
       "context": "hungering_slash_base_t",
       "contextType": "struct",
       "talentChecks": [
@@ -378,7 +378,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 7007,
+      "line": 7019,
       "context": "auto_attack_t",
       "contextType": "struct",
       "talentChecks": [
@@ -391,7 +391,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 8087,
+      "line": 8099,
       "context": "soul_cleave_t",
       "contextType": "struct",
       "talentChecks": [

@@ -612,7 +612,7 @@
     "gcd": 1.5,
     "cooldown": 10,
     "aoeRadius": 8,
-    "description": "Consume 1 beneficial Magic effect removing it from the target and granting you 1 Fury."
+    "description": "Consume 1 beneficial Magic effect removing it from the target and granting you 20 Fury."
   },
   {
     "id": 320313,
@@ -738,7 +738,7 @@
     "name": "Revel in Pain",
     "school": "Physical",
     "passive": true,
-    "description": "2.1% of your Fire damage shields you, up to a maximum of ${$MHP*$s2/100}. Shield and maximum values are doubled while Fiery Brand is active."
+    "description": "5.1% of your Fire damage shields you, up to a maximum of ${$MHP*$s2/100}. Shield and maximum values are doubled while Fiery Brand is active."
   },
   {
     "id": 343207,
@@ -1340,14 +1340,6 @@
     "description": "Chaos"
   },
   {
-    "id": 1227062,
-    "name": "Thrill of the Fight",
-    "school": "Physical",
-    "gcd": 0,
-    "duration": 10,
-    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
-  },
-  {
     "id": 1236360,
     "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc",
     "school": "Physical",
@@ -1523,7 +1515,7 @@
     "school": "Cosmic",
     "gcd": 0,
     "aoeRadius": 6,
-    "description": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+    "description": "Your first Spirit Bomb after entering demon form causes a Shadowflame meteor shower to assault the area, dealing 0 Shadowflame damage over 0 sec."
   },
   {
     "id": 1264130,
@@ -1531,7 +1523,7 @@
     "school": "Shadowflame",
     "gcd": 0,
     "aoeRadius": 6,
-    "description": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+    "description": "Your first Spirit Bomb after entering demon form causes a Shadowflame meteor shower to assault the area, dealing 0 Shadowflame damage over 0 sec."
   },
   {
     "id": 1264808,
@@ -1631,7 +1623,7 @@
     "name": "Soul Splitter",
     "school": "Physical",
     "passive": true,
-    "description": "Any time you would generate one or more soul fragments, you have a 2% chance to generate an additional Soul Fragment."
+    "description": "Any time you would generate one or more Soul Fragments, you have a 2% chance to generate an additional Soul Fragment."
   },
   {
     "id": 1266493,
@@ -1677,6 +1669,35 @@
     "description": "Your movement speed is increased by 3%."
   },
   {
+    "id": 1270444,
+    "name": "Untethered Rage",
+    "school": "Physical",
+    "passive": true,
+    "description": "Soul Cleave and Spirit Bomb have a chance per soul fragment consumed to grant Untethered Rage, allowing Metamorphosis to be cast without incurring its cooldown and lasting 10 sec."
+  },
+  {
+    "id": 1270448,
+    "name": "Untethered Rage",
+    "school": "Physical",
+    "passive": true,
+    "description": "Soul Cleave and Spirit Bomb can consume an additional soul fragment and deal an additional 5% damage for each consumed."
+  },
+  {
+    "id": 1270449,
+    "name": "Untethered Rage",
+    "school": "Physical",
+    "passive": true,
+    "description": "Each cast of Soul Cleave and Spirit Bomb that does not grant Untethered Rage instead applies a stack of Seething Anger. Seething Anger grants 1% Agility and increases your chance to gain Untethered Rage. Lasts 12 sec and cannot be refreshed after gaining Untethered Rage."
+  },
+  {
+    "id": 1270547,
+    "name": "Seething Anger",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 12,
+    "description": "Each cast of Soul Cleave and Spirit Bomb that does not grant Untethered Rage instead applies a stack of Seething Anger. Seething Anger grants 1% Agility and increases your chance to gain Untethered Rage. Lasts 12 sec and cannot be refreshed after gaining Untethered Rage."
+  },
+  {
     "id": 1272138,
     "name": "Keen Edge",
     "school": "Physical",
@@ -1718,6 +1739,16 @@
     "gcd": 0,
     "aoeRadius": 12,
     "description": "Fracture has a 0% chance to spark a violent detonation, causing 0 Fire damage onto nearby enemies. Damage reduced beyond $s2 targets."
+  },
+  {
+    "id": 1277738,
+    "name": "Consume Magic",
+    "school": "Cosmic",
+    "gcd": 0,
+    "generates": [
+      "20 fury"
+    ],
+    "description": "Consume $m1 beneficial Magic effect removing it from the target and granting you 20 Fury."
   },
   {
     "id": 1279247,

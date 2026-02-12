@@ -45,8 +45,10 @@ graph LR
   t427913{{"Immolation Aura"}}
   t427914{{"Immolation Aura"}}
   t427915{{"Immolation Aura"}}
+  t1270448["Untethered Rage"]
   s228478(("Soul Cleave"))
   t442492[/"Incisive Blade"/]
+  s247454(("Spirit Bomb"))
   s247455(("Spirit Bomb"))
   t389985["Soulcrush"]
   s247456(("Frailty"))
@@ -101,11 +103,11 @@ graph LR
   t320331["Infernal Armor"]
   t1270449["Untethered Rage"]
   t1256307[/"Dark Matter"/]
-  s247454(("Spirit Bomb"))
   t1256353[/"World Killer"/]
   s1253304(("Voidfall"))
   t442502[/"Warblade's Hunger"/]
   t343207["Focused Cleave"]
+  t1272143[/"Broken Spirit"/]
   t442497[/"Keen Engagement"/]
   t1272153[/"Bladecraft"/]
   t444997[/"Preemptive Strike"/]
@@ -133,6 +135,7 @@ graph LR
   t232893["Felblade"]
   s442502(("Warblade's Hunger"))
   s343207(("Focused Cleave"))
+  s1272143(("Broken Spirit"))
   s1272153(("Bladecraft"))
   snull(("buff:seething_anger"))
   t1256295[/"Mass Acceleration"/]
@@ -158,8 +161,6 @@ graph LR
   t442290[/"Art of the Glaive"/]
   t444926[/"Evasive Action"/]
   s444926(("Evasive Action"))
-  t1272143[/"Broken Spirit"/]
-  s1272143(("Broken Spirit"))
   t1253668[/"Swift Erasure"/]
   s1253668(("Swift Erasure"))
   t1253399[/"Path to Oblivion"/]
@@ -213,12 +214,15 @@ graph LR
   t427913 -->|buff grant| s228477
   t427914 -->|buff grant| s228477
   t427915 -->|buff grant| s228477
+  t1270448 -->|damage modifier| s228477
   t258920 -->|buff grant| s228478
   t427913 -->|buff grant| s228478
   t427914 -->|buff grant| s228478
   t427915 -->|buff grant| s228478
   t442492 -->|damage modifier| s228478
   t1265800 -->|damage modifier| s228478
+  t1270448 -->|damage modifier| s228478
+  t1270448 -->|damage modifier| s247454
   t390213 -->|damage modifier| s247455
   t389985 -->|damage modifier| s247456
   t207548 -->|damage modifier| s258920
@@ -304,6 +308,7 @@ graph LR
   t442502 -->|damage modifier| s213243
   t442502 -->|proc trigger| s225919
   t343207 -->|damage modifier| s228477
+  t1272143 -->|damage modifier| s228477
   t442497 -->|resource modifier| s185123
   t1272153 -->|proc trigger| s442290
   t444997 -->|proc trigger| s185123
@@ -335,6 +340,8 @@ graph LR
   t389958 -->|proc trigger| s1256307
   t232893 -->|damage modifier| s442502
   t389958 -->|damage modifier| s343207
+  t389958 -->|damage modifier| s1272143
+  t343207 -->|damage modifier| s1272143
   t442718 -->|proc trigger| s1272153
   t207548 -->|cooldown modifier| s320331
   t1270449 -->|buff grant| snull
@@ -356,11 +363,10 @@ graph LR
   t389220 -->|damage modifier| s389220
   t442290 -->|proc trigger| s442290
   t444926 -->|proc trigger| s444926
-  t1272143 -->|damage modifier| s1272143
   t1253668 -->|damage modifier| s1253668
   t1253399 -->|damage modifier| s1253399
   t1264809 -->|proc trigger| s1276488
   classDef hero fill:#f9d,stroke:#333
-  class t1272138,t1253415,t1253377,t442492,t1279247,t442718,t442679,t442686,t442683,t1253769,t1256307,t1256353,t442502,t442497,t1272153,t444997,t1253304,t1253391,t1253676,t1256295,t1253817,t442290,t444926,t1272143,t1253668,t1253399 hero
+  class t1272138,t1253415,t1253377,t442492,t1279247,t442718,t442679,t442686,t442683,t1253769,t1256307,t1256353,t442502,t1272143,t442497,t1272153,t444997,t1253304,t1253391,t1253676,t1256295,t1253817,t442290,t444926,t1253668,t1253399 hero
   classDef mechanic fill:#bdf,stroke:#333
   class t444929,t258920,t427913,t427914,t427915,t433719,t433721,t433724,t433737,t1264809 mechanic
