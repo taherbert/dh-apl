@@ -276,62 +276,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 179057,
-        "name": "Chaos Nova"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 429211,
         "name": "Champion of the Glaive",
         "isTalent": true,
@@ -725,62 +669,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 189112,
-        "name": "Infernal Strike"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 389781,
         "name": "Long Night",
         "isTalent": true,
@@ -1015,62 +903,6 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Vengeful Retreat (198793), Vengeful Retreat (198813), Vengeful Retreat (344866)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 198813,
-        "name": "Vengeful Retreat"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
           "triggerSpell": null
         }
       ],
@@ -1493,62 +1325,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 203782,
-        "name": "Shear"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -2083,62 +1859,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 204021,
-        "name": "Fiery Brand"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 389715,
         "name": "Chains of Anger",
         "isTalent": true,
@@ -2657,62 +2377,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 204598,
-        "name": "Sigil of Flame"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 389715,
         "name": "Chains of Anger",
         "isTalent": true,
@@ -3029,62 +2693,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 207407,
-        "name": "Soul Carver"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -3457,62 +3065,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 207771,
-        "name": "Fiery Brand"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 207744,
         "name": "Fiery Brand",
         "isTalent": false,
@@ -3834,62 +3386,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 212105,
-        "name": "Fel Devastation"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 1253377,
         "name": "Meteoric Rise",
         "isTalent": true,
@@ -4013,62 +3509,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 212106,
-        "name": "Fel Devastation"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 207744,
         "name": "Fiery Brand",
         "isTalent": false,
@@ -4334,62 +3774,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 213243,
-        "name": "Felblade"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 207744,
         "name": "Fiery Brand",
         "isTalent": false,
@@ -4651,62 +4035,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 214743,
-        "name": "Soul Carver"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -4881,62 +4209,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 225919,
-        "name": "Fracture"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -5354,62 +4626,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 225921,
-        "name": "Fracture"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -5802,6 +5018,61 @@
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": "Soul Cleave (228477), Soul Cleave (228478)",
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 1270448,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ],
+      "discoveryMethod": "spell_data",
+      "confidence": "high",
+      "magnitude": {
+        "value": 5,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "Physical",
+        "Holy"
+      ],
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Effect 1 (3)",
+          "baseValue": 5,
+          "scaledValue": 5,
+          "target": "Self (1)",
+          "schoolMask": 3,
+          "affectedSpells": "Soul Cleave (228477), Spirit Bomb (247454)",
+          "triggerSpell": null
+        },
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Effect 2 (12)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": 12,
+          "affectedSpells": "Soul Cleave (228477), Soul Cleave (228478), Spirit Bomb (247454)",
           "triggerSpell": null
         }
       ],
@@ -6133,62 +5404,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 228478,
-        "name": "Soul Cleave"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 1265800,
         "name": "Tempered Steel",
         "isTalent": true,
@@ -6236,6 +5451,105 @@
           "target": "Self (1)",
           "schoolMask": 22,
           "affectedSpells": "Vengeful Retreat (198813), Shear (203782), Fracture (225919), Fracture (225921), Soul Cleave (228478), Throw Glaive (337819), Throw Glaive (346665), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979)",
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 1270448,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 228478,
+        "name": "Soul Cleave"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        2
+      ],
+      "discoveryMethod": "spell_data",
+      "confidence": "high",
+      "magnitude": {
+        "value": 1,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "Fire",
+        "Nature"
+      ],
+      "effectDetails": [
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Effect 2 (12)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": 12,
+          "affectedSpells": "Soul Cleave (228477), Soul Cleave (228478), Spirit Bomb (247454)",
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 1270448,
+        "name": "Untethered Rage",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 247454,
+        "name": "Spirit Bomb"
+      },
+      "type": "damage_modifier",
+      "effects": [
+        1,
+        2
+      ],
+      "discoveryMethod": "spell_data",
+      "confidence": "high",
+      "magnitude": {
+        "value": 5,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "Physical",
+        "Holy"
+      ],
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Effect 1 (3)",
+          "baseValue": 5,
+          "scaledValue": 5,
+          "target": "Self (1)",
+          "schoolMask": 3,
+          "affectedSpells": "Soul Cleave (228477), Spirit Bomb (247454)",
+          "triggerSpell": null
+        },
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Effect 2 (12)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": 12,
+          "affectedSpells": "Soul Cleave (228477), Soul Cleave (228478), Spirit Bomb (247454)",
           "triggerSpell": null
         }
       ],
@@ -6549,62 +5863,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 247455,
-        "name": "Spirit Bomb"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -7349,62 +6607,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258921,
-        "name": "Immolation Aura"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 207548,
         "name": "Agonizing Flames",
         "isTalent": true,
@@ -7874,62 +7076,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 258922,
-        "name": "Immolation Aura"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 187827,
         "name": "Metamorphosis",
         "isTalent": false,
@@ -8388,62 +7534,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 320334,
-        "name": "Infernal Armor"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -8974,62 +8064,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 389860,
-        "name": "Sigil of Spite"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 209281,
         "name": "Quickened Sigils",
         "isTalent": true,
@@ -9198,62 +8232,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 391159,
-        "name": "Demon Spikes"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -9864,62 +8842,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 442294,
-        "name": "Reaver's Glaive"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 1265800,
         "name": "Tempered Steel",
         "isTalent": true,
@@ -11011,62 +9933,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 1256306,
-        "name": "Voidfall Meteor"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 1279247,
         "name": "Harness the Cosmos",
         "isTalent": true,
@@ -11384,62 +10250,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 1256667,
-        "name": "Catastrophe"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -11805,62 +10615,6 @@
     },
     {
       "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 1264130,
-        "name": "Meteor Shower"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 1279247,
         "name": "Harness the Cosmos",
         "isTalent": true,
@@ -11998,62 +10752,6 @@
       "categories": [
         "offensive",
         "defensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1227062,
-        "name": "Thrill of the Fight",
-        "isTalent": false,
-        "tree": null,
-        "heroSpec": null
-      },
-      "target": {
-        "id": 1276488,
-        "name": "Explosion of the Soul"
-      },
-      "type": "damage_modifier",
-      "effects": [
-        1,
-        2
-      ],
-      "discoveryMethod": "spell_data",
-      "confidence": "high",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 22,
-          "affectedSpells": "Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Infernal Armor (320334), Fel Devastation (333120), Throw Glaive (346665), Sigil of Spite (389860), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Reaver's Glaive (442294)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
       ]
     },
     {
@@ -12807,7 +11505,24 @@
       "mechanism": "on_impact",
       "discoveryMethod": "cpp_scanner",
       "confidence": "medium",
-      "application": "passive_always",
+      "magnitude": {
+        "value": 1,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
       "categories": [
         "offensive"
       ]
@@ -13092,6 +11807,80 @@
           "type": "Apply Aura (6) | Dummy (4)",
           "baseValue": 50,
           "scaledValue": 50,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 1272143,
+        "name": "Broken Spirit",
+        "isTalent": true,
+        "tree": "hero",
+        "heroSpec": "Aldrachi Reaver"
+      },
+      "target": {
+        "id": 228477,
+        "name": "Soul Cleave"
+      },
+      "type": "damage_modifier",
+      "mechanism": "on_impact",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium",
+      "magnitude": {
+        "value": 1,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "Physical",
+        "Holy",
+        "Fire",
+        "Frost"
+      ],
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 3 (23)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": 23,
+          "affectedSpells": "Sigil of Spite (390163)",
+          "triggerSpell": null
+        },
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 3,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 20,
+          "scaledValue": 20,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 4,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 15,
+          "scaledValue": 15,
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": null,
@@ -14705,6 +13494,77 @@
     },
     {
       "source": {
+        "id": 389958,
+        "name": "Frailty",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 1272143,
+        "name": "Broken Spirit"
+      },
+      "type": "damage_modifier",
+      "mechanism": "on_impact",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium",
+      "application": "buff_on_player",
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 0,
+          "scaledValue": 0,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 343207,
+        "name": "Focused Cleave",
+        "isTalent": true,
+        "tree": "spec",
+        "heroSpec": null
+      },
+      "target": {
+        "id": 1272143,
+        "name": "Broken Spirit"
+      },
+      "type": "damage_modifier",
+      "mechanism": "on_impact",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium",
+      "magnitude": {
+        "value": 50,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 50,
+          "scaledValue": 50,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
         "id": 442718,
         "name": "Fury of the Aldrachi",
         "isTalent": true,
@@ -14818,7 +13678,24 @@
       "mechanism": "talent_gates_buff",
       "discoveryMethod": "effect_scan",
       "confidence": "medium",
-      "application": "passive_always",
+      "magnitude": {
+        "value": 1,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
       "categories": [
         "offensive"
       ]
@@ -15678,79 +14555,6 @@
     },
     {
       "source": {
-        "id": 1272143,
-        "name": "Broken Spirit",
-        "isTalent": true,
-        "tree": "hero",
-        "heroSpec": "Aldrachi Reaver"
-      },
-      "target": {
-        "id": 1272143,
-        "name": "Broken Spirit"
-      },
-      "type": "damage_modifier",
-      "discoveryMethod": "effect_scan",
-      "confidence": "medium",
-      "magnitude": {
-        "value": 1,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Physical",
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 3 (23)",
-          "baseValue": 1,
-          "scaledValue": 1,
-          "target": "Self (1)",
-          "schoolMask": 23,
-          "affectedSpells": "Sigil of Spite (390163)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 1,
-          "scaledValue": 1,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 4,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 15,
-          "scaledValue": 15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 1253668,
         "name": "Swift Erasure",
         "isTalent": true,
@@ -16134,28 +14938,6 @@
             "offensive",
             "defensive"
           ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
         }
       ]
     },
@@ -16374,7 +15156,12 @@
           "tree": "spec",
           "heroSpec": null,
           "discoveryMethod": "cpp_scanner",
-          "application": "passive_always",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
           "categories": [
             "offensive"
           ]
@@ -16498,28 +15285,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -16661,28 +15426,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Felfire Fist",
           "sourceId": 389724,
           "type": "proc_trigger",
@@ -16815,28 +15558,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Tempered Steel",
           "sourceId": 1265800,
           "type": "damage_modifier",
@@ -16946,28 +15667,6 @@
           "application": "buff_on_player",
           "categories": [
             "offensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -17211,28 +15910,6 @@
             "offensive",
             "defensive"
           ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
         }
       ]
     },
@@ -17299,28 +15976,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -17472,28 +16127,6 @@
             "offensive",
             "defensive"
           ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
         }
       ]
     },
@@ -17639,28 +16272,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Fiery Brand",
           "sourceId": 207744,
           "type": "damage_modifier",
@@ -17758,28 +16369,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -18070,28 +16659,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Cycle of Binding",
           "sourceId": 389718,
           "type": "cooldown_modifier",
@@ -18328,28 +16895,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -18602,28 +17147,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Fiery Brand",
           "sourceId": 207744,
           "type": "damage_modifier",
@@ -18737,28 +17260,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         }
       ]
@@ -19017,28 +17518,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Fiery Brand",
           "sourceId": 207744,
           "type": "damage_modifier",
@@ -19136,28 +17615,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -19297,28 +17754,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Fiery Brand",
           "sourceId": 207744,
           "type": "damage_modifier",
@@ -19416,28 +17851,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -19646,28 +18059,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Meteoric Rise",
           "sourceId": 1253377,
           "type": "damage_modifier",
@@ -19719,28 +18110,6 @@
           "application": "buff_on_player",
           "categories": [
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -19904,28 +18273,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Meteoric Rise",
           "sourceId": 1253377,
           "type": "damage_modifier",
@@ -19977,28 +18324,6 @@
           "application": "buff_on_player",
           "categories": [
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -20162,28 +18487,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Meteoric Rise",
           "sourceId": 1253377,
           "type": "damage_modifier",
@@ -20235,28 +18538,6 @@
           "application": "buff_on_player",
           "categories": [
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -20426,28 +18707,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Warblade's Hunger",
           "sourceId": 442502,
           "type": "damage_modifier",
@@ -20611,28 +18870,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Fiery Brand",
           "sourceId": 207744,
           "type": "damage_modifier",
@@ -20747,28 +18984,6 @@
             "offensive",
             "defensive"
           ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
         }
       ]
     },
@@ -20855,28 +19070,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -21060,28 +19253,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -21376,28 +19547,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Celestial Echoes",
           "sourceId": 1253415,
           "type": "damage_modifier",
@@ -21578,28 +19727,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -21874,6 +20001,27 @@
           ]
         },
         {
+          "source": "Untethered Rage",
+          "sourceId": 1270448,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy"
+          ]
+        },
+        {
           "source": "Metamorphosis",
           "sourceId": 187827,
           "type": "damage_modifier",
@@ -22012,28 +20160,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Tempered Steel",
           "sourceId": 1265800,
           "type": "damage_modifier",
@@ -22053,6 +20179,27 @@
             "Holy",
             "Fire",
             "Frost"
+          ]
+        },
+        {
+          "source": "Untethered Rage",
+          "sourceId": 1270448,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Fire",
+            "Nature"
           ]
         },
         {
@@ -22125,6 +20272,29 @@
           "application": "buff_on_player",
           "categories": [
             "offensive"
+          ]
+        },
+        {
+          "source": "Broken Spirit",
+          "sourceId": 1272143,
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Frost"
           ]
         }
       ]
@@ -22195,6 +20365,27 @@
           ]
         },
         {
+          "source": "Untethered Rage",
+          "sourceId": 1270448,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy"
+          ]
+        },
+        {
           "source": "Metamorphosis",
           "sourceId": 187827,
           "type": "damage_modifier",
@@ -22333,28 +20524,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Tempered Steel",
           "sourceId": 1265800,
           "type": "damage_modifier",
@@ -22374,6 +20543,27 @@
             "Holy",
             "Fire",
             "Frost"
+          ]
+        },
+        {
+          "source": "Untethered Rage",
+          "sourceId": 1270448,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Fire",
+            "Nature"
           ]
         },
         {
@@ -22446,6 +20636,29 @@
           "application": "buff_on_player",
           "categories": [
             "offensive"
+          ]
+        },
+        {
+          "source": "Broken Spirit",
+          "sourceId": 1272143,
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Frost"
           ]
         }
       ]
@@ -22570,28 +20783,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Warblade's Hunger",
           "sourceId": 442502,
           "type": "damage_modifier",
@@ -22613,6 +20804,27 @@
     "247454": {
       "name": "Spirit Bomb",
       "modifiers": [
+        {
+          "source": "Untethered Rage",
+          "sourceId": 1270448,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy"
+          ]
+        },
         {
           "source": "Metamorphosis",
           "sourceId": 187827,
@@ -22747,28 +20959,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -22797,6 +20987,27 @@
       "name": "Spirit Bomb",
       "modifiers": [
         {
+          "source": "Untethered Rage",
+          "sourceId": 1270448,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy"
+          ]
+        },
+        {
           "source": "Metamorphosis",
           "sourceId": 187827,
           "type": "damage_modifier",
@@ -22930,28 +21141,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -23305,28 +21494,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -23518,28 +21685,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -24032,28 +22177,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -24245,28 +22368,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -24759,28 +22860,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -24972,28 +23051,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -25306,28 +23363,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Celestial Echoes",
           "sourceId": 1253415,
           "type": "damage_modifier",
@@ -25508,28 +23543,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -25900,28 +23913,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Fallout",
           "sourceId": 227174,
           "type": "resource_modifier",
@@ -26113,28 +24104,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -26478,28 +24447,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -26691,28 +24638,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -27440,28 +25365,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Cycle of Binding",
           "sourceId": 389718,
           "type": "cooldown_modifier",
@@ -27683,28 +25586,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -27952,28 +25833,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Quickened Sigils",
           "sourceId": 209281,
           "type": "duration_modifier",
@@ -28112,28 +25971,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         }
       ]
@@ -28426,28 +26263,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -28639,28 +26454,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -29153,28 +26946,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -29366,28 +27137,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -29880,28 +27629,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -30093,28 +27820,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -30693,28 +28398,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -30906,28 +28589,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -31420,28 +29081,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -31633,28 +29272,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -32147,28 +29764,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -32360,28 +29955,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -32874,28 +30447,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Agonizing Flames",
           "sourceId": 207548,
           "type": "damage_modifier",
@@ -33087,28 +30638,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -33511,28 +31040,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -34276,45 +31783,6 @@
         }
       ]
     },
-    "1227062": {
-      "name": "Thrill of the Fight",
-      "modifiers": [
-        {
-          "source": "Fury of the Aldrachi",
-          "sourceId": 442718,
-          "type": "proc_trigger",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 100,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        },
-        {
-          "source": "Reaver's Mark",
-          "sourceId": 442679,
-          "type": "proc_trigger",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 100,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        }
-      ]
-    },
     "1241937": {
       "name": "Soul Immolation",
       "modifiers": [
@@ -34597,28 +32065,6 @@
             "offensive",
             "defensive"
           ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
         }
       ]
     },
@@ -34778,28 +32224,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -34982,28 +32406,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -35278,28 +32680,6 @@
             "offensive",
             "defensive"
           ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
         }
       ]
     },
@@ -35459,28 +32839,6 @@
           "categories": [
             "offensive",
             "defensive"
-          ]
-        },
-        {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         },
         {
@@ -35666,28 +33024,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Harness the Cosmos",
           "sourceId": 1279247,
           "type": "damage_modifier",
@@ -35818,26 +33154,32 @@
       "name": "Broken Spirit",
       "modifiers": [
         {
-          "source": "Broken Spirit",
-          "sourceId": 1272143,
+          "source": "Frailty",
+          "sourceId": 389958,
           "type": "damage_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "discoveryMethod": "effect_scan",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "cpp_scanner",
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ]
+        },
+        {
+          "source": "Focused Cleave",
+          "sourceId": 343207,
+          "type": "damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "cpp_scanner",
           "magnitude": {
-            "value": 1,
+            "value": 50,
             "unit": "percent",
             "stacking": "multiplicative"
           },
           "application": "buff_on_player",
           "categories": [
             "offensive"
-          ],
-          "schoolTarget": [
-            "Physical",
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         }
       ]
@@ -35907,28 +33249,6 @@
           ]
         },
         {
-          "source": "Thrill of the Fight",
-          "sourceId": 1227062,
-          "type": "damage_modifier",
-          "tree": null,
-          "heroSpec": null,
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
           "source": "Vengeance 12.0 Class Set 4pc",
           "sourceId": 1264809,
           "type": "proc_trigger",
@@ -35948,6 +33268,23 @@
             "procChance": 101,
             "internalCooldown": 0.5
           }
+        }
+      ]
+    },
+    "1277738": {
+      "name": "Consume Magic",
+      "modifiers": [
+        {
+          "source": "Swallowed Anger",
+          "sourceId": 320313,
+          "type": "resource_modifier",
+          "tree": "class",
+          "heroSpec": null,
+          "discoveryMethod": "cpp_scanner",
+          "application": "buff_on_player",
+          "categories": [
+            "resource"
+          ]
         }
       ]
     }
@@ -38266,6 +35603,22 @@
           "mechanism": "on_impact"
         },
         {
+          "spell": "Broken Spirit",
+          "spellId": 1272143,
+          "type": "damage_modifier",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "mechanism": "on_impact"
+        },
+        {
           "spell": "soul_cleave_t",
           "spellId": null,
           "type": "direct_damage_modifier",
@@ -38796,6 +36149,17 @@
         {
           "spell": "Focused Cleave",
           "spellId": 343207,
+          "type": "damage_modifier",
+          "discoveryMethod": "cpp_scanner",
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "mechanism": "on_impact"
+        },
+        {
+          "spell": "Broken Spirit",
+          "spellId": 1272143,
           "type": "damage_modifier",
           "discoveryMethod": "cpp_scanner",
           "application": "buff_on_player",
@@ -40712,533 +38076,6 @@
         }
       ]
     },
-    "1227062": {
-      "name": "Thrill of the Fight",
-      "tree": null,
-      "heroSpec": null,
-      "targets": [
-        {
-          "spell": "Chaos Nova",
-          "spellId": 179057,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Infernal Strike",
-          "spellId": 189112,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Vengeful Retreat",
-          "spellId": 198813,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Shear",
-          "spellId": 203782,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Fiery Brand",
-          "spellId": 204021,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Sigil of Flame",
-          "spellId": 204598,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Soul Carver",
-          "spellId": 207407,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Fiery Brand",
-          "spellId": 207771,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Fel Devastation",
-          "spellId": 212105,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Fel Devastation",
-          "spellId": 212106,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Felblade",
-          "spellId": 213243,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Soul Carver",
-          "spellId": 214743,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Fracture",
-          "spellId": 225919,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Fracture",
-          "spellId": 225921,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Soul Cleave",
-          "spellId": 228478,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Spirit Bomb",
-          "spellId": 247455,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258921,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Immolation Aura",
-          "spellId": 258922,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Infernal Armor",
-          "spellId": 320334,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Sigil of Spite",
-          "spellId": 389860,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Demon Spikes",
-          "spellId": 391159,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Reaver's Glaive",
-          "spellId": 442294,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Voidfall Meteor",
-          "spellId": 1256306,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Catastrophe",
-          "spellId": 1256667,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Meteor Shower",
-          "spellId": 1264130,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        },
-        {
-          "spell": "Explosion of the Soul",
-          "spellId": 1276488,
-          "type": "damage_modifier",
-          "discoveryMethod": "spell_data",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        }
-      ]
-    },
     "1253304": {
       "name": "Voidfall",
       "tree": "hero",
@@ -42140,6 +38977,70 @@
         }
       ]
     },
+    "1270448": {
+      "name": "Untethered Rage",
+      "tree": "spec",
+      "heroSpec": null,
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228477,
+          "type": "damage_modifier",
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy"
+          ]
+        },
+        {
+          "spell": "Soul Cleave",
+          "spellId": 228478,
+          "type": "damage_modifier",
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Fire",
+            "Nature"
+          ]
+        },
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247454,
+          "type": "damage_modifier",
+          "discoveryMethod": "spell_data",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy"
+          ]
+        }
+      ]
+    },
     "1270449": {
       "name": "Untethered Rage",
       "tree": "spec",
@@ -42150,7 +39051,12 @@
           "spellId": 187827,
           "type": "duration_modifier",
           "discoveryMethod": "cpp_scanner",
-          "application": "passive_always",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
           "categories": [
             "offensive"
           ],
@@ -42161,7 +39067,12 @@
           "spellId": null,
           "type": "buff_grant",
           "discoveryMethod": "effect_scan",
-          "application": "passive_always",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
           "categories": [
             "offensive"
           ],
@@ -42362,10 +39273,10 @@
       "heroSpec": "Aldrachi Reaver",
       "targets": [
         {
-          "spell": "Broken Spirit",
-          "spellId": 1272143,
+          "spell": "Soul Cleave",
+          "spellId": 228477,
           "type": "damage_modifier",
-          "discoveryMethod": "effect_scan",
+          "discoveryMethod": "cpp_scanner",
           "magnitude": {
             "value": 1,
             "unit": "percent",
@@ -42380,7 +39291,8 @@
             "Holy",
             "Fire",
             "Frost"
-          ]
+          ],
+          "mechanism": "on_impact"
         }
       ]
     },

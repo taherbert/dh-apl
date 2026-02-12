@@ -220,14 +220,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Havoc Demon Hunter",
         "id": 1256955,
         "effects": [
@@ -607,7 +599,7 @@
           "scaledValue": 0,
           "spCoefficient": 2.25,
           "target": "Self (1)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Chaos Blades (211796), Chaos Blades (211797), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Essence Break (258860), Trail of Ruin (258883), Unbound Chaos (275148), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Metamorphosis - Alex S Copy (418583), Demonsurge (452416), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Chaos Blades (211796), Chaos Blades (211797), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Essence Break (258860), Trail of Ruin (258883), Unbound Chaos (275148), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Metamorphosis - Alex S Copy (418583), Demonsurge (452416), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Eye Beam (1287949)",
           "Family Flags": "43"
         }
       },
@@ -621,7 +613,7 @@
           "spCoefficient": 2.25,
           "miscValue": "22",
           "target": "Self (1)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Chaos Blades (211796), Chaos Blades (211797), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Essence Break (258860), Trail of Ruin (258883), Unbound Chaos (275148), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Metamorphosis - Alex S Copy (418583), Demonsurge (452416), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Chaos Blades (211796), Chaos Blades (211797), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Essence Break (258860), Trail of Ruin (258883), Unbound Chaos (275148), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Metamorphosis - Alex S Copy (418583), Demonsurge (452416), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Eye Beam (1287949)",
           "Family Flags": "43",
           "schoolMask": 22,
           "schoolNames": [
@@ -847,7 +839,7 @@
       "count": 1,
       "cooldown": 120
     },
-    "category": "2469 (Type 0x1)",
+    "category": "2469 (Type 0x1): Untethered Rage (1270476 effect#1), Untethered Rage (1270476 effect#2)",
     "labels": [
       "16: Class Spells",
       "66: Demon Hunter Spells",
@@ -903,7 +895,7 @@
       "Nameplate Personal Buffs/Debuffs (423)",
       "Always Allow Negative Healing Percent Modifiers (442)",
       "Prevent Jumping During Precast (448)",
-      "Unknown (491)"
+      "Important Spell (C_Spell.IsSpellImportant) (491)"
     ],
     "auraInterrupt": "Enter World (22), Enter Instance (43)",
     "description": "Transform to demon form for $d, increasing current health by $s2%, healing for that amount, and increasing Armor by $s8%$?s235893[. Versatility increased by $s5%][]$?s321067[. While transformed, Fracture generates one additional Lesser Soul Fragment][]$?s321068[ and $s4 additional Fury][].",
@@ -1152,14 +1144,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -1265,7 +1249,7 @@
       "row": 9,
       "col": 4,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -1435,18 +1419,10 @@
         ]
       },
       {
-        "name": "Voidstep",
-        "id": 1223157,
-        "effects": [
-          2
-        ]
-      },
-      {
         "name": "Demonsurge",
         "id": 1245496,
         "effects": [
-          3,
-          6
+          3
         ]
       }
     ],
@@ -1643,26 +1619,10 @@
         ]
       },
       {
-        "name": "Voidstep",
-        "id": 1223157,
-        "effects": [
-          2
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Demonsurge",
         "id": 1245496,
         "effects": [
-          3,
-          6
+          3
         ]
       },
       {
@@ -2307,14 +2267,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Celestial Echoes",
         "id": 1253415,
         "effects": [
@@ -2821,14 +2773,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -2873,7 +2817,7 @@
       "Do Not Sheath (18)",
       "Always Hit (114)",
       "Allow Class Ability Procs (416)",
-      "Unknown (491)"
+      "Important Spell (C_Spell.IsSpellImportant) (491)"
     ],
     "auraInterrupt": "Raid Encounter End or M+ Start (41)",
     "description": "Brand yourself and an enemy target with demonic symbols, reducing the damage you take by $S1% and instantly dealing $s2 Fire damage$?s320962[ and ${$207771s5*$207771d} Fire damage over $207771d][] to the enemy.",
@@ -3328,14 +3272,6 @@
       {
         "name": "Luck of the Draw!",
         "id": 1219012,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
         "effects": [
           1,
           2
@@ -3933,14 +3869,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -4457,7 +4385,7 @@
           "baseValue": 0,
           "scaledValue": 0,
           "target": "Targeted Enemy (6)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Eye Beam (1287949)",
           "Family Flags": "43, 72",
           "Modified By": "Fiery Demise (389220 effect#1)"
         }
@@ -4597,7 +4525,7 @@
           "baseValue": 0,
           "scaledValue": 0,
           "target": "Targeted Enemy (6)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Eye Beam (1287949)",
           "Family Flags": "43, 72",
           "Modified By": "Fiery Demise (389220 effect#1)"
         }
@@ -4777,14 +4705,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -4830,7 +4750,7 @@
       "Aura Points On Client (268)",
       "Allow Class Ability Procs (416)",
       "Nameplate Personal Buffs/Debuffs (423)",
-      "Unknown (512)"
+      "Big Defensive (C_UnitAuras.AuraIsBigDefensive) (512)"
     ],
     "description": "$@spelldesc204021",
     "tooltip": "Branded. $@auracaster takes less damage. Enemies take Fire damage every $t5 sec$?s389220[ and take more Fire damage from $@auracaster][].",
@@ -5482,14 +5402,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Meteoric Rise",
         "id": 1253377,
         "effects": [
@@ -5635,14 +5547,6 @@
       {
         "name": "Soulfuse",
         "id": 454774,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
         "effects": [
           1,
           2
@@ -6391,14 +6295,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Demonsurge",
         "id": 1245496,
         "effects": [
@@ -6702,14 +6598,6 @@
       {
         "name": "Luck of the Draw!",
         "id": 1219012,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
         "effects": [
           1,
           2
@@ -7174,14 +7062,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Celestial Echoes",
         "id": 1253415,
         "effects": [
@@ -7430,14 +7310,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Celestial Echoes",
         "id": 1253415,
         "effects": [
@@ -7598,7 +7470,8 @@
         "details": {
           "baseValue": 25,
           "scaledValue": 25,
-          "target": "Targeted Enemy (6)"
+          "target": "Targeted Enemy (6)",
+          "Modified By": "Untethered Rage (1270448 effect#1)"
         }
       },
       {
@@ -7610,7 +7483,8 @@
           "scaledValue": 0,
           "Delay": "300_ms",
           "triggerSpell": 228478,
-          "target": "Self (1)"
+          "target": "Self (1)",
+          "Modified By": "Untethered Rage (1270448 effect#2)"
         }
       },
       {
@@ -7718,6 +7592,14 @@
         "effects": [
           5
         ]
+      },
+      {
+        "name": "Untethered Rage",
+        "id": 1270448,
+        "effects": [
+          1,
+          2
+        ]
       }
     ],
     "triggeredBy": [
@@ -7785,7 +7667,8 @@
         "type": "Dummy (3)",
         "details": {
           "baseValue": 5,
-          "scaledValue": 5
+          "scaledValue": 5,
+          "Modified By": "Untethered Rage (1270448 effect#2)"
         }
       },
       {
@@ -7934,14 +7817,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -7962,6 +7837,13 @@
         "id": 1266328,
         "effects": [
           1,
+          2
+        ]
+      },
+      {
+        "name": "Untethered Rage",
+        "id": 1270448,
+        "effects": [
           2
         ]
       },
@@ -8186,7 +8068,8 @@
         "details": {
           "baseValue": 20,
           "scaledValue": 20,
-          "target": "Self (1)"
+          "target": "Self (1)",
+          "Modified By": "Untethered Rage (1270448 effect#1)"
         }
       },
       {
@@ -8196,7 +8079,8 @@
         "details": {
           "baseValue": 5,
           "scaledValue": 5,
-          "target": "Self (1)"
+          "target": "Self (1)",
+          "Modified By": "Untethered Rage (1270448 effect#2)"
         }
       },
       {
@@ -8260,6 +8144,14 @@
         "effects": [
           5,
           6
+        ]
+      },
+      {
+        "name": "Untethered Rage",
+        "id": 1270448,
+        "effects": [
+          1,
+          2
         ]
       }
     ],
@@ -8452,14 +8344,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -8592,7 +8476,7 @@
           "baseValue": 3,
           "scaledValue": 3,
           "target": "Targeted Enemy (6)",
-          "Affected Spells": "Chaos Nova (179057), Infernal Strike (189112), Eye Beam (198030), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Explosion of the Soul (1276488), Reaver's Glaive (1283344)",
+          "Affected Spells": "Chaos Nova (179057), Infernal Strike (189112), Eye Beam (198030), Vengeful Retreat (198813), Shear (203782), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Explosion of the Soul (1276488), Reaver's Glaive (1283344), Eye Beam (1287949)",
           "Family Flags": "8, 70",
           "Modified By": "Soulcrush (389985 effect#4)"
         }
@@ -9213,14 +9097,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Havoc Demon Hunter",
         "id": 1256955,
         "effects": [
@@ -9616,14 +9492,6 @@
         "effects": [
           2,
           3
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
         ]
       },
       {
@@ -10124,7 +9992,7 @@
       "Taps immediately (215)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][].",
+    "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $1277738s1 Fury][].",
     "schoolMask": 124,
     "hasteScaling": {
       "gcd": true
@@ -10132,7 +10000,7 @@
     "aoe": {
       "radius": 8
     },
-    "resolvedDescription": "Consume 1 beneficial Magic effect removing it from the target and granting you 1 Fury."
+    "resolvedDescription": "Consume 1 beneficial Magic effect removing it from the target and granting you 20 Fury."
   },
   {
     "name": "Swallowed Anger",
@@ -10442,14 +10310,6 @@
       {
         "name": "Luck of the Draw!",
         "id": 1219012,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
         "effects": [
           1,
           2
@@ -11164,7 +11024,9 @@
       "292"
     ],
     "attributes": [
-      "Aura Points On Client (268)"
+      "Aura Points On Client (268)",
+      "Ignore Caster Absorb Modifiers (370)",
+      "Allow Class Ability Procs (416)"
     ],
     "tooltip": "Absorbs $w1 damage.",
     "schoolMask": 32,
@@ -11473,8 +11335,8 @@
         "effectId": 844535,
         "type": "Apply Aura (6) | Dummy (4)",
         "details": {
-          "baseValue": 20,
-          "scaledValue": 20
+          "baseValue": 50,
+          "scaledValue": 50
         }
       },
       {
@@ -11516,7 +11378,7 @@
     ],
     "description": "${$s1/10}.1% of your Fire damage shields you, up to a maximum of ${$MHP*$s2/100}.\nShield and maximum values are doubled while Fiery Brand is active.",
     "schoolMask": 1,
-    "resolvedDescription": "2.1% of your Fire damage shields you, up to a maximum of ${$MHP*$s2/100}.\nShield and maximum values are doubled while Fiery Brand is active."
+    "resolvedDescription": "5.1% of your Fire damage shields you, up to a maximum of ${$MHP*$s2/100}.\nShield and maximum values are doubled while Fiery Brand is active."
   },
   {
     "name": "Focused Cleave",
@@ -12550,6 +12412,9 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "attributes": [
+      "Allow Class Ability Procs (416)"
+    ],
     "description": "$@spelldesc204596",
     "schoolMask": 1,
     "resourceFlow": {
@@ -12983,14 +12848,6 @@
       {
         "name": "Luck of the Draw!",
         "id": 1219012,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
         "effects": [
           1,
           2
@@ -13497,7 +13354,7 @@
           "baseValue": 8,
           "scaledValue": 8,
           "target": "Self (1)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Eye Beam (1287949)",
           "Family Flags": "43, 72"
         }
       },
@@ -13510,7 +13367,7 @@
           "scaledValue": 8,
           "miscValue": "22",
           "target": "Self (1)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Fiery Brand (204021), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Infernal Armor (320334), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Eye Beam (1287949)",
           "Family Flags": "43, 72",
           "schoolMask": 22,
           "schoolNames": [
@@ -13735,14 +13592,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -13943,7 +13792,7 @@
       "row": 9,
       "col": 2,
       "maxRank": 2,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -14052,7 +13901,8 @@
       "292"
     ],
     "attributes": [
-      "Include In Advanced Combat Log (72)"
+      "Include In Advanced Combat Log (72)",
+      "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc337546",
     "tooltip": "Magic damage taken reduced by $s1%.",
@@ -14087,7 +13937,7 @@
       "row": 8,
       "col": 2,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -15064,7 +14914,7 @@
           "baseValue": 3,
           "scaledValue": 3,
           "target": "Self (1)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Eye Beam (1287949)",
           "Family Flags": "43, 44, 72, 81, 83, 86"
         }
       },
@@ -15094,7 +14944,7 @@
           "scaledValue": 3,
           "miscValue": "22",
           "target": "Self (1)",
-          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130)",
+          "Affected Spells": "Chaos Strike (162794), Chaos Nova (179057), Disrupt (183752), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Chaos Strike (199547), Metamorphosis (200166), Annihilation (201427), Annihilation (201428), Soul Fragment (203795), Demon Blades (203796), Fiery Brand (204021), Soul Fragment (204062), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Chaos Blades (211796), Chaos Blades (211797), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Soul Fragment (219712), Soul Fragment (219739), Chaos Strike (222031), Annihilation (227518), Metamorphosis (247121), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Unbound Chaos (275148), Sinful Brand (317009), Infernal Armor (320334), Soul Fragment (328957), Fodder to the Flame (329554), Fel Devastation (333110), Glaive Tempest (342857), Chaos Nova (344867), Fel Devastation (346503), Fodder to the Flame (350631), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Soulscar (390181), Ragefire (390197), Eye Beam (391058), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Fodder to the Flame (391430), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Eye Beam (1287949)",
           "Family Flags": "43, 44, 72, 81, 83, 86",
           "schoolMask": 22,
           "schoolNames": [
@@ -15638,7 +15488,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "procChance": 101,
     "procFlags": "Magic Heal",
@@ -15670,7 +15520,7 @@
         "details": {
           "baseValue": 0,
           "scaledValue": 0,
-          "apCoefficient": 3.45,
+          "apCoefficient": 3.1,
           "Chain Multiplier": "1",
           "Chain Targets": "3",
           "target": "Targeted Enemy (6)"
@@ -15699,7 +15549,7 @@
       "66: Demon Hunter Spells",
       "292",
       "3349: Keen Engagement (442497 effect#1), Thrill of the Fight (442695 effect#1), Keen Edge (1272138 effect#5)",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "4215"
     ],
     "affectingSpells": [
@@ -15846,14 +15696,6 @@
       {
         "name": "Luck of the Draw!",
         "id": 1219012,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
         "effects": [
           1,
           2
@@ -16013,7 +15855,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Passive (6)",
@@ -16106,7 +15948,7 @@
       "66: Demon Hunter Spells",
       "292",
       "3351: Vengeance Demon Hunter (212613 effect#19), Warblade's Hunger (442503 effect#1)",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "4215",
       "6235: Vengeance Demon Hunter (212613 effect#17)"
     ],
@@ -16227,7 +16069,8 @@
       "58"
     ],
     "attributes": [
-      "Aura Points On Client (268)"
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc442502",
     "schoolMask": 1,
@@ -16251,7 +16094,7 @@
           "baseValue": 7,
           "scaledValue": 7,
           "target": "Targeted Enemy (6)",
-          "Affected Spells": "Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Explosion of the Soul (1276488), Reaver's Glaive (1283344)",
+          "Affected Spells": "Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Essence Break (1245759), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Explosion of the Soul (1276488), Reaver's Glaive (1283344), Eye Beam (1287949)",
           "Family Flags": "16, 70",
           "Modified By": "Havoc Demon Hunter (212612 effect#11)"
         }
@@ -16277,7 +16120,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "4821: Havoc Demon Hunter (212612 effect#11), Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc (1236360 effect#2), Bladecraft (1272153 effect#2)"
     ],
     "internalCooldown": 0.1,
@@ -16287,6 +16130,7 @@
       "DoT Stacking Rule (103)",
       "Limit N (165)",
       "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)",
       "Nameplate Personal Buffs/Debuffs (423)",
       "Do Not Consume Aura Stack On Proc (428)"
     ],
@@ -16335,7 +16179,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "5190: Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc (1236360 effect#3), Bladecraft (1272153 effect#3)"
     ],
     "attributes": [
@@ -16375,7 +16219,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Passive (6)",
@@ -16414,7 +16258,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Passive (6)",
@@ -16453,11 +16297,12 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Floating Combat Text On Cast (198)",
-      "Aura Points On Client (268)"
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
     ],
     "auraInterrupt": "Change Specialization (38), Raid Encounter Start or M+ Start (40), Change Talent (46)",
     "description": "$@spelldesc442686",
@@ -16496,12 +16341,13 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "procChance": 100,
     "procFlags": "Yellow Melee",
     "attributes": [
-      "Aura Points On Client (268)"
+      "Aura Points On Client (268)",
+      "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc442686",
     "tooltip": "Your next Reaver's Glaive deals $w1% increased damage.",
@@ -16537,7 +16383,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Passive (6)",
@@ -16588,7 +16434,10 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
+    ],
+    "attributes": [
+      "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc442714",
     "tooltip": "Damage taken reduced by $s1%.",
@@ -16634,7 +16483,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "5189"
     ],
     "attributes": [
@@ -16675,7 +16524,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "5145: Vengeance Demon Hunter (212613 effect#13)"
     ],
     "procChance": 101,
@@ -16719,7 +16568,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "6282: Vengeance Demon Hunter (212613 effect#21)"
     ],
     "procChance": 101,
@@ -16774,7 +16623,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "4215",
       "6234: Vengeance Demon Hunter (212613 effect#20)",
       "6235: Vengeance Demon Hunter (212613 effect#17)"
@@ -16903,7 +16752,8 @@
     ],
     "attributes": [
       "Always Line of Sight (185)",
-      "Always AOE Line of Sight (186)"
+      "Always AOE Line of Sight (186)",
+      "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc442290",
     "schoolMask": 1,
@@ -16942,7 +16792,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "internalCooldown": 3,
     "procChance": 101,
@@ -16986,7 +16836,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "procChance": 101,
     "procFlags": "Cast Successful",
@@ -16995,6 +16845,9 @@
         "name": "Evasive Action",
         "id": 444926
       }
+    ],
+    "attributes": [
+      "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc444926",
     "tooltip": "Vengeful Retreat may be cast again.",
@@ -17030,7 +16883,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "procChance": 101,
     "procFlags": "Cast Successful",
@@ -17073,7 +16926,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)",
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)",
       "4215",
       "6235: Vengeance Demon Hunter (212613 effect#17)"
     ],
@@ -17203,7 +17056,8 @@
       "Do Not Log Immune Misses (3)",
       "Always Line of Sight (185)",
       "Always AOE Line of Sight (186)",
-      "Do Not Log Spell Miss (397)"
+      "Do Not Log Spell Miss (397)",
+      "Allow Class Ability Procs (416)"
     ],
     "description": "$@spelldesc444997",
     "schoolMask": 1,
@@ -17242,7 +17096,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Passive (6)",
@@ -17294,7 +17148,7 @@
           "scaledValue": 0,
           "miscValue": "21",
           "target": "Self (1)",
-          "Affected Spells": "Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Void Nova (1234195), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Essence Break (1245759), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264129), Meteor Shower (1264130), Explosion of the Soul (1276488), Eradicate (1279200), Reaver's Glaive (1283344)",
+          "Affected Spells": "Demon's Bite (162243), Chaos Nova (179057), Throw Glaive (185123), Infernal Strike (189112), Fel Rush (192611), Eye Beam (198030), Vengeful Retreat (198813), Chaos Strike (199547), Blade Dance (199552), Metamorphosis (200166), Blade Dance (200685), Annihilation (201428), Shear (203782), Demon Blades (203796), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Felblade (213243), Soul Carver (214743), Chaos Strike (222031), Fracture (225919), Fracture (225921), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Essence Break (258860), Trail of Ruin (258883), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Unbound Chaos (275148), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Fel Devastation (333110), Throw Glaive (337819), Elysian Decree (339893), Elysian Decree (339894), Glaive Tempest (342857), Chaos Nova (344867), The Hunt (345335), Fel Devastation (346503), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Inner Demon (390137), Eye Beam (391058), Demon Spikes (391159), Burning Wound (391191), Blade Dance (391374), Blade Dance (391378), Throw Glaive (393035), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Metamorphosis - Alex S Copy (418583), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Warblade's Hunger (442507), Fury of the Aldrachi (444806), Preemptive Strike (444979), Demonsurge (451266), Demonsurge (452416), Burning Blades (453177), Sigil of Doom (462030), Consume (473662), Void Ray (1213649), Void Ray (1214595), Devour (1217610), Collapsing Star (1221162), Reap (1225823), Eradicate (1225827), Void Nova (1234195), Hungering Slash (1239127), Voidblade (1245414), Cull (1245455), Essence Break (1245759), Voidsurge (1246160), The Hunt (1246168), The Hunt (1246169), Voidfall Meteor (1256305), Voidfall Meteor (1256306), World Killer (1256617), World Killer (1256619), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264129), Meteor Shower (1264130), Explosion of the Soul (1276488), Eradicate (1279200), Reaver's Glaive (1283344), Eye Beam (1287949)",
           "Family Flags": "16, 70, 95",
           "schoolMask": 21,
           "schoolNames": [
@@ -17476,7 +17330,7 @@
       "Bypass Visibility Check (320)",
       "Cheap Missile AOI (374)",
       "Allow Class Ability Procs (416)",
-      "Unknown (491)"
+      "Important Spell (C_Spell.IsSpellImportant) (491)"
     ],
     "description": "|CFFffffffRequires $1225789u Soul Fragments|R\nYou ascend to a higher state of being, substantially empowering your abilities.\nWhile in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury.",
     "schoolMask": 1,
@@ -17628,99 +17482,6 @@
     "description": "$?a427775[Chaos][Fire]",
     "schoolMask": 1,
     "resolvedDescription": "Chaos"
-  },
-  {
-    "name": "Thrill of the Fight",
-    "id": 1227062,
-    "flags": [
-      "Spell Family (107)"
-    ],
-    "passive": false,
-    "hidden": false,
-    "effects": [
-      {
-        "index": 1,
-        "effectId": 1217251,
-        "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Direct Amount (0)",
-        "details": {
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "Affected Spells": "Consume Soul (178963), Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Consume Soul (202644), Shear (203782), Consume Soul (203794), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Consume Soul (210042), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Consume Soul (228532), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Consume Soul (328953), Fel Devastation (333120), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Consume Soul (1238743), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Consume Soul (1266301), Explosion of the Soul (1276488), Reaver's Glaive (1283344)",
-          "Family Flags": "20, 70, 80"
-        }
-      },
-      {
-        "index": 2,
-        "effectId": 1217252,
-        "type": "Apply Aura (6) | Add Percent Modifier (108): Spell Periodic Amount (22)",
-        "details": {
-          "baseValue": 20,
-          "scaledValue": 20,
-          "miscValue": "22",
-          "target": "Self (1)",
-          "Affected Spells": "Consume Soul (178963), Chaos Nova (179057), Infernal Strike (189112), Vengeful Retreat (198813), Consume Soul (202644), Shear (203782), Consume Soul (203794), Fiery Brand (204021), Throw Glaive (204157), Sigil of Flame (204598), Soul Carver (207407), Fiery Brand (207771), Consume Soul (210042), Fel Devastation (212105), Fel Devastation (212106), Felblade (213243), Soul Carver (214743), Fracture (225919), Fracture (225921), Soul Cleave (228478), Consume Soul (228532), Spirit Bomb (247455), Immolation Aura (258921), Immolation Aura (258922), Infernal Armor (273239), Essence Sever (279450), Elysian Decree (307046), Sinful Brand (317009), Infernal Armor (320334), The Hunt (323802), Consume Soul (328953), Fel Devastation (333120), Elysian Decree (339893), Elysian Decree (339894), The Hunt (345335), Throw Glaive (346665), The Hunt (370966), The Hunt (370969), Sigil of Spite (389860), Eye Beam (391058), Demon Spikes (391159), Sigil of Flame (425672), Immolation Aura (427904), Immolation Aura (427905), Immolation Aura (427906), Immolation Aura (427907), Immolation Aura (427908), Immolation Aura (427910), Immolation Aura (427911), Immolation Aura (427916), Blazing Nova (436899), Blazing Nova (436964), Reaver's Glaive (442294), Demonsurge (451266), Burning Blades (453177), Sigil of Doom (462030), Void Nova (1234195), Consume Soul (1238743), Voidfall Meteor (1256306), World Killer (1256617), Catastrophe (1256667), Catastrophe (1256676), Meteor Shower (1264130), Consume Soul (1266301), Explosion of the Soul (1276488), Reaver's Glaive (1283344)",
-          "Family Flags": "20, 70, 80",
-          "schoolMask": 22,
-          "schoolNames": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        }
-      },
-      {
-        "index": 3,
-        "effectId": 1217253,
-        "type": "Apply Aura (6) | Apply Percent Modifier w/ Label (218): Spell Direct Amount (0)",
-        "details": {
-          "baseValue": 20,
-          "scaledValue": 20,
-          "miscValue2": "3367 (Label)",
-          "target": "Self (1)",
-          "Affected Spells (Label)": "Art of the Glaive (442290), Reaver's Glaive (442294), Keen Engagement (442497), Warblade's Hunger (442503), Warblade's Hunger (442507), Reaver's Mark (442624), Reaver's Mark (442679), Aldrachi Tactics (442683), Thrill of the Fight (442686), Thrill of the Fight (442688), Thrill of the Fight (442695), Army Unto Oneself (442714), Blade Ward (442715), Fury of the Aldrachi (442718), Incorruptible Spirit (442736), Incorruptible Spirit (442788), Wounded Quarry (442806), Art of the Glaive (444661), Reaver's Glaive (444686), Reaver's Glaive (444764), Fury of the Aldrachi (444806), Art of the Glaive (444810), Evasive Action (444926), Evasive Action (444929), Unhindered Assault (444931), Preemptive Strike (444979), Preemptive Strike (444997), Wounded Quarry (474339), Thrill of the Fight (1227062), Keen Edge (1272138), Broken Spirit (1272143), Bladecraft (1272153), Reaver's Glaive (1283344)"
-        }
-      },
-      {
-        "index": 4,
-        "effectId": 1217254,
-        "type": "Apply Aura (6) | Apply Percent Modifier w/ Label (218): Spell Periodic Amount (22)",
-        "details": {
-          "baseValue": 20,
-          "scaledValue": 20,
-          "miscValue": "22",
-          "miscValue2": "3367 (Label)",
-          "target": "Self (1)",
-          "Affected Spells (Label)": "Art of the Glaive (442290), Reaver's Glaive (442294), Keen Engagement (442497), Warblade's Hunger (442503), Warblade's Hunger (442507), Reaver's Mark (442624), Reaver's Mark (442679), Aldrachi Tactics (442683), Thrill of the Fight (442686), Thrill of the Fight (442688), Thrill of the Fight (442695), Army Unto Oneself (442714), Blade Ward (442715), Fury of the Aldrachi (442718), Incorruptible Spirit (442736), Incorruptible Spirit (442788), Wounded Quarry (442806), Art of the Glaive (444661), Reaver's Glaive (444686), Reaver's Glaive (444764), Fury of the Aldrachi (444806), Art of the Glaive (444810), Evasive Action (444926), Evasive Action (444929), Unhindered Assault (444931), Preemptive Strike (444979), Preemptive Strike (444997), Wounded Quarry (474339), Thrill of the Fight (1227062), Keen Edge (1272138), Broken Spirit (1272143), Bladecraft (1272153), Reaver's Glaive (1283344)",
-          "schoolMask": 22,
-          "schoolNames": [
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
-        }
-      }
-    ],
-    "class": "Demon Hunter",
-    "school": "Physical",
-    "spellType": null,
-    "duration": 10,
-    "labels": [
-      "16: Class Spells",
-      "66: Demon Hunter Spells",
-      "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
-    ],
-    "attributes": [
-      "Floating Combat Text On Cast (198)",
-      "Aura Points On Client (268)"
-    ],
-    "auraInterrupt": "Change Specialization (38), Raid Encounter Start or M+ Start (40), Change Talent (46)",
-    "description": "$@spelldesc442686",
-    "tooltip": "Damage and healing increased by $w1%.",
-    "schoolMask": 1,
-    "gcd": 0,
-    "resolvedDescription": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
   },
   {
     "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc",
@@ -18246,6 +18007,17 @@
           "target": "Self (1)",
           "Affected Spells (Category)": "Shift (1234796)"
         }
+      },
+      {
+        "index": 3,
+        "effectId": 1305503,
+        "type": "Apply Aura (6) | Modify Cooldown Charge (Category) (411)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "miscValue": "2524 (Category)",
+          "target": "Self (1)"
+        }
       }
     ],
     "class": "Demon Hunter",
@@ -18684,6 +18456,8 @@
       "66: Demon Hunter Spells",
       "292"
     ],
+    "procChance": 100,
+    "procFlags": "Yellow Melee, Generic Heal",
     "attributes": [
       "Passive (6)",
       "Not In Spellbook (143)",
@@ -18791,6 +18565,14 @@
         "effects": [
           1,
           2
+        ]
+      },
+      {
+        "name": "Midnight",
+        "id": 1250088,
+        "effects": [
+          4,
+          5
         ]
       },
       {
@@ -19010,14 +18792,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -19114,7 +18888,7 @@
         }
       }
     ],
-    "class": "Demon Hunter",
+    "class": "Mage, Demon Hunter",
     "school": "None",
     "spellType": null,
     "labels": [
@@ -19127,7 +18901,7 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $?a212613[${$1264130s1*($s1/2)} Shadowflame][${$1264129s1*($s1/2)} Cosmic] damage over ${$s1/2} sec.",
+    "description": "Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $?a212613[${$1264130s1*($s1)} Shadowflame][${$1264129s1*($s1)} Cosmic] damage over ${$s1/2} sec.",
     "resolvedDescription": "Your first Spirit Bomb after entering demon form causes a Shadowflame meteor shower to assault the area, dealing 0 Shadowflame damage over 6 sec."
   },
   {
@@ -19229,7 +19003,8 @@
     "attributes": [
       "No Aura Cancel (31)",
       "Not In Spellbook (143)",
-      "Do Not Log on Learn (355)"
+      "Do Not Log on Learn (355)",
+      "Allow Class Ability Procs (416)"
     ],
     "auraInterrupt": "Raid Encounter Start or M+ Start (40)",
     "description": "$@spelldesc1253415",
@@ -19318,7 +19093,7 @@
       "No Aura Cancel (31)",
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)",
-      "Unknown (490)"
+      "Asynchronous Buff (490)"
     ],
     "auraInterrupt": "Raid Encounter Start or M+ Start (40)",
     "description": "$@spelldesc1253304",
@@ -19578,14 +19353,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Havoc Demon Hunter",
         "id": 1256955,
         "effects": [
@@ -19809,6 +19576,14 @@
         ]
       },
       {
+        "name": "Midnight",
+        "id": 1250088,
+        "effects": [
+          4,
+          5
+        ]
+      },
+      {
         "name": "Devourer Demon Hunter",
         "id": 1256964,
         "effects": [
@@ -19867,7 +19642,7 @@
       "Missile Speed is Delay (in sec) (292)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "$@spelldesc1253304",
+    "description": "$@spelldesc1256307",
     "schoolMask": 126,
     "hasteScaling": {
       "ticks": true,
@@ -19877,7 +19652,7 @@
     "aoe": {
       "radius": 6
     },
-    "resolvedDescription": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall.\nUpon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+    "resolvedDescription": "Your first Spirit Bomb after entering demon form causes a Shadowflame meteor shower to assault the area, dealing 0 Shadowflame damage over 0 sec."
   },
   {
     "name": "Meteor Shower",
@@ -20025,14 +19800,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -20092,7 +19859,7 @@
       "Missile Speed is Delay (in sec) (292)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "$@spelldesc1253304",
+    "description": "$@spelldesc1256307",
     "schoolMask": 36,
     "hasteScaling": {
       "ticks": true,
@@ -20102,7 +19869,7 @@
     "aoe": {
       "radius": 6
     },
-    "resolvedDescription": "Fracture has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall.\nUpon reaching $1256301u stacks of Voidfall, Soul Cleave consumes a stack to reach into the Void and call down a meteor strike at your target's location, dealing 0 Shadowflame damage to all enemies within $1256306A yards. Damage reduced beyond $s2 targets."
+    "resolvedDescription": "Your first Spirit Bomb after entering demon form causes a Shadowflame meteor shower to assault the area, dealing 0 Shadowflame damage over 0 sec."
   },
   {
     "name": "Demon Hunter Vengeance 12.0 Class Set 2pc",
@@ -20241,7 +20008,8 @@
       "No Aura Cancel (31)",
       "Not In Spellbook (143)",
       "Aura Points On Client (268)",
-      "Do Not Log on Learn (355)"
+      "Do Not Log on Learn (355)",
+      "Allow Class Ability Procs (416)"
     ],
     "auraInterrupt": "Change Specialization (38), Change Talent (46)",
     "description": "$@spelldesc389724",
@@ -20283,7 +20051,8 @@
     "procFlags": "Magic Hostile Spell",
     "attributes": [
       "No Aura Cancel (31)",
-      "Not In Spellbook (143)"
+      "Not In Spellbook (143)",
+      "No Aura Log (202)"
     ],
     "auraInterrupt": "Change Specialization (38), Change Talent (46)",
     "description": "$@spelldesc1253676",
@@ -20446,8 +20215,8 @@
         "effectId": 1277986,
         "type": "Apply Aura (6) | Dummy (4)",
         "details": {
-          "baseValue": 15,
-          "scaledValue": 15,
+          "baseValue": 8,
+          "scaledValue": 8,
           "target": "Self (1)"
         }
       },
@@ -20456,8 +20225,8 @@
         "effectId": 1278002,
         "type": "Apply Aura (6) | Dummy (4)",
         "details": {
-          "baseValue": 3,
-          "scaledValue": 3,
+          "baseValue": 2,
+          "scaledValue": 2,
           "target": "Self (1)"
         }
       }
@@ -20571,7 +20340,7 @@
       "row": 10,
       "col": 6,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -20692,7 +20461,7 @@
       "row": 8,
       "col": 3,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -20732,7 +20501,7 @@
           "baseValue": 3,
           "scaledValue": 3,
           "target": "Self (1)",
-          "Affected Spells": "Blade Dance (188499), Eye Beam (198030), Chaos Strike (199547), Blade Dance (199552), Blade Dance (200685), Annihilation (201428), Death Sweep (210152), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Chaos Strike (222031), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Fel Devastation (333110), Glaive Tempest (342817), Fel Devastation (346503), Eye Beam (391058), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Void Ray (1213649), Void Ray (1214595), Hungering Slash (1239127)",
+          "Affected Spells": "Blade Dance (188499), Eye Beam (198030), Chaos Strike (199547), Blade Dance (199552), Blade Dance (200685), Annihilation (201428), Death Sweep (210152), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Chaos Strike (222031), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Fel Devastation (333110), Glaive Tempest (342817), Fel Devastation (346503), Eye Beam (391058), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Void Ray (1213649), Void Ray (1214595), Hungering Slash (1239127), Eye Beam (1287949)",
           "Family Flags": "6, 8, 14, 25, 31, 37, 50, 67, 68, 88, 100, 106, 127"
         }
       },
@@ -20745,7 +20514,7 @@
           "scaledValue": 3,
           "miscValue": "22",
           "target": "Self (1)",
-          "Affected Spells": "Blade Dance (188499), Eye Beam (198030), Chaos Strike (199547), Blade Dance (199552), Blade Dance (200685), Annihilation (201428), Death Sweep (210152), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Chaos Strike (222031), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Fel Devastation (333110), Glaive Tempest (342817), Fel Devastation (346503), Eye Beam (391058), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Void Ray (1213649), Void Ray (1214595), Hungering Slash (1239127)",
+          "Affected Spells": "Blade Dance (188499), Eye Beam (198030), Chaos Strike (199547), Blade Dance (199552), Blade Dance (200685), Annihilation (201428), Death Sweep (210152), Death Sweep (210153), Death Sweep (210155), Fel Devastation (212105), Chaos Strike (222031), Annihilation (227518), Soul Cleave (228478), Spirit Bomb (247455), Fel Devastation (333110), Glaive Tempest (342817), Fel Devastation (346503), Eye Beam (391058), Blade Dance (391374), Blade Dance (391378), Death Sweep (393054), Death Sweep (393055), Fel Devastation (393834), Void Ray (1213649), Void Ray (1214595), Hungering Slash (1239127), Eye Beam (1287949)",
           "Family Flags": "6, 8, 14, 25, 31, 37, 50, 67, 68, 88, 100, 106, 127",
           "schoolMask": 22,
           "schoolNames": [
@@ -20762,7 +20531,7 @@
       "row": 8,
       "col": 5,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -20822,7 +20591,7 @@
       "row": 9,
       "col": 5,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -20881,7 +20650,7 @@
       "row": 9,
       "col": 6,
       "maxRank": 2,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -20902,9 +20671,9 @@
       "Do Not Log on Learn (355)",
       "Allow Class Ability Procs (416)"
     ],
-    "description": "Any time you would generate one or more soul fragments, you have a $s1% chance to generate an additional Soul Fragment.",
+    "description": "Any time you would generate one or more Soul Fragments, you have a $s1% chance to generate an additional Soul Fragment.",
     "schoolMask": 1,
-    "resolvedDescription": "Any time you would generate one or more soul fragments, you have a 2% chance to generate an additional Soul Fragment."
+    "resolvedDescription": "Any time you would generate one or more Soul Fragments, you have a 2% chance to generate an additional Soul Fragment."
   },
   {
     "name": "Wings of Wrath",
@@ -20933,7 +20702,7 @@
       "row": 10,
       "col": 2,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -21024,7 +20793,7 @@
       "row": 8,
       "col": 6,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -21073,7 +20842,7 @@
       "row": 9,
       "col": 3,
       "maxRank": 1,
-      "reqPoints": 20
+      "reqPoints": 23
     },
     "class": "Demon Hunter",
     "school": "Physical",
@@ -21203,6 +20972,201 @@
     "resolvedDescription": "Your movement speed is increased by 3%."
   },
   {
+    "name": "Untethered Rage",
+    "id": 1270444,
+    "flags": [
+      "Spell Family (107)",
+      "Passive"
+    ],
+    "passive": true,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1282474,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 10,
+          "scaledValue": 10,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Not In Spellbook (143)",
+      "Do Not Log on Learn (355)"
+    ],
+    "description": "Soul Cleave and Spirit Bomb have a chance per soul fragment consumed to grant Untethered Rage, allowing Metamorphosis to be cast without incurring its cooldown and lasting $s1 sec.",
+    "schoolMask": 1,
+    "resolvedDescription": "Soul Cleave and Spirit Bomb have a chance per soul fragment consumed to grant Untethered Rage, allowing Metamorphosis to be cast without incurring its cooldown and lasting 10 sec."
+  },
+  {
+    "name": "Untethered Rage",
+    "id": 1270448,
+    "flags": [
+      "Spell Family (107)",
+      "Passive"
+    ],
+    "passive": true,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1282478,
+        "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Effect 1 (3)",
+        "details": {
+          "baseValue": 5,
+          "scaledValue": 5,
+          "miscValue": "3",
+          "target": "Self (1)",
+          "Affected Spells": "Soul Cleave (228477), Spirit Bomb (247454), Soul Sunder (452436)",
+          "Family Flags": "60, 98",
+          "schoolMask": 3,
+          "schoolNames": [
+            "Physical",
+            "Holy"
+          ]
+        }
+      },
+      {
+        "index": 2,
+        "effectId": 1282767,
+        "type": "Apply Aura (6) | Add Flat Modifier (107): Spell Effect 2 (12)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "miscValue": "12",
+          "target": "Self (1)",
+          "Affected Spells": "Soul Cleave (228477), Soul Cleave (228478), Spirit Bomb (247454), Soul Sunder (452436)",
+          "Family Flags": "34, 98",
+          "schoolMask": 12,
+          "schoolNames": [
+            "Fire",
+            "Nature"
+          ]
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Not In Spellbook (143)",
+      "Do Not Log on Learn (355)"
+    ],
+    "description": "Soul Cleave and Spirit Bomb can consume an additional soul fragment and deal an additional $s1% damage for each consumed.",
+    "schoolMask": 1,
+    "resolvedDescription": "Soul Cleave and Spirit Bomb can consume an additional soul fragment and deal an additional 5% damage for each consumed."
+  },
+  {
+    "name": "Untethered Rage",
+    "id": 1270449,
+    "flags": [
+      "Spell Family (107)",
+      "Passive"
+    ],
+    "passive": true,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1282480,
+        "type": "Apply Aura (6) | Dummy (4)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "attributes": [
+      "Passive (6)",
+      "Not In Spellbook (143)",
+      "Do Not Log on Learn (355)"
+    ],
+    "description": "Each cast of Soul Cleave and Spirit Bomb that does not grant Untethered Rage instead applies a stack of Seething Anger.\nSeething Anger grants $1270547s1% Agility and increases your chance to gain Untethered Rage. Lasts $1270547d and cannot be refreshed after gaining Untethered Rage.",
+    "schoolMask": 1,
+    "resolvedDescription": "Each cast of Soul Cleave and Spirit Bomb that does not grant Untethered Rage instead applies a stack of Seething Anger.\nSeething Anger grants 1% Agility and increases your chance to gain Untethered Rage. Lasts 12 sec and cannot be refreshed after gaining Untethered Rage."
+  },
+  {
+    "name": "Seething Anger",
+    "id": 1270547,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1282620,
+        "type": "Apply Aura (6) | Modify Total Stat% (137)",
+        "details": {
+          "baseValue": 1,
+          "scaledValue": 1,
+          "Stat": "Agi",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Physical",
+    "spellType": null,
+    "range": 100,
+    "duration": 12,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292"
+    ],
+    "maxStacks": 99,
+    "procChance": 101,
+    "attributes": [
+      "No Redirection (35)",
+      "No Reflection (39)",
+      "No Threat (42)",
+      "Ignore Line of Sight (66)",
+      "Only On Player (104)",
+      "Suppress Caster Procs (112)",
+      "Suppress Target Procs (113)",
+      "Do Not Display Range (126)",
+      "Allow Cast While Casting (135)",
+      "Aura Points On Client (268)",
+      "Allow Cast While Channeling (308)",
+      "Newest Exclusive Complete (362)",
+      "Allow Class Ability Procs (416)"
+    ],
+    "auraInterrupt": "Change Specialization (38), Change Talent (46), Change Glyph (47)",
+    "description": "$@spelldesc1270449",
+    "tooltip": "Agility increased by $w1%.\nChance to gain Untethered Rage is growing...",
+    "schoolMask": 1,
+    "gcd": 0,
+    "resolvedDescription": "Each cast of Soul Cleave and Spirit Bomb that does not grant Untethered Rage instead applies a stack of Seething Anger.\nSeething Anger grants 1% Agility and increases your chance to gain Untethered Rage. Lasts 12 sec and cannot be refreshed after gaining Untethered Rage."
+  },
+  {
     "name": "Keen Edge",
     "id": 1272138,
     "flags": [
@@ -21284,7 +21248,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Passive (6)",
@@ -21363,7 +21327,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "internalCooldown": 0.1,
     "procChance": 100,
@@ -21452,7 +21416,7 @@
       "16: Class Spells",
       "66: Demon Hunter Spells",
       "292",
-      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13), Thrill of the Fight (1227062 effect#3), Thrill of the Fight (1227062 effect#4)"
+      "3367: Havoc Demon Hunter (212612 effect#12), Havoc Demon Hunter (212612 effect#13)"
     ],
     "attributes": [
       "Passive (6)",
@@ -21678,14 +21642,6 @@
         ]
       },
       {
-        "name": "Thrill of the Fight",
-        "id": 1227062,
-        "effects": [
-          1,
-          2
-        ]
-      },
-      {
         "name": "Vengeance Demon Hunter",
         "id": 1256959,
         "effects": [
@@ -21724,6 +21680,71 @@
       "radius": 12
     },
     "resolvedDescription": "Fracture has a 0% chance to spark a violent detonation, causing 0 Fire damage onto nearby enemies. Damage reduced beyond $s2 targets."
+  },
+  {
+    "name": "Consume Magic",
+    "id": 1277738,
+    "flags": [
+      "Spell Family (107)"
+    ],
+    "passive": false,
+    "hidden": false,
+    "effects": [
+      {
+        "index": 1,
+        "effectId": 1290120,
+        "type": "Energize Power (30)",
+        "details": {
+          "baseValue": 20,
+          "scaledValue": 20,
+          "Resource": "fury",
+          "target": "Self (1)"
+        }
+      }
+    ],
+    "class": "Demon Hunter",
+    "school": "Cosmic",
+    "spellType": null,
+    "labels": [
+      "16: Class Spells",
+      "66: Demon Hunter Spells",
+      "292",
+      "5754"
+    ],
+    "attributes": [
+      "Not Shapeshifted (16)",
+      "Allow While Mounted (24)",
+      "Allow Cast While Casting (135)",
+      "Allow While Stunned (163)",
+      "Allow While Fleeing (177)",
+      "Allow While Confused (178)",
+      "Allow While Charmed (261)",
+      "Aura Points On Client (268)",
+      "Allow Cast While Channeling (308)",
+      "Allow While Stunned By Horror Mechanic (342)",
+      "Allow While Stunned by Stun Mechanic (378)",
+      "Allow Class Ability Procs (416)",
+      "Allow While Feared By Fear Mechanic (417)",
+      "Nameplate Personal Buffs/Debuffs (423)"
+    ],
+    "description": "$@spelldesc278326",
+    "schoolMask": 126,
+    "resourceFlow": {
+      "generates": [
+        {
+          "amount": 20,
+          "resourceType": "fury"
+        }
+      ]
+    },
+    "generates": [
+      {
+        "amount": 20,
+        "resourceType": "fury"
+      }
+    ],
+    "gcd": 0,
+    "resolvedDescription": "Consume $m1 beneficial Magic effect removing it from the target and granting you 20 Fury."
   },
   {
     "name": "Harness the Cosmos",

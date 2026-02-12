@@ -13,7 +13,8 @@ actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery
 actions+=/variable,name=spb_threshold,value=5
 # In Meta, Fracture generates 3 frags — SBomb at 4 fires faster with better per-GCD efficiency
 actions+=/variable,name=spb_threshold,op=set,value=4,if=buff.metamorphosis.up
-actions+=/variable,name=ur_fishing,value=talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<8&!buff.untethered_rage.up
+# Shorter window (6s vs 8s) — working BLP means UR procs faster
+actions+=/variable,name=ur_fishing,value=talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<6&!buff.untethered_rage.up
 actions+=/variable,name=fallout_aoe,value=talent.fallout&active_enemies>=3
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react

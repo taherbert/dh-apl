@@ -43,18 +43,10 @@
             ]
           },
           {
-            "name": "Voidstep",
-            "id": 1223157,
-            "effects": [
-              2
-            ]
-          },
-          {
             "name": "Demonsurge",
             "id": 1245496,
             "effects": [
-              3,
-              6
+              3
             ]
           }
         ]
@@ -548,14 +540,6 @@
             ]
           },
           {
-            "name": "Thrill of the Fight",
-            "id": 1227062,
-            "effects": [
-              1,
-              2
-            ]
-          },
-          {
             "name": "Havoc Demon Hunter",
             "id": 1256955,
             "effects": [
@@ -623,7 +607,7 @@
         "spellName": "Consume Magic",
         "school": "Chromatic",
         "passive": false,
-        "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $s2 Fury][].",
+        "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $1277738s1 Fury][].",
         "entryType": "active",
         "posX": 4500,
         "posY": 3300,
@@ -1163,7 +1147,7 @@
         "spellName": "Soul Splitter",
         "school": "Physical",
         "passive": true,
-        "description": "Any time you would generate one or more soul fragments, you have a $s1% chance to generate an additional Soul Fragment.",
+        "description": "Any time you would generate one or more Soul Fragments, you have a $s1% chance to generate an additional Soul Fragment.",
         "entryType": "passive",
         "posX": 5100,
         "posY": 6300,
@@ -1329,6 +1313,14 @@
             "effects": [
               5,
               6
+            ]
+          },
+          {
+            "name": "Untethered Rage",
+            "id": 1270448,
+            "effects": [
+              1,
+              2
             ]
           }
         ]
@@ -1497,14 +1489,6 @@
           {
             "name": "Luck of the Draw!",
             "id": 1219012,
-            "effects": [
-              1,
-              2
-            ]
-          },
-          {
-            "name": "Thrill of the Fight",
-            "id": 1227062,
             "effects": [
               1,
               2
@@ -2453,14 +2437,6 @@
             ]
           },
           {
-            "name": "Thrill of the Fight",
-            "id": 1227062,
-            "effects": [
-              1,
-              2
-            ]
-          },
-          {
             "name": "Vengeance Demon Hunter",
             "id": 1256959,
             "effects": [
@@ -2553,15 +2529,15 @@
         "maxRank": 1,
         "spellId": 1270444,
         "spellName": "Untethered Rage",
-        "school": null,
+        "school": "Physical",
         "passive": false,
-        "description": null,
+        "description": "Soul Cleave and Spirit Bomb have a chance per soul fragment consumed to grant Untethered Rage, allowing Metamorphosis to be cast without incurring its cooldown and lasting $s1 sec.",
         "entryType": "tierrank",
         "posX": 12300,
         "posY": 7650,
         "entryNode": true,
         "reqPoints": 20,
-        "type": "active_ability"
+        "type": "passive_buff"
       },
       {
         "name": "Untethered Rage",
@@ -2571,15 +2547,15 @@
         "maxRank": 2,
         "spellId": 1270448,
         "spellName": "Untethered Rage",
-        "school": null,
+        "school": "Physical",
         "passive": false,
-        "description": null,
+        "description": "Soul Cleave and Spirit Bomb can consume an additional soul fragment and deal an additional $s1% damage for each consumed.",
         "entryType": "tierrank",
         "posX": 12300,
         "posY": 7650,
         "entryNode": true,
         "reqPoints": 20,
-        "type": "active_ability"
+        "type": "spell_modifier"
       },
       {
         "name": "Untethered Rage",
@@ -2589,15 +2565,15 @@
         "maxRank": 1,
         "spellId": 1270449,
         "spellName": "Untethered Rage",
-        "school": null,
+        "school": "Physical",
         "passive": false,
-        "description": null,
+        "description": "Each cast of Soul Cleave and Spirit Bomb that does not grant Untethered Rage instead applies a stack of Seething Anger.\nSeething Anger grants $1270547s1% Agility and increases your chance to gain Untethered Rage. Lasts $1270547d and cannot be refreshed after gaining Untethered Rage.",
         "entryType": "tierrank",
         "posX": 12300,
         "posY": 7650,
         "entryNode": true,
         "reqPoints": 20,
-        "type": "active_ability"
+        "type": "passive_buff"
       }
     ]
   },
@@ -3122,7 +3098,7 @@
           "spellName": "Dark Matter",
           "school": "None",
           "passive": true,
-          "description": "Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $?a212613[${$1264130s1*($s1/2)} Shadowflame][${$1264129s1*($s1/2)} Cosmic] damage over ${$s1/2} sec.",
+          "description": "Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $?a212613[${$1264130s1*($s1)} Shadowflame][${$1264129s1*($s1)} Cosmic] damage over ${$s1/2} sec.",
           "entryType": "passive",
           "posX": 8100,
           "posY": 6000,

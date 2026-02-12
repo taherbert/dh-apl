@@ -52,16 +52,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -191,7 +181,12 @@
           "source": "Untethered Rage",
           "type": "duration_modifier",
           "tree": "spec",
-          "application": "passive_always"
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
         }
       ]
     },
@@ -250,16 +245,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Felfire Fist",
@@ -329,16 +314,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Felfire Fist",
@@ -414,16 +389,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Tempered Steel",
           "type": "damage_modifier",
           "tree": "spec",
@@ -479,16 +444,6 @@
         {
           "source": "Evasive Action",
           "type": "buff_grant",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
           "application": "buff_on_player"
         },
         {
@@ -623,16 +578,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -670,16 +615,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Celestial Echoes",
@@ -759,16 +694,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -845,16 +770,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Fiery Brand",
           "type": "damage_modifier",
           "application": "debuff_on_target"
@@ -901,16 +816,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Alive",
@@ -1059,16 +964,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Cycle of Binding",
           "type": "cooldown_modifier",
           "tree": "spec",
@@ -1191,16 +1086,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Cycle of Binding",
@@ -1337,16 +1222,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Fiery Brand",
           "type": "damage_modifier",
           "application": "debuff_on_target"
@@ -1398,16 +1273,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -1544,16 +1409,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Fiery Brand",
           "type": "damage_modifier",
           "application": "debuff_on_target"
@@ -1600,16 +1455,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Alive",
@@ -1676,16 +1521,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Fiery Brand",
           "type": "damage_modifier",
           "application": "debuff_on_target"
@@ -1732,16 +1567,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Burning Alive",
@@ -1846,16 +1671,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Meteoric Rise",
           "type": "damage_modifier",
           "tree": "hero",
@@ -1884,16 +1699,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -1980,16 +1785,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Meteoric Rise",
           "type": "damage_modifier",
           "tree": "hero",
@@ -2018,16 +1813,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -2114,16 +1899,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Meteoric Rise",
           "type": "damage_modifier",
           "tree": "hero",
@@ -2152,16 +1927,6 @@
           "tree": "spec",
           "magnitude": {
             "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -2255,16 +2020,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Warblade's Hunger",
           "type": "damage_modifier",
           "tree": "hero",
@@ -2354,16 +2109,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Fiery Brand",
           "type": "damage_modifier",
           "application": "debuff_on_target"
@@ -2415,16 +2160,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -2472,16 +2207,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Celestial Echoes",
@@ -2579,16 +2304,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Celestial Echoes",
@@ -2752,16 +2467,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Celestial Echoes",
           "type": "damage_modifier",
           "tree": "hero",
@@ -2857,16 +2562,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Celestial Echoes",
@@ -3009,6 +2704,17 @@
           "application": "buff_on_player"
         },
         {
+          "source": "Untethered Rage",
+          "type": "damage_modifier",
+          "tree": "spec",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
           "source": "Metamorphosis",
           "type": "damage_modifier",
           "magnitude": {
@@ -3072,21 +2778,22 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
+          "source": "Tempered Steel",
           "type": "damage_modifier",
+          "tree": "spec",
           "magnitude": {
-            "value": 20,
+            "value": 12,
             "unit": "percent",
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         },
         {
-          "source": "Tempered Steel",
+          "source": "Untethered Rage",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
-            "value": 12,
+            "value": 1,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3131,6 +2838,18 @@
           "tree": "spec",
           "magnitude": {
             "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Broken Spirit",
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
+          "magnitude": {
+            "value": 1,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3163,6 +2882,17 @@
           "application": "buff_on_player"
         },
         {
+          "source": "Untethered Rage",
+          "type": "damage_modifier",
+          "tree": "spec",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
           "source": "Metamorphosis",
           "type": "damage_modifier",
           "magnitude": {
@@ -3226,21 +2956,22 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
+          "source": "Tempered Steel",
           "type": "damage_modifier",
+          "tree": "spec",
           "magnitude": {
-            "value": 20,
+            "value": 12,
             "unit": "percent",
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
         },
         {
-          "source": "Tempered Steel",
+          "source": "Untethered Rage",
           "type": "damage_modifier",
           "tree": "spec",
           "magnitude": {
-            "value": 12,
+            "value": 1,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3285,6 +3016,18 @@
           "tree": "spec",
           "magnitude": {
             "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Broken Spirit",
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
+          "magnitude": {
+            "value": 1,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3349,16 +3092,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Warblade's Hunger",
           "type": "damage_modifier",
           "tree": "hero",
@@ -3375,6 +3108,17 @@
     "247454": {
       "name": "Spirit Bomb",
       "modifiers": [
+        {
+          "source": "Untethered Rage",
+          "type": "damage_modifier",
+          "tree": "spec",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
         {
           "source": "Metamorphosis",
           "type": "damage_modifier",
@@ -3437,16 +3181,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Dark Matter",
@@ -3466,6 +3200,17 @@
       "name": "Spirit Bomb",
       "modifiers": [
         {
+          "source": "Untethered Rage",
+          "type": "damage_modifier",
+          "tree": "spec",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
           "source": "Metamorphosis",
           "type": "damage_modifier",
           "magnitude": {
@@ -3527,16 +3272,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Dark Matter",
@@ -3715,16 +3450,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -3813,16 +3538,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -4061,16 +3776,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -4159,16 +3864,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -4407,16 +4102,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -4505,16 +4190,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -4674,16 +4349,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Celestial Echoes",
           "type": "damage_modifier",
           "tree": "hero",
@@ -4779,16 +4444,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Celestial Echoes",
@@ -4990,16 +4645,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Fallout",
           "type": "resource_modifier",
           "tree": "spec",
@@ -5097,16 +4742,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Fallout",
@@ -5276,16 +4911,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -5374,16 +4999,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -5779,16 +5394,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Cycle of Binding",
           "type": "cooldown_modifier",
           "tree": "spec",
@@ -5913,16 +5518,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Quickened Sigils",
@@ -6051,16 +5646,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Quickened Sigils",
           "type": "duration_modifier",
           "tree": "spec",
@@ -6139,16 +5724,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -6293,16 +5868,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -6391,16 +5956,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -6639,16 +6194,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -6737,16 +6282,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -6985,16 +6520,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -7083,16 +6608,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -7393,16 +6908,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -7491,16 +6996,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -7739,16 +7234,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -7837,16 +7322,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -8085,16 +7560,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -8183,16 +7648,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -8431,16 +7886,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Agonizing Flames",
           "type": "damage_modifier",
           "tree": "spec",
@@ -8529,16 +7974,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Agonizing Flames",
@@ -8765,16 +8200,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Tempered Steel",
@@ -9245,35 +8670,6 @@
         }
       ]
     },
-    "1227062": {
-      "name": "Thrill of the Fight",
-      "modifiers": [
-        {
-          "source": "Fury of the Aldrachi",
-          "type": "proc_trigger",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "magnitude": {
-            "value": 100,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Reaver's Mark",
-          "type": "proc_trigger",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "magnitude": {
-            "value": 100,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        }
-      ]
-    },
     "1241937": {
       "name": "Soul Immolation",
       "modifiers": [
@@ -9427,16 +8823,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -9518,16 +8904,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Harness the Cosmos",
@@ -9621,16 +8997,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Harness the Cosmos",
@@ -9784,16 +9150,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -9875,16 +9231,6 @@
             "stacking": "multiplicative"
           },
           "application": "debuff_on_target"
-        },
-        {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         },
         {
           "source": "Harness the Cosmos",
@@ -9980,16 +9326,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Harness the Cosmos",
           "type": "damage_modifier",
           "tree": "hero",
@@ -10082,12 +9418,17 @@
       "name": "Broken Spirit",
       "modifiers": [
         {
-          "source": "Broken Spirit",
+          "source": "Frailty",
           "type": "damage_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
+          "tree": "spec",
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Focused Cleave",
+          "type": "damage_modifier",
+          "tree": "spec",
           "magnitude": {
-            "value": 1,
+            "value": 50,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -10136,16 +9477,6 @@
           "application": "debuff_on_target"
         },
         {
-          "source": "Thrill of the Fight",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Vengeance 12.0 Class Set 4pc",
           "type": "proc_trigger",
           "magnitude": {
@@ -10157,6 +9488,17 @@
             "procChance": 101,
             "internalCooldown": 0.5
           },
+          "application": "buff_on_player"
+        }
+      ]
+    },
+    "1277738": {
+      "name": "Consume Magic",
+      "modifiers": [
+        {
+          "source": "Swallowed Anger",
+          "type": "resource_modifier",
+          "tree": "class",
           "application": "buff_on_player"
         }
       ]
@@ -11223,6 +10565,15 @@
           }
         },
         {
+          "spell": "Broken Spirit",
+          "type": "damage_modifier",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
+        },
+        {
           "spell": "soul_cleave_t",
           "type": "direct_damage_modifier",
           "magnitude": {
@@ -11522,6 +10873,10 @@
         },
         {
           "spell": "Focused Cleave",
+          "type": "damage_modifier"
+        },
+        {
+          "spell": "Broken Spirit",
           "type": "damage_modifier"
         }
       ]
@@ -12558,246 +11913,6 @@
         }
       ]
     },
-    "1227062": {
-      "name": "Thrill of the Fight",
-      "tree": null,
-      "targets": [
-        {
-          "spell": "Chaos Nova",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Infernal Strike",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Vengeful Retreat",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Shear",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fiery Brand",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Sigil of Flame",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Soul Carver",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fiery Brand",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fel Devastation",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fel Devastation",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Felblade",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Soul Carver",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fracture",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Fracture",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Soul Cleave",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Spirit Bomb",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Immolation Aura",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Infernal Armor",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Sigil of Spite",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Demon Spikes",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Reaver's Glaive",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Voidfall Meteor",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Catastrophe",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Meteor Shower",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Explosion of the Soul",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        }
-      ]
-    },
     "1253304": {
       "name": "Voidfall",
       "tree": "hero",
@@ -13308,17 +12423,60 @@
         }
       ]
     },
+    "1270448": {
+      "name": "Untethered Rage",
+      "tree": "spec",
+      "targets": [
+        {
+          "spell": "Soul Cleave",
+          "type": "damage_modifier",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
+        },
+        {
+          "spell": "Soul Cleave",
+          "type": "damage_modifier",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
+        },
+        {
+          "spell": "Spirit Bomb",
+          "type": "damage_modifier",
+          "magnitude": {
+            "value": 5,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
+        }
+      ]
+    },
     "1270449": {
       "name": "Untethered Rage",
       "tree": "spec",
       "targets": [
         {
           "spell": "Metamorphosis",
-          "type": "duration_modifier"
+          "type": "duration_modifier",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
         },
         {
           "spell": "buff:seething_anger",
-          "type": "buff_grant"
+          "type": "buff_grant",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
         }
       ]
     },
@@ -13416,7 +12574,7 @@
       "heroSpec": "Aldrachi Reaver",
       "targets": [
         {
-          "spell": "Broken Spirit",
+          "spell": "Soul Cleave",
           "type": "damage_modifier",
           "magnitude": {
             "value": 1,
