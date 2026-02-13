@@ -11,7 +11,7 @@ actions.precombat+=/immolation_aura
 actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
 # Spirit Bomb threshold: 5 normally, 4 during Meta (Fracture generates 3 fragments)
 actions+=/variable,name=spb_threshold,op=setif,value=4,value_else=5,condition=buff.metamorphosis.up
-# Last 6s of Meta: Seething Anger bad-luck protection has accumulated, making UR procs likely
+# Last 6s of Meta without an active UR proc: maximize soul consumption attempts for proc chances
 actions+=/variable,name=ur_fishing,value=talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<6&!buff.untethered_rage.up
 actions+=/variable,name=fallout_aoe,value=talent.fallout&active_enemies>=3
 # Fracture about to cap charges and room for more fragments
@@ -115,9 +115,10 @@ actions.anni+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 actions.anni+=/potion,use_off_gcd=1,if=buff.voidfall_spending.stack=3
 actions.anni+=/call_action_list,name=externals,if=buff.voidfall_spending.stack=3
 actions.anni+=/call_action_list,name=anni_voidfall
-# At 2 building stacks, one more Fracture proc triggers spending; Mass Acceleration then grants
-# a second immediate 3-stack spending phase. Below 2 stacks, the wait isn't worth delaying Meta.
-actions.anni+=/metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up&buff.voidfall_building.stack<2
+# Apex 3 (BLP): wait for building=0 so Mass Acceleration's 3 stacks aren't wasted by overlap.
+# Non-apex: building<2 is fine since UR procs are too rare to justify the tighter gate.
+# UR procs always allow immediate Meta extension regardless of building state.
+actions.anni+=/metamorphosis,use_off_gcd=1,if=(!buff.metamorphosis.up|buff.untethered_rage.up)&!buff.voidfall_spending.up&(buff.voidfall_building.stack<(2-apex.3)|buff.untethered_rage.up)
 actions.anni+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
 actions.anni+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
 # Charred Flesh extends Brand duration with each Immolation Aura tick
