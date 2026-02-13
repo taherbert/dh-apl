@@ -17,7 +17,6 @@ actions+=/variable,name=ur_fishing,value=talent.untethered_rage&buff.metamorphos
 # Target-count tiers (spell_targets for range awareness)
 actions+=/variable,name=single_target,value=spell_targets.spirit_bomb=1
 actions+=/variable,name=small_aoe,value=spell_targets.spirit_bomb>=3
-actions+=/variable,name=big_aoe,value=spell_targets.spirit_bomb>=5
 # Fracture about to cap charges with room for more fragments
 actions+=/variable,name=fracture_cap_soon,value=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold
 actions+=/auto_attack
