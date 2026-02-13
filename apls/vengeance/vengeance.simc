@@ -11,7 +11,7 @@ actions.precombat+=/immolation_aura
 # Fiery Demise fire amplification window
 actions=/variable,name=fiery_demise_active,value=talent.fiery_brand&talent.fiery_demise&dot.fiery_brand.ticking
 # Spirit Bomb threshold: 4 during Meta (Fracture generates 3 fragments), 5 otherwise
-actions+=/variable,name=spb_threshold,op=setif,value=4,value_else=5,condition=buff.metamorphosis.up
+actions+=/variable,name=spb_threshold,value=5-buff.metamorphosis.up
 # UR fishing: last 6s of Meta without proc — maximize consumption for Seething Anger BLP
 actions+=/variable,name=ur_fishing,value=talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<6&!buff.untethered_rage.up
 # Target-count tiers (spell_targets for range awareness)
@@ -77,8 +77,8 @@ actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
 actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
 
 # === AR Cooldowns ===
-# Brand when at 2 charges or when a fire CD is ready within 8s to fill the window
-actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&(cooldown.soul_carver.remains<8|cooldown.fel_devastation.remains<8|cooldown.sigil_of_spite.remains<8)))
+# Brand when at 2 charges or when the nearest fire CD is within 8s to fill the window
+actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<8))
 actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=3
 # With Fiery Demise, hold Soul Carver for Brand windows to benefit from fire amplification
 actions.ar_cooldowns+=/soul_carver,if=!talent.fiery_demise|variable.fiery_demise_active
