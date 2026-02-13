@@ -127,7 +127,9 @@ actions.anni+=/soul_carver,if=talent.soul_carver&soul_fragments<=3
 # FelDev channel delays Soul Cleave meteor triggers — avoid during spending
 # Full UR without FelDev investment: skip FelDev during Meta for Fracture+SBomb cycling (1.43 vs 0.53 AP/GCD)
 actions.anni+=/fel_devastation,if=!buff.voidfall_spending.up&(!buff.metamorphosis.up|!apex.3|talent.darkglare_boon)
-actions.anni+=/fracture,if=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold
+actions.anni+=/fracture,if=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold&(!variable.fiery_demise_active|active_enemies>=3)
+# FD fire amp makes 3-frag SBomb casts worthwhile (same logic as AR)
+actions.anni+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active
 actions.anni+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 actions.anni+=/fracture,if=!buff.voidfall_spending.up
 actions.anni+=/felblade
