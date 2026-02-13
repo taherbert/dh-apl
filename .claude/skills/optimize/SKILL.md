@@ -272,9 +272,11 @@ SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ cras
 #### Step 5: Decide
 
 - **Accept if:** mean weighted > 0 AND worst build > -1%
-- **Build-gate if:** helps some (>+0.1%) but hurts others (>-0.3%). Create gated sub-list, re-test.
-- **Reject if:** mean weighted <= 0 OR regressions without branching path
+- **Build-gate if:** ANY builds gain meaningfully (>+0.5%) even if others regress. This is NOT a reject — it's a branching signal. Identify the discriminator (talent check, apex rank, hero tree, cluster presence, target count) and create a gated condition so the change applies only to builds that benefit. Re-test the gated version. Only escalate to reject after gating attempts fail.
+- **Reject if:** no subset of builds benefits meaningfully, OR no valid SimC expression can discriminate the benefiting builds after attempting gating
 - **Inconclusive:** within noise after confirm -> log and move on
+
+**CRITICAL: Partial gains are opportunities, not failures.** A hypothesis that shows +2% for high-apex builds and -4% for low-apex builds is a STRONG signal for a gated implementation. The mean-weighted result is misleading in this case — look at per-build results and find the pattern.
 
 ```bash
 node src/sim/iterate.js accept "reason" --hypothesis "description fragment"
