@@ -52,6 +52,8 @@ actions.ar+=/call_action_list,name=ar_brand_window,if=variable.fiery_demise_acti
 actions.ar+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
 actions.ar+=/call_action_list,name=ar_cooldowns
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.small_aoe
+# IA on cooldown — no state machine to disrupt, passive damage + fury between empowered cycles
+actions.ar+=/immolation_aura
 # Fracture during Reaver's Mark builds Wounded Quarry physical damage accumulation
 actions.ar+=/fracture,if=debuff.reavers_mark.up&variable.single_target&soul_fragments<variable.spb_threshold
 # Fiery Demise fire amplification makes 3-fragment Spirit Bomb casts worthwhile
@@ -61,7 +63,6 @@ actions.ar+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 actions.ar+=/fracture,if=variable.fracture_cap_soon
 actions.ar+=/fracture
 actions.ar+=/felblade
-actions.ar+=/immolation_aura
 actions.ar+=/sigil_of_flame
 actions.ar+=/soul_cleave
 actions.ar+=/vengeful_retreat,if=talent.unhindered_assault
@@ -94,7 +95,7 @@ actions.ar_aoe+=/sigil_of_flame
 actions.ar_aoe+=/fracture
 actions.ar_aoe+=/felblade
 actions.ar_aoe+=/soul_cleave
-actions.ar_aoe+=/vengeful_retreat,if=talent.unhindered_assault
+actions.ar_aoe+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault
 actions.ar_aoe+=/throw_glaive
 
 # === AR Brand Window — Fire CDs during Fiery Demise ===
@@ -134,7 +135,6 @@ actions.anni+=/sigil_of_flame
 actions.anni+=/soul_cleave
 # Fallback Fracture when all spending-guarded casts above are blocked during Voidfall
 actions.anni+=/fracture
-actions.anni+=/vengeful_retreat,if=talent.unhindered_assault
 actions.anni+=/throw_glaive
 
 # === Anni Cooldowns ===
