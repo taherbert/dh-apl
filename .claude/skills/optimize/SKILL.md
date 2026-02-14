@@ -272,11 +272,26 @@ SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ cras
 #### Step 5: Decide
 
 - **Accept if:** mean weighted > 0 AND worst build > -1%
-- **Build-gate if:** ANY builds gain meaningfully (>+0.5%) even if others regress. This is NOT a reject — it's a branching signal. Identify the discriminator (talent check, apex rank, hero tree, cluster presence, target count) and create a gated condition so the change applies only to builds that benefit. Re-test the gated version. Only escalate to reject after gating attempts fail.
-- **Reject if:** no subset of builds benefits meaningfully, OR no valid SimC expression can discriminate the benefiting builds after attempting gating
+- **Build-gate if:** ANY builds gain meaningfully (>+0.5%) even if others regress. This is NOT a reject — it's a branching signal. Follow the **Partial Gains Protocol** below.
+- **Reject if:** no subset of builds benefits meaningfully above the noise floor (±0.5% at standard fidelity), OR no valid SimC expression can discriminate the benefiting builds after systematic analysis of ALL discriminator axes. **Rejection requires documenting what you checked.**
 - **Inconclusive:** within noise after confirm -> log and move on
 
 **CRITICAL: Partial gains are opportunities, not failures.** A hypothesis that shows +2% for high-apex builds and -4% for low-apex builds is a STRONG signal for a gated implementation. The mean-weighted result is misleading in this case — look at per-build results and find the pattern.
+
+**Partial Gains Protocol (MANDATORY before rejecting any mixed result):**
+
+1. Sort all builds by weighted delta. Identify the top 10 gainers and top 10 losers.
+2. Systematically check EACH discriminator axis for a clean split:
+   - Hero tree (`hero_tree.aldrachi_reaver` / `hero_tree.annihilator`)
+   - Apex rank (`apex.1`, `apex.2`, `apex.3`)
+   - Talent cluster presence (`talent.X` for each cluster-defining talent)
+   - Hero variant (hero-specific talent checks)
+   - Target count (`variable.small_aoe`, `variable.single_target`)
+3. A "clean split" means: gainers predominantly share a trait that losers lack, with minimal overlap.
+4. At standard fidelity (target_error=1), the noise floor is ±0.5%. Only count builds with deltas ABOVE this threshold as meaningful gainers/losers.
+5. If a discriminator exists: write a gated candidate using that SimC expression and re-test against the full roster.
+6. If no discriminator exists after checking all axes: reject and document the analysis.
+7. If gains are suggestive but ambiguous: escalate the top-gaining subset to `--confirm` fidelity before concluding.
 
 ```bash
 node src/sim/iterate.js accept "reason" --hypothesis "description fragment"
