@@ -1,49 +1,31 @@
-# Optimization Session — 2026-02-09
+# VDH APL Structural Audit — 2026-02-14
 
-## Phase 0: Setup ✅
-- Spec: Vengeance Demon Hunter
-- Roster: 69 builds (34 Anni + 35 AR), 18 templates, apex 0-4
-- Baseline: Complete (69 builds × 3 scenarios: 1T, 5T, 10T)
-- Fixed: startup.js TLA circular import deadlock → startup-cli.js wrapper
+## Bug Fixes Applied
+1. Removed dead `vengeful_retreat,if=talent.unhindered_assault` from Anni list (Unhindered Assault is AR-only hero talent)
+2. Added `use_off_gcd=1` to AR AoE `vengeful_retreat` for consistency with AR main list
 
-## Phase 1: Deep Reasoning + Specialists ✅
-### Root Theories
-1. Anni Meta hold at building>=2 — validated in prior session, not re-tested
-2. AR brand window AoE reorder — already partially implemented
-3. Anni FD-aware SBomb threshold — exhaustively rejected in prior sessions
+## Hypotheses Tested (8 iterations, 1 accepted, 7 rejected)
 
-### Critical User Finding
-- AR empowered cycle ordering was BACKWARD: Bladecraft (12 slashes) should be AoE-first, RM stacks (14% amp) should be ST-first
-- State Machine specialist MISSED this bug (claimed correct at 0.95 confidence)
+| # | Hypothesis | Mean | Worst | Verdict |
+|---|-----------|------|-------|---------|
+| 1 | H1: Lower spb_threshold to 3 during Meta for apex.3 | +0.02% | -1.98% | Noise |
+| 2 | H4: Move IA above Felblade in AR/Anni core | +0.02% | -1.48% | Noise |
+| 3 | H2: Expand UR fishing window to 8s for apex.3 | -0.02% | -1.86% | Noise |
+| 4 | H6+H8: Fallout-gated IA + Anni Brand Voidfall gate | +0.02% | -1.29% | Noise |
+| 5 | SC during Voidfall spending in Anni core | -0.05% | -1.70% | Noise |
+| 6 | Remove AR Meta 3-fragment gate | -0.40% (AR) | -1.13% | Reject — gate is load-bearing |
+| 7 | IA on cooldown for both hero trees | +0.08% | — | Hero tree split detected → gated |
+| 8 | **AR-only IA on cooldown** | **+0.10%** | **-0.96%** | **Accepted** (+0.167% AR mean) |
 
-## Phase 2: Synthesis ✅
-- Cross-referenced 4 specialist outputs with root theories
+## Not Tested
+- H3 (UR fishing on SA stacks): Same mechanism as H2
+- H5 (IA at 2 targets): No 2-target scenario
+- H7 (Brand+UR overlap SBomb threshold): Already implemented at 3 frags
 
-## Phase 3: Iteration ✅
-- 4 iterations: 1 accepted, 3 rejected
+## Conclusion
+APL near local optimum. One sim-verified improvement found: elevating Immolation Aura to high priority in AR (cast on cooldown after sub-list calls). AR has no state machine to disrupt, so IA's passive damage + fury generation fills gaps between empowered cycles. Anni left unchanged — Voidfall state machine makes IA elevation neutral/negative.
 
-### Iteration #1 ✅ ACCEPTED — AR empowered cycle swap (+2.73% mean)
-- Swapped Bladecraft (12 slashes) to AoE, RM stacks to ST
-- AR mean: +5.36%, Anni: +0.01%, Overall: +2.73%
-- Fixed SBomb chain comment (Mass Acceleration is Anni-only)
-
-### Iteration #2 ❌ REJECTED — Anni Fallout ImmAura elevation (noise)
-- Elevating ImmAura for AoE Fallout fragment gen — +0.005% mean (noise)
-
-### Iteration #3 ❌ REJECTED — AR AoE FD SBomb at 3 (-0.06%)
-- With Fallout AoE, fragments arrive fast enough that threshold beats 3-frag dumps
-
-### Iteration #4 ❌ REJECTED — Anni AoE SBomb threshold at 3 (-0.11%)
-- Theoretical efficiency (1.33 vs 1.25 frag-units/GCD) doesn't overcome per-cast damage loss
-
-## Phase 4: Report ✅
-
-## Final DPS Progress
-| Scenario | Baseline | Current | Delta |
-|----------|----------|---------|-------|
-| 1T       | 28,044   | 28,154  | +0.39% |
-| 5T       | 109,150  | 112,904 | +3.44% |
-| 10T      | 190,669  | 199,844 | +4.81% |
-
-## Key Change
-AR empowered cycle: Bladecraft (12 FotA slashes × N targets) in AoE, RM stacks (14% single-target amp) in ST. This was a fundamental ordering bug where the AoE and ST abilities were swapped.
+## Key Findings
+- AR Meta 3-fragment gate is load-bearing (-0.40% if removed). Meta GCDs are more valuable for SBomb consumption than fragment generation.
+- IA priority shows a clear hero tree split: AR benefits (+0.167%) while Anni is neutral (+0.030%). The asymmetry is mechanical — AR's deterministic empowered cycle has natural gaps where IA fits, while Anni's Voidfall state machine has no such gaps.
+- All seething anger / apex.3 hypotheses (H1-H3) produced noise, confirming the existing Meta/UR fishing logic is well-calibrated.
