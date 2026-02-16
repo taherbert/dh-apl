@@ -190,6 +190,11 @@ actions.anni_cooldowns+=/fel_devastation,if=!buff.voidfall_spending.up&(!buff.me
 actions.anni_voidfall=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&(buff.voidfall_building.stack=2|buff.voidfall_spending.stack=3)
 # Meteoric Rise from Fel Devastation generates 3 fragments when starved at peak spending
 actions.anni_voidfall+=/fel_devastation,if=buff.voidfall_spending.stack=3&soul_fragments<variable.spb_threshold
+# Non-Fracture fragment generators at peak spending — maximize dump SpB fragment count
+actions.anni_voidfall+=/soul_carver,if=buff.voidfall_spending.stack=3&talent.soul_carver&soul_fragments<variable.spb_threshold
+actions.anni_voidfall+=/sigil_of_spite,if=buff.voidfall_spending.stack=3&soul_fragments<variable.spb_threshold
+# Fallout: IA initial burst shatters 1 fragment (bridges last frag to threshold)
+actions.anni_voidfall+=/immolation_aura,if=buff.voidfall_spending.stack=3&talent.fallout&soul_fragments<variable.spb_threshold
 actions.anni_voidfall+=/spirit_bomb,if=buff.voidfall_spending.stack=3&soul_fragments>=variable.spb_threshold
 actions.anni_voidfall+=/soul_cleave,if=buff.voidfall_spending.up&buff.voidfall_spending.stack<3
 # Pool fury before the final building Fracture so Spirit Bomb is castable immediately after transition
