@@ -123,10 +123,12 @@ actions.anni+=/call_action_list,name=anni_voidfall
 actions.anni+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up&!buff.voidfall_spending.up
 # Meta chaining: hardcast during active Meta for second MA cycle (apex.3 only)
 actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_chain_ready&buff.voidfall_building.stack=0
-# Standard Meta: fragment-gated for apex.3 (pre-load 1 generator), immediate for others
-actions.anni+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&!buff.voidfall_spending.up&(buff.voidfall_building.stack<(2-apex.3))&(soul_fragments>=3|!apex.3)
-# Burst entry: apex.3 only — pre-load fragments when Meta gated on frags<3, or UR VF fishing
-actions.anni+=/call_action_list,name=anni_burst,if=apex.3&((!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments<3&!buff.voidfall_spending.up&buff.voidfall_building.stack=0)|(buff.untethered_rage.up&buff.voidfall_building.stack>=2&!buff.voidfall_spending.up))
+# Burst SpB: fire SpB before Meta when frags available — Meta fires off-GCD during SpB's GCD
+actions.anni+=/spirit_bomb,if=!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments>=3&!buff.voidfall_spending.up&buff.voidfall_building.stack<(2-apex.3)
+# Standard Meta: bypass fragment gate after burst SpB (prev_gcd.1 detects the just-cast SpB)
+actions.anni+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&!buff.voidfall_spending.up&(buff.voidfall_building.stack<(2-apex.3))&(soul_fragments>=3|!apex.3|prev_gcd.1.spirit_bomb)
+# Burst entry: apex.3 only — pre-load fragments when Meta gated on frags<3
+actions.anni+=/call_action_list,name=anni_burst,if=apex.3&!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments<3&!buff.voidfall_spending.up&buff.voidfall_building.stack=0
 # UR fishing: last 6s of Meta
 actions.anni+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
 # In-Meta optimization: apex.3 only — prioritize SpB cycling over generator CDs
@@ -148,18 +150,12 @@ actions.anni+=/soul_cleave
 actions.anni+=/fracture
 actions.anni+=/throw_glaive
 
-# === Anni Burst — Pre-load fragments for Meta entry + UR VF fishing (apex.3 only) ===
-# UR VF fishing: complete VF building cycle before consuming UR for double MA dump
-# Fracture at building>=2 has 35% proc chance per cast (~4.3s expected to complete cycle)
-actions.anni_burst=/fracture,if=buff.untethered_rage.up&buff.voidfall_building.stack>=2&buff.untethered_rage.remains>=4
-# UR VF dump: drain spending from successful fishing before UR Meta fires
-actions.anni_burst+=/spirit_bomb,if=buff.untethered_rage.up&buff.voidfall_spending.stack=3&soul_fragments>=variable.spb_threshold
-actions.anni_burst+=/soul_cleave,if=buff.untethered_rage.up&buff.voidfall_spending.up&buff.voidfall_spending.stack<3
+# === Anni Burst — Pre-load fragments for Meta entry (apex.3 only) ===
 # Pre-load: fire highest-value generator to satisfy Meta's soul_fragments>=3 gate
-actions.anni_burst+=/soul_carver,if=!buff.metamorphosis.up&talent.soul_carver&soul_fragments<=3
-actions.anni_burst+=/sigil_of_spite,if=!buff.metamorphosis.up&soul_fragments<=2+talent.soul_sigils
+actions.anni_burst=/soul_carver,if=talent.soul_carver&soul_fragments<=3
+actions.anni_burst+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
 # Fracture: 2 frags per cast — reliable fragment generation when generators unavailable
-actions.anni_burst+=/fracture,if=!buff.metamorphosis.up&soul_fragments<3
+actions.anni_burst+=/fracture,if=soul_fragments<3
 
 # === Anni In-Meta — Optimize Fracture-SpB cycling during Meta (apex.3 only) ===
 # Fracture generates 3 fragments during Meta vs 2 outside — prioritize SpB cycling
