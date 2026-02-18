@@ -724,6 +724,8 @@ function snapshotState(s) {
         .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
     ),
     fracture_charges: s.charges.fracture,
+    ia_charges: s.charges?.immolation_aura,
+    ia_recharge: s.recharge?.immolation_aura,
   };
 }
 

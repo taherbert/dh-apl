@@ -497,6 +497,7 @@ export function scoreDpgcd(state, abilityId) {
   const cfg = s.buildConfig;
   const inMeta = s.buffs.metamorphosis > 0;
   const fbActive = s.dots.fiery_brand > 0 && cfg.talents?.fiery_demise;
+  const vfSpending = s.buffStacks?.voidfall_spending ?? s.vf_spending ?? 0;
 
   const fireAmp = fbActive ? 1.3 : 1.0;
   const metaAmp = inMeta ? 1.2 : 1.0;
@@ -514,14 +515,19 @@ export function scoreDpgcd(state, abilityId) {
       // 0.4 AP per fragment consumed (from SPEC_CONFIG)
       // Normalized: at 5 frags = 193, at 4 = 154, at 3 = 116
       score = Math.max(0, consumed) * 38.5;
-      // SpB applies Frailty — subsequent casts during FB window gain Frailty amp
-      // Not modeled directly in immediate score; rollout captures it
+      // Voidfall dump (spending=3): adds fel meteors worth ~3-4× a normal SpB.
+      // Without this bonus the greedy rollout mis-values SC at spending=1/2.
+      if (vfSpending === 3) score += 500;
       break;
     }
 
     case "soul_cleave":
       // 1.29 AP → 125 relative to Fracture
       score = 125 * metaAmp;
+      // During Voidfall spending phase (pre-dump): SC increments spending stack
+      // while preserving fragments for the dump SpB. Greedy scorer needs an
+      // explicit bonus here because SC's immediate damage is lower than SpB's.
+      if (vfSpending > 0 && vfSpending < 3) score += 200;
       break;
 
     case "fel_devastation":

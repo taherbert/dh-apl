@@ -14,7 +14,7 @@ import { parseArgs } from "node:util";
 import { initSpec, getSpecAdapter } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import {
-  generateTimeline,
+  getBestAbility,
   initEngine as initTimelineEngine,
 } from "./optimal-timeline.js";
 import {
@@ -63,6 +63,10 @@ function snapshotToState(snap, buildConfig) {
   }
 
   state.charges.fracture = snap.fracture_charges ?? 2;
+  if (snap.ia_charges !== undefined) {
+    state.charges.immolation_aura = snap.ia_charges;
+    state.recharge.immolation_aura = snap.ia_recharge ?? 30;
+  }
 
   // Sync fury_cap from Meta
   if (state.buffs.metamorphosis > 0) state.fury_cap = 120;
@@ -74,74 +78,58 @@ function snapshotToState(snap, buildConfig) {
 // Divergence detection
 // ---------------------------------------------------------------------------
 
-export function computeDivergence(timeline, aplTrace, buildConfig) {
+// State-held comparison: for each APL decision, reconstruct the exact APL state
+// and ask what the optimal rollout would choose at that state. Eliminates the
+// state-drift problem of index-based comparison (where diverging decisions cause
+// all subsequent GCDs to compare different game states).
+export function computeDivergence(aplTrace, buildConfig) {
   const divergences = [];
+  const duration = aplTrace.metadata?.duration ?? 120;
 
-  // Align events by time (t) — both traces start from the same state
-  // Match events at the same GCD slot (same t, same starting conditions)
-  const optEvents = timeline.events.filter((e) => !e.off_gcd);
-  const aplEvents = aplTrace.events.filter((e) => !e.off_gcd);
+  for (const event of aplTrace.events.filter((e) => !e.off_gcd)) {
+    const state = snapshotToState(event.pre, buildConfig);
+    const optAbility = getBestAbility(state);
 
-  const len = Math.min(optEvents.length, aplEvents.length);
+    if (!optAbility || optAbility === event.ability) continue;
+    // Skip when rollout chose a filler — indicates a scoring artifact not a real APL gap
+    if (isFillerAbility(optAbility)) continue;
+    if (isFillerAbility(event.ability) && isFillerAbility(optAbility)) continue;
 
-  for (let i = 0; i < len; i++) {
-    const opt = optEvents[i];
-    const apl = aplEvents[i];
-
-    // Skip if both chose the same ability
-    if (opt.ability === apl.ability) continue;
-
-    // Skip trivial differences (both are fillers)
-    if (isFillerAbility(opt.ability) && isFillerAbility(apl.ability)) continue;
-
-    // Compute the DPGCD delta: what the optimal choice would score vs. what APL chose
-    const preState = snapshotToState(apl.pre, buildConfig);
-    const optScore = engine.scoreDpgcd(preState, opt.ability);
-    const aplScore = engine.scoreDpgcd(preState, apl.ability);
+    const optScore = engine.scoreDpgcd(state, optAbility);
+    const aplScore = engine.scoreDpgcd(state, event.ability);
     const dpgcdDelta = optScore - aplScore;
 
-    // Skip very small deltas (noise)
     if (Math.abs(dpgcdDelta) < 10) continue;
 
-    const fixHint = generateFixHint(opt, apl, preState, buildConfig);
+    const opt = { ability: optAbility };
+    const apl = { ability: event.ability };
     const frequency = estimateFrequency(opt, apl, buildConfig);
-    const estimatedDpsImpact = estimateDpsImpact(
-      dpgcdDelta,
-      frequency,
-      timeline.metadata.duration,
-    );
 
     divergences.push({
-      gcd: opt.gcd,
-      t: opt.t,
+      gcd: event.gcd,
+      t: event.t,
       state: {
-        fury: apl.pre.fury,
-        soul_fragments: apl.pre.soul_fragments,
-        vf_building: apl.pre.vf_building,
-        vf_spending: apl.pre.vf_spending,
-        buffs: apl.pre.buffs,
-        dots: apl.pre.dots,
+        fury: event.pre.fury,
+        soul_fragments: event.pre.soul_fragments,
+        vf_building: event.pre.vf_building,
+        vf_spending: event.pre.vf_spending,
+        buffs: event.pre.buffs,
+        dots: event.pre.dots,
       },
-      optimal: {
-        ability: opt.ability,
-        rationale: opt.rationale,
-        score: opt.score?.total,
-      },
+      optimal: { ability: optAbility, score: optScore },
       actual: {
-        ability: apl.ability,
-        apl_reason: apl.apl_reason,
+        ability: event.ability,
+        apl_reason: event.apl_reason,
         score: aplScore,
       },
       dpgcd_delta: Math.round(dpgcdDelta),
       frequency_estimate: frequency,
-      estimated_dps_impact: estimatedDpsImpact,
-      fix_hint: fixHint,
+      estimated_dps_impact: estimateDpsImpact(dpgcdDelta, frequency, duration),
+      fix_hint: generateFixHint(opt, apl, state, buildConfig),
     });
   }
 
-  // Sort by absolute dpgcd_delta descending (highest impact first)
   divergences.sort((a, b) => Math.abs(b.dpgcd_delta) - Math.abs(a.dpgcd_delta));
-
   return divergences;
 }
 
@@ -362,7 +350,7 @@ export function generateReport(divergences, buildName, metadata) {
     if (dotsStr) lines.push(`**DoTs:** ${dotsStr}`);
     lines.push("");
     lines.push(`**Optimal choice:** \`${d.optimal.ability}\``);
-    lines.push(`> ${d.optimal.rationale || "(no rationale)"}`);
+    lines.push(`> DPGCD score: ${d.optimal.score?.toFixed(0) ?? "?"}`);
     lines.push("");
     lines.push(`**APL chose:** \`${d.actual.ability}\``);
     lines.push(`> Condition: \`${d.actual.apl_reason || "unconditional"}\``);
@@ -425,7 +413,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       spec: { type: "string" },
       build: { type: "string", default: "anni-apex3-dgb" },
       duration: { type: "string", default: "120" },
-      timeline: { type: "string" },
       trace: { type: "string" },
       apl: { type: "string" },
       output: { type: "string" },
@@ -452,20 +439,6 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const resultsDir = join(ROOT, "results", spec);
   mkdirSync(resultsDir, { recursive: true });
 
-  // Load or generate the optimal timeline
-  const timelineFile =
-    values.timeline || join(resultsDir, `timeline-${buildName}.json`);
-  let timeline;
-  if (existsSync(timelineFile)) {
-    console.log(`Loading timeline: ${timelineFile}`);
-    timeline = JSON.parse(readFileSync(timelineFile, "utf-8"));
-  } else {
-    console.log(`Generating optimal timeline for ${buildName}...`);
-    timeline = generateTimeline(archetype, duration);
-    writeFileSync(timelineFile, JSON.stringify(timeline));
-    console.log(`  Saved to ${timelineFile}`);
-  }
-
   // Load or generate the APL trace
   const traceFile =
     values.trace || join(resultsDir, `apl-trace-${buildName}.json`);
@@ -488,12 +461,10 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     console.log(`  Saved to ${traceFile}`);
   }
 
-  console.log("");
   console.log(
-    `Comparing ${timeline.events.length} optimal events vs ${aplTrace.events.length} APL events...`,
+    `\nRunning state-held comparison on ${aplTrace.events.filter((e) => !e.off_gcd).length} APL decisions...`,
   );
-
-  const divergences = computeDivergence(timeline, aplTrace, archetype);
+  const divergences = computeDivergence(aplTrace, archetype);
 
   console.log(`Found ${divergences.length} divergences above noise threshold.`);
   console.log("");
@@ -530,7 +501,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   // Generate and save markdown report
   const report = generateReport(divergences, buildName, {
-    ...timeline.metadata,
+    ...aplTrace.metadata,
     duration,
   });
 
@@ -543,7 +514,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const jsonFile = join(resultsDir, `divergences-${buildName}.json`);
   writeFileSync(
     jsonFile,
-    JSON.stringify({ divergences, metadata: timeline.metadata }, null, 2),
+    JSON.stringify({ divergences, metadata: aplTrace.metadata }, null, 2),
   );
   console.log(`Raw divergences saved to: ${jsonFile}`);
 }

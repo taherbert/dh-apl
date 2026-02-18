@@ -250,7 +250,15 @@ function snapshotState(s) {
         .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
     ),
     fracture_charges: s.charges?.fracture,
+    ia_charges: s.charges?.immolation_aura,
+    ia_recharge: s.recharge?.immolation_aura,
   };
+}
+
+// Returns the optimal ability for a given state — used by divergence.js
+// for state-held comparison (avoids the state drift of index-based comparison).
+export function getBestAbility(state) {
+  return pickOptimal(state)?.ability ?? null;
 }
 
 export { snapshotState };
