@@ -1,0 +1,895 @@
+// APL Decision Simulator — replays vengeance.simc decisions against the state simulator.
+//
+// Given the same initial state as optimal-timeline.js, evaluates what action the
+// current APL would choose at each GCD. Produces apl-trace.json in the same format
+// as timeline.json for direct comparison by divergence.js.
+//
+// Usage:
+//   node src/analysis/apl-interpreter.js --spec vengeance --build anni-apex3-dgb --duration 120
+//   npm run apl-trace -- --build anni-apex3-dgb --duration 120
+
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
+import { parseArgs } from "node:util";
+import { parse, getActionLists } from "../apl/parser.js";
+import { parseCondition } from "../apl/condition-parser.js";
+import {
+  createInitialState,
+  applyAbility,
+  advanceTime,
+  getAvailable,
+  OFF_GCD_ABILITIES,
+  getAbilityGcd,
+} from "./state-sim.js";
+import { ROOT } from "../engine/paths.js";
+
+// Build archetypes (same as optimal-timeline.js)
+const ARCHETYPES = {
+  "anni-apex3-dgb": {
+    heroTree: "annihilator",
+    apexRank: 3,
+    haste: 0.2,
+    target_count: 1,
+    talents: {
+      fiery_demise: true,
+      fiery_brand: true,
+      charred_flesh: true,
+      burning_alive: true,
+      down_in_flames: true,
+      darkglare_boon: true,
+      meteoric_rise: true,
+      stoke_the_flames: true,
+      vengeful_beast: true,
+      untethered_rage: true,
+      fallout: true,
+      soul_carver: false,
+      soul_sigils: false,
+      quickened_sigils: false,
+      cycle_of_binding: false,
+      vulnerability: false,
+    },
+  },
+  "anni-apex3-nodgb": {
+    heroTree: "annihilator",
+    apexRank: 3,
+    haste: 0.2,
+    target_count: 1,
+    talents: {
+      fiery_demise: true,
+      fiery_brand: true,
+      charred_flesh: true,
+      burning_alive: true,
+      down_in_flames: true,
+      darkglare_boon: false,
+      meteoric_rise: true,
+      stoke_the_flames: true,
+      vengeful_beast: true,
+      untethered_rage: true,
+      fallout: true,
+      soul_carver: false,
+    },
+  },
+  "anni-apex0-fullstack": {
+    heroTree: "annihilator",
+    apexRank: 0,
+    haste: 0.2,
+    target_count: 1,
+    talents: {
+      fiery_demise: true,
+      fiery_brand: true,
+      charred_flesh: true,
+      burning_alive: true,
+      down_in_flames: true,
+      darkglare_boon: true,
+      meteoric_rise: true,
+      stoke_the_flames: true,
+      soul_carver: true,
+      soul_sigils: true,
+      cycle_of_binding: true,
+      vulnerability: true,
+      fallout: true,
+    },
+  },
+};
+
+// ---------------------------------------------------------------------------
+// SimC expression evaluator
+// Resolves SimC dotted expressions (fury, buff.X.remains, etc.) against state
+// ---------------------------------------------------------------------------
+
+function evalSimcExpr(expr, state, vars, cfg) {
+  if (!expr) return 0;
+  const parts = expr.split(".");
+
+  // Numeric literal
+  const num = Number(expr);
+  if (!isNaN(num) && expr !== "") return num;
+
+  // Top-level resources
+  switch (parts[0]) {
+    case "fury":
+      return state.fury;
+
+    case "soul_fragments":
+      if (parts[1] === "total") return state.soul_fragments; // approximation
+      return state.soul_fragments;
+
+    case "health":
+      return 100; // Always full in simulation
+
+    case "active_enemies":
+      return state.target_count;
+
+    case "spell_targets":
+      return state.target_count;
+
+    case "gcd":
+      return state.gcd;
+
+    case "buff": {
+      const buffName = parts[1];
+      const prop = parts[2] || "up";
+      // Handle voidfall_building and voidfall_spending via buffStacks
+      if (
+        buffName === "voidfall_building" ||
+        buffName === "voidfall_spending"
+      ) {
+        const stacks = state.buffStacks[buffName] || 0;
+        switch (prop) {
+          case "up":
+            return stacks > 0 ? 1 : 0;
+          case "down":
+            return stacks === 0 ? 1 : 0;
+          case "stack":
+            return stacks;
+          case "remains":
+            return stacks > 0 ? 9999 : 0; // VF stacks aren't time-based
+          default:
+            return stacks > 0 ? 1 : 0;
+        }
+      }
+      const remains = state.buffs[buffName] || 0;
+      switch (prop) {
+        case "up":
+          return remains > 0 ? 1 : 0;
+        case "down":
+          return remains <= 0 ? 1 : 0;
+        case "remains":
+          return remains;
+        case "stack":
+          return state.buffStacks[buffName] || 0;
+        case "react":
+          return remains > 0 ? 1 : 0;
+        default:
+          return remains;
+      }
+    }
+
+    case "debuff": {
+      const buffName = parts[1];
+      const prop = parts[2] || "up";
+      const remains = state.debuffs[buffName] || 0;
+      switch (prop) {
+        case "up":
+          return remains > 0 ? 1 : 0;
+        case "react":
+          return remains > 0 ? 1 : 0;
+        case "remains":
+          return remains;
+        default:
+          return remains > 0 ? 1 : 0;
+      }
+    }
+
+    case "dot": {
+      const dotName = parts[1];
+      const prop = parts[2] || "ticking";
+      const remains = state.dots[dotName] || 0;
+      switch (prop) {
+        case "ticking":
+          return remains > 0 ? 1 : 0;
+        case "remains":
+          return remains;
+        default:
+          return remains > 0 ? 1 : 0;
+      }
+    }
+
+    case "cooldown": {
+      const spellName = parts[1];
+      const prop = parts[2] || "remains";
+
+      if (spellName === "fracture") {
+        const charges = state.charges.fracture;
+        const recharge = state.recharge.fracture;
+        switch (prop) {
+          case "ready":
+            return charges > 0 ? 1 : 0;
+          case "remains":
+            return charges > 0 ? 0 : recharge;
+          case "charges":
+            return charges;
+          case "charges_fractional":
+            return (
+              charges + (charges < 2 ? Math.max(0, 1 - recharge / 4.5) : 0)
+            );
+          case "full_recharge_time": {
+            if (charges >= 2) return 0;
+            if (charges === 1) return recharge;
+            return recharge + 4.5; // Two charges needed
+          }
+          default:
+            return charges > 0 ? 0 : recharge;
+        }
+      }
+
+      if (spellName === "immolation_aura") {
+        const charges = state.charges.immolation_aura;
+        const recharge = state.recharge.immolation_aura;
+        switch (prop) {
+          case "ready":
+            return charges > 0 ? 1 : 0;
+          case "remains":
+            return charges > 0 ? 0 : recharge;
+          case "charges":
+            return charges;
+          case "full_recharge_time": {
+            if (charges >= 2) return 0;
+            if (charges === 1) return recharge;
+            return recharge + 30;
+          }
+          default:
+            return charges > 0 ? 0 : recharge;
+        }
+      }
+
+      // Standard cooldown
+      const cd = state.cooldowns[spellName] || 0;
+      switch (prop) {
+        case "ready":
+          return cd <= 0 ? 1 : 0;
+        case "remains":
+          return cd;
+        case "duration":
+          return getCdDuration(spellName, cfg);
+        default:
+          return cd;
+      }
+    }
+
+    case "talent":
+      return cfg.talents?.[parts[1]] ? 1 : 0;
+
+    case "apex":
+      return cfg.apexRank >= parseInt(parts[1], 10) ? 1 : 0;
+
+    case "variable":
+      return vars[parts[1]] !== undefined ? vars[parts[1]] : 0;
+
+    case "prev_gcd": {
+      const pos = parseInt(parts[1], 10);
+      const ability = parts[2];
+      if (pos === 1) return state.prev_gcd === ability ? 1 : 0;
+      if (pos === 2) return state.prev_gcd_2 === ability ? 1 : 0;
+      return 0;
+    }
+
+    case "hero_tree":
+      return cfg.heroTree === parts[1] ? 1 : 0;
+
+    case "trinket":
+    case "target":
+      // Trinkets and target properties — not modeled, return safe defaults
+      return 0;
+  }
+
+  return 0;
+}
+
+// Get base cooldown duration for a spell (for trinket-style duration comparisons)
+function getCdDuration(spell, cfg) {
+  const durations = {
+    metamorphosis: 180,
+    fiery_brand: 60,
+    fel_devastation: cfg.talents?.darkglare_boon ? 30 : 40,
+    soul_carver: 60,
+    sigil_of_spite: 60,
+    sigil_of_flame: 30,
+    felblade: 15,
+  };
+  return durations[spell] || 30;
+}
+
+// ---------------------------------------------------------------------------
+// Condition evaluator — evaluates a parsed condition AST against state
+// ---------------------------------------------------------------------------
+
+function evalConditionAst(ast, state, vars, cfg) {
+  if (!ast) return true;
+
+  switch (ast.type) {
+    case "BinaryOp":
+      if (ast.op === "&") {
+        return (
+          evalConditionAst(ast.left, state, vars, cfg) &&
+          evalConditionAst(ast.right, state, vars, cfg)
+        );
+      }
+      return (
+        evalConditionAst(ast.left, state, vars, cfg) ||
+        evalConditionAst(ast.right, state, vars, cfg)
+      );
+
+    case "Not":
+      return !evalConditionAst(ast.operand, state, vars, cfg);
+
+    case "Comparison": {
+      const leftVal = evalSimcExpr(ast.left, state, vars, cfg);
+      const rightVal = evalSimcExpr(ast.right, state, vars, cfg);
+      switch (ast.op) {
+        case ">=":
+          return leftVal >= rightVal;
+        case "<=":
+          return leftVal <= rightVal;
+        case ">":
+          return leftVal > rightVal;
+        case "<":
+          return leftVal < rightVal;
+        case "=":
+          return leftVal === rightVal;
+        case "!=":
+          return leftVal !== rightVal;
+        default:
+          return false;
+      }
+    }
+
+    case "BuffCheck": {
+      const prefix = ast.isDot ? "dots" : ast.isDebuff ? "debuffs" : "buffs";
+      const buffName = ast.buff;
+      let val;
+      if (
+        prefix === "buffs" &&
+        (buffName === "voidfall_building" || buffName === "voidfall_spending")
+      ) {
+        val = state.buffStacks[buffName] || 0;
+      } else {
+        const container = state[prefix] || {};
+        val = container[buffName] || 0;
+      }
+      let result;
+      switch (ast.property) {
+        case "up":
+          result = val > 0;
+          break;
+        case "down":
+          result = val <= 0;
+          break;
+        case "ticking":
+          result = val > 0;
+          break;
+        case "react":
+          result = val > 0;
+          break;
+        default:
+          result = val > 0;
+      }
+      return ast.negate ? !result : result;
+    }
+
+    case "CooldownCheck": {
+      const spellName = ast.spell;
+      const cd = state.cooldowns[spellName] || 0;
+      const charges = state.charges[spellName] || 0;
+      switch (ast.property) {
+        case "ready":
+          return spellName === "fracture" ? charges > 0 : cd <= 0;
+        default:
+          return cd <= 0;
+      }
+    }
+
+    case "TalentCheck": {
+      const hasTalent = cfg.talents?.[ast.talent] ? true : false;
+      return ast.negate ? !hasTalent : hasTalent;
+    }
+
+    case "ResourceCheck": {
+      const val = evalSimcExpr(ast.resource, state, vars, cfg);
+      return val > 0;
+    }
+
+    case "VariableCheck": {
+      return (vars[ast.variable] || 0) > 0;
+    }
+
+    case "SpellTargets": {
+      return state.target_count;
+    }
+
+    case "PrevGcd": {
+      if (ast.position === 1) return state.prev_gcd === ast.ability;
+      if (ast.position === 2) return state.prev_gcd_2 === ast.ability;
+      return false;
+    }
+
+    case "HeroTreeCheck": {
+      return cfg.heroTree === ast.tree;
+    }
+
+    case "Literal": {
+      const n = parseFloat(ast.value);
+      if (!isNaN(n)) return n !== 0;
+      return ast.value !== "" && ast.value !== "0";
+    }
+
+    default:
+      return true;
+  }
+}
+
+// Evaluate a condition string
+// Preprocess condition string: resolve arithmetic sub-expressions (e.g., (2-apex.3))
+// into their numeric values before passing to the condition-parser.
+// The condition-parser's tokenizer drops '-' and leaves mismatched parens,
+// causing incorrect evaluation of arithmetic expressions.
+function preprocessCondition(str, state, vars, cfg) {
+  // Replace parenthesized arithmetic: (N-expr) → computed value
+  return str.replace(/\((\d+)-([\w.]+)\)/g, (match, n, expr) => {
+    const num = parseInt(n, 10);
+    const val = evalSimcExpr(expr, state, vars, cfg);
+    return String(num - val);
+  });
+}
+
+function evalCondition(conditionStr, state, vars, cfg) {
+  if (!conditionStr) return true;
+  try {
+    const processed = preprocessCondition(conditionStr, state, vars, cfg);
+    const ast = parseCondition(processed);
+    return evalConditionAst(ast, state, vars, cfg);
+  } catch {
+    return true; // Parse failure: assume condition passes
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Variable computation — evaluates all APL variables fresh each GCD
+// Variables are defined as actions in the "default" action list
+// ---------------------------------------------------------------------------
+
+function computeVariables(actionLists, state, cfg) {
+  const vars = {};
+  const defaultList = actionLists.find((l) => l.name === "default");
+  if (!defaultList) return vars;
+
+  for (const entry of defaultList.entries) {
+    if (entry.type !== "Variable") continue;
+    const name = entry.modifiers.get("name");
+    if (!name) continue;
+
+    const valueExpr = entry.modifiers.get("value");
+    const condition = entry.modifiers.get("if");
+
+    // Check condition first (some variables are conditional)
+    if (condition && !evalCondition(condition, state, vars, cfg)) continue;
+
+    if (!valueExpr) {
+      vars[name] = 0;
+      continue;
+    }
+
+    // Evaluate the value expression against current state
+    vars[name] = evalVariableExpr(valueExpr, state, vars, cfg);
+  }
+
+  return vars;
+}
+
+// Evaluate a variable value expression (may contain arithmetic/comparisons)
+function evalVariableExpr(expr, state, vars, cfg) {
+  if (!expr) return 0;
+
+  // Handle arithmetic: try to parse as a computed expression
+  // Supported patterns: "A-B", "A+B", etc. where A/B are SimC exprs
+  const minusIdx = findBinaryOp(expr, "-");
+  if (minusIdx > 0) {
+    const left = expr.slice(0, minusIdx).trim();
+    const right = expr.slice(minusIdx + 1).trim();
+    return (
+      evalSimcExpr(left, state, vars, cfg) -
+      evalSimcExpr(right, state, vars, cfg)
+    );
+  }
+
+  const plusIdx = findBinaryOp(expr, "+");
+  if (plusIdx > 0) {
+    const left = expr.slice(0, plusIdx).trim();
+    const right = expr.slice(plusIdx + 1).trim();
+    return (
+      evalSimcExpr(left, state, vars, cfg) +
+      evalSimcExpr(right, state, vars, cfg)
+    );
+  }
+
+  // Boolean/comparison: evaluates to 0 or 1
+  // Check if it contains a comparison operator
+  if (
+    expr.includes(">=") ||
+    expr.includes("<=") ||
+    expr.includes(">") ||
+    expr.includes("<") ||
+    expr.includes("=") ||
+    expr.includes("&") ||
+    expr.includes("|") ||
+    expr.includes("!")
+  ) {
+    try {
+      const ast = parseCondition(expr);
+      return evalConditionAst(ast, state, vars, cfg) ? 1 : 0;
+    } catch {
+      return 0;
+    }
+  }
+
+  // Simple expression
+  return evalSimcExpr(expr, state, vars, cfg);
+}
+
+// Find the position of a binary operator not inside parentheses
+function findBinaryOp(expr, op) {
+  let depth = 0;
+  for (let i = 0; i < expr.length; i++) {
+    if (expr[i] === "(") depth++;
+    else if (expr[i] === ")") depth--;
+    else if (depth === 0 && expr[i] === op) {
+      // Skip comparisons like >= or <=
+      if (op === ">" && expr[i + 1] === "=") continue;
+      if (op === "<" && expr[i + 1] === "=") continue;
+      return i;
+    }
+  }
+  return -1;
+}
+
+// ---------------------------------------------------------------------------
+// APL evaluator — walks action lists to find the first matching action
+// ---------------------------------------------------------------------------
+
+function evalActionList(listName, actionLists, state, vars, cfg, depth = 0) {
+  if (depth > 10) return null; // Prevent infinite recursion
+
+  const listMap = new Map(actionLists.map((l) => [l.name, l]));
+  const list = listMap.get(listName);
+  if (!list) return null;
+
+  for (const entry of list.entries) {
+    if (entry.type === "Comment" || !entry.type) continue;
+
+    const condition = entry.modifiers?.get("if");
+
+    if (entry.type === "Variable") continue; // Already computed
+
+    if (entry.type === "RunActionList") {
+      const targetList = entry.modifiers.get("name");
+      const variant = entry.variant; // "run" or "call"
+      if (!condition || evalCondition(condition, state, vars, cfg)) {
+        const result = evalActionList(
+          targetList,
+          actionLists,
+          state,
+          vars,
+          cfg,
+          depth + 1,
+        );
+        if (variant === "run") {
+          // run_action_list: swap to target list unconditionally (no fallthrough)
+          return result;
+        }
+        // call_action_list: fall through if sub-list returned nothing
+        if (result) return result;
+      }
+      continue;
+    }
+
+    if (entry.type === "Action") {
+      const ability = entry.ability;
+
+      // Skip non-game abilities
+      if (
+        ability === "snapshot_stats" ||
+        ability === "use_item" ||
+        ability === "potion" ||
+        ability === "invoke_external_buff"
+      ) {
+        continue;
+      }
+
+      // Check if ability is castable
+      const available = getAvailable(state);
+      // For off-GCD abilities, check differently
+      const useOffGcd = entry.modifiers.get("use_off_gcd") === "1";
+
+      if (!condition || evalCondition(condition, state, vars, cfg)) {
+        // Check availability
+        if (ability === "auto_attack" || ability === "disrupt") continue;
+        if (ability === "metamorphosis" && !available.includes("metamorphosis"))
+          continue;
+        if (available.includes(ability)) {
+          return {
+            ability,
+            off_gcd: useOffGcd || OFF_GCD_ABILITIES.has(ability),
+            condition: condition || null,
+            listName,
+          };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// Main trace generator
+// ---------------------------------------------------------------------------
+
+export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
+  // Parse the APL
+  const sections = parse(aplText);
+  const actionLists = getActionLists(sections);
+
+  // Build a map for fast lookup
+  const actionListMap = actionLists;
+
+  let state = createInitialState(buildConfig);
+  const events = [];
+  let gcdNumber = 0;
+  let offGcdQueue = []; // pending off-GCD actions from the current sweep
+
+  while (state.t < durationSeconds) {
+    // Compute variables fresh for this GCD
+    const vars = computeVariables(actionLists, state, buildConfig);
+
+    // Start from the hero-tree-appropriate entry point
+    // The default list does: run_action_list,name=ar/anni based on hero_tree
+    const heroList = buildConfig.heroTree === "annihilator" ? "anni" : "ar";
+
+    // First evaluate default list to handle variables and routing
+    const decision = evalDefaultList(
+      actionLists,
+      state,
+      vars,
+      buildConfig,
+      heroList,
+    );
+
+    if (!decision) {
+      // No action found — advance time
+      state = advanceTime(state, state.gcd);
+      continue;
+    }
+
+    const { ability, off_gcd, condition, apl_reason } = decision;
+
+    if (off_gcd && OFF_GCD_ABILITIES.has(ability)) {
+      // Off-GCD ability: apply without consuming GCD
+      const offGcdT = state.t;
+      const preState = snapshotState(state);
+      state = applyAbility(state, ability);
+      gcdNumber++;
+      events.push({
+        t: parseFloat(offGcdT.toFixed(3)),
+        gcd: gcdNumber,
+        ability,
+        off_gcd: true,
+        pre: preState,
+        post: snapshotState(state),
+        apl_reason: apl_reason || condition || "off-GCD action",
+      });
+      // Re-evaluate same GCD slot (off-GCD doesn't consume GCD)
+      continue;
+    }
+
+    // On-GCD ability
+    gcdNumber++;
+    const preT = state.t;
+    const preState = snapshotState(state);
+    state = applyAbility(state, ability);
+
+    const dt = getAbilityGcd(preState, ability) || preState.gcd;
+    state = advanceTime(state, dt);
+
+    // FelDev channel extra time
+    if (ability === "fel_devastation" && state._feldev_channel) {
+      const extra = Math.max(0, state._feldev_channel - dt);
+      if (extra > 0) state = advanceTime(state, extra);
+    }
+
+    events.push({
+      t: parseFloat(preT.toFixed(3)),
+      gcd: gcdNumber,
+      ability,
+      off_gcd: false,
+      pre: preState,
+      post: snapshotState(state),
+      apl_reason: apl_reason || condition || "unconditional",
+    });
+  }
+
+  return {
+    metadata: {
+      build: buildConfig._name || "custom",
+      heroTree: buildConfig.heroTree,
+      apexRank: buildConfig.apexRank,
+      duration: durationSeconds,
+      type: "apl-trace",
+    },
+    events,
+  };
+}
+
+// Evaluate the default action list with hero tree routing
+function evalDefaultList(actionLists, state, vars, cfg, heroList) {
+  const listMap = new Map(actionLists.map((l) => [l.name, l]));
+  const defaultList = listMap.get("default");
+  if (!defaultList) return null;
+
+  for (const entry of defaultList.entries) {
+    if (entry.type === "Comment" || entry.type === "Variable") continue;
+
+    const condition = entry.modifiers?.get("if");
+
+    if (entry.type === "RunActionList") {
+      const variant = entry.variant;
+      const targetList = entry.modifiers.get("name");
+
+      if (variant === "run") {
+        if (!condition || evalCondition(condition, state, vars, cfg)) {
+          return evalActionList(targetList, actionLists, state, vars, cfg, 0);
+        }
+      } else {
+        // call_action_list
+        if (!condition || evalCondition(condition, state, vars, cfg)) {
+          const result = evalActionList(
+            targetList,
+            actionLists,
+            state,
+            vars,
+            cfg,
+            0,
+          );
+          if (result) return result;
+        }
+      }
+      continue;
+    }
+
+    if (entry.type === "Action") {
+      const ability = entry.ability;
+      if (ability === "auto_attack" || ability === "snapshot_stats") continue;
+
+      if (!condition || evalCondition(condition, state, vars, cfg)) {
+        const available = getAvailable(state);
+        if (available.includes(ability)) {
+          return {
+            ability,
+            off_gcd: entry.modifiers.get("use_off_gcd") === "1",
+            condition: condition || null,
+          };
+        }
+      }
+    }
+  }
+
+  return null;
+}
+
+function snapshotState(s) {
+  return {
+    fury: s.fury,
+    soul_fragments: s.soul_fragments,
+    vf_building: s.buffStacks?.voidfall_building ?? s.vf_building ?? 0,
+    vf_spending: s.buffStacks?.voidfall_spending ?? s.vf_spending ?? 0,
+    gcd: s.gcd,
+    buffs: Object.fromEntries(
+      Object.entries(s.buffs)
+        .filter(([, v]) => v > 0)
+        .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
+    ),
+    dots: Object.fromEntries(
+      Object.entries(s.dots)
+        .filter(([, v]) => v > 0)
+        .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
+    ),
+    cooldowns: Object.fromEntries(
+      Object.entries(s.cooldowns)
+        .filter(([, v]) => v > 0)
+        .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
+    ),
+    fracture_charges: s.charges.fracture,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// CLI entry point
+// ---------------------------------------------------------------------------
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const { values } = parseArgs({
+    options: {
+      spec: { type: "string", default: "vengeance" },
+      build: { type: "string", default: "anni-apex3-dgb" },
+      duration: { type: "string", default: "120" },
+      apl: { type: "string" },
+      output: { type: "string" },
+    },
+    strict: false,
+  });
+
+  const spec = values.spec;
+  const buildName = values.build;
+  const archetype = ARCHETYPES[buildName];
+
+  if (!archetype) {
+    console.error(`Unknown build: ${buildName}`);
+    console.error(`Available builds: ${Object.keys(ARCHETYPES).join(", ")}`);
+    process.exit(1);
+  }
+
+  archetype._name = buildName;
+
+  const aplPath = values.apl || join(ROOT, "apls", spec, `${spec}.simc`);
+
+  let aplText;
+  try {
+    aplText = readFileSync(aplPath, "utf-8");
+  } catch {
+    console.error(`Cannot read APL file: ${aplPath}`);
+    process.exit(1);
+  }
+
+  const duration = parseInt(values.duration, 10);
+  console.log(`APL trace: ${buildName} against ${aplPath} (${duration}s)`);
+
+  const trace = simulateApl(aplText, archetype, duration);
+
+  // Print first 30 GCDs
+  console.log("\nFirst 30 GCDs (APL decisions):");
+  console.log("─".repeat(90));
+  const header = [
+    "GCD".padEnd(4),
+    "t".padEnd(7),
+    "Ability".padEnd(22),
+    "Fury".padEnd(6),
+    "Frags".padEnd(6),
+    "VF B/S".padEnd(8),
+    "APL Reason",
+  ].join(" ");
+  console.log(header);
+  console.log("─".repeat(90));
+
+  for (const evt of trace.events.slice(0, 30)) {
+    const vf = `${evt.pre.vf_building}/${evt.pre.vf_spending}`;
+    const row = [
+      String(evt.gcd).padEnd(4),
+      `${evt.t}s`.padEnd(7),
+      evt.ability.padEnd(22),
+      String(evt.pre.fury).padEnd(6),
+      String(evt.pre.soul_fragments).padEnd(6),
+      vf.padEnd(8),
+      (evt.apl_reason || "").slice(0, 55),
+    ].join(" ");
+    console.log(row);
+  }
+
+  console.log(`\nTotal APL decisions: ${trace.events.length}`);
+
+  // Save
+  const outputDir = join(ROOT, "results", spec);
+  mkdirSync(outputDir, { recursive: true });
+  const outputFile =
+    values.output || join(outputDir, `apl-trace-${buildName}.json`);
+  writeFileSync(outputFile, JSON.stringify(trace));
+  console.log(`\nAPL trace saved to: ${outputFile}`);
+}
