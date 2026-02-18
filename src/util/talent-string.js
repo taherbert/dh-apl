@@ -172,7 +172,6 @@ export function decode(str, nodes) {
     const selected = r.read(1);
     if (!selected) continue;
 
-    const isGranted = node.freeNode || node.grantedForSpecs?.includes(specId);
     const maxRank = node.maxRanks || 1;
     let rank = maxRank;
     let choiceIndex;
@@ -219,18 +218,6 @@ export function loadFullNodeList(dataDirOverride) {
       "utf8",
     ),
   );
-}
-
-// Build a spec-only sorted node list from raidbots-talents.json data.
-// Sufficient for encoding builds and round-tripping our own strings,
-// but NOT for decoding external strings. Use loadFullNodeList() for that.
-export function buildNodeList(data) {
-  const allNodes = [
-    ...data.classNodes,
-    ...data.specNodes,
-    ...Object.values(data.heroSubtrees).flat(),
-  ];
-  return allNodes.sort((a, b) => a.id - b.id);
 }
 
 // Convert a build object (from talent-combos.js) to a selections Map.
