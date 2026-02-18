@@ -5,7 +5,7 @@
   },
   "data": {
     "env": "beta",
-    "raidbots": "https://www.raidbots.com/static/data"
+    "raidbots": "https://mimiron.raidbots.com/static/data"
   },
   "simulation": {
     "scenarios": {

@@ -2831,29 +2831,6 @@
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
-        },
-        {
-          "source": "Focused Cleave",
-          "type": "damage_modifier",
-          "tree": "spec",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Broken Spirit",
-          "type": "damage_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
         }
       ]
     },
@@ -3005,29 +2982,6 @@
           "heroSpec": "Annihilator",
           "magnitude": {
             "value": 12,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Focused Cleave",
-          "type": "damage_modifier",
-          "tree": "spec",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Broken Spirit",
-          "type": "damage_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "magnitude": {
-            "value": 1,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -5213,17 +5167,6 @@
             "unit": "flat",
             "stacking": "additive"
           },
-          "application": "buff_on_player"
-        }
-      ]
-    },
-    "343207": {
-      "name": "Focused Cleave",
-      "modifiers": [
-        {
-          "source": "Frailty",
-          "type": "damage_modifier",
-          "tree": "spec",
           "application": "buff_on_player"
         }
       ]
@@ -9418,17 +9361,12 @@
       "name": "Broken Spirit",
       "modifiers": [
         {
-          "source": "Frailty",
+          "source": "Broken Spirit",
           "type": "damage_modifier",
-          "tree": "spec",
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Focused Cleave",
-          "type": "damage_modifier",
-          "tree": "spec",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
           "magnitude": {
-            "value": 50,
+            "value": 1,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -10556,25 +10494,7 @@
       "tree": "spec",
       "targets": [
         {
-          "spell": "Soul Cleave",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "Broken Spirit",
-          "type": "damage_modifier",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          }
-        },
-        {
-          "spell": "soul_cleave_t",
+          "spell": "inner_demon_t",
           "type": "direct_damage_modifier",
           "magnitude": {
             "value": 50,
@@ -10870,14 +10790,6 @@
         {
           "spell": "Dark Matter",
           "type": "proc_trigger"
-        },
-        {
-          "spell": "Focused Cleave",
-          "type": "damage_modifier"
-        },
-        {
-          "spell": "Broken Spirit",
-          "type": "damage_modifier"
         }
       ]
     },
@@ -12574,7 +12486,7 @@
       "heroSpec": "Aldrachi Reaver",
       "targets": [
         {
-          "spell": "Soul Cleave",
+          "spell": "Broken Spirit",
           "type": "damage_modifier",
           "magnitude": {
             "value": 1,

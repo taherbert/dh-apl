@@ -615,8 +615,6 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - (1) **Frailty** (389958) [passive_buff]
   → Ascending Flame (duration_modifier)
   → Dark Matter (proc_trigger)
-  → Focused Cleave (damage_modifier)
-  → Broken Spirit (damage_modifier)
   _Enemies struck by Sigil of Flame, Soul Cleave, and Spirit Bomb are afflicted with Frailty for $247456d. You heal for $247456s1% of all damage you deal to targets with Frailty._
 - (2) **Feast of Souls** (207697) [passive_buff]
   → Soul Cleave (resource_modifier)
@@ -668,9 +666,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 
 **Row 7:**
 - (1) **Focused Cleave** (343207) [passive_buff]
-  → Soul Cleave (damage_modifier)
-  → Broken Spirit (damage_modifier)
-  → soul_cleave_t (direct_damage_modifier)
+  → inner_demon_t (direct_damage_modifier)
   _Soul Cleave deals $s1% increased damage to your primary target._
 - (2) **Soulmonger** (389711) [passive_buff]
   _When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}._
@@ -752,7 +748,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
   → Aldrachi Tactics (proc_trigger)
   _When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take $442624s1% increased damage for $442624d. Max $442624u stacks...._
 - (4) **Broken Spirit** (1272143) [passive_buff]
-  → Soul Cleave (damage_modifier)
+  → Broken Spirit (damage_modifier)
   _$?a212613[Sigil of Spite][The Hunt] shatters $?a212613[$s1 additional][$s2] Soul $LFragment:Fragments;. $?a212613[Soul Cleave has][Blade Dance and Chaos Strike have] a $?a212613[$s3][$s4]% chance to s..._
 
 **Row 2:**

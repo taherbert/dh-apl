@@ -337,42 +337,6 @@
       "confidence": "medium"
     },
     {
-      "source": "Frailty",
-      "sourceVar": "vengeance.frailty",
-      "target": "Focused Cleave",
-      "targetVar": "vengeance.focused_cleave",
-      "context": "soul_cleave_t",
-      "contextAbility": "soul_cleave",
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
-      "source": "Frailty",
-      "sourceVar": "vengeance.frailty",
-      "target": "Broken Spirit",
-      "targetVar": "aldrachi_reaver.broken_spirit",
-      "context": "soul_cleave_t",
-      "contextAbility": "soul_cleave",
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
-      "source": "Focused Cleave",
-      "sourceVar": "vengeance.focused_cleave",
-      "target": "Broken Spirit",
-      "targetVar": "aldrachi_reaver.broken_spirit",
-      "context": "soul_cleave_t",
-      "contextAbility": "soul_cleave",
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
       "source": "Fury of the Aldrachi",
       "sourceVar": "aldrachi_reaver.fury_of_the_aldrachi",
       "target": "Bladecraft",
@@ -669,36 +633,6 @@
       "confidence": "medium"
     },
     {
-      "source": "Frailty",
-      "sourceVar": "vengeance.frailty",
-      "target": "Soul Cleave",
-      "context": "soul_cleave_t",
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
-      "source": "Focused Cleave",
-      "sourceVar": "vengeance.focused_cleave",
-      "target": "Soul Cleave",
-      "context": "soul_cleave_t",
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
-      "source": "Broken Spirit",
-      "sourceVar": "aldrachi_reaver.broken_spirit",
-      "target": "Soul Cleave",
-      "context": "soul_cleave_t",
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
       "source": "Keen Engagement",
       "sourceVar": "aldrachi_reaver.keen_engagement",
       "target": "Throw Glaive",
@@ -804,9 +738,9 @@
     }
   ],
   "scanStats": {
-    "contextsScanned": 129,
-    "talentCrossRefs": 33,
-    "talentAbilityRefs": 33,
+    "contextsScanned": 128,
+    "talentCrossRefs": 30,
+    "talentAbilityRefs": 30,
     "effectScans": 8
   }
 }

@@ -11781,118 +11781,6 @@
     },
     {
       "source": {
-        "id": 343207,
-        "name": "Focused Cleave",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": 228477,
-        "name": "Soul Cleave"
-      },
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "magnitude": {
-        "value": 50,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 50,
-          "scaledValue": 50,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 1272143,
-        "name": "Broken Spirit",
-        "isTalent": true,
-        "tree": "hero",
-        "heroSpec": "Aldrachi Reaver"
-      },
-      "target": {
-        "id": 228477,
-        "name": "Soul Cleave"
-      },
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "magnitude": {
-        "value": 1,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Physical",
-        "Holy",
-        "Fire",
-        "Frost"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 3 (23)",
-          "baseValue": 1,
-          "scaledValue": 1,
-          "target": "Self (1)",
-          "schoolMask": 23,
-          "affectedSpells": "Sigil of Spite (390163)",
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 1,
-          "scaledValue": 1,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 4,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 15,
-          "scaledValue": 15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 442497,
         "name": "Keen Engagement",
         "isTalent": true,
@@ -13461,110 +13349,6 @@
     },
     {
       "source": {
-        "id": 389958,
-        "name": "Frailty",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": 343207,
-        "name": "Focused Cleave"
-      },
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 389958,
-        "name": "Frailty",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": 1272143,
-        "name": "Broken Spirit"
-      },
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 343207,
-        "name": "Focused Cleave",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": 1272143,
-        "name": "Broken Spirit"
-      },
-      "type": "damage_modifier",
-      "mechanism": "on_impact",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "magnitude": {
-        "value": 50,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 50,
-          "scaledValue": 50,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 442718,
         "name": "Fury of the Aldrachi",
         "isTalent": true,
@@ -14020,7 +13804,7 @@
       },
       "target": {
         "id": null,
-        "name": "soul_cleave_t"
+        "name": "inner_demon_t"
       },
       "type": "direct_damage_modifier",
       "mechanism": "composite_override",
@@ -14547,6 +14331,79 @@
           "schoolMask": null,
           "affectedSpells": null,
           "triggerSpell": 444929
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 1272143,
+        "name": "Broken Spirit",
+        "isTalent": true,
+        "tree": "hero",
+        "heroSpec": "Aldrachi Reaver"
+      },
+      "target": {
+        "id": 1272143,
+        "name": "Broken Spirit"
+      },
+      "type": "damage_modifier",
+      "discoveryMethod": "effect_scan",
+      "confidence": "medium",
+      "magnitude": {
+        "value": 1,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "Physical",
+        "Holy",
+        "Fire",
+        "Frost"
+      ],
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 3 (23)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": 23,
+          "affectedSpells": "Sigil of Spite (390163)",
+          "triggerSpell": null
+        },
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 3,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 20,
+          "scaledValue": 20,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 4,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 15,
+          "scaledValue": 15,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
         }
       ],
       "categories": [
@@ -20256,46 +20113,6 @@
           "schoolTarget": [
             "None"
           ]
-        },
-        {
-          "source": "Focused Cleave",
-          "sourceId": 343207,
-          "type": "damage_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        },
-        {
-          "source": "Broken Spirit",
-          "sourceId": 1272143,
-          "type": "damage_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Physical",
-            "Holy",
-            "Fire",
-            "Frost"
-          ]
         }
       ]
     },
@@ -20619,46 +20436,6 @@
           ],
           "schoolTarget": [
             "None"
-          ]
-        },
-        {
-          "source": "Focused Cleave",
-          "sourceId": 343207,
-          "type": "damage_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        },
-        {
-          "source": "Broken Spirit",
-          "sourceId": 1272143,
-          "type": "damage_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 1,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "schoolTarget": [
-            "Physical",
-            "Holy",
-            "Fire",
-            "Frost"
           ]
         }
       ]
@@ -25039,23 +24816,6 @@
             "unit": "flat",
             "stacking": "additive"
           },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        }
-      ]
-    },
-    "343207": {
-      "name": "Focused Cleave",
-      "modifiers": [
-        {
-          "source": "Frailty",
-          "sourceId": 389958,
-          "type": "damage_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
           "application": "buff_on_player",
           "categories": [
             "offensive"
@@ -33154,32 +32914,26 @@
       "name": "Broken Spirit",
       "modifiers": [
         {
-          "source": "Frailty",
-          "sourceId": 389958,
+          "source": "Broken Spirit",
+          "sourceId": 1272143,
           "type": "damage_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        },
-        {
-          "source": "Focused Cleave",
-          "sourceId": 343207,
-          "type": "damage_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
+          "discoveryMethod": "effect_scan",
           "magnitude": {
-            "value": 50,
+            "value": 1,
             "unit": "percent",
             "stacking": "multiplicative"
           },
           "application": "buff_on_player",
           "categories": [
             "offensive"
+          ],
+          "schoolTarget": [
+            "Physical",
+            "Holy",
+            "Fire",
+            "Frost"
           ]
         }
       ]
@@ -35587,39 +35341,7 @@
       "heroSpec": null,
       "targets": [
         {
-          "spell": "Soul Cleave",
-          "spellId": 228477,
-          "type": "damage_modifier",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "on_impact"
-        },
-        {
-          "spell": "Broken Spirit",
-          "spellId": 1272143,
-          "type": "damage_modifier",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 50,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "on_impact"
-        },
-        {
-          "spell": "soul_cleave_t",
+          "spell": "inner_demon_t",
           "spellId": null,
           "type": "direct_damage_modifier",
           "discoveryMethod": "cpp_effects",
@@ -36139,28 +35861,6 @@
           "spell": "Dark Matter",
           "spellId": 1256307,
           "type": "proc_trigger",
-          "discoveryMethod": "cpp_scanner",
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "on_impact"
-        },
-        {
-          "spell": "Focused Cleave",
-          "spellId": 343207,
-          "type": "damage_modifier",
-          "discoveryMethod": "cpp_scanner",
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "on_impact"
-        },
-        {
-          "spell": "Broken Spirit",
-          "spellId": 1272143,
-          "type": "damage_modifier",
           "discoveryMethod": "cpp_scanner",
           "application": "buff_on_player",
           "categories": [
@@ -39273,10 +38973,10 @@
       "heroSpec": "Aldrachi Reaver",
       "targets": [
         {
-          "spell": "Soul Cleave",
-          "spellId": 228477,
+          "spell": "Broken Spirit",
+          "spellId": 1272143,
           "type": "damage_modifier",
-          "discoveryMethod": "cpp_scanner",
+          "discoveryMethod": "effect_scan",
           "magnitude": {
             "value": 1,
             "unit": "percent",
@@ -39291,8 +38991,7 @@
             "Holy",
             "Fire",
             "Frost"
-          ],
-          "mechanism": "on_impact"
+          ]
         }
       ]
     },

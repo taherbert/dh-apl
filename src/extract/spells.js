@@ -8,6 +8,7 @@ import { parseSpellQueryOutput, cleanSpell } from "./parser.js";
 import { resolveAllDescriptions } from "./template-resolver.js";
 import {
   SIMC_BIN,
+  DATA_ENV,
   config,
   initSpec,
   loadSpecAdapter,
@@ -20,8 +21,9 @@ import { dataDir, dataFile, ensureSpecDirs } from "../engine/paths.js";
 let RAW_DIR;
 
 function runSpellQuery(query) {
+  const ptrFlag = DATA_ENV !== "live" ? "ptr=1 " : "";
   try {
-    return execSync(`${SIMC_BIN} spell_query="${query}"`, {
+    return execSync(`${SIMC_BIN} ${ptrFlag}spell_query="${query}"`, {
       encoding: "utf-8",
       maxBuffer: 50 * 1024 * 1024,
       timeout: 30000,

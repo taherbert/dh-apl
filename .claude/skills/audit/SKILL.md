@@ -19,12 +19,12 @@ SPELL QUERY DATA:            simc spell_query (runtime, limited by binary age)
 
 ## Data Sources
 
-| Source           | Path/URL                                      | Authority                   |
-| ---------------- | --------------------------------------------- | --------------------------- |
-| Raidbots         | `raidbots.com/static/data/{env}/talents.json` | Talent tree (ground truth)  |
-| simc C++ source  | Path from config.json                         | Implementation, assignments |
-| SpellDataDump    | `reference/spelldatadump-*.txt`               | Spell effects, coefficients |
-| simc spell_query | Binary path from config.json                  | Runtime spell data          |
+| Source           | Path/URL                                              | Authority                   |
+| ---------------- | ----------------------------------------------------- | --------------------------- |
+| Raidbots         | `mimiron.raidbots.com/static/data/{env}/talents.json` | Talent tree (ground truth)  |
+| simc C++ source  | Path from config.json                                 | Implementation, assignments |
+| SpellDataDump    | `reference/spelldatadump-*.txt`                       | Spell effects, coefficients |
+| simc spell_query | Binary path from config.json                          | Runtime spell data          |
 
 ## Verification Steps
 

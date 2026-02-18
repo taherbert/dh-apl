@@ -11,7 +11,7 @@ Detailed reference material for the dh-apl project. See [CLAUDE.md](CLAUDE.md) f
 
 ## Data Sources
 
-- **Raidbots** (`raidbots.com/static/data/{env}/talents.json`): Authoritative talent tree source. Provides class/spec/hero nodes with spell IDs, positions, choice variants. Environment: `live` or `ptr` (controlled by `config.json` `data.env`).
+- **Raidbots** (`mimiron.raidbots.com/static/data/{env}/talents.json`): Authoritative talent tree source. Provides class/spec/hero nodes with spell IDs, positions, choice variants. Environment: `live` or `ptr` (controlled by `config.json` `data.env`).
 - **simc C++** (class module path from `config.json`): Implementation reference. Talent assignments via `talent.{tree}.{var}` patterns.
 - **simc spell_query**: Runtime spell data (effects, coefficients). Limited by binary age.
 - **SpellDataDump**: Full spell effect data, updated more frequently than the binary.
