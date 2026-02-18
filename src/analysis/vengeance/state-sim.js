@@ -327,8 +327,11 @@ export function applyAbility(state, abilityId) {
       s.charges.fracture = 2;
       s.recharge.fracture = 4.5;
 
-      // Instantly grant 3 VF building stacks (if not in spending)
-      if (s.buffStacks.voidfall_spending === 0) {
+      // Instantly grant 3 VF building stacks (Annihilator only, if not in spending)
+      if (
+        cfg.heroTree === "annihilator" &&
+        s.buffStacks.voidfall_spending === 0
+      ) {
         s.buffStacks.voidfall_building = 3;
       }
 
@@ -544,15 +547,6 @@ export function getAvailable(state) {
 // DPGCD scoring — relative damage per GCD for scoring purposes
 // Fire abilities benefit from Fiery Demise (+30% fire amp while FB DoT is up)
 // ---------------------------------------------------------------------------
-
-// Abilities that deal Fire school damage (benefit from Fiery Demise)
-const FIRE_ABILITIES = new Set([
-  "fel_devastation",
-  "soul_carver",
-  "immolation_aura",
-  "sigil_of_flame",
-  "fiery_brand",
-]);
 
 // Base DPGCD scores (Fracture = 100 reference)
 // Derived from AP coefficients in SPEC_CONFIG.domainOverrides:

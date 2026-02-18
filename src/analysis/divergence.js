@@ -104,18 +104,16 @@ function snapshotToState(snap, buildConfig) {
 // all subsequent GCDs to compare different game states).
 export function computeDivergence(aplTrace, buildConfig) {
   const divergences = [];
-  const duration = aplTrace.metadata?.duration ?? 120;
 
-  // Pre-compute total fight score — used as denominator for DPS% estimates.
-  // Sum immediate scoreDpgcd over all on-GCD APL choices.
+  // Single pass: accumulate total fight score AND detect divergences.
+  // totalFightScore = sum of immediate scoreDpgcd for all on-GCD APL choices,
+  // used as the denominator for DPS% impact estimates.
   let totalFightScore = 0;
-  for (const event of aplTrace.events.filter((e) => !e.off_gcd)) {
-    const st = snapshotToState(event.pre, buildConfig);
-    totalFightScore += engine.scoreDpgcd(st, event.ability);
-  }
 
   for (const event of aplTrace.events.filter((e) => !e.off_gcd)) {
     const state = snapshotToState(event.pre, buildConfig);
+    totalFightScore += engine.scoreDpgcd(state, event.ability);
+
     const optAbility = getBestAbility(state);
 
     if (!optAbility || optAbility === event.ability) continue;
@@ -300,7 +298,6 @@ function generateFixHint(opt, apl, preState, buildConfig) {
   const frags = preState.soul_fragments;
   const inMeta = preState.buffs.metamorphosis > 0;
   const vfSpending = preState.buffStacks.voidfall_spending;
-  const vfBuilding = preState.buffStacks.voidfall_building;
   const fbActive = (preState.dots?.fiery_brand || 0) > 0;
 
   // SpB was optimal but APL chose Fracture
