@@ -74,26 +74,29 @@ export function createInitialState(buildConfig) {
     },
 
     // Cooldown remaining (seconds; 0 = ready)
+    // Reflects post-precombat state: SoF was cast in precombat (~30s CD remaining),
+    // SoS/SC/FB/FelDev/Meta all start ready (none used precombat).
     cooldowns: {
       metamorphosis: 0,
       fel_devastation: 0,
       fiery_brand: 0,
-      soul_carver: 60, // Not on opener by default
-      sigil_of_spite: 60,
-      sigil_of_flame: 0,
+      soul_carver: 0,
+      sigil_of_spite: 0,
+      sigil_of_flame: 30, // Cast in precombat
       felblade: 0,
     },
 
     // Multi-charge spell tracking
+    // One IA charge used in precombat; one remaining with recharge started.
     charges: {
       fracture: 2,
-      immolation_aura: 2,
+      immolation_aura: 1,
     },
 
     // Time until next charge (only relevant when charges < max)
     recharge: {
       fracture: 4.5,
-      immolation_aura: 30,
+      immolation_aura: 28, // ~2s into recharge after precombat cast
     },
 
     // Previous GCDs for prev_gcd.N.ability checks
