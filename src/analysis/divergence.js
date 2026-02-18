@@ -11,87 +11,29 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
+import { initSpec, getSpecAdapter } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import {
-  createInitialState,
-  scoreDpgcd,
-  advanceTime,
-  applyAbility,
-} from "./state-sim.js";
-import { generateTimeline } from "./optimal-timeline.js";
-import { simulateApl } from "./apl-interpreter.js";
+  generateTimeline,
+  initEngine as initTimelineEngine,
+} from "./optimal-timeline.js";
+import {
+  simulateApl,
+  initEngine as initInterpreterEngine,
+} from "./apl-interpreter.js";
 import { ROOT } from "../engine/paths.js";
 
-// ---------------------------------------------------------------------------
-// Build archetypes (shared with other tools)
-// ---------------------------------------------------------------------------
+// State engine — loaded dynamically based on --spec
+let engine;
 
-const ARCHETYPES = {
-  "anni-apex3-dgb": {
-    heroTree: "annihilator",
-    apexRank: 3,
-    haste: 0.2,
-    target_count: 1,
-    talents: {
-      fiery_demise: true,
-      fiery_brand: true,
-      charred_flesh: true,
-      burning_alive: true,
-      down_in_flames: true,
-      darkglare_boon: true,
-      meteoric_rise: true,
-      stoke_the_flames: true,
-      vengeful_beast: true,
-      untethered_rage: true,
-      fallout: true,
-      soul_carver: false,
-      soul_sigils: false,
-      quickened_sigils: false,
-      cycle_of_binding: false,
-      vulnerability: false,
-    },
-  },
-  "anni-apex3-nodgb": {
-    heroTree: "annihilator",
-    apexRank: 3,
-    haste: 0.2,
-    target_count: 1,
-    talents: {
-      fiery_demise: true,
-      fiery_brand: true,
-      charred_flesh: true,
-      burning_alive: true,
-      down_in_flames: true,
-      darkglare_boon: false,
-      meteoric_rise: true,
-      stoke_the_flames: true,
-      vengeful_beast: true,
-      untethered_rage: true,
-      fallout: true,
-      soul_carver: false,
-    },
-  },
-  "anni-apex0-fullstack": {
-    heroTree: "annihilator",
-    apexRank: 0,
-    haste: 0.2,
-    target_count: 1,
-    talents: {
-      fiery_demise: true,
-      fiery_brand: true,
-      charred_flesh: true,
-      burning_alive: true,
-      down_in_flames: true,
-      darkglare_boon: true,
-      meteoric_rise: true,
-      stoke_the_flames: true,
-      soul_carver: true,
-      soul_sigils: true,
-      cycle_of_binding: true,
-      vulnerability: true,
-      fallout: true,
-    },
-  },
-};
+async function initEngine(specName) {
+  if (engine) return engine;
+  engine = await import(`./${specName}/state-sim.js`);
+  // Also initialize the shared engine in the sub-tools so they don't re-import
+  await initTimelineEngine(specName);
+  await initInterpreterEngine(specName);
+  return engine;
+}
 
 // ---------------------------------------------------------------------------
 // State reconstruction helper
@@ -99,7 +41,7 @@ const ARCHETYPES = {
 // ---------------------------------------------------------------------------
 
 function snapshotToState(snap, buildConfig) {
-  const state = createInitialState(buildConfig);
+  const state = engine.createInitialState(buildConfig);
   state.fury = snap.fury;
   state.soul_fragments = snap.soul_fragments;
   state.buffStacks.voidfall_building = snap.vf_building;
@@ -107,24 +49,16 @@ function snapshotToState(snap, buildConfig) {
   state.vf_building = snap.vf_building;
   state.vf_spending = snap.vf_spending;
 
-  // Restore buff durations
-  if (snap.buffs) {
-    for (const [key, val] of Object.entries(snap.buffs)) {
-      if (key in state.buffs) state.buffs[key] = val;
-    }
-  }
-
-  // Restore dots
-  if (snap.dots) {
-    for (const [key, val] of Object.entries(snap.dots)) {
-      if (key in state.dots) state.dots[key] = val;
-    }
-  }
-
-  // Restore cooldowns
-  if (snap.cooldowns) {
-    for (const [key, val] of Object.entries(snap.cooldowns)) {
-      if (key in state.cooldowns) state.cooldowns[key] = val;
+  // Restore buff durations, dots, and cooldowns from snapshot
+  for (const [dict, snapDict] of [
+    [state.buffs, snap.buffs],
+    [state.dots, snap.dots],
+    [state.cooldowns, snap.cooldowns],
+  ]) {
+    if (snapDict) {
+      for (const [key, val] of Object.entries(snapDict)) {
+        if (key in dict) dict[key] = val;
+      }
     }
   }
 
@@ -162,8 +96,8 @@ export function computeDivergence(timeline, aplTrace, buildConfig) {
 
     // Compute the DPGCD delta: what the optimal choice would score vs. what APL chose
     const preState = snapshotToState(apl.pre, buildConfig);
-    const optScore = scoreDpgcd(preState, opt.ability);
-    const aplScore = scoreDpgcd(preState, apl.ability);
+    const optScore = engine.scoreDpgcd(preState, opt.ability);
+    const aplScore = engine.scoreDpgcd(preState, apl.ability);
     const dpgcdDelta = optScore - aplScore;
 
     // Skip very small deltas (noise)
@@ -488,7 +422,7 @@ export function generateReport(divergences, buildName, metadata) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const { values } = parseArgs({
     options: {
-      spec: { type: "string", default: "vengeance" },
+      spec: { type: "string" },
       build: { type: "string", default: "anni-apex3-dgb" },
       duration: { type: "string", default: "120" },
       timeline: { type: "string" },
@@ -499,7 +433,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     strict: false,
   });
 
-  const spec = values.spec;
+  const spec = values.spec || parseSpecArg();
+  await initSpec(spec);
+  await initEngine(spec);
+
+  const ARCHETYPES = getSpecAdapter().getSpecConfig().analysisArchetypes ?? {};
   const buildName = values.build;
   const duration = parseInt(values.duration, 10);
 

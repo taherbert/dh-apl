@@ -1,8 +1,11 @@
-// APL Decision Simulator — replays vengeance.simc decisions against the state simulator.
+// APL Decision Simulator — replays {spec}.simc decisions against the state simulator.
 //
 // Given the same initial state as optimal-timeline.js, evaluates what action the
 // current APL would choose at each GCD. Produces apl-trace.json in the same format
 // as timeline.json for direct comparison by divergence.js.
+//
+// The state engine and build archetypes are loaded from the spec module at runtime
+// (--spec flag); this file contains no spec-specific hardcoding.
 //
 // Usage:
 //   node src/analysis/apl-interpreter.js --spec vengeance --build anni-apex3-dgb --duration 120
@@ -13,84 +16,18 @@ import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { parse, getActionLists } from "../apl/parser.js";
 import { parseCondition } from "../apl/condition-parser.js";
-import {
-  createInitialState,
-  applyAbility,
-  advanceTime,
-  getAvailable,
-  OFF_GCD_ABILITIES,
-  getAbilityGcd,
-} from "./state-sim.js";
+import { initSpec, getSpecAdapter } from "../engine/startup.js";
+import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { ROOT } from "../engine/paths.js";
 
-// Build archetypes (same as optimal-timeline.js)
-const ARCHETYPES = {
-  "anni-apex3-dgb": {
-    heroTree: "annihilator",
-    apexRank: 3,
-    haste: 0.2,
-    target_count: 1,
-    talents: {
-      fiery_demise: true,
-      fiery_brand: true,
-      charred_flesh: true,
-      burning_alive: true,
-      down_in_flames: true,
-      darkglare_boon: true,
-      meteoric_rise: true,
-      stoke_the_flames: true,
-      vengeful_beast: true,
-      untethered_rage: true,
-      fallout: true,
-      soul_carver: false,
-      soul_sigils: false,
-      quickened_sigils: false,
-      cycle_of_binding: false,
-      vulnerability: false,
-    },
-  },
-  "anni-apex3-nodgb": {
-    heroTree: "annihilator",
-    apexRank: 3,
-    haste: 0.2,
-    target_count: 1,
-    talents: {
-      fiery_demise: true,
-      fiery_brand: true,
-      charred_flesh: true,
-      burning_alive: true,
-      down_in_flames: true,
-      darkglare_boon: false,
-      meteoric_rise: true,
-      stoke_the_flames: true,
-      vengeful_beast: true,
-      untethered_rage: true,
-      fallout: true,
-      soul_carver: false,
-    },
-  },
-  "anni-apex0-fullstack": {
-    heroTree: "annihilator",
-    apexRank: 0,
-    haste: 0.2,
-    target_count: 1,
-    talents: {
-      fiery_demise: true,
-      fiery_brand: true,
-      charred_flesh: true,
-      burning_alive: true,
-      down_in_flames: true,
-      darkglare_boon: true,
-      meteoric_rise: true,
-      stoke_the_flames: true,
-      soul_carver: true,
-      soul_sigils: true,
-      cycle_of_binding: true,
-      vulnerability: true,
-      fallout: true,
-    },
-  },
-};
+// State engine — loaded dynamically from src/analysis/{spec}/state-sim.js
+let engine;
+
+export async function initEngine(specName) {
+  if (engine) return engine;
+  engine = await import(`./${specName}/state-sim.js`);
+  return engine;
+}
 
 // ---------------------------------------------------------------------------
 // SimC expression evaluator
@@ -135,22 +72,15 @@ function evalSimcExpr(expr, state, vars, cfg) {
         buffName === "voidfall_spending"
       ) {
         const stacks = state.buffStacks[buffName] || 0;
-        switch (prop) {
-          case "up":
-            return stacks > 0 ? 1 : 0;
-          case "down":
-            return stacks === 0 ? 1 : 0;
-          case "stack":
-            return stacks;
-          case "remains":
-            return stacks > 0 ? 9999 : 0; // VF stacks aren't time-based
-          default:
-            return stacks > 0 ? 1 : 0;
-        }
+        if (prop === "down") return stacks === 0 ? 1 : 0;
+        if (prop === "stack") return stacks;
+        if (prop === "remains") return stacks > 0 ? 9999 : 0; // VF stacks aren't time-based
+        return stacks > 0 ? 1 : 0;
       }
       const remains = state.buffs[buffName] || 0;
       switch (prop) {
         case "up":
+        case "react":
           return remains > 0 ? 1 : 0;
         case "down":
           return remains <= 0 ? 1 : 0;
@@ -158,8 +88,6 @@ function evalSimcExpr(expr, state, vars, cfg) {
           return remains;
         case "stack":
           return state.buffStacks[buffName] || 0;
-        case "react":
-          return remains > 0 ? 1 : 0;
         default:
           return remains;
       }
@@ -169,30 +97,16 @@ function evalSimcExpr(expr, state, vars, cfg) {
       const buffName = parts[1];
       const prop = parts[2] || "up";
       const remains = state.debuffs[buffName] || 0;
-      switch (prop) {
-        case "up":
-          return remains > 0 ? 1 : 0;
-        case "react":
-          return remains > 0 ? 1 : 0;
-        case "remains":
-          return remains;
-        default:
-          return remains > 0 ? 1 : 0;
-      }
+      if (prop === "remains") return remains;
+      return remains > 0 ? 1 : 0;
     }
 
     case "dot": {
       const dotName = parts[1];
       const prop = parts[2] || "ticking";
       const remains = state.dots[dotName] || 0;
-      switch (prop) {
-        case "ticking":
-          return remains > 0 ? 1 : 0;
-        case "remains":
-          return remains;
-        default:
-          return remains > 0 ? 1 : 0;
-      }
+      if (prop === "remains") return remains;
+      return remains > 0 ? 1 : 0;
     }
 
     case "cooldown": {
@@ -357,23 +271,7 @@ function evalConditionAst(ast, state, vars, cfg) {
         const container = state[prefix] || {};
         val = container[buffName] || 0;
       }
-      let result;
-      switch (ast.property) {
-        case "up":
-          result = val > 0;
-          break;
-        case "down":
-          result = val <= 0;
-          break;
-        case "ticking":
-          result = val > 0;
-          break;
-        case "react":
-          result = val > 0;
-          break;
-        default:
-          result = val > 0;
-      }
+      const result = ast.property === "down" ? val <= 0 : val > 0;
       return ast.negate ? !result : result;
     }
 
@@ -420,6 +318,11 @@ function evalConditionAst(ast, state, vars, cfg) {
     case "Literal": {
       const n = parseFloat(ast.value);
       if (!isNaN(n)) return n !== 0;
+      // apex.N: condition-parser doesn't recognize this prefix, falls through to Literal.
+      // Route through evalSimcExpr which handles it correctly.
+      if (ast.value.startsWith("apex.")) {
+        return evalSimcExpr(ast.value, state, vars, cfg) > 0;
+      }
       return ast.value !== "" && ast.value !== "0";
     }
 
@@ -435,11 +338,18 @@ function evalConditionAst(ast, state, vars, cfg) {
 // causing incorrect evaluation of arithmetic expressions.
 function preprocessCondition(str, state, vars, cfg) {
   // Replace parenthesized arithmetic: (N-expr) → computed value
-  return str.replace(/\((\d+)-([\w.]+)\)/g, (match, n, expr) => {
-    const num = parseInt(n, 10);
-    const val = evalSimcExpr(expr, state, vars, cfg);
-    return String(num - val);
-  });
+  // e.g., (2-apex.3) with apex.3=1 → 1
+  let result = str.replace(/\((\d+)-([\w.]+)\)/g, (_, n, expr) =>
+    String(parseInt(n, 10) - evalSimcExpr(expr, state, vars, cfg)),
+  );
+  // Replace bare addition in comparison RHS: <=N+expr → <=computed
+  // e.g., soul_fragments<=2+talent.soul_sigils → soul_fragments<=3 when soul_sigils=1
+  result = result.replace(
+    /(<=|>=|<|>|=)(\d+)\+([\w.]+)/g,
+    (_, op, n, expr) =>
+      `${op}${parseInt(n, 10) + evalSimcExpr(expr, state, vars, cfg)}`,
+  );
+  return result;
 }
 
 function evalCondition(conditionStr, state, vars, cfg) {
@@ -606,7 +516,7 @@ function evalActionList(listName, actionLists, state, vars, cfg, depth = 0) {
       }
 
       // Check if ability is castable
-      const available = getAvailable(state);
+      const available = engine.getAvailable(state);
       // For off-GCD abilities, check differently
       const useOffGcd = entry.modifiers.get("use_off_gcd") === "1";
 
@@ -618,7 +528,7 @@ function evalActionList(listName, actionLists, state, vars, cfg, depth = 0) {
         if (available.includes(ability)) {
           return {
             ability,
-            off_gcd: useOffGcd || OFF_GCD_ABILITIES.has(ability),
+            off_gcd: useOffGcd || engine.OFF_GCD_ABILITIES.has(ability),
             condition: condition || null,
             listName,
           };
@@ -635,17 +545,21 @@ function evalActionList(listName, actionLists, state, vars, cfg, depth = 0) {
 // ---------------------------------------------------------------------------
 
 export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
-  // Parse the APL
+  const {
+    createInitialState,
+    applyAbility,
+    advanceTime,
+    OFF_GCD_ABILITIES,
+    getAbilityGcd,
+  } = engine;
+
   const sections = parse(aplText);
   const actionLists = getActionLists(sections);
-
-  // Build a map for fast lookup
-  const actionListMap = actionLists;
 
   let state = createInitialState(buildConfig);
   const events = [];
   let gcdNumber = 0;
-  let offGcdQueue = []; // pending off-GCD actions from the current sweep
+  let offGcdGuard = 0;
 
   while (state.t < durationSeconds) {
     // Compute variables fresh for this GCD
@@ -672,8 +586,9 @@ export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
 
     const { ability, off_gcd, condition, apl_reason } = decision;
 
-    if (off_gcd && OFF_GCD_ABILITIES.has(ability)) {
+    if (off_gcd && OFF_GCD_ABILITIES.has(ability) && offGcdGuard < 5) {
       // Off-GCD ability: apply without consuming GCD
+      offGcdGuard++;
       const offGcdT = state.t;
       const preState = snapshotState(state);
       state = applyAbility(state, ability);
@@ -690,6 +605,7 @@ export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
       // Re-evaluate same GCD slot (off-GCD doesn't consume GCD)
       continue;
     }
+    offGcdGuard = 0;
 
     // On-GCD ability
     gcdNumber++;
@@ -770,7 +686,7 @@ function evalDefaultList(actionLists, state, vars, cfg, heroList) {
       if (ability === "auto_attack" || ability === "snapshot_stats") continue;
 
       if (!condition || evalCondition(condition, state, vars, cfg)) {
-        const available = getAvailable(state);
+        const available = engine.getAvailable(state);
         if (available.includes(ability)) {
           return {
             ability,
@@ -818,7 +734,7 @@ function snapshotState(s) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const { values } = parseArgs({
     options: {
-      spec: { type: "string", default: "vengeance" },
+      spec: { type: "string" },
       build: { type: "string", default: "anni-apex3-dgb" },
       duration: { type: "string", default: "120" },
       apl: { type: "string" },
@@ -827,7 +743,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     strict: false,
   });
 
-  const spec = values.spec;
+  const spec = values.spec || parseSpecArg();
+  await initSpec(spec);
+  await initEngine(spec);
+
+  const ARCHETYPES = getSpecAdapter().getSpecConfig().analysisArchetypes ?? {};
   const buildName = values.build;
   const archetype = ARCHETYPES[buildName];
 

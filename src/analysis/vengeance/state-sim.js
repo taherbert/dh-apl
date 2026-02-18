@@ -177,16 +177,15 @@ export function advanceTime(state, dt) {
 
   // Recharge multi-charge spells
   for (const spell of ["fracture", "immolation_aura"]) {
-    const maxCharges = spell === "fracture" ? 2 : 2;
-    if (s.charges[spell] < maxCharges) {
+    if (s.charges[spell] < 2) {
       s.recharge[spell] -= dt;
-      while (s.recharge[spell] <= 0 && s.charges[spell] < maxCharges) {
+      const baseRecharge = spell === "fracture" ? 4.5 : 30;
+      while (s.recharge[spell] <= 0 && s.charges[spell] < 2) {
         s.charges[spell]++;
-        const baseRecharge = spell === "fracture" ? 4.5 : 30;
-        if (s.charges[spell] < maxCharges) {
+        if (s.charges[spell] < 2) {
           s.recharge[spell] += baseRecharge;
         } else {
-          s.recharge[spell] = baseRecharge; // Reset for next use
+          s.recharge[spell] = baseRecharge;
         }
       }
     }
@@ -331,7 +330,6 @@ export function applyAbility(state, abilityId) {
       // 3 frags, +1 with Soul Sigils talent
       const fragGain = cfg.talents?.soul_sigils ? 4 : 3;
       s.soul_fragments = Math.min(fragCap(cfg), s.soul_fragments + fragGain);
-      s.sigil_of_spite_cd_tmp = 60; // Track separately since we use cooldowns dict
       s.cooldowns.sigil_of_spite = 60;
       break;
     }
@@ -619,3 +617,35 @@ function cloneState(s) {
 }
 
 export { cloneState };
+
+// ---------------------------------------------------------------------------
+// Off-GCD trigger — VDH-specific logic for when Meta should fire.
+// Returns "metamorphosis" if Meta should fire this GCD, null otherwise.
+// Called by the optimal-timeline rollout before each on-GCD decision.
+// ---------------------------------------------------------------------------
+
+export function getOffGcdTrigger(state) {
+  const cfg = state.buildConfig;
+  const metaReady = state.cooldowns.metamorphosis <= 0;
+  const inMeta = state.buffs.metamorphosis > 0;
+  const vfSpending = state.buffStacks.voidfall_spending;
+
+  if (!metaReady) return null;
+  if (vfSpending > 0) return null; // Never interrupt VF spending phase
+
+  // UR proc: fire immediately — any delay risks losing the 12s buff
+  if (state.buffs.untethered_rage > 0) return "metamorphosis";
+
+  // Standard Meta: not in Meta, frags >= 3 for immediate SpB on entry
+  if (!inMeta && state.soul_fragments >= 3) return "metamorphosis";
+
+  // Standard Meta: not in Meta, burst SpB was just cast (prev_gcd guard)
+  if (!inMeta && state.prev_gcd === "spirit_bomb") return "metamorphosis";
+
+  // Meta chaining (apex.3 only): hardcast during active Meta when vf_building=0
+  if (inMeta && cfg.apexRank >= 3 && state.buffStacks.voidfall_building === 0) {
+    return "metamorphosis";
+  }
+
+  return null;
+}
