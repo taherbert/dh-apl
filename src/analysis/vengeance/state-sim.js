@@ -515,9 +515,10 @@ export function scoreDpgcd(state, abilityId) {
       // 0.4 AP per fragment consumed (from SPEC_CONFIG)
       // Normalized: at 5 frags = 193, at 4 = 154, at 3 = 116
       score = Math.max(0, consumed) * 38.5;
-      // Voidfall dump (spending=3): adds fel meteors worth ~3-4× a normal SpB.
-      // Without this bonus the greedy rollout mis-values SC at spending=1/2.
-      if (vfSpending === 3) score += 500;
+      // Voidfall dump (spending=3): triggers Catastrophe (extra Soul Cleave hit).
+      // Soul Cleave = 1.29 AP → ~125 normalized (vs Fracture 1.035 = 100 base).
+      // Using the actual Catastrophe AP equivalent keeps scoring calibrated.
+      if (vfSpending === 3) score += 125;
       break;
     }
 
@@ -525,9 +526,9 @@ export function scoreDpgcd(state, abilityId) {
       // 1.29 AP → 125 relative to Fracture
       score = 125 * metaAmp;
       // During Voidfall spending phase (pre-dump): SC increments spending stack
-      // while preserving fragments for the dump SpB. Greedy scorer needs an
-      // explicit bonus here because SC's immediate damage is lower than SpB's.
-      if (vfSpending > 0 && vfSpending < 3) score += 200;
+      // while preserving fragments for the dump SpB. Needs enough bonus to beat
+      // SpB's immediate score at any typical frag count (SpB max = 5×38.5=192.5).
+      if (vfSpending > 0 && vfSpending < 3) score += 100;
       break;
 
     case "fel_devastation":

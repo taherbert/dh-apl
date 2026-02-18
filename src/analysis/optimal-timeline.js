@@ -261,6 +261,17 @@ export function getBestAbility(state) {
   return pickOptimal(state)?.ability ?? null;
 }
 
+// Full rollout score for a specific ability — used by divergence.js to compute
+// the delta as rollout(optimal) - rollout(apl_choice), which is always >= 0
+// and directly meaningful (immediate scores alone mislead for strategic setups).
+export function getAbilityRolloutScore(state, abilityId) {
+  const { applyAbility, advanceTime, scoreDpgcd, getAbilityGcd } = engine;
+  const immediate = scoreDpgcd(state, abilityId);
+  const next = applyAbility(state, abilityId);
+  const dt = getAbilityGcd(state, abilityId) || state.gcd;
+  return immediate + rolloutDps(advanceTime(next, dt), T_HORIZON);
+}
+
 export { snapshotState };
 
 // ---------------------------------------------------------------------------
