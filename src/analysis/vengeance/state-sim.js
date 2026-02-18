@@ -54,6 +54,10 @@ export function createInitialState(buildConfig) {
       seething_anger: 0, // stacking BLP buff; stacks tracked separately
       voidfall_building: 0, // not time-based, but tracked for compat
       voidfall_spending: 0,
+      // AR-specific (Aldrachi Reaver) buffs
+      reavers_glaive: 0, // proc buff granting the empowered glaive throw
+      rending_strike: 0, // applied by reavers_glaive — empowers next Fracture/SC
+      glaive_flurry: 0, // applied by reavers_glaive — empowers next Fracture/SC
     },
 
     // Stack counts for stacking buffs
@@ -71,6 +75,7 @@ export function createInitialState(buildConfig) {
     // Debuffs on target
     debuffs: {
       frailty: 0,
+      reavers_mark: 0, // AR: Wounded Quarry damage amp applied by reavers_glaive
     },
 
     // Cooldown remaining (seconds; 0 = ready)
@@ -105,6 +110,13 @@ export function createInitialState(buildConfig) {
 
     // Fury cap changes in Meta
     fury_cap: 100,
+
+    // Pending fragment deliveries (travel-time delayed)
+    // Each entry: { arrive_at: number, count: number }
+    pending_frags: [],
+
+    // AR proc EV accumulator — 50% chance per spending cast to grant reavers_glaive buff
+    _rg_frac: 0,
 
     // Simulation config (immutable)
     buildConfig,
@@ -194,6 +206,22 @@ export function advanceTime(state, dt) {
     }
   }
 
+  // Drain pending fragment deliveries (SoS travel time)
+  if (s.pending_frags.length > 0) {
+    const remaining = [];
+    for (const pf of s.pending_frags) {
+      if (pf.arrive_at <= s.t) {
+        s.soul_fragments = Math.min(
+          fragCap(s.buildConfig),
+          s.soul_fragments + pf.count,
+        );
+      } else {
+        remaining.push(pf);
+      }
+    }
+    s.pending_frags = remaining;
+  }
+
   // Sync vf_building / vf_spending from buffStacks (keep in sync)
   s.vf_building = s.buffStacks.voidfall_building;
   s.vf_spending = s.buffStacks.voidfall_spending;
@@ -228,8 +256,11 @@ export function applyAbility(state, abilityId) {
       // Consume a charge
       _consumeCharge(s, "fracture", 4.5);
 
-      // VF building: 35% proc chance per Fracture (expected value model)
-      if (s.buffStacks.voidfall_spending === 0) {
+      // VF building: 35% proc chance per Fracture (Annihilator only)
+      if (
+        cfg.heroTree === "annihilator" &&
+        s.buffStacks.voidfall_spending === 0
+      ) {
         s._vf_frac += 0.35;
         while (s._vf_frac >= 1.0) {
           s._vf_frac -= 1.0;
@@ -253,8 +284,11 @@ export function applyAbility(state, abilityId) {
       // Apply Frailty debuff (~6s)
       s.debuffs.frailty = 6;
 
-      // VF state machine transitions
+      // VF state machine transitions (Annihilator only)
       _applyVfSpender(s, "spirit_bomb");
+
+      // AR: proc reavers_glaive buff (art_of_the_glaive, ~50% EV per spending cast)
+      _applyArProc(s);
       break;
     }
 
@@ -266,8 +300,20 @@ export function applyAbility(state, abilityId) {
       const consumed = Math.min(2, s.soul_fragments);
       s.soul_fragments = Math.max(0, s.soul_fragments - consumed);
 
-      // VF spending increment
+      // VF spending increment (Annihilator only)
       _applyVfSpender(s, "soul_cleave");
+
+      // AR: proc reavers_glaive buff
+      _applyArProc(s);
+      break;
+    }
+
+    case "reavers_glaive": {
+      // Consume the proc buff; apply Rending Strike + Glaive Flurry empowerment
+      s.buffs.reavers_glaive = 0;
+      s.buffs.rending_strike = 15;
+      s.buffs.glaive_flurry = 15;
+      s.debuffs.reavers_mark = 30; // Wounded Quarry damage amp debuff
       break;
     }
 
@@ -331,8 +377,13 @@ export function applyAbility(state, abilityId) {
 
     case "sigil_of_spite": {
       // 3 frags, +1 with Soul Sigils talent
+      // Travel time: 1.25s (1 GCD) without Quickened Sigils; 0.5s with
       const fragGain = cfg.talents?.soul_sigils ? 4 : 3;
-      s.soul_fragments = Math.min(fragCap(cfg), s.soul_fragments + fragGain);
+      const travelTime = cfg.talents?.quickened_sigils ? 0.5 : 1.25;
+      s.pending_frags = [
+        ...s.pending_frags,
+        { arrive_at: s.t + travelTime, count: fragGain },
+      ];
       s.cooldowns.sigil_of_spite = 60;
       break;
     }
@@ -382,8 +433,10 @@ export function applyAbility(state, abilityId) {
   return s;
 }
 
-// VF spender state machine: handles spirit_bomb and soul_cleave transitions
+// VF spender state machine: handles spirit_bomb and soul_cleave transitions (Annihilator only)
 function _applyVfSpender(s, ability) {
+  if (s.buildConfig.heroTree !== "annihilator") return;
+
   if (
     s.buffStacks.voidfall_building === 3 &&
     s.buffStacks.voidfall_spending === 0
@@ -405,6 +458,20 @@ function _applyVfSpender(s, ability) {
     // SC at spending=3 shouldn't happen per APL, but handle gracefully
   }
   // If building < 3 and spending = 0: no VF effect on this cast
+}
+
+// AR proc: 50% chance (expected value) per spending cast to grant reavers_glaive buff
+function _applyArProc(s) {
+  if (
+    s.buildConfig.heroTree !== "aldrachi_reaver" ||
+    !s.buildConfig.talents?.art_of_the_glaive
+  )
+    return;
+  s._rg_frac = (s._rg_frac || 0) + 0.5;
+  while (s._rg_frac >= 1.0) {
+    s._rg_frac -= 1.0;
+    s.buffs.reavers_glaive = 15; // 15s proc buff duration
+  }
 }
 
 // Consume one charge of a multi-charge spell
@@ -464,6 +531,9 @@ export function getAvailable(state) {
   // Felblade: requires CD
   if (s.cooldowns.felblade <= 0) available.push("felblade");
 
+  // Reaver's Glaive: AR only, available when proc buff is active
+  if ((s.buffs.reavers_glaive ?? 0) > 0) available.push("reavers_glaive");
+
   // Throw Glaive: always available as filler
   available.push("throw_glaive");
 
@@ -505,10 +575,13 @@ export function scoreDpgcd(state, abilityId) {
   let score = 0;
 
   switch (abilityId) {
-    case "fracture":
+    case "fracture": {
       // 1.035 AP coefficient; generates fury/frags (future value captured by rollout)
       score = 100 * metaAmp;
+      // AR: Wounded Quarry — Fracture deals extra damage under Reaver's Mark debuff (~30%)
+      if ((s.debuffs?.reavers_mark ?? 0) > 0) score *= 1.3;
       break;
+    }
 
     case "spirit_bomb": {
       const consumed = Math.min(s.soul_fragments, spbMaxConsume(cfg));
@@ -522,13 +595,26 @@ export function scoreDpgcd(state, abilityId) {
       break;
     }
 
-    case "soul_cleave":
+    case "soul_cleave": {
       // 1.29 AP → 125 relative to Fracture
       score = 125 * metaAmp;
       // During Voidfall spending phase (pre-dump): SC increments spending stack
       // while preserving fragments for the dump SpB. Needs enough bonus to beat
       // SpB's immediate score at any typical frag count (SpB max = 5×38.5=192.5).
       if (vfSpending > 0 && vfSpending < 3) score += 100;
+      // AR: Bladecraft empowerment under Rending Strike + Glaive Flurry
+      if (
+        (s.buffs?.rending_strike ?? 0) > 0 &&
+        (s.buffs?.glaive_flurry ?? 0) > 0
+      )
+        score *= 1.5;
+      break;
+    }
+
+    case "reavers_glaive":
+      // 3.45 AP / 1.035 AP (Fracture ref) × 100 = 333; grants empowerment buffs
+      // Future empowerment value (Bladecraft SC + Wounded Quarry Fracture) captured by rollout
+      score = 333 * metaAmp;
       break;
 
     case "fel_devastation":
@@ -622,6 +708,7 @@ function cloneState(s) {
     cooldowns: { ...s.cooldowns },
     charges: { ...s.charges },
     recharge: { ...s.recharge },
+    pending_frags: s.pending_frags ? [...s.pending_frags] : [],
     // buildConfig is immutable, share the reference
   };
 }
@@ -652,8 +739,13 @@ export function getOffGcdTrigger(state) {
   // Standard Meta: not in Meta, burst SpB was just cast (prev_gcd guard)
   if (!inMeta && state.prev_gcd === "spirit_bomb") return "metamorphosis";
 
-  // Meta chaining (apex.3 only): hardcast during active Meta when vf_building=0
-  if (inMeta && cfg.apexRank >= 3 && state.buffStacks.voidfall_building === 0) {
+  // Meta chaining (apex.3 + annihilator only): hardcast during active Meta when vf_building=0
+  if (
+    inMeta &&
+    cfg.heroTree === "annihilator" &&
+    cfg.apexRank >= 3 &&
+    state.buffStacks.voidfall_building === 0
+  ) {
     return "metamorphosis";
   }
 

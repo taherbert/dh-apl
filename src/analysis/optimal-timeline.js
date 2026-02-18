@@ -35,11 +35,11 @@ export async function initEngine(specName) {
 //   score(a) = immediate_dpgcd(a) + rollout_dps(applyAbility(s, a), T_horizon)
 //
 // rollout_dps uses greedy (immediate-only) continuation to estimate future
-// value. T_horizon = 15s covers Fiery Brand duration, Meta chain decisions,
-// and fury pooling windows.
+// value. T_horizon = 25s covers a full Fiery Brand duration (10s) plus
+// follow-on burst windows, reducing false positives for CD setup abilities.
 // ---------------------------------------------------------------------------
 
-const T_HORIZON = 15;
+const T_HORIZON = 25;
 
 function rolloutDps(state, horizon) {
   const {

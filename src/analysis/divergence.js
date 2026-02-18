@@ -11,6 +11,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
+import { createHash } from "node:crypto";
 import { initSpec, getSpecAdapter } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import {
@@ -34,6 +35,24 @@ async function initEngine(specName) {
   await initTimelineEngine(specName);
   await initInterpreterEngine(specName);
   return engine;
+}
+
+// ---------------------------------------------------------------------------
+// Config hash — deterministic hash of archetype config for cache invalidation
+// ---------------------------------------------------------------------------
+
+function hashConfig(archetype) {
+  // Exclude _name (set dynamically by CLI, not part of the config)
+  const { _name, ...configData } = archetype;
+  const str = JSON.stringify(configData, (_, value) => {
+    if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+      return Object.fromEntries(
+        Object.entries(value).sort(([a], [b]) => a.localeCompare(b)),
+      );
+    }
+    return value;
+  });
+  return createHash("md5").update(str).digest("hex").slice(0, 16);
 }
 
 // ---------------------------------------------------------------------------
@@ -87,6 +106,14 @@ export function computeDivergence(aplTrace, buildConfig) {
   const divergences = [];
   const duration = aplTrace.metadata?.duration ?? 120;
 
+  // Pre-compute total fight score — used as denominator for DPS% estimates.
+  // Sum immediate scoreDpgcd over all on-GCD APL choices.
+  let totalFightScore = 0;
+  for (const event of aplTrace.events.filter((e) => !e.off_gcd)) {
+    const st = snapshotToState(event.pre, buildConfig);
+    totalFightScore += engine.scoreDpgcd(st, event.ability);
+  }
+
   for (const event of aplTrace.events.filter((e) => !e.off_gcd)) {
     const state = snapshotToState(event.pre, buildConfig);
     const optAbility = getBestAbility(state);
@@ -106,7 +133,6 @@ export function computeDivergence(aplTrace, buildConfig) {
 
     const opt = { ability: optAbility };
     const apl = { ability: event.ability };
-    const frequency = estimateFrequency(opt, apl, buildConfig);
 
     divergences.push({
       gcd: event.gcd,
@@ -126,10 +152,29 @@ export function computeDivergence(aplTrace, buildConfig) {
         score: aplScore,
       },
       dpgcd_delta: Math.round(dpgcdDelta),
-      frequency_estimate: frequency,
-      estimated_dps_impact: estimateDpsImpact(dpgcdDelta, frequency, duration),
+      // actual_occurrences and estimated_dps_impact filled in post-loop
       fix_hint: generateFixHint(opt, apl, state, buildConfig),
     });
+  }
+
+  // Count actual occurrences per (optimal, actual) ability pair
+  const pairCounts = new Map();
+  for (const d of divergences) {
+    const key = `${d.optimal.ability}|${d.actual.ability}`;
+    pairCounts.set(key, (pairCounts.get(key) || 0) + 1);
+  }
+
+  // Annotate each divergence with occurrence count and DPS impact
+  for (const d of divergences) {
+    const key = `${d.optimal.ability}|${d.actual.ability}`;
+    d.actual_occurrences = pairCounts.get(key) || 1;
+    const impact = computeImpact(
+      d.dpgcd_delta,
+      d.actual_occurrences,
+      totalFightScore,
+    );
+    d.estimated_dps_impact = impact.display;
+    d.estimated_dps_impact_pct = impact.pct;
   }
 
   divergences.sort((a, b) => Math.abs(b.dpgcd_delta) - Math.abs(a.dpgcd_delta));
@@ -141,64 +186,111 @@ function isFillerAbility(ability) {
   return ["throw_glaive", "felblade", "sigil_of_flame"].includes(ability);
 }
 
-// Estimate how often this divergence pattern occurs per 2-minute cycle
-function estimateFrequency(opt, apl, buildConfig) {
+// Count-based DPS impact estimate
+// Returns { display: string, pct: number|null }
+function computeImpact(dpgcdDelta, occurrences, totalFightScore) {
+  if (occurrences < 2 || totalFightScore <= 0) {
+    return { display: `n/a (1×)`, pct: null };
+  }
+  const pct = ((dpgcdDelta * occurrences) / totalFightScore) * 100;
+  return {
+    display: `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}% (${occurrences}×)`,
+    pct,
+  };
+}
+
+// Human-readable frequency description (kept for report context alongside actual count)
+function estimateFrequency(opt, apl) {
   const optAbility = opt.ability;
   const aplAbility = apl.ability;
 
-  // Meta-related divergences: ~every 180s
-  if (optAbility === "metamorphosis" || aplAbility === "metamorphosis") {
-    return "~every 3min (Meta CD)";
-  }
-
-  // SpB threshold divergences: multiple times per Meta window
-  if (optAbility === "spirit_bomb" && aplAbility === "fracture") {
-    return "2-4× per Meta window";
-  }
-
-  if (optAbility === "spirit_bomb" || aplAbility === "spirit_bomb") {
-    return "~every SpB window (~8-10s)";
-  }
-
-  // FelDev timing: ~every 30-40s
-  if (optAbility === "fel_devastation" || aplAbility === "fel_devastation") {
-    return "~every 30-40s (FelDev CD)";
-  }
-
-  // Fiery Brand: ~every 60s
-  if (optAbility === "fiery_brand" || aplAbility === "fiery_brand") {
-    return "~every 60s (FB CD)";
-  }
-
-  // VF state machine divergences: ~every 15-20s
-  if (opt.state?.vf_building > 0 || opt.state?.vf_spending > 0) {
-    return "~every VF cycle (~15-20s)";
-  }
-
+  if (optAbility === "metamorphosis" || aplAbility === "metamorphosis")
+    return "Meta CD (~3min)";
+  if (optAbility === "spirit_bomb" && aplAbility === "fracture")
+    return "SpB window";
+  if (optAbility === "spirit_bomb" || aplAbility === "spirit_bomb")
+    return "SpB window (~8-10s)";
+  if (optAbility === "fel_devastation" || aplAbility === "fel_devastation")
+    return "FelDev CD (~30-40s)";
+  if (optAbility === "fiery_brand" || aplAbility === "fiery_brand")
+    return "FB CD (~60s)";
+  if (optAbility === "reavers_glaive" || aplAbility === "reavers_glaive")
+    return "RG proc";
   return "intermittent";
 }
 
-// Estimate DPS impact as a percentage of total fight DPS
-// Using rough baseline of ~25,000 raw score units per 120s fight
-function estimateDpsImpact(dpgcdDelta, frequency, durationSeconds) {
-  const TOTAL_SCORE_PER_SECOND = 200; // arbitrary baseline score/second
-  const totalScore = TOTAL_SCORE_PER_SECOND * durationSeconds;
+// ---------------------------------------------------------------------------
+// Rollout branch comparison — simulates 3 GCDs from each branch and reports
+// the key state differences. Used by generateFixHint for actionable context.
+// ---------------------------------------------------------------------------
 
-  // Estimate occurrences per fight
-  let occurrences;
-  if (frequency.includes("3min")) occurrences = durationSeconds / 180;
-  else if (frequency.includes("60s")) occurrences = durationSeconds / 60;
-  else if (frequency.includes("30-40s")) occurrences = durationSeconds / 35;
-  else if (frequency.includes("15-20s")) occurrences = durationSeconds / 17;
-  else if (frequency.includes("8-10s")) occurrences = durationSeconds / 9;
-  else if (frequency.includes("Meta window"))
-    occurrences = (durationSeconds / 180) * 3;
-  else occurrences = durationSeconds / 20; // Generic estimate
+function compareRolloutBranches(state, optAbility, aplAbility, steps = 3) {
+  const {
+    applyAbility,
+    advanceTime,
+    getAvailable,
+    scoreDpgcd,
+    getAbilityGcd,
+    OFF_GCD_ABILITIES,
+  } = engine;
 
-  const totalImpact = dpgcdDelta * occurrences;
-  const pct = (totalImpact / totalScore) * 100;
+  function simulateBranch(firstAbility) {
+    let s = applyAbility(state, firstAbility);
+    const dt0 = getAbilityGcd(state, firstAbility) || state.gcd;
+    s = advanceTime(s, dt0);
+    let score = scoreDpgcd(state, firstAbility);
 
-  return `${pct >= 0 ? "+" : ""}${pct.toFixed(2)}%`;
+    for (let i = 1; i < steps; i++) {
+      const available = getAvailable(s).filter(
+        (id) => !OFF_GCD_ABILITIES.has(id),
+      );
+      if (!available.length) break;
+
+      let bestId = null;
+      let bestSc = -Infinity;
+      for (const id of available) {
+        const sc = scoreDpgcd(s, id);
+        if (sc > bestSc) {
+          bestSc = sc;
+          bestId = id;
+        }
+      }
+      if (!bestId) break;
+
+      score += bestSc;
+      const next = applyAbility(s, bestId);
+      const dt = getAbilityGcd(s, bestId) || s.gcd;
+      s = advanceTime(next, dt);
+    }
+    return { score, endState: s };
+  }
+
+  const optBranch = simulateBranch(optAbility);
+  const aplBranch = simulateBranch(aplAbility);
+  const diff = optBranch.score - aplBranch.score;
+  const o = optBranch.endState;
+  const a = aplBranch.endState;
+
+  const details = [
+    `${steps}-GCD score: ${optAbility}=${optBranch.score.toFixed(0)} vs ${aplAbility}=${aplBranch.score.toFixed(0)} (Δ${diff >= 0 ? "+" : ""}${diff.toFixed(0)})`,
+  ];
+
+  if (Math.abs(o.soul_fragments - a.soul_fragments) >= 2)
+    details.push(
+      `frags: opt_path=${o.soul_fragments} APL_path=${a.soul_fragments}`,
+    );
+  if (Math.abs(o.fury - a.fury) >= 20)
+    details.push(`fury: opt_path=${o.fury} APL_path=${a.fury}`);
+  const oVfs = o.buffStacks?.voidfall_spending ?? 0;
+  const aVfs = a.buffStacks?.voidfall_spending ?? 0;
+  if (oVfs !== aVfs)
+    details.push(`VF spending: opt_path=${oVfs} APL_path=${aVfs}`);
+  if ((o.dots?.fiery_brand ?? 0) > 0 !== (a.dots?.fiery_brand ?? 0) > 0)
+    details.push(
+      `FB active: opt_path=${(o.dots?.fiery_brand ?? 0) > 0} APL_path=${(a.dots?.fiery_brand ?? 0) > 0}`,
+    );
+
+  return details.join("; ");
 }
 
 // Generate a fix hint based on the divergence pattern
@@ -213,60 +305,61 @@ function generateFixHint(opt, apl, preState, buildConfig) {
 
   // SpB was optimal but APL chose Fracture
   if (optAbility === "spirit_bomb" && aplAbility === "fracture") {
-    if (inMeta) {
-      return `spb_threshold condition during Meta may be too high (frags=${frags}, threshold likely${frags >= 4 ? " correct" : ` requires ${frags}>=threshold`})`;
-    }
-    if (fbActive) {
-      return `SpB under Fiery Demise: APL spb_threshold or fiery_demise_active condition may not be triggering (frags=${frags}, fb_active=${fbActive})`;
-    }
-    return `SpB gating condition too strict at frags=${frags}; APL chose Fracture instead`;
+    const base = inMeta
+      ? `spb_threshold condition during Meta may be too high (frags=${frags}, threshold likely${frags >= 4 ? " correct" : ` requires ${frags}>=threshold`})`
+      : fbActive
+        ? `SpB under Fiery Demise: APL spb_threshold or fiery_demise_active condition may not be triggering (frags=${frags}, fb_active=${fbActive})`
+        : `SpB gating condition too strict at frags=${frags}; APL chose Fracture instead`;
+    return `${base}. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
   }
 
   // Meta was optimal but APL delayed
   if (optAbility === "metamorphosis" && aplAbility !== "metamorphosis") {
     if (frags < 3) {
-      return `APL gates Meta on soul_fragments>=3; at frags=${frags} APL delays. Consider whether pre-loading Fracture costs more than it gains.`;
+      return `APL gates Meta on soul_fragments>=3; at frags=${frags} APL delays. Consider whether pre-loading Fracture costs more than it gains. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
     }
     if (vfSpending > 0) {
-      return `APL blocks Meta during VF spending phase (spending=${vfSpending}); timing interaction with VF dump`;
+      return `APL blocks Meta during VF spending phase (spending=${vfSpending}); timing interaction with VF dump. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
     }
-    return `Meta timing: APL delays while optimal fires; check Meta entry conditions`;
+    return `Meta timing: APL delays while optimal fires. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
   }
 
   // FelDev timing vs. other abilities
   if (optAbility === "fel_devastation" && aplAbility !== "fel_devastation") {
     if (fbActive) {
-      return `FelDev should fire under Fiery Demise (+30% fire amp); APL chose ${aplAbility} instead — check fb_active gating in anni_cooldowns`;
+      return `FelDev should fire under Fiery Demise (+30% fire amp); APL chose ${aplAbility} instead — check fb_active gating in anni_cooldowns. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
     }
     if (inMeta) {
-      return `FelDev in Meta: APL may be gating on !apex.3|talent.darkglare_boon; verify DGB flag`;
+      return `FelDev in Meta: APL may be gating on !apex.3|talent.darkglare_boon; verify DGB flag. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
     }
-    return `FelDev opportunity: APL chose ${aplAbility}; check anni_cooldowns priority or voidfall_spending gate`;
+    return `FelDev opportunity: APL chose ${aplAbility}; check anni_cooldowns priority or voidfall_spending gate. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
   }
 
   // Fiery Brand timing
   if (optAbility === "fiery_brand" && !fbActive) {
-    return `FB should be applied to enable Fiery Demise; APL chose ${aplAbility}. Check anni_voidfall or anni_cooldowns fire brand condition`;
+    return `FB should be applied to enable Fiery Demise; APL chose ${aplAbility}. Check anni_voidfall or anni_cooldowns fire brand condition. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
   }
 
   // APL chose SC but optimal wants SpB (fragment mismatch)
   if (optAbility === "spirit_bomb" && aplAbility === "soul_cleave") {
-    if (vfSpending > 0) {
-      return `VF spending phase: optimal wants SpB at spending=${vfSpending} but APL chose SC; check voidfall spending conditions`;
-    }
-    return `SpB vs SC: ${frags} frags available, optimal prefers SpB for fragment efficiency`;
+    const base =
+      vfSpending > 0
+        ? `VF spending phase: optimal wants SpB at spending=${vfSpending} but APL chose SC; check voidfall spending conditions`
+        : `SpB vs SC: ${frags} frags available, optimal prefers SpB for fragment efficiency`;
+    return `${base}. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
   }
 
   // Fragment generator vs. spender mismatch
   if (isFragmentGenerator(optAbility) && isFragmentSpender(aplAbility)) {
-    return `APL spending fragments when optimal would generate; frags=${frags} may be above optimal spending threshold at this point`;
+    return `APL spending fragments when optimal would generate; frags=${frags} may be above optimal spending threshold at this point. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
   }
 
   if (isFragmentSpender(optAbility) && isFragmentGenerator(aplAbility)) {
-    return `APL generating fragments when optimal would spend; frags=${frags} sufficient for ${optAbility} but APL generated more first`;
+    return `APL generating fragments when optimal would spend; frags=${frags} sufficient for ${optAbility} but APL generated more first. ${compareRolloutBranches(preState, optAbility, aplAbility)}`;
   }
 
-  return `${aplAbility} chosen by APL; ${optAbility} scored higher in 15s rollout due to upcoming buff windows or resource state`;
+  // Default: show rollout branch comparison
+  return compareRolloutBranches(preState, optAbility, aplAbility);
 }
 
 function isFragmentGenerator(ability) {
@@ -313,15 +406,16 @@ export function generateReport(divergences, buildName, metadata) {
 
   // Impact table
   lines.push(
-    "| # | GCD | t | Optimal | APL Chose | Rollout Δ | Est. Impact | Frequency |",
+    "| # | GCD | t | Optimal | APL Chose | Rollout Δ | Δ Score | Count | Context |",
   );
   lines.push(
-    "|---|-----|---|---------|-----------|---------|-------------|-----------|",
+    "|---|-----|---|---------|-----------|-----------|---------|-------|---------|",
   );
   for (let i = 0; i < Math.min(divergences.length, 20); i++) {
     const d = divergences[i];
+    const freq = estimateFrequency(d.optimal, d.actual);
     lines.push(
-      `| ${i + 1} | ${d.gcd} | ${d.t}s | \`${d.optimal.ability}\` | \`${d.actual.ability}\` | ${d.dpgcd_delta > 0 ? "+" : ""}${d.dpgcd_delta} | ${d.estimated_dps_impact} | ${d.frequency_estimate} |`,
+      `| ${i + 1} | ${d.gcd} | ${d.t}s | \`${d.optimal.ability}\` | \`${d.actual.ability}\` | ${d.dpgcd_delta > 0 ? "+" : ""}${d.dpgcd_delta} | ${d.estimated_dps_impact} | ${d.actual_occurrences}× | ${freq} |`,
     );
   }
   lines.push("");
@@ -358,10 +452,14 @@ export function generateReport(divergences, buildName, metadata) {
     lines.push(`**APL chose:** \`${d.actual.ability}\``);
     lines.push(`> Condition: \`${d.actual.apl_reason || "unconditional"}\``);
     lines.push("");
+    const impactStr =
+      d.actual_occurrences >= 2
+        ? `Δ Score: ${d.estimated_dps_impact}`
+        : "single occurrence — no % estimate";
+    lines.push(`**Rollout delta:** +${d.dpgcd_delta} | ${impactStr}`);
     lines.push(
-      `**Rollout delta:** +${d.dpgcd_delta} (estimated ${d.estimated_dps_impact} DPS)`,
+      `**Occurrences:** ${d.actual_occurrences}× in ${metadata.duration}s`,
     );
-    lines.push(`**Frequency:** ${d.frequency_estimate}`);
     lines.push("");
     lines.push(`**Fix hint:** ${d.fix_hint}`);
     lines.push("");
@@ -377,10 +475,11 @@ export function generateReport(divergences, buildName, metadata) {
   );
   lines.push("");
 
-  const candidates = divergences.filter((d) => {
-    const pct = parseFloat(d.estimated_dps_impact);
-    return Math.abs(pct) >= 0.05;
-  });
+  const candidates = divergences.filter(
+    (d) =>
+      d.estimated_dps_impact_pct !== null &&
+      Math.abs(d.estimated_dps_impact_pct) >= 0.05,
+  );
 
   if (candidates.length === 0) {
     lines.push("No divergences above 0.05% threshold. APL is near optimal.");
@@ -396,7 +495,7 @@ export function generateReport(divergences, buildName, metadata) {
   lines.push("---");
   lines.push("");
   lines.push(
-    "> Generated by `npm run divergence`. Delta = 15s rollout(optimal) - rollout(APL choice); always ≥ 0.",
+    "> Generated by `npm run divergence`. Delta = 25s rollout(optimal) - rollout(APL choice); always ≥ 0.",
   );
   lines.push(
     "> All candidates must be validated with `iterate.js compare` before accepting.",
@@ -419,6 +518,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       trace: { type: "string" },
       apl: { type: "string" },
       output: { type: "string" },
+      "force-retrace": { type: "boolean", default: false },
     },
     strict: false,
   });
@@ -442,14 +542,25 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const resultsDir = join(ROOT, "results", spec);
   mkdirSync(resultsDir, { recursive: true });
 
-  // Load or generate the APL trace
+  // Load or generate the APL trace — with config-hash cache invalidation
   const traceFile =
     values.trace || join(resultsDir, `apl-trace-${buildName}.json`);
-  let aplTrace;
-  if (existsSync(traceFile)) {
-    console.log(`Loading APL trace: ${traceFile}`);
-    aplTrace = JSON.parse(readFileSync(traceFile, "utf-8"));
-  } else {
+  let aplTrace = null;
+
+  if (existsSync(traceFile) && !values["force-retrace"]) {
+    const cached = JSON.parse(readFileSync(traceFile, "utf-8"));
+    const currentHash = hashConfig(archetype);
+    if (cached.metadata?.config_hash === currentHash) {
+      console.log(`Loading APL trace from cache: ${traceFile}`);
+      aplTrace = cached;
+    } else {
+      console.log(
+        `Cache invalidated (config changed, hash ${cached.metadata?.config_hash?.slice(0, 8) ?? "none"} → ${currentHash.slice(0, 8)}) — regenerating`,
+      );
+    }
+  }
+
+  if (!aplTrace) {
     const aplPath = values.apl || join(ROOT, "apls", spec, `${spec}.simc`);
     console.log(`Running APL trace from: ${aplPath}`);
     let aplText;
@@ -460,6 +571,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       process.exit(1);
     }
     aplTrace = simulateApl(aplText, archetype, duration);
+    aplTrace.metadata = aplTrace.metadata || {};
+    aplTrace.metadata.config_hash = hashConfig(archetype);
     writeFileSync(traceFile, JSON.stringify(aplTrace));
     console.log(`  Saved to ${traceFile}`);
   }
@@ -474,7 +587,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   if (divergences.length > 0) {
     console.log("Top 10 divergences:");
-    console.log("─".repeat(80));
+    console.log("─".repeat(90));
     const header = [
       "#".padEnd(3),
       "GCD".padEnd(5),
@@ -482,10 +595,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       "Optimal".padEnd(20),
       "APL".padEnd(20),
       "Δ Rollout".padEnd(10),
-      "Est. Impact",
+      "Δ Score".padEnd(16),
+      "Count",
     ].join(" ");
     console.log(header);
-    console.log("─".repeat(80));
+    console.log("─".repeat(90));
 
     for (let i = 0; i < Math.min(10, divergences.length); i++) {
       const d = divergences[i];
@@ -495,8 +609,9 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         `${d.t}s`.padEnd(7),
         d.optimal.ability.padEnd(20),
         d.actual.ability.padEnd(20),
-        (d.dpgcd_delta >= 0 ? "+" : "") + d.dpgcd_delta,
-        d.estimated_dps_impact,
+        ((d.dpgcd_delta >= 0 ? "+" : "") + d.dpgcd_delta).padEnd(10),
+        d.estimated_dps_impact.padEnd(16),
+        `${d.actual_occurrences}×`,
       ].join(" ");
       console.log(row);
     }
