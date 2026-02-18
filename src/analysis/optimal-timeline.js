@@ -244,6 +244,11 @@ function snapshotState(s) {
         .filter(([, v]) => v > 0)
         .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
     ),
+    debuffs: Object.fromEntries(
+      Object.entries(s.debuffs ?? {})
+        .filter(([, v]) => v > 0)
+        .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
+    ),
     cooldowns: Object.fromEntries(
       Object.entries(s.cooldowns ?? {})
         .filter(([, v]) => v > 0)

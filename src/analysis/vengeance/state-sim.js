@@ -89,6 +89,7 @@ export function createInitialState(buildConfig) {
       sigil_of_spite: 0,
       sigil_of_flame: 30, // Cast in precombat
       felblade: 0,
+      throw_glaive: 0,
     },
 
     // Multi-charge spell tracking
@@ -256,6 +257,9 @@ export function applyAbility(state, abilityId) {
       // Consume a charge
       _consumeCharge(s, "fracture", 4.5);
 
+      // Consume AR Rending Strike empowerment (single use per proc)
+      if (s.buffs.rending_strike > 0) s.buffs.rending_strike = 0;
+
       // VF building: 35% proc chance per Fracture (Annihilator only)
       if (
         cfg.heroTree === "annihilator" &&
@@ -299,6 +303,9 @@ export function applyAbility(state, abilityId) {
       // Consume up to 2 fragments
       const consumed = Math.min(2, s.soul_fragments);
       s.soul_fragments = Math.max(0, s.soul_fragments - consumed);
+
+      // Consume AR Glaive Flurry empowerment (single use per proc)
+      if (s.buffs.glaive_flurry > 0) s.buffs.glaive_flurry = 0;
 
       // VF spending increment (Annihilator only)
       _applyVfSpender(s, "soul_cleave");
@@ -537,8 +544,8 @@ export function getAvailable(state) {
   // Reaver's Glaive: AR only, available when proc buff is active
   if ((s.buffs.reavers_glaive ?? 0) > 0) available.push("reavers_glaive");
 
-  // Throw Glaive: always available as filler
-  available.push("throw_glaive");
+  // Throw Glaive: requires CD
+  if ((s.cooldowns.throw_glaive ?? 0) <= 0) available.push("throw_glaive");
 
   return available;
 }

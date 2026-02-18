@@ -73,6 +73,7 @@ function snapshotToState(snap, buildConfig) {
   for (const [dict, snapDict] of [
     [state.buffs, snap.buffs],
     [state.dots, snap.dots],
+    [state.debuffs, snap.debuffs],
     [state.cooldowns, snap.cooldowns],
   ]) {
     if (snapDict) {
