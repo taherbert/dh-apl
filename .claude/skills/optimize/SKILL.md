@@ -95,6 +95,25 @@ Only if no active iteration session:
 node src/sim/iterate.js init apls/{spec}/{spec}.simc
 ```
 
+### 0f. Divergence Analysis (Pre-Hypothesis Priming)
+
+Run divergence analysis for each key archetype before deep reasoning. This generates mechanically-grounded hypotheses — states where the 15s rollout diverges from the APL — as a structured starting point for Phase 1a.
+
+```bash
+# Run for each archetype defined in SPEC_CONFIG.analysisArchetypes
+npm run divergence -- --spec {spec} --build anni-apex3-dgb
+npm run divergence -- --spec {spec} --build anni-apex0-fullstack
+# Add others as needed
+```
+
+Output: `results/{spec}/divergence-report-{build}.md` and `divergences-{build}.json`.
+
+**What it tells you:** Each divergence is a specific claim — "at state S (fury, frags, VF, buffs), 15s rollout prefers X over Y by Z rollout-score points." Divergences with high delta (>100) that recur across archetypes are strong theory candidates.
+
+**Limitation:** The rollout uses an approximate scoring model. Treat every divergence as a hypothesis requiring causal reasoning before testing — not a proven improvement. Skip this step if resuming a session (divergences were already generated).
+
+---
+
 ### 0e. Load the Full Knowledge Base
 
 **Tier 1 -- Mechanical Blueprint (always load):** spec adapter (`src/spec/{spec}.js` SPEC_CONFIG), current APL, `spells-summary.json`
@@ -149,6 +168,10 @@ Read `reference/{spec}-apl.simc` for SimC syntax patterns (NOT priorities): vari
 
 #### Form Root Theories
 
+Read `results/{spec}/divergence-report-*.md` (from Phase 0f). Each divergence is a candidate theory seed — it tells you WHERE the APL may deviate from optimal. Apply deep mechanical reasoning to each: WHY does the divergence exist? Is the rollout's reasoning sound in context? Does the APL's choice have justification the model doesn't capture (e.g., fire amp setup, burst window sync)?
+
+High-delta divergences (>100 rollout points) that appear across multiple archetypes are the most likely real improvements. Low-delta ones (<50) are likely model noise.
+
 2-3 theories that GUIDE everything. **Persist to DB** via `createTheory()`.
 
 Set session phase: `setSessionState('phase', '1_specialists')`
@@ -202,9 +225,21 @@ Read all four `results/{spec}/analysis_*.json` files. Cross-reference with root 
 
 ### 2b. Rank Hypotheses
 
+Cross-reference `results/{spec}/divergences-*.json` alongside specialist outputs. Load via:
+
+```javascript
+const divergences = JSON.parse(
+  readFileSync(`results/{spec}/divergences-{build}.json`),
+).divergences;
+```
+
+Ranking order:
+
 1. **Your theories that specialists missed** -- highest priority (deep insights)
-2. **Specialist findings aligned with theories** -- high priority
-3. **Specialist findings with no causal backing** -- lower priority
+2. **Divergences with rollout_delta > 100 that recur across archetypes** -- strong mechanical signal, validated by two independent reasoning paths (your theory + rollout model)
+3. **Specialist findings aligned with theories** -- high priority
+4. **Single-archetype divergences or rollout_delta 25-100** -- moderate priority, requires causal theory
+5. **Specialist findings with no causal backing** -- lower priority
 
 **Scope ranking:** Universal > Template-specific > Hero-tree-specific > Build-specific
 
