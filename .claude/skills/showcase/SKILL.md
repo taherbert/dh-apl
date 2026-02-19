@@ -1,6 +1,7 @@
 ---
 description: Generate a self-contained HTML showcase report comparing baseline vs optimized APL across all roster builds.
 argument-hint: "[--fidelity quick|standard|confirm] [--skip-sims]"
+allowed-tools: Bash, Read, Glob, Grep
 ---
 
 # Showcase Report

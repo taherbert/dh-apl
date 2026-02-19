@@ -1,67 +1,29 @@
 ---
-description: Look up SimC syntax, expressions, and mechanics from the wiki reference docs.
+description: Look up SimC syntax, expressions, and mechanics from the wiki reference docs. Use when writing APL conditions, checking expression syntax, or understanding SimC features.
 argument-hint: "[topic: syntax|expressions|dh|equipment|overrides|profilesets|output|stats|enemies|characters|options|developer|all]"
+context: fork
+agent: Explore
+allowed-tools: Read, Glob, Grep
 ---
 
-Look up SimC syntax, expressions, and mechanics from the wiki reference docs.
+Look up SimC syntax, expressions, and mechanics from the wiki reference docs in `reference/wiki/`.
 
-## Topic Selection
+Read the files matching the requested topic (`$ARGUMENTS`), then return a summary of the most relevant sections.
 
-Based on `$ARGUMENTS`, read the appropriate wiki files:
+## Topic → File Mapping
 
-**No argument or `syntax`** — APL syntax and expressions (most commonly needed):
-
-- `reference/wiki/action-lists.md`
-- `reference/wiki/action-list-expressions.md`
-
-**`expressions`** — Condition expressions only:
-
-- `reference/wiki/action-list-expressions.md`
-
-**`dh` or `demon-hunter`** — Demon Hunter-specific options, expressions, procs:
-
-- `reference/wiki/demon-hunters.md`
-
-**`equipment` or `gear`** — Gear, gems, enchants, set bonuses:
-
-- `reference/wiki/equipment.md`
-
-**`overrides`** — Spell data overrides for hypothetical tuning:
-
-- `reference/wiki/spell-data-overrides.md`
-
-**`profilesets`** — Batch talent/gear comparison:
-
-- `reference/wiki/profile-sets.md`
-
-**`output`** — Report formats, combat logs:
-
-- `reference/wiki/output.md`
-
-**`stats`** — Scale factors, stat plots, reforge:
-
-- `reference/wiki/stats-scaling.md`
-
-**`enemies`** — Custom enemies, tank dummies:
-
-- `reference/wiki/enemies.md`
-
-**`characters`** — Character declaration, talents, consumables:
-
-- `reference/wiki/characters.md`
-
-**`options`** — General simulation options:
-
-- `reference/wiki/options.md`
-
-**`developer`** — SimC architecture (sim_t, player_t, action_t):
-
-- `reference/wiki/developer-docs.md`
-
-**`all`** — Read every wiki file:
-
-- All files in `reference/wiki/`
-
-## After Loading
-
-Summarize what was loaded and highlight the most relevant sections for the current analysis context.
+| Topic                  | Files                                                                         |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| _(empty)_ or `syntax`  | `reference/wiki/action-lists.md`, `reference/wiki/action-list-expressions.md` |
+| `expressions`          | `reference/wiki/action-list-expressions.md`                                   |
+| `dh` or `demon-hunter` | `reference/wiki/demon-hunters.md`                                             |
+| `equipment` or `gear`  | `reference/wiki/equipment.md`                                                 |
+| `overrides`            | `reference/wiki/spell-data-overrides.md`                                      |
+| `profilesets`          | `reference/wiki/profile-sets.md`                                              |
+| `output`               | `reference/wiki/output.md`                                                    |
+| `stats`                | `reference/wiki/stats-scaling.md`                                             |
+| `enemies`              | `reference/wiki/enemies.md`                                                   |
+| `characters`           | `reference/wiki/characters.md`                                                |
+| `options`              | `reference/wiki/options.md`                                                   |
+| `developer`            | `reference/wiki/developer-docs.md`                                            |
+| `all`                  | All files in `reference/wiki/`                                                |

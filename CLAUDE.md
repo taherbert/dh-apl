@@ -54,7 +54,6 @@ actions+=/...
 
 1. Run `node src/engine/startup-cli.js` to check config and simc sync status
 2. Run `npm run db:status` to check theorycraft DB contents
-3. Check `MULTI-SPEC-PLAN.md` for any ongoing multi-phase work
 
 ## Data File Selection
 
@@ -101,9 +100,7 @@ node src/sim/iterate.js status               # Iteration state
 node src/sim/iterate.js compare <candidate>  # Test candidate APL
 ```
 
-**User commands:** `/optimize [focus]`, `/bootstrap`, `/sim`, `/build`, `/verify`, `/audit`, `/simc-reference`
-
-**Subagent model policy:** Always use `model: "opus"` for ALL subagents. Never use haiku or sonnet for this project's domain work.
+**Subagent model policy:** Use `model: "opus"` for domain agents (theorist, apl-engineer, sim-runner, reviewer) and any agent writing APL or analyzing sim data. Use `model: "sonnet"` for Explore, Plan, and general research subagents. Never use haiku.
 
 ## Conventions
 

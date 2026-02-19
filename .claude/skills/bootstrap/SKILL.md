@@ -1,6 +1,7 @@
 ---
 description: Bootstrap a fresh spec — generates data, APL scaffold, and build theory from scratch. Use when starting optimization for a new spec or after major game changes.
 argument-hint: "[spec-name]"
+allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, WebFetch, WebSearch
 ---
 
 Bootstrap workflow for fresh spec optimization. This skill orchestrates the full pipeline from zero knowledge to a working APL and build theory.

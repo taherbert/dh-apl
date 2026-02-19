@@ -1,6 +1,7 @@
 ---
 description: Run simulations using npm run sim. Pass APL file path and optional scenario as arguments.
 argument-hint: "[apl-file] [scenario]"
+allowed-tools: Bash, Read, Glob, Grep
 ---
 
 Run simulations using `npm run sim`. Arguments: APL file path and optional scenario.

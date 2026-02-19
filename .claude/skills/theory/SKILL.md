@@ -1,6 +1,7 @@
 ---
 description: Manage theories in the theorycrafting database. List, show, create, revise, or summarize theories.
 argument-hint: "[list|show <id>|create|revise <id>|summary]"
+allowed-tools: Bash, Read, Write, Glob, Grep
 ---
 
 # Theory Management

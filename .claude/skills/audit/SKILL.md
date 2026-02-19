@@ -1,5 +1,6 @@
 ---
 description: Full cross-reference data verification audit. Cross-references Raidbots, simc C++, SpellDataDump, and our data files.
+allowed-tools: Bash, Read, Write, Edit, Glob, Grep, WebFetch
 ---
 
 Full cross-reference data verification audit. Cross-references Raidbots, simc C++, SpellDataDump, and our data files. Reports findings and fixes what can be fixed.

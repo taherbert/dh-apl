@@ -1,5 +1,6 @@
 ---
 description: Run npm run verify and analyze the results. Fix issues, rebuild, and re-verify until clean.
+allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
 Run `npm run verify` and analyze the results.

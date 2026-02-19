@@ -1,5 +1,6 @@
 ---
 description: Run npm run build-data to regenerate all data files for the active spec.
+allowed-tools: Bash, Read, Glob, Grep
 ---
 
 Run `npm run build-data` to regenerate all data files for the active spec.

@@ -2,6 +2,7 @@
 description: The ONE command for all APL and build optimization. Runs everything autonomously — generates cluster roster, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, and reporting.
 argument-hint: "[focus directive or 'test: hypothesis']"
 model: opus
+allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, WebFetch, WebSearch
 ---
 
 The ONE command for all APL and build optimization. Runs everything autonomously: generate cluster roster, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, APL branching, and reporting.
