@@ -175,7 +175,7 @@ npm run verify                               # Verify data against simc C++
 npm run extract-simc                         # Extract simc C++ talent variables
 
 # Iteration state management
-node src/sim/iterate.js init apls/vengeance/baseline.simc
+node src/sim/iterate.js init apls/vengeance/baseline.simc [--force]  # --force skips baseline cache
 node src/sim/iterate.js status
 node src/sim/iterate.js compare apls/vengeance/candidate.simc [--quick|--confirm]
 node src/sim/iterate.js accept "reason" [--hypothesis "fragment"]
@@ -184,7 +184,10 @@ node src/sim/iterate.js hypotheses
 node src/sim/iterate.js strategic                    # Generate archetype-aware hypotheses with auto-mutations
 node src/sim/iterate.js theorycraft                  # Generate temporal resource flow hypotheses
 node src/sim/iterate.js generate                     # Auto-generate candidate from top hypothesis
-node src/sim/iterate.js synthesize                   # Synthesize hypotheses from all specialist sources
+node src/sim/iterate.js synthesize                   # Synthesize + persist specialist hypotheses to DB
+node src/sim/iterate.js pattern-analyze              # Batch divergence analysis (parallel via worker threads)
+node src/sim/iterate.js divergence-hypotheses        # Import divergences as DB hypotheses
+node src/sim/iterate.js unify                        # Merge all sources: consensus detection, mutation inference
 node src/sim/iterate.js rollback <iteration-id>      # Rollback an accepted iteration
 node src/sim/iterate.js summary
 
@@ -213,7 +216,7 @@ Embedded directly in agent and skill definitions:
 - **factors** — Legacy DoE factor impacts (retained for history)
 - **synergies** — Talent synergy pairs
 - **findings** — Validated analytical insights (including migrated mechanics)
-- **hypotheses** — Optimization hypotheses (pending, tested, accepted, rejected)
+- **hypotheses** — Optimization hypotheses with consensus tracking (fingerprint, consensus_count, consensus_sources, metadata)
 - **iterations** — APL iteration history (accept/reject decisions with DPS deltas)
 - **session_state** — Key-value store for iteration state
 - **talent_clusters** — Spec talent cluster definitions (migrated from build-theory)

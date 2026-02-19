@@ -62,9 +62,35 @@ Update `results/{spec}/plan.md` after every phase transition and iteration.
 
 ## Phase 0: Setup + Build Discovery
 
-### 0a. Determine Active Spec
+### 0a. Determine Active Spec + Data Freshness Gate
 
-Run `node src/engine/startup-cli.js`.
+Run `node src/engine/startup-cli.js` to check config, spec, and simc sync status.
+
+**Staleness gate — auto-refresh if needed:**
+
+1. Check the startup output for the `Sync:` line. If it says anything other than `up to date`, local data is stale (simc binary was updated but data pipeline hasn't been rebuilt).
+
+2. Check for **upstream** simc changes that haven't been pulled yet:
+
+```bash
+git -C /Users/tom/Documents/GitHub/simc fetch origin midnight --quiet
+git -C /Users/tom/Documents/GitHub/simc rev-parse HEAD           # local
+git -C /Users/tom/Documents/GitHub/simc rev-parse origin/midnight # remote
+```
+
+If local and remote HEADs differ, upstream has new commits.
+
+3. **If either check shows staleness**, run the full refresh pipeline:
+
+```bash
+SPEC={spec} npm run refresh
+```
+
+This pulls simc, rebuilds the binary, extracts reference APL + wiki + spell data, runs the full data pipeline, verifies, and records metadata (~5-10 min). Non-interactive mode is automatic.
+
+4. After refresh completes, re-run `node src/engine/startup-cli.js` to confirm `Sync: up to date`.
+
+**If both checks pass**, data is fresh — continue to 0b.
 
 ### 0b. Session Recovery
 
@@ -231,7 +257,23 @@ node src/sim/iterate.js divergence-hypotheses
 
 This populates the hypothesis DB with cross-archetype divergences (delta > 100, >= 2 archetypes).
 
-### 2c. Unify All Hypothesis Sources
+### 2c. Generate Strategic Hypotheses
+
+```bash
+node src/sim/iterate.js strategic
+```
+
+Generates APL-level strategic hypotheses (ability ordering, condition gaps, dead conditions). Requires `loadState()` — init must have run.
+
+### 2d. Generate Theorycraft Hypotheses
+
+```bash
+node src/sim/iterate.js theorycraft
+```
+
+Generates resource-flow and temporal hypotheses (resource waste, cooldown misalignment, burst window utilization). Requires workflow results from init.
+
+### 2e. Unify All Hypothesis Sources
 
 Merge all 6 hypothesis sources (strategic, theorycraft, synthesized, divergence-analysis, theory-generator, specialist agents) into a consensus-ranked, mutation-enriched list:
 
@@ -249,7 +291,7 @@ This performs:
 
 After unification, ALL hypotheses can produce candidates via `iterate.js generate`, not just sources 1-3.
 
-### 2d. Rank Hypotheses
+### 2f. Rank Hypotheses
 
 Ranking order (post-unification):
 
@@ -262,7 +304,7 @@ Ranking order (post-unification):
 
 **Scope ranking:** Universal > Template-specific > Hero-tree-specific > Build-specific
 
-### 2e. Generate Summary
+### 2g. Generate Summary
 
 Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `changelog.md`.
 

@@ -31,6 +31,7 @@ import {
   loadSpecAdapter,
   initSpec,
   FIDELITY_TIERS,
+  checkSync,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { loadRoster, updateDps, saveRosterDps } from "./build-roster.js";
@@ -105,7 +106,8 @@ import {
   ensureSpecDirs,
   getSpecName,
 } from "../engine/paths.js";
-import { randomUUID } from "node:crypto";
+import { randomUUID, createHash } from "node:crypto";
+import { Worker } from "node:worker_threads";
 
 await initSpec(parseSpecArg());
 
@@ -161,7 +163,7 @@ function normalizeHypothesisKey(description) {
 
 // Insert hypotheses into DB, deduplicating by normalized summary against all existing entries.
 function insertHypothesesToDb(hypotheses, source = "workflow") {
-  const existing = dbGetHypotheses({ limit: 500 });
+  const existing = dbGetHypotheses({ limit: 2000 });
   const existingKeys = new Set(
     existing.map((h) => normalizeHypothesisKey(h.summary || "")),
   );
@@ -179,6 +181,7 @@ function insertHypothesesToDb(hypotheses, source = "workflow") {
       status: "pending",
       source,
       mutation: h.aplMutation || h.mutation || null,
+      metadata: h.metadata || null,
     });
     inserted++;
   }
@@ -987,6 +990,42 @@ async function cmdInit(aplPath) {
   }
 
   console.log(`Multi-build mode: ${roster.builds.length} builds in roster`);
+
+  // Baseline caching: skip sim if APL, SimC binary, and roster are unchanged
+  const aplContent = readFileSync(CURRENT_APL, "utf-8");
+  let simcHead = "";
+  try {
+    simcHead = checkSync().currentHead || "";
+  } catch {
+    // SimC sync check may fail if binary not available
+  }
+  const rosterHashes = roster.builds
+    .map((b) => b.hash)
+    .sort()
+    .join(",");
+  const baselineHash = createHash("sha256")
+    .update(aplContent + simcHead + rosterHashes)
+    .digest("hex");
+
+  const storedHash = getSessionState("baseline_hash");
+  const workflowPath = resultsFile("workflow_current.json");
+  const forceInit = process.argv.includes("--force");
+
+  if (!forceInit && storedHash === baselineHash && existsSync(workflowPath)) {
+    // Verify baseline DPS data exists in DB using the stored session
+    const storedSessionId = getSessionState("session_id");
+    const existingBaseline = storedSessionId
+      ? getBaselineDps(storedSessionId)
+      : null;
+    if (existingBaseline && Object.keys(existingBaseline).length > 0) {
+      console.log(
+        "Baseline unchanged (APL + SimC + roster hash match). Skipping sim.",
+      );
+      console.log("  Use --force to re-run anyway.");
+      return;
+    }
+  }
+
   console.log("Running multi-actor baseline across all scenarios...");
 
   const tierConfig = FIDELITY_TIERS.standard;
@@ -1005,7 +1044,6 @@ async function cmdInit(aplPath) {
   // Also run single-actor workflow for hypothesis generation
   console.log("Running single-actor workflow for hypothesis generation...");
   const workflowResults = await runWorkflow(CURRENT_APL);
-  const workflowPath = resultsFile("workflow_current.json");
   writeFileSync(workflowPath, JSON.stringify(workflowResults, null, 2));
 
   const hypotheses = generateHypotheses(workflowResults);
@@ -1021,6 +1059,7 @@ async function cmdInit(aplPath) {
   setSessionState("original_apl", basename(aplPath));
   setSessionState("current_apl_path", relative(ROOT, CURRENT_APL));
   setSessionState("consecutive_rejections", 0);
+  setSessionState("baseline_hash", baselineHash);
 
   // Write baseline DPS per build per scenario
   for (const [buildId, b] of Object.entries(baseline.builds)) {
@@ -1816,6 +1855,92 @@ async function cmdDivergenceHypotheses() {
 
 // --- Pattern Analysis + Theory Generation ---
 
+// Run pattern analysis in worker threads. Returns true if workers produced results.
+async function runPatternWorkers(
+  workerPath,
+  poolSize,
+  workUnits,
+  aplPath,
+  patternsByBuild,
+  divergencesByBuild,
+) {
+  console.log(`\nUsing ${poolSize} workers for parallel processing...`);
+
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const workers = [];
+  try {
+    for (let i = 0; i < poolSize; i++) {
+      workers.push(
+        new Worker(workerPath, {
+          workerData: { spec: getSpecName(), specConfig },
+        }),
+      );
+    }
+  } catch (err) {
+    console.log(
+      `Worker creation failed (${err.message}), falling back to sequential`,
+    );
+    for (const w of workers) w.terminate();
+    return false;
+  }
+
+  const results = await new Promise((resolve) => {
+    const collected = new Map();
+    let nextUnit = 0;
+    let completed = 0;
+
+    function dispatch(worker) {
+      if (nextUnit >= workUnits.length) return;
+      const unit = workUnits[nextUnit++];
+      worker.postMessage({
+        archetype: unit.archetype,
+        duration: unit.duration,
+        aplPath,
+        runKey: unit.runKey,
+      });
+    }
+
+    for (const worker of workers) {
+      worker.on("message", (msg) => {
+        if (msg.error) {
+          console.log(`    ${msg.runKey}: ERROR ${msg.error}`);
+        } else if (msg.skipped) {
+          console.log(`    ${msg.runKey}: skipped (no APL file)`);
+        } else {
+          collected.set(msg.runKey, msg);
+          console.log(
+            `    ${msg.runKey}: ${msg.gcds} GCDs, ${msg.divergenceCount} divergences`,
+          );
+        }
+        completed++;
+        if (completed >= workUnits.length) resolve(collected);
+        else dispatch(worker);
+      });
+      worker.on("error", (err) => {
+        console.error(`Worker error: ${err.message}`);
+        // Dead worker — don't dispatch more work to it.
+        // Redistribute: try dispatching to any live worker still in the pool.
+        completed++;
+        if (completed >= workUnits.length) {
+          resolve(collected);
+        } else {
+          const alive = workers.filter((w) => w !== worker);
+          for (const w of alive) dispatch(w);
+        }
+      });
+      dispatch(worker);
+    }
+  });
+
+  for (const w of workers) w.terminate();
+
+  for (const [runKey, result] of results) {
+    patternsByBuild[runKey] = result.patterns;
+    divergencesByBuild[runKey] = result.divergences;
+  }
+  return results.size > 0;
+}
+
 async function cmdPatternAnalyze() {
   const specConfig = getSpecAdapter().getSpecConfig();
   const spec = getSpecName();
@@ -1854,20 +1979,16 @@ async function cmdPatternAnalyze() {
     process.exit(1);
   }
 
+  // Engine init — needed for sequential fallback path
   const { initEngine, reinitScoringForBuild } = await import(
     "../analysis/optimal-timeline.js"
   );
-  await initEngine(spec);
-
   const { simulateApl, initEngine: initInterpEngine } = await import(
     "../analysis/apl-interpreter.js"
   );
-  await initInterpEngine(spec);
-
   const { computeDivergence, initEngine: initDivEngine } = await import(
     "../analysis/divergence.js"
   );
-  await initDivEngine(spec);
 
   console.log(
     `Pattern analysis: ${totalUnits} work units (source: ${source})\n`,
@@ -1875,8 +1996,10 @@ async function cmdPatternAnalyze() {
 
   const patternsByBuild = {};
   const divergencesByBuild = {};
-  const buildConfigs = {}; // runKey → config, for cross-archetype synthesis
+  const buildConfigs = {};
 
+  // Collect all work units
+  const workUnits = [];
   for (const [scenario, builds] of Object.entries(scenarioArchetypes)) {
     if (typeof builds !== "object" || builds.heroTree !== undefined) continue;
     const durations = scenarios[scenario]?.durations || [120];
@@ -1888,55 +2011,86 @@ async function cmdPatternAnalyze() {
 
     for (const buildName of buildNames) {
       const archetype = { ...builds[buildName], _name: buildName };
-      reinitScoringForBuild(archetype);
-
       for (const duration of durations) {
         const runKey =
           durations.length > 1 ? `${buildName}-${duration}s` : buildName;
         buildConfigs[runKey] = archetype;
-
-        const traceFile = resultsFile(`apl-trace-${runKey}.json`);
-        const divFile = resultsFile(`divergences-${runKey}.json`);
-
-        let aplTrace = null;
-        let divergences = [];
-
-        if (existsSync(traceFile)) {
-          aplTrace = JSON.parse(readFileSync(traceFile, "utf-8"));
-        }
-
-        if (existsSync(divFile)) {
-          const divData = JSON.parse(readFileSync(divFile, "utf-8"));
-          divergences = divData.divergences || [];
-        }
-
-        if (!aplTrace) {
-          const aplPath = join(aplsDir(), `${spec}.simc`);
-          if (!existsSync(aplPath)) {
-            console.log(`    Skipping ${runKey} — no APL file`);
-            continue;
-          }
-          const aplText = readFileSync(aplPath, "utf-8");
-          aplTrace = simulateApl(aplText, archetype, duration);
-        }
-
-        if (divergences.length === 0 && aplTrace) {
-          divergences = computeDivergence(aplTrace, archetype);
-        }
-
-        const patterns = analyzePatterns(aplTrace, divergences, specConfig);
-        patternsByBuild[runKey] = patterns;
-        divergencesByBuild[runKey] = divergences;
-
-        console.log(
-          `    ${runKey}: ${patterns.resourceFlow?.gcds?.total || 0} GCDs, ${divergences.length} divergences`,
-        );
-
-        writeFileSync(
-          resultsFile(`patterns-${runKey}.json`),
-          JSON.stringify(patterns, null, 2),
-        );
+        workUnits.push({ scenario, buildName, archetype, duration, runKey });
       }
+    }
+  }
+
+  const aplPath = join(aplsDir(), `${spec}.simc`);
+
+  // Try worker-based parallel processing (2+ work units, 2+ CPUs)
+  const workerPath = new URL("../analysis/pattern-worker.js", import.meta.url)
+    .pathname;
+  const poolSize = Math.min(cpus().length - 1, 4, totalUnits);
+  let parallelized = false;
+
+  if (poolSize > 1 && workUnits.length > 1) {
+    parallelized = await runPatternWorkers(
+      workerPath,
+      poolSize,
+      workUnits,
+      aplPath,
+      patternsByBuild,
+      divergencesByBuild,
+    );
+  }
+
+  if (!parallelized) {
+    // Sequential fallback — init engines in this thread
+    await initEngine(spec);
+    await initInterpEngine(spec);
+    await initDivEngine(spec);
+
+    if (workUnits.length > 1) {
+      console.log("\nProcessing sequentially...");
+    }
+
+    for (const unit of workUnits) {
+      reinitScoringForBuild(unit.archetype);
+
+      const traceFile = resultsFile(`apl-trace-${unit.runKey}.json`);
+      const divFile = resultsFile(`divergences-${unit.runKey}.json`);
+
+      let aplTrace = null;
+      let divergences = [];
+
+      if (existsSync(traceFile)) {
+        aplTrace = JSON.parse(readFileSync(traceFile, "utf-8"));
+      }
+      if (existsSync(divFile)) {
+        const divData = JSON.parse(readFileSync(divFile, "utf-8"));
+        divergences = divData.divergences || [];
+      }
+
+      if (!aplTrace) {
+        if (!existsSync(aplPath)) {
+          console.log(`    Skipping ${unit.runKey} — no APL file`);
+          continue;
+        }
+        const aplText = readFileSync(aplPath, "utf-8");
+        aplTrace = simulateApl(aplText, unit.archetype, unit.duration);
+      }
+
+      if (divergences.length === 0 && aplTrace) {
+        divergences = computeDivergence(aplTrace, unit.archetype);
+      }
+
+      const patterns = analyzePatterns(aplTrace, divergences, specConfig);
+      patternsByBuild[unit.runKey] = patterns;
+      divergencesByBuild[unit.runKey] = divergences;
+
+      console.log(
+        `    ${unit.runKey}: ${patterns.resourceFlow?.gcds?.total || 0} GCDs, ${divergences.length} divergences`,
+      );
+
+      writeFileSync(
+        resultsFile(`patterns-${unit.runKey}.json`),
+        JSON.stringify(patterns, null, 2),
+      );
     }
   }
 
@@ -2248,6 +2402,22 @@ async function cmdSynthesize() {
   console.log("\nSynthesizing across all specialists...");
   const { loadSpecialistOutputs } = await import("../analyze/synthesizer.js");
   const outputs = loadSpecialistOutputs();
+
+  // Persist each specialist's raw hypotheses before synthesis
+  for (const [name, output] of Object.entries(outputs)) {
+    if (!output?.hypotheses?.length) continue;
+    const dbReady = output.hypotheses.map((h) => ({
+      description: h.hypothesis || h.id || h.observation,
+      category: h.category || name,
+      priority: h.priority || 5.0,
+      aplMutation: h.aplMutation || h.proposedChanges?.[0]?.aplMutation || null,
+    }));
+    const specInserted = insertHypothesesToDb(dbReady, `specialist:${name}`);
+    if (specInserted > 0) {
+      console.log(`  ${name}: ${specInserted} hypotheses persisted`);
+    }
+  }
+
   const result = synthesizeHypotheses(outputs);
 
   // Insert synthesized hypotheses to DB (dedup via insertHypothesesToDb)
@@ -2319,6 +2489,12 @@ function cmdUnify() {
     `  Mutation coverage: ${stats.mutationCoverage}% (${stats.withMutation}/${stats.uniqueGroups})`,
   );
   console.log(`  Mutations inferred: ${stats.inferredMutations}`);
+  console.log(`  Inference fallthroughs: ${stats.inferenceFallthroughs}`);
+  if (Object.keys(stats.fallthroughReasons).length > 0) {
+    for (const [reason, count] of Object.entries(stats.fallthroughReasons)) {
+      console.log(`    ${reason}: ${count}`);
+    }
+  }
   console.log(`  Rejection memory applied: ${stats.withRejectionMemory}`);
   console.log(
     `  DB updated: ${persistResult.updated}, mutations added: ${persistResult.mutationsAdded}`,

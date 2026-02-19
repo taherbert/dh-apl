@@ -12,6 +12,12 @@ function toSimcName(name) {
 // Infer an aplMutation from hypothesis signals + current APL text.
 // Returns a mutation object or null if inference isn't possible.
 export function inferMutation(hypothesis, aplText) {
+  return inferMutationWithReason(hypothesis, aplText).mutation;
+}
+
+// Like inferMutation but returns { mutation, reason } for diagnostics.
+// `reason` explains why inference failed when mutation is null.
+export function inferMutationWithReason(hypothesis, aplText) {
   const ast = parse(aplText);
   let meta = hypothesis.metadata || {};
   if (typeof meta === "string") {
@@ -28,109 +34,142 @@ export function inferMutation(hypothesis, aplText) {
     ""
   ).toLowerCase();
 
-  // Strategy 1: Divergence-style "X preferred over Y" → MOVE_UP
-  const optAbility = meta.optAbility || meta.optimalAbility;
-  const actAbility = meta.actAbility || meta.actualAbility;
-  if (optAbility && actAbility) {
-    const mutation = inferMoveUp(ast, optAbility, actAbility);
-    if (mutation) return mutation;
+  // Track strategies where pattern matched but inference failed
+  const failedStrategies = [];
+
+  // Each strategy: match a pattern, try to infer a mutation, track failures
+  const strategies = [
+    // 1: Divergence-style "X preferred over Y" → MOVE_UP
+    () => {
+      const opt = meta.optAbility || meta.optimalAbility;
+      const act = meta.actAbility || meta.actualAbility;
+      if (!opt || !act) return null;
+      return (
+        inferMoveUp(ast, opt, act) ||
+        (failedStrategies.push(`divergence: ${opt} over ${act}`), null)
+      );
+    },
+    // 2: Text-based "X should be used instead of Y"
+    () => {
+      const m = summary.match(
+        /(\w[\w_]*)\s+(?:preferred over|instead of|over|replaces?)\s+(\w[\w_]*)/,
+      );
+      if (!m) return null;
+      return (
+        inferMoveUp(ast, m[1], m[2]) ||
+        (failedStrategies.push(`text_swap: ${m[1]} over ${m[2]}`), null)
+      );
+    },
+    // 3: "X should be used during buff window W" → ADD_CONDITION
+    () => {
+      const m = summary.match(
+        /(\w[\w_]*)\s+(?:during|within|in)\s+(\w[\w_]*)\s+(?:window|buff|phase)/,
+      );
+      if (!m) return null;
+      return (
+        inferAddBuffCondition(ast, m[1], m[2]) ||
+        (failedStrategies.push(`buff_gate: ${m[1]} during ${m[2]}`), null)
+      );
+    },
+    // 4: "Resource overflow" → RELAX_THRESHOLD
+    () => {
+      const m = summary.match(
+        /(?:overflow|waste|cap)\s+(?:for |of |on )?(\w+)/,
+      );
+      if (!m) return null;
+      return (
+        inferRelaxThreshold(ast, m[1]) ||
+        (failedStrategies.push(`overflow: ${m[1]}`), null)
+      );
+    },
+    // 5: "CD alignment: X should sync with Y" → ADD_CONDITION
+    () => {
+      const m = summary.match(
+        /(?:align|sync)\s+(\w[\w_]*)\s+(?:with|during)\s+(\w[\w_]*)/,
+      );
+      if (!m) return null;
+      return (
+        inferCdSync(ast, m[1], m[2]) ||
+        (failedStrategies.push(`cd_sync: ${m[1]} with ${m[2]}`), null)
+      );
+    },
+    // 6: "Prioritize X" / "X should be higher priority" → MOVE_UP
+    () => {
+      const m = summary.match(
+        /(?:prioritize|raise priority of|move up)\s+(\w[\w_]*)/,
+      );
+      if (!m) return null;
+      return (
+        inferMoveUpGeneric(ast, m[1]) ||
+        (failedStrategies.push(`prioritize: ${m[1]}`), null)
+      );
+    },
+    // 7: "In actions.X: adjust A condition or add B priority" → B over A in list X
+    () => {
+      const m = summary.match(
+        /in actions\.(\w+):\s*adjust\s+(\w[\w_]*)\s+condition.*?add\s+(\w[\w_]*)\s+priority/,
+      );
+      if (!m) return null;
+      return (
+        inferMoveUp(ast, m[3], m[2]) ||
+        (failedStrategies.push(`list_swap: ${m[3]} over ${m[2]} in ${m[1]}`),
+        null)
+      );
+    },
+    // 8: "Adjust A priority or conditions in {phase} to allow B" → B over A
+    () => {
+      const m = summary.match(
+        /adjust\s+(\w[\w_]*)\s+priority.*?(?:to allow|for)\s+(\w[\w_]*)/,
+      );
+      if (!m) return null;
+      return (
+        inferMoveUp(ast, m[2], m[1]) ||
+        (failedStrategies.push(`adjust_priority: ${m[2]} over ${m[1]}`), null)
+      );
+    },
+    // 9: "Hold A for B window" → sync A with B's cooldown
+    () => {
+      const m = summary.match(/hold\s+(\w[\w_]*)\s+for\s+(\w[\w_]*)\s+window/);
+      if (!m) return null;
+      return (
+        inferCdSync(ast, m[1], m[2]) ||
+        (failedStrategies.push(`hold_for: ${m[1]} for ${m[2]}`), null)
+      );
+    },
+    // 10: "Lower X threshold" / "reduce X threshold" → RELAX_THRESHOLD
+    () => {
+      const m = summary.match(
+        /(?:lower|reduce|relax)\s+(\w[\w_]*)\s+(?:spending\s+)?threshold/,
+      );
+      if (!m) return null;
+      return (
+        inferRelaxThreshold(ast, m[1]) ||
+        (failedStrategies.push(`relax_threshold: ${m[1]}`), null)
+      );
+    },
+    // 11: Hero-tree gated insert
+    () => {
+      const m = summary.match(
+        /(\w[\w_]*)\s+(?:underused|missing|absent)\s+(?:in|for)\s+(?:hero tree\s+)?(\w[\w_]*)/,
+      );
+      if (!m) return null;
+      return (
+        inferHeroGateInsert(ast, m[1], m[2]) ||
+        (failedStrategies.push(`hero_gate: ${m[1]} for ${m[2]}`), null)
+      );
+    },
+  ];
+
+  for (const strategy of strategies) {
+    const mutation = strategy();
+    if (mutation) return { mutation, reason: null };
   }
 
-  // Strategy 2: Text-based "X should be used instead of Y"
-  const swapMatch = summary.match(
-    /(\w[\w_]*)\s+(?:preferred over|instead of|over|replaces?)\s+(\w[\w_]*)/,
-  );
-  if (swapMatch) {
-    const mutation = inferMoveUp(ast, swapMatch[1], swapMatch[2]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 3: "X should be used during buff window W" → ADD_CONDITION
-  const buffMatch = summary.match(
-    /(\w[\w_]*)\s+(?:during|within|in)\s+(\w[\w_]*)\s+(?:window|buff|phase)/,
-  );
-  if (buffMatch) {
-    const mutation = inferAddBuffCondition(ast, buffMatch[1], buffMatch[2]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 4: "Resource overflow" → RELAX_THRESHOLD
-  const overflowMatch = summary.match(
-    /(?:overflow|waste|cap)\s+(?:for |of |on )?(\w+)/,
-  );
-  if (overflowMatch) {
-    const mutation = inferRelaxThreshold(ast, overflowMatch[1]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 5: "CD alignment: X should sync with Y" → ADD_CONDITION
-  const syncMatch = summary.match(
-    /(?:align|sync)\s+(\w[\w_]*)\s+(?:with|during)\s+(\w[\w_]*)/,
-  );
-  if (syncMatch) {
-    const mutation = inferCdSync(ast, syncMatch[1], syncMatch[2]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 6: "Prioritize X" / "X should be higher priority" → MOVE_UP
-  const prioMatch = summary.match(
-    /(?:prioritize|raise priority of|move up)\s+(\w[\w_]*)/,
-  );
-  if (prioMatch) {
-    const mutation = inferMoveUpGeneric(ast, prioMatch[1]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 7: "In actions.X: adjust A condition or add B priority" → B over A in list X
-  const listSwapMatch = summary.match(
-    /in actions\.(\w+):\s*adjust\s+(\w[\w_]*)\s+condition.*?add\s+(\w[\w_]*)\s+priority/,
-  );
-  if (listSwapMatch) {
-    const mutation = inferMoveUp(ast, listSwapMatch[3], listSwapMatch[2]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 8: "Adjust A priority or conditions in {phase} to allow B" → B over A
-  const adjustMatch = summary.match(
-    /adjust\s+(\w[\w_]*)\s+priority.*?(?:to allow|for)\s+(\w[\w_]*)/,
-  );
-  if (adjustMatch) {
-    const mutation = inferMoveUp(ast, adjustMatch[2], adjustMatch[1]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 9: "Hold A for B window" → sync A with B's cooldown
-  const holdMatch = summary.match(
-    /hold\s+(\w[\w_]*)\s+for\s+(\w[\w_]*)\s+window/,
-  );
-  if (holdMatch) {
-    const mutation = inferCdSync(ast, holdMatch[1], holdMatch[2]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 10: "Lower X threshold" / "reduce X threshold" → RELAX_THRESHOLD
-  const threshMatch = summary.match(
-    /(?:lower|reduce|relax)\s+(\w[\w_]*)\s+(?:spending\s+)?threshold/,
-  );
-  if (threshMatch) {
-    const mutation = inferRelaxThreshold(ast, threshMatch[1]);
-    if (mutation) return mutation;
-  }
-
-  // Strategy 11: Hero-tree gated insert
-  const heroGateMatch = summary.match(
-    /(\w[\w_]*)\s+(?:underused|missing|absent)\s+(?:in|for)\s+(?:hero tree\s+)?(\w[\w_]*)/,
-  );
-  if (heroGateMatch) {
-    const mutation = inferHeroGateInsert(
-      ast,
-      heroGateMatch[1],
-      heroGateMatch[2],
-    );
-    if (mutation) return mutation;
-  }
-
-  return null;
+  const reason =
+    failedStrategies.length > 0
+      ? `pattern matched but validation failed: ${failedStrategies.join(", ")}`
+      : "no text pattern matched";
+  return { mutation: null, reason };
 }
 
 // MOVE_UP: place optAbility above actAbility in the same list

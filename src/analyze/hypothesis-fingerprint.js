@@ -133,6 +133,12 @@ function fingerprintFromText(h) {
   return null;
 }
 
+// Stable fingerprint: use stored fingerprint if available, preserving identity
+// across unify runs even when mutation inference changes the hypothesis shape.
+export function fingerprintHypothesisStable(h) {
+  return h.fingerprint || fingerprintHypothesis(h);
+}
+
 // Main fingerprinting function: extract canonical identity from any hypothesis format
 export function fingerprintHypothesis(hypothesis) {
   // Try mutation-based first (most precise)
@@ -167,12 +173,13 @@ export function fingerprintHypothesis(hypothesis) {
   return `text:${text}`;
 }
 
-// Group hypotheses by their fingerprint
-export function matchHypotheses(hypotheses) {
+// Group hypotheses by their fingerprint.
+// Accepts an optional fingerprint function for stable re-runs.
+export function matchHypotheses(hypotheses, fpFn = fingerprintHypothesis) {
   const groups = new Map();
 
   for (const h of hypotheses) {
-    const fp = fingerprintHypothesis(h);
+    const fp = fpFn(h);
     if (!groups.has(fp)) {
       groups.set(fp, []);
     }

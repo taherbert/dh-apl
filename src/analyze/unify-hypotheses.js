@@ -12,9 +12,10 @@
 
 import {
   fingerprintHypothesis,
+  fingerprintHypothesisStable,
   matchHypotheses,
 } from "./hypothesis-fingerprint.js";
-import { inferMutation } from "./infer-mutation.js";
+import { inferMutationWithReason } from "./infer-mutation.js";
 import { getHypotheses, getDb, withTransaction } from "../util/db.js";
 import { getSpecName } from "../engine/paths.js";
 
@@ -32,10 +33,52 @@ function mutationPriority(source) {
   return SOURCE_MUTATION_PRIORITY[source] ?? 0;
 }
 
+// Merge fingerprint groups that represent the same semantic change across
+// different naming conventions (swap: vs priority: namespaces).
+// swap:A:over:B:phase ↔ priority:A:up:*:phase (moving A up = preferring A)
+// swap:A:over:B:phase ↔ priority:B:down:*:phase (moving B down = same thing)
+function mergeEquivalentGroups(groups) {
+  // Build lookup from swap: groups keyed by (ability, phase)
+  const swapByAbilityUp = new Map(); // "ability:phase" → swap fingerprint
+  const swapByAbilityDown = new Map(); // "ability:phase" → swap fingerprint
+  for (const fp of groups.keys()) {
+    const m = fp.match(/^swap:([^:]+):over:([^:]+):(.+)$/);
+    if (!m) continue;
+    const [, opt, act, phase] = m;
+    swapByAbilityUp.set(`${opt}:${phase}`, fp);
+    swapByAbilityDown.set(`${act}:${phase}`, fp);
+  }
+
+  // For each priority: group, check if it matches a swap: group
+  const toDelete = [];
+  for (const [fp, members] of groups) {
+    const m = fp.match(/^priority:([^:]+):(up|down):[^:]+:(.+)$/);
+    if (!m) continue;
+    const [, ability, dir, phase] = m;
+    const key = `${ability}:${phase}`;
+    const swapFp =
+      dir === "up" ? swapByAbilityUp.get(key) : swapByAbilityDown.get(key);
+    if (swapFp && groups.has(swapFp)) {
+      groups.get(swapFp).push(...members);
+      toDelete.push(fp);
+    }
+  }
+  for (const fp of toDelete) {
+    groups.delete(fp);
+  }
+  return groups;
+}
+
 // Unify all hypotheses from DB into consensus-ranked groups.
 // Returns array of unified hypothesis objects, sorted by priority descending.
 export function unifyHypotheses(aplText, spec) {
   const specName = spec || getSpecName();
+  const db = getDb(specName);
+
+  // Reset previously-merged hypotheses so re-runs are idempotent
+  db.prepare(
+    "UPDATE hypotheses SET status = 'pending' WHERE status = 'merged' AND spec = ?",
+  ).run(specName);
 
   // 1. Load all hypotheses (pending + testing, not completed/rejected)
   const allHypotheses = getHypotheses({
@@ -57,8 +100,11 @@ export function unifyHypotheses(aplText, spec) {
     rejectedFingerprints.set(fp, (rejectedFingerprints.get(fp) || 0) + 1);
   }
 
-  // 3. Fingerprint and group pending hypotheses
-  const groups = matchHypotheses(pending);
+  // 3. Fingerprint and group pending hypotheses (stable: preserves stored fingerprints)
+  const groups = matchHypotheses(pending, fingerprintHypothesisStable);
+
+  // 3b. Merge equivalent groups across swap:/priority: namespaces
+  mergeEquivalentGroups(groups);
 
   // 4. Build unified hypotheses from each group
   const unified = [];
@@ -92,17 +138,24 @@ export function unifyHypotheses(aplText, spec) {
     }
 
     // If no mutation found, try inference on the highest-confidence member
+    let inferenceReason = null;
     if (!bestMutation && aplText) {
       const sorted = [...members].sort(
         (a, b) => (b.priority || 0) - (a.priority || 0),
       );
       for (const m of sorted) {
-        const inferred = inferMutation(m, aplText);
+        const { mutation: inferred, reason } = inferMutationWithReason(
+          m,
+          aplText,
+        );
         if (inferred) {
           bestMutation = inferred;
           bestMutationSource = "inferred";
+          inferenceReason = null;
           break;
         }
+        // Keep the first reason encountered for diagnostics
+        if (!inferenceReason) inferenceReason = reason;
       }
     }
 
@@ -125,7 +178,7 @@ export function unifyHypotheses(aplText, spec) {
     // Confidence: max across group
     const maxConfidence = Math.max(...members.map((m) => m.confidence ?? 0.5));
 
-    unified.push({
+    const group = {
       fingerprint,
       consensusCount,
       consensusSources: [...distinctSources],
@@ -139,7 +192,11 @@ export function unifyHypotheses(aplText, spec) {
       memberCount: members.length,
       representative,
       rejectionCount,
-    });
+    };
+    if (inferenceReason && !bestMutation) {
+      group.fallthroughReason = inferenceReason;
+    }
+    unified.push(group);
   }
 
   // Sort by priority descending
@@ -210,6 +267,16 @@ export function summarizeUnified(unified) {
     (g) => g.mutationSource === "inferred",
   ).length;
 
+  // Aggregate fallthrough reasons from groups that failed mutation inference
+  const fallthroughGroups = unified.filter((g) => g.fallthroughReason);
+  const fallthroughByReason = new Map();
+  for (const g of fallthroughGroups) {
+    const key = g.fallthroughReason.startsWith("pattern matched")
+      ? "pattern matched but validation failed"
+      : g.fallthroughReason;
+    fallthroughByReason.set(key, (fallthroughByReason.get(key) || 0) + 1);
+  }
+
   return {
     totalHypotheses: total,
     uniqueGroups: unified.length,
@@ -221,5 +288,7 @@ export function summarizeUnified(unified) {
     withConsensus,
     withRejectionMemory,
     inferredMutations,
+    inferenceFallthroughs: fallthroughGroups.length,
+    fallthroughReasons: Object.fromEntries(fallthroughByReason),
   };
 }
