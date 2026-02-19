@@ -572,6 +572,7 @@ export function scoreDpgcd(state, abilityId) {
   const vfSpending = s.buffStacks?.voidfall_spending ?? s.vf_spending ?? 0;
 
   const fireAmp = fbActive ? 1.3 : 1.0;
+  // Vengeful Beast: Meta +20% damage only applies to Fracture, Soul Cleave, Spirit Bomb
   const metaAmp = inMeta ? 1.2 : 1.0;
 
   let score = 0;
@@ -617,24 +618,25 @@ export function scoreDpgcd(state, abilityId) {
 
     case "reavers_glaive":
       // 3.45 AP / 1.035 AP (Fracture ref) × 100 = 333; grants empowerment buffs
-      // Future empowerment value (Bladecraft SC + Wounded Quarry Fracture) captured by rollout
-      score = 333 * metaAmp;
+      // Physical school, no Vengeful Beast — no fire or meta amps
+      score = 333;
       break;
 
     case "fel_devastation":
       // 1.54 AP → 149, fire school → fire amp applies
-      score = 149 * fireAmp * metaAmp;
-      // Meteoric Rise frags add future SpB value; captured by rollout
+      // No Vengeful Beast — meta amp does not apply
+      score = 149 * fireAmp;
       break;
 
     case "soul_carver":
       // 2.08 AP → 201, fire school
-      score = 201 * fireAmp * metaAmp;
+      // No Vengeful Beast — meta amp does not apply
+      score = 201 * fireAmp;
       break;
 
     case "sigil_of_spite":
-      // 6.92 AP → 669, but not fire school
-      score = 669 * metaAmp;
+      // 6.92 AP → 669, chromatic school — no fire or meta amps
+      score = 669;
       break;
 
     case "fiery_brand":
@@ -645,21 +647,23 @@ export function scoreDpgcd(state, abilityId) {
 
     case "immolation_aura":
       // ~1.0 AP immediate + fury regen + Charred Flesh extension + Fallout frags
-      score = 95 * fireAmp * metaAmp;
+      // Fire school, no Vengeful Beast
+      score = 95 * fireAmp;
       break;
 
     case "sigil_of_flame":
-      // 0.792 AP → 77, fire school
-      score = 77 * fireAmp * metaAmp;
+      // 0.792 AP → 77, fire school, no Vengeful Beast
+      score = 77 * fireAmp;
       break;
 
     case "felblade":
-      // Small damage + fury gen (future value in SpB capability)
-      score = 60 * metaAmp;
+      // Fire school damage + fury gen, no Vengeful Beast
+      score = 60 * fireAmp;
       break;
 
     case "throw_glaive":
-      score = 40 * metaAmp;
+      // Physical school, no amps
+      score = 40;
       break;
 
     case "metamorphosis":

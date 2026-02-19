@@ -41,7 +41,9 @@ export async function initEngine(specName) {
 
 const T_HORIZON = 25;
 
-const DEEP_STEPS = 3;
+// 6 deep steps covers setup payoffs (FB fire amp, IA Charred Flesh extension)
+// that realize over 5-8 GCDs. Each step uses depth-2 lookahead (immediate + best next).
+const DEEP_STEPS = 6;
 
 function rolloutDps(state, horizon) {
   const {

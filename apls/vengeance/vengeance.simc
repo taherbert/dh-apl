@@ -77,6 +77,8 @@ actions.ar_empowered=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_str
 actions.ar_empowered+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up&variable.small_aoe
 actions.ar_empowered+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up
 actions.ar_empowered+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
+# High-frag SpB before GF consumption: at 5+ frags SpB outscores SC in 25s rollout
+actions.ar_empowered+=/spirit_bomb,if=buff.glaive_flurry.up&!buff.rending_strike.up&soul_fragments>=5
 actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
 
 # === AR Cooldowns ===
