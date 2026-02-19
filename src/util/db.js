@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS hypotheses (
   mutation TEXT,
   category TEXT,
   priority REAL DEFAULT 5.0,
+  base_priority REAL,
   status TEXT DEFAULT 'pending',
   source TEXT,
   archetype TEXT,
@@ -332,6 +333,14 @@ export function getDb(spec) {
     if (existingVersion < 5) {
       try {
         _db.exec("ALTER TABLE hypotheses ADD COLUMN metadata TEXT");
+      } catch {
+        // Column may already exist
+      }
+    }
+    // Schema v5 → v6: add base_priority column to hypotheses (prevents priority compounding on repeated unify)
+    if (existingVersion < 6) {
+      try {
+        _db.exec("ALTER TABLE hypotheses ADD COLUMN base_priority REAL");
       } catch {
         // Column may already exist
       }

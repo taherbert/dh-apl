@@ -164,8 +164,9 @@ export function unifyHypotheses(aplText, spec) {
       (m.priority || 0) > (best.priority || 0) ? m : best,
     );
 
-    // Priority: base × consensus boost
-    const basePriority = representative.priority || 5.0;
+    // Priority: base × consensus boost (use base_priority to avoid compounding)
+    const basePriority =
+      representative.base_priority ?? representative.priority ?? 5.0;
     const consensusBoost = 1 + 0.25 * (consensusCount - 1);
     let adjustedPriority = basePriority * consensusBoost;
 
@@ -219,10 +220,16 @@ export function persistUnified(unified, spec) {
       const repId = group.representative.id;
 
       // Update representative with consensus metadata
+      // Write base_priority (pre-boost) alongside boosted priority to prevent compounding
+      const repBasePriority =
+        group.representative.base_priority ??
+        group.representative.priority ??
+        5.0;
       const updates = {
         consensus_count: group.consensusCount,
         consensus_sources: JSON.stringify(group.consensusSources),
         fingerprint: group.fingerprint,
+        base_priority: repBasePriority,
         priority: group.priority,
       };
 

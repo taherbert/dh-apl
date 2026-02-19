@@ -296,8 +296,27 @@ function calibrateConfidence(theory) {
   return Math.round(confidence * 100) / 100;
 }
 
+// Normalize hypothesis text for dedup — matches normalizeHypothesisKey in iterate.js.
+function normalizeForDedup(text) {
+  return (text || "")
+    .toLowerCase()
+    .replace(/[\d.]+%?/g, "N")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function persistTheories(theories) {
   const persisted = [];
+  let skippedDuplicates = 0;
+
+  // Load existing theory-generator hypotheses for dedup
+  const existing = getHypotheses({
+    source: "theory-generator",
+    limit: 2000,
+  });
+  const existingKeys = new Set(
+    existing.map((h) => normalizeForDedup(h.summary)),
+  );
 
   for (const theory of theories) {
     if (theory.confidence < 0.2) continue;
@@ -316,14 +335,20 @@ export function persistTheories(theories) {
       });
 
       if (theory.confidence >= 0.4) {
-        addHypothesis({
-          source: "theory-generator",
-          theoryId,
-          summary: theory.proposed_change,
-          category: theory.category,
-          priority: Math.round(theory.confidence * 10),
-          confidence: theory.confidence > 0.7 ? "high" : "medium",
-        });
+        const normalizedKey = normalizeForDedup(theory.proposed_change);
+        if (existingKeys.has(normalizedKey)) {
+          skippedDuplicates++;
+        } else {
+          existingKeys.add(normalizedKey);
+          addHypothesis({
+            source: "theory-generator",
+            theoryId,
+            summary: theory.proposed_change,
+            category: theory.category,
+            priority: Math.round(theory.confidence * 10),
+            confidence: theory.confidence > 0.7 ? "high" : "medium",
+          });
+        }
       }
 
       persisted.push({
@@ -338,6 +363,10 @@ export function persistTheories(theories) {
         error: e.message,
       });
     }
+  }
+
+  if (skippedDuplicates > 0) {
+    console.log(`  ${skippedDuplicates} duplicate hypotheses skipped`);
   }
 
   return persisted;

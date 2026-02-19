@@ -309,6 +309,85 @@ function generateHypotheses(workflowResults) {
     });
 }
 
+// Static resource-flow hypothesis generation — fallback when workflow sims are unavailable.
+// Parses APL text for resource thresholds and generates sweep/priority hypotheses.
+function generateStaticResourceHypotheses(aplText, spellData) {
+  const hypotheses = [];
+  const lines = aplText.split("\n");
+
+  // Extract resource conditions: fury>=N, soul_fragments>=N, etc.
+  const thresholdPattern = /(\w+)\s*(>=|<=|>|<|=)\s*(\d+)/g;
+  const resourceKeywords = new Set([
+    "fury",
+    "soul_fragments",
+    "pain",
+    "health",
+    "sigil_of_flame",
+  ]);
+  const thresholdsByResource = new Map();
+
+  for (const line of lines) {
+    if (!line.startsWith("actions")) continue;
+    // Extract the ability name
+    const abilityMatch = line.match(/actions(?:\.\w+)?(?:\+)?=\/(\w+)/);
+    if (!abilityMatch) continue;
+    const ability = abilityMatch[1];
+
+    const ifMatch = line.match(/,if=(.+)/);
+    if (!ifMatch) continue;
+    const condition = ifMatch[1];
+
+    let match;
+    thresholdPattern.lastIndex = 0;
+    while ((match = thresholdPattern.exec(condition)) !== null) {
+      const [, resource, op, valueStr] = match;
+      if (!resourceKeywords.has(resource)) continue;
+      const value = parseInt(valueStr);
+      const key = `${resource}:${ability}`;
+      if (!thresholdsByResource.has(key)) {
+        thresholdsByResource.set(key, []);
+      }
+      thresholdsByResource.get(key).push({ resource, op, value, ability });
+    }
+  }
+
+  // Generate threshold sweep hypotheses
+  for (const [key, entries] of thresholdsByResource) {
+    const { resource, value, ability } = entries[0];
+    const sweepDown = Math.max(1, value - 1);
+    const sweepUp = value + 1;
+    hypotheses.push({
+      category: "threshold_sweep",
+      description: `Sweep ${resource} threshold on ${ability}: currently ${entries[0].op}${value}, try ${sweepDown} and ${sweepUp}`,
+      priority: 5,
+    });
+  }
+
+  // Generate spender priority hypotheses from spell data
+  const spenders = spellData.filter(
+    (s) => s.resource && s.resource.cost && s.resource.cost > 0,
+  );
+  const spenderNames = new Set(spenders.map((s) => s.name?.toLowerCase()));
+  const aplAbilities = [];
+  for (const line of lines) {
+    if (!line.startsWith("actions")) continue;
+    const m = line.match(/actions(?:\.\w+)?(?:\+)?=\/(\w+)/);
+    if (m && spenderNames.has(m[1].replace(/_/g, " "))) {
+      aplAbilities.push(m[1]);
+    }
+  }
+  // Suggest reordering adjacent spenders
+  for (let i = 0; i < aplAbilities.length - 1; i++) {
+    hypotheses.push({
+      category: "spender_priority",
+      description: `Try swapping spender priority: ${aplAbilities[i]} before ${aplAbilities[i + 1]} — compare resource efficiency`,
+      priority: 4,
+    });
+  }
+
+  return hypotheses;
+}
+
 // --- Hypothesis Matching ---
 
 function popHypothesis(_state, descriptionFragment) {
@@ -2361,7 +2440,28 @@ async function cmdSynthesize() {
 
   // Generate from all specialist sources
   console.log("Generating metric hypotheses...");
-  const metricHypotheses = generateHypotheses(workflowResults);
+  let metricHypotheses = generateHypotheses(workflowResults);
+
+  // Fallback: when all workflow scenarios have errors, generate static resource-flow hypotheses
+  if (metricHypotheses.length === 0) {
+    const aplPath2 = state.current.apl;
+    const aplFallback = existsSync(join(ROOT, aplPath2))
+      ? readFileSync(join(ROOT, aplPath2), "utf-8")
+      : null;
+    if (aplFallback) {
+      const spellPath = dataFile("spells-summary.json");
+      const spells = existsSync(spellPath)
+        ? JSON.parse(readFileSync(spellPath, "utf-8"))
+        : [];
+      metricHypotheses = generateStaticResourceHypotheses(aplFallback, spells);
+      if (metricHypotheses.length > 0) {
+        console.log(
+          `  Workflow sims unavailable — generated ${metricHypotheses.length} static resource hypotheses`,
+        );
+      }
+    }
+  }
+
   saveSpecialistOutput("resource_flow", {
     hypotheses: metricHypotheses.map((h) => ({
       ...h,
