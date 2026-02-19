@@ -25,7 +25,18 @@ let engine;
 export async function initEngine(specName) {
   if (engine) return engine;
   engine = await import(`./${specName}/state-sim.js`);
+  if (engine.buildScoreTable) {
+    const specConfig = getSpecAdapter().getSpecConfig();
+    engine.initScoring(engine.buildScoreTable(specConfig));
+  }
   return engine;
+}
+
+// Re-initialize scoring for a specific build config (applies talent modifiers)
+export function reinitScoringForBuild(buildConfig) {
+  if (!engine?.reinitScoringForBuild) return;
+  const specConfig = getSpecAdapter().getSpecConfig();
+  engine.reinitScoringForBuild(specConfig, buildConfig);
 }
 
 // ---------------------------------------------------------------------------
@@ -39,11 +50,13 @@ export async function initEngine(specName) {
 // follow-on burst windows, reducing false positives for CD setup abilities.
 // ---------------------------------------------------------------------------
 
-const T_HORIZON = 25;
+const T_HORIZON = 35;
+const DISCOUNT_RATE = 0.97;
 
-// 6 deep steps covers setup payoffs (FB fire amp, IA Charred Flesh extension)
-// that realize over 5-8 GCDs. Each step uses depth-2 lookahead (immediate + best next).
-const DEEP_STEPS = 6;
+// 10 deep steps covers multi-GCD setup payoffs (FB fire amp, IA Charred Flesh
+// extension, Meta investment) that realize over 5-10 GCDs. Each deep step uses
+// depth-2 lookahead (immediate + best next).
+const DEEP_STEPS = 10;
 
 function rolloutDps(state, horizon) {
   const {
@@ -121,8 +134,8 @@ function rolloutDps(state, horizon) {
     }
 
     step++;
-    // Always score immediate value (not lookahead composite) for the running total
-    totalScore += scoreDpgcd(s, bestAbility);
+    const discount = Math.pow(DISCOUNT_RATE, step);
+    totalScore += scoreDpgcd(s, bestAbility) * discount;
     s = applyAbility(s, bestAbility);
     const dt = getAbilityGcd(s, bestAbility) || s.gcd;
     s = advanceTime(s, dt);
@@ -331,7 +344,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   await initSpec(specName);
   await initEngine(specName);
 
-  const ARCHETYPES = getSpecAdapter().getSpecConfig().analysisArchetypes ?? {};
+  const specMod = await import(`../spec/${specName}.js`);
+  const ARCHETYPES = specMod.flattenArchetypes();
   const buildName = values.build;
   const archetype = ARCHETYPES[buildName];
 

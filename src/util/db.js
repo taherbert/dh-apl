@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 5;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -311,6 +311,31 @@ export function getDb(spec) {
         }
       }
     }
+    // Schema v3 → v4: add consensus/fingerprint columns to hypotheses
+    if (existingVersion < 4) {
+      for (const [col, type] of [
+        ["consensus_count", "INTEGER DEFAULT 1"],
+        ["consensus_sources", "TEXT"],
+        ["fingerprint", "TEXT"],
+      ]) {
+        try {
+          _db.exec(`ALTER TABLE hypotheses ADD COLUMN ${col} ${type}`);
+        } catch {
+          // Column may already exist
+        }
+      }
+      _db.exec(
+        "CREATE INDEX IF NOT EXISTS idx_hypotheses_fingerprint ON hypotheses(fingerprint)",
+      );
+    }
+    // Schema v4 → v5: add metadata column to hypotheses
+    if (existingVersion < 5) {
+      try {
+        _db.exec("ALTER TABLE hypotheses ADD COLUMN metadata TEXT");
+      } catch {
+        // Column may already exist
+      }
+    }
     _db
       .prepare("UPDATE schema_info SET value = ? WHERE key = 'version'")
       .run(String(SCHEMA_VERSION));
@@ -455,8 +480,8 @@ function rowToTheory(r) {
 export function addHypothesis(hypothesis) {
   const db = getDb();
   const stmt = db.prepare(`
-    INSERT INTO hypotheses (theory_id, spec, summary, implementation, mutation, category, priority, status, source, archetype)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO hypotheses (theory_id, spec, summary, implementation, mutation, category, priority, status, source, archetype, metadata)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `);
   const info = stmt.run(
     hypothesis.theoryId ?? null,
@@ -469,6 +494,7 @@ export function addHypothesis(hypothesis) {
     hypothesis.status || "pending",
     hypothesis.source || null,
     hypothesis.archetype || null,
+    jsonCol(hypothesis.metadata),
   );
   return Number(info.lastInsertRowid);
 }
@@ -540,6 +566,7 @@ function rowToHypothesis(r) {
     ...r,
     theoryId: r.theory_id,
     mutation: parseJson(r.mutation),
+    metadata: parseJson(r.metadata),
     createdAt: r.created_at,
     testedAt: r.tested_at,
   };

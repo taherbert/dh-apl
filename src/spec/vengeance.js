@@ -19,6 +19,7 @@ import {
 } from "./common.js";
 import { dataDir } from "../engine/paths.js";
 import { config } from "../engine/startup.js";
+import { decodeAllTalents } from "../util/talent-fingerprint.js";
 
 // ================================================================
 // SECTION 1: HUMAN DOMAIN KNOWLEDGE
@@ -59,21 +60,57 @@ export const SPEC_CONFIG = {
   },
 
   domainOverrides: {
-    fracture: { furyGenMeta: 40, fragGenMeta: 3, apCoeff: 1.035 },
-    spirit_bomb: { fragConsume: "up_to_5", apCoeff: 0.4 },
-    soul_cleave: { fragConsume: "up_to_2", apCoeff: 1.29 },
+    fracture: {
+      furyGenMeta: 40,
+      fragGenMeta: 3,
+      apCoeff: 1.035,
+      school: "Physical",
+      aoeTargets: 1,
+    },
+    spirit_bomb: {
+      fragConsume: "up_to_5",
+      apCoeff: 0.4,
+      school: "Fire",
+      aoeTargets: 5,
+    },
+    soul_cleave: {
+      fragConsume: "up_to_2",
+      apCoeff: 1.29,
+      school: "Physical",
+      aoeTargets: 5,
+    },
     immolation_aura: {
       charges: 2,
       rechargeCd: 30,
       furyPerTick: 3,
       tickInterval: 1,
+      apCoeff: 0.98,
+      school: "Fire",
     },
-    sigil_of_flame: { apCoeff: 0.792 },
-    fiery_brand: { duration: 10, damageAmp: 0.3 },
-    soul_carver: { apCoeff: 2.08 },
-    fel_devastation: { gcd: false, apCoeff: 1.54 },
-    sigil_of_spite: { fragGen: "variable", apCoeff: 6.92 },
-    reavers_glaive: { apCoeff: 3.45 },
+    sigil_of_flame: { apCoeff: 0.792, school: "Fire", aoeTargets: 8 },
+    fiery_brand: {
+      duration: 10,
+      damageAmp: 0.3,
+      apCoeff: 1.0,
+      school: "Fire",
+      aoeTargets: 1,
+    },
+    soul_carver: { apCoeff: 2.08, school: "Fire", aoeTargets: 1 },
+    fel_devastation: {
+      gcd: false,
+      apCoeff: 1.54,
+      school: "Fire",
+      aoeTargets: 5,
+    },
+    sigil_of_spite: {
+      fragGen: "variable",
+      apCoeff: 6.92,
+      school: "Chromatic",
+      aoeTargets: 8,
+    },
+    reavers_glaive: { apCoeff: 3.45, school: "Physical", aoeTargets: 1 },
+    felblade: { apCoeff: 0.62, school: "Physical", aoeTargets: 1 },
+    throw_glaive: { apCoeff: 0.41, school: "Physical", aoeTargets: 1 },
   },
 
   // Talent locks/bans/exclusions live in config.vengeance.json under "talents".
@@ -369,6 +406,32 @@ export const SPEC_CONFIG = {
   // Buffs that are major cooldowns (excluded from "low uptime" warnings)
   cooldownBuffs: ["fiery_brand", "metamorphosis", "fel_devastation"],
 
+  // Build-specific talent modifiers for state-sim scoring enrichment.
+  // Each key is a talent name (snake_case), each value maps ability → multiplier.
+  // Applied multiplicatively to base apCoeff scores when the talent is present.
+  // Hand-authored from interactions-summary.json, cross-referenced with SimC C++ source.
+  talentModifiers: {
+    stoke_the_flames: { fel_devastation: 1.3 },
+    meteoric_rise: { fel_devastation: 1.15 },
+    ascending_flame: { sigil_of_flame: 1.5 },
+    celestial_echoes: { fracture: 1.25 },
+    tempered_steel: {
+      fracture: 1.12,
+      soul_cleave: 1.12,
+      reavers_glaive: 1.12,
+      throw_glaive: 1.12,
+    },
+    keen_edge: {
+      fracture: 1.1,
+      soul_cleave: 1.1,
+      reavers_glaive: 1.2, // Keen Edge: RG +20%, other Physical +10%
+      throw_glaive: 1.1,
+    },
+    volatile_flameblood: { immolation_aura: 1.1 },
+    incisive_blade: { soul_cleave: 1.1 },
+    // fiery_demise is NOT here — it's a dynamic FB-window amp, handled in scoreDpgcd
+  },
+
   // Fallback name→category hints for interaction classification
   classificationHints: {
     damage_modifier: [
@@ -518,6 +581,25 @@ export const SPEC_CONFIG = {
     },
   ],
 
+  setBonus: {
+    twoPiece: { target: "fracture", modifier: 1.35 },
+    fourPiece: {
+      ability: "explosion_of_the_soul",
+      procChance: 0.3,
+      apCoeff: 1.8,
+      school: "Fire",
+      aoeTargetCap: 5,
+      trigger: "fracture",
+    },
+  },
+
+  tuning: {
+    vfSpendingBonus: 100,
+    arWoundedQuarryAmp: 1.3,
+    arBladecraftAmp: 1.5,
+    windowValuation: { fieryBrand: 60 },
+  },
+
   stateMachines: {
     aldrachi_reaver: {
       name: "AR Cycle",
@@ -637,124 +719,326 @@ export const SPEC_CONFIG = {
     Shadowflame: "shadowflame-damage",
   },
 
-  // Named build configurations for gap analysis tools (optimal-timeline, divergence).
-  // Each entry maps a short name to a buildConfig object consumed by state-sim.js.
+  // Scenario definitions for pattern analysis. Each scenario defines the fight
+  // parameters; builds come from the roster (or fallback analysisArchetypes).
+  scenarios: {
+    st: { target_count: 1, durations: [120, 300] },
+    small_aoe: { target_count: 5, durations: [75] },
+    big_aoe: { target_count: 10, durations: [60] },
+  },
+
+  // Fallback build configs when no roster is populated. Prefer roster-derived
+  // configs via rosterBuildToConfig() — these are only used as a safety net.
   analysisArchetypes: {
-    "anni-apex3-dgb": {
-      heroTree: "annihilator",
-      apexRank: 3,
-      haste: 0.2,
-      target_count: 1,
-      talents: {
-        fiery_demise: true,
-        fiery_brand: true,
-        charred_flesh: true,
-        burning_alive: true,
-        down_in_flames: true,
-        darkglare_boon: true,
-        meteoric_rise: true,
-        stoke_the_flames: true,
-        vengeful_beast: true,
-        untethered_rage: true,
-        fallout: true,
-        soul_carver: false,
-        soul_sigils: false,
-        quickened_sigils: false,
-        cycle_of_binding: false,
-        vulnerability: false,
+    st: {
+      "anni-apex3-dgb": {
+        heroTree: "annihilator",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 1,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          soul_carver: false,
+          soul_sigils: false,
+          quickened_sigils: false,
+          cycle_of_binding: false,
+          vulnerability: false,
+        },
+      },
+      "anni-apex3-nodgb": {
+        heroTree: "annihilator",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 1,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: false,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          soul_carver: false,
+        },
+      },
+      "anni-apex0-fullstack": {
+        heroTree: "annihilator",
+        apexRank: 0,
+        haste: 0.2,
+        target_count: 1,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          soul_carver: true,
+          soul_sigils: true,
+          cycle_of_binding: true,
+          vulnerability: true,
+          fallout: true,
+        },
+      },
+      "ar-apex3-dgb": {
+        heroTree: "aldrachi_reaver",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 1,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          art_of_the_glaive: true,
+          soul_carver: false,
+          soul_sigils: false,
+          quickened_sigils: false,
+          cycle_of_binding: false,
+          vulnerability: false,
+        },
+      },
+      "ar-apex3-nodgb": {
+        heroTree: "aldrachi_reaver",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 1,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: false,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          art_of_the_glaive: true,
+          soul_carver: false,
+          soul_sigils: false,
+          quickened_sigils: false,
+        },
       },
     },
-    "anni-apex3-nodgb": {
-      heroTree: "annihilator",
-      apexRank: 3,
-      haste: 0.2,
-      target_count: 1,
-      talents: {
-        fiery_demise: true,
-        fiery_brand: true,
-        charred_flesh: true,
-        burning_alive: true,
-        down_in_flames: true,
-        darkglare_boon: false,
-        meteoric_rise: true,
-        stoke_the_flames: true,
-        vengeful_beast: true,
-        untethered_rage: true,
-        fallout: true,
-        soul_carver: false,
+    small_aoe: {
+      "anni-apex3-dgb-5t": {
+        heroTree: "annihilator",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 5,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          soul_carver: false,
+        },
+      },
+      "anni-apex0-fullstack-5t": {
+        heroTree: "annihilator",
+        apexRank: 0,
+        haste: 0.2,
+        target_count: 5,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          soul_carver: true,
+          soul_sigils: true,
+          cycle_of_binding: true,
+          vulnerability: true,
+          fallout: true,
+        },
+      },
+      "ar-apex3-dgb-5t": {
+        heroTree: "aldrachi_reaver",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 5,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          art_of_the_glaive: true,
+          soul_carver: false,
+        },
       },
     },
-    "anni-apex0-fullstack": {
-      heroTree: "annihilator",
-      apexRank: 0,
-      haste: 0.2,
-      target_count: 1,
-      talents: {
-        fiery_demise: true,
-        fiery_brand: true,
-        charred_flesh: true,
-        burning_alive: true,
-        down_in_flames: true,
-        darkglare_boon: true,
-        meteoric_rise: true,
-        stoke_the_flames: true,
-        soul_carver: true,
-        soul_sigils: true,
-        cycle_of_binding: true,
-        vulnerability: true,
-        fallout: true,
+    big_aoe: {
+      "anni-apex3-dgb-10t": {
+        heroTree: "annihilator",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 10,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          soul_carver: false,
+        },
       },
-    },
-    "ar-apex3-dgb": {
-      heroTree: "aldrachi_reaver",
-      apexRank: 3,
-      haste: 0.2,
-      target_count: 1,
-      talents: {
-        fiery_demise: true,
-        fiery_brand: true,
-        charred_flesh: true,
-        burning_alive: true,
-        down_in_flames: true,
-        darkglare_boon: true,
-        meteoric_rise: true,
-        stoke_the_flames: true,
-        vengeful_beast: true,
-        untethered_rage: true,
-        fallout: true,
-        art_of_the_glaive: true,
-        soul_carver: false,
-        soul_sigils: false,
-        quickened_sigils: false,
-        cycle_of_binding: false,
-        vulnerability: false,
-      },
-    },
-    "ar-apex3-nodgb": {
-      heroTree: "aldrachi_reaver",
-      apexRank: 3,
-      haste: 0.2,
-      target_count: 1,
-      talents: {
-        fiery_demise: true,
-        fiery_brand: true,
-        charred_flesh: true,
-        burning_alive: true,
-        down_in_flames: true,
-        darkglare_boon: false,
-        meteoric_rise: true,
-        stoke_the_flames: true,
-        vengeful_beast: true,
-        untethered_rage: true,
-        fallout: true,
-        art_of_the_glaive: true,
-        soul_carver: false,
-        soul_sigils: false,
-        quickened_sigils: false,
+      "ar-apex3-dgb-10t": {
+        heroTree: "aldrachi_reaver",
+        apexRank: 3,
+        haste: 0.2,
+        target_count: 10,
+        talents: {
+          fiery_demise: true,
+          fiery_brand: true,
+          charred_flesh: true,
+          burning_alive: true,
+          down_in_flames: true,
+          darkglare_boon: true,
+          meteoric_rise: true,
+          stoke_the_flames: true,
+          vengeful_beast: true,
+          untethered_rage: true,
+          fallout: true,
+          art_of_the_glaive: true,
+          soul_carver: false,
+        },
       },
     },
   },
 };
+
+// Flatten scenario-grouped archetypes into a single name→config map.
+// Used by CLI tools (optimal-timeline, divergence, apl-interpreter) that take --build.
+export function flattenArchetypes(archetypes = SPEC_CONFIG.analysisArchetypes) {
+  const flat = {};
+  for (const [scenario, builds] of Object.entries(archetypes)) {
+    if (typeof builds !== "object") continue;
+    // Handle both flat (legacy) and grouped (scenario-keyed) structures
+    if (builds.heroTree !== undefined) {
+      flat[scenario] = builds; // legacy flat entry
+    } else {
+      for (const [name, config] of Object.entries(builds)) {
+        flat[name] = { ...config, _scenario: scenario };
+      }
+    }
+  }
+  return flat;
+}
+
+// Convert a roster DB row into a state-sim-compatible buildConfig.
+// Decodes the talent hash to derive talent flags, avoiding hardcoded duplication.
+export function rosterBuildToConfig(dbRow) {
+  const { hash, hero_tree, archetype } = dbRow;
+  const { specTalents, heroTalents } = decodeAllTalents(hash);
+
+  const talents = {};
+  for (const name of [...specTalents, ...heroTalents]) {
+    const key = name.toLowerCase().replace(/['']/g, "").replace(/\s+/g, "_");
+    talents[key] = true;
+  }
+
+  const apexMatch = archetype?.match(/Apex\s+(\d+)/i);
+  const apexRank = apexMatch ? parseInt(apexMatch[1], 10) : 0;
+
+  return {
+    heroTree: hero_tree,
+    apexRank,
+    haste: 0.2,
+    talents,
+    _rosterHash: hash,
+    _name: dbRow.name || `${hero_tree}-apex${apexRank}`,
+  };
+}
+
+// Select representative builds covering distinct (heroTree × apexRank) axes.
+// Returns one build per combo (first match wins), keeping the build count manageable.
+function selectRepresentativeBuilds(configs) {
+  const seen = new Set();
+  const reps = [];
+  for (const cfg of configs) {
+    const key = `${cfg.heroTree}|${cfg.apexRank}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      reps.push(cfg);
+    }
+  }
+  return reps;
+}
+
+// Build scenario-grouped analysis configs from roster builds + scenarios config.
+// Returns the same structure as analysisArchetypes for drop-in compatibility.
+// Selects representative builds per (heroTree × apexRank) to keep analysis tractable.
+export function buildAnalysisFromRoster(rosterBuilds) {
+  const scenarios = SPEC_CONFIG.scenarios;
+  if (!scenarios || rosterBuilds.length === 0) return null;
+
+  const allConfigs = rosterBuilds.map((b) => rosterBuildToConfig(b));
+  const reps = selectRepresentativeBuilds(allConfigs);
+  const result = {};
+
+  for (const [scenarioName, scenarioCfg] of Object.entries(scenarios)) {
+    result[scenarioName] = {};
+    for (const cfg of reps) {
+      const suffix =
+        scenarioCfg.target_count > 1 ? `-${scenarioCfg.target_count}t` : "";
+      const key = `${cfg._name}${suffix}`;
+      result[scenarioName][key] = {
+        ...cfg,
+        target_count: scenarioCfg.target_count,
+      };
+    }
+  }
+
+  return result;
+}
 
 export const SET_BONUS_SPELL_IDS = new Set([
   1264808, // Vengeance 12.0 Class Set 2pc

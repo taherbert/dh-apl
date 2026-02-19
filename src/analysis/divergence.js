@@ -28,7 +28,7 @@ import { ROOT } from "../engine/paths.js";
 // State engine — loaded dynamically based on --spec
 let engine;
 
-async function initEngine(specName) {
+export async function initEngine(specName) {
   if (engine) return engine;
   engine = await import(`./${specName}/state-sim.js`);
   // Also initialize the shared engine in the sub-tools so they don't re-import
@@ -530,7 +530,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   await initSpec(spec);
   await initEngine(spec);
 
-  const ARCHETYPES = getSpecAdapter().getSpecConfig().analysisArchetypes ?? {};
+  const specMod = await import(`../spec/${spec}.js`);
+  const ARCHETYPES = specMod.flattenArchetypes();
   const buildName = values.build;
   const duration = parseInt(values.duration, 10);
 
