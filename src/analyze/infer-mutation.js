@@ -13,7 +13,14 @@ function toSimcName(name) {
 // Returns a mutation object or null if inference isn't possible.
 export function inferMutation(hypothesis, aplText) {
   const ast = parse(aplText);
-  const meta = hypothesis.metadata || {};
+  let meta = hypothesis.metadata || {};
+  if (typeof meta === "string") {
+    try {
+      meta = JSON.parse(meta);
+    } catch {
+      meta = {};
+    }
+  }
   const summary = (
     hypothesis.summary ||
     hypothesis.hypothesis ||
@@ -74,7 +81,43 @@ export function inferMutation(hypothesis, aplText) {
     if (mutation) return mutation;
   }
 
-  // Strategy 7: Hero-tree gated insert
+  // Strategy 7: "In actions.X: adjust A condition or add B priority" → B over A in list X
+  const listSwapMatch = summary.match(
+    /in actions\.(\w+):\s*adjust\s+(\w[\w_]*)\s+condition.*?add\s+(\w[\w_]*)\s+priority/,
+  );
+  if (listSwapMatch) {
+    const mutation = inferMoveUp(ast, listSwapMatch[3], listSwapMatch[2]);
+    if (mutation) return mutation;
+  }
+
+  // Strategy 8: "Adjust A priority or conditions in {phase} to allow B" → B over A
+  const adjustMatch = summary.match(
+    /adjust\s+(\w[\w_]*)\s+priority.*?(?:to allow|for)\s+(\w[\w_]*)/,
+  );
+  if (adjustMatch) {
+    const mutation = inferMoveUp(ast, adjustMatch[2], adjustMatch[1]);
+    if (mutation) return mutation;
+  }
+
+  // Strategy 9: "Hold A for B window" → sync A with B's cooldown
+  const holdMatch = summary.match(
+    /hold\s+(\w[\w_]*)\s+for\s+(\w[\w_]*)\s+window/,
+  );
+  if (holdMatch) {
+    const mutation = inferCdSync(ast, holdMatch[1], holdMatch[2]);
+    if (mutation) return mutation;
+  }
+
+  // Strategy 10: "Lower X threshold" / "reduce X threshold" → RELAX_THRESHOLD
+  const threshMatch = summary.match(
+    /(?:lower|reduce|relax)\s+(\w[\w_]*)\s+(?:spending\s+)?threshold/,
+  );
+  if (threshMatch) {
+    const mutation = inferRelaxThreshold(ast, threshMatch[1]);
+    if (mutation) return mutation;
+  }
+
+  // Strategy 11: Hero-tree gated insert
   const heroGateMatch = summary.match(
     /(\w[\w_]*)\s+(?:underused|missing|absent)\s+(?:in|for)\s+(?:hero tree\s+)?(\w[\w_]*)/,
   );

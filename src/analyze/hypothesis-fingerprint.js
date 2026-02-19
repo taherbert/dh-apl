@@ -44,8 +44,17 @@ function fingerprintFromDivergence(h) {
 
 // Build fingerprint from a strategic/theorycraft hypothesis (mutation-based)
 function fingerprintFromMutation(h) {
-  const mutation = h.mutation || h.aplMutation;
+  let mutation = h.mutation || h.aplMutation;
   if (!mutation) return null;
+
+  // DB stores mutations as JSON strings
+  if (typeof mutation === "string") {
+    try {
+      mutation = JSON.parse(mutation);
+    } catch {
+      return null;
+    }
+  }
 
   const type = (mutation.type || "").toLowerCase();
   const ability = normalizeAbility(mutation.ability);

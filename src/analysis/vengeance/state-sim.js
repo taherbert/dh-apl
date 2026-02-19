@@ -716,10 +716,13 @@ export function buildScoreTable(config, buildConfig = null) {
   }
 
   // Apply talent-specific multipliers when buildConfig provides talent flags
-  const talents = buildConfig?.talents;
-  if (talents && talentModifiers) {
+  const rawTalents = buildConfig?.talents;
+  const hasTalent = Array.isArray(rawTalents)
+    ? (t) => rawTalents.includes(t)
+    : (t) => rawTalents?.[t];
+  if (rawTalents && talentModifiers) {
     for (const [talent, mods] of Object.entries(talentModifiers)) {
-      if (!talents[talent]) continue;
+      if (!hasTalent(talent)) continue;
       for (const [ability, multiplier] of Object.entries(mods)) {
         if (baseScores[ability] != null) {
           baseScores[ability] = Math.round(baseScores[ability] * multiplier);
