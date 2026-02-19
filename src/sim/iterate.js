@@ -1832,7 +1832,10 @@ async function cmdPatternAnalyze() {
   );
   await initInterpEngine(spec);
 
-  const { computeDivergence } = await import("../analysis/divergence.js");
+  const { computeDivergence, initEngine: initDivEngine } = await import(
+    "../analysis/divergence.js"
+  );
+  await initDivEngine(spec);
 
   const patternsByBuild = {};
   const divergencesByBuild = {};

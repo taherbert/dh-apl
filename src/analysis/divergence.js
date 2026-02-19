@@ -28,7 +28,7 @@ import { ROOT } from "../engine/paths.js";
 // State engine — loaded dynamically based on --spec
 let engine;
 
-async function initEngine(specName) {
+export async function initEngine(specName) {
   if (engine) return engine;
   engine = await import(`./${specName}/state-sim.js`);
   // Also initialize the shared engine in the sub-tools so they don't re-import
