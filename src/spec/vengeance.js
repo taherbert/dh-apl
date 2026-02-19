@@ -19,6 +19,7 @@ import {
 } from "./common.js";
 import { dataDir } from "../engine/paths.js";
 import { config } from "../engine/startup.js";
+import { decodeAllTalents } from "../util/talent-fingerprint.js";
 
 // ================================================================
 // SECTION 1: HUMAN DOMAIN KNOWLEDGE
@@ -692,10 +693,16 @@ export const SPEC_CONFIG = {
     Shadowflame: "shadowflame-damage",
   },
 
-  // Named build configurations for gap analysis tools (optimal-timeline, divergence).
-  // Each entry maps a short name to a buildConfig object consumed by state-sim.js.
-  // Organized by scenario to match the simulation fight types (st, small_aoe, big_aoe).
-  // The pattern-analyze command iterates all scenarios × builds × durations.
+  // Scenario definitions for pattern analysis. Each scenario defines the fight
+  // parameters; builds come from the roster (or fallback analysisArchetypes).
+  scenarios: {
+    st: { target_count: 1, durations: [120, 300] },
+    small_aoe: { target_count: 5, durations: [75] },
+    big_aoe: { target_count: 10, durations: [60] },
+  },
+
+  // Fallback build configs when no roster is populated. Prefer roster-derived
+  // configs via rosterBuildToConfig() — these are only used as a safety net.
   analysisArchetypes: {
     st: {
       "anni-apex3-dgb": {
@@ -938,6 +945,73 @@ export function flattenArchetypes(archetypes = SPEC_CONFIG.analysisArchetypes) {
     }
   }
   return flat;
+}
+
+// Convert a roster DB row into a state-sim-compatible buildConfig.
+// Decodes the talent hash to derive talent flags, avoiding hardcoded duplication.
+export function rosterBuildToConfig(dbRow) {
+  const { hash, hero_tree, archetype } = dbRow;
+  const { specTalents, heroTalents } = decodeAllTalents(hash);
+
+  const talents = {};
+  for (const name of [...specTalents, ...heroTalents]) {
+    const key = name.toLowerCase().replace(/['']/g, "").replace(/\s+/g, "_");
+    talents[key] = true;
+  }
+
+  const apexMatch = archetype?.match(/Apex\s+(\d+)/i);
+  const apexRank = apexMatch ? parseInt(apexMatch[1], 10) : 0;
+
+  return {
+    heroTree: hero_tree,
+    apexRank,
+    haste: 0.2,
+    talents,
+    _rosterHash: hash,
+    _name: dbRow.name || `${hero_tree}-apex${apexRank}`,
+  };
+}
+
+// Select representative builds covering distinct (heroTree × apexRank) axes.
+// Returns one build per combo (first match wins), keeping the build count manageable.
+function selectRepresentativeBuilds(configs) {
+  const seen = new Set();
+  const reps = [];
+  for (const cfg of configs) {
+    const key = `${cfg.heroTree}|${cfg.apexRank}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      reps.push(cfg);
+    }
+  }
+  return reps;
+}
+
+// Build scenario-grouped analysis configs from roster builds + scenarios config.
+// Returns the same structure as analysisArchetypes for drop-in compatibility.
+// Selects representative builds per (heroTree × apexRank) to keep analysis tractable.
+export function buildAnalysisFromRoster(rosterBuilds) {
+  const scenarios = SPEC_CONFIG.scenarios;
+  if (!scenarios || rosterBuilds.length === 0) return null;
+
+  const allConfigs = rosterBuilds.map((b) => rosterBuildToConfig(b));
+  const reps = selectRepresentativeBuilds(allConfigs);
+  const result = {};
+
+  for (const [scenarioName, scenarioCfg] of Object.entries(scenarios)) {
+    result[scenarioName] = {};
+    for (const cfg of reps) {
+      const suffix =
+        scenarioCfg.target_count > 1 ? `-${scenarioCfg.target_count}t` : "";
+      const key = `${cfg._name}${suffix}`;
+      result[scenarioName][key] = {
+        ...cfg,
+        target_count: scenarioCfg.target_count,
+      };
+    }
+  }
+
+  return result;
 }
 
 export const SET_BONUS_SPELL_IDS = new Set([

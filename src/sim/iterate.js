@@ -77,6 +77,7 @@ import {
   getBaselineDps,
   updateBaselineDpsCurrent,
   getSessionSummary,
+  getRosterBuilds,
 } from "../util/db.js";
 import {
   loadAllDivergences,
@@ -1811,30 +1812,43 @@ async function cmdDivergenceHypotheses() {
 
 async function cmdPatternAnalyze() {
   const specConfig = getSpecAdapter().getSpecConfig();
-  const scenarioArchetypes = specConfig.analysisArchetypes || {};
-
-  // Multi-duration: ST gets 120s + 300s, AoE gets scenario maxTime
-  const DURATIONS = {
-    st: [120, 300],
-    small_aoe: [75],
-    big_aoe: [60],
+  const spec = getSpecName();
+  const scenarios = specConfig.scenarios || {
+    st: { target_count: 1, durations: [120, 300] },
+    small_aoe: { target_count: 5, durations: [75] },
+    big_aoe: { target_count: 10, durations: [60] },
   };
+
+  // Try roster-derived configs first, fall back to hardcoded analysisArchetypes
+  let scenarioArchetypes;
+  let source;
+  const rosterBuilds = getRosterBuilds(spec);
+  if (rosterBuilds.length > 0) {
+    const specMod = await import(`../spec/${spec}.js`);
+    scenarioArchetypes = specMod.buildAnalysisFromRoster(rosterBuilds);
+    source = `roster (${rosterBuilds.length} builds)`;
+  }
+  if (!scenarioArchetypes) {
+    scenarioArchetypes = specConfig.analysisArchetypes || {};
+    source = "analysisArchetypes (fallback)";
+  }
 
   // Count total work units
   let totalUnits = 0;
   for (const [scenario, builds] of Object.entries(scenarioArchetypes)) {
     if (typeof builds !== "object" || builds.heroTree !== undefined) continue;
-    const durations = DURATIONS[scenario] || [120];
+    const durations = scenarios[scenario]?.durations || [120];
     totalUnits += Object.keys(builds).length * durations.length;
   }
 
   if (totalUnits === 0) {
-    console.error("No analysis archetypes configured in SPEC_CONFIG.");
+    console.error(
+      "No analysis builds available (empty roster and no analysisArchetypes).",
+    );
     process.exit(1);
   }
 
   const { initEngine } = await import("../analysis/optimal-timeline.js");
-  const spec = getSpecName();
   await initEngine(spec);
 
   const { simulateApl, initEngine: initInterpEngine } = await import(
@@ -1848,15 +1862,16 @@ async function cmdPatternAnalyze() {
   await initDivEngine(spec);
 
   console.log(
-    `Pattern analysis: ${totalUnits} work units across ${Object.keys(scenarioArchetypes).length} scenarios\n`,
+    `Pattern analysis: ${totalUnits} work units (source: ${source})\n`,
   );
 
   const patternsByBuild = {};
   const divergencesByBuild = {};
+  const buildConfigs = {}; // runKey → config, for cross-archetype synthesis
 
   for (const [scenario, builds] of Object.entries(scenarioArchetypes)) {
     if (typeof builds !== "object" || builds.heroTree !== undefined) continue;
-    const durations = DURATIONS[scenario] || [120];
+    const durations = scenarios[scenario]?.durations || [120];
     const buildNames = Object.keys(builds);
 
     console.log(
@@ -1869,6 +1884,7 @@ async function cmdPatternAnalyze() {
       for (const duration of durations) {
         const runKey =
           durations.length > 1 ? `${buildName}-${duration}s` : buildName;
+        buildConfigs[runKey] = archetype;
 
         const traceFile = resultsFile(`apl-trace-${runKey}.json`);
         const divFile = resultsFile(`divergences-${runKey}.json`);
@@ -1919,6 +1935,7 @@ async function cmdPatternAnalyze() {
   const synthesis = crossArchetypeSynthesize(
     patternsByBuild,
     divergencesByBuild,
+    buildConfigs,
   );
   const synthesisFile = resultsFile("cross-archetype-synthesis.json");
   writeFileSync(synthesisFile, JSON.stringify(synthesis, null, 2));

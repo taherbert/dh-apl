@@ -7,16 +7,25 @@ import { join } from "node:path";
 import { resultsDir } from "../engine/paths.js";
 import { getSpecAdapter } from "../engine/startup.js";
 
-export function synthesizePatterns(patternsByBuild, divergencesByBuild) {
-  const specConfig = getSpecAdapter().getSpecConfig();
-  // Flatten scenario-grouped archetypes to a single name→config map
-  const rawArchetypes = specConfig.analysisArchetypes || {};
-  const archetypes = {};
-  for (const [key, val] of Object.entries(rawArchetypes)) {
-    if (val?.heroTree !== undefined) {
-      archetypes[key] = val;
-    } else if (typeof val === "object") {
-      Object.assign(archetypes, val);
+export function synthesizePatterns(
+  patternsByBuild,
+  divergencesByBuild,
+  buildConfigs,
+) {
+  // Use provided build configs, or fall back to SPEC_CONFIG analysisArchetypes
+  let archetypes;
+  if (buildConfigs) {
+    archetypes = buildConfigs;
+  } else {
+    const specConfig = getSpecAdapter().getSpecConfig();
+    const rawArchetypes = specConfig.analysisArchetypes || {};
+    archetypes = {};
+    for (const [key, val] of Object.entries(rawArchetypes)) {
+      if (val?.heroTree !== undefined) {
+        archetypes[key] = val;
+      } else if (typeof val === "object") {
+        Object.assign(archetypes, val);
+      }
     }
   }
   const groups = {};
@@ -231,9 +240,17 @@ export function compareResourceFlows(patternsByBuild) {
   return { metrics, outliers };
 }
 
-export function crossArchetypeSynthesize(patternsByBuild, divergencesByBuild) {
+export function crossArchetypeSynthesize(
+  patternsByBuild,
+  divergencesByBuild,
+  buildConfigs,
+) {
   return {
-    patterns: synthesizePatterns(patternsByBuild, divergencesByBuild),
+    patterns: synthesizePatterns(
+      patternsByBuild,
+      divergencesByBuild,
+      buildConfigs,
+    ),
     resourceComparison: compareResourceFlows(patternsByBuild),
     metadata: {
       buildCount: Object.keys(patternsByBuild).length,

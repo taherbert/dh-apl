@@ -192,3 +192,54 @@ export function decodeTalentNames(hash) {
 
   return { specTalents, heroTree: nodeSets.heroTree || null };
 }
+
+// Decode a talent hash into spec + hero talent names.
+// Returns { specTalents: string[], heroTalents: string[], heroTree: string|null }
+export function decodeAllTalents(hash) {
+  const fullNodes = getFullNodes();
+  const data = getRaidbots();
+
+  const { selections } = decode(hash, fullNodes);
+  const nodeSets = selectionsToNodeSets(selections, data);
+
+  const specNodeById = new Map();
+  for (const n of data.specNodes) specNodeById.set(n.id, n);
+
+  const specTalents = [];
+  for (const id of nodeSets.specNodes) {
+    const node = specNodeById.get(id);
+    if (!node) continue;
+    if (
+      node.type === "choice" &&
+      nodeSets.specChoices[id] !== undefined &&
+      node.entries
+    ) {
+      const entry = node.entries[nodeSets.specChoices[id]];
+      if (entry?.name) {
+        specTalents.push(entry.name);
+        continue;
+      }
+    }
+    const name = node.name || node.entries?.[0]?.name;
+    if (name) specTalents.push(name.split(" / ")[0]);
+  }
+
+  const heroTalents = [];
+  if (nodeSets.heroTree) {
+    const heroTreeNodes = data.heroSubtrees[nodeSets.heroTree];
+    if (heroTreeNodes) {
+      for (const id of nodeSets.heroNodes) {
+        const node = heroTreeNodes.find((n) => n.id === id);
+        if (!node) continue;
+        if (node.type === "choice" && nodeSets.heroChoices[id]) {
+          heroTalents.push(nodeSets.heroChoices[id].name);
+        } else {
+          const name = node.name || node.entries?.[0]?.name;
+          if (name) heroTalents.push(name);
+        }
+      }
+    }
+  }
+
+  return { specTalents, heroTalents, heroTree: nodeSets.heroTree || null };
+}
