@@ -1,5 +1,4 @@
 {
-  "$schema": "./profiles.schema.json",
   "profiles": [
     {
       "name": "max_defensive",

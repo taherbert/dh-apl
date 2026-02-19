@@ -192,7 +192,7 @@ print_summary() {
   echo "  - SimC binary (bin/simc)"
   echo "  - Reference APL (reference/vengeance-apl.simc)"
   echo "  - Wiki docs (reference/wiki/)"
-  echo "  - SpellDataDump (reference/spelldatadump-vdh.txt)"
+  echo "  - SpellDataDump (reference/spelldatadump-vengeance.txt)"
   echo "  - Data files (data/*.json)"
   echo "  - C++ references (reference/simc-talent-variables.json)"
   echo ""

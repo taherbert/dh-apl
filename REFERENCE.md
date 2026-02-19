@@ -64,8 +64,6 @@ src/
   engine/           # Core engine (spec-agnostic)
     paths.js        # Centralized per-spec path resolution (dataDir, resultsDir, aplsDir)
     startup.js      # Loads config.json, deep-merges config.{spec}.json via initSpec(), checks simc sync
-    extract.js      # Extraction pipeline orchestrator
-    model.js        # Model pipeline orchestrator
   spec/             # Spec-specific adapters
     interface.js    # Adapter contract + runtime validation
     vengeance.js    # VDH: spell IDs, domain overrides, hero trees, resource models, state machines
@@ -76,8 +74,8 @@ src/
   sim/              # SimC runner and analysis (runner.js, analyze.js, iterate.js)
   analyze/          # Strategic analysis — data-driven from spec adapter
   discover/         # Build discovery pipeline (build-discovery.js)
-  apl/              # APL parser, condition-parser, mutator, scaffold
-  util/             # Shared utilities (db.js, validate.js, talent-string.js)
+  apl/              # APL parser, condition-parser, mutator
+  util/             # Shared utilities (db.js, talent-string.js)
 data/
   vengeance/              # Per-spec extracted + modeled data
     raw/                  # Raw simc dumps (gitignored)
@@ -164,9 +162,6 @@ node src/sim/analyze.js                              # Analyze results
 
 # === Engine (all require SPEC env var or --spec flag) ===
 node src/engine/startup-cli.js               # Check config + simc sync status
-SPEC=vengeance node src/engine/extract.js    # Check extraction pipeline status
-SPEC=vengeance node src/engine/model.js      # Check model pipeline status
-SPEC=vengeance node src/util/validate.js     # Validate all data + staleness check
 npm run db:migrate                           # One-time import of legacy JSON → SQLite
 npm run db:migrate-theory                    # Migrate build-theory.json → DB tables
 npm run db:migrate-mechanics                 # Migrate mechanics.json → findings table
