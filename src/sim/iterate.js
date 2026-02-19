@@ -1866,7 +1866,14 @@ async function runPatternWorkers(
 ) {
   console.log(`\nUsing ${poolSize} workers for parallel processing...`);
 
-  const specConfig = getSpecAdapter().getSpecConfig();
+  const fullConfig = getSpecAdapter().getSpecConfig();
+  // Pass only the plain-data fields the worker needs — hypothesisPatterns
+  // contains appliesWhen functions that can't survive structuredClone.
+  const specConfig = {
+    burstWindows: fullConfig.burstWindows,
+    resourceModels: fullConfig.resourceModels,
+    stateMachines: fullConfig.stateMachines,
+  };
   const workers = [];
   try {
     for (let i = 0; i < poolSize; i++) {
