@@ -124,18 +124,18 @@ actions.anni+=/call_action_list,name=anni_voidfall
 # UR Meta: consume immediately (all apex ranks)
 actions.anni+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up&!buff.voidfall_spending.up
 # Meta chaining: hardcast during active Meta for second MA cycle (apex.3 only)
-actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_chain_ready&buff.voidfall_building.stack=0
+actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_chain_ready&buff.voidfall_building.stack<2
 # Burst SpB: fire SpB before Meta when frags available — Meta fires off-GCD during SpB's GCD
-actions.anni+=/spirit_bomb,if=!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments>=3&!buff.voidfall_spending.up&buff.voidfall_building.stack<(2-apex.3)
+actions.anni+=/spirit_bomb,if=!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments>=3&!buff.voidfall_spending.up&buff.voidfall_building.stack<2
 # Standard Meta: bypass fragment gate after burst SpB (prev_gcd.1 detects the just-cast SpB)
-actions.anni+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&!buff.voidfall_spending.up&(buff.voidfall_building.stack<(2-apex.3))&(soul_fragments>=3|!apex.3|prev_gcd.1.spirit_bomb)
+actions.anni+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&(soul_fragments>=3|!apex.3|prev_gcd.1.spirit_bomb)
 # Burst entry: apex.3 only — pre-load fragments when Meta gated on frags<3
-actions.anni+=/call_action_list,name=anni_burst,if=apex.3&!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments<3&!buff.voidfall_spending.up&buff.voidfall_building.stack=0
+actions.anni+=/call_action_list,name=anni_burst,if=apex.3&!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments<3&!buff.voidfall_spending.up&buff.voidfall_building.stack<2
 # UR fishing: last 6s of Meta
 actions.anni+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
-# In-Meta optimization: apex.3 only — prioritize SpB cycling over generator CDs
-actions.anni+=/call_action_list,name=anni_in_meta,if=apex.3&buff.metamorphosis.up&!variable.ur_fishing
-# Standard CDs (all builds; handles all of Meta for non-apex.3)
+# In-Meta optimization: prioritize Fracture-SpB cycling over generator CDs during Meta
+actions.anni+=/call_action_list,name=anni_in_meta,if=buff.metamorphosis.up&!variable.ur_fishing
+# Standard CDs (all builds; handles out-of-Meta for all and fallback)
 actions.anni+=/call_action_list,name=anni_cooldowns
 # Fiery Demise fire amplification makes 3-fragment Spirit Bomb casts worthwhile
 actions.anni+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active
