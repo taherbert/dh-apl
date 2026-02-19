@@ -74,27 +74,18 @@ Read `reference/{spec}-apl.simc` and document:
 
 Also read `reference/wiki/action-lists.md` and `reference/wiki/action-list-expressions.md` for the full SimC expression language. These document features you might not know exist.
 
-### Phase 3: APL Scaffold
+### Phase 3: APL Construction
 
-```bash
-# Generate initial APL skeleton from spell data
-node src/apl/scaffold.js {spec} null apls/{spec}/{spec}-scaffold.simc
-```
+Using the spell data from Phase 1 and syntax techniques from Phase 2, manually construct an initial APL at `apls/{spec}/{spec}.simc`.
 
-Review the generated scaffold:
+The initial APL should:
 
-- `apls/{spec}/{spec}-scaffold.simc` — starting APL
-- `apls/{spec}/{spec}-scaffold-analysis.md` — analysis report
+- Include hero tree branching structure (`run_action_list` for mutually exclusive branches)
+- Define variables for resource thresholds and buff tracking
+- Use action list delegation for cooldowns, defensives, and burst windows
+- Cover all relevant abilities from the spell catalog
 
-The scaffold is a **starting point**, not a finished APL. It:
-
-- Identifies relevant abilities
-- Classifies by cooldown, resource, category
-- Does NOT know talent gates
-- Does NOT know hero tree routing
-- Does NOT know optimal priorities
-
-Enhance the scaffold using techniques learned in Phase 2 — add hero tree branching structure, variable patterns for resource thresholds, and action list delegation. The priorities will be refined by `/optimize` later.
+The priorities will be refined by `/optimize` later.
 
 ### Phase 4: Build Theory Generation
 
