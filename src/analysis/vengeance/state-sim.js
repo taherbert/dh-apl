@@ -556,119 +556,122 @@ export function getAvailable(state) {
 // Fire abilities benefit from Fiery Demise (+30% fire amp while FB DoT is up)
 // ---------------------------------------------------------------------------
 
-// Base DPGCD scores (Fracture = 100 reference)
-// Derived from AP coefficients in SPEC_CONFIG.domainOverrides:
-//   Fracture: 1.035 AP → 100 units
-//   SpB: 0.4 AP × frags → scales with frags
-//   SC: 1.29 AP
-//   FelDev: 1.54 AP
-//   Soul Carver: 2.08 AP
-//   SoS: 6.92 AP
 export function scoreDpgcd(state, abilityId) {
   const s = state;
   const cfg = s.buildConfig;
   const inMeta = s.buffs.metamorphosis > 0;
   const fbActive = s.dots.fiery_brand > 0 && cfg.talents?.fiery_demise;
   const vfSpending = s.buffStacks?.voidfall_spending ?? s.vf_spending ?? 0;
+  const tc = s.target_count ?? 1;
 
-  const fireAmp = fbActive ? 1.3 : 1.0;
-  // Vengeful Beast: Meta +20% damage only applies to Fracture, Soul Cleave, Spirit Bomb
-  const metaAmp = inMeta ? 1.2 : 1.0;
+  const st = _scoreTable;
+
+  const fireAmp = fbActive ? (st?.fireAmpValue ?? 1.3) : 1.0;
+  const metaAmp = inMeta ? (st?.metaAmpValue ?? 1.2) : 1.0;
 
   let score = 0;
 
   switch (abilityId) {
     case "fracture": {
-      // 1.035 AP coefficient; generates fury/frags (future value captured by rollout)
-      score = 100 * metaAmp;
-      // AR: Wounded Quarry — Fracture deals extra damage under Reaver's Mark debuff (~30%)
-      if ((s.debuffs?.reavers_mark ?? 0) > 0) score *= 1.3;
+      score = (st?.baseScores?.fracture ?? 100) * metaAmp;
+      if ((s.debuffs?.reavers_mark ?? 0) > 0)
+        score *= st?.tuning?.arWoundedQuarryAmp ?? 1.3;
+      if (st?.setBonusMods?.twoPiece?.target === "fracture" && cfg.setBonus) {
+        score *= st.setBonusMods.twoPiece.modifier;
+      }
+      if (st?.setBonusMods?.fourPiece?.trigger === "fracture" && cfg.setBonus) {
+        const ev = st.setBonusMods.fourPiece.ev;
+        const aoeCap = st.setBonusMods.fourPiece.aoeTargetCap ?? 5;
+        const fourPcSchool = st.setBonusMods.fourPiece.school;
+        let fourPcAmp = 1.0;
+        if (fourPcSchool === "Fire" && fbActive) fourPcAmp = fireAmp;
+        score += ev * aoeScale(tc, aoeCap) * fourPcAmp;
+      }
       break;
     }
 
     case "spirit_bomb": {
       const consumed = Math.min(s.soul_fragments, spbMaxConsume(cfg));
-      // 0.4 AP per fragment consumed (from SPEC_CONFIG)
-      // Normalized: at 5 frags = 193, at 4 = 154, at 3 = 116
-      score = Math.max(0, consumed) * 38.5;
-      // Voidfall dump (spending=3): triggers Catastrophe (extra Soul Cleave hit).
-      // Soul Cleave = 1.29 AP → ~125 normalized (vs Fracture 1.035 = 100 base).
-      // Using the actual Catastrophe AP equivalent keeps scoring calibrated.
-      if (vfSpending === 3) score += 125;
-      // Fire school: amplified by Fiery Demise and Metamorphosis
+      if (!st) {
+        score = Math.max(0, consumed) * 38.5;
+      } else {
+        score = Math.max(0, consumed) * st.baseScores.spirit_bomb;
+      }
+      if (vfSpending === 3) score += st?.baseScores?.soul_cleave ?? 125;
       score *= fireAmp * metaAmp;
+      if (tc > 1) {
+        score *= aoeScale(tc, st?.aoeTargets?.spirit_bomb ?? 5);
+      }
       break;
     }
 
     case "soul_cleave": {
-      // 1.29 AP → 125 relative to Fracture
-      score = 125 * metaAmp;
-      // During Voidfall spending phase (pre-dump): SC increments spending stack
-      // while preserving fragments for the dump SpB. Needs enough bonus to beat
-      // SpB's immediate score at any typical frag count (SpB max = 5×38.5=192.5).
-      if (vfSpending > 0 && vfSpending < 3) score += 100;
-      // AR: Bladecraft empowerment under Rending Strike + Glaive Flurry
+      score = (st?.baseScores?.soul_cleave ?? 125) * metaAmp;
+      if (vfSpending > 0 && vfSpending < 3)
+        score += st?.tuning?.vfSpendingBonus ?? 100;
       if (
         (s.buffs?.rending_strike ?? 0) > 0 &&
         (s.buffs?.glaive_flurry ?? 0) > 0
       )
-        score *= 1.5;
+        score *= st?.tuning?.arBladecraftAmp ?? 1.5;
+      if (tc > 1) {
+        score *= aoeScale(tc, st?.aoeTargets?.soul_cleave ?? 5);
+      }
       break;
     }
 
     case "reavers_glaive":
-      // 3.45 AP / 1.035 AP (Fracture ref) × 100 = 333; grants empowerment buffs
-      // Physical school, no Vengeful Beast — no fire or meta amps
-      score = 333;
+      score = st?.baseScores?.reavers_glaive ?? 333;
       break;
 
     case "fel_devastation":
-      // 1.54 AP → 149, fire school → fire amp applies
-      // No Vengeful Beast — meta amp does not apply
-      score = 149 * fireAmp;
+      score = (st?.baseScores?.fel_devastation ?? 149) * fireAmp;
+      if (tc > 1) {
+        score *= aoeScale(tc, st?.aoeTargets?.fel_devastation ?? 5);
+      }
       break;
 
     case "soul_carver":
-      // 2.08 AP → 201, fire school
-      // No Vengeful Beast — meta amp does not apply
-      score = 201 * fireAmp;
+      score = (st?.baseScores?.soul_carver ?? 201) * fireAmp;
       break;
 
     case "sigil_of_spite":
-      // 6.92 AP → 669, chromatic school — no fire or meta amps
-      score = 669;
+      score = st?.baseScores?.sigil_of_spite ?? 669;
+      if (tc > 1) {
+        score *= aoeScale(tc, st?.aoeTargets?.sigil_of_spite ?? 8);
+      }
       break;
 
-    case "fiery_brand":
-      // Modest immediate damage (~1.0 AP) but enables fire amp for future casts
-      // Future value captured by rollout (it sees FelDev/SC firing at 1.3×)
-      score = 100 * fireAmp;
+    case "fiery_brand": {
+      const base = (st?.baseScores?.fiery_brand ?? 100) * fireAmp;
+      const windowBonus =
+        !fbActive && st?.tuning?.windowValuation?.fieryBrand
+          ? st.tuning.windowValuation.fieryBrand
+          : 0;
+      score = base + windowBonus;
       break;
+    }
 
     case "immolation_aura":
-      // ~1.0 AP immediate + fury regen + Charred Flesh extension + Fallout frags
-      // Fire school, no Vengeful Beast
-      score = 95 * fireAmp;
+      score = (st?.baseScores?.immolation_aura ?? 95) * fireAmp;
       break;
 
     case "sigil_of_flame":
-      // 0.792 AP → 77, fire school, no Vengeful Beast
-      score = 77 * fireAmp;
+      score = (st?.baseScores?.sigil_of_flame ?? 77) * fireAmp;
+      if (tc > 1) {
+        score *= aoeScale(tc, st?.aoeTargets?.sigil_of_flame ?? 8);
+      }
       break;
 
     case "felblade":
-      // Fire school damage + fury gen, no Vengeful Beast
-      score = 60 * fireAmp;
+      score = (st?.baseScores?.felblade ?? 60) * fireAmp;
       break;
 
     case "throw_glaive":
-      // Physical school, no amps
-      score = 40;
+      score = st?.baseScores?.throw_glaive ?? 40;
       break;
 
     case "metamorphosis":
-      // Off-GCD: grants Meta window value; immediate = 0 damage but enables massive future
-      // Capture as large rollout bonus, not immediate score
       score = 0;
       break;
 
@@ -685,6 +688,72 @@ export function scoreDpgcd(state, abilityId) {
 
 // Abilities that don't consume a GCD (use_off_gcd=1 in SimC APL)
 export const OFF_GCD_ABILITIES = new Set(["metamorphosis", "infernal_strike"]);
+
+// ---------------------------------------------------------------------------
+// Data-driven scoring table — replaces hardcoded constants in scoreDpgcd
+// ---------------------------------------------------------------------------
+
+let _scoreTable = null;
+
+export function buildScoreTable(config) {
+  const { domainOverrides, burstWindows, setBonus, tuning } = config;
+  const ref = domainOverrides.fracture.apCoeff;
+
+  const baseScores = {};
+  for (const [ability, data] of Object.entries(domainOverrides)) {
+    if (data.apCoeff) {
+      baseScores[ability] = Math.round((data.apCoeff / ref) * 100);
+    }
+  }
+
+  const fireAmpValue =
+    burstWindows?.find((w) => w.school === "Fire")?.damageAmp ?? 0.3;
+  const metaAmpValue =
+    burstWindows?.find((w) => w.school === "all")?.damageAmp ?? 0.2;
+
+  const schools = {};
+  const aoeTargets = {};
+  for (const [ability, data] of Object.entries(domainOverrides)) {
+    if (data.school) schools[ability] = data.school;
+    if (data.aoeTargets) aoeTargets[ability] = data.aoeTargets;
+  }
+
+  const setBonusMods = {};
+  if (setBonus?.twoPiece) {
+    setBonusMods.twoPiece = {
+      target: setBonus.twoPiece.target,
+      modifier: setBonus.twoPiece.modifier,
+    };
+  }
+  if (setBonus?.fourPiece) {
+    setBonusMods.fourPiece = {
+      trigger: setBonus.fourPiece.trigger,
+      ev:
+        setBonus.fourPiece.procChance *
+        Math.round((setBonus.fourPiece.apCoeff / ref) * 100),
+      school: setBonus.fourPiece.school,
+      aoeTargetCap: setBonus.fourPiece.aoeTargetCap,
+    };
+  }
+
+  return Object.freeze({
+    baseScores,
+    fireAmpValue: 1 + fireAmpValue,
+    metaAmpValue: 1 + metaAmpValue,
+    schools,
+    aoeTargets,
+    setBonusMods,
+    tuning: tuning ?? {},
+  });
+}
+
+export function initScoring(table) {
+  _scoreTable = table;
+}
+
+function aoeScale(n, cap) {
+  return 1 + Math.sqrt(Math.min(n, cap) - 1);
+}
 
 // Ability GCD consumption (in seconds; 0 = no GCD)
 export function getAbilityGcd(state, abilityId) {

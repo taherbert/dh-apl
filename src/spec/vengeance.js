@@ -59,21 +59,57 @@ export const SPEC_CONFIG = {
   },
 
   domainOverrides: {
-    fracture: { furyGenMeta: 40, fragGenMeta: 3, apCoeff: 1.035 },
-    spirit_bomb: { fragConsume: "up_to_5", apCoeff: 0.4 },
-    soul_cleave: { fragConsume: "up_to_2", apCoeff: 1.29 },
+    fracture: {
+      furyGenMeta: 40,
+      fragGenMeta: 3,
+      apCoeff: 1.035,
+      school: "Physical",
+      aoeTargets: 1,
+    },
+    spirit_bomb: {
+      fragConsume: "up_to_5",
+      apCoeff: 0.4,
+      school: "Fire",
+      aoeTargets: 5,
+    },
+    soul_cleave: {
+      fragConsume: "up_to_2",
+      apCoeff: 1.29,
+      school: "Physical",
+      aoeTargets: 5,
+    },
     immolation_aura: {
       charges: 2,
       rechargeCd: 30,
       furyPerTick: 3,
       tickInterval: 1,
+      apCoeff: 0.98,
+      school: "Fire",
     },
-    sigil_of_flame: { apCoeff: 0.792 },
-    fiery_brand: { duration: 10, damageAmp: 0.3 },
-    soul_carver: { apCoeff: 2.08 },
-    fel_devastation: { gcd: false, apCoeff: 1.54 },
-    sigil_of_spite: { fragGen: "variable", apCoeff: 6.92 },
-    reavers_glaive: { apCoeff: 3.45 },
+    sigil_of_flame: { apCoeff: 0.792, school: "Fire", aoeTargets: 8 },
+    fiery_brand: {
+      duration: 10,
+      damageAmp: 0.3,
+      apCoeff: 1.0,
+      school: "Fire",
+      aoeTargets: 1,
+    },
+    soul_carver: { apCoeff: 2.08, school: "Fire", aoeTargets: 1 },
+    fel_devastation: {
+      gcd: false,
+      apCoeff: 1.54,
+      school: "Fire",
+      aoeTargets: 5,
+    },
+    sigil_of_spite: {
+      fragGen: "variable",
+      apCoeff: 6.92,
+      school: "Chromatic",
+      aoeTargets: 8,
+    },
+    reavers_glaive: { apCoeff: 3.45, school: "Physical", aoeTargets: 1 },
+    felblade: { apCoeff: 0.62, school: "Physical", aoeTargets: 1 },
+    throw_glaive: { apCoeff: 0.41, school: "Physical", aoeTargets: 1 },
   },
 
   // Talent locks/bans/exclusions live in config.vengeance.json under "talents".
@@ -517,6 +553,25 @@ export const SPEC_CONFIG = {
       syncTargets: ["fracture", "spirit_bomb"],
     },
   ],
+
+  setBonus: {
+    twoPiece: { target: "fracture", modifier: 1.35 },
+    fourPiece: {
+      ability: "explosion_of_the_soul",
+      procChance: 0.3,
+      apCoeff: 1.8,
+      school: "Fire",
+      aoeTargetCap: 5,
+      trigger: "fracture",
+    },
+  },
+
+  tuning: {
+    vfSpendingBonus: 100,
+    arWoundedQuarryAmp: 1.3,
+    arBladecraftAmp: 1.5,
+    windowValuation: { fieryBrand: 60 },
+  },
 
   stateMachines: {
     aldrachi_reaver: {

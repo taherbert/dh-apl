@@ -25,6 +25,16 @@ let engine;
 export async function initEngine(specName) {
   if (engine) return engine;
   engine = await import(`./${specName}/state-sim.js`);
+  if (engine.buildScoreTable) {
+    const specConfig = getSpecAdapter().getSpecConfig();
+    const table = engine.buildScoreTable({
+      domainOverrides: specConfig.domainOverrides,
+      burstWindows: specConfig.burstWindows,
+      setBonus: specConfig.setBonus,
+      tuning: specConfig.tuning,
+    });
+    engine.initScoring(table);
+  }
   return engine;
 }
 
@@ -40,6 +50,7 @@ export async function initEngine(specName) {
 // ---------------------------------------------------------------------------
 
 const T_HORIZON = 25;
+const DISCOUNT_RATE = 0.97;
 
 // 6 deep steps covers setup payoffs (FB fire amp, IA Charred Flesh extension)
 // that realize over 5-8 GCDs. Each step uses depth-2 lookahead (immediate + best next).
@@ -121,8 +132,8 @@ function rolloutDps(state, horizon) {
     }
 
     step++;
-    // Always score immediate value (not lookahead composite) for the running total
-    totalScore += scoreDpgcd(s, bestAbility);
+    const discount = Math.pow(DISCOUNT_RATE, step);
+    totalScore += scoreDpgcd(s, bestAbility) * discount;
     s = applyAbility(s, bestAbility);
     const dt = getAbilityGcd(s, bestAbility) || s.gcd;
     s = advanceTime(s, dt);

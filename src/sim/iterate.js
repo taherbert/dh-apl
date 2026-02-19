@@ -82,6 +82,13 @@ import {
   loadAllDivergences,
   buildDivergenceHypotheses,
 } from "../analyze/divergence-to-hypotheses.js";
+import { analyzePatterns } from "../analysis/pattern-analysis.js";
+import { crossArchetypeSynthesize } from "../analyze/cross-archetype-synthesis.js";
+import {
+  generateTheories,
+  persistTheories,
+  formatTheoryCandidates,
+} from "../analyze/theory-generator.js";
 import {
   ROOT,
   resultsDir,
@@ -1800,6 +1807,132 @@ async function cmdDivergenceHypotheses() {
   );
 }
 
+// --- Pattern Analysis + Theory Generation ---
+
+async function cmdPatternAnalyze() {
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const archetypes = specConfig.analysisArchetypes || {};
+  const archetypeNames = Object.keys(archetypes);
+
+  if (archetypeNames.length === 0) {
+    console.error("No analysis archetypes configured in SPEC_CONFIG.");
+    process.exit(1);
+  }
+
+  console.log(
+    `Pattern analysis across ${archetypeNames.length} archetypes...\n`,
+  );
+
+  const { initEngine } = await import("../analysis/optimal-timeline.js");
+  const spec = getSpecName();
+  await initEngine(spec);
+
+  const { simulateApl, initEngine: initInterpEngine } = await import(
+    "../analysis/apl-interpreter.js"
+  );
+  await initInterpEngine(spec);
+
+  const { computeDivergence } = await import("../analysis/divergence.js");
+
+  const patternsByBuild = {};
+  const divergencesByBuild = {};
+
+  for (const buildName of archetypeNames) {
+    const archetype = { ...archetypes[buildName], _name: buildName };
+    console.log(`  [${buildName}] Analyzing...`);
+
+    const traceFile = resultsFile(`apl-trace-${buildName}.json`);
+    const divFile = resultsFile(`divergences-${buildName}.json`);
+
+    let aplTrace = null;
+    let divergences = [];
+
+    if (existsSync(traceFile)) {
+      aplTrace = JSON.parse(readFileSync(traceFile, "utf-8"));
+    }
+
+    if (existsSync(divFile)) {
+      const divData = JSON.parse(readFileSync(divFile, "utf-8"));
+      divergences = divData.divergences || [];
+    }
+
+    if (!aplTrace) {
+      const aplPath = join(aplsDir(), `${spec}.simc`);
+      if (!existsSync(aplPath)) {
+        console.log(`    Skipping — no APL file at ${aplPath}`);
+        continue;
+      }
+      const aplText = readFileSync(aplPath, "utf-8");
+      aplTrace = simulateApl(aplText, archetype, 120);
+    }
+
+    if (divergences.length === 0 && aplTrace) {
+      divergences = computeDivergence(aplTrace, archetype);
+    }
+
+    const patterns = analyzePatterns(aplTrace, divergences, specConfig);
+    patternsByBuild[buildName] = patterns;
+    divergencesByBuild[buildName] = divergences;
+
+    console.log(
+      `    ${patterns.resourceFlow?.gcds?.total || 0} GCDs, ${divergences.length} divergences`,
+    );
+
+    const patternFile = resultsFile(`patterns-${buildName}.json`);
+    writeFileSync(patternFile, JSON.stringify(patterns, null, 2));
+  }
+
+  console.log("\nCross-archetype synthesis...");
+  const synthesis = crossArchetypeSynthesize(
+    patternsByBuild,
+    divergencesByBuild,
+  );
+  const synthesisFile = resultsFile("cross-archetype-synthesis.json");
+  writeFileSync(synthesisFile, JSON.stringify(synthesis, null, 2));
+
+  const universalCount = synthesis.patterns.filter(
+    (p) => p.classification === "universal",
+  ).length;
+  const heroSpecificCount = synthesis.patterns.filter(
+    (p) => p.classification === "hero_specific",
+  ).length;
+  console.log(
+    `  ${synthesis.patterns.length} pattern groups: ${universalCount} universal, ${heroSpecificCount} hero-specific`,
+  );
+
+  console.log("\nGenerating theories...");
+  const theories = generateTheories(synthesis, patternsByBuild);
+  const candidates = formatTheoryCandidates(theories);
+  const candidatesFile = resultsFile("theory-candidates.json");
+  writeFileSync(candidatesFile, JSON.stringify(candidates, null, 2));
+
+  const persisted = persistTheories(theories);
+  const dbCount = persisted.filter((p) => !p.error).length;
+
+  console.log(
+    `  ${theories.length} theories generated (${theories.filter((t) => t.confidence >= 0.5).length} medium+ confidence)`,
+  );
+  console.log(`  ${dbCount} inserted to DB`);
+
+  console.log("\n" + "=".repeat(70));
+  console.log("Theory Candidates (top 10)");
+  console.log("=".repeat(70));
+
+  for (const theory of theories.slice(0, 10)) {
+    const tag =
+      theory.classification === "artifact"
+        ? "[ARTIFACT]"
+        : `[${theory.confidence.toFixed(2)}]`;
+    console.log(`\n${tag} ${theory.title}`);
+    console.log(`  ${theory.reasoning.slice(0, 120)}...`);
+    console.log(`  Change: ${theory.proposed_change}`);
+    console.log(`  Impact: ${theory.expected_impact}`);
+  }
+
+  console.log(`\nSaved: ${candidatesFile}`);
+  console.log(`Synthesis: ${synthesisFile}`);
+}
+
 // --- Auto-Generate Candidate ---
 
 async function cmdAutoGenerate() {
@@ -2648,6 +2781,10 @@ switch (cmd) {
     await cmdDivergenceHypotheses();
     break;
 
+  case "pattern-analyze":
+    await cmdPatternAnalyze();
+    break;
+
   case "checkpoint": {
     // Parse checkpoint flags
     const checkpointOpts = {};
@@ -2684,6 +2821,7 @@ Usage:
   node src/sim/iterate.js theorycraft                Generate temporal resource flow hypotheses
   node src/sim/iterate.js synthesize                 Synthesize hypotheses from all specialist sources
   node src/sim/iterate.js divergence-hypotheses      Import divergence JSONs as DB hypotheses
+  node src/sim/iterate.js pattern-analyze            Pattern analysis + theory generation
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report
