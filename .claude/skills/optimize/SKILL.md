@@ -96,22 +96,19 @@ Only if no active iteration session:
 node src/sim/iterate.js init apls/{spec}/{spec}.simc
 ```
 
-### 0f. Divergence Analysis (Pre-Hypothesis Priming)
+### 0f. Batch Divergence Analysis (Pre-Hypothesis Priming)
 
-Run divergence analysis for each key archetype before deep reasoning. This generates mechanically-grounded hypotheses — states where the 15s rollout diverges from the APL — as a structured starting point for Phase 1a.
+Run the batch pattern-analyze pipeline across all representative builds. This chains optimal-timeline → apl-interpreter → divergence → pattern-analysis → cross-archetype-synthesis → theory-generator, producing mechanically-grounded hypotheses as a structured starting point for Phase 1a. Per-build scoring is automatically enriched with talent modifiers.
 
 ```bash
-# Run for each archetype defined in SPEC_CONFIG.analysisArchetypes
-npm run divergence -- --spec {spec} --build anni-apex3-dgb
-npm run divergence -- --spec {spec} --build anni-apex0-fullstack
-# Add others as needed
+node src/sim/iterate.js pattern-analyze
 ```
 
-Output: `results/{spec}/divergence-report-{build}.md` and `divergences-{build}.json`.
+Output: `results/{spec}/divergence-report-{build}.md`, `divergences-{build}.json`, `cross-archetype-synthesis.json`, and theory-generator hypotheses in the DB.
 
-**What it tells you:** Each divergence is a specific claim — "at state S (fury, frags, VF, buffs), 15s rollout prefers X over Y by Z rollout-score points." Divergences with high delta (>100) that recur across archetypes are strong theory candidates.
+**What it tells you:** Each divergence is a specific claim — "at state S (fury, frags, VF, buffs), 15s rollout prefers X over Y by Z rollout-score points." Divergences with high delta (>100) that recur across archetypes are strong theory candidates. The cross-archetype synthesis identifies universal vs build-specific patterns.
 
-**Limitation:** The rollout uses an approximate scoring model. Treat every divergence as a hypothesis requiring causal reasoning before testing — not a proven improvement. Skip this step if resuming a session (divergences were already generated).
+**Limitation:** The rollout uses an approximate scoring model (enriched with talent modifiers but still deterministic). Treat every divergence as a hypothesis requiring causal reasoning before testing — not a proven improvement. Skip this step if resuming a session (divergences were already generated).
 
 ---
 
@@ -224,35 +221,48 @@ node src/sim/iterate.js synthesize
 
 Read all four `results/{spec}/analysis_*.json` files. Cross-reference with root theories.
 
-### 2b. Rank Hypotheses
+### 2b. Import Divergence Hypotheses
 
-Cross-reference `results/{spec}/divergences-*.json` alongside specialist outputs. Load via:
-
-```javascript
-const divergences = JSON.parse(
-  readFileSync(`results/{spec}/divergences-{build}.json`),
-).divergences;
-```
-
-Ranking order:
-
-1. **Your theories that specialists missed** -- highest priority (deep insights)
-2. **Divergences with rollout_delta > 100 that recur across archetypes** -- strong mechanical signal, validated by two independent reasoning paths (your theory + rollout model)
-3. **Specialist findings aligned with theories** -- high priority
-4. **Single-archetype divergences or rollout_delta 25-100** -- moderate priority, requires causal theory
-5. **Specialist findings with no causal backing** -- lower priority
-
-**Scope ranking:** Universal > Template-specific > Hero-tree-specific > Build-specific
-
-After reading divergence files, run the pipeline to import them as DB hypotheses:
+Import state-sim divergences as DB hypotheses:
 
 ```bash
 node src/sim/iterate.js divergence-hypotheses
 ```
 
-This populates the hypothesis DB with cross-archetype divergences (delta > 100, >= 2 archetypes). They will appear in `node src/sim/iterate.js hypotheses` ranked alongside metric-based entries.
+This populates the hypothesis DB with cross-archetype divergences (delta > 100, >= 2 archetypes).
 
-### 2c. Generate Summary
+### 2c. Unify All Hypothesis Sources
+
+Merge all 6 hypothesis sources (strategic, theorycraft, synthesized, divergence-analysis, theory-generator, specialist agents) into a consensus-ranked, mutation-enriched list:
+
+```bash
+node src/sim/iterate.js unify
+```
+
+This performs:
+
+1. **Fingerprinting** — semantic identity matching across heterogeneous formats
+2. **Consensus detection** — count distinct sources per hypothesis (e.g., strategic + divergence both flag the same swap)
+3. **Mutation inference** — generate `aplMutation` for sources that lack them (divergence, theory-generator, specialists)
+4. **Priority boosting** — +25% per additional confirming source; rejection memory reduces priority for previously-rejected fingerprints
+5. **DB persistence** — updates consensus_count, consensus_sources, fingerprint; marks duplicates as "merged"
+
+After unification, ALL hypotheses can produce candidates via `iterate.js generate`, not just sources 1-3.
+
+### 2d. Rank Hypotheses
+
+Ranking order (post-unification):
+
+1. **Your theories that specialists missed** -- highest priority (deep insights)
+2. **Unified hypotheses with consensus_count > 1** -- convergent evidence from multiple independent sources
+3. **Divergences with rollout_delta > 100 that recur across archetypes** -- strong mechanical signal
+4. **Specialist findings aligned with theories** -- high priority
+5. **Single-source hypotheses with mutation** -- moderate priority
+6. **Specialist findings with no causal backing** -- lower priority
+
+**Scope ranking:** Universal > Template-specific > Hero-tree-specific > Build-specific
+
+### 2e. Generate Summary
 
 Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `changelog.md`.
 
@@ -288,7 +298,9 @@ Use screener output to validate or quantify your theories, not replace them.
 
 #### Step 2: Choose
 
-Pick highest-value hypothesis. Priority: your deep theories > aligned screener findings > high-confidence on high-DPS-share abilities > multi-part coherent changes.
+Pick highest-value hypothesis. Priority: your deep theories > unified hypotheses with `consensus_count > 1` > aligned screener findings > high-confidence on high-DPS-share abilities > multi-part coherent changes.
+
+**Prefer consensus hypotheses** — when multiple independent sources (strategic, theorycraft, divergence, theory-generator) converge on the same finding, that's strong evidence. Use `node src/sim/iterate.js hypotheses` to see consensus counts.
 
 **Never test a hypothesis you can't explain causally.**
 

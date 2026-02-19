@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 3;
+const SCHEMA_VERSION = 4;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -310,6 +310,23 @@ export function getDb(spec) {
           // Column may already exist
         }
       }
+    }
+    // Schema v3 → v4: add consensus/fingerprint columns to hypotheses
+    if (existingVersion < 4) {
+      for (const [col, type] of [
+        ["consensus_count", "INTEGER DEFAULT 1"],
+        ["consensus_sources", "TEXT"],
+        ["fingerprint", "TEXT"],
+      ]) {
+        try {
+          _db.exec(`ALTER TABLE hypotheses ADD COLUMN ${col} ${type}`);
+        } catch {
+          // Column may already exist
+        }
+      }
+      _db.exec(
+        "CREATE INDEX IF NOT EXISTS idx_hypotheses_fingerprint ON hypotheses(fingerprint)",
+      );
     }
     _db
       .prepare("UPDATE schema_info SET value = ? WHERE key = 'version'")

@@ -554,6 +554,8 @@ export function getAvailable(state) {
 // ---------------------------------------------------------------------------
 // DPGCD scoring — relative damage per GCD for scoring purposes
 // Fire abilities benefit from Fiery Demise (+30% fire amp while FB DoT is up)
+// Physical abilities (Fracture, Felblade) also benefit from Fiery Demise
+// Reaver's Mark debuff amplifies all damage to the target (AR builds)
 // ---------------------------------------------------------------------------
 
 export function scoreDpgcd(state, abilityId) {
@@ -563,19 +565,21 @@ export function scoreDpgcd(state, abilityId) {
   const fbActive = s.dots.fiery_brand > 0 && cfg.talents?.fiery_demise;
   const vfSpending = s.buffStacks?.voidfall_spending ?? s.vf_spending ?? 0;
   const tc = s.target_count ?? 1;
+  const reaversMark = (s.debuffs?.reavers_mark ?? 0) > 0;
 
   const st = _scoreTable;
 
   const fireAmp = fbActive ? (st?.fireAmpValue ?? 1.3) : 1.0;
   const metaAmp = inMeta ? (st?.metaAmpValue ?? 1.2) : 1.0;
+  const woundedQuarryAmp = reaversMark
+    ? (st?.tuning?.arWoundedQuarryAmp ?? 1.3)
+    : 1.0;
 
   let score = 0;
 
   switch (abilityId) {
     case "fracture": {
-      score = (st?.baseScores?.fracture ?? 100) * metaAmp;
-      if ((s.debuffs?.reavers_mark ?? 0) > 0)
-        score *= st?.tuning?.arWoundedQuarryAmp ?? 1.3;
+      score = (st?.baseScores?.fracture ?? 100) * metaAmp * woundedQuarryAmp;
       if (st?.setBonusMods?.twoPiece?.target === "fracture" && cfg.setBonus) {
         score *= st.setBonusMods.twoPiece.modifier;
       }
@@ -598,7 +602,7 @@ export function scoreDpgcd(state, abilityId) {
         score = Math.max(0, consumed) * st.baseScores.spirit_bomb;
       }
       if (vfSpending === 3) score += st?.baseScores?.soul_cleave ?? 125;
-      score *= fireAmp * metaAmp;
+      score *= fireAmp * metaAmp * woundedQuarryAmp;
       if (tc > 1) {
         score *= aoeScale(tc, st?.aoeTargets?.spirit_bomb ?? 5);
       }
@@ -606,7 +610,7 @@ export function scoreDpgcd(state, abilityId) {
     }
 
     case "soul_cleave": {
-      score = (st?.baseScores?.soul_cleave ?? 125) * metaAmp;
+      score = (st?.baseScores?.soul_cleave ?? 125) * metaAmp * woundedQuarryAmp;
       if (vfSpending > 0 && vfSpending < 3)
         score += st?.tuning?.vfSpendingBonus ?? 100;
       if (
@@ -621,29 +625,31 @@ export function scoreDpgcd(state, abilityId) {
     }
 
     case "reavers_glaive":
-      score = st?.baseScores?.reavers_glaive ?? 333;
+      score = (st?.baseScores?.reavers_glaive ?? 333) * woundedQuarryAmp;
       break;
 
     case "fel_devastation":
-      score = (st?.baseScores?.fel_devastation ?? 149) * fireAmp;
+      score =
+        (st?.baseScores?.fel_devastation ?? 149) * fireAmp * woundedQuarryAmp;
       if (tc > 1) {
         score *= aoeScale(tc, st?.aoeTargets?.fel_devastation ?? 5);
       }
       break;
 
     case "soul_carver":
-      score = (st?.baseScores?.soul_carver ?? 201) * fireAmp;
+      score = (st?.baseScores?.soul_carver ?? 201) * fireAmp * woundedQuarryAmp;
       break;
 
     case "sigil_of_spite":
-      score = st?.baseScores?.sigil_of_spite ?? 669;
+      score = (st?.baseScores?.sigil_of_spite ?? 669) * woundedQuarryAmp;
       if (tc > 1) {
         score *= aoeScale(tc, st?.aoeTargets?.sigil_of_spite ?? 8);
       }
       break;
 
     case "fiery_brand": {
-      const base = (st?.baseScores?.fiery_brand ?? 100) * fireAmp;
+      const base =
+        (st?.baseScores?.fiery_brand ?? 100) * fireAmp * woundedQuarryAmp;
       const windowBonus =
         !fbActive && st?.tuning?.windowValuation?.fieryBrand
           ? st.tuning.windowValuation.fieryBrand
@@ -653,22 +659,24 @@ export function scoreDpgcd(state, abilityId) {
     }
 
     case "immolation_aura":
-      score = (st?.baseScores?.immolation_aura ?? 95) * fireAmp;
+      score =
+        (st?.baseScores?.immolation_aura ?? 95) * fireAmp * woundedQuarryAmp;
       break;
 
     case "sigil_of_flame":
-      score = (st?.baseScores?.sigil_of_flame ?? 77) * fireAmp;
+      score =
+        (st?.baseScores?.sigil_of_flame ?? 77) * fireAmp * woundedQuarryAmp;
       if (tc > 1) {
         score *= aoeScale(tc, st?.aoeTargets?.sigil_of_flame ?? 8);
       }
       break;
 
     case "felblade":
-      score = (st?.baseScores?.felblade ?? 60) * fireAmp;
+      score = (st?.baseScores?.felblade ?? 60) * woundedQuarryAmp;
       break;
 
     case "throw_glaive":
-      score = st?.baseScores?.throw_glaive ?? 40;
+      score = (st?.baseScores?.throw_glaive ?? 40) * woundedQuarryAmp;
       break;
 
     case "metamorphosis":
@@ -695,14 +703,28 @@ export const OFF_GCD_ABILITIES = new Set(["metamorphosis", "infernal_strike"]);
 
 let _scoreTable = null;
 
-export function buildScoreTable(config) {
-  const { domainOverrides, burstWindows, setBonus, tuning } = config;
+export function buildScoreTable(config, buildConfig = null) {
+  const { domainOverrides, burstWindows, setBonus, tuning, talentModifiers } =
+    config;
   const ref = domainOverrides.fracture.apCoeff;
 
   const baseScores = {};
   for (const [ability, data] of Object.entries(domainOverrides)) {
     if (data.apCoeff) {
       baseScores[ability] = Math.round((data.apCoeff / ref) * 100);
+    }
+  }
+
+  // Apply talent-specific multipliers when buildConfig provides talent flags
+  const talents = buildConfig?.talents;
+  if (talents && talentModifiers) {
+    for (const [talent, mods] of Object.entries(talentModifiers)) {
+      if (!talents[talent]) continue;
+      for (const [ability, multiplier] of Object.entries(mods)) {
+        if (baseScores[ability] != null) {
+          baseScores[ability] = Math.round(baseScores[ability] * multiplier);
+        }
+      }
     }
   }
 
@@ -749,6 +771,11 @@ export function buildScoreTable(config) {
 
 export function initScoring(table) {
   _scoreTable = table;
+}
+
+// Rebuild scoring for a specific build (applies talent modifiers)
+export function reinitScoringForBuild(specConfig, buildConfig) {
+  _scoreTable = buildScoreTable(specConfig, buildConfig);
 }
 
 function aoeScale(n, cap) {

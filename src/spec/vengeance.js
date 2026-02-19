@@ -406,6 +406,32 @@ export const SPEC_CONFIG = {
   // Buffs that are major cooldowns (excluded from "low uptime" warnings)
   cooldownBuffs: ["fiery_brand", "metamorphosis", "fel_devastation"],
 
+  // Build-specific talent modifiers for state-sim scoring enrichment.
+  // Each key is a talent name (snake_case), each value maps ability → multiplier.
+  // Applied multiplicatively to base apCoeff scores when the talent is present.
+  // Hand-authored from interactions-summary.json, cross-referenced with SimC C++ source.
+  talentModifiers: {
+    stoke_the_flames: { fel_devastation: 1.3 },
+    meteoric_rise: { fel_devastation: 1.15 },
+    ascending_flame: { sigil_of_flame: 1.5 },
+    celestial_echoes: { fracture: 1.25 },
+    tempered_steel: {
+      fracture: 1.12,
+      soul_cleave: 1.12,
+      reavers_glaive: 1.12,
+      throw_glaive: 1.12,
+    },
+    keen_edge: {
+      fracture: 1.1,
+      soul_cleave: 1.1,
+      reavers_glaive: 1.2, // Keen Edge: RG +20%, other Physical +10%
+      throw_glaive: 1.1,
+    },
+    volatile_flameblood: { immolation_aura: 1.1 },
+    incisive_blade: { soul_cleave: 1.1 },
+    // fiery_demise is NOT here — it's a dynamic FB-window amp, handled in scoreDpgcd
+  },
+
   // Fallback name→category hints for interaction classification
   classificationHints: {
     damage_modifier: [

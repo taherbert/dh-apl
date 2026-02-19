@@ -9,6 +9,7 @@
 //   accept "reason"              Adopt candidate as new baseline
 //   reject "reason"              Log rejection and move on
 //   hypotheses                   Generate improvement hypotheses
+//   unify                        Merge all sources, consensus detection, mutation inference
 //   summary                      Generate iteration report
 //   checkpoint                   Save checkpoint for session resume
 
@@ -90,6 +91,11 @@ import {
   persistTheories,
   formatTheoryCandidates,
 } from "../analyze/theory-generator.js";
+import {
+  unifyHypotheses,
+  persistUnified,
+  summarizeUnified,
+} from "../analyze/unify-hypotheses.js";
 import {
   ROOT,
   resultsDir,
@@ -1848,7 +1854,9 @@ async function cmdPatternAnalyze() {
     process.exit(1);
   }
 
-  const { initEngine } = await import("../analysis/optimal-timeline.js");
+  const { initEngine, reinitScoringForBuild } = await import(
+    "../analysis/optimal-timeline.js"
+  );
   await initEngine(spec);
 
   const { simulateApl, initEngine: initInterpEngine } = await import(
@@ -1880,6 +1888,7 @@ async function cmdPatternAnalyze() {
 
     for (const buildName of buildNames) {
       const archetype = { ...builds[buildName], _name: buildName };
+      reinitScoringForBuild(archetype);
 
       for (const duration of durations) {
         const runKey =
@@ -2268,6 +2277,64 @@ async function cmdSynthesize() {
     if (h.specialists?.length > 1) {
       console.log(`  Sources: ${h.specialists.join(", ")}`);
     }
+  }
+}
+
+// --- Unify Hypotheses ---
+
+function cmdUnify() {
+  const specName = getSpecName();
+
+  // Read current APL for mutation inference
+  let aplText = null;
+  if (existsSync(CURRENT_APL)) {
+    aplText = readFileSync(CURRENT_APL, "utf-8");
+  } else {
+    const specApl = join(aplsDir(), `${specName}.simc`);
+    if (existsSync(specApl)) {
+      aplText = readFileSync(specApl, "utf-8");
+    }
+  }
+
+  console.log(`Unifying hypotheses for spec: ${specName}`);
+  if (!aplText) {
+    console.log("  (no APL available — mutation inference disabled)");
+  }
+
+  const unified = unifyHypotheses(aplText, specName);
+
+  if (unified.length === 0) {
+    console.log("No pending hypotheses to unify.");
+    return;
+  }
+
+  const stats = summarizeUnified(unified);
+  const persistResult = persistUnified(unified, specName);
+
+  console.log(`\nUnification complete:`);
+  console.log(`  Total hypotheses: ${stats.totalHypotheses}`);
+  console.log(`  Unique groups: ${stats.uniqueGroups}`);
+  console.log(`  With consensus (>1 source): ${stats.withConsensus}`);
+  console.log(
+    `  Mutation coverage: ${stats.mutationCoverage}% (${stats.withMutation}/${stats.uniqueGroups})`,
+  );
+  console.log(`  Mutations inferred: ${stats.inferredMutations}`);
+  console.log(`  Rejection memory applied: ${stats.withRejectionMemory}`);
+  console.log(
+    `  DB updated: ${persistResult.updated}, mutations added: ${persistResult.mutationsAdded}`,
+  );
+
+  console.log(`\nTop 10 unified hypotheses:`);
+  for (const h of unified.slice(0, 10)) {
+    const consensus =
+      h.consensusCount > 1
+        ? ` [${h.consensusCount}× ${h.consensusSources.join("+")}]`
+        : "";
+    const mut = h.mutation ? " ✓mut" : " ✗mut";
+    const rej = h.rejectionCount > 0 ? ` (${h.rejectionCount}× rejected)` : "";
+    console.log(
+      `  [${h.priority.toFixed(1)}]${consensus}${mut}${rej} ${(h.summary || "").slice(0, 100)}`,
+    );
   }
 }
 
@@ -2835,6 +2902,10 @@ switch (cmd) {
     await cmdPatternAnalyze();
     break;
 
+  case "unify":
+    cmdUnify();
+    break;
+
   case "checkpoint": {
     // Parse checkpoint flags
     const checkpointOpts = {};
@@ -2872,6 +2943,7 @@ Usage:
   node src/sim/iterate.js synthesize                 Synthesize hypotheses from all specialist sources
   node src/sim/iterate.js divergence-hypotheses      Import divergence JSONs as DB hypotheses
   node src/sim/iterate.js pattern-analyze            Pattern analysis + theory generation
+  node src/sim/iterate.js unify                      Unify hypotheses: consensus, fingerprinting, mutation inference
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report

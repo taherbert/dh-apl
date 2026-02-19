@@ -27,15 +27,16 @@ export async function initEngine(specName) {
   engine = await import(`./${specName}/state-sim.js`);
   if (engine.buildScoreTable) {
     const specConfig = getSpecAdapter().getSpecConfig();
-    const table = engine.buildScoreTable({
-      domainOverrides: specConfig.domainOverrides,
-      burstWindows: specConfig.burstWindows,
-      setBonus: specConfig.setBonus,
-      tuning: specConfig.tuning,
-    });
-    engine.initScoring(table);
+    engine.initScoring(engine.buildScoreTable(specConfig));
   }
   return engine;
+}
+
+// Re-initialize scoring for a specific build config (applies talent modifiers)
+export function reinitScoringForBuild(buildConfig) {
+  if (!engine?.reinitScoringForBuild) return;
+  const specConfig = getSpecAdapter().getSpecConfig();
+  engine.reinitScoringForBuild(specConfig, buildConfig);
 }
 
 // ---------------------------------------------------------------------------
