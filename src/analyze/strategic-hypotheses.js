@@ -182,12 +182,13 @@ export function generateStrategicHypotheses(workflowResults, aplText = null) {
       ...generateBuffUptimeHypotheses(scenario, archetypeContext, aplAst),
       ...generateCooldownHypotheses(scenario, archetypeContext, aplAst),
     );
+  }
 
-    if (aplAst) {
-      hypotheses.push(
-        ...generateConditionHypotheses(scenario, archetypeContext, aplAst),
-      );
-    }
+  // Condition analysis is APL-only — run independently of scenario data
+  if (aplAst) {
+    hypotheses.push(
+      ...generateConditionHypotheses(null, archetypeContext, aplAst),
+    );
   }
 
   const seen = new Set();
@@ -602,7 +603,7 @@ function generateConditionHypotheses(scenario, archetype, aplAst) {
         metric: buffCount,
         target: entry.ability,
         hypothesis: `Try removing one negated buff check from ${entry.ability}`,
-        scenario: scenario.scenario,
+        scenario: scenario?.scenario || "apl_analysis",
         priority: buffCount * 0.8,
         confidence: "low",
         aplMutation: {

@@ -1,4 +1,4 @@
-SimulationCraft 1201-01 for World of Warcraft 12.0.1.65848 Live (hotfix 2026-02-10/65848, git build midnight 75739d162b)
+SimulationCraft 1201-01 for World of Warcraft 12.0.1.65867 Live (hotfix 2026-02-13/65867, git build midnight 75739d162b, no-networking)
 Name             : Demon Soul (id=163073) [Spell Family (107)] 
 Class            : Demon Hunter
 School           : Shadow

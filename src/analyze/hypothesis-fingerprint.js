@@ -106,6 +106,38 @@ function fingerprintFromText(h) {
     return `swap:${opt}:over:${act}:${phase}`;
   }
 
+  // "Adjust X priority or conditions in PHASE to allow Y" (theory-generator)
+  const adjustMatch = text.match(
+    /adjust\s+(\w[\w\s]*?)\s+(?:priority|condition)s?\s+(?:or\s+\w+\s+)?in\s+(\w+)\s+to\s+allow\s+(\w[\w\s]*?)(?:\s|$)/,
+  );
+  if (adjustMatch) {
+    const displaced = normalizeAbility(adjustMatch[1]);
+    const phase = adjustMatch[2];
+    const preferred = normalizeAbility(adjustMatch[3]);
+    return `swap:${preferred}:over:${displaced}:${phase}`;
+  }
+
+  // "In actions.LIST: adjust X condition or add Y priority" (theory-generator tactical)
+  const tacticalMatch = text.match(
+    /in\s+actions\.(\w+):\s+adjust\s+(\w[\w\s]*?)\s+condition\s+or\s+add\s+(\w[\w\s]*?)\s+priority/,
+  );
+  if (tacticalMatch) {
+    const displaced = normalizeAbility(tacticalMatch[2]);
+    const preferred = normalizeAbility(tacticalMatch[3]);
+    const phase = extractPhase(h);
+    return `swap:${preferred}:over:${displaced}:${phase}`;
+  }
+
+  // "Cast X before Y in cooldown sequence" (theorycraft)
+  const beforeMatch = text.match(
+    /cast\s+(\w[\w\s]*?)\s+before\s+(\w[\w\s]*?)\s+in\s+(\w[\w\s]*?)(?:\s+sequence|$)/,
+  );
+  if (beforeMatch) {
+    const preferred = normalizeAbility(beforeMatch[1]);
+    const displaced = normalizeAbility(beforeMatch[2]);
+    return `swap:${preferred}:over:${displaced}:burst`;
+  }
+
   // "Prioritize X" / "X should be higher priority"
   const prioMatch = text.match(
     /(?:prioritize|raise priority of|move up)\s+(\w[\w\s]*?)(?:\s|$|,)/,

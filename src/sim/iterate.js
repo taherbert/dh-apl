@@ -161,21 +161,24 @@ function normalizeHypothesisKey(description) {
     .trim();
 }
 
-// Insert hypotheses into DB, deduplicating by normalized summary against all existing entries.
+// Insert hypotheses into DB, deduplicating by normalized summary within the same source.
+// Different sources may insert the same semantic hypothesis — unify handles cross-source merging.
 function insertHypothesesToDb(hypotheses, source = "workflow") {
   const existing = dbGetHypotheses({ limit: 2000 });
+  // Dedup within-source: key = "source:normalizedSummary"
   const existingKeys = new Set(
-    existing.map((h) => normalizeHypothesisKey(h.summary || "")),
+    existing.map(
+      (h) => `${h.source || ""}:${normalizeHypothesisKey(h.summary || "")}`,
+    ),
   );
   let inserted = 0;
   for (const h of hypotheses) {
-    const key = normalizeHypothesisKey(
-      h.description || h.hypothesis || h.summary || "",
-    );
+    const summary = h.description || h.hypothesis || h.summary || "";
+    const key = `${source}:${normalizeHypothesisKey(summary)}`;
     if (existingKeys.has(key)) continue;
     existingKeys.add(key);
     dbAddHypothesis({
-      summary: h.description || h.hypothesis || h.summary,
+      summary,
       category: h.category || null,
       priority: h.priority ?? 5.0,
       status: "pending",
@@ -2414,7 +2417,7 @@ async function cmdSynthesize() {
   for (const [name, output] of Object.entries(outputs)) {
     if (!output?.hypotheses?.length) continue;
     const dbReady = output.hypotheses.map((h) => ({
-      description: h.hypothesis || h.id || h.observation,
+      description: h.hypothesis || h.id || h.observation || h.summary,
       category: h.category || name,
       priority: h.priority || 5.0,
       aplMutation: h.aplMutation || h.proposedChanges?.[0]?.aplMutation || null,
@@ -2432,7 +2435,7 @@ async function cmdSynthesize() {
     const mutation =
       h.proposedChanges?.[0]?.aplMutation || h.aplMutation || null;
     return {
-      description: h.systemicIssue || h.hypothesis || h.id,
+      description: h.systemicIssue || h.hypothesis || h.id || h.summary,
       category: h.category || "synthesized",
       priority: h.aggregatePriority || h.priority || 0,
       aplMutation: mutation,
@@ -2446,7 +2449,8 @@ async function cmdSynthesize() {
   console.log(`  Specialists: ${result.metadata.specialists.join(", ")}`);
 
   for (const h of result.hypotheses.slice(0, 10)) {
-    const desc = h.systemicIssue || h.hypothesis || h.id || "unknown";
+    const desc =
+      h.systemicIssue || h.hypothesis || h.id || h.summary || "unknown";
     const consensus =
       h.consensusCount > 1 ? ` [${h.consensusCount}x consensus]` : "";
     console.log(`\n${consensus} ${desc}`);

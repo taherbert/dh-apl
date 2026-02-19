@@ -3,6 +3,7 @@
 
 import { parentPort, workerData } from "node:worker_threads";
 import { readFileSync, existsSync, writeFileSync } from "node:fs";
+import { initSpec } from "../engine/startup.js";
 
 const { spec, specConfig } = workerData;
 
@@ -15,6 +16,8 @@ let reinitScoringForBuild,
 
 async function ensureEngine() {
   if (engineReady) return;
+  // Initialize the global spec adapter so getSpecAdapter() works in engine modules
+  await initSpec(spec);
   const timeline = await import("./optimal-timeline.js");
   reinitScoringForBuild = timeline.reinitScoringForBuild;
   await timeline.initEngine(spec);

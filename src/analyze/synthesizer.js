@@ -116,7 +116,7 @@ function normalizeHypothesisId(h) {
   // Create a stable ID from hypothesis properties
   const id =
     h.id ||
-    `${h.category || "unknown"}_${h.target || h.ability || "general"}_${(h.systemicIssue || h.hypothesis || "").slice(0, 50)}`;
+    `${h.category || "unknown"}_${h.target || h.ability || "general"}_${(h.systemicIssue || h.hypothesis || h.summary || "").slice(0, 50)}`;
   return id
     .toLowerCase()
     .replace(/[^a-z0-9_]/g, "_")
