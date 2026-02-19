@@ -15,13 +15,18 @@ import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataDir, dataFile, ensureSpecDirs } from "../engine/paths.js";
 
 function simplifyNode(n) {
+  const maxRanks = n.maxRanks ?? n.entries?.[0]?.maxRanks ?? 1;
+  const entryNode = n.entryNode || false;
+  const name = n.name || "";
+  const hasContent = name && n.entries?.some((e) => e.name || e.spellId);
+
   return {
     id: n.id,
     name: n.name,
     type: n.type,
-    maxRanks: n.maxRanks || n.entries?.[0]?.maxRanks || 1,
-    entryNode: n.entryNode || false,
-    freeNode: n.freeNode || false,
+    maxRanks,
+    entryNode,
+    freeNode: n.freeNode || (entryNode && !hasContent) || false,
     ...(n.entries
       ? { entries: n.entries.map((e) => ({ name: e.name, index: e.index })) }
       : {}),

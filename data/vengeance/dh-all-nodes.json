@@ -5,7 +5,7 @@
     "type": "single",
     "maxRanks": 1,
     "entryNode": true,
-    "freeNode": false,
+    "freeNode": true,
     "entries": [
       {}
     ]

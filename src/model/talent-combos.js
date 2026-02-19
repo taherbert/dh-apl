@@ -186,6 +186,7 @@ export function classifyNodes(nodes, nodeMap, budget, overrides = {}) {
     if (node.freeNode) {
       locked.add(node.id);
     } else if (node.entryNode) {
+      if (!node.name) continue; // phantom placeholder — skip
       if (node.type === "tiered" && (node.maxRanks || 1) > 1) {
         // Skip — tiered apex talent will be classified as a factor below
       } else {
@@ -1225,6 +1226,7 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
       continue;
     }
     if (n.entryNode) {
+      if (!n.name) continue; // phantom placeholder — skip
       // Check if any entry name or node name is excluded
       const entryNames = n.entries ? n.entries.map((e) => e.name) : [];
       const allNames = [n.name, ...entryNames].filter(Boolean);
