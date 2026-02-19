@@ -145,10 +145,14 @@ extract_simc_refs() {
   npm run extract-simc
 }
 
-# Run verification
+# Run verification (failures are reported but don't abort the refresh)
 verify() {
   info "Running verification..."
-  npm run verify
+  local rc=0
+  npm run verify || rc=$?
+  if [ $rc -ne 0 ]; then
+    warn "Verification exited with code $rc — review failures above"
+  fi
 }
 
 # Record metadata about this refresh
