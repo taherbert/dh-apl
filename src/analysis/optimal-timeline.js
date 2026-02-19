@@ -41,6 +41,8 @@ export async function initEngine(specName) {
 
 const T_HORIZON = 25;
 
+const DEEP_STEPS = 3;
+
 function rolloutDps(state, horizon) {
   const {
     applyAbility,
@@ -55,8 +57,16 @@ function rolloutDps(state, horizon) {
   let totalScore = 0;
   let elapsed = 0;
   let offGcdGuard = 0; // prevent infinite loop if trigger fails to clear itself
+  let step = 0;
 
-  while (elapsed < horizon) {
+  // Clip rollout to fight end so we don't credit phantom play beyond the fight
+  const effectiveHorizon = Math.min(
+    horizon,
+    Math.max(0, (s.fight_end ?? Infinity) - s.t),
+  );
+  if (effectiveHorizon <= 0) return 0;
+
+  while (elapsed < effectiveHorizon) {
     const override = getOffGcdTrigger(s);
     if (override && offGcdGuard < 5) {
       offGcdGuard++;
@@ -77,8 +87,25 @@ function rolloutDps(state, horizon) {
 
     let bestAbility = null;
     let bestScore = -Infinity;
+
     for (const id of available) {
-      const sc = scoreDpgcd(s, id);
+      let sc;
+      if (step < DEEP_STEPS) {
+        // 1-step lookahead: immediate + best next GCD score (depth-2 continuation)
+        const nextS = applyAbility(s, id);
+        const dt2 = getAbilityGcd(s, id) || s.gcd;
+        const nextS2 = advanceTime(nextS, dt2);
+        const nextAvail = getAvailable(nextS2).filter(
+          (id2) => !OFF_GCD_ABILITIES.has(id2),
+        );
+        const bestNextScore =
+          nextAvail.length > 0
+            ? Math.max(...nextAvail.map((id2) => scoreDpgcd(nextS2, id2)))
+            : 0;
+        sc = scoreDpgcd(s, id) + bestNextScore;
+      } else {
+        sc = scoreDpgcd(s, id); // pure greedy
+      }
       if (sc > bestScore) {
         bestScore = sc;
         bestAbility = id;
@@ -91,7 +118,9 @@ function rolloutDps(state, horizon) {
       continue;
     }
 
-    totalScore += bestScore;
+    step++;
+    // Always score immediate value (not lookahead composite) for the running total
+    totalScore += scoreDpgcd(s, bestAbility);
     s = applyAbility(s, bestAbility);
     const dt = getAbilityGcd(s, bestAbility) || s.gcd;
     s = advanceTime(s, dt);
@@ -158,6 +187,7 @@ export function generateTimeline(buildConfig, durationSeconds = 120) {
   } = engine;
 
   let state = createInitialState(buildConfig);
+  state.fight_end = durationSeconds;
   const events = [];
   let gcdNumber = 0;
   let offGcdGuard = 0;

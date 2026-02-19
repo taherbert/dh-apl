@@ -34,6 +34,7 @@ export function createInitialState(buildConfig) {
 
   return {
     t: 0,
+    fight_end: Infinity,
     fury: 20, // Approximate post-precombat fury
     soul_fragments: 0,
 
