@@ -440,3 +440,4 @@ On context limits or interruption, save to `results/{spec}/checkpoint.md`: curre
 - **Trusting screener output without reasoning** -- observations are not insights
 - **Grinding thresholds without theory** -- test values from mechanical reasoning, not sweeps
 - **Ignoring per-build results** -- aggregate mean hides per-template regressions
+- **Writing optimization results to memory files** -- ALL findings, hypotheses, and iteration results go to `theorycraft.db` via `addFinding()`, `addHypothesis()`, `addIteration()`. NEVER write session results, accepted/rejected hypotheses, or mechanical discoveries to auto-memory (`memory/*.md`). The DB is the canonical store; memory files are for durable workflow knowledge only.
