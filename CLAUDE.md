@@ -111,6 +111,7 @@ node src/sim/iterate.js compare <candidate>  # Test candidate APL
 - Use action list names that describe purpose (e.g., `defensives`, `cooldowns`, `aoe`, `single_target`).
 - Comment non-obvious conditions with `#` lines explaining the "why."
 - Keep the default action list short — delegate to sub-lists via `run_action_list` (mutually exclusive branches) or `call_action_list` (optional sub-routines that fall through).
+- **Never `git add -f` generated outputs.** The `results/` gitignore is intentional — only `SCHEMA.md` is tracked. Analysis JSONs, showcase HTML, iteration reports, and session state all regenerate on demand. If a file is gitignored, it stays gitignored.
 - **Always test against ALL builds.** The APL is shared by all talent builds. Verify the build roster covers all templates: `npm run roster show`. The roster is generated via `npm run roster generate` (cluster-based from SPEC_CONFIG). `iterate.js` requires the roster and refuses single-build mode.
 - **Partial gains are NOT rejects — they are gating opportunities.** When a change helps some builds but hurts others, this is a branching signal, not a rejection. **Before rejecting ANY hypothesis with mixed per-build results, you MUST:**
   1. Sort all builds by weighted delta and examine the top/bottom 10
