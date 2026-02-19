@@ -9,7 +9,16 @@ import { getSpecAdapter } from "../engine/startup.js";
 
 export function synthesizePatterns(patternsByBuild, divergencesByBuild) {
   const specConfig = getSpecAdapter().getSpecConfig();
-  const archetypes = specConfig.analysisArchetypes || {};
+  // Flatten scenario-grouped archetypes to a single name→config map
+  const rawArchetypes = specConfig.analysisArchetypes || {};
+  const archetypes = {};
+  for (const [key, val] of Object.entries(rawArchetypes)) {
+    if (val?.heroTree !== undefined) {
+      archetypes[key] = val;
+    } else if (typeof val === "object") {
+      Object.assign(archetypes, val);
+    }
+  }
   const groups = {};
 
   for (const [buildName, divergences] of Object.entries(divergencesByBuild)) {

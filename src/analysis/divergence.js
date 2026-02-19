@@ -530,7 +530,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   await initSpec(spec);
   await initEngine(spec);
 
-  const ARCHETYPES = getSpecAdapter().getSpecConfig().analysisArchetypes ?? {};
+  const specMod = await import(`../spec/${spec}.js`);
+  const ARCHETYPES = specMod.flattenArchetypes();
   const buildName = values.build;
   const duration = parseInt(values.duration, 10);
 

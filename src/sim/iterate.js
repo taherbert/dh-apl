@@ -1811,17 +1811,27 @@ async function cmdDivergenceHypotheses() {
 
 async function cmdPatternAnalyze() {
   const specConfig = getSpecAdapter().getSpecConfig();
-  const archetypes = specConfig.analysisArchetypes || {};
-  const archetypeNames = Object.keys(archetypes);
+  const scenarioArchetypes = specConfig.analysisArchetypes || {};
 
-  if (archetypeNames.length === 0) {
+  // Multi-duration: ST gets 120s + 300s, AoE gets scenario maxTime
+  const DURATIONS = {
+    st: [120, 300],
+    small_aoe: [75],
+    big_aoe: [60],
+  };
+
+  // Count total work units
+  let totalUnits = 0;
+  for (const [scenario, builds] of Object.entries(scenarioArchetypes)) {
+    if (typeof builds !== "object" || builds.heroTree !== undefined) continue;
+    const durations = DURATIONS[scenario] || [120];
+    totalUnits += Object.keys(builds).length * durations.length;
+  }
+
+  if (totalUnits === 0) {
     console.error("No analysis archetypes configured in SPEC_CONFIG.");
     process.exit(1);
   }
-
-  console.log(
-    `Pattern analysis across ${archetypeNames.length} archetypes...\n`,
-  );
 
   const { initEngine } = await import("../analysis/optimal-timeline.js");
   const spec = getSpecName();
@@ -1837,52 +1847,72 @@ async function cmdPatternAnalyze() {
   );
   await initDivEngine(spec);
 
+  console.log(
+    `Pattern analysis: ${totalUnits} work units across ${Object.keys(scenarioArchetypes).length} scenarios\n`,
+  );
+
   const patternsByBuild = {};
   const divergencesByBuild = {};
 
-  for (const buildName of archetypeNames) {
-    const archetype = { ...archetypes[buildName], _name: buildName };
-    console.log(`  [${buildName}] Analyzing...`);
-
-    const traceFile = resultsFile(`apl-trace-${buildName}.json`);
-    const divFile = resultsFile(`divergences-${buildName}.json`);
-
-    let aplTrace = null;
-    let divergences = [];
-
-    if (existsSync(traceFile)) {
-      aplTrace = JSON.parse(readFileSync(traceFile, "utf-8"));
-    }
-
-    if (existsSync(divFile)) {
-      const divData = JSON.parse(readFileSync(divFile, "utf-8"));
-      divergences = divData.divergences || [];
-    }
-
-    if (!aplTrace) {
-      const aplPath = join(aplsDir(), `${spec}.simc`);
-      if (!existsSync(aplPath)) {
-        console.log(`    Skipping — no APL file at ${aplPath}`);
-        continue;
-      }
-      const aplText = readFileSync(aplPath, "utf-8");
-      aplTrace = simulateApl(aplText, archetype, 120);
-    }
-
-    if (divergences.length === 0 && aplTrace) {
-      divergences = computeDivergence(aplTrace, archetype);
-    }
-
-    const patterns = analyzePatterns(aplTrace, divergences, specConfig);
-    patternsByBuild[buildName] = patterns;
-    divergencesByBuild[buildName] = divergences;
+  for (const [scenario, builds] of Object.entries(scenarioArchetypes)) {
+    if (typeof builds !== "object" || builds.heroTree !== undefined) continue;
+    const durations = DURATIONS[scenario] || [120];
+    const buildNames = Object.keys(builds);
 
     console.log(
-      `    ${patterns.resourceFlow?.gcds?.total || 0} GCDs, ${divergences.length} divergences`,
+      `  [${scenario}] ${buildNames.length} builds × ${durations.join("/")}s`,
     );
 
-    const patternFile = resultsFile(`patterns-${buildName}.json`);
-    writeFileSync(patternFile, JSON.stringify(patterns, null, 2));
+    for (const buildName of buildNames) {
+      const archetype = { ...builds[buildName], _name: buildName };
+
+      for (const duration of durations) {
+        const runKey =
+          durations.length > 1 ? `${buildName}-${duration}s` : buildName;
+
+        const traceFile = resultsFile(`apl-trace-${runKey}.json`);
+        const divFile = resultsFile(`divergences-${runKey}.json`);
+
+        let aplTrace = null;
+        let divergences = [];
+
+        if (existsSync(traceFile)) {
+          aplTrace = JSON.parse(readFileSync(traceFile, "utf-8"));
+        }
+
+        if (existsSync(divFile)) {
+          const divData = JSON.parse(readFileSync(divFile, "utf-8"));
+          divergences = divData.divergences || [];
+        }
+
+        if (!aplTrace) {
+          const aplPath = join(aplsDir(), `${spec}.simc`);
+          if (!existsSync(aplPath)) {
+            console.log(`    Skipping ${runKey} — no APL file`);
+            continue;
+          }
+          const aplText = readFileSync(aplPath, "utf-8");
+          aplTrace = simulateApl(aplText, archetype, duration);
+        }
+
+        if (divergences.length === 0 && aplTrace) {
+          divergences = computeDivergence(aplTrace, archetype);
+        }
+
+        const patterns = analyzePatterns(aplTrace, divergences, specConfig);
+        patternsByBuild[runKey] = patterns;
+        divergencesByBuild[runKey] = divergences;
+
+        console.log(
+          `    ${runKey}: ${patterns.resourceFlow?.gcds?.total || 0} GCDs, ${divergences.length} divergences`,
+        );
+
+        writeFileSync(
+          resultsFile(`patterns-${runKey}.json`),
+          JSON.stringify(patterns, null, 2),
+        );
+      }
+    }
   }
 
   console.log("\nCross-archetype synthesis...");

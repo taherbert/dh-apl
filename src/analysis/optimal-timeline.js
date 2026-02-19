@@ -49,12 +49,13 @@ export async function initEngine(specName) {
 // follow-on burst windows, reducing false positives for CD setup abilities.
 // ---------------------------------------------------------------------------
 
-const T_HORIZON = 25;
+const T_HORIZON = 35;
 const DISCOUNT_RATE = 0.97;
 
-// 6 deep steps covers setup payoffs (FB fire amp, IA Charred Flesh extension)
-// that realize over 5-8 GCDs. Each step uses depth-2 lookahead (immediate + best next).
-const DEEP_STEPS = 6;
+// 10 deep steps covers multi-GCD setup payoffs (FB fire amp, IA Charred Flesh
+// extension, Meta investment) that realize over 5-10 GCDs. Each deep step uses
+// depth-2 lookahead (immediate + best next).
+const DEEP_STEPS = 10;
 
 function rolloutDps(state, horizon) {
   const {
@@ -342,7 +343,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   await initSpec(specName);
   await initEngine(specName);
 
-  const ARCHETYPES = getSpecAdapter().getSpecConfig().analysisArchetypes ?? {};
+  const specMod = await import(`../spec/${specName}.js`);
+  const ARCHETYPES = specMod.flattenArchetypes();
   const buildName = values.build;
   const archetype = ARCHETYPES[buildName];
 
