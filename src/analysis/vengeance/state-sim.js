@@ -594,6 +594,8 @@ export function scoreDpgcd(state, abilityId) {
       // Soul Cleave = 1.29 AP → ~125 normalized (vs Fracture 1.035 = 100 base).
       // Using the actual Catastrophe AP equivalent keeps scoring calibrated.
       if (vfSpending === 3) score += 125;
+      // Fire school: amplified by Fiery Demise and Metamorphosis
+      score *= fireAmp * metaAmp;
       break;
     }
 
