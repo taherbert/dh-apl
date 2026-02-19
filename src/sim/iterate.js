@@ -67,6 +67,7 @@ import {
   addHypothesis as dbAddHypothesis,
   updateHypothesis as dbUpdateHypothesis,
   getHypotheses as dbGetHypotheses,
+  popNextHypothesis as dbPopNextHypothesis,
   getIterations as dbGetIterations,
   setSessionState,
   getSessionState,
@@ -78,12 +79,17 @@ import {
   getSessionSummary,
 } from "../util/db.js";
 import {
+  loadAllDivergences,
+  buildDivergenceHypotheses,
+} from "../analyze/divergence-to-hypotheses.js";
+import {
   ROOT,
   resultsDir,
   resultsFile,
   aplsDir,
   dataFile,
   ensureSpecDirs,
+  getSpecName,
 } from "../engine/paths.js";
 import { randomUUID } from "node:crypto";
 
@@ -137,6 +143,32 @@ function normalizeHypothesisKey(description) {
     .replace(/[\d.]+%?/g, "N")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+// Insert hypotheses into DB, deduplicating by normalized summary against all existing entries.
+function insertHypothesesToDb(hypotheses, source = "workflow") {
+  const existing = dbGetHypotheses({ limit: 500 });
+  const existingKeys = new Set(
+    existing.map((h) => normalizeHypothesisKey(h.summary || "")),
+  );
+  let inserted = 0;
+  for (const h of hypotheses) {
+    const key = normalizeHypothesisKey(
+      h.description || h.hypothesis || h.summary || "",
+    );
+    if (existingKeys.has(key)) continue;
+    existingKeys.add(key);
+    dbAddHypothesis({
+      summary: h.description || h.hypothesis || h.summary,
+      category: h.category || null,
+      priority: h.priority ?? 5.0,
+      status: "pending",
+      source,
+      mutation: h.aplMutation || h.mutation || null,
+    });
+    inserted++;
+  }
+  return inserted;
 }
 
 // --- Hypothesis Generation ---
@@ -259,17 +291,23 @@ function generateHypotheses(workflowResults) {
 
 // --- Hypothesis Matching ---
 
-function popHypothesis(state, descriptionFragment) {
+function popHypothesis(_state, descriptionFragment) {
   if (descriptionFragment) {
     const frag = descriptionFragment.toLowerCase();
-    const idx = state.pendingHypotheses.findIndex((h) =>
-      (h.description || h.hypothesis || "").toLowerCase().includes(frag),
+    const pending = dbGetHypotheses({ status: "pending", limit: 200 });
+    const match = pending.find((h) =>
+      (h.summary || "").toLowerCase().includes(frag),
     );
-    if (idx !== -1) return state.pendingHypotheses.splice(idx, 1)[0];
+    if (match) {
+      dbUpdateHypothesis(match.id, {
+        status: "testing",
+        tested_at: new Date().toISOString(),
+      });
+      return { ...match, description: match.summary, dbId: match.id };
+    }
   }
-  if (state.pendingHypotheses.length > 0) {
-    return state.pendingHypotheses.shift();
-  }
+  const next = dbPopNextHypothesis();
+  if (next) return { ...next, description: next.summary, dbId: next.id };
   return { description: "manual change", category: "manual" };
 }
 
@@ -987,17 +1025,8 @@ async function cmdInit(aplPath) {
   }
 
   // Write initial hypotheses to DB
-  for (const h of hypotheses) {
-    dbAddHypothesis({
-      summary: h.description,
-      category: h.category,
-      priority: h.priority || 5.0,
-      status: "pending",
-      source: "workflow",
-    });
-  }
+  const inserted = insertHypothesesToDb(hypotheses, "workflow");
 
-  // --- Legacy JSON state (kept for backward compat during transition) ---
   const state = {
     version: STATE_VERSION,
     startedAt: new Date().toISOString(),
@@ -1018,8 +1047,6 @@ async function cmdInit(aplPath) {
       workflowResults: relative(ROOT, resultsFile("workflow_current.json")),
     },
     iterations: [],
-    pendingHypotheses: hypotheses,
-    exhaustedHypotheses: [],
     consecutiveRejections: 0,
     findings: [],
   };
@@ -1039,7 +1066,7 @@ async function cmdInit(aplPath) {
     console.log(`  ${buildId.padEnd(25)} [${hero}]  ${dpsStr}`);
   }
 
-  console.log(`\nGenerated ${hypotheses.length} hypotheses.`);
+  console.log(`\nGenerated ${inserted} hypotheses (DB).`);
   printHypotheses(hypotheses.slice(0, 5));
   console.log(
     "\nMulti-build iteration state initialized. Ready for /iterate-apl.",
@@ -1103,8 +1130,16 @@ function cmdStatus() {
     );
   }
 
+  const dbHypPending = dbGetHypotheses({
+    status: "pending",
+    limit: 1000,
+  }).length;
+  const dbHypRejected = dbGetHypotheses({
+    status: "rejected",
+    limit: 1000,
+  }).length;
   console.log(
-    `Hypotheses: ${state.pendingHypotheses.length} pending, ${state.exhaustedHypotheses.length} exhausted`,
+    `Hypotheses: ${dbHypPending} pending, ${dbHypRejected} rejected (DB)`,
   );
 
   // Recent iterations
@@ -1343,7 +1378,7 @@ async function cmdAccept(reason, hypothesisHint) {
     resultsFile("workflow_current.json"),
   );
 
-  state.pendingHypotheses = generateHypotheses(workflowResults);
+  insertHypothesesToDb(generateHypotheses(workflowResults), "workflow");
   state.consecutiveRejections = 0;
   setSessionState("consecutive_rejections", 0);
   setSessionState("last_iteration", dbIterationId);
@@ -1400,7 +1435,6 @@ async function cmdAccept(reason, hypothesisHint) {
   writeChangelog(state);
   writeFindings(state);
   console.log(`\nIteration #${iterNum} accepted: ${reason}`);
-  console.log(`${state.pendingHypotheses.length} hypotheses regenerated.`);
 }
 
 function cmdReject(reason, hypothesisHint) {
@@ -1451,15 +1485,15 @@ function cmdReject(reason, hypothesisHint) {
     });
   }
 
-  state.exhaustedHypotheses.push(hypothesis);
   state.consecutiveRejections = (state.consecutiveRejections || 0) + 1;
   setSessionState("consecutive_rejections", state.consecutiveRejections);
   saveState(state);
   writeDashboard(state);
 
+  const dbPending = dbGetHypotheses({ status: "pending", limit: 1000 }).length;
   console.log(`Iteration #${iterNum} rejected: ${reason}`);
   console.log(`Consecutive rejections: ${state.consecutiveRejections}`);
-  console.log(`${state.pendingHypotheses.length} hypotheses remaining.`);
+  console.log(`${dbPending} hypotheses remaining (DB).`);
 
   if (state.consecutiveRejections >= 10) {
     console.log(
@@ -1479,43 +1513,19 @@ function cmdReject(reason, hypothesisHint) {
 }
 
 async function cmdHypotheses() {
-  const state = loadState();
-  if (!state) {
-    console.error("No iteration state. Run init first.");
-    process.exit(1);
+  const pending = dbGetHypotheses({ status: "pending", limit: 50 });
+  const rejected = dbGetHypotheses({ status: "rejected", limit: 1000 });
+
+  console.log(`${pending.length} pending, ${rejected.length} rejected (DB):`);
+
+  for (const h of pending) {
+    const src = h.source ? ` [${h.source}]` : "";
+    const cat = h.category ? ` (${h.category})` : "";
+    const pri = h.priority != null ? ` priority:${h.priority.toFixed(1)}` : "";
+    console.log(
+      `  #${h.id}${src}${cat}${pri} — ${(h.summary || "").slice(0, 100)}`,
+    );
   }
-
-  // Regenerate from latest workflow results
-  const workflowPath = join(ROOT, state.current.workflowResults);
-  if (!existsSync(workflowPath)) {
-    console.error("No workflow results found. Run init or accept first.");
-    process.exit(1);
-  }
-
-  const workflowResults = JSON.parse(readFileSync(workflowPath, "utf-8"));
-  const hypotheses = generateHypotheses(workflowResults);
-
-  // Filter out exhausted ones (normalized to ignore metric changes)
-  // Handle both .description (metric hypotheses) and .hypothesis (strategic hypotheses)
-  const exhaustedKeys = new Set(
-    state.exhaustedHypotheses.map((h) =>
-      normalizeHypothesisKey(h.hypothesis || h.description || ""),
-    ),
-  );
-  const fresh = hypotheses.filter(
-    (h) =>
-      !exhaustedKeys.has(
-        normalizeHypothesisKey(h.hypothesis || h.description || ""),
-      ),
-  );
-
-  state.pendingHypotheses = fresh;
-  saveState(state);
-
-  console.log(
-    `${fresh.length} hypotheses (${state.exhaustedHypotheses.length} exhausted):`,
-  );
-  printHypotheses(fresh);
 }
 
 function cmdSummary() {
@@ -1615,24 +1625,26 @@ function cmdSummary() {
     }
   }
 
-  // Rejected hypotheses
-  if (state.exhaustedHypotheses.length > 0) {
+  // Rejected hypotheses (from DB)
+  const rejectedHyps = dbGetHypotheses({ status: "rejected", limit: 100 });
+  if (rejectedHyps.length > 0) {
     lines.push("\n## Rejected Hypotheses\n");
-    for (const h of state.exhaustedHypotheses) {
-      lines.push(`- [${h.category}] ${h.description}`);
+    for (const h of rejectedHyps) {
+      lines.push(`- [${h.category || "?"}] ${h.summary}`);
     }
   }
 
-  // Remaining ideas
-  if (state.pendingHypotheses.length > 0) {
+  // Remaining ideas (from DB)
+  const pendingHyps = dbGetHypotheses({ status: "pending", limit: 21 });
+  if (pendingHyps.length > 0) {
     lines.push("\n## Remaining Untested Ideas\n");
-    for (const h of state.pendingHypotheses.slice(0, 20)) {
+    for (const h of pendingHyps.slice(0, 20)) {
       lines.push(
-        `- [${h.category}] ${h.description} (priority: ${h.priority.toFixed(1)})`,
+        `- [${h.category || "?"}] ${h.summary} (priority: ${(h.priority || 0).toFixed(1)})`,
       );
     }
-    if (state.pendingHypotheses.length > 20) {
-      lines.push(`\n...and ${state.pendingHypotheses.length - 20} more`);
+    if (pendingHyps.length > 20) {
+      lines.push(`\n...and more in DB`);
     }
   }
 
@@ -1726,6 +1738,68 @@ async function cmdRollback(iterationId) {
   console.log(`DPS reverted to pre-iteration state.`);
 }
 
+// --- Divergence Hypotheses ---
+
+async function cmdDivergenceHypotheses() {
+  const specName = getSpecName();
+  if (!specName) {
+    console.error("No spec configured. Run init first.");
+    process.exit(1);
+  }
+
+  console.log(`Loading divergence files for spec: ${specName}`);
+  const allDivergences = loadAllDivergences(specName);
+
+  if (allDivergences.length === 0) {
+    console.log("No divergence files found.");
+    console.log(
+      `Run: npm run divergence -- --spec ${specName} --build <archetype>`,
+    );
+    return;
+  }
+
+  console.log(
+    `Found ${allDivergences.length} divergence records across all archetypes.`,
+  );
+
+  const hypotheses = buildDivergenceHypotheses(allDivergences, specName);
+
+  if (hypotheses.length === 0) {
+    console.log(
+      `No cross-archetype divergences above threshold (dpgcd_delta >= 100, >= 2 archetypes).`,
+    );
+    return;
+  }
+
+  // Deduplicate against existing hypotheses in DB
+  const existing = dbGetHypotheses({ spec: specName, limit: 200 });
+  const existingSummaries = new Set(existing.map((h) => h.summary));
+
+  let inserted = 0;
+  for (const h of hypotheses) {
+    if (existingSummaries.has(h.summary)) continue;
+    dbAddHypothesis(h);
+    inserted++;
+  }
+
+  console.log(
+    `\nInserted ${inserted} new hypotheses (${hypotheses.length - inserted} duplicates skipped).`,
+  );
+  console.log("");
+  console.log("Top divergence hypotheses:");
+  for (let i = 0; i < Math.min(5, hypotheses.length); i++) {
+    const h = hypotheses[i];
+    console.log(`  [${h.priority}] ${h.summary}`);
+    if (h.implementation) {
+      console.log(`      → ${h.implementation.slice(0, 120)}`);
+    }
+  }
+  console.log("");
+  console.log(
+    "Run `node src/sim/iterate.js hypotheses` to see all pending hypotheses.",
+  );
+}
+
 // --- Auto-Generate Candidate ---
 
 async function cmdAutoGenerate() {
@@ -1735,18 +1809,22 @@ async function cmdAutoGenerate() {
     process.exit(1);
   }
 
-  if (state.pendingHypotheses.length === 0) {
-    console.error("No pending hypotheses. Run `hypotheses` to regenerate.");
+  // Find pending hypotheses with mutations from DB
+  const pendingAll = dbGetHypotheses({ status: "pending", limit: 200 });
+  const withMutations = pendingAll.filter((h) => h.mutation);
+
+  if (pendingAll.length === 0) {
+    console.error(
+      "No pending hypotheses in DB. Run `strategic` or `theorycraft` first.",
+    );
     process.exit(1);
   }
 
-  // Find hypotheses with mutations
-  const withMutations = state.pendingHypotheses.filter((h) => h.aplMutation);
   if (withMutations.length === 0) {
     console.error("No hypotheses with auto-mutation available.");
-    console.log("Top hypotheses without mutations:");
-    for (const h of state.pendingHypotheses.slice(0, 3)) {
-      console.log(`  - ${h.description || h.hypothesis}`);
+    console.log("Top pending hypotheses:");
+    for (const h of pendingAll.slice(0, 3)) {
+      console.log(`  - ${h.summary}`);
     }
     process.exit(1);
   }
@@ -1756,11 +1834,9 @@ async function cmdAutoGenerate() {
 
   // Try each hypothesis until one succeeds
   for (const hypothesis of withMutations) {
-    const mutation = hypothesis.aplMutation;
+    const mutation = hypothesis.mutation;
     console.log(`\nTrying hypothesis:`);
-    console.log(
-      `  ${hypothesis.strategicGoal || hypothesis.description || hypothesis.hypothesis}`,
-    );
+    console.log(`  ${hypothesis.summary}`);
     console.log(`  Mutation: ${describeMutation(mutation)}`);
 
     try {
@@ -1769,10 +1845,10 @@ async function cmdAutoGenerate() {
 
       if (!validation.valid) {
         console.log(`  Skipping — validation failed: ${validation.errors[0]}`);
-        // Mark as exhausted so we don't retry
-        state.exhaustedHypotheses.push(hypothesis);
-        const idx = state.pendingHypotheses.indexOf(hypothesis);
-        if (idx !== -1) state.pendingHypotheses.splice(idx, 1);
+        dbUpdateHypothesis(hypothesis.id, {
+          status: "rejected",
+          reason: `validation: ${validation.errors[0]}`,
+        });
         continue;
       }
 
@@ -1786,19 +1862,17 @@ async function cmdAutoGenerate() {
         `\nRun: node src/sim/iterate.js compare apls/candidate.simc --quick`,
       );
 
-      saveState(state);
       return;
     } catch (e) {
       console.log(`  Skipping — generation failed: ${e.message}`);
-      // Mark as exhausted
-      state.exhaustedHypotheses.push(hypothesis);
-      const idx = state.pendingHypotheses.indexOf(hypothesis);
-      if (idx !== -1) state.pendingHypotheses.splice(idx, 1);
+      dbUpdateHypothesis(hypothesis.id, {
+        status: "rejected",
+        reason: `generation: ${e.message}`,
+      });
       continue;
     }
   }
 
-  saveState(state);
   console.error(
     "\nAll hypothesis mutations failed. Run `strategic` to regenerate.",
   );
@@ -1825,46 +1899,18 @@ async function cmdStrategicHypotheses() {
 
   const hypotheses = generateStrategicHypotheses(workflowResults, aplText);
 
-  // Filter out exhausted ones
-  const exhaustedKeys = new Set(
-    state.exhaustedHypotheses.map((h) => normalizeHypothesisKey(h.description)),
-  );
-  const fresh = hypotheses.filter(
-    (h) =>
-      !exhaustedKeys.has(
-        normalizeHypothesisKey(h.hypothesis || h.description || ""),
-      ),
-  );
+  // Map to DB shape and insert (dedup via insertHypothesesToDb)
+  const dbReady = hypotheses.map((h) => ({
+    description: h.hypothesis || h.observation,
+    category: h.category,
+    priority: h.priority || 5.0,
+    aplMutation: h.aplMutation,
+  }));
+  const inserted = insertHypothesesToDb(dbReady, "strategic");
 
-  // Update state with strategic hypotheses + write to DB
-  state.pendingHypotheses = fresh.map((h) => {
-    const mapped = {
-      category: h.category,
-      description: h.hypothesis || h.observation,
-      strategicGoal: h.strategicGoal,
-      priority: h.priority || 0,
-      scenario: h.scenario,
-      aplMutation: h.aplMutation,
-    };
-    // Write to DB and store the DB id for later linkage
-    mapped.dbId = dbAddHypothesis({
-      summary: mapped.description,
-      category: h.category,
-      priority: h.priority || 5.0,
-      status: "pending",
-      source: "strategic",
-      mutation: h.aplMutation || null,
-    });
-    return mapped;
-  });
+  console.log(`\n${inserted} new strategic hypotheses added to DB:\n`);
 
-  saveState(state);
-
-  console.log(
-    `\n${fresh.length} strategic hypotheses generated (${state.exhaustedHypotheses.length} exhausted):\n`,
-  );
-
-  for (const h of fresh.slice(0, 10)) {
+  for (const h of hypotheses.slice(0, 10)) {
     console.log(
       `[${h.confidence || "medium"}] ${h.strategicGoal || h.hypothesis}`,
     );
@@ -1877,8 +1923,8 @@ async function cmdStrategicHypotheses() {
     console.log(`  Priority: ${(h.priority || 0).toFixed(1)}\n`);
   }
 
-  if (fresh.length > 10) {
-    console.log(`...and ${fresh.length - 10} more\n`);
+  if (hypotheses.length > 10) {
+    console.log(`...and ${hypotheses.length - 10} more\n`);
   }
 }
 
@@ -1910,53 +1956,17 @@ async function cmdTheorycraft() {
   const resourceFlow = analyzeResourceFlow(spellData, aplText, workflowResults);
   const hypotheses = generateTemporalHypotheses(resourceFlow, aplText);
 
-  // Filter out exhausted ones
-  const exhaustedKeys = new Set(
-    state.exhaustedHypotheses.map((h) =>
-      normalizeHypothesisKey(h.hypothesis || h.description || ""),
-    ),
-  );
-  const fresh = hypotheses.filter(
-    (h) =>
-      !exhaustedKeys.has(
-        normalizeHypothesisKey(h.hypothesis || h.description || ""),
-      ),
-  );
+  const dbReady = hypotheses.map((h) => ({
+    description: h.hypothesis,
+    category: h.category,
+    priority: h.priority || 5.0,
+    aplMutation: h.aplMutation,
+  }));
+  const inserted = insertHypothesesToDb(dbReady, "theorycraft");
 
-  // Update state with temporal hypotheses + write to DB
-  state.pendingHypotheses = fresh.map((h) => {
-    const mapped = {
-      category: h.category,
-      description: h.hypothesis,
-      hypothesis: h.hypothesis,
-      strategicGoal: h.hypothesis,
-      observation: h.observation,
-      priority: h.priority || 0,
-      confidence: h.confidence,
-      scenario: h.scenario,
-      aplMutation: h.aplMutation,
-      temporalAnalysis: h.temporalAnalysis,
-      prediction: h.prediction,
-      counterArgument: h.counterArgument,
-    };
-    mapped.dbId = dbAddHypothesis({
-      summary: h.hypothesis,
-      category: h.category,
-      priority: h.priority || 5.0,
-      status: "pending",
-      source: "theorycraft",
-      mutation: h.aplMutation || null,
-    });
-    return mapped;
-  });
+  console.log(`\n${inserted} new temporal hypotheses added to DB:\n`);
 
-  saveState(state);
-
-  console.log(
-    `\n${fresh.length} temporal hypotheses generated (${state.exhaustedHypotheses.length} exhausted):\n`,
-  );
-
-  for (const h of fresh.slice(0, 10)) {
+  for (const h of hypotheses.slice(0, 10)) {
     console.log(`[${h.confidence || "medium"}] ${h.hypothesis}`);
     console.log(`  Category: ${h.category}`);
     if (h.temporalAnalysis?.timingWindow) {
@@ -1971,8 +1981,8 @@ async function cmdTheorycraft() {
     console.log(`  Priority: ${(h.priority || 0).toFixed(1)}\n`);
   }
 
-  if (fresh.length > 10) {
-    console.log(`...and ${fresh.length - 10} more\n`);
+  if (hypotheses.length > 10) {
+    console.log(`...and ${hypotheses.length - 10} more\n`);
   }
 }
 
@@ -2048,50 +2058,25 @@ async function cmdSynthesize() {
   const outputs = loadSpecialistOutputs();
   const result = synthesizeHypotheses(outputs);
 
-  // Filter exhausted
-  const exhaustedKeys = new Set(
-    state.exhaustedHypotheses.map((h) =>
-      normalizeHypothesisKey(h.hypothesis || h.description || ""),
-    ),
-  );
-  const fresh = result.hypotheses.filter(
-    (h) =>
-      !exhaustedKeys.has(
-        normalizeHypothesisKey(h.hypothesis || h.systemicIssue || h.id || ""),
-      ),
-  );
-
-  // Map synthesized hypotheses back to iteration format + write to DB
-  state.pendingHypotheses = fresh.map((h) => {
+  // Insert synthesized hypotheses to DB (dedup via insertHypothesesToDb)
+  const dbReady = result.hypotheses.map((h) => {
     const mutation =
       h.proposedChanges?.[0]?.aplMutation || h.aplMutation || null;
-    const mapped = {
+    return {
       description: h.systemicIssue || h.hypothesis || h.id,
-      hypothesis: h.systemicIssue || h.hypothesis || h.id,
+      category: h.category || "synthesized",
       priority: h.aggregatePriority || h.priority || 0,
-      consensusCount: h.consensusCount || 1,
-      specialists: h.specialists || [],
       aplMutation: mutation,
     };
-    mapped.dbId = dbAddHypothesis({
-      summary: mapped.description,
-      category: h.category || "synthesized",
-      priority: mapped.priority,
-      status: "pending",
-      source: "synthesized",
-      mutation: mutation || null,
-    });
-    return mapped;
   });
-
-  saveState(state);
+  const inserted = insertHypothesesToDb(dbReady, "synthesized");
 
   console.log(
-    `\n${fresh.length} synthesized hypotheses (${result.metadata.totalRaw} raw, ${result.conflicts.length} conflicts resolved):`,
+    `\n${inserted} new synthesized hypotheses added to DB (${result.metadata.totalRaw} raw, ${result.conflicts.length} conflicts resolved):`,
   );
   console.log(`  Specialists: ${result.metadata.specialists.join(", ")}`);
 
-  for (const h of fresh.slice(0, 10)) {
+  for (const h of result.hypotheses.slice(0, 10)) {
     const desc = h.systemicIssue || h.hypothesis || h.id || "unknown";
     const consensus =
       h.consensusCount > 1 ? ` [${h.consensusCount}x consensus]` : "";
@@ -2151,8 +2136,12 @@ function cmdCheckpoint(options = {}) {
     `- Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
   );
   lines.push(`- Consecutive rejections: ${state.consecutiveRejections || 0}`);
-  lines.push(`- Pending hypotheses: ${state.pendingHypotheses.length}`);
-  lines.push(`- Exhausted hypotheses: ${state.exhaustedHypotheses.length}`);
+  lines.push(
+    `- Pending hypotheses: ${dbGetHypotheses({ status: "pending", limit: 1000 }).length} (DB)`,
+  );
+  lines.push(
+    `- Rejected hypotheses: ${dbGetHypotheses({ status: "rejected", limit: 1000 }).length} (DB)`,
+  );
   lines.push("");
 
   // Current position in deep iteration loop
@@ -2209,25 +2198,23 @@ function cmdCheckpoint(options = {}) {
   // Remaining work
   lines.push("## Remaining Work\n");
 
-  // Top pending hypotheses
-  if (state.pendingHypotheses.length > 0) {
+  // Top pending hypotheses (from DB)
+  const topPending = dbGetHypotheses({ status: "pending", limit: 6 });
+  if (topPending.length > 0) {
     lines.push("### Top Pending Hypotheses\n");
-    for (const h of state.pendingHypotheses.slice(0, 5)) {
-      const desc =
-        h.description || h.hypothesis || h.strategicGoal || "unknown";
+    for (const h of topPending.slice(0, 5)) {
+      const desc = h.summary || "unknown";
       lines.push(
         `1. [${h.category || "unknown"}] ${desc.slice(0, 80)}${desc.length > 80 ? "…" : ""}`,
       );
-      if (h.aplMutation) {
+      if (h.mutation) {
         lines.push(
-          `   - Has auto-mutation: ${describeMutation(h.aplMutation).slice(0, 60)}`,
+          `   - Has auto-mutation: ${describeMutation(h.mutation).slice(0, 60)}`,
         );
       }
     }
-    if (state.pendingHypotheses.length > 5) {
-      lines.push(
-        `\n...and ${state.pendingHypotheses.length - 5} more hypotheses`,
-      );
+    if (topPending.length > 5) {
+      lines.push(`\n...and more in DB`);
     }
     lines.push("");
   }
@@ -2287,7 +2274,9 @@ function cmdCheckpoint(options = {}) {
   console.log(
     `  Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
   );
-  console.log(`  Pending hypotheses: ${state.pendingHypotheses.length}`);
+  console.log(
+    `  Pending hypotheses: ${dbGetHypotheses({ status: "pending", limit: 1000 }).length} (DB)`,
+  );
   if (currentArchetype || currentBuild) {
     console.log(
       `  Position: ${currentArchetype || "—"} / ${currentBuild || "—"}`,
@@ -2419,8 +2408,12 @@ function writeDashboard(state) {
     `| Acceptance rate | ${iterCount > 0 ? ((accepted / iterCount) * 100).toFixed(0) : 0}% |`,
   );
   lines.push(`| Consecutive rejections | ${consecRej} |`);
-  lines.push(`| Hypotheses pending | ${state.pendingHypotheses.length} |`);
-  lines.push(`| Hypotheses exhausted | ${state.exhaustedHypotheses.length} |`);
+  lines.push(
+    `| Hypotheses pending | ${dbGetHypotheses({ status: "pending", limit: 1000 }).length} |`,
+  );
+  lines.push(
+    `| Hypotheses rejected | ${dbGetHypotheses({ status: "rejected", limit: 1000 }).length} |`,
+  );
 
   const origDpsDash = getAggregateDps(state.originalBaseline);
   const currDpsDash = getAggregateDps(state.current);
@@ -2651,6 +2644,10 @@ switch (cmd) {
     await cmdSynthesize();
     break;
 
+  case "divergence-hypotheses":
+    await cmdDivergenceHypotheses();
+    break;
+
   case "checkpoint": {
     // Parse checkpoint flags
     const checkpointOpts = {};
@@ -2686,6 +2683,7 @@ Usage:
   node src/sim/iterate.js strategic                  Generate strategic hypotheses with auto-mutations
   node src/sim/iterate.js theorycraft                Generate temporal resource flow hypotheses
   node src/sim/iterate.js synthesize                 Synthesize hypotheses from all specialist sources
+  node src/sim/iterate.js divergence-hypotheses      Import divergence JSONs as DB hypotheses
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report

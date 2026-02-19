@@ -584,7 +584,7 @@ export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
       continue;
     }
 
-    const { ability, off_gcd, condition, apl_reason } = decision;
+    const { ability, off_gcd, condition, apl_reason, listName } = decision;
 
     if (off_gcd && OFF_GCD_ABILITIES.has(ability) && offGcdGuard < 5) {
       // Off-GCD ability: apply without consuming GCD
@@ -601,6 +601,7 @@ export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
         pre: preState,
         post: snapshotState(state),
         apl_reason: apl_reason || condition || "off-GCD action",
+        list_name: listName || null,
       });
       // Re-evaluate same GCD slot (off-GCD doesn't consume GCD)
       continue;
@@ -630,6 +631,7 @@ export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
       pre: preState,
       post: snapshotState(state),
       apl_reason: apl_reason || condition || "unconditional",
+      list_name: listName || null,
     });
   }
 

@@ -60,7 +60,7 @@ function hashConfig(archetype) {
 // Converts a snapshot from the trace back into a live state for scoring
 // ---------------------------------------------------------------------------
 
-function snapshotToState(snap, buildConfig) {
+function snapshotToState(snap, buildConfig, fightDuration) {
   const state = engine.createInitialState(buildConfig);
   state.fury = snap.fury;
   state.soul_fragments = snap.soul_fragments;
@@ -92,6 +92,7 @@ function snapshotToState(snap, buildConfig) {
   // Sync fury_cap from Meta
   if (state.buffs.metamorphosis > 0) state.fury_cap = 120;
 
+  state.fight_end = fightDuration ?? Infinity;
   return state;
 }
 
@@ -112,7 +113,11 @@ export function computeDivergence(aplTrace, buildConfig) {
   let totalFightScore = 0;
 
   for (const event of aplTrace.events.filter((e) => !e.off_gcd)) {
-    const state = snapshotToState(event.pre, buildConfig);
+    const state = snapshotToState(
+      event.pre,
+      buildConfig,
+      aplTrace.metadata?.duration,
+    );
     totalFightScore += engine.scoreDpgcd(state, event.ability);
 
     const optAbility = getBestAbility(state);

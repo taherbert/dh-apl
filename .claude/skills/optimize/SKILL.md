@@ -243,6 +243,14 @@ Ranking order:
 
 **Scope ranking:** Universal > Template-specific > Hero-tree-specific > Build-specific
 
+After reading divergence files, run the pipeline to import them as DB hypotheses:
+
+```bash
+node src/sim/iterate.js divergence-hypotheses
+```
+
+This populates the hypothesis DB with cross-archetype divergences (delta > 100, >= 2 archetypes). They will appear in `node src/sim/iterate.js hypotheses` ranked alongside metric-based entries.
+
 ### 2c. Generate Summary
 
 Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `changelog.md`.
