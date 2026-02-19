@@ -349,6 +349,18 @@ function preprocessCondition(str, state, vars, cfg) {
     (_, op, n, expr) =>
       `${op}${parseInt(n, 10) + evalSimcExpr(expr, state, vars, cfg)}`,
   );
+  // Handle SimC min operator >? (e.g., A>?B>?C<8 → min(A,B,C)<8)
+  // >? returns the minimum of its operands, used for "earliest cooldown" patterns
+  result = result.replace(
+    /([\w.]+(?:>\?[\w.]+)+)(<=|>=|!=|<|>|=)(\d+)/g,
+    (_, chain, op, n) => {
+      const parts = chain.split(">?");
+      const minVal = Math.min(
+        ...parts.map((p) => evalSimcExpr(p.trim(), state, vars, cfg)),
+      );
+      return `${minVal}${op}${n}`;
+    },
+  );
   return result;
 }
 
@@ -359,7 +371,7 @@ function evalCondition(conditionStr, state, vars, cfg) {
     const ast = parseCondition(processed);
     return evalConditionAst(ast, state, vars, cfg);
   } catch {
-    return true; // Parse failure: assume condition passes
+    return false; // Parse failure: don't fire on unknown conditions
   }
 }
 
