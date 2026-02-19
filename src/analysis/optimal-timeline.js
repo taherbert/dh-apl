@@ -46,11 +46,15 @@ export function reinitScoringForBuild(buildConfig) {
 //   score(a) = immediate_dpgcd(a) + rollout_dps(applyAbility(s, a), T_horizon)
 //
 // rollout_dps uses greedy (immediate-only) continuation to estimate future
-// value. T_horizon = 25s covers a full Fiery Brand duration (10s) plus
-// follow-on burst windows, reducing false positives for CD setup abilities.
+// value. T_horizon = 20s covers multi-GCD setups (FB→fire CD within 8-10s)
+// while limiting resource-hoarding bias: longer horizons (~35s / ~28 GCDs)
+// systematically overvalue fragment-preserving actions because greedy
+// continuation scores higher when more resources are available, even when
+// spending them earlier is correct. 20s (~16 GCDs) retains setup detection
+// without magnifying this bias.
 // ---------------------------------------------------------------------------
 
-const T_HORIZON = 35;
+const T_HORIZON = 20;
 const DISCOUNT_RATE = 0.97;
 
 // 10 deep steps covers multi-GCD setup payoffs (FB fire amp, IA Charred Flesh

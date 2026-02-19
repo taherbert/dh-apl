@@ -57,11 +57,13 @@ export function buildDivergenceHypotheses(divergences, spec) {
         totalOccurrences: 0,
         bestFixHint: null,
         bestListName: null,
+        allLowConfidence: true,
       });
     }
     const g = groups.get(key);
     g.archetypes.add(d.archetype);
     g.totalOccurrences += d.actual_occurrences || 1;
+    if (d.confidence === "high") g.allLowConfidence = false;
     if (d.dpgcd_delta > g.maxDelta) {
       g.maxDelta = d.dpgcd_delta;
       g.bestFixHint = d.fix_hint || null;
@@ -81,7 +83,14 @@ export function buildDivergenceHypotheses(divergences, spec) {
       `APL chose ${g.actAbility} when rollout prefers ${g.optAbility}`;
 
     // Priority scales with delta magnitude (normalized to 0-10 range, capped at 9)
-    const priority = Math.min(9, Math.round((g.maxDelta / 200) * 5 + 4));
+    let priority = Math.min(9, Math.round((g.maxDelta / 200) * 5 + 4));
+
+    // Demote priority when all divergences in the group are low-confidence
+    // (3-GCD score disagrees with rollout — likely resource-hoarding bias)
+    const allLowConfidence = g.allLowConfidence;
+    if (allLowConfidence) {
+      priority = Math.max(1, priority - 3);
+    }
 
     hypotheses.push({
       spec,
@@ -98,6 +107,7 @@ export function buildDivergenceHypotheses(divergences, spec) {
         archetypes: [...g.archetypes],
         maxDelta: g.maxDelta,
         totalOccurrences: g.totalOccurrences,
+        confidence: allLowConfidence ? "low" : "high",
       },
     });
   }
