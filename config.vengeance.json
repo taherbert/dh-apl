@@ -20,7 +20,10 @@
       "Volatile Flameblood",
       "Felfire Fist",
       "Agonizing Flames",
-      "Fallout"
+      "Fallout",
+      "Fel Flame Fortification",
+      "Chains of Anger",
+      "Retaliation"
     ],
     "banned": [
       "Soulmonger",
@@ -34,11 +37,6 @@
       "Sigil of Chains",
       "Feast of Souls"
     ],
-    "excluded": [
-      "Calcified Spikes",
-      "Soul Barrier",
-      "Fel Flame Fortification",
-      "Void Reaver"
-    ]
+    "excluded": ["Calcified Spikes", "Soul Barrier", "Void Reaver"]
   }
 }

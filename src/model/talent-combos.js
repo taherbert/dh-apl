@@ -1283,11 +1283,20 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
   // Hard-banned node IDs: BFS will never select these
   const banned = getBannedSet();
   const bannedNodeIds = new Set();
+  // Template-excluded node IDs: BFS will never select these either, but they
+  // don't participate in the ban fallback (which only fires for global bans).
+  // This prevents BFS from filling freed cluster points back with the excluded
+  // cluster talents while also preventing the ban fallback from picking up
+  // unrelated globally banned talents to fill the gap.
+  const templateExcludeNames = new Set(profile.exclude || []);
+  const templateExcludeNodeIds = new Set();
   for (const n of data.specNodes) {
     const names = [n.name, ...(n.entries?.map((e) => e.name) || [])].filter(
       Boolean,
     );
     if (names.some((nm) => banned.has(nm))) bannedNodeIds.add(n.id);
+    if (names.some((nm) => templateExcludeNames.has(nm)))
+      templateExcludeNodeIds.add(n.id);
   }
 
   // Connectivity repair: ensure all locked nodes have a path from entry.
@@ -1350,7 +1359,8 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     const available = data.specNodes
       .filter((n) => {
         if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
-        if (bannedNodeIds.has(n.id)) return false;
+        if (bannedNodeIds.has(n.id) || templateExcludeNodeIds.has(n.id))
+          return false;
         if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
           return false;
         if (!passesGate(n, selected, specMap, rankMap)) return false;
@@ -1401,7 +1411,8 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     }
   }
 
-  // Ban fallback: if still under budget after ban-respecting fill, re-run without bans
+  // Ban fallback: if still under budget after ban-respecting fill, re-run without
+  // global bans (but still respect template exclusions — those are intentional).
   if (pts < SPEC_POINTS && bannedNodeIds.size > 0) {
     let fallbackChanged = true;
     while (fallbackChanged && pts < SPEC_POINTS) {
@@ -1409,6 +1420,7 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
       const available = data.specNodes
         .filter((n) => {
           if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+          if (templateExcludeNodeIds.has(n.id)) return false;
           if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
             return false;
           if (!passesGate(n, selected, specMap, rankMap)) return false;
@@ -1491,7 +1503,8 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     let addable = data.specNodes
       .filter((n) => {
         if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
-        if (bannedNodeIds.has(n.id)) return false;
+        if (bannedNodeIds.has(n.id) || templateExcludeNodeIds.has(n.id))
+          return false;
         if (n.reqPoints >= gateThreshold) return false;
         if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
           return false;
@@ -1505,10 +1518,12 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
       });
 
     // Ban fallback: if no addable without bans, allow banned nodes
+    // (but still respect template exclusions)
     if (addable.length === 0 && bannedNodeIds.size > 0) {
       addable = data.specNodes
         .filter((n) => {
           if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+          if (templateExcludeNodeIds.has(n.id)) return false;
           if (n.reqPoints >= gateThreshold) return false;
           if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
             return false;
