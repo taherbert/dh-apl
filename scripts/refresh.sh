@@ -168,7 +168,7 @@ record_metadata() {
   cd "$ROOT"
   local timestamp data_env
   timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-  data_env=$(node -e "import('./src/config.js').then(c => console.log(c.DATA_ENV))")
+  data_env=$(node -p "JSON.parse(require('fs').readFileSync('config.json','utf-8')).data.env")
 
   cat > "$METADATA_FILE" << EOF
 {
