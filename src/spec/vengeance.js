@@ -154,8 +154,10 @@ export const SPEC_CONFIG = {
   //   2. Apex Scaling (Apex 2-4): focus-driven — what to skip flows from build identity
   rosterTemplates: [
     // --- APL Coverage: Apex 0 (no apex, 14 S3 budget, 13 demand — 1 spare) ---
+    // Names describe the two major clusters that define the build's identity.
+    // At Apex 0-1, nearly everything is present; the name highlights the focus.
     {
-      name: "Full Stack",
+      name: "Complete",
       apexRank: 0,
       include: {
         brand: "full",
@@ -166,24 +168,24 @@ export const SPEC_CONFIG = {
       },
     },
     {
-      name: "No Brand",
+      name: "Harvest + Fel Dev",
       apexRank: 0,
       include: { sigil: "full", harvest: "full", feldev: "full", sc: "full" },
     },
     {
-      name: "No Harvest",
+      name: "Brand + Fel Dev",
       apexRank: 0,
       include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
     },
     {
-      name: "No FelDev",
+      name: "Brand + Harvest",
       apexRank: 0,
       include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
     },
 
     // --- APL Coverage: Apex 1 (same cluster coverage, apex.1 active) ---
     {
-      name: "Full Stack",
+      name: "Complete",
       apexRank: 1,
       include: {
         brand: "full",
@@ -194,24 +196,24 @@ export const SPEC_CONFIG = {
       },
     },
     {
-      name: "No Brand",
+      name: "Harvest + Fel Dev",
       apexRank: 1,
       include: { sigil: "full", harvest: "full", feldev: "full", sc: "full" },
     },
     {
-      name: "No Harvest",
+      name: "Brand + Fel Dev",
       apexRank: 1,
       include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
     },
     {
-      name: "No FelDev",
+      name: "Brand + Harvest",
       apexRank: 1,
       include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
     },
 
     // --- Apex 2 (skip 1 pt) — two meaningful 1-pt standalone drops ---
     {
-      name: "Drop SC",
+      name: "No Soul Carver",
       apexRank: 2,
       include: {
         brand: "full",
@@ -221,21 +223,21 @@ export const SPEC_CONFIG = {
       },
     },
     {
-      name: "Drop Sigil",
+      name: "No Sigil",
       apexRank: 2,
       include: { brand: "full", harvest: "full", feldev: "full", sc: "full" },
     },
 
     // --- Apex 3 (skip 2 pts) — focus determines what to sacrifice ---
-    // Balanced: drop two cheapest standalones, keep all three major clusters full
+    // Three majors: drop both standalones, keep all three major clusters full
     {
-      name: "Drop SC+Sigil",
+      name: "Three Majors",
       apexRank: 3,
       include: { brand: "full", harvest: "full", feldev: "full" },
     },
-    // Brand+Harvest focus: narrow FelDev to core, keep soul + fire economy intact
+    // Core Fel Dev: narrow FelDev to core, keep soul + fire economy intact
     {
-      name: "Trim FelDev",
+      name: "Core Fel Dev",
       apexRank: 3,
       include: {
         brand: "full",
@@ -245,9 +247,9 @@ export const SPEC_CONFIG = {
         sc: "full",
       },
     },
-    // Brand+FelDev focus: narrow Harvest to core (Vuln only), drop SC
+    // Core Harvest: narrow Harvest to core (Vuln only), keep brand + fel dev
     {
-      name: "Trim Harvest",
+      name: "Core Harvest",
       apexRank: 3,
       include: {
         brand: "full",
@@ -258,21 +260,21 @@ export const SPEC_CONFIG = {
     },
 
     // --- Apex 4 (skip 3 pts) — focus defines which cluster to sacrifice ---
-    // Brand+Harvest: sacrifice FelDev entirely
+    // Brand + Harvest: sacrifice FelDev entirely
     {
-      name: "Brand+Harvest",
+      name: "Brand + Harvest",
       apexRank: 4,
       include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
     },
-    // Brand+FelDev: sacrifice Harvest entirely
+    // Brand + Fel Dev: sacrifice Harvest entirely
     {
-      name: "Brand+FelDev",
+      name: "Brand + Fel Dev",
       apexRank: 4,
       include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
     },
-    // Harvest+FelDev: sacrifice Brand extended (keep BA for fire synergy)
+    // Harvest + Fel Dev: sacrifice Brand extended (keep BA for fire synergy)
     {
-      name: "Harvest+FelDev",
+      name: "Harvest + Fel Dev",
       apexRank: 4,
       include: {
         brand: "core",
@@ -313,8 +315,8 @@ export const SPEC_CONFIG = {
       // Hero choice locks: defensive-only choices locked to 0, DPS-relevant unlocked for DoE
       // 94911: Locked to Unhindered Assault (DPS via Felblade reset)
       // 94896: Locked to 0 (Army Unto Oneself / Incorruptible Spirit both defensive)
-      // 94910: Unlocked (Keen Engagement vs Preemptive Strike — both have DPS value)
-      choiceLocks: { 94911: 1, 94896: 0 },
+      // 94910: Locked to Keen Engagement (KE vs PS is within noise; lock to halve AR roster)
+      choiceLocks: { 94911: 1, 94896: 0, 94910: 0 },
     },
     annihilator: {
       displayName: "Annihilator",
@@ -325,8 +327,9 @@ export const SPEC_CONFIG = {
       aplBranch: "anni",
       profileKeywords: ["annihilator", "anni"],
       // 109448: Locked to State of Matter (both options are pure utility, zero DPS)
-      // 109450: Unlocked (Doomsayer opener burst vs Harness the Cosmos +15% meteor — let DoE decide)
-      choiceLocks: { 109448: 1 },
+      // 109448: Locked to State of Matter (both options are pure utility, zero DPS)
+      // 109450: Locked to Harness the Cosmos (+15% meteor always beats Doomsayer opener burst)
+      choiceLocks: { 109448: 1, 109450: 1 },
     },
   },
 
