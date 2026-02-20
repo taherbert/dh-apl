@@ -1796,11 +1796,15 @@ export function generateClusterRoster() {
 // --- Defensive cost builds ---
 
 // Generate builds that each include one banned/excluded defensive talent.
-// For each defensive talent, creates a "Full Stack + defensive" build via
-// buildPinnedBuild, then diffs against the Full Stack reference to identify
-// which DPS talent(s) were dropped. Returns reference + variant builds per
-// hero tree, ready for profileset comparison.
-export function generateDefensiveCostBuilds() {
+// For each defensive talent, creates a variant of the reference build via
+// buildPinnedBuild, then diffs against the reference to identify which DPS
+// talent(s) were dropped. Returns reference + variant builds per hero tree,
+// ready for profileset comparison.
+//
+// refTemplate: optional roster template object { name, apexRank, include }.
+//   When provided, the reference build matches that template's cluster config
+//   and apex rank. When omitted, defaults to Full Stack Apex 0.
+export function generateDefensiveCostBuilds({ refTemplate } = {}) {
   const data = loadData();
   const specMap = buildNodeMap(data.specNodes);
   const classResult = classTreeFromBaseline(data.classNodes);
@@ -1813,7 +1817,6 @@ export function generateDefensiveCostBuilds() {
 
   if (defensiveTalents.length === 0) return { references: [], variants: [] };
 
-  // Find the apex talent node to exclude it (apex 0 builds)
   const apexNode = data.specNodes.find(
     (n) => n.entryNode && n.type === "tiered" && (n.maxRanks || 1) > 1,
   );
@@ -1822,17 +1825,50 @@ export function generateDefensiveCostBuilds() {
   const nodeIdToName = new Map();
   for (const n of data.specNodes) nodeIdToName.set(n.id, n.name);
 
-  // Build the Full Stack Apex 0 reference
-  const allClusterTalents = [];
-  for (const cluster of Object.values(talentClusters || {})) {
-    for (const name of cluster.core || []) allClusterTalents.push(name);
-    for (const name of cluster.extended || []) allClusterTalents.push(name);
+  // Default to Full Stack Apex 0
+  if (!refTemplate) {
+    refTemplate = {
+      name: "Full Stack",
+      apexRank: 0,
+      include: Object.fromEntries(
+        Object.keys(talentClusters || {}).map((k) => [k, "full"]),
+      ),
+    };
   }
 
+  // Resolve template clusters → require/exclude lists
+  // Same logic as generateClusterRoster: included clusters are required,
+  // non-included clusters are excluded.
+  const clusterRequire = [];
+  const clusterExclude = [];
+
+  for (const [clusterName, cluster] of Object.entries(talentClusters || {})) {
+    const depth = refTemplate.include?.[clusterName];
+    if (!depth) {
+      for (const name of cluster.core || []) clusterExclude.push(name);
+      for (const name of cluster.extended || []) clusterExclude.push(name);
+    } else {
+      for (const name of cluster.core || []) clusterRequire.push(name);
+      if (depth === "full") {
+        for (const name of cluster.extended || []) clusterRequire.push(name);
+      } else {
+        for (const name of cluster.extended || []) clusterExclude.push(name);
+      }
+    }
+  }
+
+  // Apex handling
+  const apexRequire =
+    refTemplate.apexRank > 0
+      ? [{ name: apexName, maxRank: refTemplate.apexRank }]
+      : [];
+  const apexExclude = refTemplate.apexRank > 0 ? [] : [apexName];
+
+  // Build reference using the template config
   const refProfile = {
-    name: "FullStack_Ref",
-    require: [...(lockedTalents || []), ...allClusterTalents],
-    exclude: [apexName],
+    name: `Ref_${refTemplate.name.replace(/\s+/g, "_")}`,
+    require: [...(lockedTalents || []), ...clusterRequire, ...apexRequire],
+    exclude: [...clusterExclude, ...apexExclude],
     include: [],
   };
   const refBuild = buildPinnedBuild(refProfile, data, specMap, classResult);
@@ -1846,9 +1882,9 @@ export function generateDefensiveCostBuilds() {
   for (const defName of defensiveTalents) {
     const profile = {
       name: `def_${defName.replace(/\s+/g, "_")}`,
-      require: [...(lockedTalents || []), defName],
-      exclude: [apexName],
-      include: [...allClusterTalents, defName],
+      require: [...(lockedTalents || []), defName, ...apexRequire],
+      exclude: [...clusterExclude, ...apexExclude],
+      include: [...clusterRequire, defName],
     };
 
     const varBuild = buildPinnedBuild(profile, data, specMap, classResult);

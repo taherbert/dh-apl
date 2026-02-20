@@ -300,8 +300,35 @@ function persistSimResults(roster, buildData) {
 
 // --- Defensive talent cost sims ---
 
-async function simDefensiveCosts(aplPath, fidelityOpts) {
-  const { references, variants } = generateDefensiveCostBuilds();
+async function simDefensiveCosts(
+  aplPath,
+  fidelityOpts,
+  reportData,
+  specConfig,
+) {
+  // Find the best weighted build to use as reference
+  let refTemplate = null;
+  const bestBuild = reportData.builds.reduce(
+    (a, b) => ((b.dps.weighted || 0) > (a.dps.weighted || 0) ? b : a),
+    reportData.builds[0],
+  );
+
+  const archetypeMatch = bestBuild?.archetype?.match(/^Apex (\d+):\s*(.+)$/);
+  if (archetypeMatch && specConfig.rosterTemplates) {
+    const apexRank = parseInt(archetypeMatch[1]);
+    const templateName = archetypeMatch[2].trim();
+    refTemplate = specConfig.rosterTemplates.find(
+      (t) => t.name === templateName && t.apexRank === apexRank,
+    );
+  }
+
+  if (refTemplate) {
+    console.log(
+      `  Reference: ${bestBuild.displayName} (${bestBuild.archetype})`,
+    );
+  }
+
+  const { references, variants } = generateDefensiveCostBuilds({ refTemplate });
 
   if (references.length === 0 || variants.length === 0) {
     console.log("  No defensive talent builds to sim.");
@@ -400,7 +427,11 @@ async function simDefensiveCosts(aplPath, fidelityOpts) {
   // Sort by weighted delta (most costly first)
   results.sort((a, b) => a.deltas.weighted - b.deltas.weighted);
 
-  return results;
+  const refName = refTemplate
+    ? `${refTemplate.name} (Apex ${refTemplate.apexRank})`
+    : "Full Stack (Apex 0)";
+
+  return { costs: results, refName };
 }
 
 // --- HTML generation ---
@@ -753,8 +784,11 @@ function renderTalentImpact(
   <h2>Talent Tradeoffs</h2>`;
 
   // Per-talent defensive costs (from sim)
-  if (defensiveTalentCosts && defensiveTalentCosts.length > 0) {
-    html += renderDefensiveTalentCosts(defensiveTalentCosts);
+  if (defensiveTalentCosts?.costs?.length > 0) {
+    html += renderDefensiveTalentCosts(
+      defensiveTalentCosts.costs,
+      defensiveTalentCosts.refName,
+    );
   }
 
   if (clusterCosts.length > 0) {
@@ -921,12 +955,12 @@ function renderTalentImpact(
   return html;
 }
 
-function renderDefensiveTalentCosts(costs) {
+function renderDefensiveTalentCosts(costs, refName) {
   const scenarios = Object.keys(SCENARIOS);
 
   let html = `<div class="subsection">
     <h3>Per-Talent Defensive Costs</h3>
-    <p class="section-desc">DPS cost of taking each individual defensive talent, measured by swapping it into the Full Stack build and seeing which DPS talent BFS drops.</p>
+    <p class="section-desc">DPS cost of taking each defensive talent vs the ${esc(refName)} build. Each row shows which DPS talent(s) get dropped to make room.</p>
     <div class="table-wrap">
       <table class="cost-table">
         <thead><tr>
@@ -1879,15 +1913,21 @@ async function main() {
     persistSimResults(roster, buildData);
     console.log(`\n  Results cached to DB.`);
 
-    // Per-talent defensive cost sims
-    console.log(`\n  Running defensive talent cost sims...`);
-    defensiveTalentCosts = await simDefensiveCosts(oursPath, fidelityOpts);
-    console.log(
-      `  ${defensiveTalentCosts.length} defensive talent costs computed.`,
-    );
-
-    // Re-load from DB for consistency
+    // Load report data (needed to find best build for defensive cost reference)
     reportData = loadReportData(roster, specConfig);
+
+    // Per-talent defensive cost sims (against the current best build)
+    console.log(`\n  Running defensive talent cost sims...`);
+    const defResult = await simDefensiveCosts(
+      oursPath,
+      fidelityOpts,
+      reportData,
+      specConfig,
+    );
+    defensiveTalentCosts = defResult;
+    console.log(
+      `  ${defResult.costs.length} defensive talent costs computed (vs ${defResult.refName}).`,
+    );
   } else {
     console.log("  Loading cached DPS from DB...");
     reportData = loadReportData(roster, specConfig);
