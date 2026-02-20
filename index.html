@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vengeance — APL Optimization Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #0f1117;
+  --surface: #181a24;
+  --surface-alt: #1e2030;
+  --border: #2a2d3e;
+  --fg: #e2e4ed;
+  --fg-muted: #8b8fa3;
+  --accent: #6c8aff;
+  --accent-dim: #3d4f8a;
+  --positive: #4ade80;
+  --positive-bg: rgba(74, 222, 128, 0.08);
+  --negative: #f87171;
+  --negative-bg: rgba(248, 113, 113, 0.08);
+  --gold: #fbbf24;
+  --gold-bg: rgba(251, 191, 36, 0.1);
+  --anni: #a78bfa;
+  --ar: #fb923c;
+  --radius: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Header */
+header {
+  padding: 2.5rem 0 1.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--accent), var(--anni));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+}
+
+.header-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+}
+
+.meta-sep { opacity: 0.4; }
+
+/* Section basics */
+section { margin-bottom: 2.5rem; }
+
+h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--fg);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.25rem 0 0.75rem;
+  color: var(--fg);
+}
+
+h4 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--fg-muted);
+}
+
+.section-desc {
+  color: var(--fg-muted);
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+}
+
+.subsection { margin-bottom: 2rem; }
+
+/* Key stats */
+.key-stats {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  flex: 1;
+  min-width: 220px;
+}
+
+.stat-card.accent {
+  border-color: var(--accent-dim);
+  background: linear-gradient(135deg, rgba(108, 138, 255, 0.06), transparent);
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Best build cards */
+.best-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.best-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.best-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  margin-bottom: 0.35rem;
+}
+
+.best-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.best-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.best-dps {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+}
+
+/* Hero comparison */
+.hero-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hero-chart-wrap {
+  overflow-x: auto;
+}
+
+.hero-chart {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+.legend {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.top-builds-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.top-builds-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+
+.top-builds-table {
+  width: 100%;
+  font-size: 0.82rem;
+}
+
+.top-builds-table td {
+  padding: 0.3rem 0.5rem;
+  border: none;
+}
+
+.top-builds-table .rank {
+  width: 24px;
+  color: var(--fg-muted);
+  font-weight: 600;
+}
+
+.top-builds-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+/* Tree badges */
+.tree-badge {
+  display: inline-block;
+  padding: 0.15em 0.6em;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.tree-badge.anni { background: rgba(167, 139, 250, 0.15); color: var(--anni); }
+.tree-badge.ar { background: rgba(251, 146, 60, 0.15); color: var(--ar); }
+.tree-badge.sm { font-size: 0.68rem; padding: 0.1em 0.45em; }
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--fg-muted);
+  padding: 0.4em 1em;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-btn:hover { border-color: var(--accent); color: var(--fg); }
+.filter-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--fg); }
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+th, td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  background: var(--surface);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--accent); }
+th.sortable.sorted-asc::after { content: " \25B2"; font-size: 0.6em; }
+th.sortable.sorted-desc::after { content: " \25BC"; font-size: 0.6em; }
+
+th.num, td.num, td.dps-cell { text-align: right; }
+
+tbody tr { background: var(--bg); }
+tbody tr:nth-child(even) { background: var(--surface-alt); }
+tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
+
+.dps-cell {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.dps-cell.top-build { background: var(--gold-bg); }
+
+.build-name {
+  font-weight: 500;
+  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.78rem;
+  word-break: break-word;
+  white-space: nowrap;
+}
+
+.archetype-cell {
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+
+.ref-name {
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+
+/* Copy hash button */
+.copy-hash {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 0.15em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35em;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+}
+tr:hover .copy-hash, .build-name:hover .copy-hash,
+.best-name:hover .copy-hash, .stat-value:hover .copy-hash { opacity: 1; }
+.copy-hash:hover { color: var(--accent); border-color: var(--border); }
+.copy-hash.copied { color: var(--positive); opacity: 1; }
+.copy-hash svg { width: 13px; height: 13px; }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  background: var(--gold);
+  color: #000;
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35em;
+  letter-spacing: 0.05em;
+}
+
+/* Positive / negative */
+.positive { color: var(--positive); font-weight: 600; }
+.negative { color: var(--negative); font-weight: 600; }
+
+/* Talent policy */
+.policy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.policy-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+
+.policy-header {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.policy-header.locked { color: var(--positive); }
+.policy-header.banned { color: var(--negative); }
+.policy-header.excluded { color: var(--fg-muted); }
+
+.policy-desc {
+  color: var(--fg-muted);
+  font-size: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.talent-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.talent-tag {
+  display: inline-block;
+  padding: 0.15em 0.5em;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+}
+
+.talent-tag.locked { border-color: rgba(74, 222, 128, 0.2); }
+.talent-tag.banned { border-color: rgba(248, 113, 113, 0.2); }
+.talent-tag.excluded { border-color: var(--border); }
+
+/* Details / collapsible */
+details {
+  margin-bottom: 1rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.5rem 0;
+  color: var(--fg);
+  user-select: none;
+}
+
+summary:hover { color: var(--accent); }
+
+.detail-count {
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+}
+
+/* Optimization journey */
+.journey-table .desc-cell {
+  max-width: 400px;
+  white-space: normal;
+}
+
+.impact-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.impact-bar {
+  height: 6px;
+  border-radius: 3px;
+  min-width: 2px;
+  flex-shrink: 0;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem 0;
+  text-align: center;
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+}
+
+footer p { margin-bottom: 0.25rem; }
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+.footer-method { font-size: 0.72rem; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  header { flex-direction: column; align-items: flex-start; }
+  .key-stats { flex-direction: column; }
+  .stat-card { min-width: 100%; }
+  .best-cards { grid-template-columns: 1fr; }
+  table { font-size: 0.72rem; }
+  th, td { padding: 0.35rem 0.5rem; }
+  .filter-bar { gap: 0.35rem; }
+  .policy-grid { grid-template-columns: 1fr; }
+  .top-builds-row { grid-template-columns: 1fr; }
+  .build-name { font-size: 0.7rem; }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-content">
+    <h1>Vengeance</h1>
+    <p class="subtitle">Midnight — APL Optimization Report</p>
+  </div>
+  <div class="header-meta">
+    <span class="meta-item">Updated 2026-02-20</span>
+    <span class="meta-sep">&middot;</span>
+    <span class="meta-item">Weights: Patchwerk 1T 50% / Patchwerk 5T 30% / Patchwerk 10T 20%</span>
+  </div>
+</header>
+<section class="key-stats">
+  <div class="stat-card accent">
+    <div class="stat-value">DiF + Untethered Rage (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+    <div class="stat-label">Best Overall — 161,877 weighted</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value positive">+3.61%</div>
+    <div class="stat-label">APL improvement (8 iterations)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value"><span class="tree-badge anni">Annihilator</span></div>
+    <div class="stat-label">Leads by 41.7% weighted avg</div>
+  </div>
+</section>
+<section>
+  <h2>Best Builds Per Scenario</h2>
+  <div class="best-cards">    <div class="best-card">
+      <div class="best-label">Best Weighted</div>
+      <div class="best-name">DiF + Untethered Rage (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+      <div class="best-meta"><span class="tree-badge anni">Annihilator</span> <span class="best-dps">161,877</span></div>
+    </div>
+    <div class="best-card">
+      <div class="best-label">Best Patchwerk 1T</div>
+      <div class="best-name">DiF + Untethered Rage (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+      <div class="best-meta"><span class="tree-badge anni">Annihilator</span> <span class="best-dps">46,250</span></div>
+    </div>
+    <div class="best-card">
+      <div class="best-label">Best Patchwerk 5T</div>
+      <div class="best-name">DiF + Untethered Rage (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+      <div class="best-meta"><span class="tree-badge anni">Annihilator</span> <span class="best-dps">218,455</span></div>
+    </div>
+    <div class="best-card">
+      <div class="best-label">Best Patchwerk 10T</div>
+      <div class="best-name">DiF + Untethered Rage (HtC) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+      <div class="best-meta"><span class="tree-badge anni">Annihilator</span> <span class="best-dps">369,300</span></div>
+    </div></div>
+</section>
+<section>
+  <h2>Hero Tree Comparison</h2>
+  <div class="legend"><span class="legend-item"><span class="legend-dot" style="background:#fb923c"></span>Aldrachi Reaver (35)</span><span class="legend-item"><span class="legend-dot" style="background:#a78bfa"></span>Annihilator (34)</span></div>
+  <div class="hero-comparison">
+    <div class="hero-chart-wrap"><svg class="hero-chart" viewBox="0 0 495 298" xmlns="http://www.w3.org/2000/svg">
+    <style>
+      .chart-label { font: 500 12px Inter, sans-serif; fill: #8b8fa3; }
+      .chart-value { font: 600 11px Inter, sans-serif; fill: #e2e4ed; }
+    </style>
+    <text x="87" y="36" text-anchor="end" class="chart-label">1T (300s)</text><rect x="95" y="10" width="21.84074509834822" height="22" rx="3" fill="#fb923c" opacity="0.85"/><text x="122.84074509834822" y="26" class="chart-value">34,421</text><rect x="95" y="38" width="23.138913000113213" height="22" rx="3" fill="#a78bfa" opacity="0.85"/><text x="124.1389130001132" y="54" class="chart-value">36,467</text><text x="87" y="108" text-anchor="end" class="chart-label">5T (75s)</text><rect x="95" y="82" width="69.28637753775367" height="22" rx="3" fill="#fb923c" opacity="0.85"/><text x="170.28637753775365" y="98" class="chart-value">109,195</text><rect x="95" y="110" width="103.64202566355863" height="22" rx="3" fill="#a78bfa" opacity="0.85"/><text x="204.64202566355863" y="126" class="chart-value">163,340</text><text x="87" y="180" text-anchor="end" class="chart-label">10T (60s)</text><rect x="95" y="154" width="119.07949100871362" height="22" rx="3" fill="#fb923c" opacity="0.85"/><text x="220.0794910087136" y="170" class="chart-value">187,669</text><rect x="95" y="182" width="180" height="22" rx="3" fill="#a78bfa" opacity="0.85"/><text x="281" y="198" class="chart-value">283,680</text><text x="87" y="252" text-anchor="end" class="chart-label">Weighted</text><rect x="95" y="226" width="55.52218401224293" height="22" rx="3" fill="#fb923c" opacity="0.85"/><text x="156.52218401224292" y="242" class="chart-value">87,503</text><rect x="95" y="254" width="78.66206419912417" height="22" rx="3" fill="#a78bfa" opacity="0.85"/><text x="179.6620641991242" y="270" class="chart-value">123,971</text>
+  </svg></div>
+    <div class="top-builds-row"><div class="top-builds-panel">
+        <h4><span class="tree-badge ar">Aldrachi Reaver</span> Top 3</h4>
+        <table class="top-builds-table"><tbody><tr><td class="rank">1</td><td>DiF + Vengeful Beast + Untethered Rage (PS) #3</td><td class="num">99,597</td></tr>
+<tr><td class="rank">2</td><td>DiF + Vengeful Beast + Untethered Rage (KE) #3</td><td class="num">99,477</td></tr>
+<tr><td class="rank">3</td><td>DiF + Vengeful Beast + Untethered Rage (PS) #4</td><td class="num">99,184</td></tr></tbody></table>
+      </div>
+<div class="top-builds-panel">
+        <h4><span class="tree-badge anni">Annihilator</span> Top 3</h4>
+        <table class="top-builds-table"><tbody><tr><td class="rank">1</td><td>DiF + Untethered Rage (HtC) #2</td><td class="num">161,877</td></tr>
+<tr><td class="rank">2</td><td>DiF + Untethered Rage (HtC) #3</td><td class="num">160,805</td></tr>
+<tr><td class="rank">3</td><td>DiF + Untethered Rage (Doom) #2</td><td class="num">156,018</td></tr></tbody></table>
+      </div></div>
+  </div>
+</section>
+<section id="rankings">
+  <h2>Build Rankings</h2>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-tree="all">All (69)</button>
+    <button class="filter-btn" data-tree="aldrachi_reaver">Aldrachi Reaver</button>
+      <button class="filter-btn" data-tree="annihilator">Annihilator</button>
+  </div>
+  <div class="table-wrap">
+    <table class="roster-table" id="rankings-table">
+      <thead><tr>
+        <th class="sortable" data-col="name">Build</th>
+        <th>Tree</th>
+        <th class="sortable" data-col="archetype">Archetype</th>
+        <th class="sortable num" data-col="st">Patchwerk 1T</th>
+      <th class="sortable num" data-col="small_aoe">Patchwerk 5T</th>
+      <th class="sortable num" data-col="big_aoe">Patchwerk 10T</th>
+        <th class="sortable num" data-col="weighted">Weighted</th>
+      </tr></thead>
+      <tbody><tr data-tree="annihilator">
+  <td class="build-name">DiF + Untethered Rage (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Brand+Harvest</td>
+  <td class="dps-cell top-build">46,250<span class="badge">TOP</span></td><td class="dps-cell top-build">218,455<span class="badge">TOP</span></td><td class="dps-cell">366,075</td>
+  <td class="dps-cell top-build">161,877<span class="badge">TOP</span></td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Untethered Rage (HtC) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Balanced</td>
+  <td class="dps-cell">45,888</td><td class="dps-cell">213,337</td><td class="dps-cell top-build">369,300<span class="badge">TOP</span></td>
+  <td class="dps-cell">160,805</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Untethered Rage (Doom) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2aZmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Brand+Harvest</td>
+  <td class="dps-cell">44,833</td><td class="dps-cell">209,087</td><td class="dps-cell">354,376</td>
+  <td class="dps-cell">156,018</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Untethered Rage (Doom) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2aZmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Balanced</td>
+  <td class="dps-cell">42,490</td><td class="dps-cell">206,442</td><td class="dps-cell">355,563</td>
+  <td class="dps-cell">154,290</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (HtC) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Brand+FelDev</td>
+  <td class="dps-cell">42,323</td><td class="dps-cell">207,114</td><td class="dps-cell">353,753</td>
+  <td class="dps-cell">154,046</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (Doom) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtMzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Brand+FelDev</td>
+  <td class="dps-cell">41,051</td><td class="dps-cell">201,501</td><td class="dps-cell">343,616</td>
+  <td class="dps-cell">149,699</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Vengeful Beast + Untethered Rage (HtC) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Harvest+FelDev</td>
+  <td class="dps-cell">44,794</td><td class="dps-cell">188,397</td><td class="dps-cell">316,574</td>
+  <td class="dps-cell">142,231</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Vengeful Beast + Untethered Rage (Doom) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWLzMzAADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 4: Harvest+FelDev</td>
+  <td class="dps-cell">42,366</td><td class="dps-cell">185,191</td><td class="dps-cell">307,984</td>
+  <td class="dps-cell">138,337</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (HtC) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 2: Drop Sigil</td>
+  <td class="dps-cell">37,836</td><td class="dps-cell">171,833</td><td class="dps-cell">298,645</td>
+  <td class="dps-cell">130,197</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (HtC) #4 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 3: Drop SC+Sigil</td>
+  <td class="dps-cell">37,117</td><td class="dps-cell">169,013</td><td class="dps-cell">301,499</td>
+  <td class="dps-cell">129,562</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (Doom) #4 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWLzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 3: Drop SC+Sigil</td>
+  <td class="dps-cell">35,850</td><td class="dps-cell">168,322</td><td class="dps-cell">298,827</td>
+  <td class="dps-cell">128,187</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (Doom) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2aZmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 2: Drop Sigil</td>
+  <td class="dps-cell">36,499</td><td class="dps-cell">168,135</td><td class="dps-cell">297,225</td>
+  <td class="dps-cell">128,135</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 2: Drop SC</td>
+  <td class="dps-cell">36,194</td><td class="dps-cell">161,663</td><td class="dps-cell">287,226</td>
+  <td class="dps-cell">124,041</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (HtC) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: Full Stack</td>
+  <td class="dps-cell">37,239</td><td class="dps-cell">163,810</td><td class="dps-cell">280,814</td>
+  <td class="dps-cell">123,925</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (Doom) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2aZmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 2: Drop SC</td>
+  <td class="dps-cell">34,918</td><td class="dps-cell">161,494</td><td class="dps-cell">286,931</td>
+  <td class="dps-cell">123,293</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (Doom) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWLzMzAADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: Full Stack</td>
+  <td class="dps-cell">36,330</td><td class="dps-cell">161,377</td><td class="dps-cell">280,364</td>
+  <td class="dps-cell">122,651</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Untethered Rage (HtC) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 3: Trim FelDev</td>
+  <td class="dps-cell">36,686</td><td class="dps-cell">159,792</td><td class="dps-cell">277,291</td>
+  <td class="dps-cell">121,739</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Untethered Rage (Doom) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWLzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 3: Trim FelDev</td>
+  <td class="dps-cell">34,622</td><td class="dps-cell">157,154</td><td class="dps-cell">275,314</td>
+  <td class="dps-cell">119,520</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (HtC) #5 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 3: Trim Harvest</td>
+  <td class="dps-cell">34,441</td><td class="dps-cell">155,331</td><td class="dps-cell">276,327</td>
+  <td class="dps-cell">119,085</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Untethered Rage (HtC) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: No FelDev</td>
+  <td class="dps-cell">35,536</td><td class="dps-cell">156,089</td><td class="dps-cell">270,361</td>
+  <td class="dps-cell">118,667</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (Doom) #5 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWLzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 3: Trim Harvest</td>
+  <td class="dps-cell">33,158</td><td class="dps-cell">155,179</td><td class="dps-cell">276,106</td>
+  <td class="dps-cell">118,354</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: Full Stack</td>
+  <td class="dps-cell">35,172</td><td class="dps-cell">151,890</td><td class="dps-cell">267,355</td>
+  <td class="dps-cell">116,624</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Untethered Rage (Doom) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs1yMzMAwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: No FelDev</td>
+  <td class="dps-cell">34,107</td><td class="dps-cell">152,883</td><td class="dps-cell">268,432</td>
+  <td class="dps-cell">116,605</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast (Doom) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrlZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: Full Stack</td>
+  <td class="dps-cell">34,133</td><td class="dps-cell">151,419</td><td class="dps-cell">268,056</td>
+  <td class="dps-cell">116,103</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (HtC) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: No Harvest</td>
+  <td class="dps-cell">31,847</td><td class="dps-cell">151,336</td><td class="dps-cell">262,058</td>
+  <td class="dps-cell">113,736</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (Doom) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmtWmZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: No Harvest</td>
+  <td class="dps-cell">30,695</td><td class="dps-cell">150,533</td><td class="dps-cell">261,917</td>
+  <td class="dps-cell">112,891</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF (HtC) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: No FelDev</td>
+  <td class="dps-cell">33,602</td><td class="dps-cell">143,349</td><td class="dps-cell">250,441</td>
+  <td class="dps-cell">109,894</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF (Doom) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmtWmZmBAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: No FelDev</td>
+  <td class="dps-cell">32,537</td><td class="dps-cell">142,925</td><td class="dps-cell">251,443</td>
+  <td class="dps-cell">109,435</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast (Doom) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs1yMzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: No Harvest</td>
+  <td class="dps-cell">29,153</td><td class="dps-cell">137,830</td><td class="dps-cell">246,742</td>
+  <td class="dps-cell">105,274</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + DiF + Vengeful Beast (HtC) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: No Harvest</td>
+  <td class="dps-cell">29,976</td><td class="dps-cell">137,637</td><td class="dps-cell">244,734</td>
+  <td class="dps-cell">105,226</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + Vengeful Beast + Untethered Rage (HtC) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: No Brand</td>
+  <td class="dps-cell">34,800</td><td class="dps-cell">128,965</td><td class="dps-cell">219,268</td>
+  <td class="dps-cell">99,943</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (PS) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAgZZGMM22YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 2: Drop Sigil</td>
+  <td class="dps-cell">36,774</td><td class="dps-cell">125,687</td><td class="dps-cell">217,520</td>
+  <td class="dps-cell">99,597</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + Vengeful Beast + Untethered Rage (Doom) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmtWmZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 1: No Brand</td>
+  <td class="dps-cell">33,325</td><td class="dps-cell">129,309</td><td class="dps-cell">220,531</td>
+  <td class="dps-cell">99,561</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (KE) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 2: Drop Sigil</td>
+  <td class="dps-cell">36,898</td><td class="dps-cell">125,742</td><td class="dps-cell">216,528</td>
+  <td class="dps-cell">99,477</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (PS) #4 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAMLzghx2GTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 3: Drop SC+Sigil</td>
+  <td class="dps-cell">35,844</td><td class="dps-cell">124,169</td><td class="dps-cell">220,054</td>
+  <td class="dps-cell">99,184</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (KE) #4 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 3: Drop SC+Sigil</td>
+  <td class="dps-cell">35,988</td><td class="dps-cell">123,716</td><td class="dps-cell">219,764</td>
+  <td class="dps-cell">99,062</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (KE) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 2: Drop SC</td>
+  <td class="dps-cell">35,171</td><td class="dps-cell">115,163</td><td class="dps-cell">204,657</td>
+  <td class="dps-cell">93,066</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + Vengeful Beast (Doom) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs1yMzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: No Brand</td>
+  <td class="dps-cell">31,561</td><td class="dps-cell">118,926</td><td class="dps-cell">206,871</td>
+  <td class="dps-cell">92,833</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (PS) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAgZZGMM22YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 2: Drop SC</td>
+  <td class="dps-cell">34,878</td><td class="dps-cell">114,743</td><td class="dps-cell">204,801</td>
+  <td class="dps-cell">92,822</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">SSig + Vengeful Beast (HtC) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="archetype-cell">Apex 0: No Brand</td>
+  <td class="dps-cell">32,546</td><td class="dps-cell">117,834</td><td class="dps-cell">203,097</td>
+  <td class="dps-cell">92,243</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Untethered Rage (KE) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Balanced</td>
+  <td class="dps-cell">35,743</td><td class="dps-cell">112,313</td><td class="dps-cell">198,370</td>
+  <td class="dps-cell">91,239</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Untethered Rage (PS) #3 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAgZZGMM22YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Balanced</td>
+  <td class="dps-cell">35,202</td><td class="dps-cell">112,626</td><td class="dps-cell">198,215</td>
+  <td class="dps-cell">91,032</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast (PS) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYbjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: Full Stack</td>
+  <td class="dps-cell">35,390</td><td class="dps-cell">113,960</td><td class="dps-cell">194,034</td>
+  <td class="dps-cell">90,690</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (KE) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: Full Stack</td>
+  <td class="dps-cell">35,555</td><td class="dps-cell">113,746</td><td class="dps-cell">193,570</td>
+  <td class="dps-cell">90,615</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast (KE) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: Full Stack</td>
+  <td class="dps-cell">35,577</td><td class="dps-cell">113,657</td><td class="dps-cell">193,224</td>
+  <td class="dps-cell">90,530</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (PS) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghx2GTYYmZsAAAAgBGAAMzAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: Full Stack</td>
+  <td class="dps-cell">35,211</td><td class="dps-cell">113,195</td><td class="dps-cell">193,658</td>
+  <td class="dps-cell">90,296</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (KE) #5 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 3: Trim Harvest</td>
+  <td class="dps-cell">33,521</td><td class="dps-cell">111,440</td><td class="dps-cell">199,423</td>
+  <td class="dps-cell">90,077</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (PS) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAwsMDGGbbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Brand+FelDev</td>
+  <td class="dps-cell">33,025</td><td class="dps-cell">113,288</td><td class="dps-cell">196,796</td>
+  <td class="dps-cell">89,858</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (KE) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Brand+FelDev</td>
+  <td class="dps-cell">32,974</td><td class="dps-cell">113,437</td><td class="dps-cell">196,260</td>
+  <td class="dps-cell">89,770</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Vengeful Beast + Untethered Rage (PS) #5 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAMLzghx2GTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 3: Trim Harvest</td>
+  <td class="dps-cell">33,249</td><td class="dps-cell">111,052</td><td class="dps-cell">198,869</td>
+  <td class="dps-cell">89,714</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Untethered Rage (KE) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Brand+Harvest</td>
+  <td class="dps-cell">36,796</td><td class="dps-cell">110,551</td><td class="dps-cell">189,484</td>
+  <td class="dps-cell">89,460</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Untethered Rage (PS) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMM22YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Brand+Harvest</td>
+  <td class="dps-cell">36,565</td><td class="dps-cell">110,694</td><td class="dps-cell">189,485</td>
+  <td class="dps-cell">89,388</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Untethered Rage (PS) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAMLzghx2GTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 3: Trim FelDev</td>
+  <td class="dps-cell">35,126</td><td class="dps-cell">108,449</td><td class="dps-cell">187,748</td>
+  <td class="dps-cell">87,647</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">DiF + Untethered Rage (KE) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 3: Trim FelDev</td>
+  <td class="dps-cell">35,326</td><td class="dps-cell">107,984</td><td class="dps-cell">187,016</td>
+  <td class="dps-cell">87,461</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Vengeful Beast + Untethered Rage (PS) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghx2GTYYmZsAAAAgBGAAMzAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Harvest+FelDev</td>
+  <td class="dps-cell">36,634</td><td class="dps-cell">107,546</td><td class="dps-cell">178,047</td>
+  <td class="dps-cell">86,190</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Vengeful Beast + Untethered Rage (KE) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 4: Harvest+FelDev</td>
+  <td class="dps-cell">36,978</td><td class="dps-cell">107,835</td><td class="dps-cell">176,688</td>
+  <td class="dps-cell">86,177</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Vengeful Beast + Untethered Rage (KE) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Baseline</td>
+  <td class="dps-cell" title="SimC baseline: 27,590">34,741</td><td class="dps-cell" title="SimC baseline: 73,816">107,385</td><td class="dps-cell" title="SimC baseline: 125,987">181,375</td>
+  <td class="dps-cell" title="SimC baseline: 61,137">85,861</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Untethered Rage (KE) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: No FelDev</td>
+  <td class="dps-cell">34,620</td><td class="dps-cell">104,339</td><td class="dps-cell">176,628</td>
+  <td class="dps-cell">83,937</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Untethered Rage (PS) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAzyMYYstxEGmZGLAAAAYgBAAzMADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: No FelDev</td>
+  <td class="dps-cell">34,147</td><td class="dps-cell">104,307</td><td class="dps-cell">175,792</td>
+  <td class="dps-cell">83,524</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF (KE) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: No FelDev</td>
+  <td class="dps-cell">34,542</td><td class="dps-cell">103,847</td><td class="dps-cell">175,362</td>
+  <td class="dps-cell">83,498</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF (PS) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAYWmBDjtNmwwMzYBAAAADMAAYmBYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: No FelDev</td>
+  <td class="dps-cell">34,121</td><td class="dps-cell">103,758</td><td class="dps-cell">175,287</td>
+  <td class="dps-cell">83,245</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast (PS) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAzyMYYstxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: No Harvest</td>
+  <td class="dps-cell">30,000</td><td class="dps-cell">104,273</td><td class="dps-cell">180,528</td>
+  <td class="dps-cell">82,388</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast (KE) #1 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: No Harvest</td>
+  <td class="dps-cell">29,999</td><td class="dps-cell">104,150</td><td class="dps-cell">180,024</td>
+  <td class="dps-cell">82,249</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (PS) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAYWmBDjtNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: No Harvest</td>
+  <td class="dps-cell">30,212</td><td class="dps-cell">103,919</td><td class="dps-cell">178,022</td>
+  <td class="dps-cell">81,886</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + DiF + Vengeful Beast + Untethered Rage (KE) #2 <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: No Harvest</td>
+  <td class="dps-cell">30,292</td><td class="dps-cell">103,728</td><td class="dps-cell">177,883</td>
+  <td class="dps-cell">81,841</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + Vengeful Beast (KE) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: No Brand</td>
+  <td class="dps-cell">33,419</td><td class="dps-cell">93,235</td><td class="dps-cell">155,087</td>
+  <td class="dps-cell">75,697</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + Vengeful Beast (PS) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAzyMYYstxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 0: No Brand</td>
+  <td class="dps-cell">33,126</td><td class="dps-cell">92,731</td><td class="dps-cell">155,109</td>
+  <td class="dps-cell">75,404</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + Vengeful Beast + Untethered Rage (PS) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAYWmBDjtNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: No Brand</td>
+  <td class="dps-cell">33,397</td><td class="dps-cell">92,572</td><td class="dps-cell">152,204</td>
+  <td class="dps-cell">74,911</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">SSig + Vengeful Beast + Untethered Rage (KE) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="archetype-cell">Apex 1: No Brand</td>
+  <td class="dps-cell">33,694</td><td class="dps-cell">92,598</td><td class="dps-cell">150,910</td>
+  <td class="dps-cell">74,808</td>
+</tr></tbody>
+    </table>
+  </div>
+</section>
+<section>
+  <h2>Talent Impact</h2><div class="subsection">
+    <h3>Cluster Costs</h3>
+    <p class="section-desc">Impact of dropping talent clusters compared to the reference build at each apex rank. Negative = DPS loss from dropping.</p><details open>
+      <summary>Apex 0 <span class="detail-count">(6 comparisons)</span></summary>
+      <div class="table-wrap">
+        <table class="cost-table">
+          <thead><tr>
+            <th>Template</th>
+            <th>Hero Tree</th>
+            <th>vs Reference</th>
+            <th class="num">Weighted</th>
+            <th class="num">1T</th>
+            <th class="num">5T</th>
+            <th class="num">10T</th>
+          </tr></thead>
+          <tbody><tr>
+            <td>No Brand</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-20.48%</td>
+            <td class="num negative">-7.50%</td>
+            <td class="num negative">-21.94%</td>
+            <td class="num negative">-23.43%</td>
+          </tr><tr>
+            <td>No Brand</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-16.62%</td>
+            <td class="num negative">-6.23%</td>
+            <td class="num negative">-18.30%</td>
+            <td class="num negative">-19.90%</td>
+          </tr><tr>
+            <td>No Harvest</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-9.55%</td>
+            <td class="num negative">-14.68%</td>
+            <td class="num negative">-9.18%</td>
+            <td class="num negative">-8.21%</td>
+          </tr><tr>
+            <td>No Harvest</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-9.15%</td>
+            <td class="num negative">-15.46%</td>
+            <td class="num negative">-8.43%</td>
+            <td class="num negative">-6.90%</td>
+          </tr><tr>
+            <td>No FelDev</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-7.99%</td>
+            <td class="num negative">-3.25%</td>
+            <td class="num negative">-8.79%</td>
+            <td class="num negative">-9.45%</td>
+          </tr><tr>
+            <td>No FelDev</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-5.76%</td>
+            <td class="num negative">-4.57%</td>
+            <td class="num negative">-5.62%</td>
+            <td class="num negative">-6.26%</td>
+          </tr></tbody></table></div></details><details>
+      <summary>Apex 1 <span class="detail-count">(6 comparisons)</span></summary>
+      <div class="table-wrap">
+        <table class="cost-table">
+          <thead><tr>
+            <th>Template</th>
+            <th>Hero Tree</th>
+            <th>vs Reference</th>
+            <th class="num">Weighted</th>
+            <th class="num">1T</th>
+            <th class="num">5T</th>
+            <th class="num">10T</th>
+          </tr></thead>
+          <tbody><tr>
+            <td>No Brand</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-19.09%</td>
+            <td class="num negative">-7.40%</td>
+            <td class="num negative">-20.58%</td>
+            <td class="num negative">-21.63%</td>
+          </tr><tr>
+            <td>No Brand</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-17.24%</td>
+            <td class="num negative">-5.19%</td>
+            <td class="num negative">-18.41%</td>
+            <td class="num negative">-21.72%</td>
+          </tr><tr>
+            <td>No Harvest</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-9.50%</td>
+            <td class="num negative">-14.50%</td>
+            <td class="num negative">-8.50%</td>
+            <td class="num negative">-8.09%</td>
+          </tr><tr>
+            <td>No Harvest</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-8.09%</td>
+            <td class="num negative">-14.99%</td>
+            <td class="num negative">-7.17%</td>
+            <td class="num negative">-6.63%</td>
+          </tr><tr>
+            <td>No FelDev</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-7.43%</td>
+            <td class="num negative">-2.82%</td>
+            <td class="num negative">-8.06%</td>
+            <td class="num negative">-8.99%</td>
+          </tr><tr>
+            <td>No FelDev</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Full Stack</td>
+            <td class="num negative">-4.58%</td>
+            <td class="num negative">-5.34%</td>
+            <td class="num negative">-4.99%</td>
+            <td class="num negative">-3.99%</td>
+          </tr></tbody></table></div></details><details>
+      <summary>Apex 2 <span class="detail-count">(2 comparisons)</span></summary>
+      <div class="table-wrap">
+        <table class="cost-table">
+          <thead><tr>
+            <th>Template</th>
+            <th>Hero Tree</th>
+            <th>vs Reference</th>
+            <th class="num">Weighted</th>
+            <th class="num">1T</th>
+            <th class="num">5T</th>
+            <th class="num">10T</th>
+          </tr></thead>
+          <tbody><tr>
+            <td>Drop SC</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Drop Sigil</td>
+            <td class="num negative">-6.62%</td>
+            <td class="num negative">-4.92%</td>
+            <td class="num negative">-8.56%</td>
+            <td class="num negative">-5.67%</td>
+          </tr><tr>
+            <td>Drop SC</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Drop Sigil</td>
+            <td class="num negative">-4.26%</td>
+            <td class="num negative">-4.34%</td>
+            <td class="num negative">-4.94%</td>
+            <td class="num negative">-3.64%</td>
+          </tr></tbody></table></div></details><details>
+      <summary>Apex 3 <span class="detail-count">(4 comparisons)</span></summary>
+      <div class="table-wrap">
+        <table class="cost-table">
+          <thead><tr>
+            <th>Template</th>
+            <th>Hero Tree</th>
+            <th>vs Reference</th>
+            <th class="num">Weighted</th>
+            <th class="num">1T</th>
+            <th class="num">5T</th>
+            <th class="num">10T</th>
+          </tr></thead>
+          <tbody><tr>
+            <td>Trim FelDev</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Drop SC+Sigil</td>
+            <td class="num negative">-11.67%</td>
+            <td class="num negative">-1.92%</td>
+            <td class="num negative">-12.69%</td>
+            <td class="num negative">-14.79%</td>
+          </tr><tr>
+            <td>Trim Harvest</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Drop SC+Sigil</td>
+            <td class="num negative">-9.31%</td>
+            <td class="num negative">-7.05%</td>
+            <td class="num negative">-10.24%</td>
+            <td class="num negative">-9.44%</td>
+          </tr><tr>
+            <td>Trim Harvest</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Drop SC+Sigil</td>
+            <td class="num negative">-7.88%</td>
+            <td class="num negative">-7.36%</td>
+            <td class="num negative">-7.95%</td>
+            <td class="num negative">-7.98%</td>
+          </tr><tr>
+            <td>Trim FelDev</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Drop SC+Sigil</td>
+            <td class="num negative">-6.40%</td>
+            <td class="num negative">-2.27%</td>
+            <td class="num negative">-6.04%</td>
+            <td class="num negative">-7.95%</td>
+          </tr></tbody></table></div></details><details>
+      <summary>Apex 4 <span class="detail-count">(6 comparisons)</span></summary>
+      <div class="table-wrap">
+        <table class="cost-table">
+          <thead><tr>
+            <th>Template</th>
+            <th>Hero Tree</th>
+            <th>vs Reference</th>
+            <th class="num">Weighted</th>
+            <th class="num">1T</th>
+            <th class="num">5T</th>
+            <th class="num">10T</th>
+          </tr></thead>
+          <tbody><tr>
+            <td>Harvest+FelDev</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Brand+Harvest</td>
+            <td class="num negative">-11.74%</td>
+            <td class="num negative">-4.31%</td>
+            <td class="num negative">-12.62%</td>
+            <td class="num negative">-13.31%</td>
+          </tr><tr>
+            <td>Harvest+FelDev</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Balanced</td>
+            <td class="num negative">-5.43%</td>
+            <td class="num positive">+3.76%</td>
+            <td class="num negative">-4.25%</td>
+            <td class="num negative">-10.55%</td>
+          </tr><tr>
+            <td>Brand+FelDev</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Brand+Harvest</td>
+            <td class="num negative">-4.45%</td>
+            <td class="num negative">-8.46%</td>
+            <td class="num negative">-4.43%</td>
+            <td class="num negative">-3.20%</td>
+          </tr><tr>
+            <td>Brand+Harvest</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Balanced</td>
+            <td class="num negative">-1.88%</td>
+            <td class="num positive">+3.41%</td>
+            <td class="num negative">-1.64%</td>
+            <td class="num negative">-4.44%</td>
+          </tr><tr>
+            <td>Brand+FelDev</td>
+            <td><span class="tree-badge sm ar">AR</span></td>
+            <td class="ref-name">vs Balanced</td>
+            <td class="num negative">-1.45%</td>
+            <td class="num negative">-6.97%</td>
+            <td class="num positive">+0.79%</td>
+            <td class="num negative">-0.89%</td>
+          </tr><tr>
+            <td>Balanced</td>
+            <td><span class="tree-badge sm anni">Anni</span></td>
+            <td class="ref-name">vs Brand+Harvest</td>
+            <td class="num negative">-0.88%</td>
+            <td class="num negative">-2.97%</td>
+            <td class="num negative">-1.82%</td>
+            <td class="num positive">+0.61%</td>
+          </tr></tbody></table></div></details></div><div class="subsection">
+    <h3>Talent Policy</h3>
+    <div class="policy-grid"><div class="policy-card">
+        <div class="policy-header locked">Locked (17)</div>
+        <div class="policy-desc">Always taken — core DPS talents</div>
+        <div class="talent-list"><span class="talent-tag locked">Spirit Bomb</span><span class="talent-tag locked">Fiery Brand</span><span class="talent-tag locked">Burning Blood</span><span class="talent-tag locked">Tempered Steel</span><span class="talent-tag locked">Ascending Flame</span><span class="talent-tag locked">Fiery Demise</span><span class="talent-tag locked">Fel Devastation</span><span class="talent-tag locked">Perfectly Balanced Glaive</span><span class="talent-tag locked">Quickened Sigils</span><span class="talent-tag locked">Sigil of Spite</span><span class="talent-tag locked">Volatile Flameblood</span><span class="talent-tag locked">Felfire Fist</span><span class="talent-tag locked">Agonizing Flames</span><span class="talent-tag locked">Fallout</span><span class="talent-tag locked">Fel Flame Fortification</span><span class="talent-tag locked">Chains of Anger</span><span class="talent-tag locked">Retaliation</span></div>
+      </div><div class="policy-card">
+        <div class="policy-header banned">Banned (10)</div>
+        <div class="policy-desc">Never taken — pure defensive/healing</div>
+        <div class="talent-list"><span class="talent-tag banned">Soulmonger</span><span class="talent-tag banned">Ruinous Bulwark</span><span class="talent-tag banned">Revel in Pain</span><span class="talent-tag banned">Painbringer</span><span class="talent-tag banned">Last Resort</span><span class="talent-tag banned">Roaring Fire</span><span class="talent-tag banned">Sigil of Silence</span><span class="talent-tag banned">Feed the Demon</span><span class="talent-tag banned">Sigil of Chains</span><span class="talent-tag banned">Feast of Souls</span></div>
+      </div><div class="policy-card">
+        <div class="policy-header excluded">Excluded (3)</div>
+        <div class="policy-desc">Excluded from roster generation</div>
+        <div class="talent-list"><span class="talent-tag excluded">Calcified Spikes</span><span class="talent-tag excluded">Soul Barrier</span><span class="talent-tag excluded">Void Reaver</span></div>
+      </div></div></div></section>
+<section>
+  <h2>Optimization Journey</h2>
+  <div class="table-wrap">
+    <table class="journey-table">
+      <thead><tr>
+        <th>Date</th>
+        <th>Description</th>
+        <th class="num">Impact</th>
+        <th class="num">Cumulative</th>
+      </tr></thead>
+      <tbody><tr>
+      <td>2026-02-10</td>
+      <td class="desc-cell">Swap AR empowered cycle: Bladecraft (12 slashes) in AoE, RM stacks (14% amp) in ST</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+2.73%</span>
+          <div class="impact-bar" style="width:100%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+2.73%</td>
+    </tr><tr>
+      <td>2026-02-12</td>
+      <td class="desc-cell">Anni FelDev Meta gate for builds with apex.3 and no darkglare_boon — skip FelDev during Meta when Fracture+SBomb cycling is 1.43 vs 0.53 AP/GCD. Balanced/BrandHarvest Apex 4 gain +0.66-1.15%. Builds with strong FelDev (darkglare_boon) are excluded from gate.</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+0.09%</span>
+          <div class="impact-bar" style="width:3.2293577981651373%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+2.81%</td>
+    </tr><tr>
+      <td>2026-02-13</td>
+      <td class="desc-cell">Anni FD SBomb@3 + Fracture anti-cap FD gate — matching AR logic that was missing from Anni list</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+0.19%</span>
+          <div class="impact-bar" style="width:6.825688073394495%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+3.00%</td>
+    </tr><tr>
+      <td>2026-02-13</td>
+      <td class="desc-cell">Change 1C: apex-gated Voidfall Meta entry. apex.3 builds wait for building=0 (Mass Acceleration 3 stacks not wasted). Non-apex keeps building&lt;2. Anni +0.23% mean at both quick and confirm fidelity. AR unchanged.</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+0.11%</span>
+          <div class="impact-bar" style="width:3.926605504587156%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+3.11%</td>
+    </tr><tr>
+      <td>2026-02-14</td>
+      <td class="desc-cell">AR IA on cooldown: +0.167% AR mean at standard fidelity. No state machine to disrupt, passive damage + fury fills gaps between empowered cycles.</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+0.10%</span>
+          <div class="impact-bar" style="width:3.669724770642202%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+3.21%</td>
+    </tr><tr>
+      <td>2026-02-19</td>
+      <td class="desc-cell">fracture preferred over immolation_aura (rollout Δ460, 3 archetypes)</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+0.17%</span>
+          <div class="impact-bar" style="width:6.201834862385321%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+3.38%</td>
+    </tr><tr>
+      <td>2026-02-19</td>
+      <td class="desc-cell">fel_devastation preferred over soul_cleave (rollout Δ173, 2 archetypes)</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+0.12%</span>
+          <div class="impact-bar" style="width:4.440366972477064%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+3.50%</td>
+    </tr><tr>
+      <td>2026-02-19</td>
+      <td class="desc-cell">fracture preferred over immolation_aura (rollout Δ197, 2 archetypes)</td>
+      <td class="num">
+        <div class="impact-cell">
+          <span class="positive">+0.12%</span>
+          <div class="impact-bar" style="width:4.330275229357798%;background:var(--positive)"></div>
+        </div>
+      </td>
+      <td class="num positive">+3.61%</td>
+    </tr></tbody>
+    </table>
+  </div>
+</section>
+<footer>
+  <p class="footer-method">SimulationCraft &middot; Patchwerk 1T (1T, 300s), Patchwerk 5T (5T, 75s), Patchwerk 10T (10T, 60s) &middot; Midnight</p>
+  <p>Generated by <a href="https://github.com/taherbert/dh-apl">dh-apl</a></p>
+</footer>
+<script>
+
+// Table sorting
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const col = th.dataset.col;
+    const isNum = th.classList.contains('num');
+
+    const wasAsc = th.classList.contains('sorted-asc');
+    table.querySelectorAll('th.sortable').forEach(h => {
+      h.classList.remove('sorted-asc', 'sorted-desc');
+    });
+    const dir = wasAsc ? 'desc' : 'asc';
+    th.classList.add('sorted-' + dir);
+
+    const headers = Array.from(th.parentNode.children);
+    const colIdx = headers.indexOf(th);
+
+    rows.sort((a, b) => {
+      const cellA = a.children[colIdx];
+      const cellB = b.children[colIdx];
+      let va, vb;
+
+      if (isNum) {
+        va = parseFloat(cellA?.textContent?.replace(/[^\d.-]/g, '') || '0');
+        vb = parseFloat(cellB?.textContent?.replace(/[^\d.-]/g, '') || '0');
+      } else {
+        va = cellA?.textContent?.trim() || '';
+        vb = cellB?.textContent?.trim() || '';
+      }
+
+      if (dir === 'asc') return va > vb ? 1 : va < vb ? -1 : 0;
+      return va < vb ? 1 : va > vb ? -1 : 0;
+    });
+
+    for (const row of rows) tbody.appendChild(row);
+  });
+});
+
+// Hero tree filter
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tree = btn.dataset.tree;
+    const table = document.getElementById('rankings-table');
+    if (!table) return;
+
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    table.querySelectorAll('tbody tr').forEach(row => {
+      if (tree === 'all' || row.dataset.tree === tree) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+});
+
+// Copy talent hash to clipboard
+document.querySelectorAll('.copy-hash').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const hash = btn.dataset.hash;
+    if (!hash) return;
+
+    const doCopy = text => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      }
+      return fallbackCopy(text);
+    };
+
+    const fallbackCopy = text => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    };
+
+    function flash(el) {
+      el.classList.add('copied');
+      el.querySelector('svg').innerHTML = '<polyline points="4 8.5 6.5 11 12 5" stroke-width="2"/>';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        el.querySelector('svg').innerHTML = '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/>';
+      }, 1500);
+    }
+
+    const result = doCopy(hash);
+    if (result && result.then) {
+      result.then(() => flash(btn));
+    } else {
+      flash(btn);
+    }
+  });
+});
+
+</script>
+</body>
+</html>
