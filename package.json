@@ -40,7 +40,7 @@
     "discover": "node src/discover/build-discovery.js",
     "roster": "node src/sim/build-roster.js",
     "dashboard": "cat results/dashboard.md",
-    "showcase": "node src/visualize/showcase.js",
+    "report:dashboard": "node src/visualize/report.js",
     "refresh": "bash scripts/refresh.sh",
     "optimal-timeline": "node src/analysis/optimal-timeline.js",
     "apl-trace": "node src/analysis/apl-interpreter.js",
