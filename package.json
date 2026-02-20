@@ -41,6 +41,7 @@
     "roster": "node src/sim/build-roster.js",
     "dashboard": "cat results/dashboard.md",
     "report:dashboard": "node src/visualize/report.js",
+    "report:publish": "bash scripts/publish-report.sh",
     "refresh": "bash scripts/refresh.sh",
     "optimal-timeline": "node src/analysis/optimal-timeline.js",
     "apl-trace": "node src/analysis/apl-interpreter.js",
