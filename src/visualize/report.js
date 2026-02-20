@@ -32,6 +32,7 @@ import {
   updateBuildDps,
   updateBuildSimcDps,
 } from "../util/db.js";
+import { generateDefensiveCostBuilds } from "../model/talent-combos.js";
 
 // --- CLI ---
 
@@ -65,6 +66,27 @@ async function runRosterSim(roster, aplPath, scenario, label, fidelityOpts) {
 
 // --- Load all report data ---
 
+function formatBuildName(build) {
+  const archetype = build.archetype || "";
+  const match = archetype.match(/^Apex (\d+):\s*(.+)$/);
+  if (!match) return build.displayName || build.id;
+
+  const apex = parseInt(match[1]);
+  const template = match[2].trim();
+
+  // Extract hero variant from the original displayName parenthesized suffix
+  const variantMatch = (build.displayName || "").match(/\(([^)]+)\)\s*#?\d*$/);
+  const variant = variantMatch ? variantMatch[1] : "";
+
+  let name = template;
+  if (apex > 0) name += ` (Apex ${apex})`;
+
+  // Append hero variant if present for disambiguation
+  if (variant) name += ` [${variant}]`;
+
+  return name;
+}
+
 function loadReportData(roster, specConfig) {
   const rawBuilds = getRosterBuilds();
   const dbByHash = new Map(rawBuilds.map((b) => [b.hash, b]));
@@ -79,7 +101,7 @@ function loadReportData(roster, specConfig) {
 
     return {
       id: build.id,
-      displayName: build.displayName || build.id,
+      displayName: formatBuildName(build),
       archetype: build.archetype || "",
       heroTree: build.heroTree || "",
       hash: build.hash,
@@ -276,6 +298,111 @@ function persistSimResults(roster, buildData) {
   }
 }
 
+// --- Defensive talent cost sims ---
+
+async function simDefensiveCosts(aplPath, fidelityOpts) {
+  const { references, variants } = generateDefensiveCostBuilds();
+
+  if (references.length === 0 || variants.length === 0) {
+    console.log("  No defensive talent builds to sim.");
+    return [];
+  }
+
+  console.log(
+    `  Defensive costs: ${references.length} refs + ${variants.length} variants`,
+  );
+
+  const results = [];
+
+  // Group by hero tree — one profileset per tree per scenario
+  const heroTrees = [...new Set(references.map((r) => r.heroTree))];
+
+  for (const heroTree of heroTrees) {
+    const ref = references.find((r) => r.heroTree === heroTree);
+    if (!ref) continue;
+
+    const treeVariants = variants.filter(
+      (v) => v.heroTree === heroTree && v.hash && v.valid,
+    );
+    if (treeVariants.length === 0) continue;
+
+    // Build a mini roster-like structure for profileset generation
+    const miniRoster = {
+      builds: [
+        { id: ref.name, hash: ref.hash },
+        ...treeVariants.map((v) => ({ id: v.build.name, hash: v.hash })),
+      ],
+    };
+
+    for (const scenario of Object.keys(SCENARIOS)) {
+      console.log(`  ${heroTree} / ${SCENARIOS[scenario].name}...`);
+
+      const content = generateRosterProfilesetContent(miniRoster, aplPath);
+      const psResults = await runProfilesetAsync(
+        content,
+        scenario,
+        `defcost_${heroTree.replace(/\s+/g, "_")}_${scenario}`,
+        { simOverrides: { target_error: fidelityOpts.target_error } },
+      );
+
+      const refDps = psResults.baseline.dps;
+
+      // Build lookup matching profileset name sanitization (dots → _, spaces → _)
+      const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
+      const variantByName = new Map(
+        treeVariants.map((v) => [sanitize(v.build.name), v]),
+      );
+
+      for (const variant of psResults.variants) {
+        const match = variantByName.get(variant.name);
+        if (!match) {
+          console.warn(`  Warning: no match for variant "${variant.name}"`);
+          continue;
+        }
+
+        let entry = results.find(
+          (r) =>
+            r.defensiveName === match.defensiveName && r.heroTree === heroTree,
+        );
+        if (!entry) {
+          entry = {
+            defensiveName: match.defensiveName,
+            heroTree,
+            droppedTalents: match.droppedTalents,
+            pointCost: match.pointCost,
+            dps: {},
+            refDps: {},
+            deltas: {},
+          };
+          results.push(entry);
+        }
+
+        entry.dps[scenario] = variant.dps;
+        entry.refDps[scenario] = refDps;
+        entry.deltas[scenario] =
+          refDps > 0 ? ((variant.dps - refDps) / refDps) * 100 : 0;
+      }
+    }
+  }
+
+  // Compute weighted deltas
+  for (const entry of results) {
+    entry.dps.weighted = computeWeighted(entry.dps);
+    entry.refDps.weighted = computeWeighted(entry.refDps);
+    entry.deltas.weighted =
+      entry.refDps.weighted > 0
+        ? ((entry.dps.weighted - entry.refDps.weighted) /
+            entry.refDps.weighted) *
+          100
+        : 0;
+  }
+
+  // Sort by weighted delta (most costly first)
+  results.sort((a, b) => a.deltas.weighted - b.deltas.weighted);
+
+  return results;
+}
+
 // --- HTML generation ---
 
 function generateHtml(data) {
@@ -285,7 +412,9 @@ function generateHtml(data) {
     iterations,
     talentPolicy,
     clusterCosts,
+    defensiveTalentCosts,
     heroTrees,
+    specConfig,
   } = data;
   const displaySpec = specName
     .replace(/_/g, " ")
@@ -300,11 +429,16 @@ function generateHtml(data) {
 
   const sections = [
     renderHeader(displaySpec, freshness),
-    renderKeyStats(builds, iterations, heroTrees),
+    renderKeyStats(builds, heroTrees),
     renderBestBuilds(builds),
     renderHeroComparison(builds, heroTrees),
     renderBuildRankings(builds, heroTrees),
-    renderTalentImpact(clusterCosts, talentPolicy),
+    renderTalentImpact(
+      clusterCosts,
+      defensiveTalentCosts,
+      talentPolicy,
+      specConfig,
+    ),
     renderOptimizationJourney(iterations),
     renderFooter(),
   ];
@@ -335,12 +469,6 @@ ${JS}
 // --- Section renderers ---
 
 function renderHeader(displaySpec, freshness) {
-  const scenarioDesc = Object.keys(SCENARIOS)
-    .map(
-      (s) => `${SCENARIOS[s].name} ${Math.round(SCENARIO_WEIGHTS[s] * 100)}%`,
-    )
-    .join(" / ");
-
   return `<header>
   <div class="header-content">
     <h1>${esc(displaySpec)}</h1>
@@ -348,20 +476,12 @@ function renderHeader(displaySpec, freshness) {
   </div>
   <div class="header-meta">
     <span class="meta-item">Updated ${freshness}</span>
-    <span class="meta-sep">&middot;</span>
-    <span class="meta-item">Weights: ${esc(scenarioDesc)}</span>
   </div>
 </header>`;
 }
 
-function renderKeyStats(builds, iterations, heroTrees) {
+function renderKeyStats(builds, heroTrees) {
   const best = findBest(builds, "weighted");
-
-  // APL improvement: cumulative from accepted iterations
-  const totalImprovement = iterations.reduce(
-    (sum, it) => sum + (it.meanWeighted || 0),
-    0,
-  );
 
   // Hero tree gap
   const treeNames = Object.keys(heroTrees);
@@ -395,10 +515,6 @@ function renderKeyStats(builds, iterations, heroTrees) {
     <div class="stat-value">${esc(best?.displayName || "—")}${copyBtn(best?.hash)}</div>
     <div class="stat-label">Best Overall — ${fmtDps(best?.dps.weighted || 0)} weighted</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-value positive">+${totalImprovement.toFixed(2)}%</div>
-    <div class="stat-label">APL improvement (${iterations.length} iterations)</div>
-  </div>
   ${treeGapHtml}
 </section>`;
 }
@@ -413,15 +529,22 @@ function renderBestBuilds(builds) {
     }),
   ];
 
+  const defaultHash = bestW?.hash || "";
+
   return `<section>
   <h2>Best Builds Per Scenario</h2>
-  <div class="best-cards">${cards.join("\n")}</div>
+  <div class="best-builds-layout">
+    <div class="talent-tree-wrap">
+      <iframe id="talent-tree-iframe" src="https://mimiron.raidbots.com/simbot/render/talents/${esc(defaultHash)}?bgcolor=0f1117" title="Talent tree"></iframe>
+    </div>
+    <div class="best-cards">${cards.join("\n")}</div>
+  </div>
 </section>`;
 }
 
 function makeBestCard(label, build, dps) {
   if (!build) return "";
-  return `    <div class="best-card">
+  return `    <div class="best-card" data-hash="${esc(build.hash)}">
       <div class="best-label">${esc(label)}</div>
       <div class="best-name">${esc(build.displayName)}${copyBtn(build.hash)}</div>
       <div class="best-meta"><span class="tree-badge ${treeClass(build.heroTree)}">${esc(treeDisplayName(build.heroTree))}</span> <span class="best-dps">${fmtDps(dps)}</span></div>
@@ -605,7 +728,14 @@ function renderBuildRankings(builds, heroTrees) {
         <th>Tree</th>
         <th class="sortable" data-col="archetype">Archetype</th>
         ${scenarioHeaders}
-        <th class="sortable num" data-col="weighted">Weighted</th>
+        <th class="sortable num weighted-header" data-col="weighted">Weighted <span class="info-icon" title="${esc(
+          Object.keys(SCENARIOS)
+            .map(
+              (s) =>
+                `${SCENARIOS[s].name} ${Math.round(SCENARIO_WEIGHTS[s] * 100)}%`,
+            )
+            .join(" · "),
+        )}">&#9432;</span></th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -613,25 +743,107 @@ function renderBuildRankings(builds, heroTrees) {
 </section>`;
 }
 
-function renderTalentImpact(clusterCosts, talentPolicy) {
+function renderTalentImpact(
+  clusterCosts,
+  defensiveTalentCosts,
+  talentPolicy,
+  specConfig,
+) {
   let html = `<section>
-  <h2>Talent Impact</h2>`;
+  <h2>Talent Tradeoffs</h2>`;
 
-  // Cluster costs
+  // Per-talent defensive costs (from sim)
+  if (defensiveTalentCosts && defensiveTalentCosts.length > 0) {
+    html += renderDefensiveTalentCosts(defensiveTalentCosts);
+  }
+
   if (clusterCosts.length > 0) {
-    html += `<div class="subsection">
-    <h3>Cluster Costs</h3>
-    <p class="section-desc">Impact of dropping talent clusters compared to the reference build at each apex rank. Negative = DPS loss from dropping.</p>`;
+    // Map template names to cluster keys for talent list lookup
+    const clusterMap = {
+      "No Brand": ["brand"],
+      "No Harvest": ["harvest"],
+      "No FelDev": ["feldev"],
+      "Drop SC": ["sc"],
+      "Drop Sigil": ["sigil"],
+      "Drop SC+Sigil": ["sc", "sigil"],
+      "Trim FelDev": ["feldev"],
+      "Trim Harvest": ["harvest"],
+    };
 
-    // Group by apex rank
-    const byApex = {};
-    for (const c of clusterCosts) {
-      (byApex[c.apex] ||= []).push(c);
+    const clusters = specConfig?.talentClusters || {};
+
+    function clusterTalentList(templateName) {
+      const keys = clusterMap[templateName];
+      if (!keys) return "";
+      const talents = keys.flatMap((k) => {
+        const c = clusters[k];
+        if (!c) return [];
+        return [...(c.core || []), ...(c.extended || [])];
+      });
+      if (talents.length === 0) return "";
+      return talents.map((t) => esc(t)).join(", ");
     }
 
-    for (const [apex, costs] of Object.entries(byApex)) {
-      const isExpanded = apex === "0";
-      html += `<details${isExpanded ? " open" : ""}>
+    function groupByApex(items) {
+      const groups = {};
+      for (const c of items) (groups[c.apex] ||= []).push(c);
+      return Object.entries(groups);
+    }
+
+    // Split: defensive costs (apex 0-1) vs apex tradeoffs (apex 2+)
+    const defensiveCosts = clusterCosts.filter((c) => c.apex <= 1);
+    const apexCosts = clusterCosts.filter((c) => c.apex >= 2);
+
+    // Defensive costs section
+    if (defensiveCosts.length > 0) {
+      html += `<div class="subsection">
+    <h3>Defensive Costs</h3>
+    <p class="section-desc">How much DPS do you sacrifice when freeing points for defensive talents?</p>`;
+
+      for (const [apex, costs] of groupByApex(defensiveCosts)) {
+        const isExpanded = apex === "0";
+        html += `<details${isExpanded ? " open" : ""}>
+      <summary>Apex ${apex} <span class="detail-count">(${costs.length} comparisons)</span></summary>
+      <div class="table-wrap">
+        <table class="cost-table">
+          <thead><tr>
+            <th>Dropped</th>
+            <th>Talents Freed</th>
+            <th>Hero Tree</th>
+            <th class="num">Weighted</th>
+            <th class="num">1T</th>
+            <th class="num">5T</th>
+            <th class="num">10T</th>
+          </tr></thead>
+          <tbody>`;
+
+        for (const c of costs) {
+          const talents = clusterTalentList(c.templateName);
+          html += `<tr>
+            <td>${esc(c.templateName)}</td>
+            <td class="talents-freed">${talents}</td>
+            <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
+            ${deltaCell(c.deltaWeighted)}
+            ${deltaCell(c.deltaSt)}
+            ${deltaCell(c.deltaSmall)}
+            ${deltaCell(c.deltaBig)}
+          </tr>`;
+        }
+
+        html += `</tbody></table></div></details>`;
+      }
+
+      html += `</div>`;
+    }
+
+    // Apex tradeoffs section
+    if (apexCosts.length > 0) {
+      html += `<div class="subsection">
+    <h3>Apex Tradeoffs</h3>
+    <p class="section-desc">DPS impact of different talent investments at higher apex ranks.</p>`;
+
+      for (const [apex, costs] of groupByApex(apexCosts)) {
+        html += `<details>
       <summary>Apex ${apex} <span class="detail-count">(${costs.length} comparisons)</span></summary>
       <div class="table-wrap">
         <table class="cost-table">
@@ -646,8 +858,8 @@ function renderTalentImpact(clusterCosts, talentPolicy) {
           </tr></thead>
           <tbody>`;
 
-      for (const c of costs) {
-        html += `<tr>
+        for (const c of costs) {
+          html += `<tr>
             <td>${esc(c.templateName)}</td>
             <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
             <td class="ref-name">vs ${esc(c.refName)}</td>
@@ -656,25 +868,30 @@ function renderTalentImpact(clusterCosts, talentPolicy) {
             ${deltaCell(c.deltaSmall)}
             ${deltaCell(c.deltaBig)}
           </tr>`;
+        }
+
+        html += `</tbody></table></div></details>`;
       }
 
-      html += `</tbody></table></div></details>`;
+      html += `</div>`;
     }
-
-    html += `</div>`;
   }
 
   const policyCategories = [
-    { key: "locked", label: "Locked", desc: "Always taken — core DPS talents" },
+    {
+      key: "locked",
+      label: "Locked",
+      desc: "Always included in generated builds — core DPS rotation talents",
+    },
     {
       key: "banned",
       label: "Banned",
-      desc: "Never taken — pure defensive/healing",
+      desc: "Never included in generated builds — pure defensive/healing talents with no DPS value. You may still want these in real content.",
     },
     {
       key: "excluded",
       label: "Excluded",
-      desc: "Excluded from roster generation",
+      desc: "Not included in generated builds — defensive talents whose point budget is used to test DPS cluster variations instead. The DPS cost of taking these is shown in Defensive Costs above.",
     },
   ];
   const activePolicies = policyCategories.filter(
@@ -701,6 +918,51 @@ function renderTalentImpact(clusterCosts, talentPolicy) {
   }
 
   html += `</section>`;
+  return html;
+}
+
+function renderDefensiveTalentCosts(costs) {
+  const scenarios = Object.keys(SCENARIOS);
+
+  let html = `<div class="subsection">
+    <h3>Per-Talent Defensive Costs</h3>
+    <p class="section-desc">DPS cost of taking each individual defensive talent, measured by swapping it into the Full Stack build and seeing which DPS talent BFS drops.</p>
+    <div class="table-wrap">
+      <table class="cost-table">
+        <thead><tr>
+          <th>Defensive Talent</th>
+          <th>Replaces</th>
+          <th>Pts</th>
+          <th>Hero Tree</th>
+          <th class="num">Weighted</th>`;
+
+  for (const s of scenarios) {
+    html += `<th class="num">${esc(SCENARIOS[s].name)}</th>`;
+  }
+
+  html += `</tr></thead><tbody>`;
+
+  for (const c of costs) {
+    const replaces =
+      c.droppedTalents.length > 0
+        ? c.droppedTalents.map((t) => esc(t)).join(", ")
+        : '<span class="fg-muted">—</span>';
+
+    html += `<tr>
+      <td>${esc(c.defensiveName)}</td>
+      <td class="talents-freed">${replaces}</td>
+      <td class="num">${c.pointCost}</td>
+      <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
+      ${deltaCell(c.deltas.weighted)}`;
+
+    for (const s of scenarios) {
+      html += deltaCell(c.deltas[s] || 0);
+    }
+
+    html += `</tr>`;
+  }
+
+  html += `</tbody></table></div></div>`;
   return html;
 }
 
@@ -736,7 +998,7 @@ function renderOptimizationJourney(iterations) {
   }
 
   return `<section>
-  <h2>Optimization Journey</h2>
+  <h2>Changelog</h2>
   <div class="table-wrap">
     <table class="journey-table">
       <thead><tr>
@@ -752,15 +1014,7 @@ function renderOptimizationJourney(iterations) {
 }
 
 function renderFooter() {
-  const scenarios = Object.keys(SCENARIOS)
-    .map(
-      (s) =>
-        `${SCENARIOS[s].name} (${SCENARIOS[s].desiredTargets}T, ${SCENARIOS[s].maxTime}s)`,
-    )
-    .join(", ");
-
   return `<footer>
-  <p class="footer-method">SimulationCraft &middot; ${esc(scenarios)} &middot; Midnight</p>
   <p>Generated by <a href="https://github.com/taherbert/dh-apl">dh-apl</a></p>
 </footer>`;
 }
@@ -897,7 +1151,6 @@ header h1 {
   font-size: 0.8rem;
 }
 
-.meta-sep { opacity: 0.4; }
 
 /* Section basics */
 section { margin-bottom: 2.5rem; }
@@ -974,11 +1227,33 @@ h4 {
   letter-spacing: 0.04em;
 }
 
+/* Best builds layout */
+.best-builds-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.talent-tree-wrap {
+  flex: 0 0 340px;
+  min-width: 0;
+}
+
+.talent-tree-wrap iframe {
+  width: 100%;
+  height: 500px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
 /* Best build cards */
 .best-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 1rem;
+  flex: 1;
+  min-width: 0;
 }
 
 .best-card {
@@ -986,7 +1261,12 @@ h4 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.15s;
 }
+
+.best-card:hover { border-color: var(--accent-dim); }
+.best-card.active { border-color: var(--accent); }
 
 .best-label {
   font-size: 0.7rem;
@@ -1021,12 +1301,15 @@ h4 {
 /* Hero comparison */
 .hero-comparison {
   display: flex;
-  flex-direction: column;
   gap: 1.5rem;
+  align-items: flex-start;
+  max-width: 1000px;
 }
 
 .hero-chart-wrap {
   overflow-x: auto;
+  flex: 1;
+  min-width: 0;
 }
 
 .hero-chart {
@@ -1057,9 +1340,11 @@ h4 {
 }
 
 .top-builds-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1rem;
+  flex: 0 0 300px;
+  min-width: 0;
 }
 
 .top-builds-panel {
@@ -1194,6 +1479,12 @@ tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
 .ref-name {
   color: var(--fg-muted);
   font-size: 0.78rem;
+}
+
+.talents-freed {
+  color: var(--fg-muted);
+  font-size: 0.75rem;
+  max-width: 240px;
 }
 
 /* Copy hash button */
@@ -1340,19 +1631,52 @@ footer {
 footer p { margin-bottom: 0.25rem; }
 footer a { color: var(--accent); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
-.footer-method { font-size: 0.72rem; }
+/* Weighted tooltip */
+.info-icon {
+  cursor: help;
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  position: relative;
+  vertical-align: middle;
+}
+
+.weighted-header {
+  position: relative;
+}
+
+.info-icon:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 120%;
+  right: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.4em 0.65em;
+  font-size: 0.72rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fg);
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
   header { flex-direction: column; align-items: flex-start; }
   .key-stats { flex-direction: column; }
   .stat-card { min-width: 100%; }
+  .best-builds-layout { flex-direction: column; }
+  .talent-tree-wrap { flex: none; width: 100%; }
   .best-cards { grid-template-columns: 1fr; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
   .policy-grid { grid-template-columns: 1fr; }
-  .top-builds-row { grid-template-columns: 1fr; }
+  .hero-comparison { flex-direction: column; }
+  .top-builds-row { flex: none; width: 100%; }
   .build-name { font-size: 0.7rem; }
 }
 `;
@@ -1417,6 +1741,20 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
         row.style.display = 'none';
       }
     });
+  });
+});
+
+// Best build card → talent tree iframe
+document.querySelectorAll('.best-card').forEach(card => {
+  card.addEventListener('click', () => {
+    const hash = card.dataset.hash;
+    if (!hash) return;
+    const iframe = document.getElementById('talent-tree-iframe');
+    if (iframe) {
+      iframe.src = 'https://mimiron.raidbots.com/simbot/render/talents/' + hash + '?bgcolor=0f1117';
+    }
+    document.querySelectorAll('.best-card').forEach(c => c.classList.remove('active'));
+    card.classList.add('active');
   });
 });
 
@@ -1496,6 +1834,7 @@ async function main() {
 
   // Run sims or use cached data
   let reportData;
+  let defensiveTalentCosts = [];
 
   if (!opts.skipSims) {
     const fidelityOpts =
@@ -1540,6 +1879,13 @@ async function main() {
     persistSimResults(roster, buildData);
     console.log(`\n  Results cached to DB.`);
 
+    // Per-talent defensive cost sims
+    console.log(`\n  Running defensive talent cost sims...`);
+    defensiveTalentCosts = await simDefensiveCosts(oursPath, fidelityOpts);
+    console.log(
+      `  ${defensiveTalentCosts.length} defensive talent costs computed.`,
+    );
+
     // Re-load from DB for consistency
     reportData = loadReportData(roster, specConfig);
   } else {
@@ -1561,7 +1907,9 @@ async function main() {
     iterations: reportData.iterations,
     talentPolicy: reportData.talentPolicy,
     clusterCosts: reportData.clusterCosts,
+    defensiveTalentCosts,
     heroTrees,
+    specConfig,
   });
 
   const indexPath = join(reportDir, "index.html");
