@@ -132,8 +132,8 @@ export const SPEC_CONFIG = {
       core: ["Burning Alive"],
       extended: ["Charred Flesh", "Down in Flames"],
     },
-    sigil: { core: ["Cycle of Binding"] },
-    harvest: {
+    binding: { core: ["Cycle of Binding"] },
+    vuln: {
       core: ["Vulnerability"],
       extended: ["Soulcrush", "Focused Cleave"],
     },
@@ -157,141 +157,141 @@ export const SPEC_CONFIG = {
     // Names describe the two major clusters that define the build's identity.
     // At Apex 0-1, nearly everything is present; the name highlights the focus.
     {
-      name: "Complete",
+      name: "Full Build",
       apexRank: 0,
       include: {
         brand: "full",
-        sigil: "full",
-        harvest: "full",
+        binding: "full",
+        vuln: "full",
         feldev: "full",
         sc: "full",
       },
     },
     {
-      name: "Harvest + Fel Dev",
+      name: "Vuln + Fel Dev",
       apexRank: 0,
-      include: { sigil: "full", harvest: "full", feldev: "full", sc: "full" },
+      include: { binding: "full", vuln: "full", feldev: "full", sc: "full" },
     },
     {
       name: "Brand + Fel Dev",
       apexRank: 0,
-      include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
+      include: { brand: "full", binding: "full", feldev: "full", sc: "full" },
     },
     {
-      name: "Brand + Harvest",
+      name: "Brand + Vuln",
       apexRank: 0,
-      include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
+      include: { brand: "full", binding: "full", vuln: "full", sc: "full" },
     },
 
     // --- APL Coverage: Apex 1 (same cluster coverage, apex.1 active) ---
     {
-      name: "Complete",
+      name: "Full Build",
       apexRank: 1,
       include: {
         brand: "full",
-        sigil: "full",
-        harvest: "full",
+        binding: "full",
+        vuln: "full",
         feldev: "full",
         sc: "full",
       },
     },
     {
-      name: "Harvest + Fel Dev",
+      name: "Vuln + Fel Dev",
       apexRank: 1,
-      include: { sigil: "full", harvest: "full", feldev: "full", sc: "full" },
+      include: { binding: "full", vuln: "full", feldev: "full", sc: "full" },
     },
     {
       name: "Brand + Fel Dev",
       apexRank: 1,
-      include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
+      include: { brand: "full", binding: "full", feldev: "full", sc: "full" },
     },
     {
-      name: "Brand + Harvest",
+      name: "Brand + Vuln",
       apexRank: 1,
-      include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
+      include: { brand: "full", binding: "full", vuln: "full", sc: "full" },
     },
 
     // --- Apex 2 (skip 1 pt) — two meaningful 1-pt standalone drops ---
     {
-      name: "No Soul Carver",
+      name: "Brand + Vuln + Fel Dev",
       apexRank: 2,
       include: {
         brand: "full",
-        sigil: "full",
-        harvest: "full",
+        binding: "full",
+        vuln: "full",
         feldev: "full",
       },
     },
     {
-      name: "No Sigil",
+      name: "Brand + Vuln + Fel Dev + SC",
       apexRank: 2,
-      include: { brand: "full", harvest: "full", feldev: "full", sc: "full" },
+      include: { brand: "full", vuln: "full", feldev: "full", sc: "full" },
     },
 
     // --- Apex 3 (skip 2 pts) — focus determines what to sacrifice ---
-    // Three majors: drop both standalones, keep all three major clusters full
+    // Brand + Vuln + Fel Dev: drop both standalones, keep all three major clusters full
     {
-      name: "Three Majors",
+      name: "Brand + Vuln + Fel Dev",
       apexRank: 3,
-      include: { brand: "full", harvest: "full", feldev: "full" },
+      include: { brand: "full", vuln: "full", feldev: "full" },
     },
-    // Core Fel Dev: narrow FelDev to core, keep soul + fire economy intact
+    // Brand + Vuln: narrow FelDev to core, keep soul + fire economy intact
     {
-      name: "Core Fel Dev",
+      name: "Brand + Vuln",
       apexRank: 3,
       include: {
         brand: "full",
-        sigil: "full",
-        harvest: "full",
+        binding: "full",
+        vuln: "full",
         feldev: "core",
         sc: "full",
       },
     },
-    // Core Harvest: narrow Harvest to core (Vuln only), keep brand + fel dev
+    // Brand + Fel Dev: narrow Vuln to core, keep brand + fel dev full
     {
-      name: "Core Harvest",
+      name: "Brand + Fel Dev",
       apexRank: 3,
       include: {
         brand: "full",
-        sigil: "full",
-        harvest: "core",
+        binding: "full",
+        vuln: "core",
         feldev: "full",
       },
     },
 
     // --- Apex 4 (skip 3 pts) — focus defines which cluster to sacrifice ---
-    // Brand + Harvest: sacrifice FelDev entirely
+    // Brand + Vuln + SC: sacrifice FelDev entirely, keep Soul Carver
     {
-      name: "Brand + Harvest",
+      name: "Brand + Vuln + SC",
       apexRank: 4,
-      include: { brand: "full", sigil: "full", harvest: "full", sc: "full" },
+      include: { brand: "full", binding: "full", vuln: "full", sc: "full" },
     },
-    // Brand + Fel Dev: sacrifice Harvest entirely
+    // Brand + Fel Dev: sacrifice Vuln entirely
     {
       name: "Brand + Fel Dev",
       apexRank: 4,
-      include: { brand: "full", sigil: "full", feldev: "full", sc: "full" },
+      include: { brand: "full", binding: "full", feldev: "full", sc: "full" },
     },
-    // Harvest + Fel Dev: sacrifice Brand extended (keep BA for fire synergy)
+    // Vuln + Fel Dev: sacrifice Brand extended (keep BA for fire synergy)
     {
-      name: "Harvest + Fel Dev",
+      name: "Vuln + Fel Dev",
       apexRank: 4,
       include: {
         brand: "core",
-        sigil: "full",
-        harvest: "full",
+        binding: "full",
+        vuln: "full",
         feldev: "full",
         sc: "full",
       },
     },
-    // Balanced: sacrifice FelDev extended + SC, keep all cluster cores
+    // Brand + Vuln: sacrifice FelDev extended + SC, keep brand + vuln full
     {
-      name: "Balanced",
+      name: "Brand + Vuln",
       apexRank: 4,
       include: {
         brand: "full",
-        sigil: "full",
-        harvest: "full",
+        binding: "full",
+        vuln: "full",
         feldev: "core",
       },
     },
