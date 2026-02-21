@@ -34,6 +34,14 @@ import {
 } from "../util/db.js";
 import { generateDefensiveCostBuilds } from "../model/talent-combos.js";
 
+// Severity tiers for defensive talent cost strips, ordered by threshold ascending.
+// Thresholds are fractions of maxCost — resolved at render time via getSeverity().
+const SEVERITY_TIERS = [
+  { threshold: 0.33, cls: "light", color: "var(--positive)" },
+  { threshold: 0.66, cls: "moderate", color: "var(--gold)" },
+  { threshold: Infinity, cls: "heavy", color: "var(--negative)" },
+];
+
 // --- CLI ---
 
 function parseArgs() {
@@ -376,7 +384,7 @@ async function simDefensiveCosts(
 
   const refName = refTemplate
     ? `${refTemplate.name} (Apex ${refTemplate.apexRank})`
-    : "Full Stack (Apex 0)";
+    : formatBuildName(bestBuild);
 
   return { costs: results, refName };
 }
@@ -462,7 +470,7 @@ function renderHeroShowcase(builds, heroTrees) {
     const scenarioDps = activeScenarios(builds)
       .map(
         (s) =>
-          `<span class="showcase-scenario"><span class="showcase-scenario-label">${esc(SCENARIOS[s].name)}</span> ${fmtDps(best.dps[s] || 0)}</span>`,
+          `<span class="showcase-scenario"><span class="showcase-scenario-label" style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> ${fmtDps(best.dps[s] || 0)}</span>`,
       )
       .join("");
 
@@ -490,10 +498,15 @@ function renderHeroShowcase(builds, heroTrees) {
 function renderBestBuilds(builds) {
   const bestW = findBest(builds, "weighted");
   const cards = [
-    makeBestCard("Best Weighted", bestW, bestW?.dps.weighted || 0),
+    makeBestCard("Best Weighted", bestW, bestW?.dps.weighted || 0, "weighted"),
     ...activeScenarios(builds).map((s) => {
       const best = findBest(builds, s);
-      return makeBestCard(`Best ${SCENARIOS[s].name}`, best, best?.dps[s] || 0);
+      return makeBestCard(
+        `Best ${SCENARIOS[s].name}`,
+        best,
+        best?.dps[s] || 0,
+        s,
+      );
     }),
   ];
 
@@ -503,9 +516,11 @@ function renderBestBuilds(builds) {
 </section>`;
 }
 
-function makeBestCard(label, build, dps) {
+function makeBestCard(label, build, dps, scenario) {
   if (!build) return "";
-  return `    <div class="best-card">
+  const borderColor =
+    scenario === "weighted" ? "var(--accent)" : scenarioColor(scenario);
+  return `    <div class="best-card" style="border-top: 2px solid ${borderColor}">
       <div class="best-label">${esc(label)}</div>
       <div class="best-name">${esc(build.displayName)}${copyBtn(build.hash)}</div>
       <div class="best-meta"><span class="tree-badge ${treeClass(build.heroTree)}">${esc(treeDisplayName(build.heroTree))}</span> <span class="best-dps">${fmtDps(dps)}</span></div>
@@ -517,10 +532,6 @@ function renderHeroComparison(builds, heroTrees) {
   if (treeNames.length < 2) return "";
 
   const scenarios = [...activeScenarios(builds), "weighted"];
-
-  function scenarioLabel(s) {
-    return s === "weighted" ? "Weighted" : SCENARIOS[s].name;
-  }
 
   // Compute averages per tree per scenario
   const treeData = {};
@@ -537,101 +548,39 @@ function renderHeroComparison(builds, heroTrees) {
     }
   }
 
-  // Top builds per tree with scenario sparkline
-  const topBuildsHtml = treeNames
+  // Two side-by-side chart cards, one per hero tree
+  const charts = treeNames
     .map((tree) => {
-      const sorted = treeData[tree].builds
-        .filter((b) => (b.dps.weighted || 0) > 0)
-        .sort((a, b) => (b.dps.weighted || 0) - (a.dps.weighted || 0))
-        .slice(0, 5);
-      if (sorted.length === 0) return "";
-      const treeBest = sorted[0].dps.weighted;
-      const rows = sorted
-        .map((b, i) => {
-          const gap =
-            treeBest > 0 ? ((b.dps.weighted - treeBest) / treeBest) * 100 : 0;
-          // Mini scenario bars
-          const activeS = scenarios.filter((s) => s !== "weighted");
-          const maxS = Math.max(...activeS.map((s) => b.dps[s] || 0), 1);
-          const sparkBars = activeS
-            .map((s) => {
-              const v = b.dps[s] || 0;
-              const pct = maxS > 0 ? (v / maxS) * 100 : 0;
-              return `<div class="spark-bar" style="height:${pct}%" data-tip="${esc(SCENARIOS[s].name)}: ${fmtDps(v)}"></div>`;
-            })
-            .join("");
-          return `<div class="top-build-row">
-            <span class="top-build-rank">${i + 1}.</span>
-            <span class="top-build-name">${esc(b.displayName)}${copyBtn(b.hash)}</span>
-            <span class="spark-group">${sparkBars}</span>
-            <span class="top-build-dps">${fmtDps(b.dps.weighted)}</span>
-            <span class="top-build-gap ${gap < -3 ? "negative" : ""}">${i === 0 ? "" : gap.toFixed(1) + "%"}</span>
+      const d = treeData[tree];
+      const buildCount = d.builds.filter(
+        (b) => (b.dps.weighted || 0) > 0,
+      ).length;
+
+      const bars = scenarios
+        .map((s) => {
+          const avg = d.avgs[s];
+          const pct = globalMax > 0 ? (avg / globalMax) * 100 : 0;
+          const color = s === "weighted" ? treeColor(tree) : scenarioColor(s);
+          return `<div class="hc-bar-row">
+            <span class="hc-bar-label">${scenarioLabel(s)}</span>
+            <div class="hc-bar-track">
+              <div class="hc-bar" style="width:${pct.toFixed(1)}%;background:${color}"></div>
+            </div>
+            <span class="hc-bar-value">${fmtDps(avg)}</span>
           </div>`;
         })
         .join("\n");
-      return `<div class="top-builds-card">
-        <h4><span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span> <span class="top-builds-count">${treeData[tree].builds.filter((b) => (b.dps.weighted || 0) > 0).length} builds</span></h4>
-        ${rows}
-      </div>`;
+
+      return `<div class="hc-card" style="border-top: 3px solid ${treeColor(tree)}">
+      <h4><span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span> <span class="hc-count">${buildCount} builds</span></h4>
+      ${bars}
+    </div>`;
     })
     .join("\n");
 
-  const rightPanelHtml = `<div class="h2h-panel">
-    <h4>Top Builds (Weighted DPS)</h4>
-    ${topBuildsHtml}
-  </div>`;
-
-  // SVG bar chart
-  const barWidth = 180;
-  const barHeight = 22;
-  const gap = 6;
-  const labelWidth = 95;
-  const chartWidth = labelWidth + barWidth * 2 + 40;
-  const chartHeight = scenarios.length * (barHeight * 2 + gap * 2 + 16) + 10;
-
-  let svgBars = "";
-  let y = 10;
-  for (const s of scenarios) {
-    // Scenario label
-    svgBars += `<text x="${labelWidth - 8}" y="${y + barHeight + 4}" text-anchor="end" class="chart-label">${scenarioLabel(s)}</text>`;
-
-    for (let ti = 0; ti < treeNames.length; ti++) {
-      const tree = treeNames[ti];
-      const avg = treeData[tree].avgs[s];
-      const pct = globalMax > 0 ? avg / globalMax : 0;
-      const w = Math.max(pct * barWidth, 2);
-      const barY = y + ti * (barHeight + gap);
-
-      svgBars += `<rect x="${labelWidth}" y="${barY}" width="${w}" height="${barHeight}" rx="3" fill="${treeColor(tree)}" opacity="0.85"/>`;
-      svgBars += `<text x="${labelWidth + w + 6}" y="${barY + barHeight / 2 + 5}" class="chart-value">${fmtDps(avg)}</text>`;
-    }
-
-    y += barHeight * 2 + gap * 2 + 16;
-  }
-
-  const svg = `<svg class="hero-chart" viewBox="0 0 ${chartWidth} ${chartHeight}" xmlns="http://www.w3.org/2000/svg">
-    <style>
-      .chart-label { font: 500 12px Outfit, DM Sans, sans-serif; fill: #7c8098; }
-      .chart-value { font: 600 11px DM Sans, sans-serif; fill: #e4e6f0; }
-    </style>
-    ${svgBars}
-  </svg>`;
-
-  // Legend
-  const legend = treeNames
-    .map(
-      (t) =>
-        `<span class="legend-item"><span class="legend-dot" style="background:${treeColor(t)}"></span>${esc(heroTrees[t].displayName)} (${treeData[t].builds.length})</span>`,
-    )
-    .join("");
-
   return `<section>
   <h2>Hero Tree Comparison</h2>
-  <div class="legend">${legend}</div>
-  <div class="hero-comparison">
-    <div class="hero-chart-wrap">${svg}</div>
-    ${rightPanelHtml}
-  </div>
+  <div class="hero-comparison">${charts}</div>
 </section>`;
 }
 
@@ -691,7 +640,7 @@ function renderBuildRankings(builds, heroTrees) {
   const scenarioHeaders = scenarios
     .map(
       (s) =>
-        `<th class="sortable num" data-col="${s}">${esc(SCENARIOS[s].name)}</th>`,
+        `<th class="sortable num" data-col="${s}" style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</th>`,
     )
     .join("\n      ");
 
@@ -708,14 +657,14 @@ function renderBuildRankings(builds, heroTrees) {
         <th>Tree</th>
         <th class="sortable" data-col="archetype">Archetype</th>
         ${scenarioHeaders}
-        <th class="sortable num weighted-header" data-col="weighted">Weighted <span class="info-icon" title="${esc(
+        <th class="sortable num weighted-header" data-col="weighted">Weighted <span class="info-icon" data-tip="${esc(
           Object.keys(SCENARIOS)
             .map(
               (s) =>
                 `${SCENARIOS[s].name} ${Math.round(SCENARIO_WEIGHTS[s] * 100)}%`,
             )
             .join(" · "),
-        )}">&#9432;</span></th>
+        )}">${INFO_ICON}</span></th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -833,12 +782,6 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     1,
   );
 
-  const SEVERITY_TIERS = [
-    { threshold: 0.33, cls: "light", color: "var(--positive)" },
-    { threshold: 0.66, cls: "moderate", color: "var(--gold)" },
-    { threshold: Infinity, cls: "heavy", color: "var(--negative)" },
-  ];
-
   function getSeverity(pct) {
     const abs = Math.abs(pct);
     return SEVERITY_TIERS.find((t) => abs < maxCost * t.threshold);
@@ -868,7 +811,7 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     // Per-scenario values
     for (const s of scenarios) {
       const v = t.avgDeltas[s] || 0;
-      html += `<span class="def-strip__scenario">${esc(SCENARIOS[s].name)} <em>${fmtDelta(v)}</em></span>`;
+      html += `<span class="def-strip__scenario"><span style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> <em>${fmtDelta(v)}</em></span>`;
     }
 
     // Per-tree breakdown
@@ -962,6 +905,8 @@ function esc(s) {
 
 const COPY_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg>`;
 
+const INFO_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg>`;
+
 function treeClass(heroTree) {
   return heroTree === "annihilator" ? "anni" : "ar";
 }
@@ -976,6 +921,20 @@ function treeAbbr(heroTree) {
 
 function treeColor(heroTree) {
   return heroTree === "annihilator" ? "#a78bfa" : "#fb923c";
+}
+
+function scenarioLabel(s) {
+  return s === "weighted" ? "Weighted" : SCENARIOS[s].name;
+}
+
+function scenarioColor(s) {
+  const colors = {
+    st: "#60a5fa",
+    dungeon_slice: "#a78bfa",
+    small_aoe: "#f59e0b",
+    big_aoe: "#ef4444",
+  };
+  return colors[s] || "#7c8098";
 }
 
 function findBest(builds, field) {
@@ -1236,8 +1195,8 @@ h4 {
   display: block;
   background: var(--bg);
   pointer-events: none;
-  clip-path: inset(3% 2% 0 54%);
-  margin-left: -54%;
+  clip-path: inset(3% 36% 15% 33%);
+  margin-left: -33%;
 }
 
 /* Best build cards */
@@ -1289,117 +1248,69 @@ h4 {
   color: var(--fg-dim);
 }
 
-/* Hero comparison */
+/* Hero comparison — two side-by-side cards */
 .hero-comparison {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
-  align-items: flex-start;
-  max-width: 1000px;
 }
 
-.hero-chart-wrap {
-  overflow-x: auto;
-  flex: 1;
-  min-width: 0;
+.hc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
 }
 
-.hero-chart {
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-}
+.hc-card h4 { margin-bottom: 1rem; }
 
-.legend {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.25rem;
-}
-
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  font-size: 0.78rem;
-  color: var(--fg-muted);
-  font-weight: 500;
-}
-
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
-  display: inline-block;
-}
-
-.h2h-panel {
-  flex: 0 0 420px;
-  min-width: 0;
-}
-
-/* Top builds per tree */
-.top-builds-card {
-  margin-bottom: 1rem;
-}
-.top-builds-card h4 {
-  margin-bottom: 0.4rem;
-}
-.top-builds-count {
+.hc-count {
   font-size: 0.7rem;
   color: var(--fg-muted);
   font-weight: 400;
   margin-left: 0.4rem;
 }
-.top-build-row {
+
+.hc-bar-row {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.25rem 0;
-  font-size: 0.76rem;
-  border-bottom: 1px solid var(--border-subtle);
-}
-.top-build-rank {
-  flex: 0 0 1.2rem;
-  color: var(--fg-muted);
-  font-weight: 600;
-  font-size: 0.7rem;
-}
-.top-build-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.top-build-dps {
-  flex: 0 0 auto;
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-}
-.top-build-gap {
-  flex: 0 0 40px;
-  font-size: 0.7rem;
-  color: var(--fg-muted);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
+  gap: 0.75rem;
+  padding: 0.35rem 0;
 }
 
-/* Mini scenario sparkline bars */
-.spark-group {
-  display: flex;
-  align-items: flex-end;
-  gap: 2px;
-  height: 20px;
-  flex: 0 0 auto;
+.hc-bar-label {
+  flex: 0 0 90px;
+  font-size: 0.76rem;
+  color: var(--fg-muted);
+  font-weight: 500;
+  text-align: right;
 }
-.spark-bar {
-  width: 6px;
-  min-height: 2px;
-  background: var(--accent);
-  border-radius: 1px;
-  opacity: 0.6;
+
+.hc-bar-track {
+  flex: 1;
+  min-width: 0;
+  height: 18px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.hc-bar {
+  height: 100%;
+  border-radius: 3px;
+  opacity: 0.85;
   transition: opacity 0.15s;
 }
-.spark-bar:hover { opacity: 1; }
+
+.hc-card:hover .hc-bar { opacity: 1; }
+
+.hc-bar-value {
+  flex: 0 0 70px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
 
 /* Tree badges */
 .tree-badge {
@@ -1543,7 +1454,6 @@ tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
 }
 tr:hover .copy-hash, .build-name:hover .copy-hash,
 .best-name:hover .copy-hash, .showcase-build-name:hover .copy-hash { opacity: 1; }
-.showcase-panel .copy-hash { opacity: 0.5; }
 .copy-hash:hover { color: var(--accent); border-color: var(--border); }
 .copy-hash.copied { color: var(--positive); opacity: 1; }
 .copy-hash svg { width: 13px; height: 13px; }
@@ -1756,7 +1666,7 @@ footer a:hover { text-decoration: underline; }
 }
 
 .info-icon:hover::after {
-  content: attr(title);
+  content: attr(data-tip);
   position: absolute;
   bottom: 120%;
   right: 0;
@@ -1799,12 +1709,11 @@ footer { animation-delay: 0.35s; }
   body { padding: 0 1rem; }
   header { flex-direction: column; align-items: flex-start; }
   .showcase-grid { grid-template-columns: 1fr; }
-  .h2h-panel { flex: none; width: 100%; }
   .best-cards { grid-template-columns: 1fr; }
+  .hero-comparison { grid-template-columns: 1fr; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
-  .hero-comparison { flex-direction: column; }
   .build-name { font-size: 0.7rem; }
   .showcase-weighted { font-size: 1.4rem; }
 }
