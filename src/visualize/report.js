@@ -113,9 +113,9 @@ function loadReportData(roster, specConfig) {
   });
 
   const iterations = loadChangelog();
-  const clusterCosts = deriveClusterCosts(builds, specConfig);
+  const apexBuilds = deriveApexBuilds(builds);
 
-  return { builds, iterations, clusterCosts };
+  return { builds, iterations, apexBuilds };
 }
 
 function loadChangelog() {
@@ -153,15 +153,10 @@ function loadChangelog() {
   }
 }
 
-// --- Cluster cost derivation ---
+// --- Apex rank build analysis ---
 
-function deriveClusterCosts(builds, specConfig) {
-  const templates = specConfig.rosterTemplates;
-  if (!templates || templates.length === 0) return [];
-
-  const costs = [];
-
-  // Group builds by hero_tree + apex rank + template name, then average
+function deriveApexBuilds(builds) {
+  // Group builds by apex rank, compute avg DPS per template per tree
   const groups = {};
   for (const b of builds) {
     if (!b.archetype || b.dps.weighted <= 0) continue;
@@ -169,72 +164,38 @@ function deriveClusterCosts(builds, specConfig) {
     if (!match) continue;
     const apex = Number(match[1]);
     const templateName = match[2].trim();
-    const key = `${b.heroTree}|${apex}|${templateName}`;
+    const key = `${apex}|${b.heroTree}|${templateName}`;
     if (!groups[key])
-      groups[key] = { heroTree: b.heroTree, apex, templateName, builds: [] };
+      groups[key] = {
+        apex,
+        heroTree: b.heroTree,
+        templateName,
+        builds: [],
+      };
     groups[key].builds.push(b);
   }
 
-  function avgDps(arr) {
-    const n = arr.length;
-    const result = {};
+  const entries = Object.values(groups).map((g) => {
+    const n = g.builds.length;
+    const avg = {};
     for (const key of [...Object.keys(SCENARIOS), "weighted"]) {
-      result[key] = arr.reduce((s, b) => s + (b.dps[key] || 0), 0) / n;
+      avg[key] = g.builds.reduce((s, b) => s + (b.dps[key] || 0), 0) / n;
     }
-    return result;
+    return { ...g, avg };
+  });
+
+  // Group by apex rank
+  const byApex = {};
+  for (const e of entries) {
+    (byApex[e.apex] ||= []).push(e);
   }
 
-  const averaged = Object.values(groups).map((g) => ({
-    ...g,
-    avg: avgDps(g.builds),
-  }));
-
-  // Group averaged entries by hero_tree + apex
-  const byTreeApex = {};
-  for (const g of averaged) {
-    const key = `${g.heroTree}|${g.apex}`;
-    (byTreeApex[key] ||= []).push(g);
+  // Within each apex, sort by weighted DPS descending
+  for (const arr of Object.values(byApex)) {
+    arr.sort((a, b) => b.avg.weighted - a.avg.weighted);
   }
 
-  for (const entries of Object.values(byTreeApex)) {
-    const { heroTree, apex } = entries[0];
-
-    // Find reference (Full Stack for apex 0-1, best weighted otherwise)
-    let ref;
-    if (apex <= 1) {
-      ref = entries.find((e) => e.templateName === "Complete");
-    }
-    if (!ref) {
-      ref = entries.reduce(
-        (best, e) => (e.avg.weighted > (best?.avg.weighted || 0) ? e : best),
-        null,
-      );
-    }
-    if (!ref) continue;
-
-    for (const e of entries) {
-      if (e === ref) continue;
-      const pctDelta = (key) =>
-        ref.avg[key] ? ((e.avg[key] - ref.avg[key]) / ref.avg[key]) * 100 : 0;
-      const deltas = { weighted: pctDelta("weighted") };
-      for (const s of Object.keys(SCENARIOS)) {
-        deltas[s] = pctDelta(s);
-      }
-      costs.push({
-        heroTree,
-        apex,
-        templateName: e.templateName,
-        refName: ref.templateName,
-        deltas,
-      });
-    }
-  }
-
-  // Sort by apex rank, then by delta
-  costs.sort(
-    (a, b) => a.apex - b.apex || a.deltas.weighted - b.deltas.weighted,
-  );
-  return costs;
+  return byApex;
 }
 
 // --- Merge sim results into per-build data ---
@@ -427,7 +388,7 @@ function generateHtml(data) {
     specName,
     builds,
     iterations,
-    clusterCosts,
+    apexBuilds,
     defensiveTalentCosts,
     heroTrees,
   } = data;
@@ -448,7 +409,7 @@ function generateHtml(data) {
     renderBestBuilds(builds),
     renderHeroComparison(builds, heroTrees),
     renderBuildRankings(builds, heroTrees),
-    renderTalentImpact(clusterCosts, defensiveTalentCosts, builds),
+    renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
     renderOptimizationJourney(iterations),
     renderFooter(),
   ];
@@ -768,13 +729,7 @@ function renderBuildRankings(builds, heroTrees) {
 </section>`;
 }
 
-function groupByApex(items) {
-  const groups = {};
-  for (const c of items) (groups[c.apex] ||= []).push(c);
-  return Object.entries(groups);
-}
-
-function renderTalentImpact(clusterCosts, defensiveTalentCosts, builds) {
+function renderTalentImpact(apexBuilds, defensiveTalentCosts, builds) {
   let html = `<section>
   <h2>Talent Impact</h2>`;
 
@@ -786,44 +741,58 @@ function renderTalentImpact(clusterCosts, defensiveTalentCosts, builds) {
     );
   }
 
-  if (clusterCosts.length > 0) {
-    const scenarios = activeScenarios(builds);
+  const apexKeys = Object.keys(apexBuilds).sort(
+    (a, b) => Number(a) - Number(b),
+  );
+  if (apexKeys.length > 0) {
+    // Find global best for gap calculation
+    const globalBest = Math.max(
+      ...apexKeys.flatMap((k) => apexBuilds[k].map((e) => e.avg.weighted)),
+    );
 
     html += `<div class="subsection">
-    <h3>Talent Budget by Apex Rank</h3>
-    <p class="section-desc">Higher apex ranks cost talent points. These comparisons show viable cluster combinations at each rank and their DPS vs the best option.</p>`;
+    <h3>Builds by Apex Rank</h3>
+    <p class="section-desc">Higher apex ranks unlock more powerful talents but cost talent points elsewhere. Each row shows average DPS across hero tree variants.</p>`;
 
-    for (const [apex, costs] of groupByApex(clusterCosts)) {
-      const isExpanded = apex === "0";
+    for (const apex of apexKeys) {
+      const entries = apexBuilds[apex];
+      const apexBest = entries[0]?.avg.weighted || 0;
+      const isExpanded = apex === "0" || apex === "4";
       html += `<details${isExpanded ? " open" : ""}>
-      <summary>Apex ${apex} <span class="detail-count">(${costs.length} comparisons)</span></summary>
+      <summary>Apex ${apex} <span class="detail-count">${entries.length} builds, best: ${fmtDps(apexBest)}</span></summary>
       <div class="table-wrap">
         <table class="cost-table">
           <thead><tr>
+            <th>#</th>
             <th>Build</th>
-            <th>Hero Tree</th>
-            <th>vs Reference</th>
-            <th class="num">Weighted</th>`;
+            <th>Tree</th>
+            <th class="num">Weighted DPS</th>
+            <th class="num">vs Best</th>`;
 
-      for (const s of scenarios) {
+      for (const s of activeScenarios(builds)) {
         html += `<th class="num">${esc(SCENARIOS[s].name)}</th>`;
       }
 
       html += `</tr></thead><tbody>`;
 
-      for (const c of costs) {
+      entries.forEach((e, i) => {
+        const gapFromBest =
+          globalBest > 0
+            ? ((e.avg.weighted - globalBest) / globalBest) * 100
+            : 0;
         html += `<tr>
-            <td>${esc(c.templateName)}</td>
-            <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
-            <td class="ref-name">vs ${esc(c.refName)}</td>
-            ${deltaCell(c.deltas.weighted)}`;
+            <td class="num">${i + 1}</td>
+            <td>${esc(e.templateName)}</td>
+            <td><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
+            <td class="num">${fmtDps(e.avg.weighted)}</td>
+            ${deltaCell(gapFromBest)}`;
 
-        for (const s of scenarios) {
-          html += deltaCell(c.deltas[s] || 0);
+        for (const s of activeScenarios(builds)) {
+          html += `<td class="num">${fmtDps(e.avg[s] || 0)}</td>`;
         }
 
         html += `</tr>`;
-      }
+      });
 
       html += `</tbody></table></div></details>`;
     }
@@ -1559,12 +1528,6 @@ tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
   color: var(--fg-muted);
   font-size: 0.76rem;
 }
-
-.ref-name {
-  color: var(--fg-muted);
-  font-size: 0.76rem;
-}
-
 /* Copy hash button */
 .copy-hash {
   display: inline-flex;
@@ -1976,7 +1939,7 @@ async function main() {
     specName,
     builds: reportData.builds,
     iterations: reportData.iterations,
-    clusterCosts: reportData.clusterCosts,
+    apexBuilds: reportData.apexBuilds,
     defensiveTalentCosts,
     heroTrees,
   });
