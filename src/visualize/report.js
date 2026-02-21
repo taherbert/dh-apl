@@ -830,64 +830,72 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     return { ...group, avgDeltas };
   });
 
-  // Sort by weighted cost (most costly first)
-  averaged.sort((a, b) => a.avgDeltas.weighted - b.avgDeltas.weighted);
+  // Sort by cost: least costly first (closest to 0)
+  averaged.sort((a, b) => b.avgDeltas.weighted - a.avgDeltas.weighted);
 
-  // Classify severity
+  // Compute max cost for bar scaling
+  const maxCost = Math.max(
+    ...averaged.map((t) => Math.abs(t.avgDeltas.weighted)),
+    1,
+  );
+
+  // Severity based on data-relative quartiles
   function severity(pct) {
     const abs = Math.abs(pct);
-    if (abs < 2) return "light";
-    if (abs < 5) return "moderate";
+    if (abs < maxCost * 0.33) return "light";
+    if (abs < maxCost * 0.66) return "moderate";
     return "heavy";
+  }
+
+  function sevColor(pct) {
+    const abs = Math.abs(pct);
+    if (abs < maxCost * 0.33) return "var(--positive)";
+    if (abs < maxCost * 0.66) return "var(--gold)";
+    return "var(--negative)";
   }
 
   let html = `<div class="subsection">
     <h3>Defensive Talent Costs</h3>
     <p class="section-desc">DPS cost of taking each defensive talent (averaged across hero trees, vs ${esc(refName)}).</p>
-    <div class="table-wrap">
-      <table class="cost-table">
-        <thead><tr>
-          <th>Defensive Talent</th>
-          <th class="num">Pts</th>
-          <th class="num">Tree</th>
-          <th class="num">Weighted</th>`;
-
-  for (const s of scenarios) {
-    html += `<th class="num">${esc(SCENARIOS[s].name)}</th>`;
-  }
-
-  html += `</tr></thead><tbody>`;
+    <div class="def-cost-list">`;
 
   for (const t of averaged) {
     const sev = severity(t.avgDeltas.weighted);
-    const hasBreakdown = t.entries.length > 1;
-    html += `<tr class="severity-${sev}">
-      <td${hasBreakdown ? ` rowspan="${1 + t.entries.length}"` : ""}>${esc(t.defensiveName)}</td>
-      <td class="num">${t.pointCost}</td>
-      <td class="num avg-label">avg</td>
-      ${deltaCell(t.avgDeltas.weighted)}`;
+    const barPct = (Math.abs(t.avgDeltas.weighted) / maxCost) * 100;
+    const color = sevColor(t.avgDeltas.weighted);
 
+    html += `<div class="def-strip def-strip--${sev}">
+      <div class="def-strip__indicator" style="background:${color}"></div>
+      <div class="def-strip__body">
+        <div class="def-strip__main">
+          <span class="def-strip__name">${esc(t.defensiveName)}</span>
+          <div class="def-strip__bar-wrap">
+            <div class="def-strip__bar" style="width:${barPct.toFixed(1)}%;background:${color}"></div>
+          </div>
+          <span class="def-strip__cost" style="color:${color}">${fmtDelta(t.avgDeltas.weighted)}</span>
+        </div>
+        <div class="def-strip__detail">`;
+
+    // Per-scenario values
     for (const s of scenarios) {
-      html += deltaCell(t.avgDeltas[s] || 0);
+      const v = t.avgDeltas[s] || 0;
+      html += `<span class="def-strip__scenario">${esc(SCENARIOS[s].name)} <em>${fmtDelta(v)}</em></span>`;
     }
 
-    html += `</tr>`;
-
-    if (hasBreakdown) {
+    // Per-tree breakdown
+    if (t.entries.length > 1) {
+      html += `<span class="def-strip__sep"></span>`;
       for (const e of t.entries) {
-        html += `<tr class="breakdown-row severity-${sev}">
-          <td class="num">\u2014</td>
-          <td class="num"><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
-          ${deltaCell(e.deltas.weighted)}`;
-        for (const s of scenarios) {
-          html += deltaCell(e.deltas[s] || 0);
-        }
-        html += `</tr>`;
+        html += `<span class="def-strip__tree"><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span> <em>${fmtDelta(e.deltas.weighted)}</em></span>`;
       }
     }
+
+    html += `</div>
+      </div>
+    </div>`;
   }
 
-  html += `</tbody></table></div></div>`;
+  html += `</div></div>`;
   return html;
 }
 
@@ -1570,17 +1578,121 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 .positive { color: var(--positive); font-weight: 600; }
 .negative { color: var(--negative); font-weight: 600; }
 
-/* Severity indicators */
-.severity-light { background: var(--positive-bg) !important; }
-.severity-light td:first-child { border-left: 3px solid var(--positive); padding-left: calc(0.75rem - 3px); }
-.severity-moderate { background: var(--gold-bg) !important; }
-.severity-moderate td:first-child { border-left: 3px solid var(--gold); padding-left: calc(0.75rem - 3px); }
-.severity-heavy { background: var(--negative-bg) !important; }
-.severity-heavy td:first-child { border-left: 3px solid var(--negative); padding-left: calc(0.75rem - 3px); }
+/* Defensive cost strips */
+.def-cost-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
 
-/* Per-tree breakdown sub-rows */
-.breakdown-row td { padding: 0.3rem 0.75rem; font-size: 0.8rem; }
-.avg-label { font-size: 0.68rem; color: var(--fg-muted); font-weight: 500; letter-spacing: 0.03em; }
+.def-strip {
+  display: flex;
+  background: var(--bg-elevated);
+  transition: background 0.15s;
+}
+
+.def-strip:nth-child(even) { background: var(--surface-alt); }
+.def-strip:hover { background: rgba(123, 147, 255, 0.05); }
+
+.def-strip__indicator {
+  flex: 0 0 3px;
+  align-self: stretch;
+}
+
+.def-strip__body {
+  flex: 1;
+  min-width: 0;
+  padding: 0.65rem 1rem 0.55rem 0.85rem;
+}
+
+.def-strip__main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.def-strip__name {
+  flex: 0 0 170px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.def-strip__bar-wrap {
+  flex: 1;
+  min-width: 0;
+  height: 6px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.def-strip__bar {
+  height: 100%;
+  border-radius: 3px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.def-strip:hover .def-strip__bar { opacity: 1; }
+
+.def-strip__cost {
+  flex: 0 0 75px;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.def-strip__detail {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.def-strip__scenario {
+  font-size: 0.68rem;
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.def-strip__scenario em {
+  font-style: normal;
+  color: var(--fg-dim);
+  font-weight: 500;
+}
+
+.def-strip__sep {
+  width: 1px;
+  height: 12px;
+  background: var(--border);
+  flex: 0 0 1px;
+}
+
+.def-strip__tree {
+  font-size: 0.68rem;
+  color: var(--fg-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.def-strip__tree em {
+  font-style: normal;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.def-strip__tree .tree-badge { font-size: 0.58rem; padding: 0.1em 0.35em; }
 
 /* Details / collapsible */
 details {
