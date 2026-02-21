@@ -1549,14 +1549,14 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 .def-strip__body {
   flex: 1;
   min-width: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 160px 1fr 75px 90px 90px;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0 0.75rem;
   padding: 0.55rem 1rem 0.55rem 0.85rem;
 }
 
 .def-strip__name {
-  flex: 0 0 170px;
   font-family: "Outfit", sans-serif;
   font-weight: 600;
   font-size: 0.84rem;
@@ -1565,7 +1565,6 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 }
 
 .def-strip__bar-wrap {
-  flex: 1;
   min-width: 0;
   height: 6px;
   background: var(--border-subtle);
@@ -1583,7 +1582,6 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 .def-strip:hover .def-strip__bar { opacity: 1; }
 
 .def-strip__cost {
-  flex: 0 0 75px;
   font-family: "Outfit", sans-serif;
   font-size: 0.92rem;
   font-weight: 700;
@@ -1598,12 +1596,8 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-}
-
-.def-strip__tree em {
-  font-style: normal;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
+  text-align: right;
+  justify-content: flex-end;
 }
 
 .def-strip__tree .tree-badge { font-size: 0.58rem; padding: 0.1em 0.35em; }
@@ -1726,7 +1720,7 @@ footer { animation-delay: 0.35s; }
   .showcase-grid { grid-template-columns: 1fr; }
   .best-cards { grid-template-columns: 1fr; }
   .hc-row { grid-template-columns: 70px 1fr 100px 70px; gap: 0.5rem; }
-  .def-strip__name { flex: 0 0 120px; }
+  .def-strip__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
