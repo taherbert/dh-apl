@@ -512,7 +512,9 @@ function renderHeroShowcase(builds, heroTrees) {
       <div class="showcase-build-name">${esc(best.displayName)}${copyBtn(best.hash)}</div>
       <div class="showcase-weighted">${fmtDps(best.dps.weighted || 0)} <span class="showcase-weighted-label">weighted</span></div>
       <div class="showcase-scenarios">${scenarioDps}</div>
-      <div class="showcase-tree-link"><a href="${treeUrl}" target="_blank" rel="noopener">View Talent Tree</a></div>
+      <div class="showcase-tree-wrap">
+        <iframe src="${treeUrl}" title="${esc(heroTrees[tree].displayName)} spec tree" scrolling="no"></iframe>
+      </div>
     </div>`;
   });
 
@@ -890,6 +892,7 @@ function renderDefensiveTalentCosts(costs, refName) {
         <thead><tr>
           <th>Defensive Talent</th>
           <th class="num">Pts</th>
+          <th class="num">Tree</th>
           <th class="num">Weighted</th>`;
 
   for (const s of scenarios) {
@@ -900,9 +903,11 @@ function renderDefensiveTalentCosts(costs, refName) {
 
   for (const t of averaged) {
     const sev = severity(t.avgDeltas.weighted);
+    const hasBreakdown = t.entries.length > 1;
     html += `<tr class="severity-${sev}">
-      <td>${esc(t.defensiveName)}</td>
+      <td${hasBreakdown ? ` rowspan="${1 + t.entries.length}"` : ""}>${esc(t.defensiveName)}</td>
       <td class="num">${t.pointCost}</td>
+      <td class="num avg-label">avg</td>
       ${deltaCell(t.avgDeltas.weighted)}`;
 
     for (const s of scenarios) {
@@ -911,29 +916,17 @@ function renderDefensiveTalentCosts(costs, refName) {
 
     html += `</tr>`;
 
-    // Per-tree detail row (collapsed)
-    if (t.entries.length > 1) {
-      html += `<tr class="detail-row">
-        <td colspan="${3 + scenarios.length}">
-          <details><summary class="inline-detail">Per-tree breakdown</summary>
-          <table class="nested-table"><tbody>`;
-
+    if (hasBreakdown) {
       for (const e of t.entries) {
-        const replaces =
-          e.droppedTalents.length > 0
-            ? e.droppedTalents.map((x) => esc(x)).join(", ")
-            : "\u2014";
-        html += `<tr>
-          <td><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
-          <td class="talents-freed">${replaces}</td>
+        html += `<tr class="breakdown-row severity-${sev}">
+          <td class="num">\u2014</td>
+          <td class="num"><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
           ${deltaCell(e.deltas.weighted)}`;
         for (const s of scenarios) {
           html += deltaCell(e.deltas[s] || 0);
         }
         html += `</tr>`;
       }
-
-      html += `</tbody></table></details></td></tr>`;
     }
   }
 
@@ -1268,27 +1261,21 @@ h4 {
   margin-bottom: 0.1em;
 }
 
-.showcase-tree-link {
+.showcase-tree-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
   margin-top: 1rem;
 }
 
-.showcase-tree-link a {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 500;
-  text-decoration: none;
-  padding: 0.4em 0.8em;
-  border: 1px solid var(--accent-dim);
-  border-radius: var(--radius-sm);
-  transition: all 0.15s;
-}
-
-.showcase-tree-link a:hover {
-  background: var(--accent-glow);
-  border-color: var(--accent);
+.showcase-tree-wrap iframe {
+  width: 1500px;
+  height: 780px;
+  margin-left: -700px;
+  border: none;
+  display: block;
+  background: var(--bg);
+  pointer-events: none;
 }
 
 /* Best build cards */
@@ -1542,12 +1529,6 @@ tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
   font-size: 0.76rem;
 }
 
-.talents-freed {
-  color: var(--fg-muted);
-  font-size: 0.73rem;
-  max-width: 240px;
-}
-
 /* Copy hash button */
 .copy-hash {
   display: inline-flex;
@@ -1598,14 +1579,9 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 .severity-heavy { background: var(--negative-bg) !important; }
 .severity-heavy td:first-child { border-left: 3px solid var(--negative); padding-left: calc(0.75rem - 3px); }
 
-/* Nested detail rows */
-.detail-row { background: transparent !important; }
-.detail-row:hover { background: transparent !important; }
-.detail-row td { padding: 0 0.75rem 0.5rem; border-bottom: none; }
-.inline-detail { font-size: 0.72rem; font-weight: 500; color: var(--fg-muted); padding: 0; }
-.inline-detail:hover { color: var(--accent); }
-.nested-table { border: none; font-size: 0.76rem; }
-.nested-table td { padding: 0.25rem 0.5rem; border-bottom: 1px solid var(--border-subtle); }
+/* Per-tree breakdown sub-rows */
+.breakdown-row td { padding: 0.3rem 0.75rem; font-size: 0.8rem; }
+.avg-label { font-size: 0.68rem; color: var(--fg-muted); font-weight: 500; letter-spacing: 0.03em; }
 
 /* Details / collapsible */
 details {
@@ -1840,6 +1816,8 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
     }
   });
 });
+
+
 `;
 
 // --- Main ---
