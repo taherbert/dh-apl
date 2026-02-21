@@ -1954,18 +1954,14 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
         name: `def_${v.defensiveName.replace(/\s+/g, "_")}_${heroTreeName.replace(/\s+/g, "")}`,
       };
 
-      let hash;
+      let hash = null;
+      let errors = v.errors;
+      let valid = v.valid;
       try {
         hash = buildToHash(crossed, data);
       } catch (e) {
-        crossedVariants.push({
-          ...v,
-          heroTree: heroTreeName,
-          hash: null,
-          valid: false,
-          errors: [...(v.errors || []), `Hash failed: ${e.message}`],
-        });
-        continue;
+        errors = [...(v.errors || []), `Hash failed: ${e.message}`];
+        valid = false;
       }
 
       crossedVariants.push({
@@ -1975,8 +1971,8 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
         pointCost: v.pointCost,
         heroTree: heroTreeName,
         hash,
-        valid: v.valid,
-        errors: v.errors,
+        valid,
+        errors,
         build: crossed,
       });
     }

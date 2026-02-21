@@ -6,7 +6,7 @@
 //   --skip-sims           Generate from cached DB DPS only (no sims)
 //   --fidelity <tier>     quick|standard|confirm (default: standard)
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 import {
@@ -17,7 +17,7 @@ import {
   initSpec,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import { ROOT, resultsDir, aplsDir } from "../engine/paths.js";
+import { resultsDir, aplsDir } from "../engine/paths.js";
 import { loadRoster } from "../sim/build-roster.js";
 import {
   generateRosterProfilesetContent,
@@ -71,7 +71,7 @@ function formatBuildName(build) {
   const match = archetype.match(/^Apex (\d+):\s*(.+)$/);
   if (!match) return build.displayName || build.id;
 
-  const apex = parseInt(match[1]);
+  const apex = Number(match[1]);
   const template = match[2].trim();
 
   // Extract hero variant from the original displayName parenthesized suffix
@@ -113,10 +113,9 @@ function loadReportData(roster, specConfig) {
   });
 
   const iterations = loadChangelog();
-  const talentPolicy = loadTalentPolicy();
   const clusterCosts = deriveClusterCosts(builds, specConfig);
 
-  return { builds, iterations, talentPolicy, clusterCosts };
+  return { builds, iterations, clusterCosts };
 }
 
 function loadChangelog() {
@@ -152,24 +151,6 @@ function loadChangelog() {
   }
 }
 
-function loadTalentPolicy() {
-  const empty = { locked: [], banned: [], excluded: [] };
-  try {
-    const specJson = JSON.parse(
-      readFileSync(join(ROOT, `config.${config.spec.specName}.json`), "utf-8"),
-    );
-    const t = specJson.talents;
-    if (!t) return empty;
-    return {
-      locked: t.locked || [],
-      banned: t.banned || [],
-      excluded: t.excluded || [],
-    };
-  } catch {
-    return empty;
-  }
-}
-
 // --- Cluster cost derivation ---
 
 function deriveClusterCosts(builds, specConfig) {
@@ -184,7 +165,7 @@ function deriveClusterCosts(builds, specConfig) {
     if (!b.archetype || b.dps.weighted <= 0) continue;
     const match = b.archetype.match(/^Apex (\d+):\s*(.+)$/);
     if (!match) continue;
-    const apex = parseInt(match[1]);
+    const apex = Number(match[1]);
     const templateName = match[2].trim();
     const key = `${b.heroTree}|${apex}|${templateName}`;
     if (!groups[key])
@@ -233,21 +214,24 @@ function deriveClusterCosts(builds, specConfig) {
       if (e === ref) continue;
       const pctDelta = (key) =>
         ref.avg[key] ? ((e.avg[key] - ref.avg[key]) / ref.avg[key]) * 100 : 0;
+      const deltas = { weighted: pctDelta("weighted") };
+      for (const s of Object.keys(SCENARIOS)) {
+        deltas[s] = pctDelta(s);
+      }
       costs.push({
         heroTree,
         apex,
         templateName: e.templateName,
         refName: ref.templateName,
-        deltaWeighted: pctDelta("weighted"),
-        deltaSt: pctDelta("st"),
-        deltaSmall: pctDelta("small_aoe"),
-        deltaBig: pctDelta("big_aoe"),
+        deltas,
       });
     }
   }
 
   // Sort by apex rank, then by delta
-  costs.sort((a, b) => a.apex - b.apex || a.deltaWeighted - b.deltaWeighted);
+  costs.sort(
+    (a, b) => a.apex - b.apex || a.deltas.weighted - b.deltas.weighted,
+  );
   return costs;
 }
 
@@ -280,21 +264,24 @@ function mergeSimResults(roster, baselineMaps, oursMaps) {
 
 function persistSimResults(roster, buildData) {
   const hashById = new Map(roster.builds.map((b) => [b.id, b.hash]));
-
-  function roundScenarios(dpsRow) {
-    const result = {};
-    for (const s of Object.keys(SCENARIOS)) {
-      result[s] = Math.round(dpsRow[s] || 0);
-    }
-    return result;
-  }
+  const scenarioKeys = Object.keys(SCENARIOS);
+  const roundDps = (dpsRow) =>
+    Object.fromEntries(
+      scenarioKeys.map((s) => [s, Math.round(dpsRow[s] || 0)]),
+    );
 
   for (const row of buildData) {
     const hash = hashById.get(row.id);
     if (!hash) continue;
-    if (row.dps.weighted > 0) updateBuildDps(hash, roundScenarios(row.dps));
+    if (row.dps.weighted > 0)
+      updateBuildDps(hash, roundDps(row.dps), undefined, SCENARIO_WEIGHTS);
     if (row.simcDps?.weighted > 0)
-      updateBuildSimcDps(hash, roundScenarios(row.simcDps));
+      updateBuildSimcDps(
+        hash,
+        roundDps(row.simcDps),
+        undefined,
+        SCENARIO_WEIGHTS,
+      );
   }
 }
 
@@ -308,14 +295,11 @@ async function simDefensiveCosts(
 ) {
   // Find the best weighted build to use as reference
   let refTemplate = null;
-  const bestBuild = reportData.builds.reduce(
-    (a, b) => ((b.dps.weighted || 0) > (a.dps.weighted || 0) ? b : a),
-    reportData.builds[0],
-  );
+  const bestBuild = findBest(reportData.builds, "weighted");
 
   const archetypeMatch = bestBuild?.archetype?.match(/^Apex (\d+):\s*(.+)$/);
   if (archetypeMatch && specConfig.rosterTemplates) {
-    const apexRank = parseInt(archetypeMatch[1]);
+    const apexRank = Number(archetypeMatch[1]);
     const templateName = archetypeMatch[2].trim();
     refTemplate = specConfig.rosterTemplates.find(
       (t) => t.name === templateName && t.apexRank === apexRank,
@@ -332,7 +316,7 @@ async function simDefensiveCosts(
 
   if (references.length === 0 || variants.length === 0) {
     console.log("  No defensive talent builds to sim.");
-    return [];
+    return { costs: [], refName: "" };
   }
 
   console.log(
@@ -441,11 +425,9 @@ function generateHtml(data) {
     specName,
     builds,
     iterations,
-    talentPolicy,
     clusterCosts,
     defensiveTalentCosts,
     heroTrees,
-    specConfig,
   } = data;
   const displaySpec = specName
     .replace(/_/g, " ")
@@ -460,16 +442,11 @@ function generateHtml(data) {
 
   const sections = [
     renderHeader(displaySpec, freshness),
-    renderKeyStats(builds, heroTrees),
+    renderHeroShowcase(builds, heroTrees),
     renderBestBuilds(builds),
     renderHeroComparison(builds, heroTrees),
     renderBuildRankings(builds, heroTrees),
-    renderTalentImpact(
-      clusterCosts,
-      defensiveTalentCosts,
-      talentPolicy,
-      specConfig,
-    ),
+    renderTalentImpact(clusterCosts, defensiveTalentCosts),
     renderOptimizationJourney(iterations),
     renderFooter(),
   ];
@@ -482,7 +459,7 @@ function generateHtml(data) {
 <title>${esc(displaySpec)} — APL Optimization Report</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 ${CSS}
 </style>
@@ -511,42 +488,37 @@ function renderHeader(displaySpec, freshness) {
 </header>`;
 }
 
-function renderKeyStats(builds, heroTrees) {
-  const best = findBest(builds, "weighted");
-
-  // Hero tree gap
+function renderHeroShowcase(builds, heroTrees) {
   const treeNames = Object.keys(heroTrees);
-  const treeAvgs = {};
-  for (const tree of treeNames) {
+
+  const panels = treeNames.map((tree) => {
     const treeBuilds = builds.filter((b) => b.heroTree === tree);
-    if (treeBuilds.length === 0) continue;
-    treeAvgs[tree] =
-      treeBuilds.reduce((sum, b) => sum + (b.dps.weighted || 0), 0) /
-      treeBuilds.length;
-  }
+    const best = findBest(treeBuilds, "weighted");
+    if (!best) return "";
 
-  let treeGapHtml = "";
-  if (treeNames.length === 2) {
-    const [t1, t2] = treeNames;
-    const avg1 = treeAvgs[t1] || 0;
-    const avg2 = treeAvgs[t2] || 0;
-    if (avg1 > 0 && avg2 > 0) {
-      const leaderTree = avg1 >= avg2 ? t1 : t2;
-      const leader = heroTrees[leaderTree].displayName;
-      const gap = Math.abs(((avg1 - avg2) / Math.min(avg1, avg2)) * 100);
-      treeGapHtml = `<div class="stat-card">
-    <div class="stat-value"><span class="tree-badge ${treeClass(leaderTree)}">${esc(leader)}</span></div>
-    <div class="stat-label">Leads by ${gap.toFixed(1)}% weighted avg</div>
-  </div>`;
-    }
-  }
+    const scenarioDps = Object.keys(SCENARIOS)
+      .map(
+        (s) =>
+          `<span class="showcase-scenario"><span class="showcase-scenario-label">${esc(SCENARIOS[s].name)}</span> ${fmtDps(best.dps[s] || 0)}</span>`,
+      )
+      .join("");
 
-  return `<section class="key-stats">
-  <div class="stat-card accent">
-    <div class="stat-value">${esc(best?.displayName || "—")}${copyBtn(best?.hash)}</div>
-    <div class="stat-label">Best Overall — ${fmtDps(best?.dps.weighted || 0)} weighted</div>
-  </div>
-  ${treeGapHtml}
+    return `<div class="showcase-panel">
+      <div class="showcase-header">
+        <span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span>
+      </div>
+      <div class="showcase-build-name">${esc(best.displayName)}${copyBtn(best.hash)}</div>
+      <div class="showcase-weighted">${fmtDps(best.dps.weighted || 0)} <span class="showcase-weighted-label">weighted</span></div>
+      <div class="showcase-scenarios">${scenarioDps}</div>
+      <div class="showcase-tree-wrap">
+        <iframe src="https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117" title="${esc(heroTrees[tree].displayName)} talent tree" scrolling="no"></iframe>
+      </div>
+    </div>`;
+  });
+
+  return `<section class="hero-showcase">
+  <h2>Hero Quick View</h2>
+  <div class="showcase-grid">${panels.join("\n")}</div>
 </section>`;
 }
 
@@ -560,22 +532,15 @@ function renderBestBuilds(builds) {
     }),
   ];
 
-  const defaultHash = bestW?.hash || "";
-
   return `<section>
-  <h2>Best Builds Per Scenario</h2>
-  <div class="best-builds-layout">
-    <div class="talent-tree-wrap">
-      <iframe id="talent-tree-iframe" src="https://mimiron.raidbots.com/simbot/render/talents/${esc(defaultHash)}?bgcolor=0f1117" title="Talent tree"></iframe>
-    </div>
-    <div class="best-cards">${cards.join("\n")}</div>
-  </div>
+  <h2>Best Per Scenario</h2>
+  <div class="best-cards">${cards.join("\n")}</div>
 </section>`;
 }
 
 function makeBestCard(label, build, dps) {
   if (!build) return "";
-  return `    <div class="best-card" data-hash="${esc(build.hash)}">
+  return `    <div class="best-card">
       <div class="best-label">${esc(label)}</div>
       <div class="best-name">${esc(build.displayName)}${copyBtn(build.hash)}</div>
       <div class="best-meta"><span class="tree-badge ${treeClass(build.heroTree)}">${esc(treeDisplayName(build.heroTree))}</span> <span class="best-dps">${fmtDps(dps)}</span></div>
@@ -587,15 +552,13 @@ function renderHeroComparison(builds, heroTrees) {
   if (treeNames.length < 2) return "";
 
   const scenarios = [...Object.keys(SCENARIOS), "weighted"];
-  const scenarioLabels = {
-    ...Object.fromEntries(
-      Object.entries(SCENARIOS).map(([k, v]) => [
-        k,
-        `${v.desiredTargets}T (${v.maxTime}s)`,
-      ]),
-    ),
-    weighted: "Weighted",
-  };
+  const scenarioLabels = Object.fromEntries([
+    ...Object.entries(SCENARIOS).map(([k, v]) => [
+      k,
+      `${v.desiredTargets}T (${v.maxTime}s)`,
+    ]),
+    ["weighted", "Weighted"],
+  ]);
 
   // Compute averages per tree per scenario
   const treeData = {};
@@ -661,8 +624,8 @@ function renderHeroComparison(builds, heroTrees) {
 
   const svg = `<svg class="hero-chart" viewBox="0 0 ${chartWidth} ${chartHeight}" xmlns="http://www.w3.org/2000/svg">
     <style>
-      .chart-label { font: 500 12px Inter, sans-serif; fill: #8b8fa3; }
-      .chart-value { font: 600 11px Inter, sans-serif; fill: #e2e4ed; }
+      .chart-label { font: 500 12px Outfit, DM Sans, sans-serif; fill: #7c8098; }
+      .chart-value { font: 600 11px DM Sans, sans-serif; fill: #e4e6f0; }
     </style>
     ${svgBars}
   </svg>`;
@@ -774,16 +737,33 @@ function renderBuildRankings(builds, heroTrees) {
 </section>`;
 }
 
-function renderTalentImpact(
-  clusterCosts,
-  defensiveTalentCosts,
-  talentPolicy,
-  specConfig,
-) {
-  let html = `<section>
-  <h2>Talent Tradeoffs</h2>`;
+const TEMPLATE_LABELS = {
+  "Drop SC": "Without Soul Carver",
+  "Drop Sigil": "Without Cycle of Binding",
+  "Drop SC+Sigil": "Without Soul Carver + Cycle",
+  "Trim FelDev": "Lite Fel Devastation",
+  "Trim Harvest": "Lite Vulnerability",
+  "Brand+Harvest": "Brand + Harvest",
+  "Brand+FelDev": "Brand + Fel Devastation",
+  "Harvest+FelDev": "Harvest + Fel Devastation",
+  Balanced: "Balanced",
+  "Full Stack": "Full Stack",
+};
 
-  // Per-talent defensive costs (from sim)
+function groupByApex(items) {
+  const groups = {};
+  for (const c of items) (groups[c.apex] ||= []).push(c);
+  return Object.entries(groups);
+}
+
+function templateLabel(name) {
+  return TEMPLATE_LABELS[name] || name;
+}
+
+function renderTalentImpact(clusterCosts, defensiveTalentCosts) {
+  let html = `<section>
+  <h2>Talent Impact</h2>`;
+
   if (defensiveTalentCosts?.costs?.length > 0) {
     html += renderDefensiveTalentCosts(
       defensiveTalentCosts.costs,
@@ -792,163 +772,48 @@ function renderTalentImpact(
   }
 
   if (clusterCosts.length > 0) {
-    // Map template names to cluster keys for talent list lookup
-    const clusterMap = {
-      "No Brand": ["brand"],
-      "No Harvest": ["harvest"],
-      "No FelDev": ["feldev"],
-      "Drop SC": ["sc"],
-      "Drop Sigil": ["sigil"],
-      "Drop SC+Sigil": ["sc", "sigil"],
-      "Trim FelDev": ["feldev"],
-      "Trim Harvest": ["harvest"],
-    };
+    const scenarios = Object.keys(SCENARIOS);
 
-    const clusters = specConfig?.talentClusters || {};
+    html += `<div class="subsection">
+    <h3>Talent Budget by Apex Rank</h3>
+    <p class="section-desc">Higher apex ranks cost talent points. These comparisons show viable cluster combinations at each rank and their DPS vs the best option.</p>`;
 
-    function clusterTalentList(templateName) {
-      const keys = clusterMap[templateName];
-      if (!keys) return "";
-      const talents = keys.flatMap((k) => {
-        const c = clusters[k];
-        if (!c) return [];
-        return [...(c.core || []), ...(c.extended || [])];
-      });
-      if (talents.length === 0) return "";
-      return talents.map((t) => esc(t)).join(", ");
-    }
-
-    function groupByApex(items) {
-      const groups = {};
-      for (const c of items) (groups[c.apex] ||= []).push(c);
-      return Object.entries(groups);
-    }
-
-    // Split: defensive costs (apex 0-1) vs apex tradeoffs (apex 2+)
-    const defensiveCosts = clusterCosts.filter((c) => c.apex <= 1);
-    const apexCosts = clusterCosts.filter((c) => c.apex >= 2);
-
-    // Defensive costs section
-    if (defensiveCosts.length > 0) {
-      html += `<div class="subsection">
-    <h3>Defensive Costs</h3>
-    <p class="section-desc">How much DPS do you sacrifice when freeing points for defensive talents?</p>`;
-
-      for (const [apex, costs] of groupByApex(defensiveCosts)) {
-        const isExpanded = apex === "0";
-        html += `<details${isExpanded ? " open" : ""}>
+    for (const [apex, costs] of groupByApex(clusterCosts)) {
+      const isExpanded = apex === "0";
+      html += `<details${isExpanded ? " open" : ""}>
       <summary>Apex ${apex} <span class="detail-count">(${costs.length} comparisons)</span></summary>
       <div class="table-wrap">
         <table class="cost-table">
           <thead><tr>
-            <th>Dropped</th>
-            <th>Talents Freed</th>
-            <th>Hero Tree</th>
-            <th class="num">Weighted</th>
-            <th class="num">1T</th>
-            <th class="num">5T</th>
-            <th class="num">10T</th>
-          </tr></thead>
-          <tbody>`;
-
-        for (const c of costs) {
-          const talents = clusterTalentList(c.templateName);
-          html += `<tr>
-            <td>${esc(c.templateName)}</td>
-            <td class="talents-freed">${talents}</td>
-            <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
-            ${deltaCell(c.deltaWeighted)}
-            ${deltaCell(c.deltaSt)}
-            ${deltaCell(c.deltaSmall)}
-            ${deltaCell(c.deltaBig)}
-          </tr>`;
-        }
-
-        html += `</tbody></table></div></details>`;
-      }
-
-      html += `</div>`;
-    }
-
-    // Apex tradeoffs section
-    if (apexCosts.length > 0) {
-      html += `<div class="subsection">
-    <h3>Apex Tradeoffs</h3>
-    <p class="section-desc">DPS impact of different talent investments at higher apex ranks.</p>`;
-
-      for (const [apex, costs] of groupByApex(apexCosts)) {
-        html += `<details>
-      <summary>Apex ${apex} <span class="detail-count">(${costs.length} comparisons)</span></summary>
-      <div class="table-wrap">
-        <table class="cost-table">
-          <thead><tr>
-            <th>Template</th>
+            <th>Build</th>
             <th>Hero Tree</th>
             <th>vs Reference</th>
-            <th class="num">Weighted</th>
-            <th class="num">1T</th>
-            <th class="num">5T</th>
-            <th class="num">10T</th>
-          </tr></thead>
-          <tbody>`;
+            <th class="num">Weighted</th>`;
 
-        for (const c of costs) {
-          html += `<tr>
-            <td>${esc(c.templateName)}</td>
-            <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
-            <td class="ref-name">vs ${esc(c.refName)}</td>
-            ${deltaCell(c.deltaWeighted)}
-            ${deltaCell(c.deltaSt)}
-            ${deltaCell(c.deltaSmall)}
-            ${deltaCell(c.deltaBig)}
-          </tr>`;
-        }
-
-        html += `</tbody></table></div></details>`;
+      for (const s of scenarios) {
+        html += `<th class="num">${esc(SCENARIOS[s].name)}</th>`;
       }
 
-      html += `</div>`;
-    }
-  }
+      html += `</tr></thead><tbody>`;
 
-  const policyCategories = [
-    {
-      key: "locked",
-      label: "Locked",
-      desc: "Always included in generated builds — core DPS rotation talents",
-    },
-    {
-      key: "banned",
-      label: "Banned",
-      desc: "Never included in generated builds — pure defensive/healing talents with no DPS value. You may still want these in real content.",
-    },
-    {
-      key: "excluded",
-      label: "Excluded",
-      desc: "Not included in generated builds — defensive talents whose point budget is used to test DPS cluster variations instead. The DPS cost of taking these is shown in Defensive Costs above.",
-    },
-  ];
-  const activePolicies = policyCategories.filter(
-    (p) => talentPolicy[p.key].length > 0,
-  );
+      for (const c of costs) {
+        html += `<tr>
+            <td>${esc(templateLabel(c.templateName))}</td>
+            <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
+            <td class="ref-name">vs ${esc(templateLabel(c.refName))}</td>
+            ${deltaCell(c.deltas.weighted)}`;
 
-  if (activePolicies.length > 0) {
-    html += `<div class="subsection">
-    <h3>Talent Policy</h3>
-    <div class="policy-grid">`;
+        for (const s of scenarios) {
+          html += deltaCell(c.deltas[s] || 0);
+        }
 
-    for (const { key, label, desc } of activePolicies) {
-      const tags = talentPolicy[key]
-        .map((t) => `<span class="talent-tag ${key}">${esc(t)}</span>`)
-        .join("");
-      html += `<div class="policy-card">
-        <div class="policy-header ${key}">${label} (${talentPolicy[key].length})</div>
-        <div class="policy-desc">${desc}</div>
-        <div class="talent-list">${tags}</div>
-      </div>`;
+        html += `</tr>`;
+      }
+
+      html += `</tbody></table></div></details>`;
     }
 
-    html += `</div></div>`;
+    html += `</div>`;
   }
 
   html += `</section>`;
@@ -958,16 +823,48 @@ function renderTalentImpact(
 function renderDefensiveTalentCosts(costs, refName) {
   const scenarios = Object.keys(SCENARIOS);
 
+  // Group by defensive talent name, average across hero trees
+  const byTalent = {};
+  for (const c of costs) {
+    if (!byTalent[c.defensiveName]) {
+      byTalent[c.defensiveName] = {
+        defensiveName: c.defensiveName,
+        pointCost: c.pointCost,
+        entries: [],
+      };
+    }
+    byTalent[c.defensiveName].entries.push(c);
+  }
+
+  const averaged = Object.values(byTalent).map((group) => {
+    const n = group.entries.length;
+    const avgDeltas = {};
+    for (const key of [...scenarios, "weighted"]) {
+      avgDeltas[key] =
+        group.entries.reduce((sum, e) => sum + (e.deltas[key] || 0), 0) / n;
+    }
+    return { ...group, avgDeltas };
+  });
+
+  // Sort by weighted cost (most costly first)
+  averaged.sort((a, b) => a.avgDeltas.weighted - b.avgDeltas.weighted);
+
+  // Classify severity
+  function severity(pct) {
+    const abs = Math.abs(pct);
+    if (abs < 2) return "light";
+    if (abs < 5) return "moderate";
+    return "heavy";
+  }
+
   let html = `<div class="subsection">
-    <h3>Per-Talent Defensive Costs</h3>
-    <p class="section-desc">DPS cost of taking each defensive talent vs the ${esc(refName)} build. Each row shows which DPS talent(s) get dropped to make room.</p>
+    <h3>Defensive Talent Costs</h3>
+    <p class="section-desc">DPS cost of taking each defensive talent (averaged across hero trees, vs ${esc(refName)}).</p>
     <div class="table-wrap">
       <table class="cost-table">
         <thead><tr>
           <th>Defensive Talent</th>
-          <th>Replaces</th>
-          <th>Pts</th>
-          <th>Hero Tree</th>
+          <th class="num">Pts</th>
           <th class="num">Weighted</th>`;
 
   for (const s of scenarios) {
@@ -976,24 +873,43 @@ function renderDefensiveTalentCosts(costs, refName) {
 
   html += `</tr></thead><tbody>`;
 
-  for (const c of costs) {
-    const replaces =
-      c.droppedTalents.length > 0
-        ? c.droppedTalents.map((t) => esc(t)).join(", ")
-        : '<span class="fg-muted">—</span>';
-
-    html += `<tr>
-      <td>${esc(c.defensiveName)}</td>
-      <td class="talents-freed">${replaces}</td>
-      <td class="num">${c.pointCost}</td>
-      <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
-      ${deltaCell(c.deltas.weighted)}`;
+  for (const t of averaged) {
+    const sev = severity(t.avgDeltas.weighted);
+    html += `<tr class="severity-${sev}">
+      <td>${esc(t.defensiveName)}</td>
+      <td class="num">${t.pointCost}</td>
+      ${deltaCell(t.avgDeltas.weighted)}`;
 
     for (const s of scenarios) {
-      html += deltaCell(c.deltas[s] || 0);
+      html += deltaCell(t.avgDeltas[s] || 0);
     }
 
     html += `</tr>`;
+
+    // Per-tree detail row (collapsed)
+    if (t.entries.length > 1) {
+      html += `<tr class="detail-row">
+        <td colspan="${3 + scenarios.length}">
+          <details><summary class="inline-detail">Per-tree breakdown</summary>
+          <table class="nested-table"><tbody>`;
+
+      for (const e of t.entries) {
+        const replaces =
+          e.droppedTalents.length > 0
+            ? e.droppedTalents.map((x) => esc(x)).join(", ")
+            : "\u2014";
+        html += `<tr>
+          <td><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
+          <td class="talents-freed">${replaces}</td>
+          ${deltaCell(e.deltas.weighted)}`;
+        for (const s of scenarios) {
+          html += deltaCell(e.deltas[s] || 0);
+        }
+        html += `</tr>`;
+      }
+
+      html += `</tbody></table></details></td></tr>`;
+    }
   }
 
   html += `</tbody></table></div></div>`;
@@ -1118,42 +1034,50 @@ function computeWeighted(dpsRow) {
 
 const CSS = `
 :root {
-  --bg: #0f1117;
-  --surface: #181a24;
-  --surface-alt: #1e2030;
-  --border: #2a2d3e;
-  --fg: #e2e4ed;
-  --fg-muted: #8b8fa3;
-  --accent: #6c8aff;
+  --bg: #0c0e14;
+  --bg-elevated: #10121a;
+  --surface: #161822;
+  --surface-alt: #1a1d2a;
+  --border: #252838;
+  --border-subtle: #1e2130;
+  --fg: #e4e6f0;
+  --fg-dim: #c0c3d4;
+  --fg-muted: #7c8098;
+  --accent: #7b93ff;
   --accent-dim: #3d4f8a;
-  --positive: #4ade80;
-  --positive-bg: rgba(74, 222, 128, 0.08);
-  --negative: #f87171;
-  --negative-bg: rgba(248, 113, 113, 0.08);
-  --gold: #fbbf24;
-  --gold-bg: rgba(251, 191, 36, 0.1);
+  --accent-glow: rgba(123, 147, 255, 0.12);
+  --positive: #34d399;
+  --positive-bg: rgba(52, 211, 153, 0.07);
+  --negative: #fb7185;
+  --negative-bg: rgba(251, 113, 133, 0.07);
+  --gold: #f5c842;
+  --gold-bg: rgba(245, 200, 66, 0.08);
   --anni: #a78bfa;
+  --anni-glow: rgba(167, 139, 250, 0.10);
   --ar: #fb923c;
-  --radius: 8px;
+  --ar-glow: rgba(251, 146, 60, 0.10);
+  --radius: 10px;
+  --radius-sm: 6px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   background: var(--bg);
   color: var(--fg);
   line-height: 1.6;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 2rem;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Header */
 header {
-  padding: 2.5rem 0 1.5rem;
+  padding: 3rem 0 1.75rem;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -1162,19 +1086,23 @@ header {
 }
 
 header h1 {
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, var(--accent), var(--anni));
+  font-family: "Outfit", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--anni) 60%, var(--ar) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .subtitle {
+  font-family: "Outfit", sans-serif;
   color: var(--fg-muted);
-  font-size: 0.9rem;
-  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-top: 0.15rem;
+  letter-spacing: 0.01em;
 }
 
 .header-meta {
@@ -1182,138 +1110,184 @@ header h1 {
   gap: 0.5rem;
   align-items: center;
   color: var(--fg-muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
-
 /* Section basics */
-section { margin-bottom: 2.5rem; }
+section { margin-bottom: 3rem; }
 
 h2 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: var(--fg);
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.25rem;
   border-bottom: 1px solid var(--border);
 }
 
 h3 {
+  font-family: "Outfit", sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
-  margin: 1.25rem 0 0.75rem;
+  margin: 1.5rem 0 0.75rem;
   color: var(--fg);
 }
 
 h4 {
-  font-size: 0.85rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.82rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--fg-muted);
-}
-
-.section-desc {
-  color: var(--fg-muted);
-  font-size: 0.82rem;
-  margin-bottom: 1rem;
-}
-
-.subsection { margin-bottom: 2rem; }
-
-/* Key stats */
-.key-stats {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 2.5rem;
-}
-
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
-  flex: 1;
-  min-width: 220px;
-}
-
-.stat-card.accent {
-  border-color: var(--accent-dim);
-  background: linear-gradient(135deg, rgba(108, 138, 255, 0.06), transparent);
-}
-
-.stat-value {
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.3;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.stat-label {
-  font-size: 0.75rem;
-  color: var(--fg-muted);
-  margin-top: 0.35rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
-/* Best builds layout */
-.best-builds-layout {
-  display: flex;
+.section-desc {
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.subsection { margin-bottom: 2.5rem; }
+
+/* Hero Showcase */
+.hero-showcase { margin-bottom: 3rem; }
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 1.5rem;
-  align-items: flex-start;
 }
 
-.talent-tree-wrap {
-  flex: 0 0 340px;
-  min-width: 0;
-}
-
-.talent-tree-wrap iframe {
-  width: 100%;
-  height: 500px;
+.showcase-panel {
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.showcase-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--ar), transparent); }
+.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--anni), transparent); }
+.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--ar-glow); }
+.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--anni-glow); }
+
+.showcase-header {
+  margin-bottom: 1rem;
+}
+
+.showcase-build-name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.showcase-weighted {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.showcase-weighted-label {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.showcase-scenarios {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.showcase-scenario {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.showcase-scenario-label {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  margin-bottom: 0.1em;
+}
+
+.showcase-tree-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.showcase-tree-wrap iframe {
+  width: 100%;
+  height: 780px;
+  border: none;
+  display: block;
   background: var(--bg);
 }
 
 /* Best build cards */
 .best-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  flex: 1;
-  min-width: 0;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.75rem;
 }
 
 .best-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-  cursor: pointer;
-  transition: border-color 0.15s;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.15rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.best-card:hover { border-color: var(--accent-dim); }
-.best-card.active { border-color: var(--accent); }
+.best-card:hover { border-color: var(--accent-dim); box-shadow: 0 2px 12px var(--accent-glow); }
 
 .best-label {
-  font-size: 0.7rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.65rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: var(--fg-muted);
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
 }
 
 .best-name {
   font-weight: 600;
-  font-size: 0.9rem;
-  margin-bottom: 0.35rem;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
   display: flex;
   align-items: center;
   gap: 0.35rem;
@@ -1327,9 +1301,9 @@ h4 {
 
 .best-dps {
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.85rem;
-  color: var(--fg-muted);
+  color: var(--fg-dim);
 }
 
 /* Hero comparison */
@@ -1354,22 +1328,23 @@ h4 {
 
 .legend {
   display: flex;
-  gap: 1.25rem;
-  margin-bottom: 1rem;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
+  gap: 0.45rem;
+  font-size: 0.78rem;
   color: var(--fg-muted);
+  font-weight: 500;
 }
 
 .legend-dot {
   width: 10px;
   height: 10px;
-  border-radius: 2px;
+  border-radius: 3px;
   display: inline-block;
 }
 
@@ -1384,8 +1359,8 @@ h4 {
 .top-builds-panel {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem;
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.15rem;
 }
 
 .top-builds-table {
@@ -1394,35 +1369,37 @@ h4 {
 }
 
 .top-builds-table td {
-  padding: 0.3rem 0.5rem;
+  padding: 0.35rem 0.5rem;
   border: none;
 }
 
 .top-builds-table .rank {
   width: 24px;
   color: var(--fg-muted);
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 0.75rem;
 }
 
 .top-builds-table .num {
   text-align: right;
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* Tree badges */
 .tree-badge {
   display: inline-block;
-  padding: 0.15em 0.6em;
+  padding: 0.2em 0.6em;
   border-radius: 4px;
-  font-size: 0.72rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.03em;
 }
 
-.tree-badge.anni { background: rgba(167, 139, 250, 0.15); color: var(--anni); }
-.tree-badge.ar { background: rgba(251, 146, 60, 0.15); color: var(--ar); }
-.tree-badge.sm { font-size: 0.68rem; padding: 0.1em 0.45em; }
+.tree-badge.anni { background: rgba(167, 139, 250, 0.13); color: var(--anni); }
+.tree-badge.ar { background: rgba(251, 146, 60, 0.13); color: var(--ar); }
+.tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
 
 /* Filter bar */
 .filter-bar {
@@ -1433,9 +1410,10 @@ h4 {
 }
 
 .filter-btn {
+  font-family: "DM Sans", sans-serif;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   color: var(--fg-muted);
   padding: 0.4em 1em;
   font-size: 0.78rem;
@@ -1444,7 +1422,7 @@ h4 {
   transition: all 0.15s;
 }
 
-.filter-btn:hover { border-color: var(--accent); color: var(--fg); }
+.filter-btn:hover { border-color: var(--accent-dim); color: var(--fg); }
 .filter-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--fg); }
 
 /* Tables */
@@ -1452,26 +1430,28 @@ h4 {
   overflow-x: auto;
   border-radius: var(--radius);
   border: 1px solid var(--border);
+  background: var(--bg-elevated);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
 }
 
 th, td {
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.75rem;
   text-align: left;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 th {
   background: var(--surface);
+  font-family: "Outfit", sans-serif;
   font-weight: 600;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   color: var(--fg-muted);
   white-space: nowrap;
   position: sticky;
@@ -1486,20 +1466,21 @@ th.sortable.sorted-desc::after { content: " \\25BC"; font-size: 0.6em; }
 
 th.num, td.num, td.dps-cell { text-align: right; }
 
-tbody tr { background: var(--bg); }
+tbody tr { background: var(--bg-elevated); }
 tbody tr:nth-child(even) { background: var(--surface-alt); }
-tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
+tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
 
 .dps-cell {
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  font-weight: 500;
 }
 
 .dps-cell.top-build { background: var(--gold-bg); }
 
 .build-name {
   font-weight: 500;
-  font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  font-family: "DM Sans", sans-serif;
   font-size: 0.78rem;
   word-break: break-word;
   white-space: nowrap;
@@ -1507,17 +1488,17 @@ tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
 
 .archetype-cell {
   color: var(--fg-muted);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
 }
 
 .ref-name {
   color: var(--fg-muted);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
 }
 
 .talents-freed {
   color: var(--fg-muted);
-  font-size: 0.75rem;
+  font-size: 0.73rem;
   max-width: 240px;
 }
 
@@ -1538,7 +1519,8 @@ tbody tr:hover { background: rgba(108, 138, 255, 0.06); }
   transition: opacity 0.15s, color 0.15s, border-color 0.15s;
 }
 tr:hover .copy-hash, .build-name:hover .copy-hash,
-.best-name:hover .copy-hash, .stat-value:hover .copy-hash { opacity: 1; }
+.best-name:hover .copy-hash, .showcase-build-name:hover .copy-hash { opacity: 1; }
+.showcase-panel .copy-hash { opacity: 0.5; }
 .copy-hash:hover { color: var(--accent); border-color: var(--border); }
 .copy-hash.copied { color: var(--positive); opacity: 1; }
 .copy-hash svg { width: 13px; height: 13px; }
@@ -1547,96 +1529,68 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 .badge {
   display: inline-block;
   background: var(--gold);
-  color: #000;
+  color: #0c0e14;
+  font-family: "Outfit", sans-serif;
   font-size: 0.55rem;
   font-weight: 700;
-  padding: 0.1em 0.35em;
+  padding: 0.1em 0.4em;
   border-radius: 3px;
   vertical-align: middle;
-  margin-left: 0.35em;
-  letter-spacing: 0.05em;
+  margin-left: 0.4em;
+  letter-spacing: 0.06em;
 }
 
 /* Positive / negative */
 .positive { color: var(--positive); font-weight: 600; }
 .negative { color: var(--negative); font-weight: 600; }
 
-/* Talent policy */
-.policy-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
-}
+/* Severity indicators */
+.severity-light { background: var(--positive-bg) !important; }
+.severity-light td:first-child { border-left: 3px solid var(--positive); padding-left: calc(0.75rem - 3px); }
+.severity-moderate { background: var(--gold-bg) !important; }
+.severity-moderate td:first-child { border-left: 3px solid var(--gold); padding-left: calc(0.75rem - 3px); }
+.severity-heavy { background: var(--negative-bg) !important; }
+.severity-heavy td:first-child { border-left: 3px solid var(--negative); padding-left: calc(0.75rem - 3px); }
 
-.policy-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1rem 1.25rem;
-}
-
-.policy-header {
-  font-weight: 600;
-  font-size: 0.85rem;
-  margin-bottom: 0.25rem;
-}
-
-.policy-header.locked { color: var(--positive); }
-.policy-header.banned { color: var(--negative); }
-.policy-header.excluded { color: var(--fg-muted); }
-
-.policy-desc {
-  color: var(--fg-muted);
-  font-size: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.talent-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.talent-tag {
-  display: inline-block;
-  padding: 0.15em 0.5em;
-  border-radius: 4px;
-  font-size: 0.72rem;
-  font-weight: 500;
-  background: var(--surface-alt);
-  border: 1px solid var(--border);
-}
-
-.talent-tag.locked { border-color: rgba(74, 222, 128, 0.2); }
-.talent-tag.banned { border-color: rgba(248, 113, 113, 0.2); }
-.talent-tag.excluded { border-color: var(--border); }
+/* Nested detail rows */
+.detail-row { background: transparent !important; }
+.detail-row:hover { background: transparent !important; }
+.detail-row td { padding: 0 0.75rem 0.5rem; border-bottom: none; }
+.inline-detail { font-size: 0.72rem; font-weight: 500; color: var(--fg-muted); padding: 0; }
+.inline-detail:hover { color: var(--accent); }
+.nested-table { border: none; font-size: 0.76rem; }
+.nested-table td { padding: 0.25rem 0.5rem; border-bottom: 1px solid var(--border-subtle); }
 
 /* Details / collapsible */
 details {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 summary {
   cursor: pointer;
+  font-family: "Outfit", sans-serif;
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   padding: 0.5rem 0;
   color: var(--fg);
   user-select: none;
+  transition: color 0.15s;
 }
 
 summary:hover { color: var(--accent); }
 
 .detail-count {
+  font-family: "DM Sans", sans-serif;
   font-weight: 400;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--fg-muted);
 }
 
 /* Optimization journey */
 .journey-table .desc-cell {
-  max-width: 400px;
+  max-width: 420px;
   white-space: normal;
+  line-height: 1.45;
 }
 
 .impact-cell {
@@ -1647,7 +1601,7 @@ summary:hover { color: var(--accent); }
 }
 
 .impact-bar {
-  height: 6px;
+  height: 5px;
   border-radius: 3px;
   min-width: 2px;
   flex-shrink: 0;
@@ -1656,15 +1610,16 @@ summary:hover { color: var(--accent); }
 /* Footer */
 footer {
   border-top: 1px solid var(--border);
-  padding: 1.5rem 0;
+  padding: 2rem 0;
   text-align: center;
   color: var(--fg-muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
 }
 
 footer p { margin-bottom: 0.25rem; }
 footer a { color: var(--accent); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
+
 /* Weighted tooltip */
 .info-icon {
   cursor: help;
@@ -1685,8 +1640,9 @@ footer a:hover { text-decoration: underline; }
   right: 0;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.4em 0.65em;
+  border-radius: var(--radius-sm);
+  padding: 0.5em 0.75em;
+  font-family: "DM Sans", sans-serif;
   font-size: 0.72rem;
   font-weight: 400;
   text-transform: none;
@@ -1695,23 +1651,41 @@ footer a:hover { text-decoration: underline; }
   white-space: nowrap;
   z-index: 10;
   pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
+
+/* Load animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+section, header, footer {
+  animation: fadeUp 0.4s ease-out both;
+}
+
+section:nth-child(2) { animation-delay: 0.05s; }
+section:nth-child(3) { animation-delay: 0.1s; }
+section:nth-child(4) { animation-delay: 0.15s; }
+section:nth-child(5) { animation-delay: 0.2s; }
+section:nth-child(6) { animation-delay: 0.25s; }
+section:nth-child(7) { animation-delay: 0.3s; }
+footer { animation-delay: 0.35s; }
 
 /* Responsive */
 @media (max-width: 768px) {
+  body { padding: 0 1rem; }
   header { flex-direction: column; align-items: flex-start; }
-  .key-stats { flex-direction: column; }
-  .stat-card { min-width: 100%; }
-  .best-builds-layout { flex-direction: column; }
-  .talent-tree-wrap { flex: none; width: 100%; }
+  .showcase-grid { grid-template-columns: 1fr; }
+  .showcase-tree-wrap iframe { height: 600px; }
   .best-cards { grid-template-columns: 1fr; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
-  .policy-grid { grid-template-columns: 1fr; }
   .hero-comparison { flex-direction: column; }
   .top-builds-row { flex: none; width: 100%; }
   .build-name { font-size: 0.7rem; }
+  .showcase-weighted { font-size: 1.4rem; }
 }
 `;
 
@@ -1775,20 +1749,6 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
         row.style.display = 'none';
       }
     });
-  });
-});
-
-// Best build card → talent tree iframe
-document.querySelectorAll('.best-card').forEach(card => {
-  card.addEventListener('click', () => {
-    const hash = card.dataset.hash;
-    if (!hash) return;
-    const iframe = document.getElementById('talent-tree-iframe');
-    if (iframe) {
-      iframe.src = 'https://mimiron.raidbots.com/simbot/render/talents/' + hash + '?bgcolor=0f1117';
-    }
-    document.querySelectorAll('.best-card').forEach(c => c.classList.remove('active'));
-    card.classList.add('active');
   });
 });
 
@@ -1945,11 +1905,9 @@ async function main() {
     specName,
     builds: reportData.builds,
     iterations: reportData.iterations,
-    talentPolicy: reportData.talentPolicy,
     clusterCosts: reportData.clusterCosts,
     defensiveTalentCosts,
     heroTrees,
-    specConfig,
   });
 
   const indexPath = join(reportDir, "index.html");

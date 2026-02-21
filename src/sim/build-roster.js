@@ -29,6 +29,7 @@ import {
   initSpec,
   config,
   SCENARIOS,
+  SCENARIO_WEIGHTS,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile, resultsFile, aplsDir } from "../engine/paths.js";
@@ -345,6 +346,7 @@ export function loadRoster() {
         lastDps: b.weighted
           ? {
               st: b.dps_st || 0,
+              dungeon_slice: b.dps_dungeon_slice || 0,
               small_aoe: b.dps_small_aoe || 0,
               big_aoe: b.dps_big_aoe || 0,
               weighted: b.weighted || 0,
@@ -965,7 +967,6 @@ export async function updateAllDps({ fidelity = "quick" } = {}) {
   const { generateMultiActorContent } = await import("./multi-actor.js");
   const { runMultiActorAsync } = await import("./runner.js");
 
-  const SCENARIO_WEIGHTS = { st: 0.5, small_aoe: 0.3, big_aoe: 0.2 };
   const FIDELITY_TIERS = {
     quick: { target_error: 1.0 },
     standard: { target_error: 0.3 },
@@ -994,11 +995,11 @@ export async function updateAllDps({ fidelity = "quick" } = {}) {
   const simcContent = generateMultiActorContent(roster, aplPath);
 
   const buildDps = {};
+  const scenarioKeys = Object.keys(SCENARIOS);
   for (const b of roster.builds) {
-    buildDps[b.id] = { st: 0, small_aoe: 0, big_aoe: 0 };
+    buildDps[b.id] = Object.fromEntries(scenarioKeys.map((k) => [k, 0]));
   }
 
-  const scenarioKeys = Object.keys(SCENARIOS);
   for (const scenario of scenarioKeys) {
     console.log(`  Scenario: ${scenario}...`);
     try {
@@ -1027,17 +1028,7 @@ export async function updateAllDps({ fidelity = "quick" } = {}) {
     const dps = buildDps[b.id];
     if (!dps || !b.hash) continue;
 
-    const weighted = scenarioKeys.reduce(
-      (sum, s) => sum + (dps[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
-      0,
-    );
-
-    dbUpdateBuildDps(b.hash, {
-      st: dps.st || 0,
-      small_aoe: dps.small_aoe || 0,
-      big_aoe: dps.big_aoe || 0,
-      weighted: Math.round(weighted),
-    });
+    dbUpdateBuildDps(b.hash, dps, undefined, SCENARIO_WEIGHTS);
   }
 
   console.log(`\nDPS updated for ${roster.builds.length} builds.`);
@@ -1045,13 +1036,13 @@ export async function updateAllDps({ fidelity = "quick" } = {}) {
   // Print summary table
   const updatedBuilds = getRosterBuilds();
   console.log(
-    `\n${"Build".padEnd(30)} ${"1T".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(10)}`,
+    `\n${"Build".padEnd(30)} ${"1T".padStart(8)} ${"DS".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(10)}`,
   );
-  console.log("-".repeat(68));
+  console.log("-".repeat(78));
   for (const b of updatedBuilds) {
     const name = (b.displayName || b.name || b.hash?.slice(0, 20)).slice(0, 29);
     console.log(
-      `${name.padEnd(30)} ${(b.dps_st || 0).toLocaleString().padStart(8)} ${(b.dps_small_aoe || 0).toLocaleString().padStart(8)} ${(b.dps_big_aoe || 0).toLocaleString().padStart(8)} ${(b.weighted || 0).toLocaleString().padStart(10)}`,
+      `${name.padEnd(30)} ${(b.dps_st || 0).toLocaleString().padStart(8)} ${(b.dps_dungeon_slice || 0).toLocaleString().padStart(8)} ${(b.dps_small_aoe || 0).toLocaleString().padStart(8)} ${(b.dps_big_aoe || 0).toLocaleString().padStart(8)} ${(b.weighted || 0).toLocaleString().padStart(10)}`,
     );
   }
 }
@@ -1139,6 +1130,7 @@ export function updateDps(roster, buildId, dpsMap) {
 
   build.lastDps = {
     st: Math.round(dpsMap.st || 0),
+    dungeon_slice: Math.round(dpsMap.dungeon_slice || 0),
     small_aoe: Math.round(dpsMap.small_aoe || 0),
     big_aoe: Math.round(dpsMap.big_aoe || 0),
     weighted: dpsMap.weighted || 0,
@@ -1147,7 +1139,7 @@ export function updateDps(roster, buildId, dpsMap) {
 
   if (build.hash) {
     try {
-      dbUpdateBuildDps(build.hash, build.lastDps);
+      dbUpdateBuildDps(build.hash, build.lastDps, undefined, SCENARIO_WEIGHTS);
     } catch {
       // Non-fatal
     }
