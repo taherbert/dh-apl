@@ -95,16 +95,16 @@ function formatBuildName(build) {
   return name;
 }
 
-function loadReportData(roster, specConfig) {
+function loadReportData(roster) {
   const rawBuilds = getRosterBuilds();
   const dbByHash = new Map(rawBuilds.map((b) => [b.hash, b]));
+  const scenarioKeys = Object.keys(SCENARIOS);
 
   const builds = roster.builds.map((build) => {
     const db = dbByHash.get(build.hash);
-    const dps = {};
-    for (const s of Object.keys(SCENARIOS)) {
-      dps[s] = build.lastDps?.[s] || db?.[`dps_${s}`] || 0;
-    }
+    const dps = Object.fromEntries(
+      scenarioKeys.map((s) => [s, build.lastDps?.[s] || db?.[`dps_${s}`] || 0]),
+    );
     dps.weighted = build.lastDps?.weighted || db?.weighted || 0;
 
     return {
@@ -174,22 +174,24 @@ function deriveApexBuilds(builds) {
     const apex = Number(match[1]);
     const templateName = match[2].trim();
     const key = `${apex}|${b.heroTree}|${templateName}`;
-    if (!groups[key])
-      groups[key] = {
-        apex,
-        heroTree: b.heroTree,
-        templateName,
-        builds: [],
-      };
-    groups[key].builds.push(b);
+    const group = (groups[key] ||= {
+      apex,
+      heroTree: b.heroTree,
+      templateName,
+      builds: [],
+    });
+    group.builds.push(b);
   }
 
+  const dpsKeys = [...Object.keys(SCENARIOS), "weighted"];
   const entries = Object.values(groups).map((g) => {
     const n = g.builds.length;
-    const avg = {};
-    for (const key of [...Object.keys(SCENARIOS), "weighted"]) {
-      avg[key] = g.builds.reduce((s, b) => s + (b.dps[key] || 0), 0) / n;
-    }
+    const avg = Object.fromEntries(
+      dpsKeys.map((key) => [
+        key,
+        g.builds.reduce((s, b) => s + (b.dps[key] || 0), 0) / n,
+      ]),
+    );
     return { ...g, avg };
   });
 
@@ -238,22 +240,26 @@ function persistSimResults(roster, buildData) {
   const hashById = new Map(roster.builds.map((b) => [b.id, b.hash]));
   const scenarioKeys = Object.keys(SCENARIOS);
 
+  function roundDps(dpsRow) {
+    return Object.fromEntries(
+      scenarioKeys.map((s) => [s, Math.round(dpsRow[s] || 0)]),
+    );
+  }
+
   for (const row of buildData) {
     const hash = hashById.get(row.id);
     if (!hash) continue;
 
-    const rounded = Object.fromEntries(
-      scenarioKeys.map((s) => [s, Math.round(row.dps[s] || 0)]),
-    );
     if (row.dps.weighted > 0)
-      updateBuildDps(hash, rounded, undefined, SCENARIO_WEIGHTS);
+      updateBuildDps(hash, roundDps(row.dps), undefined, SCENARIO_WEIGHTS);
 
-    if (row.simcDps?.weighted > 0) {
-      const roundedSimc = Object.fromEntries(
-        scenarioKeys.map((s) => [s, Math.round(row.simcDps[s] || 0)]),
+    if (row.simcDps?.weighted > 0)
+      updateBuildSimcDps(
+        hash,
+        roundDps(row.simcDps),
+        undefined,
+        SCENARIO_WEIGHTS,
       );
-      updateBuildSimcDps(hash, roundedSimc, undefined, SCENARIO_WEIGHTS);
-    }
   }
 }
 
@@ -296,6 +302,9 @@ async function simDefensiveCosts(
 
   const results = [];
 
+  // Profileset names sanitize dots and spaces to underscores
+  const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
+
   // Group by hero tree — one profileset per tree per scenario
   const heroTrees = [...new Set(references.map((r) => r.heroTree))];
 
@@ -308,13 +317,16 @@ async function simDefensiveCosts(
     );
     if (treeVariants.length === 0) continue;
 
-    // Build a mini roster-like structure for profileset generation
     const miniRoster = {
       builds: [
         { id: ref.name, hash: ref.hash },
         ...treeVariants.map((v) => ({ id: v.build.name, hash: v.hash })),
       ],
     };
+
+    const variantByName = new Map(
+      treeVariants.map((v) => [sanitize(v.build.name), v]),
+    );
 
     for (const scenario of Object.keys(SCENARIOS)) {
       console.log(`  ${heroTree} / ${SCENARIOS[scenario].name}...`);
@@ -328,12 +340,6 @@ async function simDefensiveCosts(
       );
 
       const refDps = psResults.baseline.dps;
-
-      // Build lookup matching profileset name sanitization (dots → _, spaces → _)
-      const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
-      const variantByName = new Map(
-        treeVariants.map((v) => [sanitize(v.build.name), v]),
-      );
 
       for (const variant of psResults.variants) {
         const match = variantByName.get(variant.name);
@@ -548,39 +554,61 @@ function renderHeroComparison(builds, heroTrees) {
     }
   }
 
-  // Two side-by-side chart cards, one per hero tree
-  const charts = treeNames
-    .map((tree) => {
-      const d = treeData[tree];
-      const buildCount = d.builds.filter(
+  // Legend
+  const legend = treeNames
+    .map((t) => {
+      const count = treeData[t].builds.filter(
         (b) => (b.dps.weighted || 0) > 0,
       ).length;
+      return `<span class="hc-legend-item"><span class="hc-legend-dot" style="background:${treeColor(t)}"></span>${esc(heroTrees[t].displayName)} (${count})</span>`;
+    })
+    .join("");
 
-      const bars = scenarios
-        .map((s) => {
-          const avg = d.avgs[s];
-          const pct = globalMax > 0 ? (avg / globalMax) * 100 : 0;
-          const color = s === "weighted" ? treeColor(tree) : scenarioColor(s);
-          return `<div class="hc-bar-row">
-            <span class="hc-bar-label">${scenarioLabel(s)}</span>
-            <div class="hc-bar-track">
-              <div class="hc-bar" style="width:${pct.toFixed(1)}%;background:${color}"></div>
-            </div>
-            <span class="hc-bar-value">${fmtDps(avg)}</span>
-          </div>`;
+  // Paired bars per scenario with delta
+  const rows = scenarios
+    .map((s) => {
+      const vals = treeNames.map((t) => treeData[t].avgs[s]);
+      const winnerIdx = vals[0] >= vals[1] ? 0 : 1;
+      const loserIdx = 1 - winnerIdx;
+      const delta =
+        vals[loserIdx] > 0
+          ? ((vals[winnerIdx] - vals[loserIdx]) / vals[loserIdx]) * 100
+          : 0;
+      const winnerTree = treeNames[winnerIdx];
+      const labelColor = s === "weighted" ? "var(--fg)" : scenarioColor(s);
+
+      const bars = treeNames
+        .map((t, i) => {
+          const pct = globalMax > 0 ? (vals[i] / globalMax) * 100 : 0;
+          return `<div class="hc-split-bar" style="width:${pct.toFixed(1)}%;background:${treeColor(t)};opacity:${i === winnerIdx ? 0.9 : 0.55}"></div>`;
         })
-        .join("\n");
+        .join("");
 
-      return `<div class="hc-card" style="border-top: 3px solid ${treeColor(tree)}">
-      <h4><span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span> <span class="hc-count">${buildCount} builds</span></h4>
-      ${bars}
-    </div>`;
+      const deltaHtml =
+        delta > 0.5
+          ? `<span class="hc-delta" style="color:${treeColor(winnerTree)}">${treeAbbr(winnerTree)} +${delta.toFixed(1)}%</span>`
+          : `<span class="hc-delta" style="color:var(--fg-muted)">~tied</span>`;
+
+      const valsHtml = treeNames
+        .map(
+          (t, i) =>
+            `<span style="color:${treeColor(t)}">${fmtDps(vals[i])}</span>`,
+        )
+        .join('<span class="hc-sep">/</span>');
+
+      return `<div class="hc-row${s === "weighted" ? " hc-row--weighted" : ""}">
+        <span class="hc-label" style="color:${labelColor}">${scenarioLabel(s)}</span>
+        <div class="hc-split-track">${bars}</div>
+        <span class="hc-vals">${valsHtml}</span>
+        ${deltaHtml}
+      </div>`;
     })
     .join("\n");
 
   return `<section>
   <h2>Hero Tree Comparison</h2>
-  <div class="hero-comparison">${charts}</div>
+  <div class="hc-legend">${legend}</div>
+  <div class="hc-panel">${rows}</div>
 </section>`;
 }
 
@@ -688,59 +716,51 @@ function renderTalentImpact(apexBuilds, defensiveTalentCosts, builds) {
     (a, b) => Number(a) - Number(b),
   );
   if (apexKeys.length > 0) {
-    // Find global best for gap calculation
     const globalBest = Math.max(
       ...apexKeys.flatMap((k) => apexBuilds[k].map((e) => e.avg.weighted)),
     );
 
-    html += `<div class="subsection">
-    <h3>Builds by Apex Rank</h3>
-    <p class="section-desc">Higher apex ranks unlock more powerful talents but cost talent points elsewhere. Each row shows average DPS across hero tree variants.</p>`;
-
-    for (const apex of apexKeys) {
-      const entries = apexBuilds[apex];
-      const apexBest = entries[0]?.avg.weighted || 0;
-      const isExpanded = apex === "0" || apex === "4";
-      html += `<details${isExpanded ? " open" : ""}>
-      <summary>Apex ${apex} <span class="detail-count">${entries.length} builds, best: ${fmtDps(apexBest)}</span></summary>
-      <div class="table-wrap">
-        <table class="cost-table">
-          <thead><tr>
-            <th>#</th>
-            <th>Build</th>
-            <th>Tree</th>
-            <th class="num">Weighted DPS</th>
-            <th class="num">vs Best</th>`;
-
-      for (const s of activeScenarios(builds)) {
-        html += `<th class="num">${esc(SCENARIOS[s].name)}</th>`;
-      }
-
-      html += `</tr></thead><tbody>`;
-
-      entries.forEach((e, i) => {
-        const gapFromBest =
+    // Flatten all apex entries into one sorted list
+    const allEntries = apexKeys.flatMap((k) =>
+      apexBuilds[k].map((e) => ({
+        ...e,
+        gapFromBest:
           globalBest > 0
             ? ((e.avg.weighted - globalBest) / globalBest) * 100
-            : 0;
-        html += `<tr>
-            <td class="num">${i + 1}</td>
-            <td>${esc(e.templateName)}</td>
-            <td><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
-            <td class="num">${fmtDps(e.avg.weighted)}</td>
-            ${deltaCell(gapFromBest)}`;
+            : 0,
+      })),
+    );
+    allEntries.sort((a, b) => b.avg.weighted - a.avg.weighted);
 
-        for (const s of activeScenarios(builds)) {
-          html += `<td class="num">${fmtDps(e.avg[s] || 0)}</td>`;
-        }
-
-        html += `</tr>`;
-      });
-
-      html += `</tbody></table></div></details>`;
+    let rows = "";
+    for (let i = 0; i < allEntries.length; i++) {
+      const e = allEntries[i];
+      rows += `<tr>
+        <td class="num">${i + 1}</td>
+        <td>${esc(e.templateName)}</td>
+        <td><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
+        <td class="num">${e.apex}</td>
+        <td class="num">${fmtDps(e.avg.weighted)}</td>
+        ${deltaCell(e.gapFromBest)}
+      </tr>`;
     }
 
-    html += `</div>`;
+    html += `<div class="subsection">
+    <h3>Builds by Apex Rank</h3>
+    <p class="section-desc">All builds ranked by weighted DPS. Higher apex ranks unlock more powerful talents but cost points elsewhere.</p>
+    <div class="table-wrap">
+      <table class="cost-table">
+        <thead><tr>
+          <th>#</th>
+          <th>Build</th>
+          <th>Tree</th>
+          <th class="num">Apex</th>
+          <th class="num">Weighted DPS</th>
+          <th class="num">vs Best</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div></div>`;
   }
 
   html += `</section>`;
@@ -753,14 +773,12 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
   // Group by defensive talent name, average across hero trees
   const byTalent = {};
   for (const c of costs) {
-    if (!byTalent[c.defensiveName]) {
-      byTalent[c.defensiveName] = {
-        defensiveName: c.defensiveName,
-        pointCost: c.pointCost,
-        entries: [],
-      };
-    }
-    byTalent[c.defensiveName].entries.push(c);
+    const group = (byTalent[c.defensiveName] ||= {
+      defensiveName: c.defensiveName,
+      pointCost: c.pointCost,
+      entries: [],
+    });
+    group.entries.push(c);
   }
 
   const averaged = Object.values(byTalent).map((group) => {
@@ -784,7 +802,10 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
 
   function getSeverity(pct) {
     const abs = Math.abs(pct);
-    return SEVERITY_TIERS.find((t) => abs < maxCost * t.threshold);
+    return (
+      SEVERITY_TIERS.find((t) => abs < maxCost * t.threshold) ||
+      SEVERITY_TIERS[SEVERITY_TIERS.length - 1]
+    );
   }
 
   let html = `<div class="subsection">
@@ -796,33 +817,26 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     const { cls: sev, color } = getSeverity(t.avgDeltas.weighted);
     const barPct = (Math.abs(t.avgDeltas.weighted) / maxCost) * 100;
 
+    // Per-tree breakdown inline
+    let treeHtml = "";
+    if (t.entries.length > 1) {
+      treeHtml = t.entries
+        .map(
+          (e) =>
+            `<span class="def-strip__tree"><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span> ${fmtDelta(e.deltas.weighted)}</span>`,
+        )
+        .join("");
+    }
+
     html += `<div class="def-strip def-strip--${sev}">
       <div class="def-strip__indicator" style="background:${color}"></div>
       <div class="def-strip__body">
-        <div class="def-strip__main">
-          <span class="def-strip__name">${esc(t.defensiveName)}</span>
-          <div class="def-strip__bar-wrap">
-            <div class="def-strip__bar" style="width:${barPct.toFixed(1)}%;background:${color}"></div>
-          </div>
-          <span class="def-strip__cost" style="color:${color}">${fmtDelta(t.avgDeltas.weighted)}</span>
+        <span class="def-strip__name">${esc(t.defensiveName)}</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:${barPct.toFixed(1)}%;background:${color}"></div>
         </div>
-        <div class="def-strip__detail">`;
-
-    // Per-scenario values
-    for (const s of scenarios) {
-      const v = t.avgDeltas[s] || 0;
-      html += `<span class="def-strip__scenario"><span style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> <em>${fmtDelta(v)}</em></span>`;
-    }
-
-    // Per-tree breakdown
-    if (t.entries.length > 1) {
-      html += `<span class="def-strip__sep"></span>`;
-      for (const e of t.entries) {
-        html += `<span class="def-strip__tree"><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span> <em>${fmtDelta(e.deltas.weighted)}</em></span>`;
-      }
-    }
-
-    html += `</div>
+        <span class="def-strip__cost" style="color:${color}">${fmtDelta(t.avgDeltas.weighted)}</span>
+        ${treeHtml}
       </div>
     </div>`;
   }
@@ -834,31 +848,30 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
 function renderOptimizationJourney(iterations) {
   if (!iterations || iterations.length === 0) return "";
 
+  const maxDelta = Math.max(
+    ...iterations.map((it) => Math.abs(it.meanWeighted || 0)),
+    0.01,
+  );
+
   let cumulative = 0;
-  const rows = iterations.map((it) => {
+  let tableRows = "";
+  for (const it of iterations) {
     const delta = it.meanWeighted || 0;
     cumulative += delta;
-    return { ...it, delta, cumulative };
-  });
-
-  const maxDelta = Math.max(...rows.map((r) => Math.abs(r.delta)), 0.01);
-
-  let tableRows = "";
-  for (const r of rows) {
-    const date = r.date ? r.date.split(/[T ]/)[0] : "\u2014";
-    const barPct = Math.min((Math.abs(r.delta) / maxDelta) * 100, 100);
-    const barColor = r.delta >= 0 ? "var(--positive)" : "var(--negative)";
+    const date = it.date ? it.date.split(/[T ]/)[0] : "\u2014";
+    const barPct = Math.min((Math.abs(delta) / maxDelta) * 100, 100);
+    const barColor = delta >= 0 ? "var(--positive)" : "var(--negative)";
 
     tableRows += `<tr>
       <td>${date}</td>
-      <td class="desc-cell">${esc(r.description || "")}</td>
+      <td class="desc-cell">${esc(it.description || "")}</td>
       <td class="num">
         <div class="impact-cell">
-          <span class="${r.delta >= 0 ? "positive" : "negative"}">${fmtDelta(r.delta)}</span>
+          <span class="${delta >= 0 ? "positive" : "negative"}">${fmtDelta(delta)}</span>
           <div class="impact-bar" style="width:${barPct}%;background:${barColor}"></div>
         </div>
       </td>
-      <td class="num ${r.cumulative >= 0 ? "positive" : "negative"}">${fmtDelta(r.cumulative)}</td>
+      <td class="num ${cumulative >= 0 ? "positive" : "negative"}">${fmtDelta(cumulative)}</td>
     </tr>`;
   }
 
@@ -938,6 +951,7 @@ function scenarioColor(s) {
 }
 
 function findBest(builds, field) {
+  if (!builds.length) return null;
   return builds.reduce(
     (a, b) => ((b.dps[field] || 0) > (a.dps[field] || 0) ? b : a),
     builds[0],
@@ -1195,8 +1209,8 @@ h4 {
   display: block;
   background: var(--bg);
   pointer-events: none;
-  clip-path: inset(3% 36% 15% 33%);
-  margin-left: -33%;
+  clip-path: inset(3% 2% 15% 55%);
+  margin-left: -55%;
 }
 
 /* Best build cards */
@@ -1248,65 +1262,89 @@ h4 {
   color: var(--fg-dim);
 }
 
-/* Hero comparison — two side-by-side cards */
-.hero-comparison {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+/* Hero comparison — paired bars with delta */
+.hc-legend {
+  display: flex;
   gap: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-.hc-card {
+.hc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+.hc-legend-dot {
+  width: 12px;
+  height: 4px;
+  border-radius: 2px;
+}
+
+.hc-panel {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
+  padding: 0.75rem 1.5rem;
 }
 
-.hc-card h4 { margin-bottom: 1rem; }
-
-.hc-count {
-  font-size: 0.7rem;
-  color: var(--fg-muted);
-  font-weight: 400;
-  margin-left: 0.4rem;
-}
-
-.hc-bar-row {
-  display: flex;
+.hc-row {
+  display: grid;
+  grid-template-columns: 85px 1fr 130px 90px;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.35rem 0;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.hc-bar-label {
-  flex: 0 0 90px;
+.hc-row:last-child { border-bottom: none; }
+
+.hc-row--weighted {
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+  margin-top: 0.15rem;
+}
+
+.hc-label {
   font-size: 0.76rem;
-  color: var(--fg-muted);
   font-weight: 500;
   text-align: right;
 }
 
-.hc-bar-track {
-  flex: 1;
+.hc-row--weighted .hc-label { font-weight: 700; }
+
+.hc-split-track {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   min-width: 0;
-  height: 18px;
-  background: var(--border-subtle);
-  border-radius: 3px;
-  overflow: hidden;
 }
 
-.hc-bar {
-  height: 100%;
-  border-radius: 3px;
-  opacity: 0.85;
+.hc-split-bar {
+  height: 10px;
+  border-radius: 2px;
+  min-width: 2px;
   transition: opacity 0.15s;
 }
 
-.hc-card:hover .hc-bar { opacity: 1; }
+.hc-row:hover .hc-split-bar { opacity: 1 !important; }
 
-.hc-bar-value {
-  flex: 0 0 70px;
-  font-size: 0.78rem;
+.hc-vals {
+  display: flex;
+  gap: 0.25rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  justify-content: flex-end;
+}
+
+.hc-sep { color: var(--fg-muted); }
+
+.hc-delta {
+  font-size: 0.72rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -1504,13 +1542,10 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 .def-strip__body {
   flex: 1;
   min-width: 0;
-  padding: 0.65rem 1rem 0.55rem 0.85rem;
-}
-
-.def-strip__main {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  padding: 0.55rem 1rem 0.55rem 0.85rem;
 }
 
 .def-strip__name {
@@ -1548,33 +1583,6 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
   text-align: right;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.01em;
-}
-
-.def-strip__detail {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-top: 0.3rem;
-  flex-wrap: wrap;
-}
-
-.def-strip__scenario {
-  font-size: 0.68rem;
-  color: var(--fg-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.def-strip__scenario em {
-  font-style: normal;
-  color: var(--fg-dim);
-  font-weight: 500;
-}
-
-.def-strip__sep {
-  width: 1px;
-  height: 12px;
-  background: var(--border);
-  flex: 0 0 1px;
 }
 
 .def-strip__tree {
@@ -1710,7 +1718,8 @@ footer { animation-delay: 0.35s; }
   header { flex-direction: column; align-items: flex-start; }
   .showcase-grid { grid-template-columns: 1fr; }
   .best-cards { grid-template-columns: 1fr; }
-  .hero-comparison { grid-template-columns: 1fr; }
+  .hc-row { grid-template-columns: 70px 1fr 100px 70px; gap: 0.5rem; }
+  .def-strip__name { flex: 0 0 120px; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
@@ -1906,7 +1915,7 @@ async function main() {
     persistSimResults(roster, buildData);
     console.log(`\n  Results cached to DB.`);
 
-    reportData = loadReportData(roster, specConfig);
+    reportData = loadReportData(roster);
 
     console.log(`\n  Running defensive talent cost sims...`);
     defensiveTalentCosts = await simDefensiveCosts(
@@ -1921,7 +1930,7 @@ async function main() {
     );
   } else {
     console.log("  Loading cached DPS from DB...");
-    reportData = loadReportData(roster, specConfig);
+    reportData = loadReportData(roster);
     const withDps = reportData.builds.filter((b) => b.dps.weighted > 0).length;
     console.log(
       `  ${reportData.builds.length} builds loaded (${withDps} with DPS data)`,
