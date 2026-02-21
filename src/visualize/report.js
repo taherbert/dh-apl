@@ -446,7 +446,7 @@ function generateHtml(data) {
     renderBestBuilds(builds),
     renderHeroComparison(builds, heroTrees),
     renderBuildRankings(builds, heroTrees),
-    renderTalentImpact(clusterCosts, defensiveTalentCosts),
+    renderTalentImpact(clusterCosts, defensiveTalentCosts, builds),
     renderOptimizationJourney(iterations),
     renderFooter(),
   ];
@@ -496,7 +496,7 @@ function renderHeroShowcase(builds, heroTrees) {
     const best = findBest(treeBuilds, "weighted");
     if (!best) return "";
 
-    const scenarioDps = Object.keys(SCENARIOS)
+    const scenarioDps = activeScenarios(builds)
       .map(
         (s) =>
           `<span class="showcase-scenario"><span class="showcase-scenario-label">${esc(SCENARIOS[s].name)}</span> ${fmtDps(best.dps[s] || 0)}</span>`,
@@ -528,7 +528,7 @@ function renderBestBuilds(builds) {
   const bestW = findBest(builds, "weighted");
   const cards = [
     makeBestCard("Best Weighted", bestW, bestW?.dps.weighted || 0),
-    ...Object.keys(SCENARIOS).map((s) => {
+    ...activeScenarios(builds).map((s) => {
       const best = findBest(builds, s);
       return makeBestCard(`Best ${SCENARIOS[s].name}`, best, best?.dps[s] || 0);
     }),
@@ -553,14 +553,17 @@ function renderHeroComparison(builds, heroTrees) {
   const treeNames = Object.keys(heroTrees);
   if (treeNames.length < 2) return "";
 
-  const scenarios = [...Object.keys(SCENARIOS), "weighted"];
+  const allScenarios = [...Object.keys(SCENARIOS), "weighted"];
   const scenarioLabels = Object.fromEntries([
-    ...Object.entries(SCENARIOS).map(([k, v]) => [
-      k,
-      `${v.desiredTargets}T (${v.maxTime}s)`,
-    ]),
+    ...Object.entries(SCENARIOS).map(([k, v]) => [k, v.name]),
     ["weighted", "Weighted"],
   ]);
+
+  // Filter to scenarios that have actual data
+  const scenarios = allScenarios.filter((s) => {
+    if (s === "weighted") return true;
+    return builds.some((b) => (b.dps[s] || 0) > 0);
+  });
 
   // Compute averages per tree per scenario
   const treeData = {};
@@ -577,65 +580,72 @@ function renderHeroComparison(builds, heroTrees) {
     }
   }
 
-  // Head-to-head delta analysis
-  const h2hRows = scenarios
+  // Scenario advantage bars — directional visualization
+  const maxPct = Math.max(
+    ...scenarios.map((s) => {
+      const avgs = treeNames.map((t) => treeData[t].avgs[s]);
+      if (avgs[1] === 0) return 0;
+      return Math.abs(((avgs[0] - avgs[1]) / avgs[1]) * 100);
+    }),
+    1,
+  );
+
+  const advantageBars = scenarios
     .map((s) => {
       const avgs = treeNames.map((t) => treeData[t].avgs[s]);
       if (avgs.every((v) => v === 0)) return "";
-      const delta = avgs[0] - avgs[1];
       const pct = avgs[1] > 0 ? ((avgs[0] - avgs[1]) / avgs[1]) * 100 : 0;
-      const winner = delta >= 0 ? 0 : 1;
+      const barPct = Math.min((Math.abs(pct) / maxPct) * 100, 100);
+      const winner = pct >= 0 ? 0 : 1;
       const winnerTree = treeNames[winner];
-      return `<tr>
-        <td>${esc(scenarioLabels[s])}</td>
-        <td class="num">${fmtDps(avgs[0])}</td>
-        <td class="num">${fmtDps(avgs[1])}</td>
-        <td class="num"><span class="tree-badge sm ${treeClass(winnerTree)}">${treeAbbr(winnerTree)}</span></td>
-        <td class="num ${Math.abs(pct) > 1 ? (delta >= 0 ? "positive" : "negative") : ""}">${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%</td>
-      </tr>`;
+      const side = pct >= 0 ? "left" : "right";
+      return `<div class="adv-row">
+        <span class="adv-label">${esc(scenarioLabels[s])}</span>
+        <div class="adv-track">
+          <div class="adv-bar adv-${side}" style="width:${barPct}%;background:${treeColor(winnerTree)}"></div>
+        </div>
+        <span class="adv-pct ${Math.abs(pct) > 1 ? (pct >= 0 ? "positive" : "negative") : ""}">${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%</span>
+      </div>`;
     })
     .filter(Boolean)
     .join("\n");
 
-  // Per-tree stats
-  const treeStatsHtml = treeNames
+  // Top builds per tree
+  const topBuildsHtml = treeNames
     .map((tree) => {
-      const weighted = treeData[tree].builds
-        .map((b) => b.dps.weighted || 0)
-        .filter((v) => v > 0)
-        .sort((a, b) => b - a);
-      if (weighted.length === 0) return "";
-      const best = weighted[0];
-      const worst = weighted[weighted.length - 1];
-      const spread =
-        best > 0 ? (((best - worst) / best) * 100).toFixed(1) : "0";
-      return `<div class="tree-stats-card">
-        <h4><span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span></h4>
-        <div class="tree-stats-grid">
-          <div class="tree-stat"><span class="tree-stat-label">Best</span><span class="tree-stat-value">${fmtDps(best)}</span></div>
-          <div class="tree-stat"><span class="tree-stat-label">Avg</span><span class="tree-stat-value">${fmtDps(treeData[tree].avgs.weighted)}</span></div>
-          <div class="tree-stat"><span class="tree-stat-label">Spread</span><span class="tree-stat-value">${spread}%</span></div>
-          <div class="tree-stat"><span class="tree-stat-label">Builds</span><span class="tree-stat-value">${weighted.length}</span></div>
-        </div>
+      const sorted = treeData[tree].builds
+        .filter((b) => (b.dps.weighted || 0) > 0)
+        .sort((a, b) => (b.dps.weighted || 0) - (a.dps.weighted || 0))
+        .slice(0, 5);
+      if (sorted.length === 0) return "";
+      const best = sorted[0].dps.weighted;
+      const rows = sorted
+        .map((b, i) => {
+          const gap = best > 0 ? ((b.dps.weighted - best) / best) * 100 : 0;
+          return `<div class="top-build-row">
+            <span class="top-build-rank">${i + 1}.</span>
+            <span class="top-build-name">${esc(b.displayName)}${copyBtn(b.hash)}</span>
+            <span class="top-build-dps">${fmtDps(b.dps.weighted)}</span>
+            <span class="top-build-gap ${gap < -3 ? "negative" : ""}">${i === 0 ? "" : gap.toFixed(1) + "%"}</span>
+          </div>`;
+        })
+        .join("\n");
+      return `<div class="top-builds-card">
+        <h4><span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span> <span class="top-builds-count">${treeData[tree].builds.filter((b) => (b.dps.weighted || 0) > 0).length} builds</span></h4>
+        ${rows}
       </div>`;
     })
     .join("\n");
 
   const rightPanelHtml = `<div class="h2h-panel">
-    <h4>Head to Head (Avg DPS)</h4>
-    <div class="table-wrap">
-      <table class="h2h-table">
-        <thead><tr>
-          <th>Scenario</th>
-          <th class="num">${esc(heroTrees[treeNames[0]]?.displayName || treeNames[0])}</th>
-          <th class="num">${esc(heroTrees[treeNames[1]]?.displayName || treeNames[1])}</th>
-          <th>Winner</th>
-          <th class="num">Delta</th>
-        </tr></thead>
-        <tbody>${h2hRows}</tbody>
-      </table>
+    <h4>Scenario Advantage</h4>
+    <div class="adv-legend">
+      <span class="legend-item"><span class="legend-dot" style="background:${treeColor(treeNames[0])}"></span>${esc(heroTrees[treeNames[0]]?.displayName || treeNames[0])}</span>
+      <span class="legend-item"><span class="legend-dot" style="background:${treeColor(treeNames[1])}"></span>${esc(heroTrees[treeNames[1]]?.displayName || treeNames[1])}</span>
     </div>
-    <div class="tree-stats-row">${treeStatsHtml}</div>
+    ${advantageBars}
+    <h4 style="margin-top:1.5rem">Top Builds (Weighted)</h4>
+    ${topBuildsHtml}
   </div>`;
 
   // SVG bar chart
@@ -693,7 +703,7 @@ function renderHeroComparison(builds, heroTrees) {
 }
 
 function renderBuildRankings(builds, heroTrees) {
-  const scenarios = Object.keys(SCENARIOS);
+  const scenarios = activeScenarios(builds);
 
   const topWeighted = findBest(builds, "weighted");
   const topPerScenario = Object.fromEntries(
@@ -787,7 +797,7 @@ function groupByApex(items) {
   return Object.entries(groups);
 }
 
-function renderTalentImpact(clusterCosts, defensiveTalentCosts) {
+function renderTalentImpact(clusterCosts, defensiveTalentCosts, builds) {
   let html = `<section>
   <h2>Talent Impact</h2>`;
 
@@ -795,11 +805,12 @@ function renderTalentImpact(clusterCosts, defensiveTalentCosts) {
     html += renderDefensiveTalentCosts(
       defensiveTalentCosts.costs,
       defensiveTalentCosts.refName,
+      builds,
     );
   }
 
   if (clusterCosts.length > 0) {
-    const scenarios = Object.keys(SCENARIOS);
+    const scenarios = activeScenarios(builds);
 
     html += `<div class="subsection">
     <h3>Talent Budget by Apex Rank</h3>
@@ -847,8 +858,8 @@ function renderTalentImpact(clusterCosts, defensiveTalentCosts) {
   return html;
 }
 
-function renderDefensiveTalentCosts(costs, refName) {
-  const scenarios = Object.keys(SCENARIOS);
+function renderDefensiveTalentCosts(costs, refName, builds) {
+  const scenarios = activeScenarios(builds);
 
   // Group by defensive talent name, average across hero trees
   const byTalent = {};
@@ -1028,6 +1039,12 @@ function findBest(builds, field) {
   return builds.reduce(
     (a, b) => ((b.dps[field] || 0) > (a.dps[field] || 0) ? b : a),
     builds[0],
+  );
+}
+
+function activeScenarios(builds) {
+  return Object.keys(SCENARIOS).filter((s) =>
+    builds.some((b) => (b.dps[s] || 0) > 0),
   );
 }
 
@@ -1271,7 +1288,7 @@ h4 {
 .showcase-tree-wrap iframe {
   width: 1500px;
   height: 780px;
-  margin-left: -700px;
+  margin-left: -710px;
   border: none;
   display: block;
   background: var(--bg);
@@ -1374,49 +1391,97 @@ h4 {
   min-width: 0;
 }
 
-.h2h-table {
-  font-size: 0.78rem;
-}
-
-.h2h-table th, .h2h-table td {
-  padding: 0.4rem 0.6rem;
-}
-
-.tree-stats-row {
+/* Scenario advantage bars */
+.adv-legend {
   display: flex;
-  gap: 0.75rem;
-  margin-top: 1rem;
-}
-
-.tree-stats-card {
-  flex: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.75rem 1rem;
-}
-
-.tree-stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.4rem 1rem;
-  margin-top: 0.5rem;
-}
-
-.tree-stat {
-  display: flex;
-  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
   font-size: 0.75rem;
 }
-
-.tree-stat-label {
+.adv-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.adv-label {
+  flex: 0 0 80px;
+  font-size: 0.73rem;
   color: var(--fg-muted);
+  text-align: right;
   font-weight: 500;
 }
+.adv-track {
+  flex: 1;
+  height: 18px;
+  background: var(--surface);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+.adv-bar {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 3px;
+  opacity: 0.8;
+  transition: width 0.3s;
+}
+.adv-left { left: 0; }
+.adv-right { right: 0; }
+.adv-pct {
+  flex: 0 0 52px;
+  font-size: 0.73rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
 
-.tree-stat-value {
+/* Top builds per tree */
+.top-builds-card {
+  margin-bottom: 1rem;
+}
+.top-builds-card h4 {
+  margin-bottom: 0.4rem;
+}
+.top-builds-count {
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  font-weight: 400;
+  margin-left: 0.4rem;
+}
+.top-build-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0;
+  font-size: 0.76rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.top-build-rank {
+  flex: 0 0 1.2rem;
+  color: var(--fg-muted);
+  font-weight: 600;
+  font-size: 0.7rem;
+}
+.top-build-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.top-build-dps {
+  flex: 0 0 auto;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
+}
+.top-build-gap {
+  flex: 0 0 40px;
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Tree badges */
@@ -1705,7 +1770,6 @@ footer { animation-delay: 0.35s; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
   .hero-comparison { flex-direction: column; }
-  .tree-stats-row { flex-direction: column; }
   .build-name { font-size: 0.7rem; }
   .showcase-weighted { font-size: 1.4rem; }
 }
