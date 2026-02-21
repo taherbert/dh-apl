@@ -1822,8 +1822,7 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
   );
   const apexName = apexNode?.name?.split(" / ")[0] || "Untethered Rage";
 
-  const nodeIdToName = new Map();
-  for (const n of data.specNodes) nodeIdToName.set(n.id, n.name);
+  const nodeIdToName = new Map(data.specNodes.map((n) => [n.id, n.name]));
 
   // Default to Full Stack Apex 0
   if (!refTemplate) {
@@ -1836,7 +1835,7 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
     };
   }
 
-  // Resolve template clusters → require/exclude lists
+  // Resolve template clusters into require/exclude lists.
   // Same logic as generateClusterRoster: included clusters are required,
   // non-included clusters are excluded.
   const clusterRequire = [];
@@ -1844,15 +1843,16 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
 
   for (const [clusterName, cluster] of Object.entries(talentClusters || {})) {
     const depth = refTemplate.include?.[clusterName];
+    const core = cluster.core || [];
+    const extended = cluster.extended || [];
     if (!depth) {
-      for (const name of cluster.core || []) clusterExclude.push(name);
-      for (const name of cluster.extended || []) clusterExclude.push(name);
+      clusterExclude.push(...core, ...extended);
     } else {
-      for (const name of cluster.core || []) clusterRequire.push(name);
+      clusterRequire.push(...core);
       if (depth === "full") {
-        for (const name of cluster.extended || []) clusterRequire.push(name);
+        clusterRequire.push(...extended);
       } else {
-        for (const name of cluster.extended || []) clusterExclude.push(name);
+        clusterExclude.push(...extended);
       }
     }
   }
@@ -1889,16 +1889,13 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
 
     const varBuild = buildPinnedBuild(profile, data, specMap, classResult);
 
-    // Diff spec nodes to find what was dropped / added
     const varSpecSet = new Set(varBuild.specNodes);
     const dropped = [...refSpecSet]
       .filter((id) => !varSpecSet.has(id))
-      .map((id) => nodeIdToName.get(id) || `node_${id}`)
-      .filter(Boolean);
+      .map((id) => nodeIdToName.get(id) || `node_${id}`);
     const added = [...varSpecSet]
       .filter((id) => !refSpecSet.has(id))
-      .map((id) => nodeIdToName.get(id) || `node_${id}`)
-      .filter(Boolean);
+      .map((id) => nodeIdToName.get(id) || `node_${id}`);
 
     // Compute point cost: sum of ranks for added nodes minus expected
     let pointCost = 0;
@@ -1922,16 +1919,19 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
   const crossedVariants = [];
 
   for (const [heroTreeName, heroNodes] of Object.entries(data.heroSubtrees)) {
-    const heroCombos = heroChoiceCombos(heroNodes, {});
-    const heroCombo = heroCombos[0];
+    const heroCombo = heroChoiceCombos(heroNodes, {})[0];
     const heroNodeIds = heroNodes.map((n) => n.id);
-
-    const refCrossed = {
-      ...refBuild,
+    const treeSuffix = heroTreeName.replace(/\s+/g, "");
+    const heroProps = {
       heroTree: heroTreeName,
       heroNodes: heroNodeIds,
       heroChoices: heroCombo,
-      name: `ref_FullStack_${heroTreeName.replace(/\s+/g, "")}`,
+    };
+
+    const refCrossed = {
+      ...refBuild,
+      ...heroProps,
+      name: `ref_FullStack_${treeSuffix}`,
     };
 
     let refHash;
@@ -1948,15 +1948,13 @@ export function generateDefensiveCostBuilds({ refTemplate } = {}) {
     for (const v of variants) {
       const crossed = {
         ...v.specBuild,
-        heroTree: heroTreeName,
-        heroNodes: heroNodeIds,
-        heroChoices: heroCombo,
-        name: `def_${v.defensiveName.replace(/\s+/g, "_")}_${heroTreeName.replace(/\s+/g, "")}`,
+        ...heroProps,
+        name: `def_${v.defensiveName.replace(/\s+/g, "_")}_${treeSuffix}`,
       };
 
       let hash = null;
-      let errors = v.errors;
       let valid = v.valid;
+      let errors = v.errors;
       try {
         hash = buildToHash(crossed, data);
       } catch (e) {

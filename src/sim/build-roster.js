@@ -1128,13 +1128,10 @@ export function updateDps(roster, buildId, dpsMap) {
   const build = roster?.builds.find((b) => b.id === buildId);
   if (!build) return;
 
-  build.lastDps = {
-    st: Math.round(dpsMap.st || 0),
-    dungeon_slice: Math.round(dpsMap.dungeon_slice || 0),
-    small_aoe: Math.round(dpsMap.small_aoe || 0),
-    big_aoe: Math.round(dpsMap.big_aoe || 0),
-    weighted: dpsMap.weighted || 0,
-  };
+  build.lastDps = Object.fromEntries([
+    ...Object.keys(SCENARIOS).map((s) => [s, Math.round(dpsMap[s] || 0)]),
+    ["weighted", dpsMap.weighted || 0],
+  ]);
   build.lastTestedAt = new Date().toISOString();
 
   if (build.hash) {

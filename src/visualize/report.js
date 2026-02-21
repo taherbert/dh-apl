@@ -121,36 +121,37 @@ function loadReportData(roster, specConfig) {
 function loadChangelog() {
   try {
     const iterations = getIterations({ decision: "accepted", limit: 200 });
-    if (iterations.length === 0) return [];
-    return iterations.map((it) => {
-      let description = it.reason || "";
-      // Only fall back to hypothesis/theory if no reason exists
-      if (!description && it.hypothesisId) {
-        try {
-          const hyp = getDb()
-            .prepare("SELECT summary, theory_id FROM hypotheses WHERE id = ?")
-            .get(it.hypothesisId);
-          if (hyp?.summary) description = hyp.summary;
-          else if (hyp?.theory_id) {
-            const theory = getTheory(hyp.theory_id);
-            if (theory) description = theory.title;
-          }
-        } catch {
-          // Hypothesis lookup is optional
-        }
-      }
-      if (!description) description = it.aplDiff || "APL change";
-      return {
-        id: it.id,
-        date: it.createdAt,
-        description,
-        meanWeighted: it.aggregate?.meanWeighted ?? null,
-        perScenario: it.aggregate || {},
-      };
-    });
+    return iterations.map((it) => ({
+      id: it.id,
+      date: it.createdAt,
+      description: resolveIterationDescription(it),
+      meanWeighted: it.aggregate?.meanWeighted ?? null,
+      perScenario: it.aggregate || {},
+    }));
   } catch {
     return [];
   }
+}
+
+function resolveIterationDescription(it) {
+  if (it.reason) return it.reason;
+
+  if (it.hypothesisId) {
+    try {
+      const hyp = getDb()
+        .prepare("SELECT summary, theory_id FROM hypotheses WHERE id = ?")
+        .get(it.hypothesisId);
+      if (hyp?.summary) return hyp.summary;
+      if (hyp?.theory_id) {
+        const theory = getTheory(hyp.theory_id);
+        if (theory) return theory.title;
+      }
+    } catch {
+      // Hypothesis lookup is optional
+    }
+  }
+
+  return it.aplDiff || "APL change";
 }
 
 // --- Apex rank build analysis ---
@@ -228,23 +229,23 @@ function mergeSimResults(roster, baselineMaps, oursMaps) {
 function persistSimResults(roster, buildData) {
   const hashById = new Map(roster.builds.map((b) => [b.id, b.hash]));
   const scenarioKeys = Object.keys(SCENARIOS);
-  const roundDps = (dpsRow) =>
-    Object.fromEntries(
-      scenarioKeys.map((s) => [s, Math.round(dpsRow[s] || 0)]),
-    );
 
   for (const row of buildData) {
     const hash = hashById.get(row.id);
     if (!hash) continue;
+
+    const rounded = Object.fromEntries(
+      scenarioKeys.map((s) => [s, Math.round(row.dps[s] || 0)]),
+    );
     if (row.dps.weighted > 0)
-      updateBuildDps(hash, roundDps(row.dps), undefined, SCENARIO_WEIGHTS);
-    if (row.simcDps?.weighted > 0)
-      updateBuildSimcDps(
-        hash,
-        roundDps(row.simcDps),
-        undefined,
-        SCENARIO_WEIGHTS,
+      updateBuildDps(hash, rounded, undefined, SCENARIO_WEIGHTS);
+
+    if (row.simcDps?.weighted > 0) {
+      const roundedSimc = Object.fromEntries(
+        scenarioKeys.map((s) => [s, Math.round(row.simcDps[s] || 0)]),
       );
+      updateBuildSimcDps(hash, roundedSimc, undefined, SCENARIO_WEIGHTS);
+    }
   }
 }
 
@@ -256,16 +257,15 @@ async function simDefensiveCosts(
   reportData,
   specConfig,
 ) {
-  // Find the best weighted build to use as reference
-  let refTemplate = null;
   const bestBuild = findBest(reportData.builds, "weighted");
-
   const archetypeMatch = bestBuild?.archetype?.match(/^Apex (\d+):\s*(.+)$/);
+
+  let refTemplate = null;
   if (archetypeMatch && specConfig.rosterTemplates) {
-    const apexRank = Number(archetypeMatch[1]);
-    const templateName = archetypeMatch[2].trim();
     refTemplate = specConfig.rosterTemplates.find(
-      (t) => t.name === templateName && t.apexRank === apexRank,
+      (t) =>
+        t.name === archetypeMatch[2].trim() &&
+        t.apexRank === Number(archetypeMatch[1]),
     );
   }
 
@@ -516,17 +516,11 @@ function renderHeroComparison(builds, heroTrees) {
   const treeNames = Object.keys(heroTrees);
   if (treeNames.length < 2) return "";
 
-  const allScenarios = [...Object.keys(SCENARIOS), "weighted"];
-  const scenarioLabels = Object.fromEntries([
-    ...Object.entries(SCENARIOS).map(([k, v]) => [k, v.name]),
-    ["weighted", "Weighted"],
-  ]);
+  const scenarios = [...activeScenarios(builds), "weighted"];
 
-  // Filter to scenarios that have actual data
-  const scenarios = allScenarios.filter((s) => {
-    if (s === "weighted") return true;
-    return builds.some((b) => (b.dps[s] || 0) > 0);
-  });
+  function scenarioLabel(s) {
+    return s === "weighted" ? "Weighted" : SCENARIOS[s].name;
+  }
 
   // Compute averages per tree per scenario
   const treeData = {};
@@ -599,7 +593,7 @@ function renderHeroComparison(builds, heroTrees) {
   let y = 10;
   for (const s of scenarios) {
     // Scenario label
-    svgBars += `<text x="${labelWidth - 8}" y="${y + barHeight + 4}" text-anchor="end" class="chart-label">${scenarioLabels[s]}</text>`;
+    svgBars += `<text x="${labelWidth - 8}" y="${y + barHeight + 4}" text-anchor="end" class="chart-label">${scenarioLabel(s)}</text>`;
 
     for (let ti = 0; ti < treeNames.length; ti++) {
       const tree = treeNames[ti];
@@ -839,19 +833,15 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     1,
   );
 
-  // Severity based on data-relative quartiles
-  function severity(pct) {
-    const abs = Math.abs(pct);
-    if (abs < maxCost * 0.33) return "light";
-    if (abs < maxCost * 0.66) return "moderate";
-    return "heavy";
-  }
+  const SEVERITY_TIERS = [
+    { threshold: 0.33, cls: "light", color: "var(--positive)" },
+    { threshold: 0.66, cls: "moderate", color: "var(--gold)" },
+    { threshold: Infinity, cls: "heavy", color: "var(--negative)" },
+  ];
 
-  function sevColor(pct) {
+  function getSeverity(pct) {
     const abs = Math.abs(pct);
-    if (abs < maxCost * 0.33) return "var(--positive)";
-    if (abs < maxCost * 0.66) return "var(--gold)";
-    return "var(--negative)";
+    return SEVERITY_TIERS.find((t) => abs < maxCost * t.threshold);
   }
 
   let html = `<div class="subsection">
@@ -860,9 +850,8 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     <div class="def-cost-list">`;
 
   for (const t of averaged) {
-    const sev = severity(t.avgDeltas.weighted);
+    const { cls: sev, color } = getSeverity(t.avgDeltas.weighted);
     const barPct = (Math.abs(t.avgDeltas.weighted) / maxCost) * 100;
-    const color = sevColor(t.avgDeltas.weighted);
 
     html += `<div class="def-strip def-strip--${sev}">
       <div class="def-strip__indicator" style="background:${color}"></div>
@@ -1511,7 +1500,7 @@ tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
   position: absolute;
   bottom: calc(100% + 4px);
   right: 0;
-  background: var(--card);
+  background: var(--surface);
   color: var(--fg);
   border: 1px solid var(--border);
   padding: 0.3em 0.55em;
@@ -1962,7 +1951,8 @@ async function main() {
 
   // Run sims or use cached data
   let reportData;
-  let defensiveTalentCosts = [];
+  let defensiveTalentCosts = { costs: [], refName: "" };
+  const defCostPath = join(resultsDir(), "defensive_costs.json");
 
   if (!opts.skipSims) {
     const fidelityOpts =
@@ -2007,23 +1997,18 @@ async function main() {
     persistSimResults(roster, buildData);
     console.log(`\n  Results cached to DB.`);
 
-    // Load report data (needed to find best build for defensive cost reference)
     reportData = loadReportData(roster, specConfig);
 
-    // Per-talent defensive cost sims (against the current best build)
     console.log(`\n  Running defensive talent cost sims...`);
-    const defResult = await simDefensiveCosts(
+    defensiveTalentCosts = await simDefensiveCosts(
       oursPath,
       fidelityOpts,
       reportData,
       specConfig,
     );
-    defensiveTalentCosts = defResult;
-    // Cache defensive costs for --skip-sims
-    const defCostPath = join(resultsDir(), "defensive_costs.json");
-    writeFileSync(defCostPath, JSON.stringify(defResult, null, 2));
+    writeFileSync(defCostPath, JSON.stringify(defensiveTalentCosts, null, 2));
     console.log(
-      `  ${defResult.costs.length} defensive talent costs computed (vs ${defResult.refName}).`,
+      `  ${defensiveTalentCosts.costs.length} defensive talent costs computed (vs ${defensiveTalentCosts.refName}).`,
     );
   } else {
     console.log("  Loading cached DPS from DB...");
@@ -2033,8 +2018,6 @@ async function main() {
       `  ${reportData.builds.length} builds loaded (${withDps} with DPS data)`,
     );
 
-    // Load cached defensive costs if available
-    const defCostPath = join(resultsDir(), "defensive_costs.json");
     if (existsSync(defCostPath)) {
       defensiveTalentCosts = JSON.parse(readFileSync(defCostPath, "utf-8"));
       console.log(
