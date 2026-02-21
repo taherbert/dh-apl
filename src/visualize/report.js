@@ -6,7 +6,7 @@
 //   --skip-sims           Generate from cached DB DPS only (no sims)
 //   --fidelity <tier>     quick|standard|confirm (default: standard)
 
-import { writeFileSync, mkdirSync, existsSync } from "node:fs";
+import { writeFileSync, readFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 import {
@@ -503,6 +503,8 @@ function renderHeroShowcase(builds, heroTrees) {
       )
       .join("");
 
+    const treeUrl = `https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117`;
+
     return `<div class="showcase-panel">
       <div class="showcase-header">
         <span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span>
@@ -510,14 +512,12 @@ function renderHeroShowcase(builds, heroTrees) {
       <div class="showcase-build-name">${esc(best.displayName)}${copyBtn(best.hash)}</div>
       <div class="showcase-weighted">${fmtDps(best.dps.weighted || 0)} <span class="showcase-weighted-label">weighted</span></div>
       <div class="showcase-scenarios">${scenarioDps}</div>
-      <div class="showcase-tree-wrap">
-        <iframe src="https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117" title="${esc(heroTrees[tree].displayName)} talent tree" scrolling="no"></iframe>
-      </div>
+      <div class="showcase-tree-link"><a href="${treeUrl}" target="_blank" rel="noopener">View Talent Tree</a></div>
     </div>`;
   });
 
   return `<section class="hero-showcase">
-  <h2>Hero Quick View</h2>
+  <h2>Top Builds</h2>
   <div class="showcase-grid">${panels.join("\n")}</div>
 </section>`;
 }
@@ -575,24 +575,66 @@ function renderHeroComparison(builds, heroTrees) {
     }
   }
 
-  // Top 3 builds per tree
-  const topBuildsHtml = treeNames
+  // Head-to-head delta analysis
+  const h2hRows = scenarios
+    .map((s) => {
+      const avgs = treeNames.map((t) => treeData[t].avgs[s]);
+      if (avgs.every((v) => v === 0)) return "";
+      const delta = avgs[0] - avgs[1];
+      const pct = avgs[1] > 0 ? ((avgs[0] - avgs[1]) / avgs[1]) * 100 : 0;
+      const winner = delta >= 0 ? 0 : 1;
+      const winnerTree = treeNames[winner];
+      return `<tr>
+        <td>${esc(scenarioLabels[s])}</td>
+        <td class="num">${fmtDps(avgs[0])}</td>
+        <td class="num">${fmtDps(avgs[1])}</td>
+        <td class="num"><span class="tree-badge sm ${treeClass(winnerTree)}">${treeAbbr(winnerTree)}</span></td>
+        <td class="num ${Math.abs(pct) > 1 ? (delta >= 0 ? "positive" : "negative") : ""}">${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%</td>
+      </tr>`;
+    })
+    .filter(Boolean)
+    .join("\n");
+
+  // Per-tree stats
+  const treeStatsHtml = treeNames
     .map((tree) => {
-      const top3 = [...treeData[tree].builds]
-        .sort((a, b) => (b.dps.weighted || 0) - (a.dps.weighted || 0))
-        .slice(0, 3);
-      const rows = top3
-        .map(
-          (b, i) =>
-            `<tr><td class="rank">${i + 1}</td><td>${esc(b.displayName)}</td><td class="num">${fmtDps(b.dps.weighted || 0)}</td></tr>`,
-        )
-        .join("\n");
-      return `<div class="top-builds-panel">
-        <h4><span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span> Top 3</h4>
-        <table class="top-builds-table"><tbody>${rows}</tbody></table>
+      const weighted = treeData[tree].builds
+        .map((b) => b.dps.weighted || 0)
+        .filter((v) => v > 0)
+        .sort((a, b) => b - a);
+      if (weighted.length === 0) return "";
+      const best = weighted[0];
+      const worst = weighted[weighted.length - 1];
+      const spread =
+        best > 0 ? (((best - worst) / best) * 100).toFixed(1) : "0";
+      return `<div class="tree-stats-card">
+        <h4><span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span></h4>
+        <div class="tree-stats-grid">
+          <div class="tree-stat"><span class="tree-stat-label">Best</span><span class="tree-stat-value">${fmtDps(best)}</span></div>
+          <div class="tree-stat"><span class="tree-stat-label">Avg</span><span class="tree-stat-value">${fmtDps(treeData[tree].avgs.weighted)}</span></div>
+          <div class="tree-stat"><span class="tree-stat-label">Spread</span><span class="tree-stat-value">${spread}%</span></div>
+          <div class="tree-stat"><span class="tree-stat-label">Builds</span><span class="tree-stat-value">${weighted.length}</span></div>
+        </div>
       </div>`;
     })
     .join("\n");
+
+  const rightPanelHtml = `<div class="h2h-panel">
+    <h4>Head to Head (Avg DPS)</h4>
+    <div class="table-wrap">
+      <table class="h2h-table">
+        <thead><tr>
+          <th>Scenario</th>
+          <th class="num">${esc(heroTrees[treeNames[0]]?.displayName || treeNames[0])}</th>
+          <th class="num">${esc(heroTrees[treeNames[1]]?.displayName || treeNames[1])}</th>
+          <th>Winner</th>
+          <th class="num">Delta</th>
+        </tr></thead>
+        <tbody>${h2hRows}</tbody>
+      </table>
+    </div>
+    <div class="tree-stats-row">${treeStatsHtml}</div>
+  </div>`;
 
   // SVG bar chart
   const barWidth = 180;
@@ -643,7 +685,7 @@ function renderHeroComparison(builds, heroTrees) {
   <div class="legend">${legend}</div>
   <div class="hero-comparison">
     <div class="hero-chart-wrap">${svg}</div>
-    <div class="top-builds-row">${topBuildsHtml}</div>
+    ${rightPanelHtml}
   </div>
 </section>`;
 }
@@ -1243,18 +1285,27 @@ h4 {
   margin-bottom: 0.1em;
 }
 
-.showcase-tree-wrap {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+.showcase-tree-link {
+  margin-top: 1rem;
 }
 
-.showcase-tree-wrap iframe {
-  width: 100%;
-  height: 780px;
-  border: none;
-  display: block;
-  background: var(--bg);
+.showcase-tree-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 0.4em 0.8em;
+  border: 1px solid var(--accent-dim);
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.showcase-tree-link a:hover {
+  background: var(--accent-glow);
+  border-color: var(--accent);
 }
 
 /* Best build cards */
@@ -1348,40 +1399,52 @@ h4 {
   display: inline-block;
 }
 
-.top-builds-row {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  flex: 0 0 300px;
+.h2h-panel {
+  flex: 0 0 420px;
   min-width: 0;
 }
 
-.top-builds-panel {
+.h2h-table {
+  font-size: 0.78rem;
+}
+
+.h2h-table th, .h2h-table td {
+  padding: 0.4rem 0.6rem;
+}
+
+.tree-stats-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.tree-stats-card {
+  flex: 1;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 1rem 1.15rem;
+  padding: 0.75rem 1rem;
 }
 
-.top-builds-table {
-  width: 100%;
-  font-size: 0.82rem;
+.tree-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem 1rem;
+  margin-top: 0.5rem;
 }
 
-.top-builds-table td {
-  padding: 0.35rem 0.5rem;
-  border: none;
-}
-
-.top-builds-table .rank {
-  width: 24px;
-  color: var(--fg-muted);
-  font-weight: 700;
+.tree-stat {
+  display: flex;
+  justify-content: space-between;
   font-size: 0.75rem;
 }
 
-.top-builds-table .num {
-  text-align: right;
+.tree-stat-label {
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+.tree-stat-value {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
 }
@@ -1677,13 +1740,13 @@ footer { animation-delay: 0.35s; }
   body { padding: 0 1rem; }
   header { flex-direction: column; align-items: flex-start; }
   .showcase-grid { grid-template-columns: 1fr; }
-  .showcase-tree-wrap iframe { height: 600px; }
+  .h2h-panel { flex: none; width: 100%; }
   .best-cards { grid-template-columns: 1fr; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
   .hero-comparison { flex-direction: column; }
-  .top-builds-row { flex: none; width: 100%; }
+  .tree-stats-row { flex-direction: column; }
   .build-name { font-size: 0.7rem; }
   .showcase-weighted { font-size: 1.4rem; }
 }
@@ -1885,6 +1948,9 @@ async function main() {
       specConfig,
     );
     defensiveTalentCosts = defResult;
+    // Cache defensive costs for --skip-sims
+    const defCostPath = join(resultsDir(), "defensive_costs.json");
+    writeFileSync(defCostPath, JSON.stringify(defResult, null, 2));
     console.log(
       `  ${defResult.costs.length} defensive talent costs computed (vs ${defResult.refName}).`,
     );
@@ -1895,6 +1961,15 @@ async function main() {
     console.log(
       `  ${reportData.builds.length} builds loaded (${withDps} with DPS data)`,
     );
+
+    // Load cached defensive costs if available
+    const defCostPath = join(resultsDir(), "defensive_costs.json");
+    if (existsSync(defCostPath)) {
+      defensiveTalentCosts = JSON.parse(readFileSync(defCostPath, "utf-8"));
+      console.log(
+        `  ${defensiveTalentCosts.costs?.length || 0} cached defensive costs loaded.`,
+      );
+    }
   }
 
   // Generate HTML
