@@ -1204,14 +1204,40 @@ export function generateHashes() {
 
 // --- Show ---
 
+// Cluster column definitions for compact roster display.
+// Order matches the display column order.
+const CLUSTER_COLS = [
+  { key: "brand", label: "Brand", width: 7 },
+  { key: "harvest", label: "Harv", width: 6 },
+  { key: "feldev", label: "FelDev", width: 8 },
+  { key: "sc", label: "SC", width: 4 },
+  { key: "sigil", label: "Sig", width: 5 },
+];
+
+// Resolve cluster status for a build from its archetype → template mapping.
+// Key is "apexRank:templateName" to avoid collisions between same-named templates
+// at different apex ranks.
+function resolveClusterStatus(archetype, templates) {
+  const match = archetype?.match(/^Apex (\d+):\s*(.+)$/);
+  if (!match) {
+    // Baseline or unknown: assume all clusters present
+    return Object.fromEntries(CLUSTER_COLS.map((c) => [c.key, "full"]));
+  }
+  const tmpl = templates.get(`${match[1]}:${match[2]}`);
+  if (!tmpl) {
+    return Object.fromEntries(CLUSTER_COLS.map((c) => [c.key, "full"]));
+  }
+  return Object.fromEntries(
+    CLUSTER_COLS.map((c) => [c.key, tmpl[c.key] || "absent"]),
+  );
+}
+
 export function showRoster() {
   const builds = getRosterBuilds();
   if (!builds || builds.length === 0) {
     console.log("No roster builds found. Run: npm run roster generate");
     return;
   }
-
-  const hasAnyDps = builds.some((b) => b.weighted);
 
   let specConfig;
   try {
@@ -1220,19 +1246,13 @@ export function showRoster() {
     specConfig = null;
   }
 
-  // Detect hero variant for each build
-  for (const b of builds) {
-    if (!b.hash) continue;
-    const tree = b.heroTree || b.hero_tree;
-    const treeCfg = specConfig?.heroTrees?.[tree];
-    const choiceLocks = treeCfg?.choiceLocks || {};
-    try {
-      const { variant } = detectHeroVariant(b.hash, null, choiceLocks);
-      b._variant = variant;
-    } catch {
-      // Non-fatal
-    }
+  // Build template lookup from SPEC_CONFIG, keyed by "apexRank:name"
+  const templates = new Map();
+  for (const t of specConfig?.rosterTemplates || []) {
+    templates.set(`${t.apexRank}:${t.name}`, t.include);
   }
+
+  const hasAnyDps = builds.some((b) => b.weighted);
 
   // Group builds by hero tree
   const byTree = {};
@@ -1241,6 +1261,12 @@ export function showRoster() {
     (byTree[tree] ||= []).push(b);
   }
 
+  // Legend
+  console.log(
+    "  Brand=Fiery Brand cluster  Harv=Harvest cluster  FelDev=Fel Devastation cluster",
+  );
+  console.log("  SC=Soul Carver  Sig=Sigil  * = core only\n");
+
   console.log(`=== Build Roster (${builds.length} builds) ===`);
 
   for (const [tree, treeBuilds] of Object.entries(byTree)) {
@@ -1248,59 +1274,43 @@ export function showRoster() {
       specConfig?.heroTrees?.[tree]?.displayName ||
       tree.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-    console.log(`\n--- ${displayTree} (${treeBuilds.length} builds) ---`);
-
-    // Check if this tree has multiple variants in the roster
-    const variantNames = new Set(
-      treeBuilds.map((b) => b._variant).filter(Boolean),
-    );
-    const showVariantTag = variantNames.size > 1;
-
-    // Group by archetype (primary organizational unit)
-    const byArchetype = {};
-    for (const b of treeBuilds) {
-      const arch = b.archetype || "unclassified";
-      (byArchetype[arch] ||= []).push(b);
-    }
-
-    // Sort archetypes: baseline first, then by apex rank extracted from name
-    const sortedArchKeys = Object.keys(byArchetype).sort((a, b) => {
-      if (a === "Baseline") return -1;
-      if (b === "Baseline") return 1;
-      const apexA = a.match(/^Apex (\d+)/)?.[1] ?? "99";
-      const apexB = b.match(/^Apex (\d+)/)?.[1] ?? "99";
-      return Number(apexA) - Number(apexB) || a.localeCompare(b);
+    // Sort flat: baseline first, then by apex rank, then by template name
+    treeBuilds.sort((a, b) => {
+      if (a.source === "baseline") return -1;
+      if (b.source === "baseline") return 1;
+      const apexA = parseInt(a.archetype?.match(/^Apex (\d+)/)?.[1] ?? "99");
+      const apexB = parseInt(b.archetype?.match(/^Apex (\d+)/)?.[1] ?? "99");
+      if (apexA !== apexB) return apexA - apexB;
+      return (a.archetype || "").localeCompare(b.archetype || "");
     });
 
-    for (const arch of sortedArchKeys) {
-      const archBuilds = byArchetype[arch];
-      // Sort: baseline first, then by variant for consistent display
-      archBuilds.sort((a, b) => {
-        if (a.source === "baseline") return -1;
-        if (b.source === "baseline") return 1;
-        const va = a._variant || "";
-        const vb = b._variant || "";
-        return va.localeCompare(vb);
-      });
+    console.log(`\n--- ${displayTree} (${treeBuilds.length} builds) ---`);
 
-      console.log(`\n  ${arch} (${archBuilds.length}):`);
+    // Column header
+    let header = "  " + "Apex".padEnd(6);
+    for (const col of CLUSTER_COLS) header += col.label.padEnd(col.width);
+    if (hasAnyDps) header += "Weighted".padStart(10);
+    console.log(header);
+    console.log("  " + "-".repeat(header.length - 2));
 
-      for (const b of archBuilds) {
-        const name = (b.displayName || b.name || b.hash?.slice(0, 16)).slice(
-          0,
-          28,
-        );
-        const src = (b.source || "cluster").padEnd(12);
-        const vTag =
-          showVariantTag && b._variant
-            ? `[${b._variant}]`.padEnd(22)
-            : "".padEnd(22);
-        const w =
-          hasAnyDps && b.weighted
-            ? Math.round(b.weighted).toLocaleString().padStart(10)
-            : "";
-        console.log(`    ${name.padEnd(29)} ${src}${vTag}${w}`);
+    for (const b of treeBuilds) {
+      const apexMatch = b.archetype?.match(/^Apex (\d+)/);
+      const apexStr = apexMatch ? `A${apexMatch[1]}` : "BL";
+      const status = resolveClusterStatus(b.archetype, templates);
+
+      let line = "  " + apexStr.padEnd(6);
+      for (const col of CLUSTER_COLS) {
+        const s = status[col.key];
+        let cell;
+        if (s === "full") cell = col.label;
+        else if (s === "core") cell = col.label + "*";
+        else cell = "-";
+        line += cell.padEnd(col.width);
       }
+      if (hasAnyDps && b.weighted) {
+        line += Math.round(b.weighted).toLocaleString().padStart(10);
+      }
+      console.log(line);
     }
   }
 
@@ -1310,35 +1320,8 @@ export function showRoster() {
     .join(" + ");
   console.log(`\nSummary: ${treeSummary} = ${builds.length} total`);
 
-  // Template/archetype count
   const archSet = new Set(builds.map((b) => b.archetype).filter(Boolean));
   console.log(`Templates: ${archSet.size}`);
-
-  // Apex rank breakdown
-  const apexCounts = {};
-  for (const b of builds) {
-    const apexMatch = b.archetype?.match(/^Apex (\d+)/);
-    let rank = "other";
-    if (apexMatch) rank = `Apex ${apexMatch[1]}`;
-    else if (b.source === "baseline") rank = "baseline";
-    apexCounts[rank] = (apexCounts[rank] || 0) + 1;
-  }
-  const apexBreakdown = Object.entries(apexCounts)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([rank, count]) => `${count} ${rank}`)
-    .join(", ");
-  console.log(`Apex ranks: ${apexBreakdown}`);
-
-  // Source breakdown
-  const sourceCounts = {};
-  for (const b of builds) {
-    const src = b.source?.startsWith("community:") ? "community" : b.source;
-    sourceCounts[src] = (sourceCounts[src] || 0) + 1;
-  }
-  const sourceBreakdown = Object.entries(sourceCounts)
-    .map(([src, count]) => `${count} ${src}`)
-    .join(", ");
-  console.log(`Sources: ${sourceBreakdown}`);
 
   // Validation warnings
   const invalidBuilds = builds.filter((b) => !b.validated);
