@@ -779,27 +779,10 @@ function renderBuildRankings(builds, heroTrees) {
 </section>`;
 }
 
-const TEMPLATE_LABELS = {
-  "Drop SC": "Without Soul Carver",
-  "Drop Sigil": "Without Cycle of Binding",
-  "Drop SC+Sigil": "Without Soul Carver + Cycle",
-  "Trim FelDev": "Lite Fel Devastation",
-  "Trim Harvest": "Lite Vulnerability",
-  "Brand+Harvest": "Brand + Harvest",
-  "Brand+FelDev": "Brand + Fel Devastation",
-  "Harvest+FelDev": "Harvest + Fel Devastation",
-  Balanced: "Balanced",
-  "Full Stack": "Full Stack",
-};
-
 function groupByApex(items) {
   const groups = {};
   for (const c of items) (groups[c.apex] ||= []).push(c);
   return Object.entries(groups);
-}
-
-function templateLabel(name) {
-  return TEMPLATE_LABELS[name] || name;
 }
 
 function renderTalentImpact(clusterCosts, defensiveTalentCosts) {
@@ -840,9 +823,9 @@ function renderTalentImpact(clusterCosts, defensiveTalentCosts) {
 
       for (const c of costs) {
         html += `<tr>
-            <td>${esc(templateLabel(c.templateName))}</td>
+            <td>${esc(c.templateName)}</td>
             <td><span class="tree-badge sm ${treeClass(c.heroTree)}">${treeAbbr(c.heroTree)}</span></td>
-            <td class="ref-name">vs ${esc(templateLabel(c.refName))}</td>
+            <td class="ref-name">vs ${esc(c.refName)}</td>
             ${deltaCell(c.deltas.weighted)}`;
 
         for (const s of scenarios) {
