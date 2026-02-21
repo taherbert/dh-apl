@@ -560,7 +560,7 @@ function renderHeroComparison(builds, heroTrees) {
       const count = treeData[t].builds.filter(
         (b) => (b.dps.weighted || 0) > 0,
       ).length;
-      return `<span class="hc-legend-item"><span class="hc-legend-dot" style="background:${treeColor(t)}"></span>${esc(heroTrees[t].displayName)} (${count})</span>`;
+      return `<span class="hc-legend-item"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)} (${count})</span>`;
     })
     .join("");
 
@@ -586,7 +586,7 @@ function renderHeroComparison(builds, heroTrees) {
 
       const deltaHtml =
         delta > 0.5
-          ? `<span class="hc-delta" style="color:${treeColor(winnerTree)}">${treeAbbr(winnerTree)} +${delta.toFixed(1)}%</span>`
+          ? `<span class="hc-delta"><span class="tree-badge sm ${treeClass(winnerTree)}">${treeAbbr(winnerTree)}</span> +${delta.toFixed(1)}%</span>`
           : `<span class="hc-delta" style="color:var(--fg-muted)">~tied</span>`;
 
       const valsHtml = treeNames
@@ -652,13 +652,6 @@ function renderApexSummary(apexBuilds) {
     const barPct = barMax > 0 ? (r.best / barMax) * 100 : 0;
     const isTop = r.gap === 0;
 
-    const treeCells = r.treeAvgs
-      .map(
-        (t) =>
-          `<span class="apex-tree" style="color:${treeColor(t.tree)}">${fmtDps(t.best)}</span>`,
-      )
-      .join('<span class="apex-tree-sep">/</span>');
-
     rows += `<div class="apex-row${isTop ? " apex-row--best" : ""}">
       <span class="apex-rank">Apex ${r.apex}</span>
       <div class="apex-bar-track">
@@ -668,15 +661,6 @@ function renderApexSummary(apexBuilds) {
       <span class="apex-gap ${isTop ? "positive" : "negative"}">${isTop ? "best" : fmtDelta(r.gap)}</span>
     </div>`;
   }
-
-  // Tree legend for the per-tree column
-  const treeOrder = ranks[0]?.treeAvgs.map((t) => t.tree) || [];
-  const treeLegend = treeOrder
-    .map(
-      (t) =>
-        `<span class="apex-legend-item"><span class="hc-legend-dot" style="background:${treeColor(t)}"></span>${treeAbbr(t)}</span>`,
-    )
-    .join("");
 
   // Detail: best build per rank
   let detailRows = "";
@@ -1373,11 +1357,6 @@ h4 {
   font-weight: 500;
 }
 
-.hc-legend-dot {
-  width: 12px;
-  height: 4px;
-  border-radius: 2px;
-}
 
 .hc-panel {
   background: var(--surface);
@@ -1521,25 +1500,6 @@ h4 {
   letter-spacing: 0.02em;
 }
 
-.apex-tree {
-  font-size: 0.72rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-.apex-tree-sep {
-  color: var(--fg-muted);
-  font-size: 0.68rem;
-}
-
-.apex-legend-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.7rem;
-  color: var(--fg-muted);
-  font-weight: 500;
-}
 
 .apex-details {
   margin-top: 0.65rem;
