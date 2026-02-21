@@ -123,28 +123,30 @@ function loadChangelog() {
     const iterations = getIterations({ decision: "accepted", limit: 200 });
     if (iterations.length === 0) return [];
     return iterations.map((it) => {
-      const entry = {
-        id: it.id,
-        date: it.createdAt,
-        description: it.reason || it.aplDiff || "",
-        meanWeighted: it.aggregate?.meanWeighted ?? null,
-        perScenario: it.aggregate || {},
-      };
-      if (it.hypothesisId) {
+      let description = it.reason || "";
+      // Only fall back to hypothesis/theory if no reason exists
+      if (!description && it.hypothesisId) {
         try {
           const hyp = getDb()
             .prepare("SELECT summary, theory_id FROM hypotheses WHERE id = ?")
             .get(it.hypothesisId);
-          if (hyp?.summary) entry.description = hyp.summary;
+          if (hyp?.summary) description = hyp.summary;
           else if (hyp?.theory_id) {
             const theory = getTheory(hyp.theory_id);
-            if (theory) entry.description = theory.title;
+            if (theory) description = theory.title;
           }
         } catch {
           // Hypothesis lookup is optional
         }
       }
-      return entry;
+      if (!description) description = it.aplDiff || "APL change";
+      return {
+        id: it.id,
+        date: it.createdAt,
+        description,
+        meanWeighted: it.aggregate?.meanWeighted ?? null,
+        perScenario: it.aggregate || {},
+      };
     });
   } catch {
     return [];
@@ -200,7 +202,7 @@ function deriveClusterCosts(builds, specConfig) {
     // Find reference (Full Stack for apex 0-1, best weighted otherwise)
     let ref;
     if (apex <= 1) {
-      ref = entries.find((e) => e.templateName === "Full Stack");
+      ref = entries.find((e) => e.templateName === "Complete");
     }
     if (!ref) {
       ref = entries.reduce(
@@ -503,7 +505,7 @@ function renderHeroShowcase(builds, heroTrees) {
       )
       .join("");
 
-    const treeUrl = `https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117`;
+    const treeUrl = `https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117&width=1100&hideHeader=true`;
 
     return `<div class="showcase-panel">
       <div class="showcase-header">
@@ -580,37 +582,7 @@ function renderHeroComparison(builds, heroTrees) {
     }
   }
 
-  // Scenario advantage bars — directional visualization
-  const maxPct = Math.max(
-    ...scenarios.map((s) => {
-      const avgs = treeNames.map((t) => treeData[t].avgs[s]);
-      if (avgs[1] === 0) return 0;
-      return Math.abs(((avgs[0] - avgs[1]) / avgs[1]) * 100);
-    }),
-    1,
-  );
-
-  const advantageBars = scenarios
-    .map((s) => {
-      const avgs = treeNames.map((t) => treeData[t].avgs[s]);
-      if (avgs.every((v) => v === 0)) return "";
-      const pct = avgs[1] > 0 ? ((avgs[0] - avgs[1]) / avgs[1]) * 100 : 0;
-      const barPct = Math.min((Math.abs(pct) / maxPct) * 100, 100);
-      const winner = pct >= 0 ? 0 : 1;
-      const winnerTree = treeNames[winner];
-      const side = pct >= 0 ? "left" : "right";
-      return `<div class="adv-row">
-        <span class="adv-label">${esc(scenarioLabels[s])}</span>
-        <div class="adv-track">
-          <div class="adv-bar adv-${side}" style="width:${barPct}%;background:${treeColor(winnerTree)}"></div>
-        </div>
-        <span class="adv-pct ${Math.abs(pct) > 1 ? (pct >= 0 ? "positive" : "negative") : ""}">${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%</span>
-      </div>`;
-    })
-    .filter(Boolean)
-    .join("\n");
-
-  // Top builds per tree
+  // Top builds per tree with scenario sparkline
   const topBuildsHtml = treeNames
     .map((tree) => {
       const sorted = treeData[tree].builds
@@ -618,13 +590,25 @@ function renderHeroComparison(builds, heroTrees) {
         .sort((a, b) => (b.dps.weighted || 0) - (a.dps.weighted || 0))
         .slice(0, 5);
       if (sorted.length === 0) return "";
-      const best = sorted[0].dps.weighted;
+      const treeBest = sorted[0].dps.weighted;
       const rows = sorted
         .map((b, i) => {
-          const gap = best > 0 ? ((b.dps.weighted - best) / best) * 100 : 0;
+          const gap =
+            treeBest > 0 ? ((b.dps.weighted - treeBest) / treeBest) * 100 : 0;
+          // Mini scenario bars
+          const activeS = scenarios.filter((s) => s !== "weighted");
+          const maxS = Math.max(...activeS.map((s) => b.dps[s] || 0), 1);
+          const sparkBars = activeS
+            .map((s) => {
+              const v = b.dps[s] || 0;
+              const pct = maxS > 0 ? (v / maxS) * 100 : 0;
+              return `<div class="spark-bar" style="height:${pct}%" data-tip="${esc(SCENARIOS[s].name)}: ${fmtDps(v)}"></div>`;
+            })
+            .join("");
           return `<div class="top-build-row">
             <span class="top-build-rank">${i + 1}.</span>
             <span class="top-build-name">${esc(b.displayName)}${copyBtn(b.hash)}</span>
+            <span class="spark-group">${sparkBars}</span>
             <span class="top-build-dps">${fmtDps(b.dps.weighted)}</span>
             <span class="top-build-gap ${gap < -3 ? "negative" : ""}">${i === 0 ? "" : gap.toFixed(1) + "%"}</span>
           </div>`;
@@ -638,13 +622,7 @@ function renderHeroComparison(builds, heroTrees) {
     .join("\n");
 
   const rightPanelHtml = `<div class="h2h-panel">
-    <h4>Scenario Advantage</h4>
-    <div class="adv-legend">
-      <span class="legend-item"><span class="legend-dot" style="background:${treeColor(treeNames[0])}"></span>${esc(heroTrees[treeNames[0]]?.displayName || treeNames[0])}</span>
-      <span class="legend-item"><span class="legend-dot" style="background:${treeColor(treeNames[1])}"></span>${esc(heroTrees[treeNames[1]]?.displayName || treeNames[1])}</span>
-    </div>
-    ${advantageBars}
-    <h4 style="margin-top:1.5rem">Top Builds (Weighted)</h4>
+    <h4>Top Builds (Weighted DPS)</h4>
     ${topBuildsHtml}
   </div>`;
 
@@ -731,28 +709,27 @@ function renderBuildRankings(builds, heroTrees) {
 
     // Baseline tooltip
     const hasBaseline = b.simcDps && b.simcDps.weighted > 0;
-    const wTooltip = hasBaseline
-      ? ` title="SimC baseline: ${fmtDps(b.simcDps.weighted)}"`
-      : "";
-
     let scenarioCells = "";
     for (const s of scenarios) {
       const isTop = topPerScenario[s]?.id === b.id;
       const badge = isTop ? '<span class="badge">TOP</span>' : "";
       const topCls = isTop ? " top-build" : "";
-      const tooltip =
+      const tip =
         hasBaseline && b.simcDps[s]
-          ? ` title="SimC baseline: ${fmtDps(b.simcDps[s])}"`
+          ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps[s])}"`
           : "";
-      scenarioCells += `<td class="dps-cell${topCls}"${tooltip}>${fmtDps(b.dps[s] || 0)}${badge}</td>`;
+      scenarioCells += `<td class="dps-cell${topCls} has-tip"${tip}>${fmtDps(b.dps[s] || 0)}${badge}</td>`;
     }
 
+    const wTip = hasBaseline
+      ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps.weighted)}"`
+      : "";
     rows += `<tr data-tree="${esc(b.heroTree)}">
   <td class="build-name">${esc(b.displayName)}${copyBtn(b.hash)}</td>
   <td><span class="tree-badge sm ${treeClass(b.heroTree)}">${treeAbbr(b.heroTree)}</span></td>
   <td class="archetype-cell">${esc(b.archetype)}</td>
   ${scenarioCells}
-  <td class="dps-cell${isTopW ? " top-build" : ""}"${wTooltip}>${fmtDps(b.dps.weighted || 0)}${wBadge}</td>
+  <td class="dps-cell${isTopW ? " top-build" : ""} has-tip"${wTip}>${fmtDps(b.dps.weighted || 0)}${wBadge}</td>
 </tr>`;
   }
 
@@ -1283,16 +1260,18 @@ h4 {
   border-radius: var(--radius-sm);
   overflow: hidden;
   margin-top: 1rem;
+  position: relative;
 }
 
 .showcase-tree-wrap iframe {
-  width: 1500px;
-  height: 780px;
-  margin-left: -710px;
+  width: 1100px;
+  height: 700px;
   border: none;
   display: block;
   background: var(--bg);
   pointer-events: none;
+  clip-path: inset(3% 2% 0 54%);
+  margin-left: -54%;
 }
 
 /* Best build cards */
@@ -1391,52 +1370,6 @@ h4 {
   min-width: 0;
 }
 
-/* Scenario advantage bars */
-.adv-legend {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.75rem;
-}
-.adv-row {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.4rem;
-}
-.adv-label {
-  flex: 0 0 80px;
-  font-size: 0.73rem;
-  color: var(--fg-muted);
-  text-align: right;
-  font-weight: 500;
-}
-.adv-track {
-  flex: 1;
-  height: 18px;
-  background: var(--surface);
-  border-radius: 3px;
-  position: relative;
-  overflow: hidden;
-}
-.adv-bar {
-  position: absolute;
-  top: 0;
-  height: 100%;
-  border-radius: 3px;
-  opacity: 0.8;
-  transition: width 0.3s;
-}
-.adv-left { left: 0; }
-.adv-right { right: 0; }
-.adv-pct {
-  flex: 0 0 52px;
-  font-size: 0.73rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
 /* Top builds per tree */
 .top-builds-card {
   margin-bottom: 1rem;
@@ -1483,6 +1416,24 @@ h4 {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
+
+/* Mini scenario sparkline bars */
+.spark-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+.spark-bar {
+  width: 6px;
+  min-height: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+.spark-bar:hover { opacity: 1; }
 
 /* Tree badges */
 .tree-badge {
@@ -1575,6 +1526,26 @@ tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
 }
 
 .dps-cell.top-build { background: var(--gold-bg); }
+
+/* Instant styled tooltip */
+[data-tip] { position: relative; cursor: default; }
+[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  right: 0;
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  padding: 0.3em 0.55em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
 
 .build-name {
   font-weight: 500;

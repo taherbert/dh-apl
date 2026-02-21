@@ -229,9 +229,9 @@ export const SPEC_CONFIG = {
     },
 
     // --- Apex 3 (skip 2 pts) — focus determines what to sacrifice ---
-    // Three majors: drop both standalones, keep all three major clusters full
+    // All three major clusters full, drop both standalones
     {
-      name: "Three Majors",
+      name: "Brand + Harvest + Fel Dev",
       apexRank: 3,
       include: { brand: "full", harvest: "full", feldev: "full" },
     },
