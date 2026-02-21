@@ -808,25 +808,37 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     );
   }
 
+  // Extract tree names from entries for column headers
+  const treeNames =
+    averaged.length > 0 && averaged[0].entries.length > 1
+      ? averaged[0].entries.map((e) => e.heroTree)
+      : [];
+  const treeHeaders = treeNames
+    .map(
+      (t) =>
+        `<span class="def-strip__tree-header"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span></span>`,
+    )
+    .join("");
+
   let html = `<div class="subsection">
     <h3>Defensive Talent Costs</h3>
     <p class="section-desc">DPS cost of taking each defensive talent (averaged across hero trees, vs ${esc(refName)}).</p>
-    <div class="def-cost-list">`;
+    <div class="def-cost-list">
+    ${treeHeaders ? `<div class="def-strip-header"><div class="def-strip-header__body"><span></span><span></span><span class="def-strip-header__label">Avg</span>${treeHeaders}</div></div>` : ""}`;
 
   for (const t of averaged) {
     const { cls: sev, color } = getSeverity(t.avgDeltas.weighted);
     const barPct = (Math.abs(t.avgDeltas.weighted) / maxCost) * 100;
 
-    // Per-tree breakdown inline
-    let treeHtml = "";
-    if (t.entries.length > 1) {
-      treeHtml = t.entries
-        .map(
-          (e) =>
-            `<span class="def-strip__tree"><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span> ${fmtDelta(e.deltas.weighted)}</span>`,
-        )
-        .join("");
-    }
+    const treeHtml =
+      t.entries.length > 1
+        ? t.entries
+            .map(
+              (e) =>
+                `<span class="def-strip__tree">${fmtDelta(e.deltas.weighted)}</span>`,
+            )
+            .join("")
+        : "";
 
     html += `<div class="def-strip def-strip--${sev}">
       <div class="def-strip__indicator" style="background:${color}"></div>
@@ -1532,6 +1544,25 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
   border: 1px solid var(--border);
 }
 
+.def-strip-header {
+  padding-left: 3px;
+}
+
+.def-strip-header__body {
+  display: grid;
+  grid-template-columns: 160px 1fr 75px 90px 90px;
+  gap: 0 0.75rem;
+  padding: 0.35rem 1rem 0.25rem 0.85rem;
+}
+
+.def-strip-header__label,
+.def-strip__tree-header {
+  font-size: 0.68rem;
+  color: var(--fg-muted);
+  font-weight: 600;
+  text-align: right;
+}
+
 .def-strip {
   display: flex;
   background: var(--bg-elevated);
@@ -1591,16 +1622,11 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 }
 
 .def-strip__tree {
-  font-size: 0.68rem;
-  color: var(--fg-muted);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
+  font-size: 0.72rem;
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
   text-align: right;
-  justify-content: flex-end;
 }
-
-.def-strip__tree .tree-badge { font-size: 0.58rem; padding: 0.1em 0.35em; }
 
 /* Details / collapsible */
 details {
@@ -1720,7 +1746,7 @@ footer { animation-delay: 0.35s; }
   .showcase-grid { grid-template-columns: 1fr; }
   .best-cards { grid-template-columns: 1fr; }
   .hc-row { grid-template-columns: 70px 1fr 100px 70px; gap: 0.5rem; }
-  .def-strip__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
+  .def-strip__body, .def-strip-header__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
