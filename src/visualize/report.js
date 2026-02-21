@@ -605,9 +605,31 @@ function renderHeroComparison(builds, heroTrees) {
     })
     .join("\n");
 
+  // Headline: weighted DPS per tree
+  const weightedVals = treeNames.map((t) => treeData[t].avgs.weighted);
+  const headlineWinner = weightedVals[0] >= weightedVals[1] ? 0 : 1;
+  const headlineDelta =
+    weightedVals[1 - headlineWinner] > 0
+      ? ((weightedVals[headlineWinner] - weightedVals[1 - headlineWinner]) /
+          weightedVals[1 - headlineWinner]) *
+        100
+      : 0;
+
+  const headline = treeNames
+    .map((t, i) => {
+      const isWinner = i === headlineWinner;
+      return `<div class="hc-headline${isWinner ? " hc-headline--winner" : ""}">
+        <span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span>
+        <span class="hc-headline-dps" style="color:${treeColor(t)}">${fmtDps(weightedVals[i])}</span>
+        ${isWinner && headlineDelta > 0.5 ? `<span class="hc-headline-edge">+${headlineDelta.toFixed(1)}%</span>` : ""}
+      </div>`;
+    })
+    .join("");
+
   return `<div class="dual-card">
   <h3>Hero Trees</h3>
   <div class="hc-legend">${legend}</div>
+  <div class="hc-headlines">${headline}</div>
   <div class="hc-panel">${rows}</div>
 </div>`;
 }
@@ -652,8 +674,12 @@ function renderApexSummary(apexBuilds) {
     const barPct = barMax > 0 ? (r.best / barMax) * 100 : 0;
     const isTop = r.gap === 0;
 
+    const topBuild = r.entries[0];
     rows += `<div class="apex-row${isTop ? " apex-row--best" : ""}">
-      <span class="apex-rank">Apex ${r.apex}</span>
+      <div class="apex-rank-group">
+        <span class="apex-rank">Apex ${r.apex}</span>
+        <span class="apex-build-name">${esc(topBuild?.templateName || "—")} <span class="tree-badge sm ${treeClass(topBuild?.heroTree)}">${treeAbbr(topBuild?.heroTree)}</span></span>
+      </div>
       <div class="apex-bar-track">
         <div class="apex-bar" style="width:${barPct.toFixed(1)}%"></div>
       </div>
@@ -662,30 +688,9 @@ function renderApexSummary(apexBuilds) {
     </div>`;
   }
 
-  // Detail: best build per rank
-  let detailRows = "";
-  for (const r of ranks) {
-    const topBuild = r.entries[0];
-    detailRows += `<div class="apex-detail">
-      <span class="apex-detail-rank">${r.apex}</span>
-      <span class="apex-detail-name">${esc(topBuild?.templateName || "—")}</span>
-      <span class="apex-detail-tree"><span class="tree-badge sm ${treeClass(topBuild?.heroTree)}">${treeAbbr(topBuild?.heroTree)}</span></span>
-      <span class="apex-detail-count">${r.entries.length} builds</span>
-    </div>`;
-  }
-
   return `<div class="dual-card">
   <h3>Apex Scaling</h3>
   <div class="apex-panel">${rows}</div>
-  <div class="apex-details">
-    <div class="apex-detail apex-detail--header">
-      <span class="apex-detail-rank"></span>
-      <span class="apex-detail-label">Best at rank</span>
-      <span class="apex-detail-tree"></span>
-      <span class="apex-detail-count"></span>
-    </div>
-    ${detailRows}
-  </div>
 </div>`;
 }
 
@@ -1335,6 +1340,43 @@ h4 {
   font-weight: 700;
 }
 
+/* Hero headline stats */
+.hc-headlines {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0.85rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.hc-headline {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.hc-headline-dps {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.hc-headline--winner .hc-headline-dps {
+  font-size: 1.5rem;
+}
+
+.hc-headline-edge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--positive);
+  background: var(--positive-bg);
+  padding: 0.15em 0.45em;
+  border-radius: 3px;
+}
+
 /* Hero comparison — paired bars with delta */
 .dual-card .hc-panel {
   border: none;
@@ -1436,10 +1478,10 @@ h4 {
 
 .apex-row {
   display: grid;
-  grid-template-columns: 55px 1fr 65px 50px;
+  grid-template-columns: minmax(100px, auto) 1fr 65px 50px;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.45rem 0;
+  padding: 0.55rem 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -1449,6 +1491,13 @@ h4 {
 
 .apex-row--best { border-bottom: 1px solid var(--border); }
 
+.apex-rank-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
 .apex-rank {
   font-size: 0.76rem;
   font-weight: 600;
@@ -1456,6 +1505,17 @@ h4 {
 }
 
 .apex-row--best .apex-rank { color: var(--fg); }
+
+.apex-build-name {
+  font-size: 0.66rem;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
 
 .apex-bar-track {
   height: 10px;
@@ -1500,56 +1560,6 @@ h4 {
   letter-spacing: 0.02em;
 }
 
-
-.apex-details {
-  margin-top: 0.65rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid var(--border);
-}
-
-.apex-detail {
-  display: grid;
-  grid-template-columns: 16px 1fr auto 52px;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.2rem 0;
-}
-
-.apex-detail--header {
-  padding-bottom: 0.1rem;
-  margin-bottom: 0.05rem;
-}
-
-.apex-detail-rank {
-  font-size: 0.64rem;
-  color: var(--fg-muted);
-  font-weight: 600;
-  text-align: center;
-  opacity: 0.7;
-}
-
-.apex-detail-name {
-  font-size: 0.72rem;
-  color: var(--fg-dim);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.apex-detail-label {
-  font-size: 0.64rem;
-  color: var(--fg-muted);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.apex-detail-count {
-  font-size: 0.64rem;
-  color: var(--fg-muted);
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
 
 /* Tree badges */
 .tree-badge {
