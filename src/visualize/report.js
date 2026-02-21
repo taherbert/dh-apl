@@ -421,7 +421,7 @@ function generateHtml(data) {
     renderHeader(displaySpec, freshness),
     renderHeroShowcase(builds, heroTrees),
     renderBestBuilds(builds),
-    renderHeroComparison(builds, heroTrees),
+    renderHeroAndApex(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
     renderOptimizationJourney(iterations),
@@ -605,10 +605,113 @@ function renderHeroComparison(builds, heroTrees) {
     })
     .join("\n");
 
-  return `<section>
-  <h2>Hero Tree Comparison</h2>
+  return `<div class="dual-card">
+  <h3>Hero Trees</h3>
   <div class="hc-legend">${legend}</div>
   <div class="hc-panel">${rows}</div>
+</div>`;
+}
+
+function renderApexSummary(apexBuilds) {
+  const apexKeys = Object.keys(apexBuilds).sort(
+    (a, b) => Number(b) - Number(a),
+  );
+  if (apexKeys.length === 0) return "";
+
+  // Per apex rank: best DPS, avg DPS, per-tree avg
+  const globalBest = Math.max(
+    ...apexKeys.flatMap((k) => apexBuilds[k].map((e) => e.avg.weighted)),
+  );
+
+  const ranks = apexKeys.map((k) => {
+    const entries = apexBuilds[k];
+    const best = Math.max(...entries.map((e) => e.avg.weighted));
+    const avg =
+      entries.reduce((s, e) => s + e.avg.weighted, 0) / entries.length;
+    const gap = globalBest > 0 ? ((best - globalBest) / globalBest) * 100 : 0;
+
+    // Per-tree breakdown
+    const byTree = {};
+    for (const e of entries) {
+      (byTree[e.heroTree] ||= []).push(e.avg.weighted);
+    }
+    const treeAvgs = Object.entries(byTree).map(([tree, vals]) => ({
+      tree,
+      avg: vals.reduce((a, b) => a + b, 0) / vals.length,
+      best: Math.max(...vals),
+    }));
+    treeAvgs.sort((a, b) => b.avg - a.avg);
+
+    return { apex: Number(k), entries, best, avg, gap, treeAvgs };
+  });
+
+  const barMax = ranks[0]?.best || 1;
+
+  let rows = "";
+  for (const r of ranks) {
+    const barPct = barMax > 0 ? (r.best / barMax) * 100 : 0;
+    const isTop = r.gap === 0;
+
+    const treeCells = r.treeAvgs
+      .map(
+        (t) =>
+          `<span class="apex-tree" style="color:${treeColor(t.tree)}">${fmtDps(t.best)}</span>`,
+      )
+      .join('<span class="apex-tree-sep">/</span>');
+
+    rows += `<div class="apex-row${isTop ? " apex-row--best" : ""}">
+      <span class="apex-rank">Apex ${r.apex}</span>
+      <div class="apex-bar-track">
+        <div class="apex-bar" style="width:${barPct.toFixed(1)}%"></div>
+      </div>
+      <span class="apex-best">${fmtDps(r.best)}</span>
+      <span class="apex-gap ${isTop ? "positive" : "negative"}">${isTop ? "best" : fmtDelta(r.gap)}</span>
+    </div>`;
+  }
+
+  // Tree legend for the per-tree column
+  const treeOrder = ranks[0]?.treeAvgs.map((t) => t.tree) || [];
+  const treeLegend = treeOrder
+    .map(
+      (t) =>
+        `<span class="apex-legend-item"><span class="hc-legend-dot" style="background:${treeColor(t)}"></span>${treeAbbr(t)}</span>`,
+    )
+    .join("");
+
+  // Detail: best build per rank
+  let detailRows = "";
+  for (const r of ranks) {
+    const topBuild = r.entries[0];
+    detailRows += `<div class="apex-detail">
+      <span class="apex-detail-rank">${r.apex}</span>
+      <span class="apex-detail-name">${esc(topBuild?.templateName || "—")}</span>
+      <span class="apex-detail-tree"><span class="tree-badge sm ${treeClass(topBuild?.heroTree)}">${treeAbbr(topBuild?.heroTree)}</span></span>
+      <span class="apex-detail-count">${r.entries.length} builds</span>
+    </div>`;
+  }
+
+  return `<div class="dual-card">
+  <h3>Apex Scaling</h3>
+  <div class="apex-panel">${rows}</div>
+  <div class="apex-details">
+    <div class="apex-detail apex-detail--header">
+      <span class="apex-detail-rank"></span>
+      <span class="apex-detail-name" style="color:var(--fg-muted);font-weight:600">Best build</span>
+      <span class="apex-detail-tree"></span>
+      <span class="apex-detail-count"></span>
+    </div>
+    ${detailRows}
+  </div>
+</div>`;
+}
+
+function renderHeroAndApex(builds, heroTrees, apexBuilds) {
+  const heroHtml = renderHeroComparison(builds, heroTrees);
+  const apexHtml = renderApexSummary(apexBuilds);
+  if (!heroHtml && !apexHtml) return "";
+  return `<section>
+  <h2>Hero Tree Comparison</h2>
+  <div class="dual-panel">${heroHtml}${apexHtml}</div>
 </section>`;
 }
 
@@ -701,70 +804,12 @@ function renderBuildRankings(builds, heroTrees) {
 }
 
 function renderTalentImpact(apexBuilds, defensiveTalentCosts, builds) {
-  let html = `<section>
-  <h2>Talent Impact</h2>`;
+  if (!defensiveTalentCosts?.costs?.length) return "";
 
-  if (defensiveTalentCosts?.costs?.length > 0) {
-    html += renderDefensiveTalentCosts(
-      defensiveTalentCosts.costs,
-      defensiveTalentCosts.refName,
-      builds,
-    );
-  }
-
-  const apexKeys = Object.keys(apexBuilds).sort(
-    (a, b) => Number(a) - Number(b),
-  );
-  if (apexKeys.length > 0) {
-    const globalBest = Math.max(
-      ...apexKeys.flatMap((k) => apexBuilds[k].map((e) => e.avg.weighted)),
-    );
-
-    // Flatten all apex entries into one sorted list
-    const allEntries = apexKeys.flatMap((k) =>
-      apexBuilds[k].map((e) => ({
-        ...e,
-        gapFromBest:
-          globalBest > 0
-            ? ((e.avg.weighted - globalBest) / globalBest) * 100
-            : 0,
-      })),
-    );
-    allEntries.sort((a, b) => b.avg.weighted - a.avg.weighted);
-
-    let rows = "";
-    for (let i = 0; i < allEntries.length; i++) {
-      const e = allEntries[i];
-      rows += `<tr>
-        <td class="num">${i + 1}</td>
-        <td>${esc(e.templateName)}</td>
-        <td><span class="tree-badge sm ${treeClass(e.heroTree)}">${treeAbbr(e.heroTree)}</span></td>
-        <td class="num">${e.apex}</td>
-        <td class="num">${fmtDps(e.avg.weighted)}</td>
-        ${deltaCell(e.gapFromBest)}
-      </tr>`;
-    }
-
-    html += `<div class="subsection">
-    <h3>Builds by Apex Rank</h3>
-    <p class="section-desc">All builds ranked by weighted DPS. Higher apex ranks unlock more powerful talents but cost points elsewhere.</p>
-    <div class="table-wrap">
-      <table class="cost-table">
-        <thead><tr>
-          <th>#</th>
-          <th>Build</th>
-          <th>Tree</th>
-          <th class="num">Apex</th>
-          <th class="num">Weighted DPS</th>
-          <th class="num">vs Best</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>
-    </div></div>`;
-  }
-
-  html += `</section>`;
-  return html;
+  return `<section>
+  <h2>Talent Impact</h2>
+  ${renderDefensiveTalentCosts(defensiveTalentCosts.costs, defensiveTalentCosts.refName, builds)}
+</section>`;
 }
 
 function renderDefensiveTalentCosts(costs, refName, builds) {
@@ -1281,7 +1326,37 @@ h4 {
   color: var(--fg-dim);
 }
 
+/* Dual panel layout */
+.dual-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.dual-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+}
+
+.dual-card h3 {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-muted);
+  margin: 0 0 1rem;
+  font-weight: 700;
+}
+
 /* Hero comparison — paired bars with delta */
+.dual-card .hc-panel {
+  border: none;
+  padding: 0;
+  background: none;
+}
+
 .hc-legend {
   display: flex;
   gap: 1.5rem;
@@ -1312,9 +1387,9 @@ h4 {
 
 .hc-row {
   display: grid;
-  grid-template-columns: 85px 1fr 130px 90px;
+  grid-template-columns: 80px 1fr auto auto;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   padding: 0.5rem 0;
   border-bottom: 1px solid var(--border-subtle);
 }
@@ -1328,9 +1403,10 @@ h4 {
 }
 
 .hc-label {
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 500;
   text-align: right;
+  white-space: nowrap;
 }
 
 .hc-row--weighted .hc-label { font-weight: 700; }
@@ -1354,18 +1430,141 @@ h4 {
 .hc-vals {
   display: flex;
   gap: 0.25rem;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   justify-content: flex-end;
+  white-space: nowrap;
 }
 
 .hc-sep { color: var(--fg-muted); }
 
 .hc-delta {
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Apex scaling panel */
+.apex-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.apex-row {
+  display: grid;
+  grid-template-columns: 55px 1fr 65px 50px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.apex-row:last-child { border-bottom: none; }
+
+.apex-row--best { border-bottom: 1px solid var(--border); }
+
+.apex-rank {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--fg-dim);
+}
+
+.apex-row--best .apex-rank { color: var(--fg); }
+
+.apex-bar-track {
+  height: 8px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.apex-bar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.apex-row:hover .apex-bar { opacity: 1; }
+.apex-row--best .apex-bar { opacity: 0.9; }
+
+.apex-best {
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--fg);
+}
+
+.apex-gap {
   font-size: 0.72rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.apex-tree {
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.apex-tree-sep {
+  color: var(--fg-muted);
+  font-size: 0.68rem;
+}
+
+.apex-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+.apex-details {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.apex-detail {
+  display: grid;
+  grid-template-columns: 20px 1fr auto 55px;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0;
+}
+
+.apex-detail--header {
+  padding-bottom: 0.15rem;
+}
+
+.apex-detail-rank {
+  font-size: 0.68rem;
+  color: var(--fg-muted);
+  font-weight: 600;
+  text-align: center;
+}
+
+.apex-detail-name {
+  font-size: 0.74rem;
+  color: var(--fg-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.apex-detail-count {
+  font-size: 0.66rem;
+  color: var(--fg-muted);
   text-align: right;
 }
 
@@ -1745,6 +1944,7 @@ footer { animation-delay: 0.35s; }
   header { flex-direction: column; align-items: flex-start; }
   .showcase-grid { grid-template-columns: 1fr; }
   .best-cards { grid-template-columns: 1fr; }
+  .dual-panel { grid-template-columns: 1fr; }
   .hc-row { grid-template-columns: 70px 1fr 100px 70px; gap: 0.5rem; }
   .def-strip__body, .def-strip-header__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
   table { font-size: 0.72rem; }
