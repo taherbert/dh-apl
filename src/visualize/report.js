@@ -920,20 +920,24 @@ const COPY_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" st
 
 const INFO_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg>`;
 
+function isAnni(heroTree) {
+  return heroTree?.toLowerCase().startsWith("anni");
+}
+
 function treeClass(heroTree) {
-  return heroTree === "annihilator" ? "anni" : "ar";
+  return isAnni(heroTree) ? "anni" : "ar";
 }
 
 function treeDisplayName(heroTree) {
-  return heroTree === "annihilator" ? "Annihilator" : "Aldrachi Reaver";
+  return isAnni(heroTree) ? "Annihilator" : "Aldrachi Reaver";
 }
 
 function treeAbbr(heroTree) {
-  return heroTree === "annihilator" ? "Anni" : "AR";
+  return isAnni(heroTree) ? "Anni" : "AR";
 }
 
 function treeColor(heroTree) {
-  return heroTree === "annihilator" ? "#a78bfa" : "#fb923c";
+  return isAnni(heroTree) ? "#a78bfa" : "#fb923c";
 }
 
 function scenarioLabel(s) {
@@ -1200,17 +1204,20 @@ h4 {
   overflow: hidden;
   margin-top: 1rem;
   position: relative;
+  aspect-ratio: 4 / 5;
 }
 
 .showcase-tree-wrap iframe {
+  position: absolute;
   width: 1100px;
   height: 700px;
   border: none;
-  display: block;
   background: var(--bg);
   pointer-events: none;
-  clip-path: inset(3% 2% 15% 55%);
-  margin-left: -55%;
+  clip-path: inset(3% 0% 15% 55%);
+  left: 50%;
+  top: 50%;
+  transform-origin: 77.5% 44%;
 }
 
 /* Best build cards */
@@ -1731,6 +1738,19 @@ footer { animation-delay: 0.35s; }
 // --- Interactive JS ---
 
 const JS = `
+// Responsive spec tree scaling
+document.querySelectorAll('.showcase-tree-wrap').forEach(wrap => {
+  const iframe = wrap.querySelector('iframe');
+  if (!iframe) return;
+  const TREE_W = 495, TREE_H = 574;
+  const fit = () => {
+    const s = Math.min(wrap.clientWidth / TREE_W, wrap.clientHeight / TREE_H);
+    iframe.style.transform = 'translate(-77.5%, -44%) scale(' + s + ')';
+  };
+  fit();
+  new ResizeObserver(fit).observe(wrap);
+});
+
 // Table sorting
 document.querySelectorAll('th.sortable').forEach(th => {
   th.addEventListener('click', () => {
