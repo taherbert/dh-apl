@@ -1214,10 +1214,10 @@ h4 {
   border: none;
   background: var(--bg);
   pointer-events: none;
-  clip-path: inset(3% 0% 15% 55%);
+  clip-path: inset(0% 0% 15% 57%);
   left: 50%;
   top: 50%;
-  transform-origin: 77.5% 44%;
+  transform-origin: 78.5% 42.5%;
 }
 
 /* Best build cards */
@@ -1742,10 +1742,10 @@ const JS = `
 document.querySelectorAll('.showcase-tree-wrap').forEach(wrap => {
   const iframe = wrap.querySelector('iframe');
   if (!iframe) return;
-  const TREE_W = 495, TREE_H = 574;
+  const TREE_W = 473, TREE_H = 595;
   const fit = () => {
     const s = Math.min(wrap.clientWidth / TREE_W, wrap.clientHeight / TREE_H);
-    iframe.style.transform = 'translate(-77.5%, -44%) scale(' + s + ')';
+    iframe.style.transform = 'translate(-78.5%, -42.5%) scale(' + s + ')';
   };
   fit();
   new ResizeObserver(fit).observe(wrap);
