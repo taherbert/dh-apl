@@ -696,7 +696,7 @@ function renderApexSummary(apexBuilds) {
   <div class="apex-details">
     <div class="apex-detail apex-detail--header">
       <span class="apex-detail-rank"></span>
-      <span class="apex-detail-name" style="color:var(--fg-muted);font-weight:600">Best build</span>
+      <span class="apex-detail-label">Best at rank</span>
       <span class="apex-detail-tree"></span>
       <span class="apex-detail-count"></span>
     </div>
@@ -1342,11 +1342,12 @@ h4 {
 }
 
 .dual-card h3 {
-  font-size: 0.82rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.78rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--fg-muted);
-  margin: 0 0 1rem;
+  letter-spacing: 0.08em;
+  color: var(--fg-dim);
+  margin: 0 0 0.85rem;
   font-weight: 700;
 }
 
@@ -1390,7 +1391,7 @@ h4 {
   grid-template-columns: 80px 1fr auto auto;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 0;
+  padding: 0.45rem 0;
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -1414,13 +1415,13 @@ h4 {
 .hc-split-track {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
   min-width: 0;
 }
 
 .hc-split-bar {
-  height: 10px;
-  border-radius: 2px;
+  height: 12px;
+  border-radius: 3px;
   min-width: 2px;
   transition: opacity 0.15s;
 }
@@ -1464,6 +1465,8 @@ h4 {
 }
 
 .apex-row:last-child { border-bottom: none; }
+.apex-row { transition: background 0.12s; }
+.apex-row:hover { background: var(--accent-glow); }
 
 .apex-row--best { border-bottom: 1px solid var(--border); }
 
@@ -1476,7 +1479,7 @@ h4 {
 .apex-row--best .apex-rank { color: var(--fg); }
 
 .apex-bar-track {
-  height: 8px;
+  height: 10px;
   background: var(--border-subtle);
   border-radius: 3px;
   overflow: hidden;
@@ -1486,13 +1489,13 @@ h4 {
 .apex-bar {
   height: 100%;
   border-radius: 3px;
-  background: var(--accent);
-  opacity: 0.7;
+  background: linear-gradient(90deg, var(--accent-dim) 0%, var(--accent) 100%);
+  opacity: 0.65;
   transition: opacity 0.15s;
 }
 
 .apex-row:hover .apex-bar { opacity: 1; }
-.apex-row--best .apex-bar { opacity: 0.9; }
+.apex-row--best .apex-bar { opacity: 0.85; background: linear-gradient(90deg, var(--accent) 0%, #a5b4fc 100%); }
 
 .apex-best {
   font-size: 0.78rem;
@@ -1507,6 +1510,15 @@ h4 {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
   text-align: right;
+}
+
+.apex-gap.positive {
+  font-size: 0.62rem;
+  background: rgba(52, 211, 153, 0.12);
+  color: var(--positive);
+  padding: 0.15em 0.5em;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
 }
 
 .apex-tree {
@@ -1530,42 +1542,53 @@ h4 {
 }
 
 .apex-details {
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
+  margin-top: 0.65rem;
+  padding-top: 0.6rem;
   border-top: 1px solid var(--border);
 }
 
 .apex-detail {
   display: grid;
-  grid-template-columns: 20px 1fr auto 55px;
+  grid-template-columns: 16px 1fr auto 52px;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.25rem 0;
+  gap: 0.35rem;
+  padding: 0.2rem 0;
 }
 
 .apex-detail--header {
-  padding-bottom: 0.15rem;
+  padding-bottom: 0.1rem;
+  margin-bottom: 0.05rem;
 }
 
 .apex-detail-rank {
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   color: var(--fg-muted);
   font-weight: 600;
   text-align: center;
+  opacity: 0.7;
 }
 
 .apex-detail-name {
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   color: var(--fg-dim);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.apex-detail-label {
+  font-size: 0.64rem;
+  color: var(--fg-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .apex-detail-count {
-  font-size: 0.66rem;
+  font-size: 0.64rem;
   color: var(--fg-muted);
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Tree badges */
