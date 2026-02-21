@@ -10,6 +10,12 @@
   "simulation": {
     "scenarios": {
       "st": { "name": "Patchwerk 1T", "maxTime": 300, "desiredTargets": 1 },
+      "dungeon_slice": {
+        "name": "Dungeon",
+        "maxTime": 360,
+        "desiredTargets": 1,
+        "fightStyle": "DungeonSlice"
+      },
       "small_aoe": {
         "name": "Patchwerk 5T",
         "maxTime": 75,

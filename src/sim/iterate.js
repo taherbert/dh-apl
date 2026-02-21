@@ -25,7 +25,12 @@ import {
 import { join, dirname, basename, resolve, relative } from "node:path";
 import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
-import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
+import {
+  SCENARIOS,
+  SCENARIO_WEIGHTS,
+  SIM_DEFAULTS,
+  runMultiActorAsync,
+} from "./runner.js";
 import {
   getSpecAdapter,
   loadSpecAdapter,
@@ -115,10 +120,10 @@ const RESULTS_DIR = resultsDir();
 // Iteration working copy — created by `init`, updated by `accept`.
 const CURRENT_APL = join(aplsDir(), "current.simc");
 
-const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];
-const SCENARIO_LABELS = { st: "1T", small_aoe: "5T", big_aoe: "10T" };
-// ST weighted highest (hardest to improve, most common), 5T moderate, 10T lowest (rarest encounter type)
-const SCENARIO_WEIGHTS = { st: 0.5, small_aoe: 0.3, big_aoe: 0.2 };
+const SCENARIO_KEYS = Object.keys(SCENARIOS);
+const SCENARIO_LABELS = Object.fromEntries(
+  Object.entries(SCENARIOS).map(([k, v]) => [k, v.name]),
+);
 
 const STATE_VERSION = 3;
 
@@ -126,7 +131,7 @@ const STATE_VERSION = 3;
 let batchSizeOverride = null;
 
 // Extract aggregate per-scenario DPS from state, handling both single-build and multi-build.
-// For multi-build: averages across all builds. Returns {st, small_aoe, big_aoe}.
+// For multi-build: averages across all builds. Returns per-scenario DPS map.
 function getAggregateDps(stateSection) {
   if (stateSection.dps) return stateSection.dps;
   if (!stateSection.builds) return {};
@@ -687,7 +692,7 @@ function assembleBuildsFromScenarios(roster, scenarioResults) {
 }
 
 // Run multi-actor sims for an APL file against the roster.
-// Returns { builds: { "<buildId>": { heroTree, dps: {st, small_aoe, big_aoe} } } }
+// Returns { builds: { "<buildId>": { heroTree, dps: { [scenario]: number } } } }
 // Batches actors to avoid OOM at high fidelity.
 async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
   // Profileset path: constant memory (~2 actors) regardless of roster size
@@ -827,7 +832,8 @@ async function runMultiBuildComparison(
     let weighted = 0;
     for (const scenario of SCENARIO_KEYS) {
       weighted +=
-        (br.scenarios[scenario]?.deltaPct || 0) * SCENARIO_WEIGHTS[scenario];
+        (br.scenarios[scenario]?.deltaPct || 0) *
+        (SCENARIO_WEIGHTS[scenario] || 0);
     }
     br.weightedDelta = +weighted.toFixed(3);
   }
@@ -876,7 +882,7 @@ async function runMultiBuildComparison(
 // Batched multi-actor comparison: splits roster into smaller groups to limit memory.
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonBatched(candidatePath, roster, tierConfig) {
-  const simCount = SCENARIO_KEYS.length * 2; // 3 scenarios × 2 APLs
+  const simCount = SCENARIO_KEYS.length * 2;
   const { concurrency, threadsPerSim } = simConcurrency(simCount);
 
   const batchSize = batchSizeForFidelity(tierConfig);
@@ -940,7 +946,7 @@ async function runComparisonBatched(candidatePath, roster, tierConfig) {
 // Profileset-based comparison: constant memory, uses talents= hash overrides.
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonProfileset(candidatePath, roster, tierConfig) {
-  const simCount = SCENARIO_KEYS.length * 2; // 3 scenarios × 2 APLs
+  const simCount = SCENARIO_KEYS.length * 2;
   const { concurrency, threadsPerSim } = simConcurrency(simCount);
 
   const currentContent = generateRosterProfilesetContent(roster, CURRENT_APL);
@@ -1116,7 +1122,7 @@ async function cmdInit(aplPath) {
   // Update persistent roster with baseline DPS
   for (const [buildId, b] of Object.entries(baseline.builds)) {
     const weighted = SCENARIO_KEYS.reduce(
-      (sum, s) => sum + (b.dps[s] || 0) * SCENARIO_WEIGHTS[s],
+      (sum, s) => sum + (b.dps[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
       0,
     );
     updateDps(roster, buildId, { ...b.dps, weighted });
@@ -1480,7 +1486,7 @@ async function cmdAccept(reason, hypothesisHint) {
           dps[scenario] = br.scenarios[scenario]?.candidate || 0;
         }
         dps.weighted = SCENARIO_KEYS.reduce(
-          (sum, s) => sum + (dps[s] || 0) * SCENARIO_WEIGHTS[s],
+          (sum, s) => sum + (dps[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
           0,
         );
         updateDps(rosterForDps, buildId, dps);
@@ -2916,7 +2922,7 @@ function computeWeightedDelta(results) {
   for (const scenario of SCENARIO_KEYS) {
     const r = results[scenario];
     if (!r) continue;
-    const w = SCENARIO_WEIGHTS[scenario];
+    const w = SCENARIO_WEIGHTS[scenario] || 0;
     delta += (r.deltaPct || r.delta_pct || 0) * w;
     stderr += ((r.stderrPct || 0) * w) ** 2;
   }
