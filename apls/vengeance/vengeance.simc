@@ -151,14 +151,14 @@ actions.anni+=/call_action_list,name=anni_voidfall
 actions.anni+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up&!buff.voidfall_spending.up&variable.meta_ready
 # Meta chaining: hardcast during active Meta for a second Voidfall reset (apex.3 only)
 actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_chain_ready&buff.voidfall_building.stack<2&variable.meta_ready
-# Burst SpB before Meta — Meta fires off-GCD during SpB's GCD
-actions.anni+=/spirit_bomb,if=!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments>=3&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&variable.meta_ready
+# Burst SpB before Meta — Meta fires off-GCD during SpB's GCD (skip for apex.3: Mass Acceleration resets SpB CD, better to enter Meta with fragments)
+actions.anni+=/spirit_bomb,if=!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments>=3&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&variable.meta_ready&!apex.3
 # Standard Meta: bypass fragment gate for non-apex.3 or after burst SpB
 actions.anni+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&(soul_fragments>=3|!apex.3|prev_gcd.1.spirit_bomb)&variable.meta_ready
 # Pre-load fragments when Meta is gated on soul_fragments<3 (apex.3 only)
 actions.anni+=/call_action_list,name=anni_burst,if=apex.3&!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments<3&!buff.voidfall_spending.up&buff.voidfall_building.stack<2
-# UR fishing: last 6s of Meta
-actions.anni+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
+# UR fishing: last 6s of Meta (apex.3 only — Seething Anger BLP makes procs near-deterministic; lower ranks have sub-8% cumulative chance)
+actions.anni+=/call_action_list,name=ur_fishing,if=variable.ur_fishing&apex.3
 actions.anni+=/call_action_list,name=anni_in_meta,if=buff.metamorphosis.up&!variable.ur_fishing
 # Standard CDs (all builds)
 actions.anni+=/call_action_list,name=anni_cooldowns
