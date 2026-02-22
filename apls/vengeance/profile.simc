@@ -1,6 +1,21 @@
-# Vengeance DH Midnight Profile — Gear and Talents
+# Vengeance DH Midnight Profile — Voidspire Raid Gear (Season 1)
 # Use with: simc apls/profile.simc <apl_file>
 # Gear-only partial — no talents (builds come from the roster)
+#
+# 4-piece Devouring Reaver's Sheathe tier set (set 1979)
+# Stat priority: Agility > Haste >= Crit > Versatility > Mastery
+#
+# Tier Set Bonuses:
+#   2pc: Fracture damage increased by 35%.
+#   4pc: Fracture has a 30% chance to spark a violent detonation,
+#        dealing Fire damage to nearby enemies (reduced beyond 5 targets).
+#
+# Gear sources:
+#   Tier pieces (5/5):  The Voidspire (Mythic)
+#   Weapons:            Emblazoned Sunglaive — Vaelgor & Ezzorak (Voidspire)
+#   Trinkets:           Araz's Ritual Forge (on-use AGI) + Sigil of the Cosmic Hunt (passive)
+#   Non-tier armor:     Voidspire raid drops + crafted items
+#   Enchants/gems:      Crit/Haste optimized for DPS
 
 ptr=1
 demonhunter="VDH_Midnight"
@@ -12,23 +27,38 @@ timeofday=night
 role=tank
 position=front
 
-# Consumables disabled — no Midnight consumables in SimC yet
-flask=disabled
+# Consumables
+flask=flask_of_alchemical_chaos
+potion=tempered_potion
+food=feast_of_the_midnight_masquerade
+augmentation=void_touched
+temporary_enchant=main_hand:ironclaw_whetstone_3/off_hand:ironclaw_whetstone_3
 
-# Generic Midnight gear — no expansion-specific enchants/gems exist yet
-head=,id=153840,ilevel=289
-neck=,id=153861,ilevel=289
-shoulder=,id=153842,ilevel=289
-back=,id=153865,ilevel=289
-chest=,id=153837,ilevel=289
-wrist=,id=153844,ilevel=289
-hands=,id=153839,ilevel=289
-waist=,id=153843,ilevel=289
-legs=,id=153841,ilevel=289
-feet=,id=153838,ilevel=289
-finger1=,id=153863,ilevel=289
-finger2=,id=153862,ilevel=289
-trinket1=,id=153860,ilevel=289
-trinket2=,id=153864,ilevel=289
-main_hand=,id=248072,ilevel=289
-off_hand=,id=248062,ilevel=289
+# --- Tier Set: Devouring Reaver's Sheathe (5pc equipped, 4pc bonus active) ---
+head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983,enchant_id=7961
+shoulders=devouring_reavers_exhaustplates,id=250031,ilevel=289,enchant_id=8031
+chest=devouring_reavers_engine,id=250036,ilevel=289,enchant_id=7364
+hands=devouring_reavers_essence_grips,id=250034,ilevel=289
+legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=7601
+
+# --- Non-Tier Armor ---
+neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240892
+back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,gem_id=238045,enchant_id=7409
+wrist=void_skinned_bracers,id=249327,ilevel=289,gem_id=240908,enchant_id=7391
+waist=devouring_reavers_emblem,id=250030,ilevel=289,gem_id=240900
+# TODO: Replace feet placeholder with Voidspire leather boots when item IDs are available
+feet=,id=153838,ilevel=289,enchant_id=7424
+
+# --- Jewelry — Haste + Crit ring enchants ---
+finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240918/240900,enchant_id=7340
+finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240900,enchant_id=7352
+
+# --- Trinkets — Agility DPS ---
+# Araz's Ritual Forge: on-use primary stat (decaying over 30s), pairs with burst windows
+# Sigil of the Cosmic Hunt: passive single-target damage, scales with execute
+trinket1=arazs_ritual_forge,id=242402,ilevel=289
+trinket2=sigil_of_the_cosmic_hunt,id=242397,ilevel=289
+
+# --- Weapons — Dual Warglaives from Voidspire ---
+main_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7460
+off_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7439
