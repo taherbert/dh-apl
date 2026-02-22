@@ -61,7 +61,7 @@ actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.gla
 actions.ar+=/metamorphosis,use_off_gcd=1,if=((!buff.metamorphosis.up&soul_fragments>=3)|buff.untethered_rage.up)&variable.meta_ready
 actions.ar+=/call_action_list,name=ar_empowered
 actions.ar+=/call_action_list,name=ar_brand_window,if=variable.fiery_demise_active
-actions.ar+=/call_action_list,name=ur_fishing,if=variable.ur_fishing
+# AR skips UR fishing — UR Meta extensions provide near-zero value for AR's empowered cycle
 actions.ar+=/call_action_list,name=ar_cooldowns
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.small_aoe
 # IA on cooldown — no state machine to disrupt
@@ -92,8 +92,9 @@ actions.ar_empowered+=/spirit_bomb,if=buff.glaive_flurry.up&!buff.rending_strike
 actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
 
 # === AR Cooldowns ===
-# Brand at 2 charges, or when a fire CD is within 8s
-actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&variable.cd_ready&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<8))
+# Brand synced with empowered cycle: fire when AotG nearing trigger so Brand window covers burst
+# Fallback: 2 charges or nearest fire CD within 8s
+actions.ar_cooldowns=/fiery_brand,if=talent.fiery_demise&variable.cd_ready&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&buff.art_of_the_glaive.stack>=15)|(!dot.fiery_brand.ticking&cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<8))
 actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=3&variable.cd_ready
 # With Fiery Demise, hold Soul Carver for Brand windows to benefit from fire amplification
 actions.ar_cooldowns+=/soul_carver,if=(!talent.fiery_demise|variable.fiery_demise_active)&variable.cd_ready
