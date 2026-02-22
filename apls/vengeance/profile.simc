@@ -17,7 +17,7 @@
 # Gear sources:
 #   Tier pieces (5/5):  The Voidspire (Mythic, ilevel 289)
 #   Weapons:            MH raid warglaive + crafted OH (ilevel 285 w/ embellishment)
-#   Trinkets:           Gaze of the Alnseer + Undreamt God's Oozing Vestige (Dreamrift)
+#   Trinkets:           Ranger-Captain's Insignia (Voidspire) + Oozing Vestige (Dreamrift)
 #   Non-tier armor:     Voidspire raid drops + crafted (ilevel 285)
 #   Enchants:           Midnight enchants (rank 2) throughout, crit/haste optimized
 #   Gems:               Midnight gems — Deadly Peridot (Haste+Crit), Quick Garnet (Crit+Haste)
@@ -58,11 +58,14 @@ hands=devouring_reavers_essence_grips,id=250034,ilevel=289
 legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8161
 
 # --- Non-Tier Armor ---
+# Eternal Voidsong Chain: Very Rare from Alleria (Voidspire). Has 2.0 RPPM Shadow DoT proc
+#   ("Voidstalker Sting") — strong for VDH which deals heavy Shadow damage.
+#   Haste+Mastery base stats; Mastery is suboptimal but the proc outweighs it.
 # Deadly Peridot: Haste +7, Crit +3
 neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240858
 # Back enchant: Chant of Leeching Fangs (TWW rank 3 — no Midnight cloak enchant exists)
 # Quick Garnet: Crit +7, Haste +3
-back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,gem_id=240874,enchant_id=7409
+back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240874,enchant_id=7409
 # Wrist: Crafted leather bracers with Devouring Banding embellishment (Midnight LW)
 # Enchant: Chant of Armored Leech (TWW rank 3 — no Midnight bracer enchant exists)
 # Deadly Peridot: Haste +7, Crit +3
@@ -74,23 +77,28 @@ waist=devouring_reavers_emblem,id=250030,ilevel=289,gem_id=240874
 feet=,id=153838,ilevel=289,enchant_id=8019
 
 # --- Jewelry ---
+# Eye of Midnight: raid drop with on-equip proc (spell 1266505) — triggers from damage dealt
+#   and damage taken. SimC doesn't model the proc yet; unmodeled DPS upside.
 # Ring enchants: Thalassian Haste + Eyes of the Eagle (Midnight, rank 2) — crit/haste priority
 # Deadly Peridot + Quick Garnet for balanced crit/haste
 finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240858/240874,enchant_id=8021
 # Deadly Peridot: Haste +7, Crit +3
-finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240858,enchant_id=7967
+finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,crafted_stats=32/36,gem_id=240858,enchant_id=7967
 
 # --- Trinkets — Midnight Agility DPS ---
-# Gaze of the Alnseer: primary stat proc (AGI for DH), from Dreamrift (Chimaerus)
-#   Used by 82% of Devourer DHs in Beta M+ — stacking Alnsight → AGI buff
-# Undreamt God's Oozing Vestige: from Dreamrift (Chimaerus), Midnight-era trinket
-trinket1=gaze_of_the_alnseers,id=249343,ilevel=289
+# Ranger-Captain's Iridescent Insignia: Very Rare from Alleria Windrunner (Voidspire final boss)
+#   Pure AGI passive (best stat type) + on-use AGI burst + on-equip crit damage proc
+#   that also reduces the on-use CD. Replaces Gaze of the Alnseer which had Mastery passive.
+# Undreamt God's Oozing Vestige: from Dreamrift (Chimaerus)
+#   STR+AGI passive (gives full AGI to DH) + massive AoE explosion (coeff 37.24) at max stacks.
+#   Strong in both ST (DoT + explosion) and AoE (accelerated stacking from multi-target hits).
+trinket1=ranger_captains_iridescent_insignia,id=249345,ilevel=289
 trinket2=undreamt_gods_oozing_vestige,id=249805,ilevel=289
 
 # --- Weapons ---
 # MH: Raid warglaive from Vaelgor & Ezzorak (Voidspire)
-# Weapon enchant: Strength of Halazzi (Midnight, rank 2) — lynx loa AGI proc
+# Weapon enchant: Strength of Halazzi (Midnight, rank 2) — bleed DoT proc (18s), loa damage
 main_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7979
 # OH: Crafted weapon with Darkmoon Sigil: Hunt embellishment (Midnight inscription)
-# Weapon enchant: Berserker's Rage (Midnight, rank 2) — attack damage proc
+# Weapon enchant: Berserker's Rage (Midnight, rank 2) — Haste buff proc (15s Frenzied Focus)
 off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt
