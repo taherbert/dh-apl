@@ -10,12 +10,17 @@
 #   4pc: Fracture has a 30% chance to spark a violent detonation,
 #        dealing Fire damage to nearby enemies (reduced beyond 5 targets).
 #
+# Embellishments (2/2):
+#   1. Darkmoon Sigil: Hunt (id=245875) on crafted OH weapon — secondary stats by target type
+#   2. Devouring Banding (id=244674) on crafted wrist — direct damage proc + self-buff
+#
 # Gear sources:
-#   Tier pieces (5/5):  The Voidspire (Mythic)
-#   Weapons:            Emblazoned Sunglaive — Vaelgor & Ezzorak (Voidspire)
+#   Tier pieces (5/5):  The Voidspire (Mythic, ilevel 289)
+#   Weapons:            MH raid warglaive + crafted OH (ilevel 285 w/ embellishment)
 #   Trinkets:           Araz's Ritual Forge (on-use AGI) + Sigil of the Cosmic Hunt (passive)
-#   Non-tier armor:     Voidspire raid drops + crafted items
-#   Enchants/gems:      Crit/Haste optimized for DPS
+#   Non-tier armor:     Voidspire raid drops + crafted (ilevel 285)
+#   Enchants:           Midnight enchants (rank 2) throughout, crit/haste optimized
+#   Gems:               Midnight gems, crit/haste secondary focus
 
 ptr=1
 demonhunter="VDH_Midnight"
@@ -27,38 +32,57 @@ timeofday=night
 role=tank
 position=front
 
-# Consumables
-flask=flask_of_alchemical_chaos
-potion=tempered_potion
-food=feast_of_the_midnight_masquerade
+# --- Midnight Consumables ---
+# Flask of the Magisters: secondary stat flask used by AGI specs (BM Hunter, Devourer DH pattern)
+flask=flask_of_the_magisters_2
+# Draught of Rampant Abandon: primary stat potion (gives AGI for DH), void zone drawback
+potion=draught_of_rampant_abandon_2
+# Silvermoon Parade: Midnight feast for physical/AGI specs
+food=silvermoon_parade
+# Void Touched: Midnight augment rune
 augmentation=void_touched
-temporary_enchant=main_hand:ironclaw_whetstone_3/off_hand:ironclaw_whetstone_3
+# Thalassian Phoenix Oil: universal Midnight weapon oil (used by all updated AGI APLs)
+temporary_enchant=main_hand:thalassian_phoenix_oil_2/off_hand:thalassian_phoenix_oil_2
 
 # --- Tier Set: Devouring Reaver's Sheathe (5pc equipped, 4pc bonus active) ---
+# Head enchant: Empowered Hex of Leeching (Midnight, rank 2)
 head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983,enchant_id=7961
-shoulders=devouring_reavers_exhaustplates,id=250031,ilevel=289,enchant_id=8031
-chest=devouring_reavers_engine,id=250036,ilevel=289,enchant_id=7364
+# Shoulder enchant: Flight of the Eagle (Midnight, rank 2) — DPS-oriented
+shoulders=devouring_reavers_exhaustplates,id=250031,ilevel=289,enchant_id=7971
+# Chest enchant: Mark of the Worldsoul (Midnight, rank 2) — primary stat
+chest=devouring_reavers_engine,id=250036,ilevel=289,enchant_id=7987
 hands=devouring_reavers_essence_grips,id=250034,ilevel=289
-legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=7601
+# Legs enchant: Thalassian Scout Armor Kit (Midnight LW, rank 2)
+legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8161
 
 # --- Non-Tier Armor ---
 neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240892
+# Back enchant: Chant of Leeching Fangs (no Midnight cloak enchant exists yet)
 back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,gem_id=238045,enchant_id=7409
-wrist=void_skinned_bracers,id=249327,ilevel=289,gem_id=240908,enchant_id=7391
+# Wrist: Crafted leather bracers with Devouring Banding embellishment (Midnight LW)
+# Enchant: Chant of Armored Speed (no Midnight bracer enchant exists yet)
+wrist=,id=219334,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240908,enchant_id=7391,embellishment=devouring_banding
 waist=devouring_reavers_emblem,id=250030,ilevel=289,gem_id=240900
+# Feet enchant: Farstrider's Hunt (Midnight, rank 2) — AGI/DPS oriented
 # TODO: Replace feet placeholder with Voidspire leather boots when item IDs are available
-feet=,id=153838,ilevel=289,enchant_id=7424
+feet=,id=153838,ilevel=289,enchant_id=8019
 
-# --- Jewelry — Haste + Crit ring enchants ---
-finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240918/240900,enchant_id=7340
-finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240900,enchant_id=7352
+# --- Jewelry ---
+# Ring enchants: Thalassian Haste + Eyes of the Eagle (Midnight, rank 2) — crit/haste priority
+finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240918/240900,enchant_id=8021
+finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240900,enchant_id=7967
 
 # --- Trinkets — Agility DPS ---
 # Araz's Ritual Forge: on-use primary stat (decaying over 30s), pairs with burst windows
-# Sigil of the Cosmic Hunt: passive single-target damage, scales with execute
+# Sigil of the Cosmic Hunt: passive single-target damage, scales with execute phase
+# TODO: Replace with Voidspire agility trinkets when raid launches (March 17, 2026)
 trinket1=arazs_ritual_forge,id=242402,ilevel=289
 trinket2=sigil_of_the_cosmic_hunt,id=242397,ilevel=289
 
-# --- Weapons — Dual Warglaives from Voidspire ---
-main_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7460
-off_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7439
+# --- Weapons ---
+# MH: Raid warglaive from Vaelgor & Ezzorak (Voidspire)
+# Weapon enchant: Strength of Halazzi (Midnight, rank 2) — lynx loa AGI proc
+main_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7979
+# OH: Crafted weapon with Darkmoon Sigil: Hunt embellishment (Midnight inscription)
+# Weapon enchant: Berserker's Rage (Midnight, rank 2) — attack damage proc
+off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt
