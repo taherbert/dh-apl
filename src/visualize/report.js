@@ -420,8 +420,7 @@ function generateHtml(data) {
   const sections = [
     renderHeader(displaySpec, freshness),
     renderHeroShowcase(builds, heroTrees),
-    renderBestBuilds(builds),
-    renderHeroAndApex(builds, heroTrees, apexBuilds),
+    renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
     renderOptimizationJourney(iterations),
@@ -501,73 +500,38 @@ function renderHeroShowcase(builds, heroTrees) {
 </section>`;
 }
 
-function renderBestBuilds(builds) {
-  const bestW = findBest(builds, "weighted");
-  const cards = [
-    makeBestCard("Best Weighted", bestW, bestW?.dps.weighted || 0, "weighted"),
-    ...activeScenarios(builds).map((s) => {
-      const best = findBest(builds, s);
-      return makeBestCard(
-        `Best ${SCENARIOS[s].name}`,
-        best,
-        best?.dps[s] || 0,
-        s,
-      );
-    }),
-  ];
-
-  return `<section>
-  <h2>Best Per Scenario</h2>
-  <div class="best-cards">${cards.join("\n")}</div>
-</section>`;
-}
-
-function makeBestCard(label, build, dps, scenario) {
-  if (!build) return "";
-  const borderColor =
-    scenario === "weighted" ? "var(--accent)" : scenarioColor(scenario);
-  return `    <div class="best-card" style="border-top: 2px solid ${borderColor}">
-      <div class="best-label">${esc(label)}</div>
-      <div class="best-name">${esc(build.displayName)}${copyBtn(build.hash)}</div>
-      <div class="best-meta"><span class="tree-badge ${treeClass(build.heroTree)}">${esc(treeDisplayName(build.heroTree))}</span> <span class="best-dps">${fmtDps(dps)}</span></div>
-    </div>`;
-}
-
 function renderHeroComparison(builds, heroTrees) {
   const treeNames = Object.keys(heroTrees);
   if (treeNames.length < 2) return "";
 
   const scenarios = [...activeScenarios(builds), "weighted"];
 
-  // Compute averages per tree per scenario
+  // Best DPS per tree per scenario
   const treeData = {};
   let globalMax = 0;
   for (const tree of treeNames) {
     const treeBuilds = builds.filter((b) => b.heroTree === tree);
-    treeData[tree] = { builds: treeBuilds, avgs: {} };
+    treeData[tree] = { builds: treeBuilds, best: {} };
     for (const s of scenarios) {
       const vals = treeBuilds.map((b) => b.dps[s] || 0).filter((v) => v > 0);
-      const avg =
-        vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
-      treeData[tree].avgs[s] = avg;
-      if (avg > globalMax) globalMax = avg;
+      const best = vals.length > 0 ? Math.max(...vals) : 0;
+      treeData[tree].best[s] = best;
+      if (best > globalMax) globalMax = best;
     }
   }
 
   // Legend
   const legend = treeNames
-    .map((t) => {
-      const count = treeData[t].builds.filter(
-        (b) => (b.dps.weighted || 0) > 0,
-      ).length;
-      return `<span class="hc-legend-item"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)} (${count})</span>`;
-    })
+    .map(
+      (t) =>
+        `<span class="hc-legend-item"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)}</span>`,
+    )
     .join("");
 
   // Paired bars per scenario with delta
   const rows = scenarios
     .map((s) => {
-      const vals = treeNames.map((t) => treeData[t].avgs[s]);
+      const vals = treeNames.map((t) => treeData[t].best[s]);
       const winnerIdx = vals[0] >= vals[1] ? 0 : 1;
       const loserIdx = 1 - winnerIdx;
       const delta =
@@ -580,128 +544,184 @@ function renderHeroComparison(builds, heroTrees) {
       const bars = treeNames
         .map((t, i) => {
           const pct = globalMax > 0 ? (vals[i] / globalMax) * 100 : 0;
-          return `<div class="hc-split-bar" style="width:${pct.toFixed(1)}%;background:${treeColor(t)};opacity:${i === winnerIdx ? 0.9 : 0.55}"></div>`;
+          return `<div class="hc-bar-row"><div class="hc-split-bar" style="width:${pct.toFixed(1)}%;background:${treeColor(t)};opacity:${i === winnerIdx ? 0.9 : 0.75}"></div><span class="hc-bar-val" style="color:${treeColor(t)}">${fmtDps(vals[i])}</span></div>`;
         })
         .join("");
 
       const deltaHtml =
         delta > 0.5
-          ? `<span class="hc-delta"><span class="tree-badge sm ${treeClass(winnerTree)}">${treeAbbr(winnerTree)}</span> +${delta.toFixed(1)}%</span>`
+          ? `<span class="hc-delta" style="color:${treeColor(winnerTree)}">+${delta.toFixed(1)}%</span>`
           : `<span class="hc-delta" style="color:var(--fg-muted)">~tied</span>`;
-
-      const valsHtml = treeNames
-        .map(
-          (t, i) =>
-            `<span style="color:${treeColor(t)}">${fmtDps(vals[i])}</span>`,
-        )
-        .join('<span class="hc-sep">/</span>');
 
       return `<div class="hc-row${s === "weighted" ? " hc-row--weighted" : ""}">
         <span class="hc-label" style="color:${labelColor}">${scenarioLabel(s)}</span>
         <div class="hc-split-track">${bars}</div>
-        <span class="hc-vals">${valsHtml}</span>
         ${deltaHtml}
       </div>`;
     })
     .join("\n");
 
-  // Headline: weighted DPS per tree
-  const weightedVals = treeNames.map((t) => treeData[t].avgs.weighted);
-  const headlineWinner = weightedVals[0] >= weightedVals[1] ? 0 : 1;
-  const headlineDelta =
-    weightedVals[1 - headlineWinner] > 0
-      ? ((weightedVals[headlineWinner] - weightedVals[1 - headlineWinner]) /
-          weightedVals[1 - headlineWinner]) *
-        100
-      : 0;
-
-  const headline = treeNames
-    .map((t, i) => {
-      const isWinner = i === headlineWinner;
-      return `<div class="hc-headline${isWinner ? " hc-headline--winner" : ""}">
-        <span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span>
-        <span class="hc-headline-dps" style="color:${treeColor(t)}">${fmtDps(weightedVals[i])}</span>
-        ${isWinner && headlineDelta > 0.5 ? `<span class="hc-headline-edge">+${headlineDelta.toFixed(1)}%</span>` : ""}
-      </div>`;
-    })
-    .join("");
-
-  return `<div class="dual-card">
-  <h3>Hero Trees</h3>
-  <div class="hc-legend">${legend}</div>
-  <div class="hc-headlines">${headline}</div>
-  <div class="hc-panel">${rows}</div>
-</div>`;
+  return `<div class="hc-panel">
+    <h3>By Scenario</h3>
+    <p class="section-desc">Best build DPS per hero tree at each target count.</p>
+    <div class="hc-rows">
+      ${rows}
+    </div>
+    <div class="hc-legend">${legend}</div>
+  </div>`;
 }
 
-function renderApexSummary(apexBuilds) {
-  const apexKeys = Object.keys(apexBuilds).sort(
-    (a, b) => Number(b) - Number(a),
-  );
-  if (apexKeys.length === 0) return "";
+function renderComparisonSection(builds, heroTrees, apexBuilds) {
+  const treeNames = Object.keys(heroTrees);
+  if (treeNames.length < 2) return "";
 
-  // Per apex rank: best DPS, avg DPS, per-tree avg
-  const globalBest = Math.max(
-    ...apexKeys.flatMap((k) => apexBuilds[k].map((e) => e.avg.weighted)),
-  );
+  const heroPanel = renderHeroComparison(builds, heroTrees);
+  const apexPanel = renderApexScaling(apexBuilds, heroTrees);
+  const gridCls = apexPanel ? "comparison-grid" : "";
 
-  const ranks = apexKeys.map((k) => {
-    const entries = apexBuilds[k];
-    const best = Math.max(...entries.map((e) => e.avg.weighted));
-    const avg =
-      entries.reduce((s, e) => s + e.avg.weighted, 0) / entries.length;
-    const gap = globalBest > 0 ? ((best - globalBest) / globalBest) * 100 : 0;
-
-    // Per-tree breakdown
-    const byTree = {};
-    for (const e of entries) {
-      (byTree[e.heroTree] ||= []).push(e.avg.weighted);
-    }
-    const treeAvgs = Object.entries(byTree).map(([tree, vals]) => ({
-      tree,
-      avg: vals.reduce((a, b) => a + b, 0) / vals.length,
-      best: Math.max(...vals),
-    }));
-    treeAvgs.sort((a, b) => b.avg - a.avg);
-
-    return { apex: Number(k), entries, best, avg, gap, treeAvgs };
-  });
-
-  const barMax = ranks[0]?.best || 1;
-
-  let rows = "";
-  for (const r of ranks) {
-    const barPct = barMax > 0 ? (r.best / barMax) * 100 : 0;
-    const isTop = r.gap === 0;
-
-    const topBuild = r.entries[0];
-    rows += `<div class="apex-row${isTop ? " apex-row--best" : ""}">
-      <div class="apex-rank-group">
-        <span class="apex-rank">Apex ${r.apex}</span>
-        <span class="apex-build-name">${esc(topBuild?.templateName || "—")} <span class="tree-badge sm ${treeClass(topBuild?.heroTree)}">${treeAbbr(topBuild?.heroTree)}</span></span>
-      </div>
-      <div class="apex-bar-track">
-        <div class="apex-bar" style="width:${barPct.toFixed(1)}%"></div>
-      </div>
-      <span class="apex-best">${fmtDps(r.best)}</span>
-      <span class="apex-gap ${isTop ? "positive" : "negative"}">${isTop ? "best" : fmtDelta(r.gap)}</span>
-    </div>`;
-  }
-
-  return `<div class="dual-card">
-  <h3>Apex Scaling</h3>
-  <div class="apex-panel">${rows}</div>
-</div>`;
-}
-
-function renderHeroAndApex(builds, heroTrees, apexBuilds) {
-  const heroHtml = renderHeroComparison(builds, heroTrees);
-  const apexHtml = renderApexSummary(apexBuilds);
-  if (!heroHtml && !apexHtml) return "";
   return `<section>
   <h2>Hero Tree Comparison</h2>
-  <div class="dual-panel">${heroHtml}${apexHtml}</div>
+  <div class="${gridCls}">
+    ${heroPanel}
+    ${apexPanel}
+  </div>
 </section>`;
+}
+
+function renderApexScaling(apexBuilds, heroTrees) {
+  const treeNames = Object.keys(heroTrees);
+  if (!apexBuilds || Object.keys(apexBuilds).length < 2) return "";
+
+  const ranks = Object.keys(apexBuilds)
+    .map(Number)
+    .sort((a, b) => a - b);
+  const maxRank = Math.max(...ranks);
+  if (maxRank <= 0) return "";
+
+  // Best weighted DPS per tree per rank
+  const perTree = {};
+  for (const tree of treeNames) {
+    perTree[tree] = {};
+    for (const rank of ranks) {
+      const entries = (apexBuilds[rank] || []).filter(
+        (e) => e.heroTree === tree,
+      );
+      if (entries.length > 0) {
+        perTree[tree][rank] = Math.max(...entries.map((e) => e.avg.weighted));
+      }
+    }
+  }
+
+  // % gain from each tree's rank 0 baseline
+  const gains = {};
+  let yMaxRaw = 0;
+  for (const tree of treeNames) {
+    const baseline = perTree[tree][0];
+    if (!baseline) continue;
+    gains[tree] = {};
+    for (const rank of ranks) {
+      const dps = perTree[tree][rank];
+      if (dps === undefined) continue;
+      const pct = ((dps - baseline) / baseline) * 100;
+      gains[tree][rank] = { pct, dps };
+      if (pct > yMaxRaw) yMaxRaw = pct;
+    }
+  }
+
+  // SVG layout
+  const W = 400,
+    H = 250;
+  const LEFT = 48,
+    RIGHT = 30,
+    TOP = 15,
+    BOT = 40;
+  const cW = W - LEFT - RIGHT,
+    cH = H - TOP - BOT;
+  const yMax = Math.ceil((yMaxRaw + 5) / 10) * 10;
+  if (yMax <= 0) return "";
+
+  const xOf = (r) => LEFT + (r / maxRank) * cW;
+  const yOf = (g) => TOP + cH - (g / yMax) * cH;
+
+  // Gridlines
+  let grid = "";
+  const step = yMax <= 20 ? 5 : 10;
+  for (let g = 0; g <= yMax; g += step) {
+    const y = yOf(g).toFixed(1);
+    grid += `<line x1="${LEFT}" y1="${y}" x2="${W - RIGHT}" y2="${y}" stroke="var(--border-subtle)" stroke-width="1"/>`;
+    grid += `<text x="${LEFT - 8}" y="${(+y + 3.5).toFixed(1)}" text-anchor="end" class="apex-axis-label">${g}%</text>`;
+  }
+
+  // X-axis labels
+  let xAxis = "";
+  for (const r of ranks) {
+    const x = xOf(r).toFixed(1);
+    xAxis += `<text x="${x}" y="${(TOP + cH + 18).toFixed(1)}" text-anchor="middle" class="apex-axis-label">Rank ${r}</text>`;
+  }
+
+  // Curves + nodes
+  let paths = "";
+  let points = "";
+
+  for (const tree of treeNames) {
+    if (!gains[tree]) continue;
+    const color = treeColor(tree);
+    const fill = isAnni(tree)
+      ? "rgba(167, 139, 250, 0.15)"
+      : "rgba(251, 146, 60, 0.15)";
+
+    const pts = ranks
+      .filter((r) => gains[tree][r] !== undefined)
+      .map((r) => ({
+        r,
+        x: xOf(r),
+        y: yOf(gains[tree][r].pct),
+        ...gains[tree][r],
+      }));
+    if (pts.length < 2) continue;
+
+    // Area fill + stroke
+    const base = yOf(0);
+    const line = pts
+      .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+      .join(" ");
+    paths += `<path d="${line} L${pts.at(-1).x.toFixed(1)},${base.toFixed(1)} L${pts[0].x.toFixed(1)},${base.toFixed(1)}Z" fill="${fill}"/>`;
+    paths += `<path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
+
+    // Data point nodes
+    const tipW = 130;
+    for (const p of pts) {
+      const cx = p.x.toFixed(1);
+      const cy = p.y.toFixed(1);
+      const tipX = Math.max(tipW / 2, Math.min(W - tipW / 2, p.x));
+      const tipLabel = `${fmtDps(p.dps)} (${p.pct >= 0 ? "+" : ""}${p.pct.toFixed(1)}%)`;
+
+      points += `<g class="apex-point">`;
+      points += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="var(--bg)" stroke="${color}" stroke-width="1.5" class="apex-node"/>`;
+      points += `<g class="apex-tooltip"><rect x="${(tipX - tipW / 2).toFixed(1)}" y="${(p.y - 44).toFixed(1)}" width="${tipW}" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="${tipX.toFixed(1)}" y="${(p.y - 30).toFixed(1)}" text-anchor="middle" class="apex-tip-text">${tipLabel}</text></g>`;
+      points += `</g>`;
+    }
+  }
+
+  // HTML legend (matches hero comparison panel)
+  const legend = treeNames
+    .map(
+      (t) =>
+        `<span class="hc-legend-item"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)}</span>`,
+    )
+    .join("");
+
+  return `<div class="apex-panel">
+    <h3>Apex Scaling</h3>
+    <p class="section-desc">Weighted DPS gain by apex rank (best build per hero tree), relative to each tree's rank 0 baseline.</p>
+    <svg class="apex-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      ${grid}
+      ${xAxis}
+      ${paths}
+      ${points}
+    </svg>
+    <div class="hc-legend">${legend}</div>
+  </div>`;
 }
 
 function renderBuildRankings(builds, heroTrees) {
@@ -751,7 +771,6 @@ function renderBuildRankings(builds, heroTrees) {
     rows += `<tr data-tree="${esc(b.heroTree)}">
   <td class="build-name">${esc(b.displayName)}${copyBtn(b.hash)}</td>
   <td><span class="tree-badge sm ${treeClass(b.heroTree)}">${treeAbbr(b.heroTree)}</span></td>
-  <td class="archetype-cell">${esc(b.archetype)}</td>
   ${scenarioCells}
   <td class="dps-cell${isTopW ? " top-build" : ""} has-tip"${wTip}>${fmtDps(b.dps.weighted || 0)}${wBadge}</td>
 </tr>`;
@@ -775,16 +794,15 @@ function renderBuildRankings(builds, heroTrees) {
       <thead><tr>
         <th class="sortable" data-col="name">Build</th>
         <th>Tree</th>
-        <th class="sortable" data-col="archetype">Archetype</th>
         ${scenarioHeaders}
-        <th class="sortable num weighted-header" data-col="weighted">Weighted <span class="info-icon" data-tip="${esc(
-          Object.keys(SCENARIOS)
-            .map(
-              (s) =>
-                `${SCENARIOS[s].name} ${Math.round(SCENARIO_WEIGHTS[s] * 100)}%`,
-            )
-            .join(" · "),
-        )}">${INFO_ICON}</span></th>
+        <th class="sortable num weighted-header" data-col="weighted" style="color:var(--fg)">Weighted <span class="info-icon">${INFO_ICON}<span class="info-popup">Weighted DPS combines all scenarios into a single score.<br><br>${Object.keys(
+          SCENARIOS,
+        )
+          .map(
+            (s) =>
+              `<span style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> ${Math.round(SCENARIO_WEIGHTS[s] * 100)}%`,
+          )
+          .join(" · ")}</span></span></th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
@@ -858,7 +876,7 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
     <h3>Defensive Talent Costs</h3>
     <p class="section-desc">DPS cost of taking each defensive talent (averaged across hero trees, vs ${esc(refName)}).</p>
     <div class="def-cost-list">
-    ${treeHeaders ? `<div class="def-strip-header"><div class="def-strip-header__body"><span></span><span></span><span class="def-strip-header__label">Avg</span>${treeHeaders}</div></div>` : ""}`;
+    ${treeHeaders ? `<div class="def-strip-header"><div class="def-strip-header__body"><span></span><span></span><span class="def-strip-header__label" style="color:var(--fg)">Avg</span>${treeHeaders}</div></div>` : ""}`;
 
   for (const t of averaged) {
     const { cls: sev, color } = getSeverity(t.avgDeltas.weighted);
@@ -866,12 +884,21 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
 
     const treeHtml =
       t.entries.length > 1
-        ? t.entries
-            .map(
-              (e) =>
-                `<span class="def-strip__tree">${fmtDelta(e.deltas.weighted)}</span>`,
-            )
-            .join("")
+        ? (() => {
+            const deltas = t.entries.map((e) => e.deltas.weighted);
+            const spread = Math.abs(deltas[0] - deltas[1]);
+            const avgAbs = Math.abs(t.avgDeltas.weighted);
+            const divergent = avgAbs > 0 && spread / avgAbs > 0.3;
+            return t.entries
+              .map((e) => {
+                const isOutlier =
+                  divergent &&
+                  Math.abs(e.deltas.weighted) >
+                    Math.abs(t.avgDeltas.weighted) * 1.15;
+                return `<span class="def-strip__tree${isOutlier ? " def-strip__tree--divergent" : ""}">${fmtDelta(e.deltas.weighted)}</span>`;
+              })
+              .join("");
+          })()
         : "";
 
     html += `<div class="def-strip def-strip--${sev}">
@@ -894,29 +921,17 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
 function renderOptimizationJourney(iterations) {
   if (!iterations || iterations.length === 0) return "";
 
-  const maxDelta = Math.max(
-    ...iterations.map((it) => Math.abs(it.meanWeighted || 0)),
-    0.01,
-  );
-
   let cumulative = 0;
   let tableRows = "";
   for (const it of iterations) {
     const delta = it.meanWeighted || 0;
     cumulative += delta;
     const date = it.date ? it.date.split(/[T ]/)[0] : "\u2014";
-    const barPct = Math.min((Math.abs(delta) / maxDelta) * 100, 100);
-    const barColor = delta >= 0 ? "var(--positive)" : "var(--negative)";
 
     tableRows += `<tr>
       <td>${date}</td>
       <td class="desc-cell">${esc(it.description || "")}</td>
-      <td class="num">
-        <div class="impact-cell">
-          <span class="${delta >= 0 ? "positive" : "negative"}">${fmtDelta(delta)}</span>
-          <div class="impact-bar" style="width:${barPct}%;background:${barColor}"></div>
-        </div>
-      </td>
+      <td class="num ${delta >= 0 ? "positive" : "negative"}">${fmtDelta(delta)}</td>
       <td class="num ${cumulative >= 0 ? "positive" : "negative"}">${fmtDelta(cumulative)}</td>
     </tr>`;
   }
@@ -1266,128 +1281,13 @@ h4 {
   transform-origin: 78.5% 42.5%;
 }
 
-/* Best build cards */
-.best-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-  gap: 0.75rem;
-}
-
-.best-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 1rem 1.15rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.best-card:hover { border-color: var(--accent-dim); box-shadow: 0 2px 12px var(--accent-glow); }
-
-.best-label {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--fg-muted);
-  margin-bottom: 0.4rem;
-  font-weight: 600;
-}
-
-.best-name {
-  font-weight: 600;
-  font-size: 0.85rem;
-  margin-bottom: 0.4rem;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.best-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.best-dps {
-  font-variant-numeric: tabular-nums;
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--fg-dim);
-}
-
 /* Dual panel layout */
-.dual-panel {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  align-items: start;
-}
-
-.dual-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
-}
-
-.dual-card h3 {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--fg-dim);
-  margin: 0 0 0.85rem;
-  font-weight: 700;
-}
-
-/* Hero headline stats */
-.hc-headlines {
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 0.85rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.hc-headline {
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-}
-
-.hc-headline-dps {
-  font-family: "Outfit", sans-serif;
-  font-size: 1.35rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.hc-headline--winner .hc-headline-dps {
-  font-size: 1.5rem;
-}
-
-.hc-headline-edge {
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: var(--positive);
-  background: var(--positive-bg);
-  padding: 0.15em 0.45em;
-  border-radius: 3px;
-}
-
 /* Hero comparison — paired bars with delta */
-.dual-card .hc-panel {
-  border: none;
-  padding: 0;
-  background: none;
-}
-
 .hc-legend {
   display: flex;
   gap: 1.5rem;
-  margin-bottom: 1rem;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
 }
 
 .hc-legend-item {
@@ -1405,11 +1305,20 @@ h4 {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 0.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.hc-rows {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .hc-row {
   display: grid;
-  grid-template-columns: 80px 1fr auto auto;
+  grid-template-columns: 80px 1fr auto;
   align-items: center;
   gap: 0.5rem;
   padding: 0.45rem 0;
@@ -1422,6 +1331,9 @@ h4 {
   border-top: 1px solid var(--border);
   padding-top: 0.65rem;
   margin-top: 0.15rem;
+  background: rgba(228, 230, 240, 0.04);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.5rem 0.45rem;
 }
 
 .hc-label {
@@ -1440,26 +1352,27 @@ h4 {
   min-width: 0;
 }
 
+.hc-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .hc-split-bar {
-  height: 12px;
+  height: 16px;
   border-radius: 3px;
   min-width: 2px;
   transition: opacity 0.15s;
 }
 
-.hc-row:hover .hc-split-bar { opacity: 1 !important; }
-
-.hc-vals {
-  display: flex;
-  gap: 0.25rem;
+.hc-bar-val {
   font-size: 0.74rem;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  justify-content: flex-end;
   white-space: nowrap;
 }
 
-.hc-sep { color: var(--fg-muted); }
+.hc-row:hover .hc-split-bar { opacity: 1 !important; }
 
 .hc-delta {
   font-size: 0.7rem;
@@ -1469,95 +1382,67 @@ h4 {
   white-space: nowrap;
 }
 
-/* Apex scaling panel */
-.apex-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.apex-row {
+/* Comparison grid (hero bars + apex chart side by side) */
+.comparison-grid {
   display: grid;
-  grid-template-columns: minmax(100px, auto) 1fr 65px 50px;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.55rem 0;
-  border-bottom: 1px solid var(--border-subtle);
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
 }
 
-.apex-row:last-child { border-bottom: none; }
-.apex-row { transition: background 0.12s; }
-.apex-row:hover { background: var(--accent-glow); }
-
-.apex-row--best { border-bottom: 1px solid var(--border); }
-
-.apex-rank-group {
+.apex-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.5rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  min-width: 0;
 }
 
-.apex-rank {
-  font-size: 0.76rem;
+.hc-panel h3, .apex-panel h3 {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--fg-dim);
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.apex-row--best .apex-rank { color: var(--fg); }
-
-.apex-build-name {
-  font-size: 0.66rem;
-  color: var(--fg-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
+/* Apex SVG chart */
+.apex-chart {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: block;
 }
 
-.apex-bar-track {
-  height: 10px;
-  background: var(--border-subtle);
-  border-radius: 3px;
-  overflow: hidden;
-  min-width: 0;
+.apex-axis-label {
+  font-family: "Outfit", sans-serif;
+  font-size: 10px;
+  fill: var(--fg-muted);
 }
 
-.apex-bar {
-  height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, var(--accent-dim) 0%, var(--accent) 100%);
-  opacity: 0.65;
+.apex-node {
+  cursor: default;
+  transition: r 0.15s;
+}
+
+.apex-point .apex-tooltip {
+  opacity: 0;
+  pointer-events: none;
   transition: opacity 0.15s;
 }
 
-.apex-row:hover .apex-bar { opacity: 1; }
-.apex-row--best .apex-bar { opacity: 0.85; background: linear-gradient(90deg, var(--accent) 0%, #a5b4fc 100%); }
-
-.apex-best {
-  font-size: 0.78rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-  color: var(--fg);
+.apex-point:hover .apex-tooltip {
+  opacity: 1;
 }
 
-.apex-gap {
-  font-size: 0.72rem;
-  font-weight: 600;
+.apex-tip-text {
+  font-family: "DM Sans", sans-serif;
+  font-size: 10px;
+  fill: var(--fg);
   font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
-.apex-gap.positive {
-  font-size: 0.62rem;
-  background: rgba(52, 211, 153, 0.12);
-  color: var(--positive);
-  padding: 0.15em 0.5em;
-  border-radius: 3px;
-  letter-spacing: 0.02em;
 }
 
 
@@ -1820,6 +1705,11 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
   text-align: right;
 }
 
+.def-strip__tree--divergent {
+  color: var(--fg);
+  font-weight: 600;
+}
+
 /* Details / collapsible */
 details {
   margin-bottom: 1.25rem;
@@ -1852,19 +1742,7 @@ summary:hover { color: var(--accent); }
   line-height: 1.45;
 }
 
-.impact-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
 
-.impact-bar {
-  height: 5px;
-  border-radius: 3px;
-  min-width: 2px;
-  flex-shrink: 0;
-}
 
 /* Footer */
 footer {
@@ -1892,25 +1770,25 @@ footer a:hover { text-decoration: underline; }
   position: relative;
 }
 
-.info-icon:hover::after {
-  content: attr(data-tip);
-  position: absolute;
-  bottom: 120%;
-  right: 0;
+.info-popup {
+  display: none;
+  position: fixed;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 0.5em 0.75em;
+  padding: 0.65em 0.85em;
   font-family: "DM Sans", sans-serif;
   font-size: 0.72rem;
   font-weight: 400;
   text-transform: none;
   letter-spacing: 0;
-  color: var(--fg);
-  white-space: nowrap;
-  z-index: 10;
+  color: var(--fg-dim);
+  line-height: 1.5;
+  width: 260px;
+  white-space: normal;
+  z-index: 100;
   pointer-events: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 /* Load animation */
@@ -1936,9 +1814,8 @@ footer { animation-delay: 0.35s; }
   body { padding: 0 1rem; }
   header { flex-direction: column; align-items: flex-start; }
   .showcase-grid { grid-template-columns: 1fr; }
-  .best-cards { grid-template-columns: 1fr; }
-  .dual-panel { grid-template-columns: 1fr; }
-  .hc-row { grid-template-columns: 70px 1fr 100px 70px; gap: 0.5rem; }
+  .hc-row { grid-template-columns: 70px 1fr 60px; gap: 0.5rem; }
+  .comparison-grid { grid-template-columns: 1fr; }
   .def-strip__body, .def-strip-header__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
@@ -2025,6 +1902,22 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 });
 
 // Copy talent hash to clipboard
+// Info popup positioning
+document.querySelectorAll('.info-icon').forEach(icon => {
+  const popup = icon.querySelector('.info-popup');
+  if (!popup) return;
+  icon.addEventListener('mouseenter', () => {
+    const r = icon.getBoundingClientRect();
+    popup.style.display = 'block';
+    popup.style.right = (document.documentElement.clientWidth - r.right) + 'px';
+    popup.style.left = 'auto';
+    popup.style.top = (r.top - popup.offsetHeight - 8) + 'px';
+  });
+  icon.addEventListener('mouseleave', () => {
+    popup.style.display = 'none';
+  });
+});
+
 document.querySelectorAll('.copy-hash').forEach(btn => {
   btn.addEventListener('click', e => {
     e.stopPropagation();
