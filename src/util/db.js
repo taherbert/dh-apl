@@ -97,6 +97,11 @@ CREATE TABLE IF NOT EXISTS builds (
   dps_small_aoe REAL,
   dps_big_aoe REAL,
   weighted REAL,
+  simc_dps_st REAL,
+  simc_dps_dungeon_slice REAL,
+  simc_dps_small_aoe REAL,
+  simc_dps_big_aoe REAL,
+  simc_weighted REAL,
   rank INTEGER,
   source TEXT DEFAULT 'doe',
   pinned INTEGER DEFAULT 0,
@@ -955,10 +960,13 @@ const SIMC_SCENARIO_COLUMNS = {
   big_aoe: "simc_dps_big_aoe",
 };
 
+// Default weights mirror config.json scenarioWeights. Callers should pass
+// SCENARIO_WEIGHTS from startup.js when available.
 const DEFAULT_WEIGHTS = {
-  st: 0.5,
-  small_aoe: 0.3,
-  big_aoe: 0.2,
+  st: 0.35,
+  dungeon_slice: 0.25,
+  small_aoe: 0.25,
+  big_aoe: 0.15,
 };
 
 function computeWeightedDps(dps, weights) {

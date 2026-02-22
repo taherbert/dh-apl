@@ -1793,6 +1793,192 @@ export function generateClusterRoster() {
   return results;
 }
 
+// --- Defensive cost builds ---
+
+// Generate builds that each include one banned/excluded defensive talent.
+// For each defensive talent, creates a variant of the reference build via
+// buildPinnedBuild, then diffs against the reference to identify which DPS
+// talent(s) were dropped. Returns reference + variant builds per hero tree,
+// ready for profileset comparison.
+//
+// refTemplate: optional roster template object { name, apexRank, include }.
+//   When provided, the reference build matches that template's cluster config
+//   and apex rank. When omitted, defaults to Full Stack Apex 0.
+export function generateDefensiveCostBuilds({ refTemplate } = {}) {
+  const data = loadData();
+  const specMap = buildNodeMap(data.specNodes);
+  const classResult = classTreeFromBaseline(data.classNodes);
+  const specConfig = getSpecAdapter().getSpecConfig();
+
+  const { talentClusters, lockedTalents } = specConfig;
+  const banned = specConfig.bannedTalents || [];
+  const excluded = specConfig.excludedTalents || [];
+  const defensiveTalents = [...banned, ...excluded];
+
+  if (defensiveTalents.length === 0) return { references: [], variants: [] };
+
+  const apexNode = data.specNodes.find(
+    (n) => n.entryNode && n.type === "tiered" && (n.maxRanks || 1) > 1,
+  );
+  const apexName = apexNode?.name?.split(" / ")[0] || "Untethered Rage";
+
+  const nodeIdToName = new Map(data.specNodes.map((n) => [n.id, n.name]));
+
+  // Default to Full Stack Apex 0
+  if (!refTemplate) {
+    refTemplate = {
+      name: "Full Stack",
+      apexRank: 0,
+      include: Object.fromEntries(
+        Object.keys(talentClusters || {}).map((k) => [k, "full"]),
+      ),
+    };
+  }
+
+  // Resolve template clusters into require/exclude lists.
+  // Same logic as generateClusterRoster: included clusters are required,
+  // non-included clusters are excluded.
+  const clusterRequire = [];
+  const clusterExclude = [];
+
+  for (const [clusterName, cluster] of Object.entries(talentClusters || {})) {
+    const depth = refTemplate.include?.[clusterName];
+    const core = cluster.core || [];
+    const extended = cluster.extended || [];
+    if (!depth) {
+      clusterExclude.push(...core, ...extended);
+    } else {
+      clusterRequire.push(...core);
+      if (depth === "full") {
+        clusterRequire.push(...extended);
+      } else {
+        clusterExclude.push(...extended);
+      }
+    }
+  }
+
+  // Apex handling
+  const apexRequire =
+    refTemplate.apexRank > 0
+      ? [{ name: apexName, maxRank: refTemplate.apexRank }]
+      : [];
+  const apexExclude = refTemplate.apexRank > 0 ? [] : [apexName];
+
+  // Build reference using the template config
+  const refProfile = {
+    name: `Ref_${refTemplate.name.replace(/\s+/g, "_")}`,
+    require: [...(lockedTalents || []), ...clusterRequire, ...apexRequire],
+    exclude: [...clusterExclude, ...apexExclude],
+    include: [],
+  };
+  const refBuild = buildPinnedBuild(refProfile, data, specMap, classResult);
+  const refSpecSet = new Set(refBuild.specNodes);
+
+  // Generate one variant per defensive talent.
+  // Cluster talents go in `include` (available but not locked) rather than
+  // `require`, so BFS can drop them to make room for expensive defensive
+  // prerequisite chains (e.g., Soulmonger → Painbringer = 3 points).
+  const variants = [];
+  for (const defName of defensiveTalents) {
+    const profile = {
+      name: `def_${defName.replace(/\s+/g, "_")}`,
+      require: [...(lockedTalents || []), defName, ...apexRequire],
+      exclude: [...clusterExclude, ...apexExclude],
+      include: [...clusterRequire, defName],
+    };
+
+    const varBuild = buildPinnedBuild(profile, data, specMap, classResult);
+
+    const varSpecSet = new Set(varBuild.specNodes);
+    const dropped = [...refSpecSet]
+      .filter((id) => !varSpecSet.has(id))
+      .map((id) => nodeIdToName.get(id) || `node_${id}`);
+    const added = [...varSpecSet]
+      .filter((id) => !refSpecSet.has(id))
+      .map((id) => nodeIdToName.get(id) || `node_${id}`);
+
+    // Compute point cost: sum of ranks for added nodes minus expected
+    let pointCost = 0;
+    for (const id of varBuild.specNodes) {
+      if (!refSpecSet.has(id)) pointCost += varBuild.specRanks[id] || 1;
+    }
+
+    variants.push({
+      defensiveName: defName,
+      droppedTalents: dropped,
+      addedTalents: added,
+      pointCost,
+      specBuild: varBuild,
+      valid: varBuild.valid,
+      errors: varBuild.errors,
+    });
+  }
+
+  // Cross with hero trees — one variant per tree (default combo only)
+  const references = [];
+  const crossedVariants = [];
+
+  for (const [heroTreeName, heroNodes] of Object.entries(data.heroSubtrees)) {
+    const heroCombo = heroChoiceCombos(heroNodes, {})[0];
+    const heroNodeIds = heroNodes.map((n) => n.id);
+    const treeSuffix = heroTreeName.replace(/\s+/g, "");
+    const heroProps = {
+      heroTree: heroTreeName,
+      heroNodes: heroNodeIds,
+      heroChoices: heroCombo,
+    };
+
+    const refCrossed = {
+      ...refBuild,
+      ...heroProps,
+      name: `ref_FullStack_${treeSuffix}`,
+    };
+
+    let refHash;
+    try {
+      refHash = buildToHash(refCrossed, data);
+    } catch (e) {
+      console.warn(
+        `Failed to hash reference for ${heroTreeName}: ${e.message}`,
+      );
+      continue;
+    }
+    references.push({ ...refCrossed, hash: refHash });
+
+    for (const v of variants) {
+      const crossed = {
+        ...v.specBuild,
+        ...heroProps,
+        name: `def_${v.defensiveName.replace(/\s+/g, "_")}_${treeSuffix}`,
+      };
+
+      let hash = null;
+      let valid = v.valid;
+      let errors = v.errors;
+      try {
+        hash = buildToHash(crossed, data);
+      } catch (e) {
+        errors = [...(v.errors || []), `Hash failed: ${e.message}`];
+        valid = false;
+      }
+
+      crossedVariants.push({
+        defensiveName: v.defensiveName,
+        droppedTalents: v.droppedTalents,
+        addedTalents: v.addedTalents,
+        pointCost: v.pointCost,
+        heroTree: heroTreeName,
+        hash,
+        valid,
+        errors,
+        build: crossed,
+      });
+    }
+  }
+
+  return { references, variants: crossedVariants };
+}
+
 // --- CLI entry point ---
 
 if (import.meta.url === `file://${process.argv[1]}`) {

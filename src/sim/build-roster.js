@@ -999,6 +999,7 @@ export async function updateAllDps({ fidelity = "quick" } = {}) {
   for (const b of roster.builds) {
     buildDps[b.id] = Object.fromEntries(scenarioKeys.map((k) => [k, 0]));
   }
+
   for (const scenario of scenarioKeys) {
     console.log(`  Scenario: ${scenario}...`);
     try {
@@ -1204,10 +1205,10 @@ export function generateHashes() {
 // Order matches the display column order.
 const CLUSTER_COLS = [
   { key: "brand", label: "Brand", width: 7 },
-  { key: "harvest", label: "Harv", width: 6 },
+  { key: "vuln", label: "Vuln", width: 6 },
   { key: "feldev", label: "FelDev", width: 8 },
   { key: "sc", label: "SC", width: 4 },
-  { key: "sigil", label: "Sig", width: 5 },
+  { key: "binding", label: "Bind", width: 6 },
 ];
 
 // Resolve cluster status for a build from its archetype → template mapping.
@@ -1259,9 +1260,9 @@ export function showRoster() {
 
   // Legend
   console.log(
-    "  Brand=Fiery Brand cluster  Harv=Harvest cluster  FelDev=Fel Devastation cluster",
+    "  Brand=Fiery Brand cluster  Vuln=Vulnerability cluster  FelDev=Fel Devastation cluster",
   );
-  console.log("  SC=Soul Carver  Sig=Sigil  * = core only\n");
+  console.log("  SC=Soul Carver  Bind=Cycle of Binding  * = core only\n");
 
   console.log(`=== Build Roster (${builds.length} builds) ===`);
 
