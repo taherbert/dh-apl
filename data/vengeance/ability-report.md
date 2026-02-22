@@ -613,7 +613,6 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 
 **Row 5:**
 - (1) **Frailty** (389958) [passive_buff]
-  → Ascending Flame (duration_modifier)
   → Dark Matter (proc_trigger)
   _Enemies struck by Sigil of Flame, Soul Cleave, and Spirit Bomb are afflicted with Frailty for $247456d. You heal for $247456s1% of all damage you deal to targets with Frailty._
 - (2) **Feast of Souls** (207697) [passive_buff]
@@ -679,8 +678,6 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - (7) **Cycle of Binding** (389718) [passive]
   → Sigil of Flame (cooldown_modifier)
   → Soul Sigils (cooldown_modifier)
-  → Frailty (duration_modifier)
-  → Ascending Flame (duration_modifier)
   _Your Sigils have $S2% reduced cooldowns._
 
 **Row 8:**

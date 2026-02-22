@@ -181,42 +181,6 @@
       "confidence": "medium"
     },
     {
-      "source": "Cycle of Binding",
-      "sourceVar": "vengeance.cycle_of_binding",
-      "target": "Frailty",
-      "targetVar": "vengeance.frailty",
-      "context": "sigil_of_flame_damage_base_t",
-      "contextAbility": "sigil_of_flame_damage_base",
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
-      "source": "Cycle of Binding",
-      "sourceVar": "vengeance.cycle_of_binding",
-      "target": "Ascending Flame",
-      "targetVar": "vengeance.ascending_flame",
-      "context": "sigil_of_flame_damage_base_t",
-      "contextAbility": "sigil_of_flame_damage_base",
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
-      "source": "Frailty",
-      "sourceVar": "vengeance.frailty",
-      "target": "Ascending Flame",
-      "targetVar": "vengeance.ascending_flame",
-      "context": "sigil_of_flame_damage_base_t",
-      "contextAbility": "sigil_of_flame_damage_base",
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
       "source": "Fallout",
       "sourceVar": "vengeance.fallout",
       "target": "Charred Flesh",
@@ -496,19 +460,9 @@
       "source": "Frailty",
       "sourceVar": "vengeance.frailty",
       "target": "Sigil of Flame",
-      "context": "sigil_of_flame_damage_base_t",
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
-      "source": "Ascending Flame",
-      "sourceVar": "vengeance.ascending_flame",
-      "target": "Sigil of Flame",
-      "context": "sigil_of_flame_damage_base_t",
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
+      "context": "sigil_of_flame_t",
+      "type": "cooldown_modifier",
+      "mechanism": "on_impact",
       "discoveryMethod": "cpp_scanner",
       "confidence": "medium"
     },
@@ -738,9 +692,9 @@
     }
   ],
   "scanStats": {
-    "contextsScanned": 128,
-    "talentCrossRefs": 30,
-    "talentAbilityRefs": 30,
+    "contextsScanned": 123,
+    "talentCrossRefs": 27,
+    "talentAbilityRefs": 29,
     "effectScans": 8
   }
 }

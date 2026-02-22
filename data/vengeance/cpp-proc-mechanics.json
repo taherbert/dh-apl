@@ -1,13 +1,13 @@
 {
   "source": "undefined (auto-extracted)",
-  "extractedAt": "2026-02-19T18:36:30.581Z",
+  "extractedAt": "2026-02-22T05:00:04.634Z",
   "icds": [
     {
       "icdName": "wounded_quarry_trigger_icd",
       "durationExpression": "1_s",
       "durationSeconds": 1,
       "durationSource": "hardcoded",
-      "line": 2882,
+      "line": 2878,
       "context": "wounded_quarry_accumulator_t",
       "contextType": "struct"
     },
@@ -16,7 +16,7 @@
       "durationExpression": "p(",
       "durationSeconds": null,
       "durationSource": "unknown",
-      "line": 7408,
+      "line": 7240,
       "context": "relentless_onslaught_t",
       "contextType": "struct"
     },
@@ -25,7 +25,7 @@
       "durationExpression": "p(",
       "durationSeconds": null,
       "durationSource": "unknown",
-      "line": 7472,
+      "line": 7304,
       "context": "relentless_onslaught_t",
       "contextType": "struct"
     },
@@ -34,7 +34,7 @@
       "durationExpression": "p(",
       "durationSeconds": null,
       "durationSource": "unknown",
-      "line": 8062,
+      "line": 7894,
       "context": "fracture_t",
       "contextType": "struct"
     },
@@ -43,7 +43,7 @@
       "durationExpression": "100_ms",
       "durationSeconds": 0.1,
       "durationSource": "hardcoded",
-      "line": 9976,
+      "line": 9802,
       "context": "create_buffs",
       "contextType": "member_function"
     }
@@ -53,7 +53,7 @@
       "chanceExpression": "chance",
       "resolvedChance": null,
       "chanceSource": "variable:p()->talent.havoc.chaotic_disposition->effectN( 2 ).percent() / 100",
-      "line": 2251,
+      "line": 2247,
       "context": "unknown",
       "contextType": "unknown",
       "surroundingHint": "double damage_percent = p()->talent.havoc.chaotic_disposition->effectN( 3 ).percent();"
@@ -62,7 +62,7 @@
       "chanceExpression": "chance",
       "resolvedChance": null,
       "chanceSource": "variable:p()->talent.havoc.chaotic_disposition->effectN( 2 ).percent() / 100",
-      "line": 2298,
+      "line": 2294,
       "context": "unknown",
       "contextType": "unknown",
       "surroundingHint": "double damage_percent = p()->talent.havoc.chaotic_disposition->effectN( 3 ).percent();"
@@ -71,7 +71,7 @@
       "chanceExpression": "chance_to_proc",
       "resolvedChance": null,
       "chanceSource": "variable:souls_consumed * 0.0075 * pow( 1.35, p()->buff.seething_anger->stack() )",
-      "line": 2542,
+      "line": 2538,
       "context": "unknown",
       "contextType": "unknown",
       "surroundingHint": "if ( souls_consumed <= 0 || !p()->talent.vengeance.untethered_rage_1->ok() ) | double chance_to_proc = souls_consumed * 0.0075 * pow( 1.35, p()->buff.seething_anger->stack() ); | p()->buff.seething_anger->expire();"
@@ -80,7 +80,7 @@
       "chanceExpression": "BASE::p(",
       "resolvedChance": null,
       "chanceSource": "expression:BASE::p(",
-      "line": 2906,
+      "line": 2902,
       "context": "voidfall_building_trigger_t",
       "contextType": "struct",
       "surroundingHint": "if ( !BASE::p()->talent.annihilator.voidfall->ok() ) | if ( !BASE::rng().roll( BASE::p()->talent.annihilator.voidfall->effectN( 3 ).percent() ) ) | if ( BASE::p()->buff.voidfall_spending->up() )"
@@ -89,7 +89,7 @@
       "chanceExpression": "chance",
       "resolvedChance": null,
       "chanceSource": "variable:shattered_souls_chance( s )",
-      "line": 3332,
+      "line": 3328,
       "context": "shattered_souls_trigger_t",
       "contextType": "struct",
       "surroundingHint": "BASE::p()->spawn_soul_fragment( BASE::p()->proc.soul_fragment_from_shattered_souls, soul_fragment::LESSER, 1 );"
@@ -98,7 +98,7 @@
       "chanceExpression": "0.60",
       "resolvedChance": 0.6,
       "chanceSource": "hardcoded",
-      "line": 4793,
+      "line": 4617,
       "context": "immolation_aura_t",
       "contextType": "struct",
       "surroundingHint": "if ( p()->talent.vengeance.fallout->ok() ) | p()->spawn_soul_fragment( p()->proc.soul_fragment_from_fallout, soul_fragment::LESSER, 1 );"
@@ -107,7 +107,7 @@
       "chanceExpression": "p(",
       "resolvedChance": null,
       "chanceSource": "expression:p(",
-      "line": 6014,
+      "line": 5831,
       "context": "soul_immolation_base_t",
       "contextType": "struct",
       "surroundingHint": "if ( p()->talent.scarred.undying_embers->ok() && | rng().roll( p()->talent.scarred.undying_embers->effectN( 2 ).percent() ) )"
@@ -116,7 +116,7 @@
       "chanceExpression": "chance",
       "resolvedChance": null,
       "chanceSource": "variable:p()->talent.havoc.screaming_brutality->effectN( 2 ).percent()",
-      "line": 7224,
+      "line": 7056,
       "context": "unknown",
       "contextType": "unknown",
       "surroundingHint": "if ( p()->talent.havoc.screaming_brutality->ok() ) | double chance = p()->talent.havoc.screaming_brutality->effectN( 2 ).percent();"
@@ -125,7 +125,7 @@
       "chanceExpression": "chance",
       "resolvedChance": null,
       "chanceSource": "variable:p()->talent.havoc.screaming_brutality->effectN( 2 ).percent()",
-      "line": 7242,
+      "line": 7074,
       "context": "unknown",
       "contextType": "unknown",
       "surroundingHint": "if ( p()->talent.havoc.screaming_brutality->ok() && !p()->talent.havoc.first_blood->ok() ) | double chance = p()->talent.havoc.screaming_brutality->effectN( 2 ).percent();"
@@ -134,7 +134,7 @@
       "chanceExpression": "p(",
       "resolvedChance": null,
       "chanceSource": "expression:p(",
-      "line": 7252,
+      "line": 7084,
       "context": "unknown",
       "contextType": "unknown",
       "surroundingHint": "if ( p()->talent.aldrachi_reaver.broken_spirit->ok() && | rng().roll( p()->talent.aldrachi_reaver.broken_spirit->effectN( 4 ).percent() ) ) | p()->spawn_soul_fragment( p()->proc.soul_fragment_from_broken_spirit, soul_fragment::LESSER );"
@@ -143,7 +143,7 @@
       "chanceExpression": "this->get_refund_proc_chance(",
       "resolvedChance": null,
       "chanceSource": "expression:this->get_refund_proc_chance(",
-      "line": 7468,
+      "line": 7300,
       "context": "relentless_onslaught_t",
       "contextType": "struct",
       "surroundingHint": null
@@ -152,7 +152,7 @@
       "chanceExpression": "chance",
       "resolvedChance": null,
       "chanceSource": "variable:p()->talent.havoc.relentless_onslaught->effectN( 1 ).percent()",
-      "line": 7491,
+      "line": 7323,
       "context": "relentless_onslaught_t",
       "contextType": "struct",
       "surroundingHint": "if ( p()->talent.havoc.relentless_onslaught->ok() && result_is_hit( s->result ) && may_refund && | double chance = p()->talent.havoc.relentless_onslaught->effectN( 1 ).percent();"
@@ -161,7 +161,7 @@
       "chanceExpression": "p(",
       "resolvedChance": null,
       "chanceSource": "expression:p(",
-      "line": 7581,
+      "line": 7413,
       "context": "relentless_onslaught_t",
       "contextType": "struct",
       "surroundingHint": "p()->spawn_soul_fragment( p()->proc.soul_fragment_from_demonic_appetite, soul_fragment::LESSER ); | if ( p()->talent.aldrachi_reaver.broken_spirit->ok() && | rng().roll( p()->talent.aldrachi_reaver.broken_spirit->effectN( 4 ).percent() ) )"
@@ -170,7 +170,7 @@
       "chanceExpression": "p(",
       "resolvedChance": null,
       "chanceSource": "expression:p(",
-      "line": 8058,
+      "line": 7890,
       "context": "fracture_t",
       "contextType": "struct",
       "surroundingHint": "p()->buff.warblades_hunger->expire();"
@@ -179,7 +179,7 @@
       "chanceExpression": "p(",
       "resolvedChance": null,
       "chanceSource": "expression:p(",
-      "line": 8162,
+      "line": 7996,
       "context": "inner_demon_t",
       "contextType": "struct",
       "surroundingHint": "if ( p()->talent.aldrachi_reaver.broken_spirit->ok() && | rng().roll( p()->talent.aldrachi_reaver.broken_spirit->effectN( 3 ).percent() ) ) | p()->spawn_soul_fragment( p()->proc.soul_fragment_from_broken_spirit, soul_fragment::LESSER );"
@@ -188,7 +188,7 @@
       "chanceExpression": "chance",
       "resolvedChance": null,
       "chanceSource": "variable:p->hero_spec.wounded_quarry_proc_rate",
-      "line": 8773,
+      "line": 8607,
       "context": "wounded_quarry_t",
       "contextType": "struct",
       "surroundingHint": "p()->spawn_soul_fragment( p()->proc.soul_fragment_from_wounded_quarry, soul_fragment::LESSER );"
@@ -197,7 +197,7 @@
       "chanceExpression": "undying_embers_proc_chance",
       "resolvedChance": null,
       "chanceSource": "variable:p->talent.scarred.undying_embers->effectN( 1 ).percent()",
-      "line": 8959,
+      "line": 8793,
       "context": "immolation_aura_buff_t",
       "contextType": "struct",
       "surroundingHint": "auto functional_buff = new immolation_aura_functional_buff_t( p, fmt::format( \"immolation_aura{}\", i + 1 ) ); | if ( p->talent.scarred.undying_embers->ok() ) | if ( rng().roll( undying_embers_proc_chance ) && p->cooldown.immolation_aura->up() )"
@@ -206,7 +206,7 @@
       "chanceExpression": "dh(",
       "resolvedChance": null,
       "chanceSource": "expression:dh(",
-      "line": 9535,
+      "line": 9361,
       "context": "target_demise",
       "contextType": "member_function",
       "surroundingHint": "if ( dh().rng().roll( dh().options.soul_fragment_from_shattered_souls_chance ) ) | dh().spawn_soul_fragment( dh().proc.soul_fragment_from_death, soul_fragment::GREATER ); | dh().proc.soul_fragment_from_death->occur();"
@@ -215,7 +215,7 @@
       "chanceExpression": "options.soul_fragment_movement_consume_chance",
       "resolvedChance": null,
       "chanceSource": "expression:options.soul_fragment_movement_consume_chance",
-      "line": 12227,
+      "line": 12055,
       "context": "adjust_movement",
       "contextType": "member_function",
       "surroundingHint": "int soul_fragments_to_consume = 0; | for ( auto& it : soul_fragments ) | if ( it->is_type( type ) && it->active() && rng().roll( options.soul_fragment_movement_consume_chance ) )"
@@ -224,7 +224,7 @@
       "chanceExpression": "talent.demon_hunter.soul_splitter->effectN( 1",
       "resolvedChance": null,
       "chanceSource": "expression:talent.demon_hunter.soul_splitter->effectN( 1",
-      "line": 12467,
+      "line": 12295,
       "context": "spawn_soul_fragment",
       "contextType": "member_function",
       "surroundingHint": "sim->print_log( \"{} creates {} {}. active={} total={}\", *this, n, get_soul_fragment_str( type ), | get_active_soul_fragments( type ), get_total_soul_fragments( type ) ); | if ( talent.demon_hunter.soul_splitter->ok() &&"
@@ -233,20 +233,20 @@
   "rppm": [
     {
       "name": "demonic_appetite",
-      "line": 1138
+      "line": 1135
     }
   ],
   "accumulators": [
     {
       "functionName": "accumulate_frailty",
-      "line": 2490,
+      "line": 2486,
       "threshold": null,
       "effect": null,
       "bodySnippet": "{\n    if ( !p()->talent.vengeance.frailty->ok() )\n      return;\n\n    if ( !( ab::harmful && s->result_amount > 0 ) )\n      return;\n\n    const demon_hunter_td_t* target_data = td( s->target );\n    if ( !target_data->debuffs.frailty->up() )\n      return;\n\n    const double multiplier = target_data->deb"
     },
     {
       "functionName": "accumulate_ragefire",
-      "line": 4782,
+      "line": 4606,
       "threshold": null,
       "effect": "volatile_flameblood_icd",
       "bodySnippet": "{\n      demon_hunter_spell_t::impact( s );\n\n      if ( result_is_hit( s->result ) )\n      {\n        bool spawn_fallout_soul = false;\n        if ( p()->talent.vengeance.fallout->ok() )\n        {\n          spawn_fallout_soul = s->n_targets == 1 || rng().roll( 0.60 );\n        }\n\n        if ( initial &&"
@@ -257,19 +257,19 @@
       "optionName": "soul_fragment_movement_consume_chance",
       "variable": "options.soul_fragment_movement_consume_chance",
       "defaultValue": "0, 1",
-      "line": 10245
+      "line": 10071
     },
     {
       "optionName": "wounded_quarry_chance_vengeance",
       "variable": "options.wounded_quarry_chance_vengeance",
       "defaultValue": "0, 1",
-      "line": 10246
+      "line": 10072
     },
     {
       "optionName": "wounded_quarry_chance_havoc",
       "variable": "options.wounded_quarry_chance_havoc",
       "defaultValue": "0, 1",
-      "line": 10247
+      "line": 10073
     }
   ],
   "constants": [
@@ -277,37 +277,37 @@
       "name": "MAX_SOUL_FRAGMENTS",
       "expression": "6",
       "numericValue": 6,
-      "line": 87
+      "line": 85
     },
     {
       "name": "DEVOURER_MAX_SOUL_FRAGMENTS",
       "expression": "10",
       "numericValue": 10,
-      "line": 88
+      "line": 86
     },
     {
       "name": "soul_fragment_movement_consume_chance",
       "expression": "0.85",
       "numericValue": 0.85,
-      "line": 1213
+      "line": 1209
     },
     {
       "name": "wounded_quarry_chance_vengeance",
       "expression": "0.30",
       "numericValue": 0.3,
-      "line": 1215
+      "line": 1211
     },
     {
       "name": "wounded_quarry_chance_havoc",
       "expression": "0.10",
       "numericValue": 0.1,
-      "line": 1217
+      "line": 1213
     },
     {
       "name": "soul_fragment_from_shattered_souls_chance",
       "expression": "0.4",
       "numericValue": 0.4,
-      "line": 1221
+      "line": 1217
     }
   ],
   "stats": {

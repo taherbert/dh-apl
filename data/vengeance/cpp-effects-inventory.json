@@ -4,7 +4,7 @@
       "buff": "demon_soul",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2096,
+      "line": 2092,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.demon_soul )"
@@ -13,7 +13,7 @@
       "buff": "empowered_demon_soul",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2097,
+      "line": 2093,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.empowered_demon_soul )"
@@ -22,7 +22,7 @@
       "buff": "metamorphosis",
       "secondarySource": "monster_within",
       "effectMask": "meta_mask",
-      "line": 2109,
+      "line": 2105,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.metamorphosis, p()->mastery.monster_within, meta_mask )"
@@ -31,7 +31,7 @@
       "buff": "feast_of_souls",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2112,
+      "line": 2108,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.feast_of_souls )"
@@ -40,7 +40,7 @@
       "buff": "rolling_torment",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2113,
+      "line": 2109,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.rolling_torment )"
@@ -49,7 +49,7 @@
       "buff": "impending_apocalypse",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2114,
+      "line": 2110,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.impending_apocalypse )"
@@ -58,7 +58,7 @@
       "buff": "exergy",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2117,
+      "line": 2113,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.exergy )"
@@ -67,7 +67,7 @@
       "buff": "inertia",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2118,
+      "line": 2114,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.inertia )"
@@ -76,7 +76,7 @@
       "buff": "empowered_eye_beam",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2119,
+      "line": 2115,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.empowered_eye_beam )"
@@ -85,7 +85,7 @@
       "buff": "warblades_hunger",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2124,
+      "line": 2120,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.warblades_hunger )"
@@ -94,7 +94,7 @@
       "buff": "thrill_of_the_fight_damage",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2125,
+      "line": 2121,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.thrill_of_the_fight_damage )"
@@ -103,7 +103,7 @@
       "buff": "enduring_torment",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2163,
+      "line": 2159,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.enduring_torment )"
@@ -112,7 +112,7 @@
       "buff": "demonsurge_demonsurge",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2164,
+      "line": 2160,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.demonsurge_demonsurge )"
@@ -121,7 +121,7 @@
       "buff": "demonsurge_demonic_intensity",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2165,
+      "line": 2161,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.demonsurge_demonic_intensity )"
@@ -130,7 +130,7 @@
       "buff": "demonsurge",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2166,
+      "line": 2162,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.demonsurge )"
@@ -139,7 +139,7 @@
       "buff": "voidsurge",
       "secondarySource": null,
       "effectMask": null,
-      "line": 2167,
+      "line": 2163,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "raw": "ab::parse_effects( p()->buff.voidsurge )"
@@ -148,7 +148,7 @@
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12553,
+      "line": 12381,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.metamorphosis )"
@@ -157,7 +157,7 @@
       "buff": "blur",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12554,
+      "line": 12382,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.blur )"
@@ -166,7 +166,7 @@
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12560,
+      "line": 12388,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.metamorphosis )"
@@ -175,7 +175,7 @@
       "buff": "blur",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12561,
+      "line": 12389,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.blur )"
@@ -184,7 +184,7 @@
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12567,
+      "line": 12395,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.metamorphosis )"
@@ -193,7 +193,7 @@
       "buff": "demon_spikes",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12568,
+      "line": 12396,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.demon_spikes )"
@@ -202,7 +202,7 @@
       "buff": "seething_anger",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12569,
+      "line": 12397,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.seething_anger )"
@@ -211,7 +211,7 @@
       "buff": "fel_blood_rank_2",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12570,
+      "line": 12398,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( mastery.fel_blood_rank_2 )"
@@ -220,7 +220,7 @@
       "buff": "thrill_of_the_fight_haste",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12574,
+      "line": 12402,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.thrill_of_the_fight_haste )"
@@ -229,7 +229,7 @@
       "buff": "voidfall_building",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12577,
+      "line": 12405,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_building )"
@@ -238,7 +238,7 @@
       "buff": "voidfall_spending",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12578,
+      "line": 12406,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_spending )"
@@ -247,7 +247,7 @@
       "buff": "voidfall_final_hour",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12579,
+      "line": 12407,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_final_hour )"
@@ -259,7 +259,7 @@
       "debuff": "devourers_bite",
       "spellSource": "spec.devourers_bite_debuff",
       "effectMask": null,
-      "line": 2182,
+      "line": 2178,
       "context": "demon_hunter_pet_t",
       "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::debuffs_t::devourers_bite ), p()->spec.devourers_bite_debuff )"
     },
@@ -268,7 +268,7 @@
       "debuff": "burning_wound",
       "spellSource": "spec.burning_wound_debuff",
       "effectMask": null,
-      "line": 2185,
+      "line": 2181,
       "context": "demon_hunter_pet_t",
       "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::debuffs_t::burning_wound ), p()->spec.burning_wound_debuff )"
     },
@@ -280,7 +280,7 @@
         "defaultEnabled": false,
         "modifications": ".enable( 4, 5 )"
       },
-      "line": 2193,
+      "line": 2189,
       "context": "demon_hunter_pet_t",
       "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::debuffs_t::frailty ), p()->spec.frailty_debuff, effect_mask_t( false ).enable( 4, 5 ), p()->talent.vengeance.vulnerability->effectN( 1 ).percent() + p()->talent.vengeance.soulcrush->effectN( 4 ).percent() )"
     },
@@ -292,7 +292,7 @@
         "defaultEnabled": true,
         "modifications": ".disable( 4 )"
       },
-      "line": 2201,
+      "line": 2197,
       "context": "demon_hunter_pet_t",
       "raw": "ab::parse_target_effects( d_fn( &demon_hunter_td_t::dots_t::fiery_brand ), p()->spec.fiery_brand_debuff, effect_mask_t( true ).disable( 4 ) )"
     }
@@ -300,7 +300,7 @@
   "compositeOverrides": [
     {
       "function": "composite_da_multiplier",
-      "line": 2228,
+      "line": 2224,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "talentChecks": [
@@ -313,7 +313,7 @@
     },
     {
       "function": "composite_ta_multiplier",
-      "line": 2275,
+      "line": 2271,
       "context": "demon_hunter_pet_t",
       "contextType": "struct",
       "talentChecks": [
@@ -326,7 +326,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 3281,
+      "line": 3277,
       "context": "otherworldly_focus_benefit_t",
       "contextType": "struct",
       "talentChecks": [
@@ -339,7 +339,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 5756,
+      "line": 5571,
       "context": "surge_base_t",
       "contextType": "struct",
       "talentChecks": [
@@ -352,7 +352,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 6281,
+      "line": 6113,
       "context": "reap_t",
       "contextType": "struct",
       "talentChecks": [
@@ -365,7 +365,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 6684,
+      "line": 6516,
       "context": "hungering_slash_base_t",
       "contextType": "struct",
       "talentChecks": [
@@ -378,7 +378,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 7023,
+      "line": 6855,
       "context": "auto_attack_t",
       "contextType": "struct",
       "talentChecks": [
@@ -391,7 +391,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 8104,
+      "line": 7936,
       "context": "inner_demon_t",
       "contextType": "struct",
       "talentChecks": [
