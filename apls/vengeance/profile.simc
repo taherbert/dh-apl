@@ -17,10 +17,11 @@
 # Gear sources:
 #   Tier pieces (5/5):  The Voidspire (Mythic, ilevel 289)
 #   Weapons:            MH raid warglaive + crafted OH (ilevel 285 w/ embellishment)
-#   Trinkets:           Araz's Ritual Forge (on-use AGI) + Sigil of the Cosmic Hunt (passive)
+#   Trinkets:           Gaze of the Alnseer + Undreamt God's Oozing Vestige (Dreamrift)
 #   Non-tier armor:     Voidspire raid drops + crafted (ilevel 285)
 #   Enchants:           Midnight enchants (rank 2) throughout, crit/haste optimized
-#   Gems:               Midnight gems, crit/haste secondary focus
+#   Gems:               Midnight gems — Deadly Peridot (Haste+Crit), Quick Garnet (Crit+Haste)
+#                       Meta: Eversong Diamond (240983)
 
 ptr=1
 demonhunter="VDH_Midnight"
@@ -56,28 +57,34 @@ hands=devouring_reavers_essence_grips,id=250034,ilevel=289
 legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8161
 
 # --- Non-Tier Armor ---
-neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240892
+# Deadly Peridot: Haste +7, Crit +3
+neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240858
 # Back enchant: Chant of Leeching Fangs (no Midnight cloak enchant exists yet)
-back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,gem_id=238045,enchant_id=7409
+# Quick Garnet: Crit +7, Haste +3
+back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,gem_id=240874,enchant_id=7409
 # Wrist: Crafted leather bracers with Devouring Banding embellishment (Midnight LW)
 # Enchant: Chant of Armored Speed (no Midnight bracer enchant exists yet)
-wrist=,id=219334,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240908,enchant_id=7391,embellishment=devouring_banding
-waist=devouring_reavers_emblem,id=250030,ilevel=289,gem_id=240900
+# Deadly Peridot: Haste +7, Crit +3
+wrist=,id=219334,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240858,enchant_id=7391,embellishment=devouring_banding
+# Quick Garnet: Crit +7, Haste +3
+waist=devouring_reavers_emblem,id=250030,ilevel=289,gem_id=240874
 # Feet enchant: Farstrider's Hunt (Midnight, rank 2) — AGI/DPS oriented
 # TODO: Replace feet placeholder with Voidspire leather boots when item IDs are available
 feet=,id=153838,ilevel=289,enchant_id=8019
 
 # --- Jewelry ---
 # Ring enchants: Thalassian Haste + Eyes of the Eagle (Midnight, rank 2) — crit/haste priority
-finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240918/240900,enchant_id=8021
-finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240900,enchant_id=7967
+# Deadly Peridot + Quick Garnet for balanced crit/haste
+finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240858/240874,enchant_id=8021
+# Deadly Peridot: Haste +7, Crit +3
+finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240858,enchant_id=7967
 
-# --- Trinkets — Agility DPS ---
-# Araz's Ritual Forge: on-use primary stat (decaying over 30s), pairs with burst windows
-# Sigil of the Cosmic Hunt: passive single-target damage, scales with execute phase
-# TODO: Replace with Voidspire agility trinkets when raid launches (March 17, 2026)
-trinket1=arazs_ritual_forge,id=242402,ilevel=289
-trinket2=sigil_of_the_cosmic_hunt,id=242397,ilevel=289
+# --- Trinkets — Midnight Agility DPS ---
+# Gaze of the Alnseer: primary stat proc (AGI for DH), from Dreamrift (Chimaerus)
+#   Used by 82% of Devourer DHs in Beta M+ — stacking Alnsight → AGI buff
+# Undreamt God's Oozing Vestige: from Dreamrift (Chimaerus), Midnight-era trinket
+trinket1=gaze_of_the_alnseers,id=249343,ilevel=289
+trinket2=undreamt_gods_oozing_vestige,id=249805,ilevel=289
 
 # --- Weapons ---
 # MH: Raid warglaive from Vaelgor & Ezzorak (Voidspire)
