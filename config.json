@@ -10,6 +10,12 @@
   "simulation": {
     "scenarios": {
       "st": { "name": "Patchwerk 1T", "maxTime": 300, "desiredTargets": 1 },
+      "dungeon_slice": {
+        "name": "DSlice",
+        "maxTime": 360,
+        "desiredTargets": 1,
+        "fightStyle": "DungeonSlice"
+      },
       "small_aoe": {
         "name": "Patchwerk 5T",
         "maxTime": 75,
@@ -21,7 +27,12 @@
         "desiredTargets": 10
       }
     },
-    "scenarioWeights": { "st": 0.5, "small_aoe": 0.3, "big_aoe": 0.2 },
+    "scenarioWeights": {
+      "st": 0.35,
+      "dungeon_slice": 0.25,
+      "small_aoe": 0.25,
+      "big_aoe": 0.15
+    },
     "fidelity": {
       "quick": { "target_error": 0.5 },
       "standard": { "target_error": 0.25 },

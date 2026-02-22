@@ -8,6 +8,7 @@ import {
   SIMC_BIN,
   DATA_ENV,
   SCENARIOS,
+  SCENARIO_WEIGHTS,
   SIM_DEFAULTS as _SIM_DEFAULTS,
   initSpec,
 } from "../engine/startup.js";
@@ -17,7 +18,7 @@ import { resultsDir, resultsFile } from "../engine/paths.js";
 const SIMC = SIMC_BIN;
 const TOTAL_CORES = cpus().length;
 
-export { SCENARIOS };
+export { SCENARIOS, SCENARIO_WEIGHTS };
 export const SIM_DEFAULTS = { threads: TOTAL_CORES, ..._SIM_DEFAULTS };
 
 function buildOverrides(scenario, extraOverrides = {}) {
@@ -26,6 +27,7 @@ function buildOverrides(scenario, extraOverrides = {}) {
   const overrides = [
     `max_time=${config.maxTime}`,
     `desired_targets=${config.desiredTargets}`,
+    ...(config.fightStyle ? [`fight_style=${config.fightStyle}`] : []),
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
   ];
@@ -260,6 +262,7 @@ export async function runMultiActorAsync(
     simcPath,
     `max_time=${config.maxTime}`,
     `desired_targets=${config.desiredTargets}`,
+    ...(config.fightStyle ? [`fight_style=${config.fightStyle}`] : []),
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
     `json2=${jsonPath}`,

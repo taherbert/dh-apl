@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 6;
+const SCHEMA_VERSION = 7;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -93,9 +93,15 @@ CREATE TABLE IF NOT EXISTS builds (
   archetype TEXT,
   overrides TEXT,
   dps_st REAL,
+  dps_dungeon_slice REAL,
   dps_small_aoe REAL,
   dps_big_aoe REAL,
   weighted REAL,
+  simc_dps_st REAL,
+  simc_dps_dungeon_slice REAL,
+  simc_dps_small_aoe REAL,
+  simc_dps_big_aoe REAL,
+  simc_weighted REAL,
   rank INTEGER,
   source TEXT DEFAULT 'doe',
   pinned INTEGER DEFAULT 0,
@@ -343,6 +349,16 @@ export function getDb(spec) {
         _db.exec("ALTER TABLE hypotheses ADD COLUMN base_priority REAL");
       } catch {
         // Column may already exist
+      }
+    }
+    // Schema v6 → v7: add dungeon_slice DPS columns to builds
+    if (existingVersion < 7) {
+      for (const col of ["dps_dungeon_slice", "simc_dps_dungeon_slice"]) {
+        try {
+          _db.exec(`ALTER TABLE builds ADD COLUMN ${col} REAL`);
+        } catch {
+          // Column may already exist
+        }
       }
     }
     _db
@@ -824,8 +840,8 @@ export function upsertBuild(build) {
     build.dps?.st != null || build.dps_st != null || build.weighted != null;
   db.prepare(
     `
-    INSERT INTO builds (hash, spec, name, display_name, hero_tree, archetype, overrides, dps_st, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
-    VALUES ($hash, $spec, $name, $display_name, $hero_tree, $archetype, $overrides, $dps_st, $dps_small_aoe, $dps_big_aoe, $weighted, $rank, $source, $pinned, $in_roster, $validated, $validation_errors, $last_tested_at)
+    INSERT INTO builds (hash, spec, name, display_name, hero_tree, archetype, overrides, dps_st, dps_dungeon_slice, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
+    VALUES ($hash, $spec, $name, $display_name, $hero_tree, $archetype, $overrides, $dps_st, $dps_dungeon_slice, $dps_small_aoe, $dps_big_aoe, $weighted, $rank, $source, $pinned, $in_roster, $validated, $validation_errors, $last_tested_at)
     ON CONFLICT(hash) DO UPDATE SET
       spec = excluded.spec,
       name = excluded.name,
@@ -840,6 +856,7 @@ export function upsertBuild(build) {
       validation_errors = excluded.validation_errors,
       last_tested_at = CASE WHEN excluded.last_tested_at IS NOT NULL THEN excluded.last_tested_at ELSE builds.last_tested_at END,
       dps_st = CASE WHEN $hasDps THEN excluded.dps_st ELSE builds.dps_st END,
+      dps_dungeon_slice = CASE WHEN $hasDps THEN excluded.dps_dungeon_slice ELSE builds.dps_dungeon_slice END,
       dps_small_aoe = CASE WHEN $hasDps THEN excluded.dps_small_aoe ELSE builds.dps_small_aoe END,
       dps_big_aoe = CASE WHEN $hasDps THEN excluded.dps_big_aoe ELSE builds.dps_big_aoe END,
       weighted = CASE WHEN $hasDps THEN excluded.weighted ELSE builds.weighted END,
@@ -854,6 +871,8 @@ export function upsertBuild(build) {
     $archetype: build.archetype || null,
     $overrides: jsonCol(build.overrides),
     $dps_st: build.dps?.st ?? build.dps_st ?? null,
+    $dps_dungeon_slice:
+      build.dps?.dungeon_slice ?? build.dps_dungeon_slice ?? null,
     $dps_small_aoe: build.dps?.small_aoe ?? build.dps_small_aoe ?? null,
     $dps_big_aoe: build.dps?.big_aoe ?? build.dps_big_aoe ?? null,
     $weighted: build.weighted ?? null,
@@ -927,41 +946,75 @@ export function clearAllRosterMembership(s) {
   db.prepare("UPDATE builds SET in_roster = 0 WHERE spec = ?").run(s || spec());
 }
 
-export function updateBuildDps(hash, dps, s) {
-  const db = getDb();
-  const weighted =
-    (dps.st || 0) * 0.5 + (dps.small_aoe || 0) * 0.3 + (dps.big_aoe || 0) * 0.2;
+const SCENARIO_COLUMNS = {
+  st: "dps_st",
+  dungeon_slice: "dps_dungeon_slice",
+  small_aoe: "dps_small_aoe",
+  big_aoe: "dps_big_aoe",
+};
+
+const SIMC_SCENARIO_COLUMNS = {
+  st: "simc_dps_st",
+  dungeon_slice: "simc_dps_dungeon_slice",
+  small_aoe: "simc_dps_small_aoe",
+  big_aoe: "simc_dps_big_aoe",
+};
+
+// Default weights mirror config.json scenarioWeights. Callers should pass
+// SCENARIO_WEIGHTS from startup.js when available.
+const DEFAULT_WEIGHTS = {
+  st: 0.35,
+  dungeon_slice: 0.25,
+  small_aoe: 0.25,
+  big_aoe: 0.15,
+};
+
+function computeWeightedDps(dps, weights) {
+  let total = 0;
+  for (const [key, w] of Object.entries(weights)) {
+    total += (dps[key] || 0) * w;
+  }
+  return total;
+}
+
+function runDpsUpdate(db, columns, extraSet, dps, hash, s, weights) {
+  const w = weights || DEFAULT_WEIGHTS;
+  const weighted = computeWeightedDps(dps, w);
+  const setClauses = Object.values(columns)
+    .map((col) => `${col} = ?`)
+    .join(", ");
   db.prepare(
-    `
-    UPDATE builds SET dps_st = ?, dps_small_aoe = ?, dps_big_aoe = ?, weighted = ?, last_tested_at = datetime('now')
-    WHERE hash = ? AND spec = ?
-  `,
+    `UPDATE builds SET ${setClauses}, ${extraSet}
+    WHERE hash = ? AND spec = ?`,
   ).run(
-    dps.st ?? null,
-    dps.small_aoe ?? null,
-    dps.big_aoe ?? null,
+    ...Object.keys(columns).map((k) => dps[k] ?? null),
     weighted,
     hash,
     s || spec(),
   );
 }
 
-export function updateBuildSimcDps(hash, dps, s) {
-  const db = getDb();
-  const weighted =
-    (dps.st || 0) * 0.5 + (dps.small_aoe || 0) * 0.3 + (dps.big_aoe || 0) * 0.2;
-  db.prepare(
-    `
-    UPDATE builds SET simc_dps_st = ?, simc_dps_small_aoe = ?, simc_dps_big_aoe = ?, simc_weighted = ?
-    WHERE hash = ? AND spec = ?
-  `,
-  ).run(
-    dps.st ?? null,
-    dps.small_aoe ?? null,
-    dps.big_aoe ?? null,
-    weighted,
+export function updateBuildDps(hash, dps, s, weights) {
+  runDpsUpdate(
+    getDb(),
+    SCENARIO_COLUMNS,
+    "weighted = ?, last_tested_at = datetime('now')",
+    dps,
     hash,
-    s || spec(),
+    s,
+    weights,
+  );
+}
+
+export function updateBuildSimcDps(hash, dps, s, weights) {
+  runDpsUpdate(
+    getDb(),
+    SIMC_SCENARIO_COLUMNS,
+    "simc_weighted = ?",
+    dps,
+    hash,
+    s,
+    weights,
   );
 }
 
@@ -978,6 +1031,7 @@ function rowToBuild(r) {
     simcDps: r.simc_weighted
       ? {
           st: r.simc_dps_st || 0,
+          dungeon_slice: r.simc_dps_dungeon_slice || 0,
           small_aoe: r.simc_dps_small_aoe || 0,
           big_aoe: r.simc_dps_big_aoe || 0,
           weighted: r.simc_weighted || 0,

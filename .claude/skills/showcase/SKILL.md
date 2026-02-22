@@ -1,12 +1,12 @@
 ---
-description: Generate a self-contained HTML showcase report comparing baseline vs optimized APL across all roster builds.
+description: Generate a self-contained HTML dashboard report for APL optimization results across all roster builds.
 argument-hint: "[--fidelity quick|standard|confirm] [--skip-sims]"
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
-# Showcase Report
+# Report Dashboard
 
-Generate a self-contained HTML showcase report comparing the baseline SimC APL against our optimized APL across the full roster (all builds).
+Generate a self-contained HTML dashboard showing build rankings, hero tree comparison, talent costs, and optimization history.
 
 ## Usage
 
@@ -18,35 +18,34 @@ Arguments: $ARGUMENTS
 
 1. Determine spec from `SPEC` env var or `--spec` flag
 2. Parse fidelity and flags from arguments (default: `standard`)
-3. Run the showcase generator:
+3. Run the report generator:
 
 ```bash
-SPEC=$SPEC node src/visualize/showcase.js --fidelity $FIDELITY
+SPEC=$SPEC node src/visualize/report.js --fidelity $FIDELITY
 ```
 
 Use `--skip-sims` to regenerate HTML from cached DB data without running sims.
 
-4. Report the output location: `results/{spec}/showcase/index.html`
-5. Open in browser if possible: `open results/{spec}/showcase/index.html`
+4. Report the output location: `results/{spec}/report/index.html`
+5. Open in browser if possible: `open results/{spec}/report/index.html`
 
 ## What the Report Shows
 
-- **Summary cards**: Average weighted improvement, per-scenario averages, best/worst build
-- **Full roster table**: All builds grouped by hero tree, with per-scenario DPS + delta%
-  - Baseline DPS shown on hover (tooltip)
-  - TOP badge on per-scenario and per-tree winners
-  - Column sorting (click headers)
-  - Sticky headers for scrolling
-- **APL structural diff**: Added/removed/modified action lists
-- **Optimization changelog**: Accepted iterations with DPS deltas
+- **Key stats**: Best overall build, APL improvement %, hero tree gap
+- **Best builds per scenario**: Best weighted, 1T, 5T, 10T with copy-hash buttons
+- **Hero tree comparison**: Side-by-side bar chart, top 3 builds per tree
+- **Build rankings**: All builds sortable by any column, hero tree filter, TOP badges
+- **Talent impact**: Cluster costs (dropping clusters vs reference), talent policy (locked/banned/excluded)
+- **Optimization journey**: Chronological table of accepted iterations with impact bars
 
 ## Architecture
 
-- Uses **profileset mode** (`generateRosterProfilesetContent` + `runProfilesetAsync`) for all 69+ builds
-- 6 total sims: 2 APLs (baseline + ours) x 3 scenarios
+- Uses **profileset mode** (`generateRosterProfilesetContent` + `runProfilesetAsync`) for all roster builds
+- 3-6 total sims: our APL x 3 scenarios (+ baseline if present)
 - Results stored in DB: our DPS in `dps_*` columns, baseline in `simc_dps_*` columns
-- `--skip-sims` reads both sets of DPS from DB without any sim runs
-- Dark theme, self-contained HTML (inline CSS + JS, no external deps)
+- `--skip-sims` reads DPS from DB without any sim runs
+- Dark theme, self-contained HTML (inline CSS + JS, Inter font from Google Fonts)
+- Interactive: sortable columns, hero tree filter, copy-to-clipboard, collapsible sections
 
 ## Notes
 

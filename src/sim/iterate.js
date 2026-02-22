@@ -25,7 +25,12 @@ import {
 import { join, dirname, basename, resolve, relative } from "node:path";
 import { cpus } from "node:os";
 import { runWorkflow } from "./workflow.js";
-import { SCENARIOS, SIM_DEFAULTS, runMultiActorAsync } from "./runner.js";
+import {
+  SCENARIOS,
+  SCENARIO_WEIGHTS,
+  SIM_DEFAULTS,
+  runMultiActorAsync,
+} from "./runner.js";
 import {
   getSpecAdapter,
   loadSpecAdapter,
@@ -115,10 +120,10 @@ const RESULTS_DIR = resultsDir();
 // Iteration working copy — created by `init`, updated by `accept`.
 const CURRENT_APL = join(aplsDir(), "current.simc");
 
-const SCENARIO_KEYS = ["st", "small_aoe", "big_aoe"];
-const SCENARIO_LABELS = { st: "1T", small_aoe: "5T", big_aoe: "10T" };
-// ST weighted highest (hardest to improve, most common), 5T moderate, 10T lowest (rarest encounter type)
-const SCENARIO_WEIGHTS = { st: 0.5, small_aoe: 0.3, big_aoe: 0.2 };
+const SCENARIO_KEYS = Object.keys(SCENARIOS);
+const SCENARIO_LABELS = Object.fromEntries(
+  Object.entries(SCENARIOS).map(([k, v]) => [k, v.name]),
+);
 
 const STATE_VERSION = 3;
 

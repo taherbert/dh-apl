@@ -95,6 +95,7 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
     simcPath,
     `max_time=${config.maxTime}`,
     `desired_targets=${config.desiredTargets}`,
+    ...(config.fightStyle ? [`fight_style=${config.fightStyle}`] : []),
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
     `json2=${jsonPath}`,
