@@ -131,7 +131,7 @@ const STATE_VERSION = 3;
 let batchSizeOverride = null;
 
 // Extract aggregate per-scenario DPS from state, handling both single-build and multi-build.
-// For multi-build: averages across all builds. Returns {st, small_aoe, big_aoe}.
+// For multi-build: averages across all builds. Returns per-scenario DPS map.
 function getAggregateDps(stateSection) {
   if (stateSection.dps) return stateSection.dps;
   if (!stateSection.builds) return {};
@@ -692,7 +692,7 @@ function assembleBuildsFromScenarios(roster, scenarioResults) {
 }
 
 // Run multi-actor sims for an APL file against the roster.
-// Returns { builds: { "<buildId>": { heroTree, dps: {st, small_aoe, big_aoe} } } }
+// Returns { builds: { "<buildId>": { heroTree, dps: { [scenario]: number } } } }
 // Batches actors to avoid OOM at high fidelity.
 async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
   // Profileset path: constant memory (~2 actors) regardless of roster size
@@ -832,7 +832,8 @@ async function runMultiBuildComparison(
     let weighted = 0;
     for (const scenario of SCENARIO_KEYS) {
       weighted +=
-        (br.scenarios[scenario]?.deltaPct || 0) * SCENARIO_WEIGHTS[scenario];
+        (br.scenarios[scenario]?.deltaPct || 0) *
+        (SCENARIO_WEIGHTS[scenario] || 0);
     }
     br.weightedDelta = +weighted.toFixed(3);
   }
@@ -881,7 +882,7 @@ async function runMultiBuildComparison(
 // Batched multi-actor comparison: splits roster into smaller groups to limit memory.
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonBatched(candidatePath, roster, tierConfig) {
-  const simCount = SCENARIO_KEYS.length * 2; // 3 scenarios × 2 APLs
+  const simCount = SCENARIO_KEYS.length * 2;
   const { concurrency, threadsPerSim } = simConcurrency(simCount);
 
   const batchSize = batchSizeForFidelity(tierConfig);
@@ -945,7 +946,7 @@ async function runComparisonBatched(candidatePath, roster, tierConfig) {
 // Profileset-based comparison: constant memory, uses talents= hash overrides.
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonProfileset(candidatePath, roster, tierConfig) {
-  const simCount = SCENARIO_KEYS.length * 2; // 3 scenarios × 2 APLs
+  const simCount = SCENARIO_KEYS.length * 2;
   const { concurrency, threadsPerSim } = simConcurrency(simCount);
 
   const currentContent = generateRosterProfilesetContent(roster, CURRENT_APL);
@@ -991,27 +992,39 @@ async function runComparisonProfileset(candidatePath, roster, tierConfig) {
   return byScenario;
 }
 
+function shortScenarioLabel(key) {
+  const name = SCENARIO_LABELS[key] || key;
+  if (name.startsWith("Patchwerk ")) return name.replace("Patchwerk ", "");
+  if (name === "Dungeon") return "DS";
+  return name.slice(0, 4);
+}
+
 function printMultiBuildComparison(comparison) {
   const { buildResults, aggregate, tier } = comparison;
   const tierLabel = `${tier}, target_error=${FIDELITY_TIERS[tier]?.target_error ?? "?"}`;
 
+  const scenarioHeaders = SCENARIO_KEYS.map((s) =>
+    shortScenarioLabel(s).padStart(8),
+  ).join(" ");
+  const sepWidth = 25 + 1 + 6 + SCENARIO_KEYS.length * 9 + 10;
+
   console.log(`\nMulti-Build Comparison (${tierLabel}):`);
   console.log(
-    `${"Build".padEnd(25)} ${"Hero".padEnd(6)} ${"1T".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(9)}`,
+    `${"Build".padEnd(25)} ${"Hero".padEnd(6)} ${scenarioHeaders} ${"Weighted".padStart(9)}`,
   );
-  console.log("-".repeat(67));
+  console.log("-".repeat(sepWidth));
 
   for (const [buildId, br] of Object.entries(buildResults)) {
     const hero = (br.heroTree || "?").slice(0, 6);
-    const cols = SCENARIO_KEYS.map((s) =>
-      signedPct(br.scenarios[s]?.deltaPct || 0, 2),
-    );
+    const scenarioCols = SCENARIO_KEYS.map((s) =>
+      signedPct(br.scenarios[s]?.deltaPct || 0, 2).padStart(8),
+    ).join(" ");
     console.log(
-      `${buildId.padEnd(25)} ${hero.padEnd(6)} ${cols[0].padStart(8)} ${cols[1].padStart(8)} ${cols[2].padStart(8)} ${signedPct(br.weightedDelta, 2).padStart(9)}`,
+      `${buildId.padEnd(25)} ${hero.padEnd(6)} ${scenarioCols} ${signedPct(br.weightedDelta, 2).padStart(9)}`,
     );
   }
 
-  console.log("-".repeat(67));
+  console.log("-".repeat(sepWidth));
   const treeAvgStr = aggregate.treeAvgs
     ? Object.entries(aggregate.treeAvgs)
         .map(([tree, avg]) => `${tree}: ${signedPct(avg)}`)
@@ -1121,7 +1134,7 @@ async function cmdInit(aplPath) {
   // Update persistent roster with baseline DPS
   for (const [buildId, b] of Object.entries(baseline.builds)) {
     const weighted = SCENARIO_KEYS.reduce(
-      (sum, s) => sum + (b.dps[s] || 0) * SCENARIO_WEIGHTS[s],
+      (sum, s) => sum + (b.dps[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
       0,
     );
     updateDps(roster, buildId, { ...b.dps, weighted });
@@ -1485,7 +1498,7 @@ async function cmdAccept(reason, hypothesisHint) {
           dps[scenario] = br.scenarios[scenario]?.candidate || 0;
         }
         dps.weighted = SCENARIO_KEYS.reduce(
-          (sum, s) => sum + (dps[s] || 0) * SCENARIO_WEIGHTS[s],
+          (sum, s) => sum + (dps[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
           0,
         );
         updateDps(rosterForDps, buildId, dps);
@@ -2921,7 +2934,7 @@ function computeWeightedDelta(results) {
   for (const scenario of SCENARIO_KEYS) {
     const r = results[scenario];
     if (!r) continue;
-    const w = SCENARIO_WEIGHTS[scenario];
+    const w = SCENARIO_WEIGHTS[scenario] || 0;
     delta += (r.deltaPct || r.delta_pct || 0) * w;
     stderr += ((r.stderrPct || 0) * w) ** 2;
   }
