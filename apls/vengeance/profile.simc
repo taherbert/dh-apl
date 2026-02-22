@@ -36,8 +36,9 @@ position=front
 # --- Midnight Consumables ---
 # Flask of the Magisters: secondary stat flask used by AGI specs (BM Hunter, Devourer DH pattern)
 flask=flask_of_the_magisters_2
-# Draught of Rampant Abandon: primary stat potion (gives AGI for DH), void zone drawback
-potion=draught_of_rampant_abandon_2
+# Light's Potential: primary stat potion — used by Blood DK, SV/MM Hunter, Devourer DH, SP
+#   Preferred over Draught of Rampant Abandon for tank mobility (no void zone drawback)
+potion=lights_potential_2
 # Silvermoon Parade: Midnight feast for physical/AGI specs
 food=silvermoon_parade
 # Void Touched: Midnight augment rune
@@ -59,11 +60,11 @@ legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8161
 # --- Non-Tier Armor ---
 # Deadly Peridot: Haste +7, Crit +3
 neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240858
-# Back enchant: Chant of Leeching Fangs (no Midnight cloak enchant exists yet)
+# Back enchant: Chant of Leeching Fangs (TWW rank 3 — no Midnight cloak enchant exists)
 # Quick Garnet: Crit +7, Haste +3
 back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,gem_id=240874,enchant_id=7409
 # Wrist: Crafted leather bracers with Devouring Banding embellishment (Midnight LW)
-# Enchant: Chant of Armored Speed (no Midnight bracer enchant exists yet)
+# Enchant: Chant of Armored Leech (TWW rank 3 — no Midnight bracer enchant exists)
 # Deadly Peridot: Haste +7, Crit +3
 wrist=,id=219334,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240858,enchant_id=7391,embellishment=devouring_banding
 # Quick Garnet: Crit +7, Haste +3
