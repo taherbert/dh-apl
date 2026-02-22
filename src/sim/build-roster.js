@@ -346,7 +346,7 @@ export function loadRoster() {
         lastDps: b.weighted
           ? {
               st: b.dps_st || 0,
-              dungeon_slice: b.dps_dungeon_slice || 0,
+              dungeon_route: b.dps_dungeon_route || 0,
               small_aoe: b.dps_small_aoe || 0,
               big_aoe: b.dps_big_aoe || 0,
               weighted: b.weighted || 0,
@@ -1036,13 +1036,13 @@ export async function updateAllDps({ fidelity = "quick" } = {}) {
   // Print summary table
   const updatedBuilds = getRosterBuilds();
   console.log(
-    `\n${"Build".padEnd(30)} ${"1T".padStart(8)} ${"DS".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(10)}`,
+    `\n${"Build".padEnd(30)} ${"1T".padStart(8)} ${"DR".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(10)}`,
   );
   console.log("-".repeat(78));
   for (const b of updatedBuilds) {
     const name = (b.displayName || b.name || b.hash?.slice(0, 20)).slice(0, 29);
     console.log(
-      `${name.padEnd(30)} ${(b.dps_st || 0).toLocaleString().padStart(8)} ${(b.dps_dungeon_slice || 0).toLocaleString().padStart(8)} ${(b.dps_small_aoe || 0).toLocaleString().padStart(8)} ${(b.dps_big_aoe || 0).toLocaleString().padStart(8)} ${(b.weighted || 0).toLocaleString().padStart(10)}`,
+      `${name.padEnd(30)} ${(b.dps_st || 0).toLocaleString().padStart(8)} ${(b.dps_dungeon_route || 0).toLocaleString().padStart(8)} ${(b.dps_small_aoe || 0).toLocaleString().padStart(8)} ${(b.dps_big_aoe || 0).toLocaleString().padStart(8)} ${(b.weighted || 0).toLocaleString().padStart(10)}`,
     );
   }
 }

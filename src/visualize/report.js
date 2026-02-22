@@ -989,10 +989,6 @@ function treeClass(heroTree) {
   return isAnni(heroTree) ? "anni" : "ar";
 }
 
-function treeDisplayName(heroTree) {
-  return isAnni(heroTree) ? "Annihilator" : "Aldrachi Reaver";
-}
-
 function treeAbbr(heroTree) {
   return isAnni(heroTree) ? "Anni" : "AR";
 }
@@ -1008,7 +1004,7 @@ function scenarioLabel(s) {
 function scenarioColor(s) {
   const colors = {
     st: "#60a5fa",
-    dungeon_slice: "#a78bfa",
+    dungeon_route: "#a78bfa",
     small_aoe: "#f59e0b",
     big_aoe: "#ef4444",
   };
@@ -1032,11 +1028,6 @@ function activeScenarios(builds) {
 function copyBtn(hash) {
   if (!hash) return "";
   return ` <button class="copy-hash" data-hash="${esc(hash)}" title="Copy talent hash">${COPY_ICON}</button>`;
-}
-
-function deltaCell(value) {
-  const cls = value >= 0 ? "positive" : "negative";
-  return `<td class="num ${cls}">${fmtDelta(value)}</td>`;
 }
 
 function computeWeighted(dpsRow) {
