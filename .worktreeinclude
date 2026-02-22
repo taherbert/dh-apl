@@ -1,0 +1,4 @@
+# Files to copy between worktrees (via wt step copy-ignored)
+# Only gitignored files matching these patterns are copied.
+node_modules/
+bin/

@@ -1,0 +1,8 @@
+# Worktrunk project config for dh-apl
+# Shared hooks run on worktree creation/lifecycle
+
+[post-create]
+deps = "npm ci"
+
+[post-start]
+copy = "wt step copy-ignored"
