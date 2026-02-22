@@ -9,7 +9,12 @@
   },
   "simulation": {
     "scenarios": {
-      "st": { "name": "Patchwerk 1T", "maxTime": 300, "desiredTargets": 1 },
+      "st": {
+        "name": "Patchwerk 1T",
+        "maxTime": 300,
+        "desiredTargets": 1,
+        "overrides": ["override.bloodlust=1"]
+      },
       "dungeon_route": {
         "name": "DRoute",
         "maxTime": 1920,
