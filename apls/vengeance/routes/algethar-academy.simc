@@ -1,0 +1,44 @@
+# Algeth'ar Academy — 12-pull route (based on Skandar +10/+15 routing)
+# HP scaled to tank solo-sim share (reference KL14 values / 4)
+# At S1 Myth cap (ilvl 289, ~37k ST DPS): ~17 min total, ~11 min combat
+
+# Invulnerable main target — standard DungeonRoute idiom
+enemy=DungeonRoute_AA
+enemy_health=999999
+raid_events=/invulnerable,cooldown=5160,duration=5160,retarget=1
+
+# Pull 1: Opening Botanica trash — lashers + skitterflies (BL)
+raid_events+=/pull,pull=01,bloodlust=1,delay=046,enemies="vile-lasher_1":514000|"vile-lasher_2":514000|"vile-lasher_3":514000|"hungry-lasher_1":143000|"hungry-lasher_2":143000|"hungry-lasher_3":143000|"hungry-lasher_4":143000|"hungry-lasher_5":143000|"hungry-lasher_6":143000|"hungry-lasher_7":143000|"hungry-lasher_8":143000|"hungry-lasher_9":143000|"hungry-lasher_10":143000|"hungry-lasher_11":143000|"hungry-lasher_12":143000|"hungry-lasher_13":143000|"hungry-lasher_14":143000|"hungry-lasher_15":143000|"hungry-lasher_16":143000|"hungry-lasher_17":143000|"hungry-lasher_18":143000|"hungry-lasher_19":143000|"hungry-lasher_20":143000|"hungry-lasher_21":143000|"hungry-lasher_22":143000|"hungry-lasher_23":143000|"hungry-lasher_24":143000|"aggravated-skitterfly_1":229000|"aggravated-skitterfly_2":229000|"aggravated-skitterfly_3":229000|"aggravated-skitterfly_4":229000|"aggravated-skitterfly_5":229000|"aggravated-skitterfly_6":229000
+
+# Pull 2: Boss 1 — Overgrown Ancient
+raid_events+=/pull,pull=02,bloodlust=0,delay=024,enemies="BOSS_overgrown-ancient_1":1937000
+
+# Pull 3: Mini-boss — Guardian Sentry
+raid_events+=/pull,pull=03,bloodlust=0,delay=057,enemies="BOSS_guardian-sentry_1":930000
+
+# Pull 4: Pre-Crawth eagles
+raid_events+=/pull,pull=04,bloodlust=0,delay=039,enemies="territorial-eagle_1":143000|"territorial-eagle_2":143000|"territorial-eagle_3":143000|"territorial-eagle_4":143000|"territorial-eagle_5":143000|"territorial-eagle_6":143000|"territorial-eagle_7":143000|"territorial-eagle_8":143000|"territorial-eagle_9":143000|"territorial-eagle_10":143000|"territorial-eagle_11":143000|"territorial-eagle_12":143000|"territorial-eagle_13":143000|"territorial-eagle_14":143000|"territorial-eagle_15":143000|"territorial-eagle_16":143000|"alpha-eagle_1":429000|"alpha-eagle_2":429000|"alpha-eagle_3":429000
+
+# Pull 5: Boss 2 — Crawth (BL)
+raid_events+=/pull,pull=05,bloodlust=1,delay=006,enemies="BOSS_crawth_1":3229000
+
+# Pull 6: Arcane corridor — manafiends + ravagers + battleaxes
+raid_events+=/pull,pull=06,bloodlust=0,delay=092,enemies="corrupted-manafiend_1":286000|"corrupted-manafiend_2":286000|"corrupted-manafiend_3":286000|"corrupted-manafiend_4":286000|"vicious-ravager_1":686000|"vicious-ravager_2":686000|"spellbound-battleaxe_1":314000|"spellbound-battleaxe_2":314000|"spellbound-battleaxe_3":314000|"spellbound-battleaxe_4":314000
+
+# Pull 7: Big arcane corridor pull — foragers + manafiends + battleaxes + textbooks
+raid_events+=/pull,pull=07,bloodlust=0,delay=023,enemies="arcane-forager_1":229000|"arcane-forager_2":229000|"corrupted-manafiend_1":286000|"corrupted-manafiend_2":286000|"corrupted-manafiend_3":286000|"corrupted-manafiend_4":286000|"spellbound-battleaxe_1":314000|"spellbound-battleaxe_2":314000|"spellbound-battleaxe_3":314000|"spellbound-battleaxe_4":314000|"spellbound-battleaxe_5":314000|"unruly-textbook_1":229000|"unruly-textbook_2":229000|"unruly-textbook_3":229000|"unruly-textbook_4":229000
+
+# Pull 8: Boss 3 — Vexamus
+raid_events+=/pull,pull=08,bloodlust=0,delay=009,enemies="BOSS_vexamus_1":2260000
+
+# Pull 9: Post-Vexamus trash — foragers + ravager + manafiends + battleaxes
+raid_events+=/pull,pull=09,bloodlust=0,delay=029,enemies="arcane-forager_1":229000|"arcane-forager_2":229000|"vicious-ravager_1":686000|"corrupted-manafiend_1":286000|"corrupted-manafiend_2":286000|"corrupted-manafiend_3":286000|"spellbound-battleaxe_1":314000|"spellbound-battleaxe_2":314000|"spellbound-battleaxe_3":314000
+
+# Pull 10: Echoknight + invokers
+raid_events+=/pull,pull=10,bloodlust=0,delay=033,enemies="algethar-echoknight_1":514000|"spectral-invoker_1":314000|"spectral-invoker_2":314000
+
+# Pull 11: Echoknights + invoker
+raid_events+=/pull,pull=11,bloodlust=0,delay=010,enemies="spectral-invoker_1":314000|"algethar-echoknight_1":514000|"algethar-echoknight_2":514000|"algethar-echoknight_3":514000
+
+# Pull 12: Boss 4 — Echo of Doragosa
+raid_events+=/pull,pull=12,bloodlust=0,delay=012,enemies="BOSS_echo-of-doragosa_1":2906000

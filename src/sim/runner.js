@@ -1,8 +1,8 @@
-import { execSync, execFile } from "node:child_process";
+import { execFileSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { cpus } from "node:os";
-import { join, basename } from "node:path";
+import { basename, resolve } from "node:path";
 
 import {
   SIMC_BIN,
@@ -21,6 +21,15 @@ const TOTAL_CORES = cpus().length;
 export { SCENARIOS, SCENARIO_WEIGHTS };
 export const SIM_DEFAULTS = { threads: TOTAL_CORES, ..._SIM_DEFAULTS };
 
+export function readRouteFile(routePath) {
+  const resolved = resolve(routePath);
+  return readFileSync(resolved, "utf-8")
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"))
+    .map((l) => l.replace(/"/g, ""));
+}
+
 function buildOverrides(scenario, extraOverrides = {}) {
   const config = SCENARIOS[scenario];
   const merged = { ...SIM_DEFAULTS, ...extraOverrides };
@@ -28,6 +37,7 @@ function buildOverrides(scenario, extraOverrides = {}) {
     `max_time=${config.maxTime}`,
     `desired_targets=${config.desiredTargets}`,
     ...(config.fightStyle ? [`fight_style=${config.fightStyle}`] : []),
+    ...(config.routeFile ? readRouteFile(config.routeFile) : []),
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
   ];
@@ -81,11 +91,9 @@ export function runSim(profilePath, scenario = "st", opts = {}) {
     scenario,
     opts,
   );
-  const cmd = [SIMC, ...args].join(" ");
-
   console.log(`Running ${config.name}...`);
   try {
-    execSync(cmd, {
+    execFileSync(SIMC, args, {
       encoding: "utf-8",
       maxBuffer: 50 * 1024 * 1024,
       timeout: 300000,
@@ -258,13 +266,10 @@ export async function runMultiActorAsync(
   writeFileSync(simcPath, simcContent);
 
   const merged = { ...SIM_DEFAULTS, ...simOverrides };
+  const overrides = buildOverrides(scenario, simOverrides);
   const args = [
     simcPath,
-    `max_time=${config.maxTime}`,
-    `desired_targets=${config.desiredTargets}`,
-    ...(config.fightStyle ? [`fight_style=${config.fightStyle}`] : []),
-    `target_error=${merged.target_error}`,
-    `iterations=${merged.iterations}`,
+    ...overrides,
     `json2=${jsonPath}`,
     `threads=${merged.threads || TOTAL_CORES}`,
     "report_details=0",

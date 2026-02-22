@@ -2,11 +2,11 @@
 // Supports talent, APL, and action line overrides per variant.
 // Usage: node src/sim/profilesets.js <base-profile.simc> [scenario]
 
-import { execSync, execFile } from "node:child_process";
+import { execFileSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
-import { SCENARIOS, SIM_DEFAULTS } from "./runner.js";
+import { SCENARIOS, SIM_DEFAULTS, readRouteFile } from "./runner.js";
 import { SIMC_BIN, DATA_ENV, initSpec } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, resultsFile, dataFile } from "../engine/paths.js";
@@ -96,6 +96,7 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
     `max_time=${config.maxTime}`,
     `desired_targets=${config.desiredTargets}`,
     ...(config.fightStyle ? [`fight_style=${config.fightStyle}`] : []),
+    ...(config.routeFile ? readRouteFile(config.routeFile) : []),
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
     `json2=${jsonPath}`,
@@ -128,7 +129,7 @@ export function runProfileset(
   );
 
   try {
-    execSync([SIMC, ...args].join(" "), {
+    execFileSync(SIMC, args, {
       encoding: "utf-8",
       maxBuffer: 100 * 1024 * 1024,
       timeout: 1800000,

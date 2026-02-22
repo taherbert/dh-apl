@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 8;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -93,12 +93,12 @@ CREATE TABLE IF NOT EXISTS builds (
   archetype TEXT,
   overrides TEXT,
   dps_st REAL,
-  dps_dungeon_slice REAL,
+  dps_dungeon_route REAL,
   dps_small_aoe REAL,
   dps_big_aoe REAL,
   weighted REAL,
   simc_dps_st REAL,
-  simc_dps_dungeon_slice REAL,
+  simc_dps_dungeon_route REAL,
   simc_dps_small_aoe REAL,
   simc_dps_big_aoe REAL,
   simc_weighted REAL,
@@ -351,13 +351,26 @@ export function getDb(spec) {
         // Column may already exist
       }
     }
-    // Schema v6 → v7: add dungeon_slice DPS columns to builds
+    // Schema v6 → v7: add dungeon DPS columns to builds
     if (existingVersion < 7) {
-      for (const col of ["dps_dungeon_slice", "simc_dps_dungeon_slice"]) {
+      for (const col of ["dps_dungeon_route", "simc_dps_dungeon_route"]) {
         try {
           _db.exec(`ALTER TABLE builds ADD COLUMN ${col} REAL`);
         } catch {
           // Column may already exist
+        }
+      }
+    }
+    // Schema v7 → v8: rename dungeon_slice → dungeon_route columns
+    if (existingVersion < 8) {
+      for (const [oldCol, newCol] of [
+        ["dps_dungeon_slice", "dps_dungeon_route"],
+        ["simc_dps_dungeon_slice", "simc_dps_dungeon_route"],
+      ]) {
+        try {
+          _db.exec(`ALTER TABLE builds RENAME COLUMN ${oldCol} TO ${newCol}`);
+        } catch {
+          // Column may already be renamed or not exist
         }
       }
     }
@@ -840,8 +853,8 @@ export function upsertBuild(build) {
     build.dps?.st != null || build.dps_st != null || build.weighted != null;
   db.prepare(
     `
-    INSERT INTO builds (hash, spec, name, display_name, hero_tree, archetype, overrides, dps_st, dps_dungeon_slice, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
-    VALUES ($hash, $spec, $name, $display_name, $hero_tree, $archetype, $overrides, $dps_st, $dps_dungeon_slice, $dps_small_aoe, $dps_big_aoe, $weighted, $rank, $source, $pinned, $in_roster, $validated, $validation_errors, $last_tested_at)
+    INSERT INTO builds (hash, spec, name, display_name, hero_tree, archetype, overrides, dps_st, dps_dungeon_route, dps_small_aoe, dps_big_aoe, weighted, rank, source, pinned, in_roster, validated, validation_errors, last_tested_at)
+    VALUES ($hash, $spec, $name, $display_name, $hero_tree, $archetype, $overrides, $dps_st, $dps_dungeon_route, $dps_small_aoe, $dps_big_aoe, $weighted, $rank, $source, $pinned, $in_roster, $validated, $validation_errors, $last_tested_at)
     ON CONFLICT(hash) DO UPDATE SET
       spec = excluded.spec,
       name = excluded.name,
@@ -856,7 +869,7 @@ export function upsertBuild(build) {
       validation_errors = excluded.validation_errors,
       last_tested_at = CASE WHEN excluded.last_tested_at IS NOT NULL THEN excluded.last_tested_at ELSE builds.last_tested_at END,
       dps_st = CASE WHEN $hasDps THEN excluded.dps_st ELSE builds.dps_st END,
-      dps_dungeon_slice = CASE WHEN $hasDps THEN excluded.dps_dungeon_slice ELSE builds.dps_dungeon_slice END,
+      dps_dungeon_route = CASE WHEN $hasDps THEN excluded.dps_dungeon_route ELSE builds.dps_dungeon_route END,
       dps_small_aoe = CASE WHEN $hasDps THEN excluded.dps_small_aoe ELSE builds.dps_small_aoe END,
       dps_big_aoe = CASE WHEN $hasDps THEN excluded.dps_big_aoe ELSE builds.dps_big_aoe END,
       weighted = CASE WHEN $hasDps THEN excluded.weighted ELSE builds.weighted END,
@@ -871,8 +884,8 @@ export function upsertBuild(build) {
     $archetype: build.archetype || null,
     $overrides: jsonCol(build.overrides),
     $dps_st: build.dps?.st ?? build.dps_st ?? null,
-    $dps_dungeon_slice:
-      build.dps?.dungeon_slice ?? build.dps_dungeon_slice ?? null,
+    $dps_dungeon_route:
+      build.dps?.dungeon_route ?? build.dps_dungeon_route ?? null,
     $dps_small_aoe: build.dps?.small_aoe ?? build.dps_small_aoe ?? null,
     $dps_big_aoe: build.dps?.big_aoe ?? build.dps_big_aoe ?? null,
     $weighted: build.weighted ?? null,
@@ -948,14 +961,14 @@ export function clearAllRosterMembership(s) {
 
 const SCENARIO_COLUMNS = {
   st: "dps_st",
-  dungeon_slice: "dps_dungeon_slice",
+  dungeon_route: "dps_dungeon_route",
   small_aoe: "dps_small_aoe",
   big_aoe: "dps_big_aoe",
 };
 
 const SIMC_SCENARIO_COLUMNS = {
   st: "simc_dps_st",
-  dungeon_slice: "simc_dps_dungeon_slice",
+  dungeon_route: "simc_dps_dungeon_route",
   small_aoe: "simc_dps_small_aoe",
   big_aoe: "simc_dps_big_aoe",
 };
@@ -964,7 +977,7 @@ const SIMC_SCENARIO_COLUMNS = {
 // SCENARIO_WEIGHTS from startup.js when available.
 const DEFAULT_WEIGHTS = {
   st: 0.35,
-  dungeon_slice: 0.25,
+  dungeon_route: 0.25,
   small_aoe: 0.25,
   big_aoe: 0.15,
 };
@@ -1031,7 +1044,7 @@ function rowToBuild(r) {
     simcDps: r.simc_weighted
       ? {
           st: r.simc_dps_st || 0,
-          dungeon_slice: r.simc_dps_dungeon_slice || 0,
+          dungeon_route: r.simc_dps_dungeon_route || 0,
           small_aoe: r.simc_dps_small_aoe || 0,
           big_aoe: r.simc_dps_big_aoe || 0,
           weighted: r.simc_weighted || 0,

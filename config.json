@@ -10,11 +10,12 @@
   "simulation": {
     "scenarios": {
       "st": { "name": "Patchwerk 1T", "maxTime": 300, "desiredTargets": 1 },
-      "dungeon_slice": {
-        "name": "DSlice",
-        "maxTime": 360,
+      "dungeon_route": {
+        "name": "DRoute",
+        "maxTime": 1920,
         "desiredTargets": 1,
-        "fightStyle": "DungeonSlice"
+        "fightStyle": "DungeonRoute",
+        "routeFile": "apls/vengeance/routes/algethar-academy.simc"
       },
       "small_aoe": {
         "name": "Patchwerk 5T",
@@ -29,7 +30,7 @@
     },
     "scenarioWeights": {
       "st": 0.35,
-      "dungeon_slice": 0.25,
+      "dungeon_route": 0.25,
       "small_aoe": 0.25,
       "big_aoe": 0.15
     },
