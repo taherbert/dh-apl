@@ -57,12 +57,17 @@ actions.ar+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!v
 actions.ar+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilience.up
 actions.ar+=/potion,use_off_gcd=1,if=((buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive)&(!variable.is_dungeon|in_boss_encounter)
 actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
-# Wait for 3+ fragments before Meta so Spirit Bomb is immediately castable on entry
-actions.ar+=/metamorphosis,use_off_gcd=1,if=((!buff.metamorphosis.up&soul_fragments>=3)|buff.untethered_rage.up)&variable.meta_ready
+# UR proc Meta fires unconditionally — free proc, always positive EV even in short pulls
+actions.ar+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up
+# Hardcast Meta: wait for 3+ fragments so Spirit Bomb is immediately castable on entry
+actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&soul_fragments>=3&variable.meta_ready
 actions.ar+=/call_action_list,name=ar_empowered
 actions.ar+=/call_action_list,name=ar_brand_window,if=variable.fiery_demise_active
-# AR skips UR fishing — UR Meta extensions provide near-zero value for AR's empowered cycle
+# UR fishing for AR: apex.3 where Seething Anger BLP makes procs near-deterministic
+actions.ar+=/call_action_list,name=ur_fishing,if=variable.ur_fishing&apex.3
 actions.ar+=/call_action_list,name=ar_cooldowns
+# Meta-aware Fracture→SpB cycling (ST only — ar_aoe already handles Meta Fracture priority)
+actions.ar+=/call_action_list,name=ar_in_meta,if=buff.metamorphosis.up&!variable.ur_fishing&!variable.small_aoe
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.small_aoe
 # IA on cooldown — no state machine to disrupt
 actions.ar+=/immolation_aura,if=!variable.is_dungeon|in_combat
@@ -122,6 +127,15 @@ actions.ar_brand_window+=/soul_carver
 actions.ar_brand_window+=/sigil_of_spite,if=soul_fragments<=3
 actions.ar_brand_window+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up
 actions.ar_brand_window+=/immolation_aura,if=!talent.charred_flesh
+
+# === AR In-Meta — Fracture→SpB cycling during Metamorphosis ===
+# Meta Fracture generates 3 fragments + 40 fury — prioritize over IA and fillers
+actions.ar_in_meta=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking
+actions.ar_in_meta+=/immolation_aura,if=talent.charred_flesh&dot.fiery_brand.ticking
+actions.ar_in_meta+=/spirit_bomb,if=soul_fragments>=3&variable.fiery_demise_active
+actions.ar_in_meta+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
+actions.ar_in_meta+=/fracture
+actions.ar_in_meta+=/soul_cleave,if=soul_fragments>=1
 
 # === Annihilator ===
 # Non-buff trinkets fire on cooldown; buff trinkets sync with Metamorphosis
