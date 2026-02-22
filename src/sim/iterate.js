@@ -992,27 +992,39 @@ async function runComparisonProfileset(candidatePath, roster, tierConfig) {
   return byScenario;
 }
 
+function shortScenarioLabel(key) {
+  const name = SCENARIO_LABELS[key] || key;
+  if (name.startsWith("Patchwerk ")) return name.replace("Patchwerk ", "");
+  if (name === "Dungeon") return "DS";
+  return name.slice(0, 4);
+}
+
 function printMultiBuildComparison(comparison) {
   const { buildResults, aggregate, tier } = comparison;
   const tierLabel = `${tier}, target_error=${FIDELITY_TIERS[tier]?.target_error ?? "?"}`;
 
+  const scenarioHeaders = SCENARIO_KEYS.map((s) =>
+    shortScenarioLabel(s).padStart(8),
+  ).join(" ");
+  const sepWidth = 25 + 1 + 6 + SCENARIO_KEYS.length * 9 + 10;
+
   console.log(`\nMulti-Build Comparison (${tierLabel}):`);
   console.log(
-    `${"Build".padEnd(25)} ${"Hero".padEnd(6)} ${"1T".padStart(8)} ${"5T".padStart(8)} ${"10T".padStart(8)} ${"Weighted".padStart(9)}`,
+    `${"Build".padEnd(25)} ${"Hero".padEnd(6)} ${scenarioHeaders} ${"Weighted".padStart(9)}`,
   );
-  console.log("-".repeat(67));
+  console.log("-".repeat(sepWidth));
 
   for (const [buildId, br] of Object.entries(buildResults)) {
     const hero = (br.heroTree || "?").slice(0, 6);
-    const cols = SCENARIO_KEYS.map((s) =>
-      signedPct(br.scenarios[s]?.deltaPct || 0, 2),
-    );
+    const scenarioCols = SCENARIO_KEYS.map((s) =>
+      signedPct(br.scenarios[s]?.deltaPct || 0, 2).padStart(8),
+    ).join(" ");
     console.log(
-      `${buildId.padEnd(25)} ${hero.padEnd(6)} ${cols[0].padStart(8)} ${cols[1].padStart(8)} ${cols[2].padStart(8)} ${signedPct(br.weightedDelta, 2).padStart(9)}`,
+      `${buildId.padEnd(25)} ${hero.padEnd(6)} ${scenarioCols} ${signedPct(br.weightedDelta, 2).padStart(9)}`,
     );
   }
 
-  console.log("-".repeat(67));
+  console.log("-".repeat(sepWidth));
   const treeAvgStr = aggregate.treeAvgs
     ? Object.entries(aggregate.treeAvgs)
         .map(([tree, avg]) => `${tree}: ${signedPct(avg)}`)
