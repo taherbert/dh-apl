@@ -97,6 +97,7 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
     `desired_targets=${config.desiredTargets}`,
     ...(config.fightStyle ? [`fight_style=${config.fightStyle}`] : []),
     ...(config.routeFile ? readRouteFile(config.routeFile) : []),
+    ...(config.overrides || []),
     `target_error=${merged.target_error}`,
     `iterations=${merged.iterations}`,
     `json2=${jsonPath}`,
