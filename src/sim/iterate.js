@@ -102,6 +102,7 @@ import {
   persistUnified,
   summarizeUnified,
 } from "../analyze/unify-hypotheses.js";
+import { groupIndependent } from "../analyze/hypothesis-independence.js";
 import {
   ROOT,
   resultsDir,
@@ -3211,6 +3212,36 @@ switch (cmd) {
     cmdUnify();
     break;
 
+  case "group-independent": {
+    const state = loadState();
+    if (!state) {
+      console.error(
+        "No iteration state found. Run: node src/sim/iterate.js init <apl.simc>",
+      );
+      process.exit(1);
+    }
+    const aplText = readFileSync(CURRENT_APL, "utf-8");
+    const pending = dbGetHypotheses({ status: "pending", limit: 500 });
+    if (pending.length === 0) {
+      console.log("No pending hypotheses to group.");
+      break;
+    }
+    const groups = groupIndependent(pending, aplText);
+    console.log(
+      `\nGrouped ${pending.length} pending hypotheses into ${groups.length} independent set(s):\n`,
+    );
+    for (let g = 0; g < groups.length; g++) {
+      console.log(`  Group ${g + 1} (${groups[g].length} hypotheses):`);
+      for (const h of groups[g]) {
+        const summary = (h.summary || "").slice(0, 80);
+        const src = h.source ? ` [${h.source}]` : "";
+        console.log(`    - ${summary}${src}`);
+      }
+      console.log();
+    }
+    break;
+  }
+
   case "checkpoint": {
     // Parse checkpoint flags
     const checkpointOpts = {};
@@ -3252,6 +3283,7 @@ Usage:
   node src/sim/iterate.js generate                   Auto-generate candidate from top hypothesis
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report
+  node src/sim/iterate.js group-independent           Group hypotheses into independent sets
   node src/sim/iterate.js checkpoint                 Save checkpoint for session resume`);
     break;
 }

@@ -55,9 +55,27 @@ After Phase 1, you should have:
 - `data/{spec}/interactions-summary.json` — talent interactions
 - `data/{spec}/cpp-proc-mechanics.json` — proc rates and ICDs
 
-### Phase 2: Reference APL Technique Study
+### Phases 2, 4, 5: Parallel Launch
 
-Before building our own APL, study the SimC default APL for **technique** — syntax patterns, structural idioms, and SimC features we should use. This is NOT about copying priorities.
+After Phase 1 completes, launch three subagents **in a single message** using the Task tool with `run_in_background: true`:
+
+| Subagent | Phase | Task                          | Model  |
+| -------- | ----- | ----------------------------- | ------ |
+| A        | 2     | Reference APL technique study | opus   |
+| B        | 4     | Build theory generation       | sonnet |
+| C        | 5     | Talent-APL coupling analysis  | opus   |
+
+**Dependency graph:**
+
+```
+Phase 1 → [A + B + C in parallel] → Phase 3 (waits for A + C) → Phase 6 → Phase 7
+```
+
+Phase 3 (APL Construction) needs results from A (techniques) and C (coupling). Phase B (build theory) runs independently — its output feeds Phase 7 (roster generation).
+
+#### Subagent A — Phase 2: Reference APL Technique Study
+
+Prompt: Extract and study the SimC default APL for **technique** — syntax patterns, structural idioms, and SimC features. NOT about copying priorities.
 
 ```bash
 # Extract the default APL from SimC C++ source
@@ -75,20 +93,11 @@ Read `reference/{spec}-apl.simc` and document:
 
 Also read `reference/wiki/action-lists.md` and `reference/wiki/action-list-expressions.md` for the full SimC expression language. These document features you might not know exist.
 
-### Phase 3: APL Construction
+Write findings to `results/{spec}/phase2-techniques.md`.
 
-Using the spell data from Phase 1 and syntax techniques from Phase 2, manually construct an initial APL at `apls/{spec}/{spec}.simc`.
+#### Subagent B — Phase 4: Build Theory Generation
 
-The initial APL should:
-
-- Include hero tree branching structure (`run_action_list` for mutually exclusive branches)
-- Define variables for resource thresholds and buff tracking
-- Use action list delegation for cooldowns, defensives, and burst windows
-- Cover all relevant abilities from the spell catalog
-
-The priorities will be refined by `/optimize` later.
-
-### Phase 4: Build Theory Generation
+Prompt: Generate initial build theory and write to DB.
 
 ```bash
 # Generate initial build theory and write to DB
@@ -104,7 +113,9 @@ Review the generated theory via `npm run db:status` and `npm run db:dump`:
 
 Review and curate the talent clusters and archetypes in the DB. Use `/theory` to manage theories.
 
-### Phase 5: Talent-APL Coupling Analysis
+#### Subagent C — Phase 5: Talent-APL Coupling Analysis
+
+Prompt: Analyze talent-APL dependencies.
 
 ```bash
 # Analyze talent-APL dependencies
@@ -117,6 +128,21 @@ This identifies:
 - Resource modifications (need threshold adjustments)
 - Proc mechanics (need buff tracking)
 - Buff windows (need damage alignment)
+
+Write findings to `results/{spec}/phase5-coupling.md`.
+
+### Phase 3: APL Construction (waits for A + C)
+
+Using the spell data from Phase 1, syntax techniques from Subagent A (Phase 2), and coupling analysis from Subagent C (Phase 5), manually construct an initial APL at `apls/{spec}/{spec}.simc`.
+
+The initial APL should:
+
+- Include hero tree branching structure (`run_action_list` for mutually exclusive branches)
+- Define variables for resource thresholds and buff tracking
+- Use action list delegation for cooldowns, defensives, and burst windows
+- Cover all relevant abilities from the spell catalog
+
+The priorities will be refined by `/optimize` later.
 
 ### Phase 6: Initial Simulation
 
