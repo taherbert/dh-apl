@@ -134,8 +134,8 @@ actions.ar_cooldowns+=/immolation_aura,if=variable.fiery_demise_active&talent.ch
 # Brand application: sync with AotG nearing trigger, or 2 charges, or nearest fire CD within 8s
 actions.ar_cooldowns+=/fiery_brand,if=talent.fiery_demise&variable.cd_ready&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&buff.art_of_the_glaive.stack>=15)|(!dot.fiery_brand.ticking&cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<8))
 # Fire CDs: into active Brand (skip cd_ready) or on normal timing
-actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=3&(variable.fiery_demise_active|variable.cd_ready)
-actions.ar_cooldowns+=/soul_carver,if=variable.fiery_demise_active|(!talent.fiery_demise&variable.cd_ready)
+actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils&(variable.fiery_demise_active|variable.cd_ready)
+actions.ar_cooldowns+=/soul_carver,if=variable.fiery_demise_active|(!talent.fiery_demise&variable.cd_ready)|(talent.fiery_demise&variable.cd_ready&cooldown.fiery_brand.remains>20)
 # Fel Devastation channel would interrupt the empowered cycle
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.fiery_demise_active|variable.cd_ready)
 # IA in Brand window (non-Charred Flesh)
@@ -150,7 +150,7 @@ actions.anni+=/variable,name=meta_entry,value=!buff.metamorphosis.up&!buff.voidf
 # Coordinated burst: two phases — "entering" (SpB nearly ready) and "executing" (SpB just fired, remains>20)
 # meta_entry check terminates burst cleanly after Meta fires (!buff.metamorphosis.up → false)
 actions.anni+=/variable,name=burst_ready,value=variable.meta_entry&cooldown.metamorphosis.ready&(cooldown.spirit_bomb.remains<(2*gcd.max)|cooldown.spirit_bomb.remains>20)&(cooldown.soul_carver.ready|cooldown.sigil_of_spite.ready)
-# Safe to use CDs: Meta far away, already active, or SpB ready after Meta
+# Hold CDs: Meta imminent (<15s), not yet active, SpB ready for burst entry
 actions.anni+=/variable,name=hold_for_meta,value=cooldown.metamorphosis.remains<=15&!buff.metamorphosis.up&cooldown.spirit_bomb.remains<=cooldown.metamorphosis.remains
 # --- Setup ---
 actions.anni+=/call_action_list,name=trinkets
