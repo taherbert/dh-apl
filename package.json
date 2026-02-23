@@ -45,6 +45,11 @@
     "refresh": "bash scripts/refresh.sh",
     "optimal-timeline": "node src/analysis/optimal-timeline.js",
     "apl-trace": "node src/analysis/apl-interpreter.js",
-    "divergence": "node src/analysis/divergence.js"
+    "divergence": "node src/analysis/divergence.js",
+    "gear": "node src/sim/gear.js",
+    "gear:tier-config": "node src/sim/gear.js tier-config",
+    "gear:screen": "node src/sim/gear.js screen",
+    "gear:run": "node src/sim/gear.js run",
+    "gear:status": "node src/sim/gear.js status"
   }
 }

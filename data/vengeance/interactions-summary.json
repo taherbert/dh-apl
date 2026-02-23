@@ -3256,17 +3256,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Cycle of Binding",
-          "type": "duration_modifier",
-          "tree": "spec",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Spirit Bomb",
           "type": "proc_trigger",
           "tree": "spec",
@@ -5501,17 +5490,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Cycle of Binding",
-          "type": "duration_modifier",
-          "tree": "spec",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Spirit Bomb",
           "type": "proc_trigger",
           "tree": "spec",
@@ -6660,28 +6638,6 @@
             "maxRank": 2,
             "stacking": "multiplicative"
           },
-          "application": "buff_on_player"
-        }
-      ]
-    },
-    "428603": {
-      "name": "Ascending Flame",
-      "modifiers": [
-        {
-          "source": "Cycle of Binding",
-          "type": "duration_modifier",
-          "tree": "spec",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player"
-        },
-        {
-          "source": "Frailty",
-          "type": "duration_modifier",
-          "tree": "spec",
           "application": "buff_on_player"
         }
       ]
@@ -10653,24 +10609,6 @@
             "unit": "flat",
             "stacking": "additive"
           }
-        },
-        {
-          "spell": "Frailty",
-          "type": "duration_modifier",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          }
-        },
-        {
-          "spell": "Ascending Flame",
-          "type": "duration_modifier",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          }
         }
       ]
     },
@@ -10783,10 +10721,6 @@
       "name": "Frailty",
       "tree": "spec",
       "targets": [
-        {
-          "spell": "Ascending Flame",
-          "type": "duration_modifier"
-        },
         {
           "spell": "Dark Matter",
           "type": "proc_trigger"

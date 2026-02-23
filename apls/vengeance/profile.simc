@@ -15,20 +15,23 @@ position=front
 # Consumables disabled — no Midnight consumables in SimC yet
 flask=disabled
 
-# Generic Midnight gear — no expansion-specific enchants/gems exist yet
-head=,id=153840,ilevel=289
-neck=,id=153861,ilevel=289
-shoulder=,id=153842,ilevel=289
-back=,id=153865,ilevel=289
-chest=,id=153837,ilevel=289
-wrist=,id=153844,ilevel=289
-hands=,id=153839,ilevel=289
-waist=,id=153843,ilevel=289
-legs=,id=153841,ilevel=289
-feet=,id=153838,ilevel=289
-finger1=,id=153863,ilevel=289
-finger2=,id=153862,ilevel=289
-trinket1=,id=153860,ilevel=289
-trinket2=,id=153864,ilevel=289
-main_hand=,id=248072,ilevel=289
-off_hand=,id=248062,ilevel=289
+# Gear Pipeline v2 — optimized via 4-phase screening + stat rebalancing
+# Tier: Devouring Reaver 4pc (skip shoulders for Ancient Hornswog Spaulders)
+# Stat priority: Haste > Crit > Vers > Mastery (reforge plot + scale factors)
+# Gems: 3 haste + 2 crit (Amethyst/Garnet as Deadly) for optimal H+C balance
+head=devouring_reavers_intake,id=250033,ilevel=289
+neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240967/240884
+shoulder=ancient_hornswog_spaulders,id=193725,ilevel=289
+back=devouring_reavers_drape,id=250028,ilevel=289
+chest=devouring_reavers_engine,id=250036,ilevel=289
+wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=prismatic_focusing_iris
+hands=devouring_reavers_essence_grips,id=250034,ilevel=289
+waist=devouring_reavers_emblem,id=250030,ilevel=289
+legs=devouring_reavers_pistons,id=250032,ilevel=289
+feet=eclipse_espadrilles,id=251210,ilevel=289
+finger1=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240856/240866,enchant_id=8025
+finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240872/240858,enchant_id=8025
+trinket1=light_company_guidon,id=249344,ilevel=289
+trinket2=void_execution_mandate,id=250225,ilevel=289
+main_hand=arators_swift_remembrance,id=260423,ilevel=289,enchant_id=8039
+off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt

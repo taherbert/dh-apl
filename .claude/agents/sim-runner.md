@@ -13,9 +13,28 @@ Simulation execution specialist for APL iteration testing. Runs `iterate.js comp
 
 1. Read hypothesis mutation spec
 2. Generate candidate: `node src/apl/mutator.js <apl.simc> '<mutation-json>'` (or direct Edit for structural changes)
-3. Quick screen: `SPEC={spec} node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick`
-4. Parse output for per-build deltas and aggregate metrics
-5. Report results with accept/reject recommendation (see Accept Criteria in optimize.md Phase 3)
+3. Write state checkpoint (see below)
+4. Quick screen: `SPEC={spec} node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick`
+5. Parse output for per-build deltas and aggregate metrics
+6. Report results with accept/reject recommendation (see Accept Criteria in optimize.md Phase 3)
+
+## State Checkpoint
+
+Before launching any sim, write `results/{spec}/active-sim.json` with the Write tool:
+
+```json
+{
+  "timestamp": "<ISO 8601>",
+  "taskId": null,
+  "candidate": "apls/{spec}/candidate.simc",
+  "fidelity": "<quick|standard|confirm|staged>",
+  "hypothesis": "<1-2 sentence description>",
+  "expectedOutcome": "<predicted direction and reasoning>",
+  "spec": "<spec name>"
+}
+```
+
+This enables recovery after context compaction — `/sim-check` reads this file to restore context.
 
 ## iterate.js CLI Reference
 

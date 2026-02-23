@@ -1,0 +1,1130 @@
+{
+  "version": 2,
+  "baseline": "apls/vengeance/profile.simc",
+  "tier": {
+    "set_id": 1979,
+    "required_count": 4,
+    "items": {
+      "head": "head=devouring_reavers_intake,id=250033,ilevel=289",
+      "shoulders": "shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289",
+      "chest": "chest=devouring_reavers_engine,id=250036,ilevel=289",
+      "hands": "hands=devouring_reavers_essence_grips,id=250034,ilevel=289",
+      "legs": "legs=devouring_reavers_pistons,id=250032,ilevel=289"
+    },
+    "alternatives": {
+      "head": [
+        {
+          "id": "devouring_nights_visage",
+          "simc": "head=devouring_nights_visage,id=249306,ilevel=289"
+        },
+        {
+          "id": "mask_of_darkest_intent",
+          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289"
+        },
+        {
+          "id": "spellsnap_shadowmask",
+          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289"
+        },
+        {
+          "id": "vilefiends_guise",
+          "simc": "head=vilefiends_guise,id=251140,ilevel=289"
+        },
+        {
+          "id": "fetid_vilecrown",
+          "simc": "head=fetid_vilecrown,id=251177,ilevel=289"
+        },
+        {
+          "id": "voidlashed_hood",
+          "simc": "head=voidlashed_hood,id=151336,ilevel=289"
+        }
+      ],
+      "shoulders": [
+        {
+          "id": "blooming_barklight_spaulders",
+          "simc": "shoulder=blooming_barklight_spaulders,id=249333,ilevel=289"
+        },
+        {
+          "id": "fallen_grunts_mantle",
+          "simc": "shoulder=fallen_grunts_mantle,id=251092,ilevel=289"
+        },
+        {
+          "id": "scavengers_spaulders",
+          "simc": "shoulder=scavengers_spaulders,id=251146,ilevel=289"
+        },
+        {
+          "id": "enthralled_bonespines",
+          "simc": "shoulder=enthralled_bonespines,id=251171,ilevel=289"
+        },
+        {
+          "id": "somber_spaulders",
+          "simc": "shoulder=somber_spaulders,id=251223,ilevel=289"
+        },
+        {
+          "id": "bloodfeather_mantle",
+          "simc": "shoulder=bloodfeather_mantle,id=258581,ilevel=289"
+        },
+        {
+          "id": "ancient_hornswog_spaulders",
+          "simc": "shoulder=ancient_hornswog_spaulders,id=193725,ilevel=289"
+        },
+        {
+          "id": "twilights_edge_spaulders",
+          "simc": "shoulder=twilights_edge_spaulders,id=151319,ilevel=289"
+        }
+      ],
+      "chest": [
+        {
+          "id": "radiant_clutchtenders_jerkin",
+          "simc": "chest=radiant_clutchtenders_jerkin,id=249322,ilevel=289"
+        },
+        {
+          "id": "vest_of_the_howling_gale",
+          "simc": "chest=vest_of_the_howling_gale,id=251099,ilevel=289"
+        },
+        {
+          "id": "war_trial_vestments",
+          "simc": "chest=war_trial_vestments,id=251159,ilevel=289"
+        },
+        {
+          "id": "rootwalker_harness",
+          "simc": "chest=rootwalker_harness,id=251189,ilevel=289"
+        },
+        {
+          "id": "maledict_vest",
+          "simc": "chest=maledict_vest,id=251216,ilevel=289"
+        },
+        {
+          "id": "bloodfeather_chestguard",
+          "simc": "chest=bloodfeather_chestguard,id=258586,ilevel=289"
+        },
+        {
+          "id": "vest_of_the_voids_embrace",
+          "simc": "chest=vest_of_the_voids_embrace,id=151313,ilevel=289"
+        }
+      ],
+      "hands": [
+        {
+          "id": "vaelgors_fearsome_grasp",
+          "simc": "hands=vaelgors_fearsome_grasp,id=249321,ilevel=289"
+        },
+        {
+          "id": "gloves_of_viscous_goo",
+          "simc": "hands=gloves_of_viscous_goo,id=251113,ilevel=289"
+        },
+        {
+          "id": "gauntlets_of_fevered_defense",
+          "simc": "hands=gauntlets_of_fevered_defense,id=251124,ilevel=289"
+        },
+        {
+          "id": "corewrights_zappers",
+          "simc": "hands=corewrights_zappers,id=251204,ilevel=289"
+        },
+        {
+          "id": "ruby_contestants_gloves",
+          "simc": "hands=ruby_contestants_gloves,id=193721,ilevel=289"
+        },
+        {
+          "id": "gloves_of_the_dark_shroud",
+          "simc": "hands=gloves_of_the_dark_shroud,id=151318,ilevel=289"
+        }
+      ],
+      "legs": [
+        {
+          "id": "nightblades_pantaloons",
+          "simc": "legs=nightblades_pantaloons,id=249312,ilevel=289"
+        },
+        {
+          "id": "devouring_outriders_chausses",
+          "simc": "legs=devouring_outriders_chausses,id=250457,ilevel=289"
+        },
+        {
+          "id": "power_stance_breeches",
+          "simc": "legs=power_stance_breeches,id=260373,ilevel=289"
+        },
+        {
+          "id": "legwraps_of_lingering_legacies",
+          "simc": "legs=legwraps_of_lingering_legacies,id=251087,ilevel=289"
+        },
+        {
+          "id": "breeches_of_deft_deals",
+          "simc": "legs=breeches_of_deft_deals,id=251130,ilevel=289"
+        },
+        {
+          "id": "lightspore_leggings",
+          "simc": "legs=lightspore_leggings,id=251198,ilevel=289"
+        },
+        {
+          "id": "shifting_stalker_hide_pants",
+          "simc": "legs=shifting_stalker_hide_pants,id=151314,ilevel=289"
+        }
+      ]
+    }
+  },
+  "paired_slots": {
+    "trinkets": {
+      "slots": ["trinket1", "trinket2"],
+      "topK": 5,
+      "candidates": [
+        {
+          "id": "ranger_captains_insignia",
+          "label": "Ranger-Captain's Iridescent Insignia",
+          "simc_base": "ranger_captains_iridescent_insignia,id=249345,ilevel=289",
+          "tags": ["on-use", "agi", "raid"]
+        },
+        {
+          "id": "light_company_guidon",
+          "label": "Light Company Guidon",
+          "simc_base": "light_company_guidon,id=249344,ilevel=289",
+          "tags": ["on-use", "agi", "raid"]
+        },
+        {
+          "id": "undreamt_gods_oozing_vestige",
+          "label": "Undreamt God's Oozing Vestige",
+          "simc_base": "undreamt_gods_oozing_vestige,id=249805,ilevel=289",
+          "tags": ["passive", "agi", "raid"]
+        },
+        {
+          "id": "radiant_plume",
+          "label": "Radiant Plume",
+          "simc_base": "radiant_plume,id=249806,ilevel=289",
+          "tags": ["passive", "agi", "raid"]
+        },
+        {
+          "id": "umbral_plume",
+          "label": "Umbral Plume",
+          "simc_base": "umbral_plume,id=260235,ilevel=289",
+          "tags": ["passive", "agi", "raid"]
+        },
+        {
+          "id": "gaze_of_the_alnseer",
+          "label": "Gaze of the Alnseer",
+          "simc_base": "gaze_of_the_alnseer,id=249343,ilevel=289",
+          "tags": ["passive", "mastery", "raid"]
+        },
+        {
+          "id": "gloom_spattered_dreadscale",
+          "label": "Gloom-Spattered Dreadscale",
+          "simc_base": "gloom_spattered_dreadscale,id=249339,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "wraps_of_cosmic_madness",
+          "label": "Wraps of Cosmic Madness",
+          "simc_base": "wraps_of_cosmic_madness,id=249340,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "volatile_void_suffuser",
+          "label": "Volatile Void Suffuser",
+          "simc_base": "volatile_void_suffuser,id=249341,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "heart_of_ancient_hunger",
+          "label": "Heart of Ancient Hunger",
+          "simc_base": "heart_of_ancient_hunger,id=249342,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "vaelgors_final_stare",
+          "label": "Vaelgor's Final Stare",
+          "simc_base": "vaelgors_final_stare,id=249346,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "the_eternal_egg",
+          "label": "The Eternal Egg",
+          "simc_base": "the_eternal_egg,id=249807,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "shadow_of_the_empyrean_requiem",
+          "label": "Shadow of the Empyrean Requiem",
+          "simc_base": "shadow_of_the_empyrean_requiem,id=249810,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "forgotten_farstriders_insignia",
+          "label": "Forgotten Farstrider's Insignia",
+          "simc_base": "forgotten_farstriders_insignia,id=250462,ilevel=289",
+          "tags": ["passive", "raid"]
+        },
+        {
+          "id": "void_execution_mandate",
+          "label": "Void Execution Mandate",
+          "simc_base": "void_execution_mandate,id=250225,ilevel=289",
+          "tags": ["on-use", "agi", "dungeon"]
+        },
+        {
+          "id": "latchs_crooked_hook",
+          "label": "Latch's Crooked Hook",
+          "simc_base": "latchs_crooked_hook,id=250226,ilevel=289",
+          "tags": ["on-use", "agi", "dungeon"]
+        },
+        {
+          "id": "kroluks_warbanner",
+          "label": "Kroluk's Warbanner",
+          "simc_base": "kroluks_warbanner,id=250227,ilevel=289",
+          "tags": ["passive", "agi", "dungeon"]
+        },
+        {
+          "id": "resonant_bellowstone",
+          "label": "Resonant Bellowstone",
+          "simc_base": "resonant_bellowstone,id=250228,ilevel=289",
+          "tags": ["passive", "agi", "dungeon"]
+        },
+        {
+          "id": "heart_of_wind",
+          "label": "Heart of Wind",
+          "simc_base": "heart_of_wind,id=250256,ilevel=289",
+          "tags": ["passive", "agi", "dungeon"]
+        },
+        {
+          "id": "eye_of_the_drowning_void",
+          "label": "Eye of the Drowning Void",
+          "simc_base": "eye_of_the_drowning_void,id=250257,ilevel=289",
+          "tags": ["passive", "agi", "dungeon"]
+        },
+        {
+          "id": "sapling_of_the_dawnroot",
+          "label": "Sapling of the Dawnroot",
+          "simc_base": "sapling_of_the_dawnroot,id=250259,ilevel=289",
+          "tags": ["passive", "agi", "dungeon"]
+        },
+        {
+          "id": "algethar_puzzle_box",
+          "label": "Algeth'ar Puzzle Box",
+          "simc_base": "algethar_puzzle_box,id=193701,ilevel=289",
+          "tags": ["on-use", "mastery", "dungeon"]
+        },
+        {
+          "id": "solarflare_prism",
+          "label": "Solarflare Prism",
+          "simc_base": "solarflare_prism,id=252420,ilevel=289",
+          "tags": ["passive", "crit", "dungeon"]
+        },
+        {
+          "id": "sealed_chaos_urn",
+          "label": "Sealed Chaos Urn",
+          "simc_base": "sealed_chaos_urn,id=251787,ilevel=285",
+          "tags": ["on-use", "agi", "crafted"]
+        }
+      ]
+    },
+    "rings": {
+      "slots": ["finger1", "finger2"],
+      "topK": 5,
+      "candidates": [
+        {
+          "id": "signet_of_the_starved_beast",
+          "label": "Signet of the Starved Beast",
+          "simc_base": "signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240856/240868",
+          "tags": ["raid"]
+        },
+        {
+          "id": "bond_of_light",
+          "label": "Bond of Light",
+          "simc_base": "bond_of_light,id=249369,ilevel=289,gem_id=240856/240868",
+          "tags": ["raid"]
+        },
+        {
+          "id": "sindorei_band_of_hope",
+          "label": "Sin'dorei Band of Hope",
+          "simc_base": "sindorei_band_of_hope,id=249919,ilevel=289,gem_id=240856/240868",
+          "tags": ["raid"]
+        },
+        {
+          "id": "eye_of_midnight",
+          "label": "Eye of Midnight",
+          "simc_base": "eye_of_midnight,id=249920,ilevel=289,gem_id=240856/240868",
+          "tags": ["socket", "proc", "raid"],
+          "notes": "2 sockets (1 natural + Jeweler's Setting). On-equip shadow barrier proc (spell 1266505)."
+        },
+        {
+          "id": "encroaching_shadow_signet",
+          "label": "Encroaching Shadow Signet",
+          "simc_base": "encroaching_shadow_signet,id=250460,ilevel=289,gem_id=240856/240868",
+          "tags": ["raid"]
+        },
+        {
+          "id": "omission_of_light",
+          "label": "Omission of Light",
+          "simc_base": "omission_of_light,id=251093,ilevel=289,gem_id=240856/240868",
+          "tags": ["dungeon", "set"],
+          "notes": "Voidlight Bindings 2pc with Occlusion of Void — Twilight Barrage damage proc (set 1971)."
+        },
+        {
+          "id": "occlusion_of_void",
+          "label": "Occlusion of Void",
+          "simc_base": "occlusion_of_void,id=251217,ilevel=289,gem_id=240856/240868",
+          "tags": ["dungeon", "set"],
+          "notes": "Voidlight Bindings 2pc with Omission of Light — Twilight Barrage damage proc (set 1971)."
+        },
+        {
+          "id": "bifurcation_band",
+          "label": "Bifurcation Band",
+          "simc_base": "bifurcation_band,id=251115,ilevel=289,gem_id=240856/240868",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "platinum_star_band",
+          "label": "Platinum Star Band",
+          "simc_base": "platinum_star_band,id=193708,ilevel=289,gem_id=240856/240868",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "eredath_seal_of_nobility",
+          "label": "Eredath Seal of Nobility",
+          "simc_base": "eredath_seal_of_nobility,id=151308,ilevel=289,gem_id=240856/240868",
+          "tags": ["dungeon", "set"],
+          "notes": "Velen's Lament 2pc with Band of the Triumvirate — +Avoidance (defensive only, no DPS value)."
+        },
+        {
+          "id": "band_of_the_triumvirate",
+          "label": "Band of the Triumvirate",
+          "simc_base": "band_of_the_triumvirate,id=151311,ilevel=289,gem_id=240856/240868",
+          "tags": ["dungeon", "set"],
+          "notes": "Velen's Lament 2pc with Eredath Seal — +Avoidance (defensive only, no DPS value)."
+        },
+        {
+          "id": "purloined_wedding_ring",
+          "label": "Purloined Wedding Ring",
+          "simc_base": "purloined_wedding_ring,id=49812,ilevel=289,gem_id=240856/240868",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "masterwork_sindorei_band",
+          "label": "Masterwork Sindorei Band",
+          "simc_base": "masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240856/240868",
+          "tags": ["crafted", "socket"],
+          "notes": "2 sockets (1 natural + Jeweler's Setting)."
+        },
+        {
+          "id": "loa_worshipers_band",
+          "label": "Loa Worshiper's Band",
+          "simc_base": "loa_worshipers_band,id=251513,ilevel=285,gem_id=240856/240868",
+          "tags": ["crafted", "proc", "socket", "gem-scaling"],
+          "notes": "2 sockets (1 natural + Jeweler's Setting). Loa proc scales with gem color diversity across all gear. Each unique color (Garnet/Amethyst/Lapis/Peridot) unlocks a different Loa."
+        },
+        {
+          "id": "signet_of_azerothian_blessings",
+          "label": "Signet of Azerothian Blessings",
+          "simc_base": "signet_of_azerothian_blessings,id=241140,ilevel=285,gem_id=240856/240868",
+          "tags": ["crafted", "proc", "socket", "gem-scaling"],
+          "notes": "2 sockets (1 natural + Jeweler's Setting). All-secondary stat buff proc, amplified per unique gem color."
+        }
+      ]
+    }
+  },
+  "slots": {
+    "neck": {
+      "candidates": [
+        {
+          "id": "ribbon_of_coiled_malice",
+          "label": "Ribbon of Coiled Malice",
+          "simc": "neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240967/240884",
+          "tags": ["raid"]
+        },
+        {
+          "id": "eternal_voidsong_chain",
+          "label": "Eternal Voidsong Chain",
+          "simc": "neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240967/240884",
+          "tags": ["raid"]
+        },
+        {
+          "id": "amulet_of_the_abyssal_hymn",
+          "label": "Amulet of the Abyssal Hymn",
+          "simc": "neck=amulet_of_the_abyssal_hymn,id=250247,ilevel=289,gem_id=240967/240884/240856",
+          "tags": ["raid", "socket"],
+          "notes": "3 sockets (1 natural + 2 Jeweler's Settings). Extra gem slot vs other necks."
+        },
+        {
+          "id": "chain_of_the_ancient_watcher",
+          "label": "Chain of the Ancient Watcher",
+          "simc": "neck=chain_of_the_ancient_watcher,id=250461,ilevel=289,gem_id=240967/240884",
+          "tags": ["raid"]
+        },
+        {
+          "id": "amulet_of_the_ascendant_void",
+          "label": "Amulet of the Ascendant Void",
+          "simc": "neck=amulet_of_the_ascendant_void,id=260414,ilevel=289,gem_id=240967/240884",
+          "tags": ["raid"]
+        },
+        {
+          "id": "pendant_of_aching_grief",
+          "label": "Pendant of Aching Grief",
+          "simc": "neck=pendant_of_aching_grief,id=251096,ilevel=289,gem_id=240967/240884",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "necklace_of_the_twisting_void",
+          "label": "Necklace of the Twisting Void",
+          "simc": "neck=necklace_of_the_twisting_void,id=151309,ilevel=289,gem_id=240967/240884",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "barbed_ymirheim_choker",
+          "label": "Barbed Ymirheim Choker",
+          "simc": "neck=barbed_ymirheim_choker,id=50228,ilevel=289,gem_id=240967/240884",
+          "tags": ["dungeon"]
+        }
+      ]
+    },
+    "back": {
+      "candidates": [
+        {
+          "id": "imperators_banner",
+          "label": "Imperator's Banner",
+          "simc": "back=imperators_banner,id=249335,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "draconic_nullcape",
+          "label": "Draconic Nullcape",
+          "simc": "back=draconic_nullcape,id=249370,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "devouring_reavers_drape",
+          "label": "Devouring Reaver's Drape",
+          "simc": "back=devouring_reavers_drape,id=250028,ilevel=289",
+          "tags": ["class"]
+        },
+        {
+          "id": "speakeasy_shroud",
+          "label": "Speakeasy Shroud",
+          "simc": "back=speakeasy_shroud,id=251132,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "bloodthorn_burnous",
+          "label": "Bloodthorn Burnous",
+          "simc": "back=bloodthorn_burnous,id=251190,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "fluxweave_cloak",
+          "label": "Fluxweave Cloak",
+          "simc": "back=fluxweave_cloak,id=251206,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "potion_stained_cloak",
+          "label": "Potion-Stained Cloak",
+          "simc": "back=potion_stained_cloak,id=193712,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "dignitarys_traveling_cloak",
+          "label": "Dignitary's Traveling Cloak",
+          "simc": "back=dignitarys_traveling_cloak,id=151306,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "rigid_scale_greatcloak",
+          "label": "Rigid Scale Greatcloak",
+          "simc": "back=rigid_scale_greatcloak,id=258575,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "cloak_of_the_fallen_cardinal",
+          "label": "Cloak of the Fallen Cardinal",
+          "simc": "back=cloak_of_the_fallen_cardinal,id=49823,ilevel=289",
+          "tags": ["dungeon"]
+        }
+      ]
+    },
+    "waist": {
+      "candidates": [
+        {
+          "id": "twisted_twilight_sash",
+          "label": "Twisted Twilight Sash",
+          "simc": "waist=twisted_twilight_sash,id=249314,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "scorn_scarred_shulkas_belt",
+          "label": "Scorn-Scarred Shul'ka's Belt",
+          "simc": "waist=scorn_scarred_shulkas_belt,id=249374,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "devouring_reavers_emblem",
+          "label": "Devouring Reaver's Emblem",
+          "simc": "waist=devouring_reavers_emblem,id=250030,ilevel=289",
+          "tags": ["class"]
+        },
+        {
+          "id": "snapvine_cinch",
+          "label": "Snapvine Cinch",
+          "simc": "waist=snapvine_cinch,id=251082,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "falconers_cinch",
+          "label": "Falconer's Cinch",
+          "simc": "waist=falconers_cinch,id=251166,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "cinch_of_the_umbral_lasher",
+          "label": "Cinch of the Umbral Lasher",
+          "simc": "waist=cinch_of_the_umbral_lasher,id=151316,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "flayers_black_belt",
+          "label": "Flayer's Black Belt",
+          "simc": "waist=flayers_black_belt,id=49806,ilevel=289",
+          "tags": ["dungeon"]
+        }
+      ]
+    },
+    "wrists": {
+      "candidates": [
+        {
+          "id": "void_skinned_bracers",
+          "label": "Void-Skinned Bracers",
+          "simc": "wrist=void_skinned_bracers,id=249327,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "devouring_reavers_support_straps",
+          "label": "Devouring Reaver's Support Straps",
+          "simc": "wrist=devouring_reavers_support_straps,id=250029,ilevel=289",
+          "tags": ["class"]
+        },
+        {
+          "id": "custodial_cuffs",
+          "label": "Custodial Cuffs",
+          "simc": "wrist=custodial_cuffs,id=251103,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "fury_fletched_armlets",
+          "label": "Fury-fletched Armlets",
+          "simc": "wrist=fury_fletched_armlets,id=251135,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "rootwarden_wraps",
+          "label": "Rootwarden Wraps",
+          "simc": "wrist=rootwarden_wraps,id=251183,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "frenzyroot_cuffs",
+          "label": "Frenzyroot Cuffs",
+          "simc": "wrist=frenzyroot_cuffs,id=193714,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "bracers_of_dark_binding",
+          "label": "Bracers of Dark Binding",
+          "simc": "wrist=bracers_of_dark_binding,id=151315,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "chewed_leather_wristguards",
+          "label": "Chewed Leather Wristguards",
+          "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289",
+          "tags": ["dungeon"]
+        }
+      ]
+    },
+    "feet": {
+      "candidates": [
+        {
+          "id": "void_claimed_shinkickers",
+          "label": "Void-Claimed Shinkickers",
+          "simc": "feet=void_claimed_shinkickers,id=249334,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "canopy_walkers_footwraps",
+          "label": "Canopy Walker's Footwraps",
+          "simc": "feet=canopy_walkers_footwraps,id=249382,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "devouring_reavers_soul_flatteners",
+          "label": "Devouring Reaver's Soul Flatteners",
+          "simc": "feet=devouring_reavers_soul_flatteners,id=250035,ilevel=289",
+          "tags": ["class"]
+        },
+        {
+          "id": "nullstriders_boots",
+          "label": "Nullstrider's Boots",
+          "simc": "feet=nullstriders_boots,id=260372,ilevel=289",
+          "tags": ["raid"]
+        },
+        {
+          "id": "domanaars_dire_treads",
+          "label": "Domanaar's Dire Treads",
+          "simc": "feet=domanaars_dire_treads,id=251121,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "eclipse_espadrilles",
+          "label": "Eclipse Espadrilles",
+          "simc": "feet=eclipse_espadrilles,id=251210,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "footpads_of_seeping_dread",
+          "label": "Footpads of Seeping Dread",
+          "simc": "feet=footpads_of_seeping_dread,id=151317,ilevel=289",
+          "tags": ["dungeon"]
+        },
+        {
+          "id": "boots_of_burning_focus",
+          "label": "Boots of Burning Focus",
+          "simc": "feet=boots_of_burning_focus,id=258577,ilevel=289",
+          "tags": ["dungeon"]
+        }
+      ]
+    },
+    "main_hand": {
+      "candidates": [
+        {
+          "id": "emblazoned_sunglaive",
+          "label": "Emblazoned Sunglaive",
+          "simc": "main_hand=emblazoned_sunglaive,id=249280,ilevel=289",
+          "tags": ["warglaive", "raid"]
+        },
+        {
+          "id": "blade_of_the_final_twilight",
+          "label": "Blade of the Final Twilight",
+          "simc": "main_hand=blade_of_the_final_twilight,id=249281,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "blade_of_the_blind_verdict",
+          "label": "Blade of the Blind Verdict",
+          "simc": "main_hand=blade_of_the_blind_verdict,id=249294,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "tormentors_bladed_fists",
+          "label": "Tormentor's Bladed Fists",
+          "simc": "main_hand=tormentors_bladed_fists,id=249298,ilevel=289",
+          "tags": ["fist", "raid"]
+        },
+        {
+          "id": "dawncrazed_beast_cleaver",
+          "label": "Dawncrazed Beast Cleaver",
+          "simc": "main_hand=dawncrazed_beast_cleaver,id=250451,ilevel=289",
+          "tags": ["axe", "raid"]
+        },
+        {
+          "id": "blooming_thornblade",
+          "label": "Blooming Thornblade",
+          "simc": "main_hand=blooming_thornblade,id=250452,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "lightless_lament",
+          "label": "Lightless Lament",
+          "simc": "main_hand=lightless_lament,id=260408,ilevel=289",
+          "tags": ["warglaive", "raid"]
+        },
+        {
+          "id": "arators_swift_remembrance",
+          "label": "Arator's Swift Remembrance",
+          "simc": "main_hand=arators_swift_remembrance,id=260423,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "resolute_runeglaive",
+          "label": "Resolute Runeglaive",
+          "simc": "main_hand=resolute_runeglaive,id=251106,ilevel=289",
+          "tags": ["warglaive", "dungeon"]
+        },
+        {
+          "id": "mystakrias_harvester",
+          "label": "Mystakria's Harvester",
+          "simc": "main_hand=mystakrias_harvester,id=193717,ilevel=289",
+          "tags": ["warglaive", "dungeon"]
+        },
+        {
+          "id": "grips_of_the_dark_viceroy",
+          "label": "Grips of the Dark Viceroy",
+          "simc": "main_hand=grips_of_the_dark_viceroy,id=258524,ilevel=289",
+          "tags": ["fist", "dungeon"]
+        },
+        {
+          "id": "blazing_sunclaws",
+          "label": "Blazing Sunclaws",
+          "simc": "main_hand=blazing_sunclaws,id=258438,ilevel=289",
+          "tags": ["fist", "dungeon"]
+        },
+        {
+          "id": "shadowslash_slicer",
+          "label": "Shadowslash Slicer",
+          "simc": "main_hand=shadowslash_slicer,id=251122,ilevel=289",
+          "tags": ["sword", "dungeon"]
+        },
+        {
+          "id": "soulblight_cleaver",
+          "label": "Soulblight Cleaver",
+          "simc": "main_hand=soulblight_cleaver,id=251175,ilevel=289",
+          "tags": ["axe", "dungeon"]
+        },
+        {
+          "id": "warworn_cleaver",
+          "label": "Warworn Cleaver",
+          "simc": "main_hand=warworn_cleaver,id=251088,ilevel=289",
+          "tags": ["axe", "dungeon"]
+        }
+      ]
+    },
+    "off_hand": {
+      "candidates": [
+        {
+          "id": "emblazoned_sunglaive_oh",
+          "label": "Emblazoned Sunglaive (OH)",
+          "simc": "off_hand=emblazoned_sunglaive,id=249280,ilevel=289",
+          "tags": ["warglaive", "raid"]
+        },
+        {
+          "id": "blade_of_the_final_twilight_oh",
+          "label": "Blade of the Final Twilight (OH)",
+          "simc": "off_hand=blade_of_the_final_twilight,id=249281,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "blade_of_the_blind_verdict_oh",
+          "label": "Blade of the Blind Verdict (OH)",
+          "simc": "off_hand=blade_of_the_blind_verdict,id=249294,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "tormentors_bladed_fists_oh",
+          "label": "Tormentor's Bladed Fists (OH)",
+          "simc": "off_hand=tormentors_bladed_fists,id=249298,ilevel=289",
+          "tags": ["fist", "raid"]
+        },
+        {
+          "id": "dawncrazed_beast_cleaver_oh",
+          "label": "Dawncrazed Beast Cleaver (OH)",
+          "simc": "off_hand=dawncrazed_beast_cleaver,id=250451,ilevel=289",
+          "tags": ["axe", "raid"]
+        },
+        {
+          "id": "blooming_thornblade_oh",
+          "label": "Blooming Thornblade (OH)",
+          "simc": "off_hand=blooming_thornblade,id=250452,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "lightless_lament_oh",
+          "label": "Lightless Lament (OH)",
+          "simc": "off_hand=lightless_lament,id=260408,ilevel=289",
+          "tags": ["warglaive", "raid"]
+        },
+        {
+          "id": "arators_swift_remembrance_oh",
+          "label": "Arator's Swift Remembrance (OH)",
+          "simc": "off_hand=arators_swift_remembrance,id=260423,ilevel=289",
+          "tags": ["sword", "raid"]
+        },
+        {
+          "id": "resolute_runeglaive_oh",
+          "label": "Resolute Runeglaive (OH)",
+          "simc": "off_hand=resolute_runeglaive,id=251106,ilevel=289",
+          "tags": ["warglaive", "dungeon"]
+        },
+        {
+          "id": "mystakrias_harvester_oh",
+          "label": "Mystakria's Harvester (OH)",
+          "simc": "off_hand=mystakrias_harvester,id=193717,ilevel=289",
+          "tags": ["warglaive", "dungeon"]
+        },
+        {
+          "id": "grips_of_the_dark_viceroy_oh",
+          "label": "Grips of the Dark Viceroy (OH)",
+          "simc": "off_hand=grips_of_the_dark_viceroy,id=258524,ilevel=289",
+          "tags": ["fist", "dungeon"]
+        },
+        {
+          "id": "blazing_sunclaws_oh",
+          "label": "Blazing Sunclaws (OH)",
+          "simc": "off_hand=blazing_sunclaws,id=258438,ilevel=289",
+          "tags": ["fist", "dungeon"]
+        },
+        {
+          "id": "shadowslash_slicer_oh",
+          "label": "Shadowslash Slicer (OH)",
+          "simc": "off_hand=shadowslash_slicer,id=251122,ilevel=289",
+          "tags": ["sword", "dungeon"]
+        },
+        {
+          "id": "soulblight_cleaver_oh",
+          "label": "Soulblight Cleaver (OH)",
+          "simc": "off_hand=soulblight_cleaver,id=251175,ilevel=289",
+          "tags": ["axe", "dungeon"]
+        },
+        {
+          "id": "warworn_cleaver_oh",
+          "label": "Warworn Cleaver (OH)",
+          "simc": "off_hand=warworn_cleaver,id=251088,ilevel=289",
+          "tags": ["axe", "dungeon"]
+        },
+        {
+          "id": "everforged_longsword",
+          "label": "Everforged Longsword (Crafted)",
+          "simc": "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "tags": ["crafted", "sword"]
+        }
+      ]
+    }
+  },
+  "enchants": {
+    "weapon_mh": {
+      "base_item": "main_hand=emblazoned_sunglaive,id=249280,ilevel=289",
+      "candidates": [
+        {
+          "id": "strength_of_halazzi",
+          "label": "Strength of Halazzi",
+          "enchant_id": 7979,
+          "tags": ["bleed", "physical"]
+        },
+        {
+          "id": "janalais_precision",
+          "label": "Jan'alai's Precision",
+          "enchant_id": 7981,
+          "tags": ["crit", "proc"]
+        },
+        {
+          "id": "berserkers_rage",
+          "label": "Berserker's Rage",
+          "enchant_id": 7983,
+          "tags": ["haste", "proc"]
+        },
+        {
+          "id": "worldsoul_cradle",
+          "label": "Worldsoul Cradle",
+          "enchant_id": 8007,
+          "tags": ["passive"]
+        },
+        {
+          "id": "worldsoul_aegis",
+          "label": "Worldsoul Aegis",
+          "enchant_id": 8009,
+          "tags": ["passive"]
+        },
+        {
+          "id": "worldsoul_tenacity",
+          "label": "Worldsoul Tenacity",
+          "enchant_id": 8011,
+          "tags": ["vers", "proc"]
+        },
+        {
+          "id": "flames_of_the_sindorei",
+          "label": "Flames of the Sin'dorei",
+          "enchant_id": 8037,
+          "tags": ["fire", "proc"]
+        },
+        {
+          "id": "acuity_of_the_rendorei",
+          "label": "Acuity of the Ren'dorei",
+          "enchant_id": 8039,
+          "tags": ["shadow", "proc"]
+        },
+        {
+          "id": "arcane_mastery",
+          "label": "Arcane Mastery",
+          "enchant_id": 8041,
+          "tags": ["mastery", "proc"]
+        }
+      ]
+    },
+    "weapon_oh": {
+      "base_item": "off_hand=emblazoned_sunglaive,id=249280,ilevel=289",
+      "candidates": [
+        {
+          "id": "strength_of_halazzi",
+          "label": "Strength of Halazzi",
+          "enchant_id": 7979,
+          "tags": ["bleed", "physical"]
+        },
+        {
+          "id": "janalais_precision",
+          "label": "Jan'alai's Precision",
+          "enchant_id": 7981,
+          "tags": ["crit", "proc"]
+        },
+        {
+          "id": "berserkers_rage",
+          "label": "Berserker's Rage",
+          "enchant_id": 7983,
+          "tags": ["haste", "proc"]
+        },
+        {
+          "id": "worldsoul_cradle",
+          "label": "Worldsoul Cradle",
+          "enchant_id": 8007,
+          "tags": ["passive"]
+        },
+        {
+          "id": "worldsoul_aegis",
+          "label": "Worldsoul Aegis",
+          "enchant_id": 8009,
+          "tags": ["passive"]
+        },
+        {
+          "id": "worldsoul_tenacity",
+          "label": "Worldsoul Tenacity",
+          "enchant_id": 8011,
+          "tags": ["vers", "proc"]
+        },
+        {
+          "id": "flames_of_the_sindorei",
+          "label": "Flames of the Sin'dorei",
+          "enchant_id": 8037,
+          "tags": ["fire", "proc"]
+        },
+        {
+          "id": "acuity_of_the_rendorei",
+          "label": "Acuity of the Ren'dorei",
+          "enchant_id": 8039,
+          "tags": ["shadow", "proc"]
+        },
+        {
+          "id": "arcane_mastery",
+          "label": "Arcane Mastery",
+          "enchant_id": 8041,
+          "tags": ["mastery", "proc"]
+        }
+      ]
+    },
+    "ring": {
+      "base_item": "finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240856/240868",
+      "candidates": [
+        {
+          "id": "thalassian_haste",
+          "label": "Thalassian Haste",
+          "enchant_id": 8021,
+          "tags": ["haste"]
+        },
+        {
+          "id": "thalassian_versatility",
+          "label": "Thalassian Versatility",
+          "enchant_id": 8023,
+          "tags": ["vers"]
+        },
+        {
+          "id": "silvermoons_alacrity",
+          "label": "Silvermoon's Alacrity",
+          "enchant_id": 8025,
+          "tags": ["haste"]
+        },
+        {
+          "id": "silvermoons_tenacity",
+          "label": "Silvermoon's Tenacity",
+          "enchant_id": 8027,
+          "tags": ["vers"]
+        }
+      ]
+    }
+  },
+  "embellishments": {
+    "pairs": [
+      {
+        "id": "hunt_banding",
+        "label": "Sigil Hunt + Devouring Banding",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=devouring_banding"
+        ]
+      },
+      {
+        "id": "hunt_blood",
+        "label": "Sigil Hunt + Sigil Blood",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_blood"
+        ]
+      },
+      {
+        "id": "hunt_void",
+        "label": "Sigil Hunt + Sigil Void",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_void"
+        ]
+      },
+      {
+        "id": "hunt_rot",
+        "label": "Sigil Hunt + Sigil Rot",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_rot"
+        ]
+      },
+      {
+        "id": "hunt_arcanoweave",
+        "label": "Sigil Hunt + Arcanoweave Lining",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=arcanoweave_lining"
+        ]
+      },
+      {
+        "id": "hunt_sunfire",
+        "label": "Sigil Hunt + Sunfire Silk Lining",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=sunfire_silk_lining"
+        ]
+      },
+      {
+        "id": "hunt_prismatic_iris",
+        "label": "Sigil Hunt + Prismatic Focusing Iris",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=prismatic_focusing_iris"
+        ]
+      },
+      {
+        "id": "hunt_spore_binding",
+        "label": "Sigil Hunt + Primal Spore Binding",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=primal_spore_binding"
+        ]
+      },
+      {
+        "id": "double_banding",
+        "label": "Double Devouring Banding",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=devouring_banding",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=devouring_banding"
+        ]
+      }
+    ]
+  },
+  "stat_allocations": {
+    "crafted_slots": ["off_hand", "wrists"],
+    "pairs": [
+      { "id": "haste_crit", "label": "Haste/Crit", "crafted_stats": "32/36" },
+      { "id": "crit_haste", "label": "Crit/Haste", "crafted_stats": "36/32" },
+      {
+        "id": "haste_mastery",
+        "label": "Haste/Mastery",
+        "crafted_stats": "40/36"
+      },
+      { "id": "haste_vers", "label": "Haste/Vers", "crafted_stats": "45/36" },
+      {
+        "id": "crit_mastery",
+        "label": "Crit/Mastery",
+        "crafted_stats": "40/32"
+      }
+    ]
+  },
+  "flagged": {
+    "eye_of_midnight": "On-equip proc (spell 1266505) not fully modeled in SimC. DPS results may understate this ring.",
+    "radiant_plume": "Decaying stat mechanic — average value over fight is lower than tooltip. SimC models the decay.",
+    "umbral_plume": "Unique-Equipped with Radiant Plume — cannot equip both."
+  }
+}

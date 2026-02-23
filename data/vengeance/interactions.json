@@ -12720,195 +12720,6 @@
     },
     {
       "source": {
-        "id": 389718,
-        "name": "Cycle of Binding",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": 389958,
-        "name": "Frailty"
-      },
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "magnitude": {
-        "value": -15,
-        "unit": "flat",
-        "stacking": "additive"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 4,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 5,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 389718,
-        "name": "Cycle of Binding",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": 428603,
-        "name": "Ascending Flame"
-      },
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "magnitude": {
-        "value": -15,
-        "unit": "flat",
-        "stacking": "additive"
-      },
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 2,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 3,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 4,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        },
-        {
-          "index": 5,
-          "type": "Apply Aura (6) | Modify Recharge Time% (Category) (454)",
-          "baseValue": -15,
-          "scaledValue": -15,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
-        "id": 389958,
-        "name": "Frailty",
-        "isTalent": true,
-        "tree": "spec",
-        "heroSpec": null
-      },
-      "target": {
-        "id": 428603,
-        "name": "Ascending Flame"
-      },
-      "type": "duration_modifier",
-      "mechanism": "on_tick",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "application": "buff_on_player",
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Dummy (4)",
-          "baseValue": 0,
-          "scaledValue": 0,
-          "target": "Self (1)",
-          "schoolMask": null,
-          "affectedSpells": null,
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "offensive"
-      ]
-    },
-    {
-      "source": {
         "id": 227174,
         "name": "Fallout",
         "isTalent": true,
@@ -20967,23 +20778,6 @@
           ]
         },
         {
-          "source": "Cycle of Binding",
-          "sourceId": 389718,
-          "type": "duration_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        },
-        {
           "source": "Spirit Bomb",
           "sourceId": 247454,
           "type": "proc_trigger",
@@ -25416,23 +25210,6 @@
           ]
         },
         {
-          "source": "Cycle of Binding",
-          "sourceId": 389718,
-          "type": "duration_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        },
-        {
           "source": "Spirit Bomb",
           "sourceId": 247454,
           "type": "proc_trigger",
@@ -27802,40 +27579,6 @@
           "schoolTarget": [
             "Physical",
             "Shadow"
-          ]
-        }
-      ]
-    },
-    "428603": {
-      "name": "Ascending Flame",
-      "modifiers": [
-        {
-          "source": "Cycle of Binding",
-          "sourceId": 389718,
-          "type": "duration_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ]
-        },
-        {
-          "source": "Frailty",
-          "sourceId": 389958,
-          "type": "duration_modifier",
-          "tree": "spec",
-          "heroSpec": null,
-          "discoveryMethod": "cpp_scanner",
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
           ]
         }
       ]
@@ -35642,38 +35385,6 @@
             "offensive"
           ],
           "mechanism": "conditional"
-        },
-        {
-          "spell": "Frailty",
-          "spellId": 389958,
-          "type": "duration_modifier",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "on_tick"
-        },
-        {
-          "spell": "Ascending Flame",
-          "spellId": 428603,
-          "type": "duration_modifier",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": -15,
-            "unit": "flat",
-            "stacking": "additive"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "on_tick"
         }
       ]
     },
@@ -35846,17 +35557,6 @@
       "tree": "spec",
       "heroSpec": null,
       "targets": [
-        {
-          "spell": "Ascending Flame",
-          "spellId": 428603,
-          "type": "duration_modifier",
-          "discoveryMethod": "cpp_scanner",
-          "application": "buff_on_player",
-          "categories": [
-            "offensive"
-          ],
-          "mechanism": "on_tick"
-        },
         {
           "spell": "Dark Matter",
           "spellId": 1256307,

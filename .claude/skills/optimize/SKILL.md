@@ -322,6 +322,22 @@ Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `chang
 2. If empty: `npm run roster generate` -- cluster-based generation from SPEC_CONFIG
 3. `iterate.js init` requires the roster. Profileset mode auto-activates (all cluster builds have hashes).
 
+### Progress Tracking
+
+Before entering the iteration loop, query pending hypotheses (`iterate.js hypotheses`).
+For the top N (up to 10), create a task for each using TaskCreate:
+
+- subject: hypothesis summary (truncated to 60 chars)
+- activeForm: "Testing <topic from hypothesis>"
+- description: full summary + mutation type + source
+
+When starting an iteration (Step 1), set the task to in_progress via `TaskUpdate { taskId, status: "in_progress" }`.
+When recording the outcome (Step 5b), set the task to completed via `TaskUpdate { taskId, status: "completed" }` and update
+the description with the result: "ACCEPTED +X.XX%: reason" or "REJECTED: reason".
+
+If new hypotheses are generated mid-loop (escape strategies, theorycraft),
+create new tasks as they're selected.
+
 ### Session Resilience
 
 If resuming: `node src/sim/iterate.js status`, read `dashboard.md`/`changelog.md`, check `git log --oneline -10`, read `current.simc`, query DB findings (`getFindings({status:'validated'})`). Resume from Step 1.
@@ -355,6 +371,8 @@ Read `current.simc`. Make ONE targeted change. Save as `candidate.simc`.
 Before any change: locate the ability, understand its priority placement, trace resource/cooldown impact, check cross-references, check all hero tree branches, predict direction and magnitude.
 
 #### Step 4: Test
+
+Before launching any sim, write `results/{spec}/active-sim.json` (hypothesis, candidate path, fidelity, expected outcome, timestamp). This checkpoint enables `/sim-check` recovery after context compaction. The sim-runner agent does this automatically; for manual iteration, use `/sim-background` or write it directly.
 
 ```bash
 node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick
