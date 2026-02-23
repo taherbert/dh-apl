@@ -56,6 +56,10 @@ CREATE TABLE IF NOT EXISTS hypotheses (
   status TEXT DEFAULT 'pending',
   source TEXT,
   archetype TEXT,
+  consensus_count INTEGER DEFAULT 1,
+  consensus_sources TEXT,
+  fingerprint TEXT,
+  metadata TEXT,
   created_at TEXT DEFAULT (datetime('now')),
   tested_at TEXT,
   reason TEXT
