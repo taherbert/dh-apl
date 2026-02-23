@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 8;
+const SCHEMA_VERSION = 9;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -216,6 +216,32 @@ CREATE TABLE IF NOT EXISTS baseline_dps (
 );
 
 -- ═══════════════════════════════════════════════════════════
+-- GEAR OPTIMIZATION
+-- ═══════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS gear_results (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  spec TEXT NOT NULL DEFAULT '',
+  phase INTEGER NOT NULL,
+  slot TEXT,
+  combination_type TEXT,
+  candidate_id TEXT NOT NULL,
+  label TEXT,
+  dps_st REAL,
+  dps_dungeon_route REAL,
+  dps_small_aoe REAL,
+  dps_big_aoe REAL,
+  weighted REAL,
+  delta_pct_weighted REAL,
+  fidelity TEXT,
+  eliminated INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_gear_results_spec_phase ON gear_results(spec, phase);
+CREATE INDEX IF NOT EXISTS idx_gear_results_spec_slot ON gear_results(spec, slot);
+
+-- ═══════════════════════════════════════════════════════════
 -- METADATA
 -- ═══════════════════════════════════════════════════════════
 
@@ -374,6 +400,7 @@ export function getDb(spec) {
         }
       }
     }
+    // Schema v8 → v9: gear_results table added to DDL (no data migration needed)
     _db
       .prepare("UPDATE schema_info SET value = ? WHERE key = 'version'")
       .run(String(SCHEMA_VERSION));
@@ -1722,6 +1749,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       ["Talent clusters", "talent_clusters"],
       ["Cluster synergies", "cluster_synergies"],
       ["Tension points", "tension_points"],
+      ["Gear results", "gear_results"],
     ];
     console.log(`Database: ${resultsFile("theorycraft.db")}\n`);
     for (const [label, table] of tables) {
