@@ -131,11 +131,11 @@ actions.ar_empowered+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike
 # Brand maintenance: Frailty application and Charred Flesh extension during active Brand
 actions.ar_cooldowns=/spirit_bomb,if=variable.fiery_demise_active&soul_fragments>=3&!debuff.frailty.up
 actions.ar_cooldowns+=/immolation_aura,if=variable.fiery_demise_active&talent.charred_flesh&!buff.immolation_aura.up
-# Brand application: sync with AotG nearing trigger, or 2 charges, or nearest fire CD within 8s
-actions.ar_cooldowns+=/fiery_brand,if=talent.fiery_demise&variable.cd_ready&(cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&buff.art_of_the_glaive.stack>=15)|(!dot.fiery_brand.ticking&cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<8))
+# Brand application: during Meta (FD amp on window), AotG nearing trigger, 2 charges, or fire CD within 8s
+actions.ar_cooldowns+=/fiery_brand,if=talent.fiery_demise&variable.cd_ready&((!dot.fiery_brand.ticking&buff.metamorphosis.up)|cooldown.fiery_brand.charges>=2|(!dot.fiery_brand.ticking&buff.art_of_the_glaive.stack>=15)|(!dot.fiery_brand.ticking&cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<8))
 # Fire CDs: into active Brand (skip cd_ready) or on normal timing
 actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils&(variable.fiery_demise_active|variable.cd_ready)
-actions.ar_cooldowns+=/soul_carver,if=variable.fiery_demise_active|(!talent.fiery_demise&variable.cd_ready)|(talent.fiery_demise&variable.cd_ready&cooldown.fiery_brand.remains>20)
+actions.ar_cooldowns+=/soul_carver,if=variable.fiery_demise_active|variable.cd_ready
 # Fel Devastation channel would interrupt the empowered cycle
 actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.fiery_demise_active|variable.cd_ready)
 # IA in Brand window (non-Charred Flesh)
@@ -166,7 +166,8 @@ actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_chain_ready&buff.voi
 # Coordinated burst: Brand → SpB → Meta(off-GCD) + SC/SoS in same cycle
 actions.anni+=/call_action_list,name=anni_burst,if=variable.burst_ready
 # Standalone pre-Meta SpB (burst not available — no SC/SoS or SpB far from ready)
-actions.anni+=/spirit_bomb,if=variable.meta_entry&cooldown.metamorphosis.ready&soul_fragments>=3
+# apex.3 skips: enters Meta with frags for immediate Brand-amplified SpB (anni_in_meta)
+actions.anni+=/spirit_bomb,if=!apex.3&variable.meta_entry&cooldown.metamorphosis.ready&soul_fragments>=3
 # Standard Meta: fallback for non-burst entries
 actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_entry&(soul_fragments>=3|!apex.3|prev_gcd.1.spirit_bomb)
 # --- UR fishing (apex.3) ---
