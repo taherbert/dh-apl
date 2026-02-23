@@ -387,7 +387,7 @@ SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ cras
 
 #### Step 5: Decide
 
-- **Accept if:** mean weighted > 0 AND worst build > -1%
+- **Accept if:** mean weighted > target_error AND worst build > -1%. A change with impact below the sim's target_error is noise — do not accept it regardless of sign.
 - **Build-gate if:** ANY builds gain meaningfully (>+0.5%) even if others regress. This is NOT a reject — it's a branching signal. Follow the **Partial Gains Protocol** below.
 - **Reject if:** no subset of builds benefits meaningfully above the noise floor (±0.5% at standard fidelity), OR no valid SimC expression can discriminate the benefiting builds after systematic analysis of ALL discriminator axes. **Rejection requires documenting what you checked.**
 - **Inconclusive:** within noise after confirm -> log and move on
