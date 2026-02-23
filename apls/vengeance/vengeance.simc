@@ -21,9 +21,9 @@ input=apls/vengeance/profile.simc
 # │ 2. Meta entry            │   │ 2. Setup                         │
 # │ 3. Empowered cycle       │   │ 3. Voidfall building/spending    │
 # │ 4. Cooldowns             │   │ 4. Meta entry + burst            │
-# │ 5. UR fishing (apex.3)    │   │ 5. UR fishing (apex.3)            │
-# │ 6. Fillers (ST / AoE)    │   │ 6. Cooldowns                     │
-# └──────────────────────────┘   │ 7. Fillers                       │
+# │ 5. Fillers (ST / AoE)    │   │ 5. UR fishing (apex.3)            │
+# └──────────────────────────┘   │ 6. Cooldowns                     │
+#                                │ 7. Fillers                       │
 #                                └──────────────────────────────────┘
 #
 # Shared sub-lists: trinkets, externals, ur_fishing
@@ -104,8 +104,6 @@ actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&soul_fragment
 actions.ar+=/call_action_list,name=ar_empowered
 # --- Cooldowns ---
 actions.ar+=/call_action_list,name=ar_cooldowns
-# --- UR fishing (apex.3) ---
-actions.ar+=/call_action_list,name=ur_fishing,if=variable.ur_fishing&apex.3
 # --- Fillers ---
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.small_aoe
 actions.ar+=/immolation_aura,if=!variable.is_dungeon|in_combat
