@@ -118,7 +118,7 @@ actions.ar+=/fracture
 actions.ar+=/felblade
 actions.ar+=/sigil_of_flame
 actions.ar+=/soul_cleave
-actions.ar+=/vengeful_retreat,if=talent.unhindered_assault
+actions.ar+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault
 actions.ar+=/throw_glaive
 
 # === AR Empowered — Art of the Glaive cycle ===
