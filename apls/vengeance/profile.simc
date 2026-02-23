@@ -15,20 +15,20 @@ position=front
 # Consumables disabled — no Midnight consumables in SimC yet
 flask=disabled
 
-# Generic Midnight gear — no expansion-specific enchants/gems exist yet
-head=,id=153840,ilevel=289
-neck=,id=153861,ilevel=289
-shoulder=,id=153842,ilevel=289
-back=,id=153865,ilevel=289
-chest=,id=153837,ilevel=289
-wrist=,id=153844,ilevel=289
-hands=,id=153839,ilevel=289
-waist=,id=153843,ilevel=289
-legs=,id=153841,ilevel=289
-feet=,id=153838,ilevel=289
-finger1=,id=153863,ilevel=289
-finger2=,id=153862,ilevel=289
-trinket1=,id=153860,ilevel=289
-trinket2=,id=153864,ilevel=289
-main_hand=,id=248072,ilevel=289
-off_hand=,id=248062,ilevel=289
+# Devouring Reaver tier set (4pc baseline) + DH class items
+head=devouring_reavers_intake,id=250033,ilevel=289
+neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240967/240884
+shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289
+back=devouring_reavers_drape,id=250028,ilevel=289
+chest=devouring_reavers_engine,id=250036,ilevel=289
+wrist=devouring_reavers_support_straps,id=250029,ilevel=289
+hands=devouring_reavers_essence_grips,id=250034,ilevel=289
+waist=devouring_reavers_emblem,id=250030,ilevel=289
+legs=devouring_reavers_pistons,id=250032,ilevel=289
+feet=devouring_reavers_soul_flatteners,id=250035,ilevel=289
+finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240856/240868,enchant_id=8021
+finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240874/240856,enchant_id=8021
+trinket1=ranger_captains_iridescent_insignia,id=249345,ilevel=289
+trinket2=gaze_of_the_alnseer,id=249343,ilevel=289
+main_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7979
+off_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7983
