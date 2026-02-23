@@ -1,6 +1,16 @@
-# Vengeance DH Midnight Profile — Gear and Talents
+# Vengeance DH Midnight Profile — Voidspire Raid Gear (Season 1)
 # Use with: simc apls/profile.simc <apl_file>
 # Gear-only partial — no talents (builds come from the roster)
+#
+# 4-piece Devouring Reaver's Sheathe tier set (set 1979)
+# Stat priority: Agility > Haste >= Crit > Versatility > Mastery
+#
+# Embellishments (2/2):
+#   1. Darkmoon Sigil: Hunt (id=245875) on crafted OH weapon
+#   2. Devouring Banding (id=244674) on crafted wrist
+#
+# Enchants: Midnight rank 2 throughout (TWW rank 3 fallback where no Midnight exists)
+# Gems: Deadly Peridot (Haste+Crit) + Quick Garnet (Crit+Haste), Eversong Diamond meta
 
 ptr=1
 demonhunter="VDH_Midnight"
@@ -12,26 +22,35 @@ timeofday=night
 role=tank
 position=front
 
-# Consumables disabled — no Midnight consumables in SimC yet
-flask=disabled
+# --- Midnight Consumables ---
+flask=flask_of_the_magisters_2
+potion=lights_potential_2
+food=silvermoon_parade
+augmentation=void_touched
+temporary_enchant=main_hand:thalassian_phoenix_oil_2/off_hand:thalassian_phoenix_oil_2
 
-# Gear Pipeline v2 — optimized via 4-phase screening + stat rebalancing
-# Tier: Devouring Reaver 4pc (skip shoulders for Ancient Hornswog Spaulders)
-# Stat priority: Haste > Crit > Vers > Mastery (reforge plot + scale factors)
-# Gems: 3 haste + 2 crit (Amethyst/Garnet as Deadly) for optimal H+C balance
-head=devouring_reavers_intake,id=250033,ilevel=289
-neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240967/240884
-shoulder=ancient_hornswog_spaulders,id=193725,ilevel=289
-back=devouring_reavers_drape,id=250028,ilevel=289
-chest=devouring_reavers_engine,id=250036,ilevel=289
-wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=prismatic_focusing_iris
+# --- Tier Set: Devouring Reaver's Sheathe (4pc active) ---
+head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983,enchant_id=7961
+shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289,enchant_id=7971
+chest=devouring_reavers_engine,id=250036,ilevel=289,enchant_id=7987
 hands=devouring_reavers_essence_grips,id=250034,ilevel=289
-waist=devouring_reavers_emblem,id=250030,ilevel=289
-legs=devouring_reavers_pistons,id=250032,ilevel=289
-feet=eclipse_espadrilles,id=251210,ilevel=289
-finger1=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240856/240866,enchant_id=8025
-finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240872/240858,enchant_id=8025
-trinket1=light_company_guidon,id=249344,ilevel=289
-trinket2=void_execution_mandate,id=250225,ilevel=289
-main_hand=arators_swift_remembrance,id=260423,ilevel=289,enchant_id=8039
+legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8161
+
+# --- Non-Tier Armor ---
+neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240858
+back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240874,enchant_id=7409
+wrist=,id=219334,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240858,enchant_id=7391,embellishment=devouring_banding
+waist=devouring_reavers_emblem,id=250030,ilevel=289,gem_id=240874
+feet=eclipse_espadrilles,id=251210,ilevel=289,enchant_id=8019
+
+# --- Jewelry ---
+finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240858/240874,enchant_id=8021
+finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,crafted_stats=32/36,gem_id=240858,enchant_id=7967
+
+# --- Trinkets ---
+trinket1=ranger_captains_iridescent_insignia,id=249345,ilevel=289
+trinket2=undreamt_gods_oozing_vestige,id=249805,ilevel=289
+
+# --- Weapons ---
+main_hand=emblazoned_sunglaive,id=249280,ilevel=289,enchant_id=7979
 off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt
