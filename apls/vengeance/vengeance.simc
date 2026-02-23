@@ -1,23 +1,36 @@
 input=apls/vengeance/profile.simc
 
+# === How this APL is evaluated ===
+#
+# SimC evaluates top-to-bottom each cycle. The Default list runs first: it
+# computes shared variables (fragment thresholds, target counts, CD readiness),
+# handles off-GCD maintenance (Disrupt, Infernal Strike, Demon Spikes), then
+# branches into exactly one hero tree list via run_action_list.
+#
+# Each hero tree list is a priority sequence of phases. The first action whose
+# conditions are met fires, ending that cycle. Phases are ordered so that
+# high-value windows (burst setup, empowered abilities, Meta entry) are checked
+# before routine cooldowns and fillers.
+#
 # ┌─────────────────────────────────────────────────────────────────┐
-# │ Default: variables → off-GCD maintenance → hero tree dispatch   │
+# │ Default: shared variables → off-GCD maintenance → hero branch   │
 # └──────────────┬──────────────────────────────┬───────────────────┘
-#        AR (run_action_list)            Anni (run_action_list)
+#        AR (exclusive)                    Anni (exclusive)
 # ┌──────────────┴───────────┐   ┌──────────────┴───────────────────┐
-# │ 1. Setup (trinkets/pots) │   │ 1. Setup (trinkets/pots)         │
-# │ 2. Meta entry             │   │ 2. Voidfall state machine        │
-# │ 3. Empowered cycle        │   │ 3. Meta entry sequence           │
-# │ 4. Brand window            │   │ 4. UR fishing (apex.3)           │
-# │ 5. UR fishing (apex.3)    │   │ 5. In-Meta cycling               │
-# │ 6. Cooldowns               │   │ 6. Cooldowns                     │
-# │ 7. In-Meta cycling (ST)   │   │ 7. Fillers                       │
-# │ 8. AoE (3+ targets)       │   └────────────────────────────────┘
-# │ 9. Fillers                 │
-# └────────────────────────────┘
+# │ 1. Setup (trinkets/pots) │   │ 1. Anni-only variables           │
+# │ 2. Meta entry            │   │ 2. Setup (trinkets/pots)         │
+# │ 3. Empowered cycle       │   │ 3. Voidfall building/spending    │
+# │ 4. Brand window          │   │ 4. Meta entry sequence           │
+# │ 5. UR fishing (apex.3)   │   │ 5. UR fishing (apex.3)           │
+# │ 6. Cooldowns             │   │ 6. In-Meta cycling               │
+# │ 7. In-Meta cycling (ST)  │   │ 7. Cooldowns                     │
+# │ 8. AoE (3+ targets)      │   │ 8. Fillers                       │
+# │ 9. Fillers               │   └──────────────────────────────────┘
+# └──────────────────────────┘
+#
 # Shared sub-lists: trinkets, externals, ur_fishing
-# call_action_list = try sub-list, fall through if nothing fires
-# run_action_list = branch exclusively (AR vs Anni)
+# run_action_list  — branch exclusively into one list (AR vs Anni)
+# call_action_list — try a sub-list, fall through if nothing fires
 
 # === Precombat ===
 actions.precombat=/snapshot_stats
