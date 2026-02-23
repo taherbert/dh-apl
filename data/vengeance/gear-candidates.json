@@ -318,19 +318,19 @@
         {
           "id": "signet_of_the_starved_beast",
           "label": "Signet of the Starved Beast",
-          "simc_base": "signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240856",
+          "simc_base": "signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240856/240868",
           "tags": ["raid"]
         },
         {
           "id": "bond_of_light",
           "label": "Bond of Light",
-          "simc_base": "bond_of_light,id=249369,ilevel=289,gem_id=240856",
+          "simc_base": "bond_of_light,id=249369,ilevel=289,gem_id=240856/240868",
           "tags": ["raid"]
         },
         {
           "id": "sindorei_band_of_hope",
           "label": "Sin'dorei Band of Hope",
-          "simc_base": "sindorei_band_of_hope,id=249919,ilevel=289,gem_id=240856",
+          "simc_base": "sindorei_band_of_hope,id=249919,ilevel=289,gem_id=240856/240868",
           "tags": ["raid"]
         },
         {
@@ -343,53 +343,53 @@
         {
           "id": "encroaching_shadow_signet",
           "label": "Encroaching Shadow Signet",
-          "simc_base": "encroaching_shadow_signet,id=250460,ilevel=289,gem_id=240856",
+          "simc_base": "encroaching_shadow_signet,id=250460,ilevel=289,gem_id=240856/240868",
           "tags": ["raid"]
         },
         {
           "id": "omission_of_light",
           "label": "Omission of Light",
-          "simc_base": "omission_of_light,id=251093,ilevel=289,gem_id=240856",
+          "simc_base": "omission_of_light,id=251093,ilevel=289,gem_id=240856/240868",
           "tags": ["dungeon", "set"],
           "notes": "Voidlight Bindings 2pc with Occlusion of Void — Twilight Barrage damage proc (set 1971)."
         },
         {
           "id": "occlusion_of_void",
           "label": "Occlusion of Void",
-          "simc_base": "occlusion_of_void,id=251217,ilevel=289,gem_id=240856",
+          "simc_base": "occlusion_of_void,id=251217,ilevel=289,gem_id=240856/240868",
           "tags": ["dungeon", "set"],
           "notes": "Voidlight Bindings 2pc with Omission of Light — Twilight Barrage damage proc (set 1971)."
         },
         {
           "id": "bifurcation_band",
           "label": "Bifurcation Band",
-          "simc_base": "bifurcation_band,id=251115,ilevel=289,gem_id=240856",
+          "simc_base": "bifurcation_band,id=251115,ilevel=289,gem_id=240856/240868",
           "tags": ["dungeon"]
         },
         {
           "id": "platinum_star_band",
           "label": "Platinum Star Band",
-          "simc_base": "platinum_star_band,id=193708,ilevel=289,gem_id=240856",
+          "simc_base": "platinum_star_band,id=193708,ilevel=289,gem_id=240856/240868",
           "tags": ["dungeon"]
         },
         {
           "id": "eredath_seal_of_nobility",
           "label": "Eredath Seal of Nobility",
-          "simc_base": "eredath_seal_of_nobility,id=151308,ilevel=289,gem_id=240856",
+          "simc_base": "eredath_seal_of_nobility,id=151308,ilevel=289,gem_id=240856/240868",
           "tags": ["dungeon", "set"],
           "notes": "Velen's Lament 2pc with Band of the Triumvirate — +Avoidance (defensive only, no DPS value)."
         },
         {
           "id": "band_of_the_triumvirate",
           "label": "Band of the Triumvirate",
-          "simc_base": "band_of_the_triumvirate,id=151311,ilevel=289,gem_id=240856",
+          "simc_base": "band_of_the_triumvirate,id=151311,ilevel=289,gem_id=240856/240868",
           "tags": ["dungeon", "set"],
           "notes": "Velen's Lament 2pc with Eredath Seal — +Avoidance (defensive only, no DPS value)."
         },
         {
           "id": "purloined_wedding_ring",
           "label": "Purloined Wedding Ring",
-          "simc_base": "purloined_wedding_ring,id=49812,ilevel=289,gem_id=240856",
+          "simc_base": "purloined_wedding_ring,id=49812,ilevel=289,gem_id=240856/240868",
           "tags": ["dungeon"]
         },
         {
