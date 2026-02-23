@@ -1109,16 +1109,17 @@
     "pairs": [
       { "id": "haste_crit", "label": "Haste/Crit", "crafted_stats": "32/36" },
       { "id": "crit_haste", "label": "Crit/Haste", "crafted_stats": "36/32" },
+      { "id": "haste_vers", "label": "Haste/Vers", "crafted_stats": "40/36" },
+      { "id": "crit_vers", "label": "Crit/Vers", "crafted_stats": "40/32" },
       {
         "id": "haste_mastery",
         "label": "Haste/Mastery",
-        "crafted_stats": "40/36"
+        "crafted_stats": "49/36"
       },
-      { "id": "haste_vers", "label": "Haste/Vers", "crafted_stats": "45/36" },
       {
         "id": "crit_mastery",
         "label": "Crit/Mastery",
-        "crafted_stats": "40/32"
+        "crafted_stats": "49/32"
       }
     ]
   },
