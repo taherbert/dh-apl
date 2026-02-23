@@ -1,5 +1,24 @@
 input=apls/vengeance/profile.simc
 
+# ┌─────────────────────────────────────────────────────────────────┐
+# │ Default: variables → off-GCD maintenance → hero tree dispatch   │
+# └──────────────┬──────────────────────────────┬───────────────────┘
+#        AR (run_action_list)            Anni (run_action_list)
+# ┌──────────────┴───────────┐   ┌──────────────┴───────────────────┐
+# │ 1. Setup (trinkets/pots) │   │ 1. Setup (trinkets/pots)         │
+# │ 2. Meta entry             │   │ 2. Voidfall state machine        │
+# │ 3. Empowered cycle        │   │ 3. Meta entry sequence           │
+# │ 4. Brand window            │   │ 4. UR fishing (apex.3)           │
+# │ 5. UR fishing (apex.3)    │   │ 5. In-Meta cycling               │
+# │ 6. Cooldowns               │   │ 6. Cooldowns                     │
+# │ 7. In-Meta cycling (ST)   │   │ 7. Fillers                       │
+# │ 8. AoE (3+ targets)       │   └────────────────────────────────┘
+# │ 9. Fillers                 │
+# └────────────────────────────┘
+# Shared sub-lists: trinkets, externals, ur_fishing
+# call_action_list = try sub-list, fall through if nothing fires
+# run_action_list = branch exclusively (AR vs Anni)
+
 # === Precombat ===
 actions.precombat=/snapshot_stats
 actions.precombat+=/variable,name=trinket_1_buffs,value=trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery|trinket.1.has_buff.versatility|trinket.1.has_buff.haste|trinket.1.has_buff.crit)
@@ -22,8 +41,6 @@ actions+=/variable,name=single_target,value=spell_targets.spirit_bomb=1
 actions+=/variable,name=small_aoe,value=spell_targets.spirit_bomb>=3
 # Fracture about to cap charges with room for more fragments
 actions+=/variable,name=fracture_cap_soon,value=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments<variable.spb_threshold
-# Meta chaining: hardcast available during active Meta (apex.3 only — UR procs create the window)
-actions+=/variable,name=meta_chain_ready,value=apex.3&buff.metamorphosis.up&cooldown.metamorphosis.ready&!buff.voidfall_spending.up
 # --- Dungeon awareness ---
 actions+=/variable,name=is_dungeon,value=fight_style.dungeonroute|fight_style.dungeonslice
 # Per-pull max TTD (cycling across all targets in current pull)
@@ -36,9 +53,6 @@ actions+=/variable,name=hold_for_next_pull,value=variable.is_dungeon&raid_event.
 actions+=/variable,name=cd_ready,value=!variable.is_dungeon|(variable.pull_ttd>12&!variable.hold_for_next_pull)
 # TTD guard for Meta — Anni gets lower bar (10) for UR proc windows + Voidfall resets
 actions+=/variable,name=meta_ready,value=!variable.is_dungeon|(variable.pull_ttd>(15-5*hero_tree.annihilator)&!variable.hold_for_next_pull)
-# Coordinated burst: two phases — "entering" (SpB nearly ready) and "executing" (SpB just fired, remains>20)
-# !buff.metamorphosis.up terminates burst cleanly after Meta fires off-GCD inside the burst
-actions+=/variable,name=burst_ready,value=!buff.metamorphosis.up&cooldown.metamorphosis.ready&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&variable.meta_ready&(cooldown.spirit_bomb.remains<(2*gcd.max)|cooldown.spirit_bomb.remains>20)&(cooldown.soul_carver.ready|cooldown.sigil_of_spite.ready)
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react
 actions+=/infernal_strike,use_off_gcd=1
@@ -57,30 +71,39 @@ actions.trinkets+=/use_item,name=tome_of_lights_devotion,if=buff.inner_resilienc
 
 # === UR Fishing — Consume fragments to proc Untethered Rage before Meta expires ===
 actions.ur_fishing=/spirit_bomb,if=buff.seething_anger.up&soul_fragments>=3
-actions.ur_fishing+=/spirit_bomb,if=soul_fragments>=4
-actions.ur_fishing+=/sigil_of_spite,if=soul_fragments<=2
-actions.ur_fishing+=/soul_carver,if=soul_fragments<=2
+actions.ur_fishing+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
+actions.ur_fishing+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
+actions.ur_fishing+=/soul_carver,if=soul_fragments<=2+talent.soul_sigils
 actions.ur_fishing+=/fracture
 actions.ur_fishing+=/soul_cleave,if=soul_fragments>=1
 
 # === Aldrachi Reaver ===
+# --- Phase 1: Setup ---
 actions.ar=/call_action_list,name=trinkets
 actions.ar+=/potion,use_off_gcd=1,if=((buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive)&(!variable.is_dungeon|in_boss_encounter)
 actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
+# --- Phase 2: Meta entry ---
 # UR proc Meta fires unconditionally — free proc, always positive EV even in short pulls
 actions.ar+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up
 # Brand before hardcast Meta: fire amp for entire Meta window (spare charge or AotG not imminent)
 actions.ar+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&soul_fragments>=3&variable.meta_ready&!buff.metamorphosis.up&(cooldown.fiery_brand.charges>=2|buff.art_of_the_glaive.stack<10)
 # Hardcast Meta: wait for 3+ fragments so Spirit Bomb is immediately castable on entry
 actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&soul_fragments>=3&variable.meta_ready
+# --- Phase 3: Empowered cycle ---
 actions.ar+=/call_action_list,name=ar_empowered
+# --- Phase 4: Brand window ---
 actions.ar+=/call_action_list,name=ar_brand_window,if=variable.fiery_demise_active
-# UR fishing for AR: apex.3 where Seething Anger BLP makes procs near-deterministic
+# --- Phase 5: UR fishing ---
+# apex.3 where Seething Anger BLP makes procs near-deterministic
 actions.ar+=/call_action_list,name=ur_fishing,if=variable.ur_fishing&apex.3
+# --- Phase 6: Cooldowns ---
 actions.ar+=/call_action_list,name=ar_cooldowns
+# --- Phase 7: In-Meta cycling (ST) ---
 # Meta-aware Fracture→SpB cycling (ST only — ar_aoe already handles Meta Fracture priority)
 actions.ar+=/call_action_list,name=ar_in_meta,if=buff.metamorphosis.up&!variable.ur_fishing&!variable.small_aoe
+# --- Phase 8: AoE ---
 actions.ar+=/call_action_list,name=ar_aoe,if=variable.small_aoe
+# --- Phase 9: Fillers ---
 # IA on cooldown — no state machine to disrupt
 actions.ar+=/immolation_aura,if=!variable.is_dungeon|in_combat
 # Fracture during Reaver's Mark builds Wounded Quarry physical damage accumulation
@@ -118,6 +141,7 @@ actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_f
 
 # === AR AoE — IA uptime + SBomb cycling at 3+ targets ===
 actions.ar_aoe=/immolation_aura,if=!buff.immolation_aura.up&in_combat
+# Full threshold only — AoE makes FD windows less impactful per individual SpB cast
 actions.ar_aoe+=/spirit_bomb,if=soul_fragments>=variable.spb_threshold
 # Meta Fracture generates 3 fragments, reaching SpB threshold faster
 actions.ar_aoe+=/fracture,if=buff.metamorphosis.up
@@ -147,11 +171,23 @@ actions.ar_in_meta+=/fracture
 actions.ar_in_meta+=/soul_cleave,if=soul_fragments>=1
 
 # === Annihilator ===
-actions.anni=/call_action_list,name=trinkets
+# --- Anni variables ---
+# Meta chaining: hardcast available during active Meta (apex.3 only — UR procs create the window)
+actions.anni=/variable,name=meta_chain_ready,value=apex.3&buff.metamorphosis.up&cooldown.metamorphosis.ready&!buff.voidfall_spending.up
+# Meta entry conditions: not in Meta, not in Voidfall spending, building stacks low, TTD safe
+actions.anni+=/variable,name=meta_entry,value=!buff.metamorphosis.up&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&variable.meta_ready
+# Coordinated burst: two phases — "entering" (SpB nearly ready) and "executing" (SpB just fired, remains>20)
+# meta_entry check terminates burst cleanly after Meta fires (!buff.metamorphosis.up → false)
+actions.anni+=/variable,name=burst_ready,value=variable.meta_entry&cooldown.metamorphosis.ready&(cooldown.spirit_bomb.remains<(2*gcd.max)|cooldown.spirit_bomb.remains>20)&(cooldown.soul_carver.ready|cooldown.sigil_of_spite.ready)
+# Safe to use CDs: Meta far away, already active, or SpB ready after Meta
+actions.anni+=/variable,name=hold_for_meta,value=cooldown.metamorphosis.remains<=15&!buff.metamorphosis.up&cooldown.spirit_bomb.remains<=cooldown.metamorphosis.remains
+# --- Phase 1: Setup ---
+actions.anni+=/call_action_list,name=trinkets
 actions.anni+=/potion,use_off_gcd=1,if=buff.voidfall_spending.stack=3&(!variable.is_dungeon|in_boss_encounter)
 actions.anni+=/call_action_list,name=externals,if=buff.voidfall_spending.stack=3
-# Voidfall state machine: highest priority
+# --- Phase 2: Voidfall state machine ---
 actions.anni+=/call_action_list,name=anni_voidfall
+# --- Phase 3: Meta entry sequence ---
 # UR Meta: consume immediately (all apex ranks)
 actions.anni+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up&!buff.voidfall_spending.up&variable.meta_ready
 # Meta chaining: hardcast during active Meta for a second Voidfall reset (apex.3 only)
@@ -159,30 +195,18 @@ actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_chain_ready&buff.voi
 # Coordinated burst: Brand → SpB → Meta(off-GCD) + SC/SoS in same cycle
 actions.anni+=/call_action_list,name=anni_burst,if=variable.burst_ready
 # Standalone pre-Meta SpB (burst not available — no SC/SoS or SpB far from ready)
-actions.anni+=/spirit_bomb,if=!buff.metamorphosis.up&cooldown.metamorphosis.ready&soul_fragments>=3&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&variable.meta_ready
+actions.anni+=/spirit_bomb,if=variable.meta_entry&cooldown.metamorphosis.ready&soul_fragments>=3
 # Standard Meta: fallback for non-burst entries
-actions.anni+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&(soul_fragments>=3|!apex.3|prev_gcd.1.spirit_bomb)&variable.meta_ready
-# UR fishing: last 6s of Meta (apex.3 only — Seething Anger BLP makes procs near-deterministic; lower ranks have sub-8% cumulative chance)
+actions.anni+=/metamorphosis,use_off_gcd=1,if=variable.meta_entry&(soul_fragments>=3|!apex.3|prev_gcd.1.spirit_bomb)
+# --- Phase 4: UR fishing ---
+# Last 6s of Meta (apex.3 only — Seething Anger BLP makes procs near-deterministic; lower ranks have sub-8% cumulative chance)
 actions.anni+=/call_action_list,name=ur_fishing,if=variable.ur_fishing&apex.3
+# --- Phase 5: In-Meta cycling ---
 actions.anni+=/call_action_list,name=anni_in_meta,if=buff.metamorphosis.up&!variable.ur_fishing
-# Standard CDs (all builds)
+# --- Phase 6: Cooldowns ---
 actions.anni+=/call_action_list,name=anni_cooldowns
-actions.anni+=/spirit_bomb,if=variable.spb_ready
-# Prevent Fracture charge cap
-actions.anni+=/fracture,if=variable.fracture_cap_soon
-# IA priority in AoE — Fallout proc for fragments + AoE damage
-actions.anni+=/immolation_aura,if=variable.small_aoe&(!variable.is_dungeon|in_combat)
-# Avoid Fracture during Voidfall spending to keep GCDs free for meteor-triggering spenders
-actions.anni+=/fracture,if=!buff.voidfall_spending.up
-# SoF priority in AoE — free GCD with AoE damage
-actions.anni+=/sigil_of_flame,if=variable.small_aoe
-actions.anni+=/felblade
-actions.anni+=/immolation_aura,if=!variable.is_dungeon|in_combat
-actions.anni+=/sigil_of_flame
-actions.anni+=/soul_cleave
-# Fallback Fracture during Voidfall spending
-actions.anni+=/fracture
-actions.anni+=/throw_glaive
+# --- Phase 7: Fillers ---
+actions.anni+=/call_action_list,name=anni_fillers
 
 # === Anni Burst — Coordinated Meta entry: Brand → SpB → Meta(off-GCD) + SC/SoS → SpB(reset) ===
 # Entry: SpB nearly ready or just fired, SC or SoS ready.
@@ -198,6 +222,23 @@ actions.anni_burst+=/soul_carver,if=talent.soul_carver&soul_fragments<=3&cooldow
 # SoS fallback when SC unavailable
 actions.anni_burst+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils&cooldown.spirit_bomb.remains>20&(!talent.soul_carver|!cooldown.soul_carver.ready)
 actions.anni_burst+=/fracture,if=soul_fragments<3
+
+# === Anni Fillers — Default priority with AoE awareness ===
+actions.anni_fillers=/spirit_bomb,if=variable.spb_ready
+actions.anni_fillers+=/fracture,if=variable.fracture_cap_soon
+# IA priority in AoE — Fallout proc for fragments + AoE damage
+actions.anni_fillers+=/immolation_aura,if=variable.small_aoe&(!variable.is_dungeon|in_combat)
+# Avoid Fracture during Voidfall spending to keep GCDs free for meteor-triggering spenders
+actions.anni_fillers+=/fracture,if=!buff.voidfall_spending.up
+# SoF priority in AoE — free GCD with AoE damage
+actions.anni_fillers+=/sigil_of_flame,if=variable.small_aoe
+actions.anni_fillers+=/felblade
+actions.anni_fillers+=/immolation_aura,if=!variable.is_dungeon|in_combat
+actions.anni_fillers+=/sigil_of_flame
+actions.anni_fillers+=/soul_cleave
+# Unconditional fallback — catch-all when nothing above fires
+actions.anni_fillers+=/fracture
+actions.anni_fillers+=/throw_glaive
 
 # === Anni In-Meta — Fracture-SpB cycling during Meta ===
 # Fracture generates 3 fragments during Meta — prioritize SpB cycling
@@ -218,8 +259,8 @@ actions.anni_in_meta+=/soul_carver,if=talent.soul_carver&soul_fragments<=3
 actions.anni_cooldowns=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&variable.cd_ready
 # Charred Flesh extends Brand duration with each Immolation Aura tick
 actions.anni_cooldowns+=/immolation_aura,if=talent.charred_flesh&dot.fiery_brand.ticking
-actions.anni_cooldowns+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils&variable.cd_ready&(cooldown.metamorphosis.remains>15|buff.metamorphosis.up|cooldown.spirit_bomb.remains>cooldown.metamorphosis.remains)
-actions.anni_cooldowns+=/soul_carver,if=talent.soul_carver&soul_fragments<=3&variable.cd_ready&(cooldown.metamorphosis.remains>15|buff.metamorphosis.up|cooldown.spirit_bomb.remains>cooldown.metamorphosis.remains)
+actions.anni_cooldowns+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils&variable.cd_ready&!variable.hold_for_meta
+actions.anni_cooldowns+=/soul_carver,if=talent.soul_carver&soul_fragments<=3&variable.cd_ready&!variable.hold_for_meta
 # Skip during Voidfall spending or Meta for apex.3 without Darkglare Boon
 actions.anni_cooldowns+=/fel_devastation,if=!buff.voidfall_spending.up&(!buff.metamorphosis.up|!apex.3|talent.darkglare_boon)&variable.cd_ready
 
