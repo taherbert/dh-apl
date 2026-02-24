@@ -1,0 +1,654 @@
+// Remote EC2 spot instance management for sim offloading.
+// SSH-based remote execution as drop-in replacement for local simc.
+//
+// CLI: node src/sim/remote.js start|stop|status|build-ami
+//
+// Kill switches:
+//   1. shutdown -h +N in user-data (instance self-terminates at OS level)
+//   2. Spot MaxPrice caps hourly cost (AWS terminates if price spikes)
+//   3. AWS Budget alarm at $10/month (set up via scripts/aws-setup.sh)
+
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  unlinkSync,
+  mkdirSync,
+} from "node:fs";
+import { join, basename, dirname, resolve } from "node:path";
+import { cpus, homedir } from "node:os";
+import { ROOT, config } from "../engine/startup.js";
+
+const execAsync = promisify(execFile);
+
+const STATE_PATH = join(ROOT, "results", ".remote-state.json");
+const REMOTE_DIR = "/tmp/sim";
+const REMOTE_SIMC = "/opt/simc/engine/simc";
+
+const SSH_OPTS = [
+  "-o",
+  "StrictHostKeyChecking=no",
+  "-o",
+  "UserKnownHostsFile=/dev/null",
+  "-o",
+  "ConnectTimeout=10",
+  "-o",
+  "LogLevel=ERROR",
+];
+
+function sshKeyArgs() {
+  const raw = config.remote?.sshKeyPath;
+  const keyPath = raw?.startsWith("~") ? join(homedir(), raw.slice(1)) : raw;
+  return keyPath ? ["-i", keyPath] : [];
+}
+
+function sshTarget(ip) {
+  return `${config.remote?.sshUser || "ubuntu"}@${ip}`;
+}
+
+// --- State management ---
+
+function readState() {
+  if (!existsSync(STATE_PATH)) return null;
+  try {
+    return JSON.parse(readFileSync(STATE_PATH, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+function writeState(state) {
+  mkdirSync(join(ROOT, "results"), { recursive: true });
+  writeFileSync(STATE_PATH, JSON.stringify(state, null, 2));
+}
+
+function clearState() {
+  if (existsSync(STATE_PATH)) unlinkSync(STATE_PATH);
+}
+
+async function awsCmd(args, opts = {}) {
+  const { stdout } = await execAsync("aws", args, {
+    timeout: 30000,
+    ...opts,
+  });
+  return stdout.trim();
+}
+
+async function awsJson(args, opts = {}) {
+  return JSON.parse(await awsCmd([...args, "--output", "json"], opts));
+}
+
+async function waitSsh(ip, attempts = 30) {
+  const t = sshTarget(ip);
+  const ka = sshKeyArgs();
+  for (let i = 0; i < attempts; i++) {
+    try {
+      await execAsync("ssh", [...SSH_OPTS, ...ka, t, "echo ready"], {
+        timeout: 10000,
+      });
+      return;
+    } catch {
+      await new Promise((r) => setTimeout(r, 5000));
+    }
+  }
+  throw new Error(`SSH to ${ip} timed out after ${attempts * 5}s`);
+}
+
+export function isRemoteActive() {
+  const state = readState();
+  if (!state) return false;
+  // Auto-clear stale state if shutdown timer has expired
+  const elapsed = (Date.now() - new Date(state.launchTime).getTime()) / 60000;
+  if (elapsed > state.shutdownMinutes + 5) {
+    clearState();
+    return false;
+  }
+  return true;
+}
+
+export function getSimCores() {
+  return isRemoteActive() ? config.remote?.vCpus || 96 : cpus().length;
+}
+
+// Prevents metacharacters (|, &, etc.) from being interpreted by the remote shell.
+function shellEscape(s) {
+  return "'" + s.replace(/'/g, "'\\''") + "'";
+}
+
+export async function runSimcRemote(args) {
+  const state = readState();
+  if (!state) {
+    throw new Error("No remote instance active. Run: npm run remote:start");
+  }
+
+  const t = sshTarget(state.publicIp);
+  const ka = sshKeyArgs();
+
+  // Find the .simc input file — may not be args[0] due to ptr=1 unshift
+  const simcIdx = args.findIndex((a) => a.endsWith(".simc"));
+  if (simcIdx === -1) {
+    throw new Error("No .simc file found in args");
+  }
+  let localSimcPath = args[simcIdx];
+  const remoteSimcPath = `${REMOTE_DIR}/${basename(localSimcPath)}`;
+
+  // Resolve input= directives so the uploaded file is self-contained.
+  // The remote instance doesn't have the local file tree. Dynamic import
+  // avoids circular dependency (profilesets.js imports from remote.js).
+  const { resolveInputDirectives } = await import("./profilesets.js");
+  const raw = readFileSync(localSimcPath, "utf-8");
+  const resolved = resolveInputDirectives(raw, dirname(resolve(localSimcPath)));
+  let tempSimcPath = null;
+  if (resolved !== raw) {
+    const suffix = `_remote_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    tempSimcPath = localSimcPath.replace(/\.simc$/, `${suffix}.simc`);
+    writeFileSync(tempSimcPath, resolved);
+    localSimcPath = tempSimcPath;
+  }
+
+  const jsonArg = args.find((a) => a.startsWith("json2="));
+  const localJsonPath = jsonArg ? jsonArg.split("=").slice(1).join("=") : null;
+  const remoteJsonPath = localJsonPath
+    ? `${REMOTE_DIR}/${basename(localJsonPath)}`
+    : null;
+
+  // Transform args: local paths → remote paths, add remote-only flags
+  const remoteArgs = args.map((arg, i) => {
+    if (i === simcIdx) return remoteSimcPath;
+    if (arg.startsWith("json2=") && remoteJsonPath)
+      return `json2=${remoteJsonPath}`;
+    return arg;
+  });
+  remoteArgs.push("report_progress=0");
+
+  try {
+    // SCP input up
+    await execAsync(
+      "scp",
+      [...SSH_OPTS, ...ka, localSimcPath, `${t}:${remoteSimcPath}`],
+      { timeout: 30000 },
+    );
+
+    // Execute remotely with NUMA interleaving for even memory distribution.
+    const cmd = [
+      "numactl",
+      "--interleave=all",
+      REMOTE_SIMC,
+      ...remoteArgs.map(shellEscape),
+    ].join(" ");
+    try {
+      await execAsync("ssh", [...SSH_OPTS, ...ka, t, cmd], {
+        timeout: 1800000,
+        maxBuffer: 100 * 1024 * 1024,
+      });
+    } catch (e) {
+      if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
+      throw new Error(`Remote SimC failed: ${e.message}`);
+    }
+
+    // SCP results back
+    if (localJsonPath && remoteJsonPath) {
+      await execAsync(
+        "scp",
+        [...SSH_OPTS, ...ka, `${t}:${remoteJsonPath}`, localJsonPath],
+        { timeout: 60000 },
+      );
+    }
+  } finally {
+    if (tempSimcPath) {
+      try {
+        unlinkSync(tempSimcPath);
+      } catch {}
+    }
+  }
+}
+
+async function launchInstance({ instanceType } = {}) {
+  const c = config.remote ?? {};
+  if (!c.amiId) {
+    throw new Error(
+      "config.json remote.amiId not set. Run: npm run remote:build-ami",
+    );
+  }
+
+  const region = c.region || "us-east-1";
+  const shutdownMin = c.shutdownMinutes || 45;
+
+  // Kill switch #1: OS-level self-destruct timer
+  const userData = Buffer.from(
+    `#!/bin/bash\nshutdown -h +${shutdownMin}\nmkdir -p ${REMOTE_DIR}\nchown ubuntu:ubuntu ${REMOTE_DIR}`,
+  ).toString("base64");
+
+  const launchArgs = [
+    "ec2",
+    "run-instances",
+    "--image-id",
+    c.amiId,
+    "--instance-type",
+    instanceType || c.instanceType || "c7i.24xlarge",
+    "--key-name",
+    c.keyPairName || "dh-apl",
+    // Kill switch #2: spot price ceiling
+    "--instance-market-options",
+    JSON.stringify({
+      MarketType: "spot",
+      SpotOptions: {
+        MaxPrice: c.spotMaxPrice || "1.50",
+        SpotInstanceType: "one-time",
+      },
+    }),
+    "--user-data",
+    userData,
+    "--tag-specifications",
+    JSON.stringify([
+      {
+        ResourceType: "instance",
+        Tags: [
+          { Key: "Name", Value: "dh-apl-sim" },
+          { Key: "project", Value: "dh-apl" },
+        ],
+      },
+    ]),
+    "--region",
+    region,
+    "--count",
+    "1",
+  ];
+
+  if (c.securityGroup) {
+    launchArgs.push("--security-group-ids", c.securityGroup);
+  }
+  if (c.subnetId) {
+    launchArgs.push("--subnet-id", c.subnetId);
+  }
+
+  console.log("Launching spot instance...");
+  const result = await awsJson(launchArgs);
+  const instanceId = result.Instances[0].InstanceId;
+  console.log(`Instance ${instanceId} launched. Waiting for running state...`);
+
+  try {
+    await awsCmd(
+      [
+        "ec2",
+        "wait",
+        "instance-running",
+        "--instance-ids",
+        instanceId,
+        "--region",
+        region,
+      ],
+      { timeout: 600000 },
+    );
+
+    const desc = await awsJson([
+      "ec2",
+      "describe-instances",
+      "--instance-ids",
+      instanceId,
+      "--region",
+      region,
+    ]);
+    const publicIp = desc.Reservations[0].Instances[0].PublicIpAddress;
+    if (!publicIp) {
+      throw new Error(
+        "Instance has no public IP. Check subnet/security group config.",
+      );
+    }
+
+    const state = {
+      instanceId,
+      publicIp,
+      launchTime: new Date().toISOString(),
+      amiId: c.amiId,
+      shutdownMinutes: shutdownMin,
+    };
+    writeState(state);
+
+    console.log(`Waiting for SSH at ${publicIp}...`);
+    await waitSsh(publicIp);
+
+    await execAsync(
+      "ssh",
+      [
+        ...SSH_OPTS,
+        ...sshKeyArgs(),
+        sshTarget(publicIp),
+        `mkdir -p ${REMOTE_DIR}`,
+      ],
+      { timeout: 10000 },
+    );
+
+    console.log(`\nReady: ${instanceId} (${publicIp})`);
+    console.log(`Auto-shutdown in ${shutdownMin} minutes`);
+    return state;
+  } catch (e) {
+    console.error(`Launch failed: ${e.message}. Terminating ${instanceId}...`);
+    await awsCmd([
+      "ec2",
+      "terminate-instances",
+      "--instance-ids",
+      instanceId,
+      "--region",
+      region,
+    ]).catch(() => {});
+    clearState();
+    throw e;
+  }
+}
+
+async function terminateInstance() {
+  const state = readState();
+  if (!state) {
+    console.log("No active instance.");
+    return;
+  }
+  const region = config.remote?.region || "us-east-1";
+  console.log(`Terminating ${state.instanceId}...`);
+  await awsCmd([
+    "ec2",
+    "terminate-instances",
+    "--instance-ids",
+    state.instanceId,
+    "--region",
+    region,
+  ]);
+  clearState();
+  console.log("Instance terminated.");
+}
+
+async function getStatus() {
+  const state = readState();
+  if (!state) {
+    console.log("No active instance.");
+    return null;
+  }
+
+  const region = config.remote?.region || "us-east-1";
+  try {
+    const desc = await awsJson([
+      "ec2",
+      "describe-instances",
+      "--instance-ids",
+      state.instanceId,
+      "--region",
+      region,
+    ]);
+    const inst = desc.Reservations[0]?.Instances[0];
+    if (!inst) {
+      console.log("Instance not found. Cleaning up state.");
+      clearState();
+      return null;
+    }
+
+    const awsState = inst.State.Name;
+    const elapsed = Math.round(
+      (Date.now() - new Date(state.launchTime).getTime()) / 60000,
+    );
+    const remaining = Math.max(0, state.shutdownMinutes - elapsed);
+
+    console.log(`Instance: ${state.instanceId}`);
+    console.log(`State:    ${awsState}`);
+    console.log(`IP:       ${state.publicIp}`);
+    console.log(`Elapsed:  ${elapsed} min`);
+    console.log(`Shutdown: ~${remaining} min remaining`);
+
+    if (awsState === "terminated" || awsState === "shutting-down") {
+      clearState();
+    }
+
+    return { ...state, awsState, elapsed, remaining };
+  } catch (e) {
+    console.error(`Error checking status: ${e.message}`);
+    return null;
+  }
+}
+
+async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
+  const c = config.remote ?? {};
+  const region = c.region || "us-east-1";
+
+  console.log("Finding latest Ubuntu 24.04 AMI...");
+  const baseAmi = await awsCmd([
+    "ec2",
+    "describe-images",
+    "--region",
+    region,
+    "--owners",
+    "099720109477",
+    "--filters",
+    "Name=name,Values=ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*",
+    "Name=state,Values=available",
+    "--query",
+    "sort_by(Images, &CreationDate)[-1].ImageId",
+    "--output",
+    "text",
+  ]);
+  if (!baseAmi || baseAmi === "None") {
+    throw new Error("No Ubuntu 24.04 AMI found in " + region);
+  }
+  console.log(`Base AMI: ${baseAmi}`);
+
+  // 30-min safety timer for the build instance
+  const userData = Buffer.from("#!/bin/bash\nshutdown -h +30").toString(
+    "base64",
+  );
+  const launchArgs = [
+    "ec2",
+    "run-instances",
+    "--image-id",
+    baseAmi,
+    "--instance-type",
+    buildInstanceType || c.instanceType || "c7i.24xlarge",
+    "--key-name",
+    c.keyPairName || "dh-apl",
+    ...(onDemand
+      ? []
+      : [
+          "--instance-market-options",
+          JSON.stringify({
+            MarketType: "spot",
+            SpotOptions: {
+              MaxPrice: c.spotMaxPrice || "1.50",
+              SpotInstanceType: "one-time",
+            },
+          }),
+        ]),
+    "--user-data",
+    userData,
+    "--tag-specifications",
+    JSON.stringify([
+      {
+        ResourceType: "instance",
+        Tags: [
+          { Key: "Name", Value: "dh-apl-ami-build" },
+          { Key: "project", Value: "dh-apl" },
+        ],
+      },
+    ]),
+    "--region",
+    region,
+    "--block-device-mappings",
+    JSON.stringify([
+      { DeviceName: "/dev/sda1", Ebs: { VolumeSize: 20, VolumeType: "gp3" } },
+    ]),
+    "--count",
+    "1",
+  ];
+  if (c.securityGroup) {
+    launchArgs.push("--security-group-ids", c.securityGroup);
+  }
+  if (c.subnetId) {
+    launchArgs.push("--subnet-id", c.subnetId);
+  }
+
+  console.log("Launching build instance...");
+  const result = await awsJson(launchArgs);
+  const instanceId = result.Instances[0].InstanceId;
+
+  try {
+    await awsCmd(
+      [
+        "ec2",
+        "wait",
+        "instance-running",
+        "--instance-ids",
+        instanceId,
+        "--region",
+        region,
+      ],
+      { timeout: 600000 },
+    );
+
+    const desc = await awsJson([
+      "ec2",
+      "describe-instances",
+      "--instance-ids",
+      instanceId,
+      "--region",
+      region,
+    ]);
+    const publicIp = desc.Reservations[0].Instances[0].PublicIpAddress;
+    if (!publicIp) throw new Error("No public IP assigned to build instance");
+
+    console.log(`Build instance ready at ${publicIp}`);
+    await waitSsh(publicIp);
+
+    // Resolve repo URL and branch HEAD from the local simc checkout
+    const { stdout: repoUrl } = await execAsync(
+      "git",
+      ["remote", "get-url", "origin"],
+      { cwd: config.simc.dir },
+    );
+    const { stdout: commitRaw } = await execAsync(
+      "git",
+      ["rev-parse", "--short", `origin/${config.simc.branch}`],
+      { cwd: config.simc.dir },
+    );
+    const simcCommit = commitRaw.trim();
+
+    // Full optimization build: -O3, -ffast-math, -march=native (AVX-512 on c7i),
+    // -flto=auto, -DNDEBUG, no networking code
+    const buildCmds = [
+      "sudo apt-get update -qq",
+      "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq build-essential git numactl",
+      `git clone --depth 1 --branch ${config.simc.branch} ${repoUrl.trim()} /tmp/simc-build`,
+      "cd /tmp/simc-build/engine && make optimized LTO_AUTO=1 SC_NO_NETWORKING=1 -j$(nproc)",
+      "sudo mkdir -p /opt/simc/engine",
+      "sudo cp /tmp/simc-build/engine/simc /opt/simc/engine/simc",
+      "mkdir -p /tmp/sim",
+      "rm -rf /tmp/simc-build",
+    ];
+
+    const t = sshTarget(publicIp);
+    const ka = sshKeyArgs();
+    for (const cmd of buildCmds) {
+      console.log(`  ${cmd.length > 80 ? cmd.slice(0, 77) + "..." : cmd}`);
+      await execAsync("ssh", [...SSH_OPTS, ...ka, t, cmd], {
+        timeout: 600000,
+        maxBuffer: 50 * 1024 * 1024,
+      });
+    }
+
+    console.log("Creating AMI...");
+    const amiName = `simc-${config.simc.branch}-${simcCommit}-${Date.now()}`;
+    const ami = await awsJson([
+      "ec2",
+      "create-image",
+      "--instance-id",
+      instanceId,
+      "--name",
+      amiName,
+      "--description",
+      `SimC ${config.simc.branch} @ ${simcCommit}`,
+      "--tag-specifications",
+      JSON.stringify([
+        {
+          ResourceType: "image",
+          Tags: [
+            { Key: "project", Value: "dh-apl" },
+            { Key: "simc-commit", Value: simcCommit },
+            { Key: "simc-branch", Value: config.simc.branch },
+          ],
+        },
+      ]),
+      "--region",
+      region,
+    ]);
+
+    const amiId = ami.ImageId;
+    console.log(`Waiting for AMI ${amiId}...`);
+    await awsCmd(
+      [
+        "ec2",
+        "wait",
+        "image-available",
+        "--image-ids",
+        amiId,
+        "--region",
+        region,
+      ],
+      { timeout: 900000 },
+    );
+
+    console.log(`\nAMI ready: ${amiId}`);
+    console.log(`Update config.json remote.amiId to "${amiId}"`);
+    return amiId;
+  } finally {
+    console.log(`Terminating build instance ${instanceId}...`);
+    await awsCmd([
+      "ec2",
+      "terminate-instances",
+      "--instance-ids",
+      instanceId,
+      "--region",
+      region,
+    ]).catch(() => {});
+  }
+}
+
+// --- CLI ---
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const cmd = process.argv[2];
+
+  if (!cmd || !["start", "stop", "status", "build-ami"].includes(cmd)) {
+    console.log("Usage: node src/sim/remote.js <start|stop|status|build-ami>");
+    console.log("");
+    console.log("Commands:");
+    console.log("  start      Launch a spot instance for remote sims");
+    console.log("  stop       Terminate the active instance");
+    console.log("  status     Show instance state and time remaining");
+    console.log("  build-ami  Build a SimC AMI from current simc branch");
+    process.exit(1);
+  }
+
+  try {
+    switch (cmd) {
+      case "start":
+        await launchInstance({
+          instanceType: process.argv[3] || undefined,
+        });
+        break;
+      case "stop":
+        await terminateInstance();
+        break;
+      case "status":
+        await getStatus();
+        break;
+      case "build-ami": {
+        const extraArgs = process.argv.slice(3);
+        await buildAmi({
+          buildInstanceType: extraArgs.find((a) => !a.startsWith("--")),
+          onDemand: extraArgs.includes("--on-demand"),
+        });
+        break;
+      }
+    }
+  } catch (e) {
+    console.error(`Error: ${e.message}`);
+    process.exit(1);
+  }
+}

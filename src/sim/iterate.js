@@ -23,7 +23,7 @@ import {
   unlinkSync,
 } from "node:fs";
 import { join, dirname, basename, resolve, relative } from "node:path";
-import { cpus } from "node:os";
+import { getSimCores } from "./remote.js";
 import { runWorkflow } from "./workflow.js";
 import {
   SCENARIOS,
@@ -501,7 +501,7 @@ async function runComparison(candidatePath, tier = "standard") {
   const simcContent = buildProfilesetContent(candidatePath);
 
   // Parallel: each scenario gets cores/3 threads
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
@@ -664,7 +664,7 @@ const MIN_THREADS_PER_SIM = 4;
 
 // Calculate optimal concurrency and thread allocation for sim batching.
 function simConcurrency(simCount) {
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const maxConcurrency = Math.max(
     1,
     Math.floor(totalCores / MIN_THREADS_PER_SIM),
@@ -704,7 +704,7 @@ async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
     return runMultiBuildBaselineProfileset(aplPath, roster, tierConfig);
   }
 
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
@@ -2133,7 +2133,7 @@ async function cmdPatternAnalyze() {
   // Try worker-based parallel processing (2+ work units, 2+ CPUs)
   const workerPath = new URL("../analysis/pattern-worker.js", import.meta.url)
     .pathname;
-  const poolSize = Math.min(cpus().length - 1, 4, totalUnits);
+  const poolSize = Math.min(getSimCores() - 1, 4, totalUnits);
   let parallelized = false;
 
   if (poolSize > 1 && workUnits.length > 1) {

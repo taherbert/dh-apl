@@ -1,7 +1,7 @@
 import { execFileSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { cpus } from "node:os";
+import { isRemoteActive, runSimcRemote, getSimCores } from "./remote.js";
 import { basename, resolve } from "node:path";
 
 import {
@@ -16,10 +16,13 @@ import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, resultsFile } from "../engine/paths.js";
 
 const SIMC = SIMC_BIN;
-const TOTAL_CORES = cpus().length;
-
 export { SCENARIOS, SCENARIO_WEIGHTS };
-export const SIM_DEFAULTS = { threads: TOTAL_CORES, ..._SIM_DEFAULTS };
+export const SIM_DEFAULTS = {
+  ..._SIM_DEFAULTS,
+  get threads() {
+    return getSimCores();
+  },
+};
 
 export function readRouteFile(routePath) {
   const resolved = resolve(routePath);
@@ -68,13 +71,14 @@ export function prepareSim(
 
   const overrides = buildOverrides(scenario, simOverrides);
   const extras = extraOverrides ? extraOverrides.split(" ") : [];
+  const threads = simOverrides.threads ?? SIM_DEFAULTS.threads;
 
   const args = [
     profilePath,
     ...overrides,
     ...extras,
     `json2=${jsonPath}`,
-    `threads=${simOverrides.threads || SIM_DEFAULTS.threads}`,
+    `threads=${threads}`,
     "buff_uptime_timeline=0",
     "buff_stack_uptime_timeline=0",
   ];
@@ -123,11 +127,15 @@ export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
 
   console.log(`Running ${config.name}...`);
   try {
-    await execFileAsync(SIMC, args, {
-      encoding: "utf-8",
-      maxBuffer: 50 * 1024 * 1024,
-      timeout: 300000,
-    });
+    if (isRemoteActive()) {
+      await runSimcRemote(args);
+    } else {
+      await execFileAsync(SIMC, args, {
+        encoding: "utf-8",
+        maxBuffer: 50 * 1024 * 1024,
+        timeout: 300000,
+      });
+    }
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-5).join("\n"));
     throw new Error(`SimC failed: ${e.message}`);
@@ -272,7 +280,7 @@ export async function runMultiActorAsync(
     simcPath,
     ...overrides,
     `json2=${jsonPath}`,
-    `threads=${merged.threads || TOTAL_CORES}`,
+    `threads=${merged.threads}`,
     "report_details=0",
     "buff_uptime_timeline=0",
     "buff_stack_uptime_timeline=0",
@@ -280,10 +288,14 @@ export async function runMultiActorAsync(
 
   console.log(`Running multi-actor ${config.name} (${label})...`);
   try {
-    await execFileAsync(SIMC, args, {
-      maxBuffer: 100 * 1024 * 1024,
-      timeout: 600000,
-    });
+    if (isRemoteActive()) {
+      await runSimcRemote(args);
+    } else {
+      await execFileAsync(SIMC, args, {
+        maxBuffer: 100 * 1024 * 1024,
+        timeout: 600000,
+      });
+    }
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
     throw new Error(`SimC multi-actor failed: ${e.message}`);
