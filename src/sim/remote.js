@@ -48,6 +48,70 @@ function sshTarget(ip) {
   return `${config.remote?.sshUser || "ubuntu"}@${ip}`;
 }
 
+// --- SimC version tracking ---
+
+async function getLocalSimcCommit({ fetch = false } = {}) {
+  if (fetch) {
+    await execAsync("git", ["fetch", "origin", config.simc.branch], {
+      cwd: config.simc.dir,
+      timeout: 30000,
+    });
+  }
+  const { stdout } = await execAsync(
+    "git",
+    ["rev-parse", "--short", `origin/${config.simc.branch}`],
+    { cwd: config.simc.dir },
+  );
+  return stdout.trim();
+}
+
+async function getAmiSimcCommit(amiId) {
+  const region = config.remote?.region || "us-east-1";
+  const desc = await awsJson([
+    "ec2",
+    "describe-images",
+    "--image-ids",
+    amiId,
+    "--region",
+    region,
+  ]);
+  const tags = desc.Images?.[0]?.Tags || [];
+  return tags.find((t) => t.Key === "simc-commit")?.Value || null;
+}
+
+function updateConfigAmiId(amiId) {
+  const configPath = join(ROOT, "config.json");
+  const raw = JSON.parse(readFileSync(configPath, "utf-8"));
+  raw.remote.amiId = amiId;
+  writeFileSync(configPath, JSON.stringify(raw, null, 2) + "\n");
+  config.remote.amiId = amiId;
+}
+
+async function ensureAmiCurrent({ onDemand, buildInstanceType } = {}) {
+  const c = config.remote ?? {};
+  console.log("Checking simc version...");
+  const localCommit = await getLocalSimcCommit({ fetch: true });
+
+  if (!c.amiId) {
+    console.log(`No AMI configured. Building for simc @ ${localCommit}...`);
+    const amiId = await buildAmi({ onDemand, buildInstanceType });
+    updateConfigAmiId(amiId);
+    return;
+  }
+
+  const amiCommit = await getAmiSimcCommit(c.amiId);
+  if (amiCommit === localCommit) {
+    console.log(`AMI simc commit (${amiCommit}) matches local. OK.`);
+    return;
+  }
+
+  console.log(
+    `AMI simc commit (${amiCommit}) != local (${localCommit}). Rebuilding...`,
+  );
+  const amiId = await buildAmi({ onDemand, buildInstanceType });
+  updateConfigAmiId(amiId);
+}
+
 // --- State management ---
 
 function readState() {
@@ -206,13 +270,10 @@ export async function runSimcRemote(args) {
 }
 
 async function launchInstance({ instanceType, onDemand } = {}) {
-  const c = config.remote ?? {};
-  if (!c.amiId) {
-    throw new Error(
-      "config.json remote.amiId not set. Run: npm run remote:build-ami",
-    );
-  }
+  // Ensure AMI matches local simc before launching
+  await ensureAmiCurrent({ onDemand });
 
+  const c = config.remote ?? {};
   const region = c.region || "us-east-1";
   const shutdownMin = c.shutdownMinutes || 45;
 
@@ -599,7 +660,8 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
     );
 
     console.log(`\nAMI ready: ${amiId}`);
-    console.log(`Update config.json remote.amiId to "${amiId}"`);
+    updateConfigAmiId(amiId);
+    console.log(`Updated config.json remote.amiId → ${amiId}`);
     return amiId;
   } finally {
     console.log(`Terminating build instance ${instanceId}...`);
