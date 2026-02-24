@@ -509,9 +509,9 @@
           "tags": ["dungeon"]
         },
         {
-          "id": "potion_stained_cloak",
+          "id": "potionstained_cloak",
           "label": "Potion-Stained Cloak",
-          "simc": "back=potion_stained_cloak,id=193712,ilevel=289",
+          "simc": "back=potionstained_cloak,id=193712,ilevel=289",
           "tags": ["dungeon"]
         },
         {
@@ -635,9 +635,9 @@
     "feet": {
       "candidates": [
         {
-          "id": "void_claimed_shinkickers",
+          "id": "voidclaimed_shinkickers",
           "label": "Void-Claimed Shinkickers",
-          "simc": "feet=void_claimed_shinkickers,id=249334,ilevel=289",
+          "simc": "feet=voidclaimed_shinkickers,id=249334,ilevel=289",
           "tags": ["raid"]
         },
         {
