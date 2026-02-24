@@ -34,8 +34,8 @@
       }
     },
     "scenarioWeights": {
-      "st": 0.35,
-      "dungeon_route": 0.25,
+      "st": 0.45,
+      "dungeon_route": 0.15,
       "small_aoe": 0.25,
       "big_aoe": 0.15
     },
