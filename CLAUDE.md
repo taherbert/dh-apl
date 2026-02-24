@@ -106,7 +106,7 @@ node src/sim/iterate.js compare <candidate>  # Test candidate APL
 
 - APL files use `.simc` extension.
 - Use action list names that describe purpose (e.g., `defensives`, `cooldowns`, `aoe`, `single_target`).
-- Comment non-obvious conditions with `#` lines explaining the "why."
+- Comment non-obvious conditions with `#` lines explaining the "why." **APL comments must be plain ASCII and never consecutive.** No em dashes (`—`), arrows (`→`), curly quotes, double quotes, or decorative characters like `===` / `---`. Use `-` instead of `—`, `->` instead of `→`. Never place two `#` comment lines in a row — `ConvertAPL.py` concatenates consecutive comments into a single C++ string literal, producing garbled output. Each action gets at most one comment line directly before it.
 - Keep the default action list short — delegate to sub-lists via `run_action_list` (mutually exclusive branches) or `call_action_list` (optional sub-routines that fall through).
 - **Never `git add -f` generated outputs.** The `results/` gitignore is intentional — only `SCHEMA.md` is tracked. Analysis JSONs, showcase HTML, iteration reports, and session state all regenerate on demand. If a file is gitignored, it stays gitignored.
 - **Always test against ALL builds.** The APL is shared by all talent builds. Verify the build roster covers all templates: `npm run roster show`. The roster is generated via `npm run roster generate` (cluster-based from SPEC_CONFIG). `iterate.js` requires the roster and refuses single-build mode.
