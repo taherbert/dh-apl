@@ -423,7 +423,6 @@ function generateHtml(data) {
     renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
-    renderOptimizationJourney(iterations),
     renderFooter(),
   ];
 
