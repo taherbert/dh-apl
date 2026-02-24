@@ -205,7 +205,7 @@ export async function runSimcRemote(args) {
   }
 }
 
-async function launchInstance({ instanceType } = {}) {
+async function launchInstance({ instanceType, onDemand } = {}) {
   const c = config.remote ?? {};
   if (!c.amiId) {
     throw new Error(
@@ -230,15 +230,6 @@ async function launchInstance({ instanceType } = {}) {
     instanceType || c.instanceType || "c7i.24xlarge",
     "--key-name",
     c.keyPairName || "dh-apl",
-    // Kill switch #2: spot price ceiling
-    "--instance-market-options",
-    JSON.stringify({
-      MarketType: "spot",
-      SpotOptions: {
-        MaxPrice: c.spotMaxPrice || "1.50",
-        SpotInstanceType: "one-time",
-      },
-    }),
     "--user-data",
     userData,
     "--tag-specifications",
@@ -257,6 +248,20 @@ async function launchInstance({ instanceType } = {}) {
     "1",
   ];
 
+  // Kill switch #2: spot price ceiling (skip for on-demand)
+  if (!onDemand) {
+    launchArgs.push(
+      "--instance-market-options",
+      JSON.stringify({
+        MarketType: "spot",
+        SpotOptions: {
+          MaxPrice: c.spotMaxPrice || "1.50",
+          SpotInstanceType: "one-time",
+        },
+      }),
+    );
+  }
+
   if (c.securityGroup) {
     launchArgs.push("--security-group-ids", c.securityGroup);
   }
@@ -264,7 +269,7 @@ async function launchInstance({ instanceType } = {}) {
     launchArgs.push("--subnet-id", c.subnetId);
   }
 
-  console.log("Launching spot instance...");
+  console.log(`Launching ${onDemand ? "on-demand" : "spot"} instance...`);
   const result = await awsJson(launchArgs);
   const instanceId = result.Instances[0].InstanceId;
   console.log(`Instance ${instanceId} launched. Waiting for running state...`);
@@ -627,11 +632,14 @@ if (import.meta.url === `file://${process.argv[1]}`) {
 
   try {
     switch (cmd) {
-      case "start":
+      case "start": {
+        const startArgs = process.argv.slice(3);
         await launchInstance({
-          instanceType: process.argv[3] || undefined,
+          instanceType: startArgs.find((a) => !a.startsWith("--")),
+          onDemand: startArgs.includes("--on-demand"),
         });
         break;
+      }
       case "stop":
         await terminateInstance();
         break;
