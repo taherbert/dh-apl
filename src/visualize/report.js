@@ -2248,7 +2248,6 @@ summary:hover { color: var(--accent); }
 .tc-bar-track {
   position: relative;
   height: 22px;
-  background: var(--border-subtle);
   border-radius: 4px;
   overflow: hidden;
 }
