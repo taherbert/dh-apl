@@ -131,13 +131,14 @@ function loadGearCandidates() {
 
 // --- v2 helpers: build screenable slot lists ---
 
-// For paired slots, create a temporary simc line with the first slot prefix for screening
+// For paired slots, screen slot 0 only with slot 1 cleared so scores
+// are comparable to pair scores (which also have both slots defined).
 function pairedSlotScreenCandidates(pairedData) {
-  const slotPrefix = pairedData.slots[0];
+  const [slot0, slot1] = pairedData.slots;
   return pairedData.candidates.map((c) => ({
     id: c.id,
     label: c.label,
-    simc: `${slotPrefix}=${c.simc_base}`,
+    overrides: [`${slot0}=${c.simc_base}`, `${slot1}=`],
     tags: c.tags,
   }));
 }
@@ -183,19 +184,8 @@ function getRepresentativeBuilds() {
     process.exit(1);
   }
 
-  // Pick top build from each hero tree (roster is sorted by weighted DESC)
-  const arBuild = roster.find((b) => b.heroTree === "aldrachi_reaver");
-  const anniBuild = roster.find((b) => b.heroTree !== "aldrachi_reaver");
-
-  const builds = [];
-  if (arBuild) builds.push(arBuild);
-  if (anniBuild) builds.push(anniBuild);
-
-  if (builds.length === 0) {
-    builds.push(...roster.slice(0, 2));
-  }
-
-  return builds;
+  // Use the single best build (roster is sorted by weighted DESC)
+  return [roster[0]];
 }
 
 // --- Profile path resolution ---
@@ -246,7 +236,8 @@ function checkAplWarnings(candidates, slot) {
 
   for (const c of candidates) {
     if (!c.tags?.includes("on-use")) continue;
-    const simcName = c.simc.split("=")[1]?.split(",")[0];
+    const simcLine = c.overrides?.[0] ?? c.simc;
+    const simcName = simcLine?.split("=")[1]?.split(",")[0];
     if (!simcName) continue;
     if (
       !aplContent.includes(simcName) &&
@@ -271,7 +262,7 @@ async function screenSlot(slot, candidates, gearData, fidelityTier, builds) {
 
   const variants = candidates.map((c) => ({
     name: c.id,
-    overrides: [c.simc],
+    overrides: c.overrides ?? [c.simc],
   }));
 
   if (variants.length === 0) {
@@ -1088,6 +1079,17 @@ function cmdStatus() {
   } else {
     console.log("  not started");
   }
+
+  // Trinket chart
+  const chartState = getSessionState("gear_trinket_chart");
+  console.log("\nTrinket Chart:");
+  if (chartState) {
+    console.log(
+      `  ${chartState.trinkets} trinkets x ${chartState.ilvlTiers.join("/")} (${chartState.fidelity}, ${chartState.timestamp})`,
+    );
+  } else {
+    console.log("  not started");
+  }
 }
 
 // --- CLI: results ---
@@ -1243,6 +1245,198 @@ function cmdExport() {
   }
 }
 
+// --- CLI: trinket-chart ---
+
+function swapIlevel(simcBase, ilvl) {
+  return simcBase.replace(/ilevel=\d+/, `ilevel=${ilvl}`);
+}
+
+function aggregateIlvlResults(results, candidates) {
+  // Key: candidateId_ilvlN → { scenarioDps: { scenario: [dps...] } }
+  const byKey = new Map();
+
+  for (const { scenario, result } of results) {
+    for (const variant of result.variants) {
+      // Strip build hash prefix: "ab12cd34_trinketid_ilvl289" → "trinketid_ilvl289"
+      const underscoreIdx = variant.name.indexOf("_");
+      const key =
+        underscoreIdx >= 0
+          ? variant.name.slice(underscoreIdx + 1)
+          : variant.name;
+
+      if (!byKey.has(key)) byKey.set(key, { scenarioDps: {} });
+      const entry = byKey.get(key);
+      if (!entry.scenarioDps[scenario]) entry.scenarioDps[scenario] = [];
+      entry.scenarioDps[scenario].push(variant.dps);
+    }
+  }
+
+  const candidateMap = new Map(candidates.map((c) => [c.id, c]));
+  const rows = [];
+
+  for (const [key, data] of byKey) {
+    // Parse "trinketid_ilvlN" — split on last "_ilvl"
+    const ilvlMatch = key.match(/^(.+)_ilvl(\d+)$/);
+    if (!ilvlMatch) continue;
+
+    const [, candidateId, ilvlStr] = ilvlMatch;
+    const ilvl = parseInt(ilvlStr);
+    const candidate = candidateMap.get(candidateId);
+
+    const avgScenarioDps = {};
+    for (const [scenario, dpsValues] of Object.entries(data.scenarioDps)) {
+      avgScenarioDps[scenario] =
+        dpsValues.reduce((a, b) => a + b, 0) / dpsValues.length;
+    }
+
+    let weighted = 0;
+    for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+      weighted += (avgScenarioDps[scenario] || 0) * weight;
+    }
+
+    rows.push({
+      candidate_id: candidateId,
+      label: candidate?.label || candidateId,
+      ilvl,
+      dps_st: avgScenarioDps.st || 0,
+      dps_dungeon_route: avgScenarioDps.dungeon_route || 0,
+      dps_small_aoe: avgScenarioDps.small_aoe || 0,
+      dps_big_aoe: avgScenarioDps.big_aoe || 0,
+      weighted,
+    });
+  }
+
+  return rows;
+}
+
+function saveGearIlvlResults(rows, fidelity) {
+  const db = getDb();
+  const spec = getSpecName();
+  const stmt = db.prepare(`
+    INSERT INTO gear_ilvl_results (spec, candidate_id, label, ilvl, dps_st, dps_dungeon_route, dps_small_aoe, dps_big_aoe, weighted, fidelity)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  withTransaction(() => {
+    for (const r of rows) {
+      stmt.run(
+        spec,
+        r.candidate_id,
+        r.label,
+        r.ilvl,
+        r.dps_st,
+        r.dps_dungeon_route,
+        r.dps_small_aoe,
+        r.dps_big_aoe,
+        r.weighted,
+        fidelity,
+      );
+    }
+  });
+}
+
+function clearGearIlvlResults() {
+  const db = getDb();
+  const spec = getSpecName();
+  db.prepare("DELETE FROM gear_ilvl_results WHERE spec = ?").run(spec);
+}
+
+async function cmdTrinketChart(args) {
+  const { values } = parseArgs({
+    args,
+    options: {
+      fidelity: { type: "string", default: "quick" },
+    },
+    strict: false,
+  });
+
+  const fidelity = values.fidelity;
+  const gearData = loadGearCandidates();
+  const rawTiers = gearData.ilvl_tiers || [237, 250, 263, 276, 289];
+  const ilvlTiers = rawTiers.map((t) => (typeof t === "object" ? t.ilvl : t));
+  const trinketCandidates = gearData.paired_slots?.trinkets?.candidates || [];
+
+  if (trinketCandidates.length === 0) {
+    console.log("No trinket candidates in gear-candidates.json.");
+    return;
+  }
+
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+
+  // Generate all (candidate, ilvl) variants
+  const variants = [];
+  for (const c of trinketCandidates) {
+    for (const ilvl of ilvlTiers) {
+      variants.push({
+        name: `${c.id}_ilvl${ilvl}`,
+        overrides: [`trinket1=${swapIlevel(c.simc_base, ilvl)}`],
+      });
+    }
+  }
+
+  const scenarioCount = Object.keys(SCENARIOS).length;
+  console.log(
+    `\nTrinket chart: ${trinketCandidates.length} trinkets x ${ilvlTiers.length} ilvl tiers = ${variants.length} variants`,
+  );
+  console.log(
+    `Running ${variants.length * builds.length * scenarioCount} sims (${fidelity} fidelity)...\n`,
+  );
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_trinket_chart",
+  );
+
+  const aggregated = aggregateIlvlResults(results, trinketCandidates);
+
+  clearGearIlvlResults();
+  saveGearIlvlResults(aggregated, fidelity);
+
+  // Print summary sorted by highest-ilvl DPS
+  const highestIlvl = ilvlTiers.at(-1);
+  const byCandidate = new Map();
+  for (const r of aggregated) {
+    if (!byCandidate.has(r.candidate_id)) byCandidate.set(r.candidate_id, {});
+    byCandidate.get(r.candidate_id)[r.ilvl] = r.weighted;
+  }
+  const sorted = [...byCandidate.entries()].sort(
+    (a, b) => (b[1][highestIlvl] || 0) - (a[1][highestIlvl] || 0),
+  );
+
+  console.log(`\n=== Trinket Chart Results ===`);
+  console.log(
+    `${"Rank".padStart(4)}  ${"Trinket".padEnd(40)} ${ilvlTiers.map((t) => String(t).padStart(10)).join("")}`,
+  );
+  console.log("-".repeat(4 + 2 + 40 + ilvlTiers.length * 10));
+
+  for (let i = 0; i < sorted.length; i++) {
+    const [id, ilvlDps] = sorted[i];
+    const label = trinketCandidates.find((c) => c.id === id)?.label || id;
+    const vals = ilvlTiers
+      .map((t) =>
+        Math.round(ilvlDps[t] || 0)
+          .toLocaleString()
+          .padStart(10),
+      )
+      .join("");
+    console.log(`${String(i + 1).padStart(4)}  ${label.padEnd(40)} ${vals}`);
+  }
+
+  setSessionState("gear_trinket_chart", {
+    trinkets: trinketCandidates.length,
+    ilvlTiers,
+    fidelity,
+    timestamp: new Date().toISOString(),
+  });
+
+  console.log(
+    `\nSaved ${aggregated.length} results to DB (${trinketCandidates.length} trinkets x ${ilvlTiers.length} ilvl tiers).`,
+  );
+}
+
 // --- CLI dispatch ---
 
 await initSpec(parseSpecArg());
@@ -1282,6 +1476,9 @@ switch (cmd) {
   case "export":
     cmdExport();
     break;
+  case "trinket-chart":
+    await cmdTrinketChart(cleanArgs);
+    break;
   default:
     console.log(`Usage: node src/sim/gear.js <command> [options]
 
@@ -1295,6 +1492,7 @@ Commands:
   status          Show pipeline progress
   results         Show stored results (--slot X --phase N)
   export          Export best gear as SimC overrides
+  trinket-chart   Sim all trinkets at multiple ilvl tiers for chart visualization
 
 Options:
   --spec X        Spec name (or SPEC env var)

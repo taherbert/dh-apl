@@ -21,7 +21,7 @@ import {
 
 // --- Schema ---
 
-const SCHEMA_VERSION = 9;
+const SCHEMA_VERSION = 10;
 
 const SCHEMA = `
 -- ═══════════════════════════════════════════════════════════
@@ -245,6 +245,23 @@ CREATE TABLE IF NOT EXISTS gear_results (
 CREATE INDEX IF NOT EXISTS idx_gear_results_spec_phase ON gear_results(spec, phase);
 CREATE INDEX IF NOT EXISTS idx_gear_results_spec_slot ON gear_results(spec, slot);
 
+CREATE TABLE IF NOT EXISTS gear_ilvl_results (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  spec TEXT NOT NULL DEFAULT '',
+  candidate_id TEXT NOT NULL,
+  label TEXT,
+  ilvl INTEGER NOT NULL,
+  dps_st REAL,
+  dps_dungeon_route REAL,
+  dps_small_aoe REAL,
+  dps_big_aoe REAL,
+  weighted REAL,
+  fidelity TEXT,
+  created_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_gear_ilvl_spec ON gear_ilvl_results(spec);
+
 -- ═══════════════════════════════════════════════════════════
 -- METADATA
 -- ═══════════════════════════════════════════════════════════
@@ -405,6 +422,7 @@ export function getDb(spec) {
       }
     }
     // Schema v8 → v9: gear_results table added to DDL (no data migration needed)
+    // Schema v9 → v10: gear_ilvl_results table added to DDL (no data migration needed)
     _db
       .prepare("UPDATE schema_info SET value = ? WHERE key = 'version'")
       .run(String(SCHEMA_VERSION));
@@ -1754,6 +1772,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
       ["Cluster synergies", "cluster_synergies"],
       ["Tension points", "tension_points"],
       ["Gear results", "gear_results"],
+      ["Gear ilvl chart", "gear_ilvl_results"],
     ];
     console.log(`Database: ${resultsFile("theorycraft.db")}\n`);
     for (const [label, table] of tables) {

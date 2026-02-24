@@ -17,7 +17,7 @@ import {
   initSpec,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import { resultsDir, aplsDir } from "../engine/paths.js";
+import { resultsDir, aplsDir, dataFile, getSpecName } from "../engine/paths.js";
 import { loadRoster } from "../sim/build-roster.js";
 import {
   generateRosterProfilesetContent,
@@ -124,6 +124,57 @@ function loadReportData(roster) {
   const apexBuilds = deriveApexBuilds(builds);
 
   return { builds, iterations, apexBuilds };
+}
+
+function loadTrinketData() {
+  const db = getDb();
+  const spec = getSpecName();
+
+  const phase1 = db
+    .prepare(
+      "SELECT * FROM gear_results WHERE spec = ? AND phase = 1 AND slot = 'trinkets' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
+    )
+    .all(spec);
+
+  const phase2 = db
+    .prepare(
+      "SELECT * FROM gear_results WHERE spec = ? AND phase = 2 AND combination_type = 'trinkets' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
+    )
+    .all(spec);
+
+  const ilvlRows = db
+    .prepare(
+      "SELECT * FROM gear_ilvl_results WHERE spec = ? ORDER BY candidate_id, ilvl ASC",
+    )
+    .all(spec);
+
+  if (phase1.length === 0 && phase2.length === 0 && ilvlRows.length === 0)
+    return null;
+
+  const { tagMap, ilvlTierConfig } = loadTrinketTagMap();
+  return { phase1, phase2, ilvlRows, tagMap, ilvlTierConfig };
+}
+
+function loadTrinketTagMap() {
+  const candidatePath = dataFile("gear-candidates.json");
+  if (!existsSync(candidatePath)) return { tagMap: {}, ilvlTierConfig: null };
+
+  try {
+    const gearData = JSON.parse(readFileSync(candidatePath, "utf-8"));
+    const candidates = gearData.paired_slots?.trinkets?.candidates || [];
+    const tagMap = Object.fromEntries(
+      candidates.map((c) => [c.id, { label: c.label, tags: c.tags || [] }]),
+    );
+    const rawTiers = gearData.ilvl_tiers;
+    const ilvlTierConfig = rawTiers?.length
+      ? rawTiers.map((t) =>
+          typeof t === "object" ? t : { ilvl: t, track: String(t) },
+        )
+      : null;
+    return { tagMap, ilvlTierConfig };
+  } catch {
+    return { tagMap: {}, ilvlTierConfig: null };
+  }
 }
 
 function loadChangelog() {
@@ -405,6 +456,7 @@ function generateHtml(data) {
     apexBuilds,
     defensiveTalentCosts,
     heroTrees,
+    trinketData,
   } = data;
   const displaySpec = specName
     .replace(/_/g, " ")
@@ -422,6 +474,7 @@ function generateHtml(data) {
     renderHeroShowcase(builds, heroTrees),
     renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
+    renderTrinketRankings(trinketData),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
     renderFooter(),
   ];
@@ -807,6 +860,254 @@ function renderBuildRankings(builds, heroTrees) {
     </table>
   </div>
 </section>`;
+}
+
+const TAG_CLASSES = {
+  "on-use": "trinket-tag--use",
+  passive: "trinket-tag--passive",
+  raid: "trinket-tag--raid",
+  dungeon: "trinket-tag--dungeon",
+  crafted: "trinket-tag--crafted",
+};
+
+function renderTagBadges(tags) {
+  if (!tags?.length) return "";
+  return tags
+    .map((t) => {
+      const modifier = TAG_CLASSES[t] || "";
+      const cls = modifier ? `trinket-tag ${modifier}` : "trinket-tag";
+      return `<span class="${cls}">${esc(t)}</span>`;
+    })
+    .join("");
+}
+
+function renderTrinketRankings(trinketData) {
+  if (!trinketData) return "";
+
+  const { phase1, phase2, ilvlRows, tagMap, ilvlTierConfig } = trinketData;
+
+  function trinketLabel(r) {
+    return r.label || tagMap[r.candidate_id]?.label || r.candidate_id;
+  }
+
+  function tagBadges(candidateId) {
+    return renderTagBadges(tagMap[candidateId]?.tags);
+  }
+
+  function renderStrips(items, showTags, maxDps) {
+    if (!items.length) return "";
+    if (!maxDps) maxDps = items[0].weighted;
+
+    let html = "";
+    for (let i = 0; i < items.length; i++) {
+      const r = items[i];
+      const isBest = i === 0 && !r.eliminated;
+      const delta = isBest
+        ? "best"
+        : `${(r.delta_pct_weighted || 0).toFixed(1)}%`;
+      const barPct = maxDps > 0 ? (r.weighted / maxDps) * 100 : 0;
+      const elimCls = r.eliminated === 1 ? " trinket-strip--elim" : "";
+      const tags = showTags ? tagBadges(r.candidate_id) : "";
+      const label = trinketLabel(r);
+
+      html += `<div class="trinket-strip${elimCls}">
+        <div class="trinket-strip__rank">${i + 1}</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">${esc(label)}</span>
+            ${tags ? `<span class="trinket-strip__tags">${tags}</span>` : ""}
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:${barPct.toFixed(1)}%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">${fmtDps(r.weighted)}</div>
+        <div class="trinket-strip__delta ${isBest ? "trinket-strip__delta--best" : ""}">${delta}</div>
+      </div>`;
+    }
+    return html;
+  }
+
+  function renderPhase(items, title, desc, showTags) {
+    if (!items.length) return "";
+    const active = items.filter((r) => !r.eliminated);
+    const elim = items.filter((r) => r.eliminated);
+    const maxDps = items[0].weighted;
+
+    const elimHtml =
+      elim.length > 0
+        ? `<details class="trinket-details">
+        <summary>Eliminated <span class="detail-count">(${elim.length})</span></summary>
+        <div class="trinket-list trinket-list--elim">${renderStrips(elim, showTags, maxDps)}</div>
+      </details>`
+        : "";
+
+    return `<div class="subsection">
+      <h3>${title}</h3>
+      <p class="section-desc">${desc}</p>
+      <div class="trinket-list">${renderStrips(active, showTags, maxDps)}</div>
+      ${elimHtml}
+    </div>`;
+  }
+
+  const sections = [];
+
+  // ilvl chart replaces individual trinkets when available
+  if (ilvlRows?.length > 0) {
+    sections.push(renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig));
+  } else if (phase1.length > 0) {
+    sections.push(
+      renderPhase(
+        phase1,
+        "Individual Trinkets",
+        "Weighted DPS per trinket slot (single-slot screen, best build). Eliminated trinkets fell below the advancement threshold.",
+        true,
+      ),
+    );
+  }
+
+  if (phase2.length > 0) {
+    sections.push(
+      renderPhase(
+        phase2,
+        "Trinket Pairs",
+        `Best trinket combinations (paired slot screen, top ${phase2.length} combos tested).`,
+        false,
+      ),
+    );
+  }
+
+  if (sections.length === 0) return "";
+
+  return `<section>
+  <h2>Trinket Rankings</h2>
+  ${sections.join("")}
+</section>`;
+}
+
+// ilvl tier colors: muted → bright across the progression range
+const ILVL_COLORS = [
+  "#7c8098", // lowest — muted gray
+  "#60a5fa", // blue
+  "#34d399", // green
+  "#f5c842", // gold
+  "#fb923c", // orange — highest
+];
+
+function renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig) {
+  // Group rows into: Map<candidateId, { label, byIlvl: Map<ilvl, weighted> }>
+  const byTrinket = new Map();
+  for (const row of ilvlRows) {
+    if (!byTrinket.has(row.candidate_id)) {
+      const info = tagMap[row.candidate_id];
+      byTrinket.set(row.candidate_id, {
+        candidateId: row.candidate_id,
+        label: row.label || info?.label || row.candidate_id,
+        tags: info?.tags || [],
+        byIlvl: new Map(),
+      });
+    }
+    byTrinket.get(row.candidate_id).byIlvl.set(row.ilvl, row.weighted);
+  }
+
+  // Sorted ilvl tiers from the data
+  const ilvlTiers = [...new Set(ilvlRows.map((r) => r.ilvl))].sort(
+    (a, b) => a - b,
+  );
+  const highestIlvl = ilvlTiers.at(-1);
+
+  // Track name lookup from config (e.g., 276 → "Hero")
+  const trackNames = new Map(
+    (ilvlTierConfig || []).map((t) => [t.ilvl, t.track]),
+  );
+
+  // Assign colors to tiers
+  const tierColors = Object.fromEntries(
+    ilvlTiers.map((t, i) => [
+      t,
+      ILVL_COLORS[
+        Math.round(
+          (i / Math.max(ilvlTiers.length - 1, 1)) * (ILVL_COLORS.length - 1),
+        )
+      ],
+    ]),
+  );
+
+  // Sort trinkets by highest-ilvl DPS descending
+  const sorted = [...byTrinket.values()].sort(
+    (a, b) =>
+      (b.byIlvl.get(highestIlvl) || 0) - (a.byIlvl.get(highestIlvl) || 0),
+  );
+
+  // Truncated axis: scale from near-min to max so differences are visible
+  const allDps = ilvlRows.map((r) => r.weighted).filter((v) => v > 0);
+  const globalMax = Math.max(...allDps, 1);
+  const globalMin = Math.min(...allDps);
+  const axisFloor = globalMin * 0.97;
+  const axisRange = globalMax - axisFloor;
+  const bestAtHighest = sorted[0]?.byIlvl.get(highestIlvl) || 1;
+
+  // Legend — show track name when available (e.g., "Hero 276")
+  const legend = ilvlTiers
+    .map((t) => {
+      const track = trackNames.get(t);
+      const label = track ? `${track} ${t}` : String(t);
+      return `<span class="tc-legend-item"><span class="tc-legend-swatch" style="background:${tierColors[t]}"></span>${label}</span>`;
+    })
+    .join("");
+
+  // Rows
+  let rows = "";
+  for (let i = 0; i < sorted.length; i++) {
+    const trinket = sorted[i];
+    const topDps = trinket.byIlvl.get(highestIlvl) || 0;
+    const delta =
+      i === 0
+        ? "best"
+        : `${(((topDps - bestAtHighest) / bestAtHighest) * 100).toFixed(1)}%`;
+
+    const tags = renderTagBadges(trinket.tags);
+
+    // Overlapping bars: highest ilvl (widest) in back, lowest in front
+    const barsHtml = [...ilvlTiers]
+      .reverse()
+      .map((ilvl) => {
+        const dps = trinket.byIlvl.get(ilvl) || 0;
+        const barPct =
+          axisRange > 0 ? ((dps - axisFloor) / axisRange) * 100 : 0;
+        const track = trackNames.get(ilvl) || "";
+        return `<div class="tc-bar" data-ilvl="${ilvl}" data-track="${esc(track)}" data-dps="${Math.round(dps)}" style="width:${Math.max(barPct, 0).toFixed(1)}%;background:${tierColors[ilvl]}"></div>`;
+      })
+      .join("");
+
+    rows += `<div class="tc-row">
+      <div class="tc-rank">${i + 1}</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">${esc(trinket.label)}</span>
+          ${tags ? `<span class="trinket-strip__tags">${tags}</span>` : ""}
+        </div>
+        <div class="tc-bar-track">${barsHtml}</div>
+      </div>
+      <div class="tc-best-dps">${fmtDps(topDps)}</div>
+      <div class="tc-delta${i === 0 ? " tc-delta--best" : ""}">${delta}</div>
+    </div>`;
+  }
+
+  // Best DPS per ilvl tier (for tooltip delta display)
+  const bestPerIlvl = {};
+  for (const ilvl of ilvlTiers) {
+    bestPerIlvl[ilvl] = Math.max(...sorted.map((t) => t.byIlvl.get(ilvl) || 0));
+  }
+
+  return `<div class="subsection">
+    <h3>Trinket Scaling by Item Level</h3>
+    <p class="section-desc">Weighted DPS per trinket at each upgrade track (top of track ilvl). Sorted by ${trackNames.get(highestIlvl) || "highest"} (${highestIlvl}) performance.</p>
+    <div class="tc-chart" data-best-per-ilvl='${JSON.stringify(bestPerIlvl)}'>
+      <div class="tc-legend"><span class="tc-legend-label">Upgrade Track</span>${legend}</div>
+      ${rows}
+    </div>
+  </div>`;
 }
 
 function renderTalentImpact(apexBuilds, defensiveTalentCosts, builds) {
@@ -1734,6 +2035,288 @@ summary:hover { color: var(--accent); }
 
 
 
+/* Trinket rankings */
+.trinket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.trinket-list--elim { margin-top: 0.5rem; }
+
+.trinket-strip {
+  display: grid;
+  grid-template-columns: 32px 1fr 90px 60px;
+  align-items: center;
+  gap: 0 0.75rem;
+  padding: 0.55rem 1rem;
+  background: var(--bg-elevated);
+  transition: background 0.15s;
+}
+
+.trinket-strip:nth-child(even) { background: var(--surface-alt); }
+.trinket-strip:hover { background: rgba(123, 147, 255, 0.05); }
+
+.trinket-strip--elim { opacity: 0.5; }
+
+.trinket-strip__rank {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+.trinket-strip__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trinket-strip__name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.trinket-strip__name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.trinket-strip__tags {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.trinket-tag {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface);
+  color: var(--fg-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.trinket-tag--use { color: var(--accent); border-color: var(--accent-dim); }
+.trinket-tag--passive { color: var(--fg-muted); }
+.trinket-tag--raid { color: var(--gold); border-color: rgba(245, 200, 66, 0.25); }
+.trinket-tag--dungeon { color: var(--positive); border-color: rgba(52, 211, 153, 0.25); }
+.trinket-tag--crafted { color: var(--ar); border-color: rgba(251, 146, 60, 0.25); }
+
+.trinket-strip__bar-wrap {
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.trinket-strip__bar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.trinket-strip:hover .trinket-strip__bar { opacity: 0.8; }
+
+.trinket-strip__dps {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.trinket-strip__delta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+
+.trinket-strip__delta--best {
+  color: var(--gold);
+}
+
+.trinket-details { margin-top: 0.75rem; }
+
+/* Trinket ilvl chart */
+.tc-chart {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tc-legend {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.55rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tc-legend-label {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.25rem;
+}
+
+.tc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--fg-dim);
+}
+
+.tc-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tc-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 90px 60px;
+  align-items: start;
+  gap: 0 0.75rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s;
+}
+
+.tc-row:nth-child(even) { background: var(--surface-alt); }
+.tc-row:last-child { border-bottom: none; }
+.tc-row:hover { background: rgba(123, 147, 255, 0.05); }
+
+.tc-rank {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-align: center;
+  padding-top: 0.2rem;
+}
+
+.tc-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tc-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.tc-name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.tc-bar-track {
+  position: relative;
+  height: 22px;
+  background: var(--border-subtle);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tc-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 4px;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.tc-row:hover .tc-bar { opacity: 1; }
+
+.tc-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  opacity: 0;
+  transition: opacity 0.1s;
+  white-space: nowrap;
+}
+.tc-tooltip.visible { opacity: 1; }
+.tc-tooltip__track {
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+.tc-tooltip__dps {
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+.tc-tooltip__delta {
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  font-size: 0.72rem;
+}
+
+.tc-best-dps {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  padding-top: 0.2rem;
+  white-space: nowrap;
+}
+
+.tc-delta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  padding-top: 0.2rem;
+}
+
+.tc-delta--best { color: var(--gold); }
+
 /* Footer */
 footer {
   border-top: 1px solid var(--border);
@@ -1812,6 +2395,12 @@ footer { animation-delay: 0.35s; }
   .filter-bar { gap: 0.35rem; }
   .build-name { font-size: 0.7rem; }
   .showcase-weighted { font-size: 1.4rem; }
+  .trinket-strip { grid-template-columns: 28px 1fr 75px 50px; gap: 0 0.5rem; padding: 0.45rem 0.75rem; }
+  .trinket-strip__name { font-size: 0.76rem; }
+  .trinket-strip__dps { font-size: 0.76rem; }
+  .tc-row { grid-template-columns: 24px 1fr 75px 50px; padding: 0.5rem 0.6rem; }
+  .tc-name { font-size: 0.76rem; }
+  .tc-best-dps { font-size: 0.76rem; }
 }
 `;
 
@@ -1896,6 +2485,7 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 document.querySelectorAll('.info-icon').forEach(icon => {
   const popup = icon.querySelector('.info-popup');
   if (!popup) return;
+  document.body.appendChild(popup);
   icon.addEventListener('mouseenter', () => {
     const r = icon.getBoundingClientRect();
     popup.style.display = 'block';
@@ -1950,6 +2540,63 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
   });
 });
 
+// Trinket ilvl chart tooltip
+(() => {
+  const chart = document.querySelector('.tc-chart');
+  if (!chart) return;
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tc-tooltip';
+  document.body.appendChild(tooltip);
+
+  const bestPerIlvl = JSON.parse(chart.dataset.bestPerIlvl || '{}');
+  const fmtNum = n => Number(n).toLocaleString();
+
+  function positionTooltip(e) {
+    const pad = 12;
+    let x = e.clientX + pad;
+    let y = e.clientY + pad;
+    const tw = tooltip.offsetWidth;
+    const th = tooltip.offsetHeight;
+    if (x + tw > window.innerWidth - pad) x = e.clientX - tw - pad;
+    if (y + th > window.innerHeight - pad) y = e.clientY - th - pad;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  chart.addEventListener('mouseover', e => {
+    const bar = e.target.closest('.tc-bar');
+    if (!bar) return;
+    const ilvl = bar.dataset.ilvl;
+    const dps = Number(bar.dataset.dps);
+    const track = bar.dataset.track;
+    const best = bestPerIlvl[ilvl] || dps;
+    const deltaPct = best > 0 ? ((dps - best) / best * 100).toFixed(1) : '0.0';
+    const deltaStr = dps >= best ? 'best' : deltaPct + '%';
+    const deltaClass = dps >= best ? 'style="color:var(--gold)"' : '';
+
+    tooltip.innerHTML =
+      '<div class="tc-tooltip__track" style="color:' + bar.style.background + '">' +
+        (track || 'ilvl') + ' ' + ilvl +
+      '</div>' +
+      '<div class="tc-tooltip__dps">' + fmtNum(dps) + ' DPS</div>' +
+      '<div class="tc-tooltip__delta" ' + deltaClass + '>' + deltaStr + ' at this tier</div>';
+    tooltip.classList.add('visible');
+    positionTooltip(e);
+  });
+
+  chart.addEventListener('mousemove', e => {
+    if (!tooltip.classList.contains('visible')) return;
+    positionTooltip(e);
+  });
+
+  chart.addEventListener('mouseout', e => {
+    const bar = e.target.closest('.tc-bar');
+    if (!bar) return;
+    if (!e.relatedTarget || !e.relatedTarget.closest('.tc-bar')) {
+      tooltip.classList.remove('visible');
+    }
+  });
+})();
 
 `;
 
@@ -2060,6 +2707,19 @@ async function main() {
     }
   }
 
+  // Load trinket data from gear pipeline
+  const trinketData = loadTrinketData();
+  if (trinketData) {
+    const p1 = trinketData.phase1.length;
+    const p2 = trinketData.phase2.length;
+    const ilvl = trinketData.ilvlRows?.length || 0;
+    const parts = [];
+    if (p1) parts.push(`${p1} individual`);
+    if (p2) parts.push(`${p2} pairs`);
+    if (ilvl) parts.push(`${ilvl} ilvl chart`);
+    console.log(`  Trinkets: ${parts.join(", ")} loaded from DB.`);
+  }
+
   // Generate HTML
   const reportDir = join(resultsDir(), "report");
   mkdirSync(reportDir, { recursive: true });
@@ -2071,6 +2731,7 @@ async function main() {
     apexBuilds: reportData.apexBuilds,
     defensiveTalentCosts,
     heroTrees,
+    trinketData,
   });
 
   const indexPath = join(reportDir, "index.html");

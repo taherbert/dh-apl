@@ -1,6 +1,13 @@
 {
   "version": 2,
   "baseline": "apls/vengeance/profile.simc",
+  "ilvl_tiers": [
+    { "ilvl": 237, "track": "Adventurer" },
+    { "ilvl": 250, "track": "Veteran" },
+    { "ilvl": 263, "track": "Champion" },
+    { "ilvl": 276, "track": "Hero" },
+    { "ilvl": 289, "track": "Myth" }
+  ],
   "tier": {
     "set_id": 1979,
     "required_count": 4,
