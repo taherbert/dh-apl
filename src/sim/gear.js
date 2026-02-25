@@ -9,7 +9,7 @@
 //   3  ep-rank        Pure EP scoring for stat-stick items (no sims)
 //   4  proc-eval      Sim proc/effect items vs Phase 3 EP winners
 //   5  trinkets       Screen + pair sims
-//   6  rings          Screen + pair sims
+//   6  (removed — rings are EP-ranked in Phase 3)
 //   7  embellishments Screen + pair sims
 //   8  stat-re-opt    Re-run Phase 2 if embellishments changed crafted slots
 //   9  gems           EP-rank gems, apply to all sockets
@@ -383,11 +383,17 @@ function cmdEpRank(gearData) {
 
   const hasEmbellishments = gearData.embellishments?.pairs?.length > 0;
   let totalRanked = 0;
+  let finger1WinnerId = null;
 
   for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
-    const candidates = (slotData.candidates || []).filter(
+    let candidates = (slotData.candidates || []).filter(
       (c) => !hasEmbellishments || !isCraftedSimc(c.simc),
     );
+
+    // Prevent the same ring from occupying both finger slots
+    if (slot === "finger2" && finger1WinnerId) {
+      candidates = candidates.filter((c) => c.id !== finger1WinnerId);
+    }
 
     if (candidates.length === 0) continue;
 
@@ -396,6 +402,7 @@ function cmdEpRank(gearData) {
       .sort((a, b) => b.ep - a.ep);
 
     const best = ranked[0];
+    if (slot === "finger1") finger1WinnerId = best?.id ?? null;
     clearGearResults(3, slot);
     saveGearResults(
       3,
@@ -509,12 +516,24 @@ function cmdGems(gearData) {
     .map((g) => ({ ...g, ep: scoreEp(g.stats, sf) }))
     .sort((a, b) => b.ep - a.ep);
 
-  if (ranked.length === 0) {
-    console.log("No gems with stat data for EP ranking.");
+  const best = ranked.length > 0 ? ranked[0] : gems[0];
+  if (!best) {
+    console.log("No gems configured.");
     return;
   }
-
-  const best = ranked[0];
+  if (ranked.length === 0) {
+    console.log(
+      `Phase 9: Gems — no stat data, defaulting to first gem: ${best.label}`,
+    );
+    setSessionState("gear_gems", {
+      best_id: best.id,
+      best_enchant_id: best.enchant_id,
+      best_label: best.label,
+      ep: 0,
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
   setSessionState("gear_gems", {
     best_id: best.id,
     best_enchant_id: best.enchant_id,
@@ -1019,12 +1038,11 @@ async function cmdScreen(args) {
 }
 
 // Phase assignments for combination types
-const COMBO_PHASES = { trinkets: 5, rings: 6, embellishments: 7 };
+const COMBO_PHASES = { trinkets: 5, embellishments: 7 };
 
-// --- CLI: combinations (Phases 5/6/7) ---
-// trinkets=Phase 5, rings=Phase 6, embellishments=Phase 7
-// For trinkets and rings: screens first then generates pairs.
-// For embellishments: pairs only.
+// --- CLI: combinations (Phases 5/7) ---
+// trinkets=Phase 5, embellishments=Phase 7
+// For trinkets: screens first then generates pairs. Embellishments: pairs only.
 
 async function cmdCombinations(args) {
   const { values } = parseArgs({
@@ -1376,6 +1394,8 @@ function applySlotEnchant(line, slot, enchantMap) {
     wrists: "wrist",
     wrist: "wrist",
     feet: "foot",
+    finger1: "ring",
+    finger2: "ring",
   };
   const enchantKey = SLOT_ENCHANT[slot];
   return enchantKey ? applyEnchant(line, enchantMap[enchantKey]) : line;
@@ -1490,24 +1510,6 @@ function buildGearLines(gearData) {
     }
   }
 
-  // Phase 6: rings (with ring enchant)
-  const ringWinner = getBestGear(6, "rings").find(
-    (r) => r.candidate_id !== "__baseline__",
-  );
-  if (ringWinner) {
-    const overrides = resolveComboOverrides(ringWinner.candidate_id, gearData);
-    for (const line of overrides) {
-      const slot = line.split("=")[0];
-      if (!coveredSlots.has(slot)) {
-        const enchanted =
-          slot === "finger1" || slot === "finger2"
-            ? applyEnchant(line, enchantMap.ring)
-            : line;
-        addLine(enchanted, slot);
-      }
-    }
-  }
-
   // Phase 4: proc eval winners for individual slots
   for (const slot of Object.keys(gearData.slots || {})) {
     if (coveredSlots.has(slot)) continue;
@@ -1588,11 +1590,22 @@ function cmdWriteProfile() {
 
   const itemId = (line) => line.match(/,id=(\d+)/)?.[1] ?? null;
 
-  // Preserve current line when item is unchanged (keeps gems/enchants not tracked by pipeline)
+  // Preserve current line when item is unchanged (keeps gems/enchants not tracked by pipeline).
+  // Exception: if the pipeline line specifies embellishment= or crafted_stats=, those are
+  // pipeline-controlled and must NOT be overridden by the current line.
   const finalLines = newLines.map((line) => {
     const slot = line.split("=")[0];
     const cur = currentGear.get(slot);
-    return cur && itemId(cur) === itemId(line) ? cur : line;
+    if (!cur || itemId(cur) !== itemId(line)) return line;
+    // Pipeline controls embellishment and crafted_stats — use pipeline line but copy gem_id
+    if (line.includes("embellishment=") || line.includes("crafted_stats=")) {
+      if (!line.includes("gem_id=")) {
+        const curGem = cur.match(/gem_id=([\d/]+)/);
+        if (curGem) return `${line},gem_id=${curGem[1]}`;
+      }
+      return line;
+    }
+    return cur;
   });
 
   // Any slot in the current profile not covered by the pipeline is preserved as-is.
@@ -1687,10 +1700,6 @@ async function cmdRun(args) {
   if (maxPhase >= 5) {
     console.log("\n========== PHASE 5: Trinkets ==========\n");
     await cmdCombinations(["--type", "trinkets", ...fidelityArgs]);
-  }
-  if (maxPhase >= 6) {
-    console.log("\n========== PHASE 6: Rings ==========\n");
-    await cmdCombinations(["--type", "rings", ...fidelityArgs]);
   }
   if (maxPhase >= 7) {
     console.log("\n========== PHASE 7: Embellishments ==========\n");
@@ -1821,25 +1830,6 @@ function cmdStatus() {
   if (trinketPairs) {
     console.log(
       `  Pairs:  ${trinketPairs.advancing.length} advancing, ${trinketPairs.pruned.length} pruned`,
-    );
-  } else {
-    console.log("  pairs:  not started");
-  }
-
-  // Phase 6: rings
-  const ringScreen = getSessionState("gear_phase6_rings");
-  const ringPairs = getSessionState("gear_phase6_rings_pairs");
-  console.log("\nPhase 6 (Rings):");
-  if (ringScreen) {
-    console.log(
-      `  Screen: ${ringScreen.advancing.length} advancing (${ringScreen.fidelity})`,
-    );
-  } else {
-    console.log("  screen: not started");
-  }
-  if (ringPairs) {
-    console.log(
-      `  Pairs:  ${ringPairs.advancing.length} advancing, ${ringPairs.pruned.length} pruned`,
     );
   } else {
     console.log("  pairs:  not started");

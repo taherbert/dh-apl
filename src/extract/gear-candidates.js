@@ -1,7 +1,7 @@
 // Fetches current-expansion items, enchants, and embellishments from Raidbots
 // and refreshes data/{spec}/gear-candidates.json.
 //
-// Auto-generates: paired_slots (trinkets, rings), slots (non-crafted gear), enchants.
+// Auto-generates: paired_slots (trinkets), slots (non-crafted gear incl. rings), enchants.
 // Preserves: baseline, ilvl_tiers, tier, embellishments, stat_allocations, flagged,
 //            crafted items in slot candidates (detected by bonus_id in simc string),
 //            crafted/manually-added paired candidates (trinkets, rings).
@@ -131,9 +131,11 @@ function pick(obj, ...keys) {
 
 function extractStats(item) {
   const out = {};
-  for (const { id, value } of item.stats || []) {
-    const key = STAT_ID_MAP[id];
-    if (key) out[key] = (out[key] || 0) + value;
+  for (const stat of item.stats || []) {
+    const key = STAT_ID_MAP[stat.id];
+    // Raidbots beta uses "alloc" instead of "value" for stat quantities
+    const val = stat.value ?? stat.alloc ?? 0;
+    if (key && val) out[key] = (out[key] || 0) + val;
   }
   return Object.keys(out).length ? out : null;
 }
@@ -153,6 +155,43 @@ async function fetchJson(url) {
   const res = await fetch(url, { signal: AbortSignal.timeout(30_000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${url}`);
   return res.json();
+}
+
+function parseWowheadStats(tooltip) {
+  const out = {};
+  const patterns = [
+    [/\+?([\d,]+)\s+Agility/, "agi"],
+    [/\+?([\d,]+)\s+\[(?:Agility|Agi)\s+or\s+/, "agi"],
+    [/\+?([\d,]+)\s+Critical Strike/, "crit"],
+    [/\+?([\d,]+)\s+Haste/, "haste"],
+    [/\+?([\d,]+)\s+Mastery/, "mastery"],
+    [/\+?([\d,]+)\s+Versatility/, "vers"],
+  ];
+  for (const [re, key] of patterns) {
+    const m = tooltip.match(re);
+    if (m) out[key] = parseInt(m[1].replace(/,/g, ""), 10);
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+async function fetchWowheadStats(itemId, ilvl) {
+  const urls = [
+    `https://nether.wowhead.com/tooltip/item/${itemId}?ilvl=${ilvl}`,
+    `https://nether.wowhead.com/tooltip/item/${itemId}?dataEnv=2&ilvl=${ilvl}`,
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
+      if (!res.ok) continue;
+      const data = await res.json();
+      if (!data?.tooltip) continue;
+      const stats = parseWowheadStats(data.tooltip);
+      if (stats) return stats;
+    } catch {
+      // try next
+    }
+  }
+  return null;
 }
 
 // Convert a display name to a SimC-compatible identifier.
@@ -181,6 +220,12 @@ function buildSimcString(slot, item, ilvl, defaultGemId) {
   const gemSuffix = gems ? `,gem_id=${gems}` : "";
   const prefix = slot ? `${slot}=` : "";
   return `${prefix}${name},id=${item.id},ilevel=${ilvl}${gemSuffix}`;
+}
+
+function hasEquipProc(item) {
+  // Raidbots marks on-use trinkets; items with spell effects that aren't purely stat-based
+  // For non-trinkets we rely on manual tags preserved by mergePreservingCrafted
+  return !!item.onUseTrinket;
 }
 
 // Detect the current expansion from item data (highest expansion number seen).
@@ -237,13 +282,30 @@ function hasAgilityStats(item) {
   return item.stats.some((s) => AGILITY_STAT_IDS.has(s.id));
 }
 
-const PVP_PREFIXES = ["Gladiator", "Combatant", "Aspirant", "Veteran"];
+// PvP item name keywords — any item containing these words is PvP
+const PVP_KEYWORDS = [
+  "Gladiator",
+  "Combatant",
+  "Aspirant",
+  "Veteran",
+  "Galactic",
+  "Novice",
+];
 
 function isPvp(item) {
   return (
-    PVP_PREFIXES.some((p) => item.name.startsWith(p)) ||
+    PVP_KEYWORDS.some((k) => item.name.includes(k)) ||
     /\bS\d+\b/.test(item.name) ||
     !!item.pvp
+  );
+}
+
+function isDNT(item) {
+  return (
+    item.name.includes("[DNT]") ||
+    item.name.startsWith("Test Item") ||
+    item.name.startsWith("TEMPLATE") ||
+    /^Item - \w/.test(item.name)
   );
 }
 
@@ -378,7 +440,8 @@ async function main() {
       item.itemClass != null &&
       isDHUsable(item) &&
       !isPvp(item) &&
-      !isCrafted(item),
+      !isCrafted(item) &&
+      !isDNT(item),
   );
 
   console.log(`${eligible.length} eligible items from ${items.length} total`);
@@ -422,20 +485,33 @@ async function main() {
   );
 
   const ringItems = bySlot.get("finger") || [];
-  const newRings = ringItems.map((item) => {
+  const newRings1 = ringItems.map((item) => {
     const stats = extractStats(item);
     return {
       id: toSimcName(item.name),
       label: item.name,
-      simc_base: buildSimcString(null, item, maxIlvl, defaultGemId),
+      simc: buildSimcString("finger1", item, maxIlvl, defaultGemId),
       ...(stats ? { stats } : {}),
       tags: [],
     };
   });
-  const rings = mergePreservingCrafted(
-    newRings,
-    current.paired_slots?.rings?.candidates,
-    "simc_base",
+  const newRings2 = ringItems.map((item) => {
+    const stats = extractStats(item);
+    return {
+      id: toSimcName(item.name),
+      label: item.name,
+      simc: buildSimcString("finger2", item, maxIlvl, defaultGemId),
+      ...(stats ? { stats } : {}),
+      tags: [],
+    };
+  });
+  const rings1 = mergePreservingCrafted(
+    newRings1,
+    current.slots?.finger1?.candidates,
+  );
+  const rings2 = mergePreservingCrafted(
+    newRings2,
+    current.slots?.finger2?.candidates,
   );
 
   // --- individual slots ---
@@ -458,6 +534,47 @@ async function main() {
       current.slots?.[slot]?.candidates,
     );
     if (all.length > 0) slots[slot] = { candidates: all };
+  }
+
+  // --- Wowhead stat backfill ---
+  // Items with null stats from Raidbots beta data get stats from Wowhead.
+  const needStats = [];
+  const allCandidateSections = [
+    ...trinkets.map((c) => ({ c, simc: c.simc_base })),
+    ...rings1.map((c) => ({ c, simc: c.simc })),
+    ...Object.values(slots).flatMap((s) =>
+      s.candidates.map((c) => ({ c, simc: c.simc })),
+    ),
+  ];
+  for (const { c, simc } of allCandidateSections) {
+    // Fetch from Wowhead only when Raidbots has no stat data at all (pure proc items)
+    if (!c.stats) {
+      const m = (simc || "").match(/,id=(\d+)/);
+      if (m) needStats.push({ c, id: parseInt(m[1], 10) });
+    }
+  }
+  if (needStats.length > 0) {
+    console.log(`Fetching stats for ${needStats.length} items from Wowhead...`);
+    let fetched = 0;
+    for (const { c, id } of needStats) {
+      const stats = await fetchWowheadStats(id, maxIlvl);
+      if (stats) {
+        c.stats = stats;
+        fetched++;
+      }
+      // Small delay to avoid hammering Wowhead
+      await new Promise((r) => setTimeout(r, 50));
+    }
+    console.log(`  Got stats for ${fetched}/${needStats.length} items`);
+  }
+
+  // Copy stats from rings1 -> rings2 (same items, different slot prefix)
+  const ring1StatsById = new Map(rings1.map((c) => [c.id, c.stats]));
+  for (const c of rings2) {
+    if (!c.stats) {
+      const stats = ring1StatsById.get(c.id);
+      if (stats) c.stats = stats;
+    }
   }
 
   // --- enchants ---
@@ -563,13 +680,12 @@ async function main() {
         topK: current.paired_slots?.trinkets?.topK ?? 5,
         candidates: trinkets,
       },
-      rings: {
-        slots: ["finger1", "finger2"],
-        topK: current.paired_slots?.rings?.topK ?? 5,
-        candidates: rings,
-      },
     },
-    slots,
+    slots: {
+      ...slots,
+      finger1: { candidates: rings1 },
+      finger2: { candidates: rings2 },
+    },
     enchants: enchantSection,
     ...(gems.length ? { gems } : {}),
     // Preserved fields: manually-maintained sections carried forward as-is
@@ -585,7 +701,8 @@ async function main() {
   writeFileSync(candidatesPath, JSON.stringify(output, null, 2));
   console.log(`\nWrote ${candidatesPath}`);
   console.log(`  Trinkets: ${trinkets.length}`);
-  console.log(`  Rings: ${rings.length}`);
+  console.log(`  Finger1 (rings): ${rings1.length} candidates`);
+  console.log(`  Finger2 (rings): ${rings2.length} candidates`);
   for (const [slot, data] of Object.entries(slots)) {
     console.log(`  ${slot}: ${data.candidates.length} candidates`);
   }

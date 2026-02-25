@@ -195,7 +195,7 @@
           "label": "Darkmoon Deck: Void",
           "simc_base": "darkmoon_deck_void,id=245750,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -208,7 +208,7 @@
           "label": "Darkmoon Deck: Hunt",
           "simc_base": "darkmoon_deck_hunt,id=245829,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -221,7 +221,7 @@
           "label": "Darkmoon Deck: Rot",
           "simc_base": "darkmoon_deck_rot,id=245846,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -234,20 +234,7 @@
           "label": "Darkmoon Deck: Blood",
           "simc_base": "darkmoon_deck_blood,id=245855,ilevel=289",
           "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "template_120_raid___ranged_dps___trinket",
-          "label": "TEMPLATE 12.0 Raid - Ranged DPS - Trinket",
-          "simc_base": "template_120_raid___ranged_dps___trinket,id=249142,ilevel=289",
-          "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -260,7 +247,7 @@
           "label": "Gloom-Spattered Dreadscale",
           "simc_base": "gloom_spattered_dreadscale,id=249339,ilevel=289",
           "stats": {
-            "crit": null
+            "crit": 6666
           },
           "tags": [
             "on-use",
@@ -274,7 +261,7 @@
           "label": "Volatile Void Suffuser",
           "simc_base": "volatile_void_suffuser,id=249341,ilevel=289",
           "stats": {
-            "mastery": null
+            "mastery": 6666
           },
           "tags": [
             "passive",
@@ -291,14 +278,17 @@
             "mastery",
             "raid"
           ],
-          "uniqueEquipped": true
+          "uniqueEquipped": true,
+          "stats": {
+            "mastery": 117
+          }
         },
         {
           "id": "light_company_guidon",
           "label": "Light Company Guidon",
           "simc_base": "light_company_guidon,id=249344,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -312,7 +302,7 @@
           "label": "Ranger-Captain's Iridescent Insignia",
           "simc_base": "ranger_captains_iridescent_insignia,id=249345,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -325,7 +315,7 @@
           "label": "Undreamt God's Oozing Vestige",
           "simc_base": "undreamt_gods_oozing_vestige,id=249805,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -339,7 +329,7 @@
           "label": "Radiant Plume",
           "simc_base": "radiant_plume,id=249806,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -352,7 +342,7 @@
           "label": "The Eternal Egg",
           "simc_base": "the_eternal_egg,id=249807,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -368,14 +358,17 @@
           "tags": [
             "passive"
           ],
-          "uniqueEquipped": true
+          "uniqueEquipped": true,
+          "stats": {
+            "mastery": 117
+          }
         },
         {
           "id": "emberwing_feather",
           "label": "Emberwing Feather",
           "simc_base": "emberwing_feather,id=250144,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -388,7 +381,7 @@
           "label": "Lightspire Core",
           "simc_base": "lightspire_core,id=250214,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -401,7 +394,7 @@
           "label": "Freightrunner's Flask",
           "simc_base": "freightrunners_flask,id=250215,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -423,7 +416,7 @@
           "label": "Void Execution Mandate",
           "simc_base": "void_execution_mandate,id=250225,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -438,7 +431,7 @@
           "label": "Latch's Crooked Hook",
           "simc_base": "latchs_crooked_hook,id=250226,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -452,7 +445,7 @@
           "label": "Kroluk's Warbanner",
           "simc_base": "kroluks_warbanner,id=250227,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -466,7 +459,7 @@
           "label": "Resonant Bellowstone",
           "simc_base": "resonant_bellowstone,id=250228,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -480,7 +473,7 @@
           "label": "Idol of the War Loa",
           "simc_base": "idol_of_the_war_loa,id=250229,ilevel=289",
           "stats": {
-            "crit": null
+            "crit": 6666
           },
           "tags": [
             "passive"
@@ -492,7 +485,7 @@
           "label": "Jelly Replicator",
           "simc_base": "jelly_replicator,id=250242,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -505,7 +498,7 @@
           "label": "Manaheart's Binding Flame",
           "simc_base": "manahearts_binding_flame,id=250243,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -527,7 +520,7 @@
           "label": "Tumor of the Swarm",
           "simc_base": "tumor_of_the_swarm,id=250245,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -540,7 +533,7 @@
           "label": "Heart of Wind",
           "simc_base": "heart_of_wind,id=250256,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -554,7 +547,7 @@
           "label": "Eye of the Drowning Void",
           "simc_base": "eye_of_the_drowning_void,id=250257,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -570,14 +563,17 @@
           "tags": [
             "passive"
           ],
-          "uniqueEquipped": true
+          "uniqueEquipped": true,
+          "stats": {
+            "mastery": 117
+          }
         },
         {
           "id": "sapling_of_the_dawnroot",
           "label": "Sapling of the Dawnroot",
           "simc_base": "sapling_of_the_dawnroot,id=250259,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -591,7 +587,7 @@
           "label": "Forgotten Farstrider's Insignia",
           "simc_base": "forgotten_farstriders_insignia,id=250462,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -605,7 +601,7 @@
           "label": "Withered Saptor's Paw",
           "simc_base": "withered_saptors_paw,id=251782,ilevel=289",
           "stats": {
-            "mastery": null
+            "mastery": 6666
           },
           "tags": [
             "passive"
@@ -619,14 +615,17 @@
           "tags": [
             "passive"
           ],
-          "uniqueEquipped": true
+          "uniqueEquipped": true,
+          "stats": {
+            "agi": 118
+          }
         },
         {
           "id": "sylvan_wakrapuku",
           "label": "Sylvan Wakrapuku",
           "simc_base": "sylvan_wakrapuku,id=251784,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -639,7 +638,7 @@
           "label": "Void-Reaper's Libram",
           "simc_base": "void_reapers_libram,id=251785,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -652,7 +651,7 @@
           "label": "Sealed Chaos Urn",
           "simc_base": "sealed_chaos_urn,id=251787,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -666,7 +665,7 @@
           "label": "Desecrated Chalice",
           "simc_base": "desecrated_chalice,id=251790,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -679,7 +678,7 @@
           "label": "Holy Retributor's Order",
           "simc_base": "holy_retributors_order,id=251791,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -692,7 +691,7 @@
           "label": "Glorious Crusader's Keepsake",
           "simc_base": "glorious_crusaders_keepsake,id=251792,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -705,7 +704,7 @@
           "label": "Endosymbiotic Mycelium",
           "simc_base": "endosymbiotic_mycelium,id=251793,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -718,7 +717,7 @@
           "label": "Gris-gris of Confidence",
           "simc_base": "gris_gris_of_confidence,id=251794,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -731,7 +730,7 @@
           "label": "Solar Core Igniter",
           "simc_base": "solar_core_igniter,id=252418,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
@@ -744,7 +743,7 @@
           "label": "Solarflare Prism",
           "simc_base": "solarflare_prism,id=252420,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -759,142 +758,20 @@
           "label": "Rotting Globule",
           "simc_base": "rotting_globule,id=252421,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "on-use",
             "agi"
           ],
           "uniqueEquipped": true
-        },
-        {
-          "id": "galactic_aspirants_badge_of_ferocity",
-          "label": "Galactic Aspirant's Badge of Ferocity",
-          "simc_base": "galactic_aspirants_badge_of_ferocity,id=255326,ilevel=289",
-          "stats": {
-            "mastery": null
-          },
-          "tags": [
-            "on-use"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "galactic_aspirants_medallion",
-          "label": "Galactic Aspirant's Medallion",
-          "simc_base": "galactic_aspirants_medallion,id=255327,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ]
-        },
-        {
-          "id": "galactic_aspirants_insignia_of_alacrity",
-          "label": "Galactic Aspirant's Insignia of Alacrity",
-          "simc_base": "galactic_aspirants_insignia_of_alacrity,id=255328,ilevel=289",
-          "stats": {
-            "mastery": null
-          },
-          "tags": [
-            "passive"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "galactic_aspirants_emblem",
-          "label": "Galactic Aspirant's Emblem",
-          "simc_base": "galactic_aspirants_emblem,id=255329,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "galactic_aspirants_sigil_of_adaptation",
-          "label": "Galactic Aspirant's Sigil of Adaptation",
-          "simc_base": "galactic_aspirants_sigil_of_adaptation,id=255330,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ]
-        },
-        {
-          "id": "galactic_gladiators_badge_of_ferocity",
-          "label": "Galactic Gladiator's Badge of Ferocity",
-          "simc_base": "galactic_gladiators_badge_of_ferocity,id=255613,ilevel=289",
-          "stats": {
-            "crit": null
-          },
-          "tags": [
-            "on-use"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "galactic_gladiators_insignia_of_alacrity",
-          "label": "Galactic Gladiator's Insignia of Alacrity",
-          "simc_base": "galactic_gladiators_insignia_of_alacrity,id=255614,ilevel=289",
-          "stats": {
-            "mastery": null
-          },
-          "tags": [
-            "passive"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "galactic_gladiators_emblem",
-          "label": "Galactic Gladiator's Emblem",
-          "simc_base": "galactic_gladiators_emblem,id=255615,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "galactic_gladiators_medallion",
-          "label": "Galactic Gladiator's Medallion",
-          "simc_base": "galactic_gladiators_medallion,id=255616,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ]
-        },
-        {
-          "id": "galactic_gladiators_sigil_of_adaptation",
-          "label": "Galactic Gladiator's Sigil of Adaptation",
-          "simc_base": "galactic_gladiators_sigil_of_adaptation,id=255617,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ]
         },
         {
           "id": "umbral_plume",
           "label": "Umbral Plume",
           "simc_base": "umbral_plume,id=260235,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -907,7 +784,7 @@
           "label": "Crucible of Erratic Energies",
           "simc_base": "crucible_of_erratic_energies,id=264507,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
@@ -920,7 +797,7 @@
           "label": "Ultradon Cuirass",
           "simc_base": "ultradon_cuirass,id=264694,ilevel=289",
           "stats": {
-            "vers": null
+            "vers": 6666
           },
           "tags": [
             "on-use"
@@ -934,390 +811,23 @@
           "tags": [
             "on-use"
           ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "novice_combatants_medallion",
-          "label": "Novice Combatant's Medallion",
-          "simc_base": "novice_combatants_medallion,id=267076,ilevel=289",
+          "uniqueEquipped": true,
           "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ]
-        },
-        {
-          "id": "novice_combatants_emblem",
-          "label": "Novice Combatant's Emblem",
-          "simc_base": "novice_combatants_emblem,id=267077,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "on-use",
-            "agi"
-          ]
-        },
-        {
-          "id": "test_item_dnt___apply_poison___label",
-          "label": "Test Item [DNT] - Apply Poison - Label",
-          "simc_base": "test_item_dnt___apply_poison___label,id=267388,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "test_item_dnt___apply_poison___dispel_type",
-          "label": "Test Item [DNT] - Apply Poison - DISPEL TYPE",
-          "simc_base": "test_item_dnt___apply_poison___dispel_type,id=267403,ilevel=289",
-          "stats": {
-            "agi": null
-          },
-          "tags": [
-            "passive",
-            "agi"
-          ],
-          "uniqueEquipped": true
-        },
-        {
-          "id": "novice_combatants_insignia_of_alacrity",
-          "label": "Novice Combatant's Insignia of Alacrity",
-          "simc_base": "novice_combatants_insignia_of_alacrity,id=267469,ilevel=289",
-          "stats": {
-            "mastery": null
-          },
-          "tags": [
-            "passive"
-          ]
+            "mastery": 117
+          }
         },
         {
           "id": "sanctums_decree",
           "label": "Sanctum's Decree",
           "simc_base": "sanctums_decree,id=268534,ilevel=289",
           "stats": {
-            "agi": null
+            "agi": 6666
           },
           "tags": [
             "passive",
             "agi"
           ],
           "uniqueEquipped": true
-        }
-      ]
-    },
-    "rings": {
-      "slots": [
-        "finger1",
-        "finger2"
-      ],
-      "topK": 5,
-      "candidates": [
-        {
-          "id": "signet_of_the_starved_beast",
-          "label": "Signet of the Starved Beast",
-          "simc_base": "signet_of_the_starved_beast,id=249336,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
-          },
-          "tags": [
-            "raid"
-          ]
-        },
-        {
-          "id": "bond_of_light",
-          "label": "Bond of Light",
-          "simc_base": "bond_of_light,id=249369,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null
-          },
-          "tags": [
-            "raid"
-          ]
-        },
-        {
-          "id": "vibrant_wilderloop",
-          "label": "Vibrant Wilderloop",
-          "simc_base": "vibrant_wilderloop,id=249620,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "voodoo_band",
-          "label": "Voodoo Band",
-          "simc_base": "voodoo_band,id=249621,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "spiritseal_ring",
-          "label": "Spiritseal Ring",
-          "simc_base": "spiritseal_ring,id=249622,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "blooming_leafcoil",
-          "label": "Blooming Leafcoil",
-          "simc_base": "blooming_leafcoil,id=249623,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "sindorei_band_of_hope",
-          "label": "Sin'dorei Band of Hope",
-          "simc_base": "sindorei_band_of_hope,id=249919,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null
-          },
-          "tags": [
-            "raid"
-          ]
-        },
-        {
-          "id": "eye_of_midnight",
-          "label": "Eye of Midnight",
-          "simc_base": "eye_of_midnight,id=249920,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null
-          },
-          "tags": [
-            "socket",
-            "proc",
-            "raid"
-          ]
-        },
-        {
-          "id": "encroaching_shadow_signet",
-          "label": "Encroaching Shadow Signet",
-          "simc_base": "encroaching_shadow_signet,id=250460,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": [
-            "raid"
-          ]
-        },
-        {
-          "id": "omission_of_light",
-          "label": "Omission of Light",
-          "simc_base": "omission_of_light,id=251093,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null
-          },
-          "tags": [
-            "dungeon",
-            "set"
-          ]
-        },
-        {
-          "id": "bifurcation_band",
-          "label": "Bifurcation Band",
-          "simc_base": "bifurcation_band,id=251115,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null
-          },
-          "tags": [
-            "dungeon"
-          ]
-        },
-        {
-          "id": "signet_of_snarling_servitude",
-          "label": "Signet of Snarling Servitude",
-          "simc_base": "signet_of_snarling_servitude,id=251136,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "pilfered_precious_band",
-          "label": "Pilfered Precious Band",
-          "simc_base": "pilfered_precious_band,id=251148,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "lightwardens_bind",
-          "label": "Lightwarden's Bind",
-          "simc_base": "lightwardens_bind,id=251194,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "occlusion_of_void",
-          "label": "Occlusion of Void",
-          "simc_base": "occlusion_of_void,id=251217,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null,
-            "mastery": null
-          },
-          "tags": [
-            "dungeon",
-            "set"
-          ]
-        },
-        {
-          "id": "blessed_signet",
-          "label": "Blessed Signet",
-          "simc_base": "blessed_signet,id=251934,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "sickening_signet_of_atroxus",
-          "label": "Sickening Signet of Atroxus",
-          "simc_base": "sickening_signet_of_atroxus,id=252258,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_ring",
-          "label": "Galactic Aspirant's Ring",
-          "simc_base": "galactic_aspirants_ring,id=255331,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_band",
-          "label": "Galactic Aspirant's Band",
-          "simc_base": "galactic_aspirants_band,id=255332,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_signet",
-          "label": "Galactic Aspirant's Signet",
-          "simc_base": "galactic_aspirants_signet,id=255333,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_ring",
-          "label": "Galactic Gladiator's Ring",
-          "simc_base": "galactic_gladiators_ring,id=255607,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_band",
-          "label": "Galactic Gladiator's Band",
-          "simc_base": "galactic_gladiators_band,id=255608,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_signet",
-          "label": "Galactic Gladiator's Signet",
-          "simc_base": "galactic_gladiators_signet,id=255609,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "novice_combatants_ring",
-          "label": "Novice Combatant's Ring",
-          "simc_base": "novice_combatants_ring,id=266317,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "test_item_dnt___while_you_are_poisoned",
-          "label": "Test Item [DNT] - While you are poisoned",
-          "simc_base": "test_item_dnt___while_you_are_poisoned,id=267387,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "test_item_dnt___if_target_is_poisoned",
-          "label": "Test Item [DNT] - If target is poisoned",
-          "simc_base": "test_item_dnt___if_target_is_poisoned,id=267390,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "masterwork_sindorei_band",
-          "label": "Masterwork Sindorei Band",
-          "simc_base": "masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240856/240868",
-          "tags": [
-            "crafted",
-            "socket"
-          ],
-          "notes": "2 sockets (1 natural + Jeweler's Setting)."
         }
       ]
     }
@@ -1330,9 +840,9 @@
           "label": "Ribbon of Coiled Malice",
           "simc": "neck=ribbon_of_coiled_malice,id=249337,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "mastery": null
+            "stamina": 7889,
+            "crit": 13000,
+            "mastery": 4500
           },
           "tags": [
             "raid"
@@ -1343,8 +853,8 @@
           "label": "Eternal Voidsong Chain",
           "simc": "neck=eternal_voidsong_chain,id=249368,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 14700
           },
           "tags": [
             "raid"
@@ -1355,9 +865,9 @@
           "label": "Nocturnal Thorncharm",
           "simc": "neck=nocturnal_thorncharm,id=249626,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "mastery": null
+            "stamina": 7889,
+            "crit": 10250,
+            "mastery": 7250
           },
           "tags": []
         },
@@ -1366,9 +876,9 @@
           "label": "Arboreal Vine Collar",
           "simc": "neck=arboreal_vine_collar,id=249627,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "stamina": 7889,
+            "crit": 10250,
+            "vers": 7250
           },
           "tags": []
         },
@@ -1377,8 +887,8 @@
           "label": "Amulet of the Abyssal Hymn",
           "simc": "neck=amulet_of_the_abyssal_hymn,id=250247,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 2500
           },
           "tags": [
             "raid",
@@ -1390,8 +900,8 @@
           "label": "Chain of the Ancient Watcher",
           "simc": "neck=chain_of_the_ancient_watcher,id=250461,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 11500
           },
           "tags": [
             "raid"
@@ -1402,9 +912,9 @@
           "label": "Pendant of Aching Grief",
           "simc": "neck=pendant_of_aching_grief,id=251096,ilevel=289",
           "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
+            "stamina": 7889,
+            "vers": 10500,
+            "mastery": 7000
           },
           "tags": [
             "dungeon"
@@ -1415,8 +925,8 @@
           "label": "Pendant of Malefic Fury",
           "simc": "neck=pendant_of_malefic_fury,id=251142,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 5500
           },
           "tags": []
         },
@@ -1425,9 +935,9 @@
           "label": "Yoke of the Charging Bear",
           "simc": "neck=yoke_of_the_charging_bear,id=251173,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 11500,
+            "crit": 6000
           },
           "tags": []
         },
@@ -1436,8 +946,8 @@
           "label": "Graft of the Domanaar",
           "simc": "neck=graft_of_the_domanaar,id=251234,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 11250
           },
           "tags": []
         },
@@ -1446,72 +956,8 @@
           "label": "Unstable Mana-Locket",
           "simc": "neck=unstable_mana_locket,id=251886,ilevel=289",
           "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_necklace",
-          "label": "Galactic Aspirant's Necklace",
-          "simc": "neck=galactic_aspirants_necklace,id=255334,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_choker",
-          "label": "Galactic Aspirant's Choker",
-          "simc": "neck=galactic_aspirants_choker,id=255335,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_pendant",
-          "label": "Galactic Aspirant's Pendant",
-          "simc": "neck=galactic_aspirants_pendant,id=255336,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_necklace",
-          "label": "Galactic Gladiator's Necklace",
-          "simc": "neck=galactic_gladiators_necklace,id=255610,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_pendant",
-          "label": "Galactic Gladiator's Pendant",
-          "simc": "neck=galactic_gladiators_pendant,id=255611,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_amulet",
-          "label": "Galactic Gladiator's Amulet",
-          "simc": "neck=galactic_gladiators_amulet,id=255612,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
+            "stamina": 7889,
+            "vers": 9750
           },
           "tags": []
         },
@@ -1520,7 +966,7 @@
           "label": "Amulet of the Ascendant Void",
           "simc": "neck=amulet_of_the_ascendant_void,id=260414,ilevel=289",
           "stats": {
-            "stamina": null
+            "stamina": 7889
           },
           "tags": [
             "raid"
@@ -1531,9 +977,9 @@
           "label": "Amani Heartstring Pendant",
           "simc": "neck=amani_heartstring_pendant,id=265739,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 9250,
+            "crit": 8250
           },
           "tags": []
         },
@@ -1542,29 +988,8 @@
           "label": "Amani Totemstring",
           "simc": "neck=amani_totemstring,id=265740,ilevel=289",
           "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "novice_combatants_necklace",
-          "label": "Novice Combatant's Necklace",
-          "simc": "neck=novice_combatants_necklace,id=266314,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "test_item_dnt___when_you_are_poisoned",
-          "label": "Test Item [DNT] - When you are poisoned",
-          "simc": "neck=test_item_dnt___when_you_are_poisoned,id=267389,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null,
-            "mastery": null
+            "stamina": 7889,
+            "vers": 8250
           },
           "tags": []
         },
@@ -1573,9 +998,9 @@
           "label": "Worn Amani Heartstring Pendant",
           "simc": "neck=worn_amani_heartstring_pendant,id=267642,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 9250,
+            "crit": 8250
           },
           "tags": []
         },
@@ -1584,8 +1009,8 @@
           "label": "Worn Amani Totemstring",
           "simc": "neck=worn_amani_totemstring,id=267643,ilevel=289",
           "stats": {
-            "stamina": null,
-            "vers": null
+            "stamina": 7889,
+            "vers": 8250
           },
           "tags": []
         }
@@ -1594,14 +1019,22 @@
     "wrists": {
       "candidates": [
         {
+          "id": "silvermoon_agents_deflectors",
+          "label": "Silvermoon Agent's Deflectors (crafted)",
+          "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "tags": [
+            "crafted"
+          ]
+        },
+        {
           "id": "void_skinned_bracers",
           "label": "Void-Skinned Bracers",
           "simc": "wrist=void_skinned_bracers,id=249327,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4686,
+            "mastery": 2314
           },
           "tags": [
             "raid"
@@ -1612,9 +1045,9 @@
           "label": "Osseoclad Ivory Wrist",
           "simc": "wrist=osseoclad_ivory_wrist,id=249644,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4100
           },
           "tags": []
         },
@@ -1623,9 +1056,9 @@
           "label": "Devouring Reaver's Support Straps",
           "simc": "wrist=devouring_reavers_support_straps,id=250029,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2199
           },
           "tags": [
             "class"
@@ -1636,10 +1069,10 @@
           "label": "Custodial Cuffs",
           "simc": "wrist=custodial_cuffs,id=251103,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4100,
+            "mastery": 2900
           },
           "tags": [
             "dungeon"
@@ -1650,10 +1083,10 @@
           "label": "Fury-fletched Armlets",
           "simc": "wrist=fury_fletched_armlets,id=251135,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4400,
+            "crit": 2600
           },
           "tags": [
             "dungeon"
@@ -1664,87 +1097,18 @@
           "label": "Rootwarden Wraps",
           "simc": "wrist=rootwarden_wraps,id=251183,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4550
           },
           "tags": [
             "dungeon"
           ]
         },
         {
-          "id": "galactic_aspirants_leather_wristwraps",
-          "label": "Galactic Aspirant's Leather Wristwraps",
-          "simc": "wrist=galactic_aspirants_leather_wristwraps,id=255293,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_leather_armguards",
-          "label": "Galactic Aspirant's Leather Armguards",
-          "simc": "wrist=galactic_aspirants_leather_armguards,id=255325,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_leather_wristwraps",
-          "label": "Galactic Gladiator's Leather Wristwraps",
-          "simc": "wrist=galactic_gladiators_leather_wristwraps,id=255449,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_leather_wristguards",
-          "label": "Galactic Gladiator's Leather Wristguards",
-          "simc": "wrist=galactic_gladiators_leather_wristguards,id=255450,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_wraps",
-          "label": "Galactic Warmonger's Wraps",
-          "simc": "wrist=galactic_warmongers_wraps,id=255895,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
           "id": "harati_rootwardens_bracelet",
           "label": "Hara'ti Rootwarden's Bracelet",
           "simc": "wrist=harati_rootwardens_bracelet,id=257995,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "test_item_dnt___when_you_have_poison_dispelled_from_you",
-          "label": "Test Item [DNT] - When you have poison dispelled from you",
-          "simc": "wrist=test_item_dnt___when_you_have_poison_dispelled_from_you,id=267392,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
-          },
           "tags": []
         }
       ]
@@ -1756,9 +1120,9 @@
           "label": "Twisted Twilight Sash",
           "simc": "waist=twisted_twilight_sash,id=249314,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2204
           },
           "tags": [
             "raid"
@@ -1769,10 +1133,10 @@
           "label": "Scorn-Scarred Shul'ka's Belt",
           "simc": "waist=scorn_scarred_shulkas_belt,id=249374,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4849,
+            "crit": 2151
           },
           "tags": [
             "raid"
@@ -1783,10 +1147,10 @@
           "label": "Osseoclad Waistbone",
           "simc": "waist=osseoclad_waistbone,id=249643,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4250,
+            "vers": 2750
           },
           "tags": []
         },
@@ -1795,10 +1159,10 @@
           "label": "Devouring Reaver's Emblem",
           "simc": "waist=devouring_reavers_emblem,id=250030,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4966,
+            "crit": 2034
           },
           "tags": [
             "class"
@@ -1809,9 +1173,9 @@
           "label": "Snapvine Cinch",
           "simc": "waist=snapvine_cinch,id=251082,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4250
           },
           "tags": [
             "dungeon"
@@ -1822,10 +1186,10 @@
           "label": "Falconer's Cinch",
           "simc": "waist=falconers_cinch,id=251166,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4250,
+            "vers": 2750
           },
           "tags": [
             "dungeon"
@@ -1836,10 +1200,10 @@
           "label": "Rootwalker Harness",
           "simc": "waist=rootwalker_harness,id=251189,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4400,
+            "crit": 2600
           },
           "tags": []
         },
@@ -1848,67 +1212,9 @@
           "label": "Gravitic Girdle",
           "simc": "waist=gravitic_girdle,id=251235,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_leather_belt",
-          "label": "Galactic Aspirant's Leather Belt",
-          "simc": "waist=galactic_aspirants_leather_belt,id=255289,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_leather_cord",
-          "label": "Galactic Aspirant's Leather Cord",
-          "simc": "waist=galactic_aspirants_leather_cord,id=255321,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_leather_belt",
-          "label": "Galactic Gladiator's Leather Belt",
-          "simc": "waist=galactic_gladiators_leather_belt,id=255447,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_leather_strap",
-          "label": "Galactic Gladiator's Leather Strap",
-          "simc": "waist=galactic_gladiators_leather_strap,id=255448,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_belt",
-          "label": "Galactic Warmonger's Belt",
-          "simc": "waist=galactic_warmongers_belt,id=255894,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4550
           },
           "tags": []
         },
@@ -1923,20 +1229,9 @@
           "label": "Hara'ti Defender's Cord",
           "simc": "waist=harati_defenders_cord,id=263267,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "test_item_dnt___dispelling_a_poison_from_target",
-          "label": "Test Item [DNT] - Dispelling a poison from target",
-          "simc": "waist=test_item_dnt___dispelling_a_poison_from_target,id=267391,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 3350
           },
           "tags": []
         },
@@ -1945,9 +1240,9 @@
           "label": "Aspiring Hara'ti Defender's Cord",
           "simc": "waist=aspiring_harati_defenders_cord,id=267480,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 3350
           },
           "tags": []
         }
@@ -1960,10 +1255,10 @@
           "label": "Void-Claimed Shinkickers",
           "simc": "feet=void_claimed_shinkickers,id=249334,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4632,
+            "mastery": 2368
           },
           "tags": []
         },
@@ -1972,9 +1267,9 @@
           "label": "Canopy Walker's Footwraps",
           "simc": "feet=canopy_walkers_footwraps,id=249382,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 2414
           },
           "tags": [
             "raid"
@@ -1985,9 +1280,9 @@
           "label": "Osseoclad Bonecrushers",
           "simc": "feet=osseoclad_bonecrushers,id=249638,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 2900
           },
           "tags": []
         },
@@ -1996,9 +1291,9 @@
           "label": "Devouring Reaver's Soul Flatteners",
           "simc": "feet=devouring_reavers_soul_flatteners,id=250035,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 2103
           },
           "tags": [
             "class"
@@ -2009,9 +1304,9 @@
           "label": "Domanaar's Dire Treads",
           "simc": "feet=domanaars_dire_treads,id=251121,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2450
           },
           "tags": [
             "dungeon"
@@ -2022,10 +1317,10 @@
           "label": "Arctic Explorer's Legwraps",
           "simc": "feet=arctic_explorers_legwraps,id=251153,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4400,
+            "crit": 2600
           },
           "tags": []
         },
@@ -2034,74 +1329,14 @@
           "label": "Eclipse Espadrilles",
           "simc": "feet=eclipse_espadrilles,id=251210,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4250,
+            "mastery": 2750
           },
           "tags": [
             "dungeon"
           ]
-        },
-        {
-          "id": "galactic_aspirants_leather_boots",
-          "label": "Galactic Aspirant's Leather Boots",
-          "simc": "feet=galactic_aspirants_leather_boots,id=255270,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_leather_footpads",
-          "label": "Galactic Aspirant's Leather Footpads",
-          "simc": "feet=galactic_aspirants_leather_footpads,id=255302,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_leather_boots",
-          "label": "Galactic Gladiator's Leather Boots",
-          "simc": "feet=galactic_gladiators_leather_boots,id=255437,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_leather_treads",
-          "label": "Galactic Gladiator's Leather Treads",
-          "simc": "feet=galactic_gladiators_leather_treads,id=255438,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_boots",
-          "label": "Galactic Warmonger's Boots",
-          "simc": "feet=galactic_warmongers_boots,id=255890,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
         },
         {
           "id": "harati_rootwardens_soles",
@@ -2114,8 +1349,8 @@
           "label": "Nullstrider's Boots",
           "simc": "feet=nullstriders_boots,id=260372,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null
+            "agi": 5259,
+            "stamina": 7889
           },
           "tags": [
             "raid"
@@ -2130,8 +1365,8 @@
           "label": "Farstrider's Chopper",
           "simc": "main_hand=farstriders_chopper,id=237850,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null
+            "agi": 5259,
+            "stamina": 7889
           },
           "tags": []
         },
@@ -2146,8 +1381,8 @@
           "label": "Blade of the Final Twilight",
           "simc": "main_hand=blade_of_the_final_twilight,id=249281,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 4698
           },
           "tags": [
             "sword",
@@ -2159,9 +1394,9 @@
           "label": "Clutchmates' Caress",
           "simc": "main_hand=clutchmates_caress,id=249287,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2188
           },
           "tags": []
         },
@@ -2170,9 +1405,9 @@
           "label": "Weight of Command",
           "simc": "main_hand=weight_of_command,id=249293,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "stamina": 7889,
+            "crit": 4559,
+            "vers": 2441
           },
           "tags": []
         },
@@ -2181,8 +1416,8 @@
           "label": "Blade of the Blind Verdict",
           "simc": "main_hand=blade_of_the_blind_verdict,id=249294,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 4606
           },
           "tags": [
             "sword",
@@ -2194,9 +1429,9 @@
           "label": "Turalyon's False Echo",
           "simc": "main_hand=turalyons_false_echo,id=249295,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4977,
+            "crit": 2023
           },
           "tags": []
         },
@@ -2205,10 +1440,10 @@
           "label": "Tormentor's Bladed Fists",
           "simc": "main_hand=tormentors_bladed_fists,id=249298,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4621,
+            "vers": 2379
           },
           "tags": [
             "fist",
@@ -2220,8 +1455,8 @@
           "label": "Root Sculptor's Verdaxe",
           "simc": "main_hand=root_sculptors_verdaxe,id=249661,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 4250
           },
           "tags": []
         },
@@ -2230,9 +1465,9 @@
           "label": "Gnarled Thornmace",
           "simc": "main_hand=gnarled_thornmace,id=249664,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2600
           },
           "tags": []
         },
@@ -2241,9 +1476,9 @@
           "label": "Blooming Seedpod",
           "simc": "main_hand=blooming_seedpod,id=249665,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "stamina": 7889,
+            "crit": 4250,
+            "vers": 2750
           },
           "tags": []
         },
@@ -2252,10 +1487,10 @@
           "label": "Dawncrazed Beast Cleaver",
           "simc": "main_hand=dawncrazed_beast_cleaver,id=250451,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4012,
+            "crit": 2988
           },
           "tags": [
             "axe",
@@ -2267,8 +1502,8 @@
           "label": "Blooming Thornblade",
           "simc": "main_hand=blooming_thornblade,id=250452,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 3387
           },
           "tags": [
             "sword",
@@ -2280,8 +1515,8 @@
           "label": "Scepter of the Unbound Light",
           "simc": "main_hand=scepter_of_the_unbound_light,id=250453,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 3037
           },
           "tags": []
         },
@@ -2290,8 +1525,8 @@
           "label": "Excavating Cudgel",
           "simc": "main_hand=excavating_cudgel,id=251083,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 4400
           },
           "tags": []
         },
@@ -2300,9 +1535,9 @@
           "label": "Warworn Cleaver",
           "simc": "main_hand=warworn_cleaver,id=251088,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "stamina": 7889,
+            "crit": 4400,
+            "vers": 2600
           },
           "tags": [
             "axe",
@@ -2314,8 +1549,8 @@
           "label": "Malfeasance Mallet",
           "simc": "main_hand=malfeasance_mallet,id=251100,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 2750
           },
           "tags": []
         },
@@ -2324,9 +1559,9 @@
           "label": "Shadowslash Slicer",
           "simc": "main_hand=shadowslash_slicer,id=251122,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4400
           },
           "tags": [
             "sword",
@@ -2338,10 +1573,10 @@
           "label": "Grim Harvest Gloves",
           "simc": "main_hand=grim_harvest_gloves,id=251143,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4100,
+            "vers": 2900
           },
           "tags": []
         },
@@ -2350,9 +1585,9 @@
           "label": "Berserker's Hexclaws",
           "simc": "main_hand=berserkers_hexclaws,id=251163,ilevel=289",
           "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
+            "stamina": 7889,
+            "vers": 4250,
+            "crit": 2750
           },
           "tags": []
         },
@@ -2361,9 +1596,9 @@
           "label": "Soulblight Cleaver",
           "simc": "main_hand=soulblight_cleaver,id=251175,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4250
           },
           "tags": [
             "axe",
@@ -2375,9 +1610,9 @@
           "label": "Thorntalon Edge",
           "simc": "main_hand=thorntalon_edge,id=251186,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 2600
           },
           "tags": []
         },
@@ -2386,9 +1621,9 @@
           "label": "Thorned Reply",
           "simc": "main_hand=thorned_reply,id=251195,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4100,
+            "crit": 2900
           },
           "tags": []
         },
@@ -2397,10 +1632,10 @@
           "label": "Dreadflail Bludgeon",
           "simc": "main_hand=dreadflail_bludgeon,id=251207,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4550,
+            "crit": 2450
           },
           "tags": []
         },
@@ -2409,8 +1644,8 @@
           "label": "Taz'Rah's Cosmic Edge",
           "simc": "main_hand=tazrahs_cosmic_edge,id=251218,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 4100
           },
           "tags": []
         },
@@ -2419,9 +1654,9 @@
           "label": "Hulking Handaxe",
           "simc": "main_hand=hulking_handaxe,id=251224,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2450
           },
           "tags": []
         },
@@ -2430,249 +1665,32 @@
           "label": "Abyss Sabre",
           "simc": "main_hand=abyss_sabre,id=251884,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4900
           },
-          "tags": []
+          "tags": [
+            "proc"
+          ]
         },
         {
           "id": "radiant_foil",
           "label": "Radiant Foil",
           "simc": "main_hand=radiant_foil,id=251885,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4200,
+            "vers": 2800
           },
-          "tags": []
+          "tags": [
+            "proc"
+          ]
         },
         {
           "id": "fangfin_flailer",
           "label": "Fangfin Flailer",
           "simc": "main_hand=fangfin_flailer,id=253582,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_battleaxe",
-          "label": "Galactic Aspirant's Battleaxe",
-          "simc": "main_hand=galactic_aspirants_battleaxe,id=255341,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_mace",
-          "label": "Galactic Aspirant's Mace",
-          "simc": "main_hand=galactic_aspirants_mace,id=255343,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_scepter",
-          "label": "Galactic Aspirant's Scepter",
-          "simc": "main_hand=galactic_aspirants_scepter,id=255349,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_morningstar",
-          "label": "Galactic Aspirant's Morningstar",
-          "simc": "main_hand=galactic_aspirants_morningstar,id=255353,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_chopper",
-          "label": "Galactic Aspirant's Chopper",
-          "simc": "main_hand=galactic_aspirants_chopper,id=255355,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_scepter",
-          "label": "Galactic Gladiator's Scepter",
-          "simc": "main_hand=galactic_gladiators_scepter,id=255624,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_hammer",
-          "label": "Galactic Gladiator's Hammer",
-          "simc": "main_hand=galactic_gladiators_hammer,id=255627,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_slicer",
-          "label": "Galactic Gladiator's Slicer",
-          "simc": "main_hand=galactic_gladiators_slicer,id=255629,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_sword",
-          "label": "Galactic Gladiator's Sword",
-          "simc": "main_hand=galactic_gladiators_sword,id=255635,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_gladius",
-          "label": "Galactic Gladiator's Gladius",
-          "simc": "main_hand=galactic_gladiators_gladius,id=255636,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_mace",
-          "label": "Galactic Gladiator's Mace",
-          "simc": "main_hand=galactic_gladiators_mace,id=255639,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_battleaxe",
-          "label": "Galactic Warmonger's Battleaxe",
-          "simc": "main_hand=galactic_warmongers_battleaxe,id=255918,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_hatchet",
-          "label": "Galactic Warmonger's Hatchet",
-          "simc": "main_hand=galactic_warmongers_hatchet,id=255919,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_carver",
-          "label": "Galactic Warmonger's Carver",
-          "simc": "main_hand=galactic_warmongers_carver,id=255920,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_club",
-          "label": "Galactic Warmonger's Club",
-          "simc": "main_hand=galactic_warmongers_club,id=255928,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_hammer",
-          "label": "Galactic Warmonger's Hammer",
-          "simc": "main_hand=galactic_warmongers_hammer,id=255929,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_cudgel",
-          "label": "Galactic Warmonger's Cudgel",
-          "simc": "main_hand=galactic_warmongers_cudgel,id=255930,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_mace",
-          "label": "Galactic Warmonger's Mace",
-          "simc": "main_hand=galactic_warmongers_mace,id=255935,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_crusher",
-          "label": "Galactic Warmonger's Crusher",
-          "simc": "main_hand=galactic_warmongers_crusher,id=255936,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_scepter",
-          "label": "Galactic Warmonger's Scepter",
-          "simc": "main_hand=galactic_warmongers_scepter,id=255937,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
           "tags": []
         },
         {
@@ -2686,8 +1704,8 @@
           "label": "Skybreaker's Blade",
           "simc": "main_hand=skybreakers_blade,id=258218,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 3200
           },
           "tags": []
         },
@@ -2696,9 +1714,9 @@
           "label": "Blazing Sunclaws",
           "simc": "main_hand=blazing_sunclaws,id=258438,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2600
           },
           "tags": [
             "fist",
@@ -2710,9 +1728,9 @@
           "label": "Grips of the Dark Viceroy",
           "simc": "main_hand=grips_of_the_dark_viceroy,id=258524,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2600
           },
           "tags": [
             "fist",
@@ -2724,9 +1742,9 @@
           "label": "Scepter of the Endless Night",
           "simc": "main_hand=scepter_of_the_endless_night,id=258525,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4250,
+            "crit": 2750
           },
           "tags": []
         },
@@ -2771,9 +1789,9 @@
           "label": "Underbrush Render",
           "simc": "main_hand=underbrush_render,id=260187,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4400
           },
           "tags": []
         },
@@ -2782,10 +1800,10 @@
           "label": "Arator's Swift Remembrance",
           "simc": "main_hand=arators_swift_remembrance,id=260423,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4900,
+            "mastery": 2100
           },
           "tags": [
             "sword",
@@ -2827,9 +1845,9 @@
           "label": "Hand of the Rootkeeper",
           "simc": "main_hand=hand_of_the_rootkeeper,id=262729,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "stamina": 7889,
+            "mastery": 4200,
+            "vers": 2800
           },
           "tags": []
         },
@@ -2838,9 +1856,9 @@
           "label": "Wildthorn Razorfang",
           "simc": "main_hand=wildthorn_razorfang,id=262731,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4100,
+            "crit": 2900
           },
           "tags": []
         },
@@ -2887,66 +1905,9 @@
           "tags": []
         },
         {
-          "id": "galactic_gladiators_scepter",
-          "label": "Galactic Gladiator's Scepter",
-          "simc": "main_hand=galactic_gladiators_scepter,id=265617,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_slicer",
-          "label": "Galactic Gladiator's Slicer",
-          "simc": "main_hand=galactic_gladiators_slicer,id=265623,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_sword",
-          "label": "Galactic Gladiator's Sword",
-          "simc": "main_hand=galactic_gladiators_sword,id=265629,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_hammer",
-          "label": "Galactic Gladiator's Hammer",
-          "simc": "main_hand=galactic_gladiators_hammer,id=265632,ilevel=289",
-          "tags": []
-        },
-        {
           "id": "extinguished_exaliburn",
           "label": "Extinguished Exaliburn",
           "simc": "main_hand=extinguished_exaliburn,id=266099,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_ripper",
-          "label": "Galactic Gladiator's Ripper",
-          "simc": "main_hand=galactic_gladiators_ripper,id=267371,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_claws",
-          "label": "Galactic Aspirant's Claws",
-          "simc": "main_hand=galactic_aspirants_claws,id=267375,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_talons",
-          "label": "Galactic Aspirant's Talons",
-          "simc": "main_hand=galactic_aspirants_talons,id=267417,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
           "tags": []
         }
       ]
@@ -2958,8 +1919,8 @@
           "label": "Farstrider's Chopper (OH)",
           "simc": "off_hand=farstriders_chopper,id=237850,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null
+            "agi": 5259,
+            "stamina": 7889
           },
           "tags": []
         },
@@ -2974,8 +1935,8 @@
           "label": "Blade of the Final Twilight (OH)",
           "simc": "off_hand=blade_of_the_final_twilight,id=249281,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 4698
           },
           "tags": [
             "sword",
@@ -2987,9 +1948,9 @@
           "label": "Clutchmates' Caress (OH)",
           "simc": "off_hand=clutchmates_caress,id=249287,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2188
           },
           "tags": []
         },
@@ -2998,9 +1959,9 @@
           "label": "Weight of Command (OH)",
           "simc": "off_hand=weight_of_command,id=249293,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "stamina": 7889,
+            "crit": 4559,
+            "vers": 2441
           },
           "tags": []
         },
@@ -3009,8 +1970,8 @@
           "label": "Blade of the Blind Verdict (OH)",
           "simc": "off_hand=blade_of_the_blind_verdict,id=249294,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 4606
           },
           "tags": [
             "sword",
@@ -3022,9 +1983,9 @@
           "label": "Turalyon's False Echo (OH)",
           "simc": "off_hand=turalyons_false_echo,id=249295,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4977,
+            "crit": 2023
           },
           "tags": []
         },
@@ -3033,10 +1994,10 @@
           "label": "Tormentor's Bladed Fists (OH)",
           "simc": "off_hand=tormentors_bladed_fists,id=249298,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4621,
+            "vers": 2379
           },
           "tags": [
             "fist",
@@ -3048,8 +2009,8 @@
           "label": "Root Sculptor's Verdaxe (OH)",
           "simc": "off_hand=root_sculptors_verdaxe,id=249661,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 4250
           },
           "tags": []
         },
@@ -3058,9 +2019,9 @@
           "label": "Gnarled Thornmace (OH)",
           "simc": "off_hand=gnarled_thornmace,id=249664,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2600
           },
           "tags": []
         },
@@ -3069,9 +2030,9 @@
           "label": "Blooming Seedpod (OH)",
           "simc": "off_hand=blooming_seedpod,id=249665,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "stamina": 7889,
+            "crit": 4250,
+            "vers": 2750
           },
           "tags": []
         },
@@ -3080,10 +2041,10 @@
           "label": "Dawncrazed Beast Cleaver (OH)",
           "simc": "off_hand=dawncrazed_beast_cleaver,id=250451,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4012,
+            "crit": 2988
           },
           "tags": [
             "axe",
@@ -3095,8 +2056,8 @@
           "label": "Blooming Thornblade (OH)",
           "simc": "off_hand=blooming_thornblade,id=250452,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 3387
           },
           "tags": [
             "sword",
@@ -3108,8 +2069,8 @@
           "label": "Scepter of the Unbound Light (OH)",
           "simc": "off_hand=scepter_of_the_unbound_light,id=250453,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 3037
           },
           "tags": []
         },
@@ -3118,8 +2079,8 @@
           "label": "Excavating Cudgel (OH)",
           "simc": "off_hand=excavating_cudgel,id=251083,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 4400
           },
           "tags": []
         },
@@ -3128,9 +2089,9 @@
           "label": "Warworn Cleaver (OH)",
           "simc": "off_hand=warworn_cleaver,id=251088,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "stamina": 7889,
+            "crit": 4400,
+            "vers": 2600
           },
           "tags": [
             "axe",
@@ -3142,8 +2103,8 @@
           "label": "Malfeasance Mallet (OH)",
           "simc": "off_hand=malfeasance_mallet,id=251100,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 2750
           },
           "tags": []
         },
@@ -3152,9 +2113,9 @@
           "label": "Shadowslash Slicer (OH)",
           "simc": "off_hand=shadowslash_slicer,id=251122,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4400
           },
           "tags": [
             "sword",
@@ -3166,10 +2127,10 @@
           "label": "Grim Harvest Gloves (OH)",
           "simc": "off_hand=grim_harvest_gloves,id=251143,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4100,
+            "vers": 2900
           },
           "tags": []
         },
@@ -3178,9 +2139,9 @@
           "label": "Berserker's Hexclaws (OH)",
           "simc": "off_hand=berserkers_hexclaws,id=251163,ilevel=289",
           "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
+            "stamina": 7889,
+            "vers": 4250,
+            "crit": 2750
           },
           "tags": []
         },
@@ -3189,9 +2150,9 @@
           "label": "Soulblight Cleaver (OH)",
           "simc": "off_hand=soulblight_cleaver,id=251175,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4250
           },
           "tags": [
             "axe",
@@ -3203,9 +2164,9 @@
           "label": "Thorntalon Edge (OH)",
           "simc": "off_hand=thorntalon_edge,id=251186,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 2600
           },
           "tags": []
         },
@@ -3214,9 +2175,9 @@
           "label": "Thorned Reply (OH)",
           "simc": "off_hand=thorned_reply,id=251195,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4100,
+            "crit": 2900
           },
           "tags": []
         },
@@ -3225,10 +2186,10 @@
           "label": "Dreadflail Bludgeon (OH)",
           "simc": "off_hand=dreadflail_bludgeon,id=251207,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4550,
+            "crit": 2450
           },
           "tags": []
         },
@@ -3237,8 +2198,8 @@
           "label": "Taz'Rah's Cosmic Edge (OH)",
           "simc": "off_hand=tazrahs_cosmic_edge,id=251218,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null
+            "stamina": 7889,
+            "mastery": 4100
           },
           "tags": []
         },
@@ -3247,9 +2208,9 @@
           "label": "Hulking Handaxe (OH)",
           "simc": "off_hand=hulking_handaxe,id=251224,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2450
           },
           "tags": []
         },
@@ -3258,249 +2219,32 @@
           "label": "Abyss Sabre (OH)",
           "simc": "off_hand=abyss_sabre,id=251884,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4900
           },
-          "tags": []
+          "tags": [
+            "proc"
+          ]
         },
         {
           "id": "radiant_foil_oh",
           "label": "Radiant Foil (OH)",
           "simc": "off_hand=radiant_foil,id=251885,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4200,
+            "vers": 2800
           },
-          "tags": []
+          "tags": [
+            "proc"
+          ]
         },
         {
           "id": "fangfin_flailer_oh",
           "label": "Fangfin Flailer (OH)",
           "simc": "off_hand=fangfin_flailer,id=253582,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_battleaxe_oh",
-          "label": "Galactic Aspirant's Battleaxe (OH)",
-          "simc": "off_hand=galactic_aspirants_battleaxe,id=255341,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_mace_oh",
-          "label": "Galactic Aspirant's Mace (OH)",
-          "simc": "off_hand=galactic_aspirants_mace,id=255343,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_scepter_oh",
-          "label": "Galactic Aspirant's Scepter (OH)",
-          "simc": "off_hand=galactic_aspirants_scepter,id=255349,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_morningstar_oh",
-          "label": "Galactic Aspirant's Morningstar (OH)",
-          "simc": "off_hand=galactic_aspirants_morningstar,id=255353,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_chopper_oh",
-          "label": "Galactic Aspirant's Chopper (OH)",
-          "simc": "off_hand=galactic_aspirants_chopper,id=255355,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_scepter_oh",
-          "label": "Galactic Gladiator's Scepter (OH)",
-          "simc": "off_hand=galactic_gladiators_scepter,id=255624,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_hammer_oh",
-          "label": "Galactic Gladiator's Hammer (OH)",
-          "simc": "off_hand=galactic_gladiators_hammer,id=255627,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_slicer_oh",
-          "label": "Galactic Gladiator's Slicer (OH)",
-          "simc": "off_hand=galactic_gladiators_slicer,id=255629,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_sword_oh",
-          "label": "Galactic Gladiator's Sword (OH)",
-          "simc": "off_hand=galactic_gladiators_sword,id=255635,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_gladius_oh",
-          "label": "Galactic Gladiator's Gladius (OH)",
-          "simc": "off_hand=galactic_gladiators_gladius,id=255636,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_mace_oh",
-          "label": "Galactic Gladiator's Mace (OH)",
-          "simc": "off_hand=galactic_gladiators_mace,id=255639,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_battleaxe_oh",
-          "label": "Galactic Warmonger's Battleaxe (OH)",
-          "simc": "off_hand=galactic_warmongers_battleaxe,id=255918,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_hatchet_oh",
-          "label": "Galactic Warmonger's Hatchet (OH)",
-          "simc": "off_hand=galactic_warmongers_hatchet,id=255919,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_carver_oh",
-          "label": "Galactic Warmonger's Carver (OH)",
-          "simc": "off_hand=galactic_warmongers_carver,id=255920,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_club_oh",
-          "label": "Galactic Warmonger's Club (OH)",
-          "simc": "off_hand=galactic_warmongers_club,id=255928,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_hammer_oh",
-          "label": "Galactic Warmonger's Hammer (OH)",
-          "simc": "off_hand=galactic_warmongers_hammer,id=255929,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_cudgel_oh",
-          "label": "Galactic Warmonger's Cudgel (OH)",
-          "simc": "off_hand=galactic_warmongers_cudgel,id=255930,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_mace_oh",
-          "label": "Galactic Warmonger's Mace (OH)",
-          "simc": "off_hand=galactic_warmongers_mace,id=255935,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_crusher_oh",
-          "label": "Galactic Warmonger's Crusher (OH)",
-          "simc": "off_hand=galactic_warmongers_crusher,id=255936,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_warmongers_scepter_oh",
-          "label": "Galactic Warmonger's Scepter (OH)",
-          "simc": "off_hand=galactic_warmongers_scepter,id=255937,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "crit": null
-          },
           "tags": []
         },
         {
@@ -3514,8 +2258,8 @@
           "label": "Skybreaker's Blade (OH)",
           "simc": "off_hand=skybreakers_blade,id=258218,ilevel=289",
           "stats": {
-            "stamina": null,
-            "crit": null
+            "stamina": 7889,
+            "crit": 3200
           },
           "tags": []
         },
@@ -3524,9 +2268,9 @@
           "label": "Blazing Sunclaws (OH)",
           "simc": "off_hand=blazing_sunclaws,id=258438,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 2600
           },
           "tags": [
             "fist",
@@ -3538,9 +2282,9 @@
           "label": "Grips of the Dark Viceroy (OH)",
           "simc": "off_hand=grips_of_the_dark_viceroy,id=258524,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2600
           },
           "tags": [
             "fist",
@@ -3552,9 +2296,9 @@
           "label": "Scepter of the Endless Night (OH)",
           "simc": "off_hand=scepter_of_the_endless_night,id=258525,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4250,
+            "crit": 2750
           },
           "tags": []
         },
@@ -3599,9 +2343,9 @@
           "label": "Underbrush Render (OH)",
           "simc": "off_hand=underbrush_render,id=260187,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4400
           },
           "tags": []
         },
@@ -3610,10 +2354,10 @@
           "label": "Arator's Swift Remembrance (OH)",
           "simc": "off_hand=arators_swift_remembrance,id=260423,ilevel=289",
           "stats": {
-            "agi": null,
-            "stamina": null,
-            "crit": null,
-            "mastery": null
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4900,
+            "mastery": 2100
           },
           "tags": [
             "sword",
@@ -3655,9 +2399,9 @@
           "label": "Hand of the Rootkeeper (OH)",
           "simc": "off_hand=hand_of_the_rootkeeper,id=262729,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "vers": null
+            "stamina": 7889,
+            "mastery": 4200,
+            "vers": 2800
           },
           "tags": []
         },
@@ -3666,9 +2410,9 @@
           "label": "Wildthorn Razorfang (OH)",
           "simc": "off_hand=wildthorn_razorfang,id=262731,ilevel=289",
           "stats": {
-            "stamina": null,
-            "mastery": null,
-            "crit": null
+            "stamina": 7889,
+            "mastery": 4100,
+            "crit": 2900
           },
           "tags": []
         },
@@ -3715,66 +2459,9 @@
           "tags": []
         },
         {
-          "id": "galactic_gladiators_scepter_oh",
-          "label": "Galactic Gladiator's Scepter (OH)",
-          "simc": "off_hand=galactic_gladiators_scepter,id=265617,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_slicer_oh",
-          "label": "Galactic Gladiator's Slicer (OH)",
-          "simc": "off_hand=galactic_gladiators_slicer,id=265623,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_sword_oh",
-          "label": "Galactic Gladiator's Sword (OH)",
-          "simc": "off_hand=galactic_gladiators_sword,id=265629,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_hammer_oh",
-          "label": "Galactic Gladiator's Hammer (OH)",
-          "simc": "off_hand=galactic_gladiators_hammer,id=265632,ilevel=289",
-          "tags": []
-        },
-        {
           "id": "extinguished_exaliburn_oh",
           "label": "Extinguished Exaliburn (OH)",
           "simc": "off_hand=extinguished_exaliburn,id=266099,ilevel=289",
-          "tags": []
-        },
-        {
-          "id": "galactic_gladiators_ripper_oh",
-          "label": "Galactic Gladiator's Ripper (OH)",
-          "simc": "off_hand=galactic_gladiators_ripper,id=267371,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_claws_oh",
-          "label": "Galactic Aspirant's Claws (OH)",
-          "simc": "off_hand=galactic_aspirants_claws,id=267375,ilevel=289",
-          "stats": {
-            "stamina": null,
-            "vers": null,
-            "mastery": null
-          },
-          "tags": []
-        },
-        {
-          "id": "galactic_aspirants_talons_oh",
-          "label": "Galactic Aspirant's Talons (OH)",
-          "simc": "off_hand=galactic_aspirants_talons,id=267417,ilevel=289",
-          "stats": {
-            "agi": null,
-            "stamina": null,
-            "vers": null
-          },
           "tags": []
         },
         {
@@ -3784,7 +2471,368 @@
           "tags": [
             "crafted",
             "sword"
-          ]
+          ],
+          "stats": {
+            "agi": 62
+          }
+        }
+      ]
+    },
+    "finger1": {
+      "candidates": [
+        {
+          "id": "signet_of_the_starved_beast",
+          "label": "Signet of the Starved Beast",
+          "simc": "finger1=signet_of_the_starved_beast,id=249336,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 13750,
+            "vers": 3750
+          },
+          "tags": []
+        },
+        {
+          "id": "bond_of_light",
+          "label": "Bond of Light",
+          "simc": "finger1=bond_of_light,id=249369,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 3250
+          },
+          "tags": []
+        },
+        {
+          "id": "vibrant_wilderloop",
+          "label": "Vibrant Wilderloop",
+          "simc": "finger1=vibrant_wilderloop,id=249620,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 5500
+          },
+          "tags": []
+        },
+        {
+          "id": "voodoo_band",
+          "label": "Voodoo Band",
+          "simc": "finger1=voodoo_band,id=249621,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 12250,
+            "mastery": 5250
+          },
+          "tags": []
+        },
+        {
+          "id": "spiritseal_ring",
+          "label": "Spiritseal Ring",
+          "simc": "finger1=spiritseal_ring,id=249622,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 12000
+          },
+          "tags": []
+        },
+        {
+          "id": "blooming_leafcoil",
+          "label": "Blooming Leafcoil",
+          "simc": "finger1=blooming_leafcoil,id=249623,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 11750
+          },
+          "tags": []
+        },
+        {
+          "id": "sindorei_band_of_hope",
+          "label": "Sin'dorei Band of Hope",
+          "simc": "finger1=sindorei_band_of_hope,id=249919,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 14350
+          },
+          "tags": []
+        },
+        {
+          "id": "eye_of_midnight",
+          "label": "Eye of Midnight",
+          "simc": "finger1=eye_of_midnight,id=249920,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 17500
+          },
+          "tags": []
+        },
+        {
+          "id": "encroaching_shadow_signet",
+          "label": "Encroaching Shadow Signet",
+          "simc": "finger1=encroaching_shadow_signet,id=250460,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 12000,
+            "mastery": 5500
+          },
+          "tags": []
+        },
+        {
+          "id": "omission_of_light",
+          "label": "Omission of Light",
+          "simc": "finger1=omission_of_light,id=251093,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 10250
+          },
+          "tags": []
+        },
+        {
+          "id": "bifurcation_band",
+          "label": "Bifurcation Band",
+          "simc": "finger1=bifurcation_band,id=251115,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 6500
+          },
+          "tags": []
+        },
+        {
+          "id": "signet_of_snarling_servitude",
+          "label": "Signet of Snarling Servitude",
+          "simc": "finger1=signet_of_snarling_servitude,id=251136,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 10750
+          },
+          "tags": []
+        },
+        {
+          "id": "pilfered_precious_band",
+          "label": "Pilfered Precious Band",
+          "simc": "finger1=pilfered_precious_band,id=251148,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 10500,
+            "crit": 7000
+          },
+          "tags": []
+        },
+        {
+          "id": "lightwardens_bind",
+          "label": "Lightwarden's Bind",
+          "simc": "finger1=lightwardens_bind,id=251194,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 5750
+          },
+          "tags": []
+        },
+        {
+          "id": "occlusion_of_void",
+          "label": "Occlusion of Void",
+          "simc": "finger1=occlusion_of_void,id=251217,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 12250,
+            "mastery": 5250
+          },
+          "tags": []
+        },
+        {
+          "id": "blessed_signet",
+          "label": "Blessed Signet",
+          "simc": "finger1=blessed_signet,id=251934,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 7000
+          },
+          "tags": []
+        },
+        {
+          "id": "sickening_signet_of_atroxus",
+          "label": "Sickening Signet of Atroxus",
+          "simc": "finger1=sickening_signet_of_atroxus,id=252258,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 12000
+          },
+          "tags": []
+        }
+      ]
+    },
+    "finger2": {
+      "candidates": [
+        {
+          "id": "signet_of_the_starved_beast",
+          "label": "Signet of the Starved Beast",
+          "simc": "finger2=signet_of_the_starved_beast,id=249336,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 13750,
+            "vers": 3750
+          },
+          "tags": []
+        },
+        {
+          "id": "bond_of_light",
+          "label": "Bond of Light",
+          "simc": "finger2=bond_of_light,id=249369,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 3250
+          },
+          "tags": []
+        },
+        {
+          "id": "vibrant_wilderloop",
+          "label": "Vibrant Wilderloop",
+          "simc": "finger2=vibrant_wilderloop,id=249620,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 5500
+          },
+          "tags": []
+        },
+        {
+          "id": "voodoo_band",
+          "label": "Voodoo Band",
+          "simc": "finger2=voodoo_band,id=249621,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 12250,
+            "mastery": 5250
+          },
+          "tags": []
+        },
+        {
+          "id": "spiritseal_ring",
+          "label": "Spiritseal Ring",
+          "simc": "finger2=spiritseal_ring,id=249622,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 12000
+          },
+          "tags": []
+        },
+        {
+          "id": "blooming_leafcoil",
+          "label": "Blooming Leafcoil",
+          "simc": "finger2=blooming_leafcoil,id=249623,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 11750
+          },
+          "tags": []
+        },
+        {
+          "id": "sindorei_band_of_hope",
+          "label": "Sin'dorei Band of Hope",
+          "simc": "finger2=sindorei_band_of_hope,id=249919,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 14350
+          },
+          "tags": []
+        },
+        {
+          "id": "eye_of_midnight",
+          "label": "Eye of Midnight",
+          "simc": "finger2=eye_of_midnight,id=249920,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 17500
+          },
+          "tags": []
+        },
+        {
+          "id": "encroaching_shadow_signet",
+          "label": "Encroaching Shadow Signet",
+          "simc": "finger2=encroaching_shadow_signet,id=250460,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 12000,
+            "mastery": 5500
+          },
+          "tags": []
+        },
+        {
+          "id": "omission_of_light",
+          "label": "Omission of Light",
+          "simc": "finger2=omission_of_light,id=251093,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 10250
+          },
+          "tags": []
+        },
+        {
+          "id": "bifurcation_band",
+          "label": "Bifurcation Band",
+          "simc": "finger2=bifurcation_band,id=251115,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 6500
+          },
+          "tags": []
+        },
+        {
+          "id": "signet_of_snarling_servitude",
+          "label": "Signet of Snarling Servitude",
+          "simc": "finger2=signet_of_snarling_servitude,id=251136,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 10750
+          },
+          "tags": []
+        },
+        {
+          "id": "pilfered_precious_band",
+          "label": "Pilfered Precious Band",
+          "simc": "finger2=pilfered_precious_band,id=251148,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 10500,
+            "crit": 7000
+          },
+          "tags": []
+        },
+        {
+          "id": "lightwardens_bind",
+          "label": "Lightwarden's Bind",
+          "simc": "finger2=lightwardens_bind,id=251194,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "vers": 5750
+          },
+          "tags": []
+        },
+        {
+          "id": "occlusion_of_void",
+          "label": "Occlusion of Void",
+          "simc": "finger2=occlusion_of_void,id=251217,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 12250,
+            "mastery": 5250
+          },
+          "tags": []
+        },
+        {
+          "id": "blessed_signet",
+          "label": "Blessed Signet",
+          "simc": "finger2=blessed_signet,id=251934,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 7000
+          },
+          "tags": []
+        },
+        {
+          "id": "sickening_signet_of_atroxus",
+          "label": "Sickening Signet of Atroxus",
+          "simc": "finger2=sickening_signet_of_atroxus,id=252258,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 12000
+          },
+          "tags": []
         }
       ]
     }
@@ -3930,7 +2978,7 @@
   },
   "flagged": {
     "eye_of_midnight": "On-equip proc (spell 1266505) not fully modeled in SimC. DPS results may understate this ring.",
-    "radiant_plume": "Decaying stat mechanic — average value over fight is lower than tooltip. SimC models the decay.",
-    "umbral_plume": "Unique-Equipped with Radiant Plume — cannot equip both."
+    "radiant_plume": "Decaying stat mechanic \u2014 average value over fight is lower than tooltip. SimC models the decay.",
+    "umbral_plume": "Unique-Equipped with Radiant Plume \u2014 cannot equip both."
   }
 }
