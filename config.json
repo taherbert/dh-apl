@@ -7,6 +7,19 @@
     "env": "beta",
     "raidbots": "https://mimiron.raidbots.com/static/data"
   },
+  "remote": {
+    "instanceType": "c7i.24xlarge",
+    "vCpus": 96,
+    "amiId": "ami-0b9ace4690d3d75b9",
+    "spotMaxPrice": "1.50",
+    "shutdownMinutes": 45,
+    "region": "us-east-1",
+    "securityGroup": "sg-00d7f1bc4bf4138b2",
+    "subnetId": null,
+    "sshKeyPath": "~/.ssh/simulationcraft",
+    "sshUser": "ubuntu",
+    "keyPairName": "simulationcraft"
+  },
   "simulation": {
     "scenarios": {
       "st": {

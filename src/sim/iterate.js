@@ -23,7 +23,7 @@ import {
   unlinkSync,
 } from "node:fs";
 import { join, dirname, basename, resolve, relative } from "node:path";
-import { cpus } from "node:os";
+import { getSimCores, isRemoteActive } from "./remote.js";
 import { runWorkflow } from "./workflow.js";
 import {
   SCENARIOS,
@@ -501,7 +501,7 @@ async function runComparison(candidatePath, tier = "standard") {
   const simcContent = buildProfilesetContent(candidatePath);
 
   // Parallel: each scenario gets cores/3 threads
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
@@ -664,7 +664,7 @@ const MIN_THREADS_PER_SIM = 4;
 
 // Calculate optimal concurrency and thread allocation for sim batching.
 function simConcurrency(simCount) {
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const maxConcurrency = Math.max(
     1,
     Math.floor(totalCores / MIN_THREADS_PER_SIM),
@@ -704,7 +704,7 @@ async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
     return runMultiBuildBaselineProfileset(aplPath, roster, tierConfig);
   }
 
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
@@ -1127,6 +1127,12 @@ async function cmdInit(aplPath) {
     }
   }
 
+  if (!isRemoteActive()) {
+    console.log(
+      `\n  Tip: ${roster.builds.length} builds baseline — consider 'npm run remote:start' for faster sims\n`,
+    );
+  }
+
   console.log("Running multi-actor baseline across all scenarios...");
 
   const tierConfig = FIDELITY_TIERS.standard;
@@ -1348,6 +1354,13 @@ async function cmdCompare(candidatePath, tier, { staged = false } = {}) {
         "Multi-build state but no roster found. Regenerate roster first.",
       );
       process.exit(1);
+    }
+
+    // Hint: suggest remote for non-quick fidelity with many builds
+    if (tier !== "quick" && !staged && !isRemoteActive()) {
+      console.log(
+        `\n  Tip: ${roster.builds.length} builds at ${tier} fidelity — consider 'npm run remote:start' for faster sims\n`,
+      );
     }
 
     if (staged) {
@@ -2133,7 +2146,7 @@ async function cmdPatternAnalyze() {
   // Try worker-based parallel processing (2+ work units, 2+ CPUs)
   const workerPath = new URL("../analysis/pattern-worker.js", import.meta.url)
     .pathname;
-  const poolSize = Math.min(cpus().length - 1, 4, totalUnits);
+  const poolSize = Math.min(getSimCores() - 1, 4, totalUnits);
   let parallelized = false;
 
   if (poolSize > 1 && workUnits.length > 1) {

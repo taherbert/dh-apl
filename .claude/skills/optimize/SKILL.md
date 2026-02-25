@@ -316,6 +316,22 @@ Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `chang
 
 **Every test runs against ALL roster builds simultaneously.**
 
+### Remote Sim Check
+
+Before starting heavy iteration, check if remote sim offloading is available:
+
+```bash
+SPEC={spec} npm run remote:status
+```
+
+If no instance is active, suggest starting one — multi-build iteration at standard/confirm fidelity benefits significantly from remote (96 vCPUs vs local cores):
+
+```bash
+npm run remote:start
+```
+
+Quick-fidelity screening sims automatically stay local (SCP overhead exceeds sim time). Standard and confirm fidelity sims route to remote automatically when an instance is active.
+
 ### Build Roster Requirement
 
 1. Verify roster: `npm run roster show` -- must cover templates from both hero trees

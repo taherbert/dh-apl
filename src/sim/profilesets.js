@@ -8,6 +8,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { SCENARIOS, SIM_DEFAULTS, readRouteFile } from "./runner.js";
 import { SIMC_BIN, DATA_ENV, initSpec } from "../engine/startup.js";
+import { shouldUseRemote, runSimcRemote } from "./remote.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, resultsFile, dataFile } from "../engine/paths.js";
 
@@ -158,10 +159,14 @@ export async function runProfilesetAsync(
   );
 
   try {
-    await execFileAsync(SIMC, args, {
-      maxBuffer: 100 * 1024 * 1024,
-      timeout: 1800000,
-    });
+    if (shouldUseRemote(args)) {
+      await runSimcRemote(args);
+    } else {
+      await execFileAsync(SIMC, args, {
+        maxBuffer: 100 * 1024 * 1024,
+        timeout: 1800000,
+      });
+    }
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
     throw new Error(`SimC profileset failed: ${e.message}`);

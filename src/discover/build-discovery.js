@@ -6,7 +6,7 @@
 import { readFileSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { createHash } from "node:crypto";
-import { cpus } from "node:os";
+import { getSimCores } from "../sim/remote.js";
 
 import { generateCombos, buildToHash } from "../model/talent-combos.js";
 import { generateProfileset, runProfilesetAsync } from "../sim/profilesets.js";
@@ -109,7 +109,7 @@ async function simBuilds(builds, aplPath, fidelity, data) {
   );
 
   const results = {};
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const threadsPerScenario = Math.max(
     1,
     Math.floor(totalCores / scenarios.length),

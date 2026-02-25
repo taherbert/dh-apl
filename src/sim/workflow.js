@@ -5,7 +5,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, basename } from "node:path";
 import { runSimAsync, SCENARIOS } from "./runner.js";
-import { cpus } from "node:os";
+import { getSimCores } from "./remote.js";
 import {
   getSpecAdapter,
   loadSpecAdapter,
@@ -24,7 +24,7 @@ export async function runWorkflow(aplPath, scenarios = ALL_SCENARIOS) {
   };
 
   // Run scenarios in parallel, splitting threads across them
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const threadsPerScenario = Math.max(
     1,
     Math.floor(totalCores / scenarios.length),

@@ -61,6 +61,10 @@
     "gear:screen": "node src/sim/gear.js screen",
     "gear:run": "node src/sim/gear.js run",
     "gear:write-profile": "node src/sim/gear.js write-profile",
-    "gear:status": "node src/sim/gear.js status"
+    "gear:status": "node src/sim/gear.js status",
+    "remote:start": "AWS_PROFILE=simulationcraft node src/sim/remote.js start",
+    "remote:stop": "AWS_PROFILE=simulationcraft node src/sim/remote.js stop",
+    "remote:status": "AWS_PROFILE=simulationcraft node src/sim/remote.js status",
+    "remote:build-ami": "AWS_PROFILE=simulationcraft node src/sim/remote.js build-ami"
   }
 }
