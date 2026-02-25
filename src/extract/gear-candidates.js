@@ -10,6 +10,7 @@
 // Per-item ilvl: uses equippable-items-full.json (has sources[]) + instances.json to
 // determine each item's max obtainable ilvl. World boss items (instance flags=2) are
 // capped at the Hero-track ilvl (second-highest tier); all other items use Myth-track max.
+// Items with no sources array are excluded entirely — their ilvl cannot be verified.
 //
 // Usage: SPEC=vengeance node src/extract/gear-candidates.js
 
@@ -450,8 +451,23 @@ async function main() {
 
   console.log(`Detected expansion ${expansion}, target ilvl ${maxIlvl}`);
 
-  // Filter: current expansion, epic+ quality, DH-usable, non-PvP, non-crafted
+  // Filter: current expansion, epic+ quality, DH-usable, non-PvP, non-crafted,
+  // and must have at least one known drop source so we can verify its max ilvl.
+  // Items with no sources array (e.g. delve rewards not yet mapped in beta data)
+  // are excluded — simming them at an unverified ilvl produces misleading rankings.
   const eligible = items.filter(
+    (item) =>
+      item.expansion === expansion &&
+      item.quality >= 3 &&
+      item.itemClass != null &&
+      item.sources?.length > 0 &&
+      isDHUsable(item) &&
+      !isPvp(item) &&
+      !isCrafted(item) &&
+      !isDNT(item),
+  );
+
+  const noSource = items.filter(
     (item) =>
       item.expansion === expansion &&
       item.quality >= 3 &&
@@ -459,9 +475,14 @@ async function main() {
       isDHUsable(item) &&
       !isPvp(item) &&
       !isCrafted(item) &&
-      !isDNT(item),
+      !isDNT(item) &&
+      !(item.sources?.length > 0),
   );
-
+  if (noSource.length > 0) {
+    console.log(
+      `Skipped ${noSource.length} items with no known drop source: ${noSource.map((i) => i.name).join(", ")}`,
+    );
+  }
   console.log(`${eligible.length} eligible items from ${items.length} total`);
 
   // Group by slot
