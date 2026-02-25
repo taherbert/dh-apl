@@ -32,7 +32,7 @@
 //   SPEC=vengeance node src/sim/gear.js export
 //   SPEC=vengeance node src/sim/gear.js screen [--slot X]  (diagnostic only)
 
-import { getSimCores } from "./remote.js";
+import { getSimCores, stopRemote } from "./remote.js";
 import { parseArgs } from "node:util";
 import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
@@ -72,12 +72,9 @@ import {
 function parseFidelity(args, defaultTier = "standard") {
   if (args.includes("--quick")) return "quick";
   if (args.includes("--confirm")) return "confirm";
-  const { values } = parseArgs({
-    args,
-    options: { fidelity: { type: "string", default: defaultTier } },
-    strict: false,
-  });
-  return values.fidelity;
+  const idx = args.indexOf("--fidelity");
+  if (idx >= 0 && args[idx + 1]) return args[idx + 1];
+  return defaultTier;
 }
 
 // --- Concurrency helpers ---
@@ -1725,6 +1722,8 @@ async function cmdRun(args) {
 
   console.log("\n========== Pipeline Complete ==========\n");
   cmdStatus();
+
+  await stopRemote();
 }
 
 // --- CLI: status ---

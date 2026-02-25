@@ -10,7 +10,133 @@
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { execSync } from "node:child_process";
+import http from "node:http";
+import tls from "node:tls";
 import { ROOT, setSpecName, REFERENCE_DIR } from "./paths.js";
+
+// --- Proxy-aware fetch ---
+// Node.js native fetch ignores https_proxy. When the sandbox proxy is active,
+// patch globalThis.fetch to tunnel HTTPS requests through HTTP CONNECT.
+(function installProxyFetch() {
+  const proxyEnv = process.env.https_proxy || process.env.HTTPS_PROXY;
+  if (!proxyEnv) return;
+
+  const proxy = new URL(proxyEnv);
+  const noProxy = (process.env.no_proxy || process.env.NO_PROXY || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  function shouldProxy(hostname) {
+    return !noProxy.some(
+      (p) => hostname === p || hostname.endsWith("." + p) || p === "*",
+    );
+  }
+
+  const nativeFetch = globalThis.fetch;
+
+  globalThis.fetch = async function proxyFetch(url, options = {}) {
+    const target = new URL(url.toString());
+    if (target.protocol !== "https:" || !shouldProxy(target.hostname)) {
+      return nativeFetch(url, options);
+    }
+
+    const { signal } = options;
+
+    const rawSocket = await new Promise((resolve, reject) => {
+      if (signal?.aborted)
+        return reject(new DOMException("Request aborted", "AbortError"));
+      const req = http.request({
+        host: proxy.hostname,
+        port: parseInt(proxy.port) || 80,
+        method: "CONNECT",
+        path: `${target.hostname}:443`,
+        headers: { Host: `${target.hostname}:443` },
+      });
+      const onAbort = () => {
+        req.destroy();
+        reject(new DOMException("Request aborted", "AbortError"));
+      };
+      signal?.addEventListener("abort", onAbort, { once: true });
+      req.on("connect", (res, socket) => {
+        signal?.removeEventListener("abort", onAbort);
+        if (res.statusCode !== 200) {
+          socket.destroy();
+          return reject(new Error(`Proxy CONNECT failed: ${res.statusCode}`));
+        }
+        resolve(socket);
+      });
+      req.on("error", (err) => {
+        signal?.removeEventListener("abort", onAbort);
+        reject(err);
+      });
+      req.end();
+    });
+
+    const tlsSocket = await new Promise((resolve, reject) => {
+      const s = tls.connect(
+        { socket: rawSocket, servername: target.hostname },
+        () => resolve(s),
+      );
+      s.on("error", reject);
+    });
+
+    return new Promise((resolve, reject) => {
+      const method = (options.method || "GET").toUpperCase();
+      const extraHeaders =
+        options.headers instanceof Headers
+          ? Object.fromEntries(options.headers.entries())
+          : options.headers || {};
+      const req = http.request(
+        {
+          createConnection: (_, cb) => {
+            cb(null, tlsSocket);
+            return tlsSocket;
+          },
+          hostname: target.hostname,
+          port: 443,
+          path: target.pathname + target.search,
+          method,
+          headers: { Host: target.hostname, ...extraHeaders },
+        },
+        (res) => {
+          const chunks = [];
+          res.on("data", (c) => chunks.push(c));
+          res.on("end", () => {
+            const body = Buffer.concat(chunks);
+            resolve({
+              ok: res.statusCode >= 200 && res.statusCode < 300,
+              status: res.statusCode,
+              json: () => Promise.resolve(JSON.parse(body.toString("utf-8"))),
+              text: () => Promise.resolve(body.toString("utf-8")),
+              arrayBuffer: () =>
+                Promise.resolve(
+                  body.buffer.slice(
+                    body.byteOffset,
+                    body.byteOffset + body.byteLength,
+                  ),
+                ),
+            });
+          });
+          res.on("error", reject);
+        },
+      );
+      if (signal?.aborted) {
+        req.destroy();
+        return reject(new DOMException("Request aborted", "AbortError"));
+      }
+      const onAbort = () => {
+        req.destroy();
+        reject(new DOMException("Request aborted", "AbortError"));
+      };
+      signal?.addEventListener("abort", onAbort, { once: true });
+      req.on("close", () => signal?.removeEventListener("abort", onAbort));
+      req.on("error", reject);
+      if (options.body) req.write(options.body);
+      req.end();
+    });
+  };
+})();
 
 // --- Load and validate config.json + config.local.json ---
 

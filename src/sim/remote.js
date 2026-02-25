@@ -32,7 +32,7 @@ import {
   statSync,
 } from "node:fs";
 import { join, basename, dirname, resolve } from "node:path";
-import { cpus, homedir } from "node:os";
+import { cpus, homedir, tmpdir } from "node:os";
 import { ROOT, config } from "../engine/startup.js";
 import { aplsDir } from "../engine/paths.js";
 
@@ -105,7 +105,7 @@ let sshMasterCheckedAt = 0;
 const SSH_CHECK_TTL_MS = 30000; // 30s — masters persist for 10min
 
 function controlPath(ip) {
-  return `/tmp/ssh-remote-${ip.replace(/\./g, "-")}.sock`;
+  return join(tmpdir(), `ssh-remote-${ip.replace(/\./g, "-")}.sock`);
 }
 
 function controlOpts(ip) {
@@ -367,9 +367,10 @@ export function isRemoteActive() {
 }
 
 // Fidelity-aware routing: quick sims (te >= 0.5) stay local even when remote
-// is active — the ~1.7s SCP overhead exceeds the sim time. Everything else
-// (standard, confirm) goes remote for the core count advantage.
+// is active — the ~1.7s SCP overhead exceeds the sim time. Standard/confirm
+// go remote only when the remote has meaningfully more cores than local.
 const QUICK_TE_THRESHOLD = 0.5;
+const REMOTE_SPEEDUP_MIN = 2; // require at least 2× local core count to justify SSH overhead
 
 export function shouldUseRemote(args) {
   if (!isRemoteActive()) return false;
@@ -378,6 +379,9 @@ export function shouldUseRemote(args) {
     const te = parseFloat(teArg.split("=")[1]);
     if (te >= QUICK_TE_THRESHOLD) return false;
   }
+  const remoteVcpus = getSimCores();
+  const localCpus = cpus().length;
+  if (remoteVcpus < localCpus * REMOTE_SPEEDUP_MIN) return false;
   return true;
 }
 
@@ -390,6 +394,11 @@ export function getSimCores() {
 // Prevents metacharacters (|, &, etc.) from being interpreted by the remote shell.
 function shellEscape(s) {
   return "'" + s.replace(/'/g, "'\\''") + "'";
+}
+
+export async function stopRemote() {
+  if (!isRemoteActive()) return;
+  await terminateInstance();
 }
 
 export async function runSimcRemote(args) {

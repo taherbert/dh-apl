@@ -15,18 +15,18 @@ augmentation=void_touched
 temporary_enchant=main_hand:thalassian_phoenix_oil_2/off_hand:thalassian_phoenix_oil_2
 
 head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983,enchant_id=7961
-neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240858/240858
+neck=ribbon_of_coiled_malice,id=249337,ilevel=289
 shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289,enchant_id=7971
 back=potionstained_cloak,id=193712,ilevel=289
-chest=vest_of_the_voids_embrace,id=151313,ilevel=289,enchant_id=7987
+chest=maledict_vest,id=251216,ilevel=289
 wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240858,embellishment=prismatic_focusing_iris
 hands=devouring_reavers_essence_grips,id=250034,ilevel=289
-waist=cinch_of_the_umbral_lasher,id=151316,ilevel=289,gem_id=240858
+waist=twisted_twilight_sash,id=249314,ilevel=289
 legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8161
 feet=voidclaimed_shinkickers,id=249334,ilevel=289,enchant_id=8019
-finger1=loa_worshipers_band,id=251513,ilevel=285,gem_id=240856/240868,enchant_id=8025
-finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13453,ilevel=285,gem_id=240856/240868,enchant_id=8025
-trinket1=gaze_of_the_alnseer,id=249343,ilevel=289
-trinket2=void_execution_mandate,id=250225,ilevel=289
-main_hand=dawncrazed_beast_cleaver,id=250451,ilevel=289,enchant_id=8039
+finger1=signet_of_snarling_servitude,id=251136,ilevel=289
+finger2=pilfered_precious_band,id=251148,ilevel=289
+trinket1=freightrunners_flask,id=250215,ilevel=289
+trinket2=radiant_plume,id=249806,ilevel=289
+main_hand=farstriders_chopper,id=237850,ilevel=289
 off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt
