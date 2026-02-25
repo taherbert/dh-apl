@@ -23,6 +23,7 @@ import {
 import { join, basename, dirname, resolve } from "node:path";
 import { cpus, homedir } from "node:os";
 import { ROOT, config } from "../engine/startup.js";
+import { aplsDir } from "../engine/paths.js";
 
 const execAsync = promisify(execFile);
 
@@ -86,6 +87,11 @@ function sshArgs(ip) {
 }
 
 // --- SSH connection multiplexing ---
+
+// Cache SSH master health checks — avoids 8 redundant `ssh -O check` calls
+// when concurrent sims all launch within the same batch window.
+let sshMasterCheckedAt = 0;
+const SSH_CHECK_TTL_MS = 30000; // 30s — masters persist for 10min
 
 function controlPath(ip) {
   return `/tmp/ssh-remote-${ip.replace(/\./g, "-")}.sock`;
@@ -367,11 +373,15 @@ export async function runSimcRemote(args) {
   const sa = sshArgs(publicIp);
   const target = sshTarget(publicIp);
 
-  // Re-establish multiplexed connection if master died (laptop sleep, network blip)
-  try {
-    await execAsync("ssh", [...sa, "-O", "check", target], { timeout: 5000 });
-  } catch {
-    await openSshMaster(publicIp);
+  // Re-establish multiplexed connection if master died (laptop sleep, network blip).
+  // Cached to avoid redundant checks when 8 concurrent sims launch in a batch.
+  if (Date.now() - sshMasterCheckedAt > SSH_CHECK_TTL_MS) {
+    try {
+      await execAsync("ssh", [...sa, "-O", "check", target], { timeout: 5000 });
+    } catch {
+      await openSshMaster(publicIp);
+    }
+    sshMasterCheckedAt = Date.now();
   }
 
   // Find the .simc input file — may not be args[0] due to ptr=1 unshift
@@ -815,28 +825,83 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
     );
     const simcCommit = commitRaw.trim();
 
-    // Full optimization build: -O3, -ffast-math, -march=native (AVX-512 on c7i),
-    // -flto=auto, -DNDEBUG, no networking code
+    // PGO (Profile-Guided Optimization) three-pass build:
+    //   1. Instrumented build with -fprofile-generate (GCC)
+    //   2. Run representative workload to collect profile data
+    //   3. Optimized rebuild with -fprofile-use (uses branch/layout data)
+    //
+    // Base flags from `make optimized`: -O3, -DNDEBUG, -ffast-math,
+    // -fomit-frame-pointer, -march=native (AVX-512 on c7i)
+    // LTO_AUTO=1 adds -flto=auto, SC_NO_NETWORKING=1 drops libcurl
     const branch = shellEscape(config.simc.branch);
     const cloneUrl = shellEscape(repoUrl);
+    const makeBase =
+      "cd /tmp/simc-build/engine && make optimized LTO_AUTO=1 SC_NO_NETWORKING=1";
+
+    // Upload a self-contained APL profile for PGO training
+    const target = sshTarget(publicIp);
+    const ka = sshKeyArgs();
+    let pgoProfile = null;
+    const aplPath = join(aplsDir(), "vengeance.simc");
+    if (existsSync(aplPath)) {
+      const { resolveInputDirectives } = await import("./profilesets.js");
+      const raw = readFileSync(aplPath, "utf-8");
+      const resolved = resolveInputDirectives(raw, dirname(resolve(aplPath)));
+      const tmpProfile = join(ROOT, "results", ".pgo-profile.simc");
+      writeFileSync(tmpProfile, resolved);
+      pgoProfile = tmpProfile;
+    }
+
     const buildCmds = [
       "sudo apt-get update -qq",
       "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq build-essential git numactl",
       `git clone --depth 1 --branch ${branch} ${cloneUrl} /tmp/simc-build`,
-      "cd /tmp/simc-build/engine && make optimized LTO_AUTO=1 SC_NO_NETWORKING=1 -j$(nproc)",
+    ];
+
+    if (pgoProfile) {
+      // Pass 1: instrumented build
+      buildCmds.push(`${makeBase} 'OPTS=-fprofile-generate' -j$(nproc)`);
+      // Upload APL profile for training run
+      console.log("  Uploading PGO training profile...");
+      await execAsync(
+        "scp",
+        [...SSH_OPTS, ...ka, pgoProfile, `${target}:/tmp/pgo-training.simc`],
+        { timeout: 30000 },
+      );
+      // Pass 2: run representative workload (quick sim, enough to train branches)
+      buildCmds.push(
+        "/tmp/simc-build/engine/simc /tmp/pgo-training.simc target_error=0.5 threads=$(nproc) report_progress=0 json2=/dev/null ptr=1",
+      );
+      // Pass 3: clean objects (preserves .gcda profile data), rebuild with PGO
+      buildCmds.push(
+        "cd /tmp/simc-build/engine && make clean",
+        `${makeBase} 'OPTS=-fprofile-use -fprofile-correction' -j$(nproc)`,
+      );
+    } else {
+      // No APL available — single-pass optimized build
+      buildCmds.push(`${makeBase} -j$(nproc)`);
+    }
+
+    buildCmds.push(
       "sudo mkdir -p /opt/simc/engine",
       "sudo cp /tmp/simc-build/engine/simc /opt/simc/engine/simc",
       "mkdir -p /tmp/sim",
       "rm -rf /tmp/simc-build",
-    ];
+    );
 
-    const target = sshTarget(publicIp);
     for (const cmd of buildCmds) {
       console.log(`  ${cmd.length > 80 ? cmd.slice(0, 77) + "..." : cmd}`);
-      await execAsync("ssh", [...SSH_OPTS, ...sshKeyArgs(), target, cmd], {
+      await execAsync("ssh", [...SSH_OPTS, ...ka, target, cmd], {
         timeout: 600000,
         maxBuffer: 50 * 1024 * 1024,
       });
+    }
+
+    // Clean up local temp file
+    if (pgoProfile) {
+      try {
+        unlinkSync(pgoProfile);
+      } catch {}
     }
 
     console.log("Creating AMI...");
