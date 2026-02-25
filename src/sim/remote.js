@@ -367,8 +367,9 @@ export function isRemoteActive() {
 }
 
 // Fidelity-aware routing: quick sims (te >= 0.5) stay local even when remote
-// is active — the ~1.7s SCP overhead exceeds the sim time. Standard/confirm
-// go remote only when the remote has meaningfully more cores than local.
+// is active — they're used for lightweight screening and don't require a remote
+// instance. Standard/confirm go remote only when the remote has meaningfully
+// more cores than local (the ~0.5s SCP overhead is negligible at those fidelities).
 const QUICK_TE_THRESHOLD = 0.5;
 const REMOTE_SPEEDUP_MIN = 2; // require at least 2× local core count to justify SSH overhead
 

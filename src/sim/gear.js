@@ -317,11 +317,34 @@ function isCraftedSimc(simcStr) {
   return (simcStr || "").includes("crafted_stats=");
 }
 
-// Proc/on-use/set items must be sim-evaluated (Phase 4 / set eval), never purely EP-ranked.
-function isSpecialItem(c) {
-  return (
-    c.tags?.includes("proc") || c.tags?.includes("on-use") || Boolean(c.set_id)
-  );
+// Slots where ALL candidates are sim-evaluated in Phase 4, not just EP-ranked.
+// Weapons have procs, cross-slot synergies, and other non-stat effects that EP can't model.
+const ALWAYS_SIM_SLOTS = new Set(["main_hand", "off_hand"]);
+
+// All valid secondary stat combinations for crafted items.
+// These are SimC crafted_stats IDs (not Raidbots item stat IDs).
+const CRAFTED_STAT_PAIRS = [
+  { id: "haste_crit", label: "Haste/Crit", crafted_stats: "32/36" },
+  { id: "crit_haste", label: "Crit/Haste", crafted_stats: "36/32" },
+  { id: "haste_vers", label: "Haste/Vers", crafted_stats: "40/36" },
+  { id: "crit_vers", label: "Crit/Vers", crafted_stats: "40/32" },
+  { id: "haste_mastery", label: "Haste/Mastery", crafted_stats: "49/36" },
+  { id: "crit_mastery", label: "Crit/Mastery", crafted_stats: "49/32" },
+];
+
+// Detect crafted item slots from profile.simc (lines containing crafted_stats=).
+function detectCraftedSlots(profilePath) {
+  if (!existsSync(profilePath)) return [];
+  const content = readFileSync(profilePath, "utf-8");
+  const slots = new Set();
+  for (const line of content.split("\n")) {
+    if (!line.includes("crafted_stats=")) continue;
+    const m = line.match(/^(\w+)=/);
+    if (!m) continue;
+    // Normalize wrist -> wrists (gear-candidates uses "wrists" as slot key)
+    slots.add(m[1] === "wrist" ? "wrists" : m[1]);
+  }
+  return [...slots];
 }
 
 // Gate on statistical significance: winner must beat control by more than target_error%.
@@ -401,9 +424,11 @@ function cmdEpRank(gearData) {
   let finger1WinnerId = null;
 
   for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
+    // ALWAYS_SIM_SLOTS (weapons) are evaluated via sim in Phase 4 — skip EP ranking.
+    if (ALWAYS_SIM_SLOTS.has(slot)) continue;
+
     let candidates = (slotData.candidates || []).filter(
-      (c) =>
-        !isSpecialItem(c) && (!hasEmbellishments || !isCraftedSimc(c.simc)),
+      (c) => !hasEmbellishments || !isCraftedSimc(c.simc),
     );
 
     // Prevent the same ring from occupying both finger slots
@@ -463,32 +488,21 @@ async function cmdProcEval(args) {
   const builds = getRepresentativeBuilds();
   const baseProfile = getBaseProfile(gearData);
 
-  for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
-    const procCandidates = (slotData.candidates || []).filter(isSpecialItem);
-    if (procCandidates.length === 0) continue;
+  // Phase 4 sims ALL candidates in ALWAYS_SIM_SLOTS.
+  // No proc tagging needed — every weapon is evaluated empirically.
+  for (const slot of ALWAYS_SIM_SLOTS) {
+    const slotData = gearData.slots?.[slot];
+    const candidates = slotData?.candidates || [];
+    if (candidates.length === 0) continue;
 
-    // Phase 3 winner is guaranteed to be a stat-stick (special items were excluded).
-    // It serves as the control baseline for significance gating.
-    const epResults = getBestGear(3, slot);
-    if (epResults.length === 0) {
-      console.log(
-        `No stat-stick baseline for slot ${slot}, skipping proc eval.`,
-      );
-      continue;
-    }
-
-    const statStickId = epResults[0].candidate_id;
-    const statStick = slotData.candidates.find((c) => c.id === statStickId);
-    if (!statStick) continue;
-
-    const variants = [
-      { name: statStickId, overrides: [statStick.simc] },
-      ...procCandidates.map((c) => ({ name: c.id, overrides: [c.simc] })),
-    ];
+    const variants = candidates.map((c) => ({
+      name: c.id,
+      overrides: [c.simc],
+    }));
 
     const scenarioCount = Object.keys(SCENARIOS).length;
     console.log(
-      `\nProc eval: ${slot} (1 stat-stick + ${procCandidates.length} proc x ${builds.length} builds x ${scenarioCount} scenarios)`,
+      `\nWeapon eval: ${slot} (${candidates.length} candidates x ${builds.length} builds x ${scenarioCount} scenarios)`,
     );
 
     const results = await runBuildScenarioSims(
@@ -496,49 +510,34 @@ async function cmdProcEval(args) {
       builds,
       baseProfile,
       fidelity,
-      `gear_proc_${slot}`,
+      `gear_weapon_${slot}`,
     );
-    const candidateMeta = variants.map((v) => ({
-      id: v.name,
-      label: slotData.candidates.find((c) => c.id === v.name)?.label || v.name,
-    }));
+    const candidateMeta = candidates.map((c) => ({ id: c.id, label: c.label }));
     const ranked = aggregateGearResults(results, candidateMeta, builds);
 
-    // Significance gate: proc item must beat the stat-stick by more than target_error%.
-    // Non-significant proc items are eliminated and won't be selected by buildGearLines.
-    const statStickEntry = ranked.find((r) => r.id === statStickId);
-    const statStickDps = statStickEntry?.weighted ?? 0;
+    // Significance gate: winner must beat the current profile baseline by more than target_error%.
+    const baselineEntry = ranked.find((r) => r.id === "__baseline__");
+    const baselineDps = baselineEntry?.weighted ?? 0;
     for (const r of ranked) {
-      if (r.id === statStickId || r.id === "__baseline__") continue;
-      if (!isSignificant(r.weighted, statStickDps, targetError)) {
+      if (r.id === "__baseline__") continue;
+      if (!isSignificant(r.weighted, baselineDps, targetError)) {
         r.eliminated = true;
-        const deltaPct = statStickDps
-          ? (((r.weighted - statStickDps) / statStickDps) * 100).toFixed(2)
+        const deltaPct = baselineDps
+          ? (((r.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
           : "?";
         console.log(
-          `  ${r.label}: not significant vs stat-stick (${deltaPct}%, threshold ${targetError}%)`,
+          `  ${r.label}: not significant vs profile baseline (${deltaPct}%, threshold ${targetError}%)`,
         );
       }
     }
 
-    // Warn if proc_abilities defined — per-variant action data unavailable in profileset mode.
-    for (const proc of procCandidates) {
-      if (proc.proc_abilities?.length) {
-        console.log(
-          `  NOTE: proc_abilities defined for ${proc.id} but verification requires a separate single-player sim.`,
-        );
-      }
-    }
+    printSlotResults(`weapon-eval: ${slot}`, ranked, gearData);
 
-    printSlotResults(`proc-eval: ${slot}`, ranked, gearData);
-
-    // Save only proc items to Phase 4 (exclude stat-stick control and synthetic baseline).
-    // buildGearLines falls back to Phase 3 if no proc item passes significance.
     clearGearResults(4, slot);
     saveGearResults(
       4,
       slot,
-      ranked.filter((r) => r.id !== statStickId && r.id !== "__baseline__"),
+      ranked.filter((r) => r.id !== "__baseline__"),
       fidelity,
     );
   }
@@ -549,75 +548,57 @@ const SET_EVAL_PHASE = 45;
 
 // --- CLI: set-eval (Phase 4b) ---
 
+// Paired slot combos to check for cross-slot synergy after Phase 4.
+// For each pair, if both slots have significant Phase 4 winners, run A-alone/B-alone/full.
+const WEAPON_SLOT_PAIRS = [["main_hand", "off_hand"]];
+
 async function cmdEvalSets(args) {
   const fidelity = parseFidelity(args, "quick");
   const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.quick;
   const targetError = fidelityConfig.target_error;
   const gearData = loadGearCandidates();
-  const sets = gearData.sets || [];
-
-  if (sets.length === 0) {
-    console.log("No sets defined in gear-candidates.json, skipping set eval.");
-    return;
-  }
-
+  const evaluatedPairIds = [];
   const builds = getRepresentativeBuilds();
   const baseProfile = getBaseProfile(gearData);
 
-  for (const set of sets) {
-    if (
-      !set.members ||
-      set.members.length !== 2 ||
-      !set.slots ||
-      set.slots.length !== 2
-    ) {
-      console.log(
-        `Set ${set.id}: requires exactly 2 members and 2 slots, skipping.`,
-      );
-      continue;
-    }
-
-    const [memberId0, memberId1] = set.members;
-    const [slot0, slot1] = set.slots;
-
-    const candidate0 = gearData.slots[slot0]?.candidates.find(
-      (c) => c.id === memberId0,
+  // Auto-generate cross-slot pairs from Phase 4 winners in weapon slot pairs.
+  for (const [slotA, slotB] of WEAPON_SLOT_PAIRS) {
+    const winnersA = getBestGear(4, slotA).filter(
+      (r) => !r.eliminated && r.candidate_id !== "__baseline__",
     );
-    const candidate1 = gearData.slots[slot1]?.candidates.find(
-      (c) => c.id === memberId1,
+    const winnersB = getBestGear(4, slotB).filter(
+      (r) => !r.eliminated && r.candidate_id !== "__baseline__",
     );
 
-    if (!candidate0) {
+    if (winnersA.length === 0 || winnersB.length === 0) {
       console.log(
-        `Set ${set.id}: member ${memberId0} not found in slot ${slot0}, skipping.`,
+        `No significant Phase 4 winners for ${slotA}/${slotB} pair, skipping set eval.`,
       );
       continue;
     }
-    if (!candidate1) {
-      console.log(
-        `Set ${set.id}: member ${memberId1} not found in slot ${slot1}, skipping.`,
-      );
-      continue;
-    }
+
+    const wA = winnersA[0];
+    const wB = winnersB[0];
+    const memberA = gearData.slots[slotA]?.candidates.find(
+      (c) => c.id === wA.candidate_id,
+    );
+    const memberB = gearData.slots[slotB]?.candidates.find(
+      (c) => c.id === wB.candidate_id,
+    );
+    if (!memberA || !memberB) continue;
+
+    const pairId = `${wA.candidate_id}__${wB.candidate_id}`;
+    evaluatedPairIds.push(pairId);
 
     const variants = [
-      {
-        name: `${set.id}_A_alone`,
-        overrides: [candidate0.simc],
-      },
-      {
-        name: `${set.id}_B_alone`,
-        overrides: [candidate1.simc],
-      },
-      {
-        name: `${set.id}_full`,
-        overrides: [candidate0.simc, candidate1.simc],
-      },
+      { name: `${pairId}_A_alone`, overrides: [memberA.simc] },
+      { name: `${pairId}_B_alone`, overrides: [memberB.simc] },
+      { name: `${pairId}_full`, overrides: [memberA.simc, memberB.simc] },
     ];
 
     const scenarioCount = Object.keys(SCENARIOS).length;
     console.log(
-      `\nSet eval: ${set.name || set.id} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
+      `\nSet eval: ${memberA.label} + ${memberB.label} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
     );
 
     const results = await runBuildScenarioSims(
@@ -625,15 +606,12 @@ async function cmdEvalSets(args) {
       builds,
       baseProfile,
       fidelity,
-      `gear_set_${set.id}`,
+      `gear_set_${pairId}`,
     );
     const candidateMeta = [
-      { id: `${set.id}_A_alone`, label: `${candidate0.label} alone` },
-      { id: `${set.id}_B_alone`, label: `${candidate1.label} alone` },
-      {
-        id: `${set.id}_full`,
-        label: `${set.name || set.id} (full set)`,
-      },
+      { id: `${pairId}_A_alone`, label: `${memberA.label} alone` },
+      { id: `${pairId}_B_alone`, label: `${memberB.label} alone` },
+      { id: `${pairId}_full`, label: `${memberA.label} + ${memberB.label}` },
     ];
     const ranked = aggregateGearResults(results, candidateMeta, builds);
 
@@ -652,7 +630,7 @@ async function cmdEvalSets(args) {
         ? (((bestConfig.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
         : "?";
       console.log(
-        `  Set ${set.id}: no significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
+        `  No significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
       );
     }
 
@@ -660,24 +638,28 @@ async function cmdEvalSets(args) {
       r.eliminated = !significant || r.id !== bestConfig.id;
     }
 
-    printSlotResults(`set-eval: ${set.id}`, ranked, gearData);
+    printSlotResults(`set-eval: ${pairId}`, ranked, gearData);
 
-    clearGearResults(SET_EVAL_PHASE, set.id);
-    saveGearResults(SET_EVAL_PHASE, set.id, ranked, fidelity, "set_eval");
+    clearGearResults(SET_EVAL_PHASE, pairId);
+    saveGearResults(SET_EVAL_PHASE, pairId, ranked, fidelity, "set_eval");
 
     if (significant) {
-      setSessionState(`gear_set_eval_${set.id}`, {
+      setSessionState(`gear_set_eval_${pairId}`, {
         winner: bestConfig.id,
-        set_members: set.members,
-        set_slots: set.slots,
+        member0: wA.candidate_id,
+        member1: wB.candidate_id,
+        slot0: slotA,
+        slot1: slotB,
         fidelity,
         timestamp: new Date().toISOString(),
       });
       console.log(`  Set winner: ${bestConfig.label}`);
     } else {
-      setSessionState(`gear_set_eval_${set.id}`, null);
+      setSessionState(`gear_set_eval_${pairId}`, null);
     }
   }
+
+  setSessionState("gear_set_eval_pairs", evaluatedPairIds);
 }
 
 // --- CLI: gems (Phase 9) ---
@@ -1445,24 +1427,27 @@ function generatePairedSlotCombinations(poolName, gearData, screenPhase) {
 async function cmdStatOptimize(args) {
   const fidelity = parseFidelity(args, "standard");
   const gearData = loadGearCandidates();
-  const statAlloc = gearData.stat_allocations;
+  const baseProfile = getBaseProfile(gearData);
 
-  if (!statAlloc || !statAlloc.crafted_slots || !statAlloc.pairs) {
-    console.log("No stat allocation data in gear-candidates.json.");
+  // Auto-detect crafted slots from profile.simc (no manual config needed).
+  const craftedSlots = detectCraftedSlots(baseProfile);
+  if (craftedSlots.length === 0) {
+    console.log(
+      "No crafted items found in profile.simc, skipping stat optimization.",
+    );
     return;
   }
 
   const builds = getRepresentativeBuilds();
-  const baseProfile = getBaseProfile(gearData);
 
-  for (const craftedSlot of statAlloc.crafted_slots) {
+  for (const craftedSlot of craftedSlots) {
     const slotData = gearData.slots[craftedSlot];
     if (!slotData || slotData.candidates.length === 0) {
       console.log(`No candidates for crafted slot: ${craftedSlot}, skipping.`);
       continue;
     }
 
-    // Find the first candidate with crafted_stats
+    // Find the first candidate with crafted_stats in this slot
     const baseCandidate = slotData.candidates.find((c) =>
       c.simc.includes("crafted_stats="),
     );
@@ -1474,10 +1459,10 @@ async function cmdStatOptimize(args) {
     }
 
     console.log(
-      `\nStat optimization: ${craftedSlot} (${statAlloc.pairs.length} stat pairs, ${fidelity} fidelity)`,
+      `\nStat optimization: ${craftedSlot} (${CRAFTED_STAT_PAIRS.length} stat pairs, ${fidelity} fidelity)`,
     );
 
-    const variants = statAlloc.pairs.map((pair) => {
+    const variants = CRAFTED_STAT_PAIRS.map((pair) => {
       const modifiedSimc = baseCandidate.simc.replace(
         /crafted_stats=\d+\/\d+/,
         `crafted_stats=${pair.crafted_stats}`,
@@ -1495,7 +1480,7 @@ async function cmdStatOptimize(args) {
       fidelity,
       `gear_stat_${craftedSlot}`,
     );
-    const candidates = statAlloc.pairs.map((p) => ({
+    const candidates = CRAFTED_STAT_PAIRS.map((p) => ({
       id: `${craftedSlot}_${p.id}`,
       label: `${craftedSlot}: ${p.label}`,
     }));
@@ -1612,12 +1597,12 @@ function applySlotEnchant(line, slot, enchantMap) {
 }
 
 // Apply Phase 2 stat alloc to a crafted_stats simc line.
-function applyStatAlloc(line, slot, gearData) {
+function applyStatAlloc(line, slot) {
   if (!line.includes("crafted_stats=")) return line;
   const statState = getSessionState(`gear_phase2_${slot}`);
   if (!statState?.best) return line;
   const pairId = statState.best.replace(new RegExp(`^${slot}_`), "");
-  const pair = gearData.stat_allocations?.pairs?.find((p) => p.id === pairId);
+  const pair = CRAFTED_STAT_PAIRS.find((p) => p.id === pairId);
   return pair
     ? line.replace(
         /crafted_stats=\d+\/\d+/,
@@ -1700,18 +1685,18 @@ function buildGearLines(gearData) {
     for (const line of overrides) {
       const slot = line.split("=")[0];
       if (!coveredSlots.has(slot)) {
-        addLine(applyStatAlloc(line, slot, gearData), slot);
+        addLine(applyStatAlloc(line, slot), slot);
       }
     }
   }
 
-  // Set eval: winners cover their specific slots before trinkets and proc eval
-  for (const set of gearData.sets || []) {
-    const state = getSessionState(`gear_set_eval_${set.id}`);
+  // Set eval: auto-generated pair winners cover their specific slots
+  const setEvalPairs = getSessionState("gear_set_eval_pairs") || [];
+  for (const pairId of setEvalPairs) {
+    const state = getSessionState(`gear_set_eval_${pairId}`);
     if (!state?.winner) continue;
 
-    const [member0, member1] = state.set_members;
-    const [slot0, slot1] = state.set_slots;
+    const { member0, member1, slot0, slot1 } = state;
     const winnerId = state.winner;
 
     const includeA = !winnerId.endsWith("_B_alone");
@@ -1722,7 +1707,10 @@ function buildGearLines(gearData) {
         (c) => c.id === member0,
       );
       if (c0 && !coveredSlots.has(slot0)) {
-        addLine(applySlotEnchant(c0.simc, slot0, enchantMap), slot0);
+        addLine(
+          applySlotEnchant(applyStatAlloc(c0.simc, slot0), slot0, enchantMap),
+          slot0,
+        );
       }
     }
     if (includeB) {
@@ -1730,7 +1718,10 @@ function buildGearLines(gearData) {
         (c) => c.id === member1,
       );
       if (c1 && !coveredSlots.has(slot1)) {
-        addLine(applySlotEnchant(c1.simc, slot1, enchantMap), slot1);
+        addLine(
+          applySlotEnchant(applyStatAlloc(c1.simc, slot1), slot1, enchantMap),
+          slot1,
+        );
       }
     }
   }
@@ -1759,7 +1750,7 @@ function buildGearLines(gearData) {
       (c) => c.id === procResult.candidate_id,
     );
     if (!candidate) continue;
-    const line = applyStatAlloc(candidate.simc, slot, gearData);
+    const line = applyStatAlloc(candidate.simc, slot);
     addLine(applySlotEnchant(line, slot, enchantMap), slot);
   }
 
@@ -1772,7 +1763,7 @@ function buildGearLines(gearData) {
       (c) => c.id === epResult.candidate_id,
     );
     if (!candidate) continue;
-    const line = applyStatAlloc(candidate.simc, slot, gearData);
+    const line = applyStatAlloc(candidate.simc, slot);
     addLine(applySlotEnchant(line, slot, enchantMap), slot);
   }
 
@@ -1934,12 +1925,10 @@ async function cmdRun(args) {
     cmdEpRank(gearData);
   }
   if (maxPhase >= 4) {
-    console.log("\n========== PHASE 4: Proc Evaluation ==========\n");
+    console.log("\n========== PHASE 4: Weapon Evaluation ==========\n");
     await cmdProcEval(fidelityArgs);
-    if (gearData.sets?.length > 0) {
-      console.log("\n========== PHASE 4b: Set Evaluation ==========\n");
-      await cmdEvalSets(fidelityArgs);
-    }
+    console.log("\n========== PHASE 4b: Set Evaluation ==========\n");
+    await cmdEvalSets(fidelityArgs);
   }
   if (maxPhase >= 5) {
     console.log("\n========== PHASE 5: Trinkets ==========\n");
@@ -2010,11 +1999,11 @@ function cmdStatus() {
     console.log("  not started");
   }
 
-  // Phase 2: stat optimization
+  // Phase 2: stat optimization (crafted slots auto-detected from profile.simc)
   console.log("\nPhase 2 (Stat Optimization):");
-  const statAlloc = gearData.stat_allocations;
-  if (statAlloc?.crafted_slots?.length) {
-    for (const craftedSlot of statAlloc.crafted_slots) {
+  const craftedSlotsStatus = detectCraftedSlots(getBaseProfile(gearData));
+  if (craftedSlotsStatus.length > 0) {
+    for (const craftedSlot of craftedSlotsStatus) {
       const state = getSessionState(`gear_phase2_${craftedSlot}`);
       if (state) {
         console.log(
@@ -2025,57 +2014,54 @@ function cmdStatus() {
       }
     }
   } else {
-    console.log("  no crafted slots configured");
+    console.log("  no crafted items in profile.simc");
   }
 
   // Phase 3: EP ranking
   const phase3 = getSessionState("gear_phase3");
   console.log("\nPhase 3 (EP Ranking):");
   if (phase3?.timestamp) {
-    const slotCount = Object.values(gearData.slots || {}).length;
-    console.log(`  ${slotCount} slots ranked (${phase3.timestamp})`);
+    const epSlotCount = Object.keys(gearData.slots || {}).filter(
+      (s) => !ALWAYS_SIM_SLOTS.has(s),
+    ).length;
+    console.log(`  ${epSlotCount} slots ranked (${phase3.timestamp})`);
   } else {
     console.log("  not started");
   }
 
-  // Phase 4: proc eval
-  console.log("\nPhase 4 (Proc Evaluation):");
-  const procSlots = Object.keys(gearData.slots || {}).filter((slot) =>
-    gearData.slots[slot].candidates?.some(
-      (c) => c.tags?.includes("proc") || c.tags?.includes("on-use"),
-    ),
-  );
-  if (procSlots.length === 0) {
-    console.log("  no proc-tagged candidates");
-  } else {
-    for (const slot of procSlots) {
-      const results = getGearResults(4, slot);
-      if (results.length > 0) {
-        console.log(
-          `  ${slot.padEnd(20)} ${results.length} candidates evaluated`,
-        );
-      } else {
-        console.log(`  ${slot.padEnd(20)} not started`);
-      }
+  // Phase 4: weapon eval (all candidates in ALWAYS_SIM_SLOTS)
+  console.log("\nPhase 4 (Weapon Evaluation):");
+  for (const slot of ALWAYS_SIM_SLOTS) {
+    if (!gearData.slots?.[slot]) continue;
+    const results = getGearResults(4, slot);
+    if (results.length > 0) {
+      const significant = results.filter(
+        (r) => !r.eliminated && r.candidate_id !== "__baseline__",
+      ).length;
+      console.log(
+        `  ${slot.padEnd(20)} ${results.length} evaluated, ${significant} significant`,
+      );
+    } else {
+      console.log(`  ${slot.padEnd(20)} not started`);
     }
   }
 
-  // Set evaluation (Phase 4b)
-  const gearSets = gearData.sets || [];
-  if (gearSets.length > 0) {
+  // Set evaluation (Phase 4b) — auto-generated from Phase 4 winners
+  const setEvalPairsStatus = getSessionState("gear_set_eval_pairs");
+  if (setEvalPairsStatus?.length > 0) {
     console.log("\nSet Evaluation (Phase 4b):");
-    for (const set of gearSets) {
-      const state = getSessionState(`gear_set_eval_${set.id}`);
+    for (const pairId of setEvalPairsStatus) {
+      const state = getSessionState(`gear_set_eval_${pairId}`);
       if (state?.winner) {
         console.log(
-          `  ${set.id.padEnd(20)} winner: ${state.winner} (${state.fidelity}, ${state.timestamp})`,
+          `  ${pairId.slice(0, 20).padEnd(20)} winner: ${state.winner} (${state.fidelity})`,
         );
       } else if (state === null) {
         console.log(
-          `  ${set.id.padEnd(20)} completed — no significant improvement`,
+          `  ${pairId.slice(0, 20).padEnd(20)} completed — no significant improvement`,
         );
       } else {
-        console.log(`  ${set.id.padEnd(20)} not started`);
+        console.log(`  ${pairId.slice(0, 20).padEnd(20)} not started`);
       }
     }
   }
@@ -2291,13 +2277,10 @@ function cmdExport() {
   }
 
   // Phase 2 stat winners
-  const statAlloc = gearData.stat_allocations;
-  if (statAlloc?.crafted_slots) {
-    for (const craftedSlot of statAlloc.crafted_slots) {
-      const state = getSessionState(`gear_phase2_${craftedSlot}`);
-      if (state?.best) {
-        console.log(`# ${craftedSlot} stat alloc: ${state.best}`);
-      }
+  for (const craftedSlot of detectCraftedSlots(getBaseProfile(gearData))) {
+    const state = getSessionState(`gear_phase2_${craftedSlot}`);
+    if (state?.best) {
+      console.log(`# ${craftedSlot} stat alloc: ${state.best}`);
     }
   }
 

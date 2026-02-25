@@ -1,10 +1,15 @@
 // Fetches current-expansion items, enchants, and embellishments from Raidbots
 // and refreshes data/{spec}/gear-candidates.json.
 //
-// Auto-generates: paired_slots (trinkets), slots (non-crafted gear incl. rings), enchants.
-// Preserves: baseline, ilvl_tiers, tier, embellishments, stat_allocations, flagged,
-//            crafted items in slot candidates (detected by bonus_id in simc string),
-//            crafted/manually-added paired candidates (trinkets, rings).
+// Auto-generates: paired_slots (trinkets), slots (non-crafted gear incl. rings), enchants,
+//                 gems, _defaultGem (highest agi gem detected automatically).
+// Reads from gear-config.json: ilvl_tiers, tier, embellishments, flagged.
+// Crafted items in slot candidates (bonus_id) are preserved across refreshes.
+// stat_allocations and sets are NOT stored here — generated at runtime in gear.js.
+//
+// Per-item ilvl: uses equippable-items-full.json (has sources[]) + instances.json to
+// determine each item's max obtainable ilvl. World boss items (instance flags=2) are
+// capped at the Hero-track ilvl (second-highest tier); all other items use Myth-track max.
 //
 // Usage: SPEC=vengeance node src/extract/gear-candidates.js
 
@@ -118,15 +123,6 @@ const DPS_STAT_TYPES = new Set([
 // Crafted item marker — these are preserved across refreshes
 const CRAFTED_SIMC_RE = /bonus_id=/;
 
-// Return an object containing only the specified keys that exist on `obj`.
-function pick(obj, ...keys) {
-  const out = {};
-  for (const k of keys) {
-    if (obj[k] != null) out[k] = obj[k];
-  }
-  return out;
-}
-
 // --- Stat extraction ---
 
 function extractStats(item) {
@@ -220,12 +216,6 @@ function buildSimcString(slot, item, ilvl, defaultGemId) {
   const gemSuffix = gems ? `,gem_id=${gems}` : "";
   const prefix = slot ? `${slot}=` : "";
   return `${prefix}${name},id=${item.id},ilevel=${ilvl}${gemSuffix}`;
-}
-
-function hasEquipProc(item) {
-  // Raidbots marks on-use trinkets; items with spell effects that aren't purely stat-based
-  // For non-trinkets we rely on manual tags preserved by mergePreservingCrafted
-  return !!item.onUseTrinket;
 }
 
 // Detect the current expansion from item data (highest expansion number seen).
@@ -374,32 +364,18 @@ function deduplicateEnchants(enchants) {
 }
 
 // Merge auto-generated candidates with existing entries.
-// For items found in the new fetch: preserve existing tags (manual overrides like "proc").
-// For crafted items not in the new fetch: preserve entirely.
+// For crafted items not in the new fetch (detected by bonus_id): preserve entirely.
+// No manual tag preservation — proc tagging is replaced by ALWAYS_SIM_SLOTS in gear.js.
 function mergePreservingCrafted(
   newItems,
   existingCandidates,
   simcField = "simc",
 ) {
-  const existingById = new Map(
-    (existingCandidates || []).map((c) => [c.id, c]),
-  );
-
-  const merged = newItems.map((item) => {
-    const existing = existingById.get(item.id);
-    if (!existing) return item;
-    // Merge tags: keep manually-set tags from existing run
-    const mergedTags = [
-      ...new Set([...(item.tags || []), ...(existing.tags || [])]),
-    ];
-    return { ...item, tags: mergedTags };
-  });
-
   const allIds = new Set(newItems.map((c) => c.id));
   const preserved = (existingCandidates || []).filter(
     (c) => CRAFTED_SIMC_RE.test(c[simcField] || "") && !allIds.has(c.id),
   );
-  return [...merged, ...preserved];
+  return [...newItems, ...preserved];
 }
 
 // --- Main ---
@@ -411,26 +387,68 @@ async function main() {
   const base = `${config.data.raidbots}/${DATA_ENV}`;
 
   console.log(`Fetching Raidbots data (${DATA_ENV})...`);
-  const [items, enchants] = await Promise.all([
-    fetchJson(`${base}/equippable-items.json`),
+  const [items, enchants, instances] = await Promise.all([
+    fetchJson(`${base}/equippable-items-full.json`),
     fetchJson(`${base}/enchantments.json`),
+    fetchJson(`${base}/instances.json`),
   ]);
 
-  // Load current file to preserve manual fields
+  // Load spec config (manually maintained: ilvl_tiers, tier, embellishments, flagged)
+  const configPath = dataFile("gear-config.json");
+  const gearConfig = existsSync(configPath)
+    ? JSON.parse(readFileSync(configPath, "utf-8"))
+    : {};
+
+  // Load current candidates file only to preserve crafted items across refreshes
   const candidatesPath = dataFile("gear-candidates.json");
   const current = existsSync(candidatesPath)
     ? JSON.parse(readFileSync(candidatesPath, "utf-8"))
     : { version: 2 };
 
   const expansion = detectExpansion(items);
-  const ilvlTiers = current.ilvl_tiers || [];
-  const maxIlvl =
-    ilvlTiers.length > 0 ? Math.max(...ilvlTiers.map((t) => t.ilvl)) : 289;
-  const defaultGemId = current._defaultGem || 0;
-
-  console.log(
-    `Detected expansion ${expansion}, target ilvl ${maxIlvl}${defaultGemId ? `, default gem ${defaultGemId}` : ", no default gem (set _defaultGem in gear-candidates.json)"}`,
+  const sortedTiers = [...(gearConfig.ilvl_tiers || [])].sort(
+    (a, b) => a.ilvl - b.ilvl,
   );
+  const maxIlvl = sortedTiers.length > 0 ? sortedTiers.at(-1).ilvl : 289;
+  // World boss items are not upgradeable — cap at the second-highest tier (Hero track).
+  const worldBossIlvl =
+    sortedTiers.length >= 2 ? sortedTiers.at(-2).ilvl : maxIlvl;
+  // Use current _defaultGem as placeholder for simc string generation; recomputed after gem fetch.
+  const placeholderGemId = current._defaultGem || 0;
+
+  // Build world boss instance ID set from instances.json.
+  // World bosses are raid-type instances with flags=2; items from only these sources
+  // cannot be upgraded beyond Hero track and are capped at worldBossIlvl.
+  const worldBossInstanceIds = new Set(
+    instances
+      .filter((inst) => inst.type === "raid" && inst.flags === 2)
+      .map((inst) => inst.id),
+  );
+  if (worldBossInstanceIds.size > 0) {
+    console.log(
+      `World boss instances: [${[...worldBossInstanceIds].join(", ")}] (max ilvl: ${worldBossIlvl})`,
+    );
+  }
+
+  // Returns the max obtainable ilvl for an item based on its drop sources.
+  // Items with sources exclusively from world boss instances are capped at worldBossIlvl.
+  // All other items (raid, M+ dungeons, regular dungeons) can be fully upgraded → maxIlvl.
+  function getItemMaxIlvl(item) {
+    const sources = item.sources || [];
+    if (sources.length === 0) return maxIlvl;
+    const hasWorldBossSource = sources.some((s) =>
+      worldBossInstanceIds.has(s.instanceId),
+    );
+    const hasNonWorldBossSource = sources.some(
+      (s) => !worldBossInstanceIds.has(s.instanceId),
+    );
+    // Only cap if ALL sources are world boss (an item with both world boss and
+    // dungeon sources can still reach maxIlvl via the non-world-boss drop).
+    if (hasWorldBossSource && !hasNonWorldBossSource) return worldBossIlvl;
+    return maxIlvl;
+  }
+
+  console.log(`Detected expansion ${expansion}, target ilvl ${maxIlvl}`);
 
   // Filter: current expansion, epic+ quality, DH-usable, non-PvP, non-crafted
   const eligible = items.filter(
@@ -466,10 +484,11 @@ async function main() {
   const newTrinkets = trinketItems.map((item) => {
     const isAgi = hasAgilityStats(item);
     const stats = extractStats(item);
+    const ilvl = getItemMaxIlvl(item);
     return {
       id: toSimcName(item.name),
       label: item.name,
-      simc_base: buildSimcString(null, item, maxIlvl, defaultGemId),
+      simc_base: buildSimcString(null, item, ilvl, placeholderGemId),
       ...(stats ? { stats } : {}),
       tags: [
         item.onUseTrinket ? "on-use" : "passive",
@@ -487,20 +506,22 @@ async function main() {
   const ringItems = bySlot.get("finger") || [];
   const newRings1 = ringItems.map((item) => {
     const stats = extractStats(item);
+    const ilvl = getItemMaxIlvl(item);
     return {
       id: toSimcName(item.name),
       label: item.name,
-      simc: buildSimcString("finger1", item, maxIlvl, defaultGemId),
+      simc: buildSimcString("finger1", item, ilvl, placeholderGemId),
       ...(stats ? { stats } : {}),
       tags: [],
     };
   });
   const newRings2 = ringItems.map((item) => {
     const stats = extractStats(item);
+    const ilvl = getItemMaxIlvl(item);
     return {
       id: toSimcName(item.name),
       label: item.name,
-      simc: buildSimcString("finger2", item, maxIlvl, defaultGemId),
+      simc: buildSimcString("finger2", item, ilvl, placeholderGemId),
       ...(stats ? { stats } : {}),
       tags: [],
     };
@@ -520,10 +541,11 @@ async function main() {
     const isOffHand = slot === "off_hand";
     const newItems = (bySlot.get(slot) || []).map((item) => {
       const stats = extractStats(item);
+      const ilvl = getItemMaxIlvl(item);
       return {
         id: isOffHand ? `${toSimcName(item.name)}_oh` : toSimcName(item.name),
         label: isOffHand ? `${item.name} (OH)` : item.name,
-        simc: buildSimcString(simcSlot, item, maxIlvl, defaultGemId),
+        simc: buildSimcString(simcSlot, item, ilvl, placeholderGemId),
         ...(stats ? { stats } : {}),
         tags: [],
       };
@@ -542,6 +564,7 @@ async function main() {
   const allCandidateSections = [
     ...trinkets.map((c) => ({ c, simc: c.simc_base })),
     ...rings1.map((c) => ({ c, simc: c.simc })),
+    ...rings2.map((c) => ({ c, simc: c.simc })),
     ...Object.values(slots).flatMap((s) =>
       s.candidates.map((c) => ({ c, simc: c.simc })),
     ),
@@ -549,15 +572,22 @@ async function main() {
   for (const { c, simc } of allCandidateSections) {
     // Fetch from Wowhead only when Raidbots has no stat data at all (pure proc items)
     if (!c.stats) {
-      const m = (simc || "").match(/,id=(\d+)/);
-      if (m) needStats.push({ c, id: parseInt(m[1], 10) });
+      const idMatch = (simc || "").match(/,id=(\d+)/);
+      const ilvlMatch = (simc || "").match(/ilevel=(\d+)/);
+      if (idMatch) {
+        needStats.push({
+          c,
+          id: parseInt(idMatch[1], 10),
+          ilvl: ilvlMatch ? parseInt(ilvlMatch[1], 10) : maxIlvl,
+        });
+      }
     }
   }
   if (needStats.length > 0) {
     console.log(`Fetching stats for ${needStats.length} items from Wowhead...`);
     let fetched = 0;
-    for (const { c, id } of needStats) {
-      const stats = await fetchWowheadStats(id, maxIlvl);
+    for (const { c, id, ilvl } of needStats) {
+      const stats = await fetchWowheadStats(id, ilvl);
       if (stats) {
         c.stats = stats;
         fetched++;
@@ -667,13 +697,34 @@ async function main() {
   // Preserve existing gems if none fetched (data may not expose socket enchants)
   const gems = newGems.length > 0 ? newGems : current.gems || [];
 
+  // Auto-detect _defaultGem: gem with the highest agi stat value
+  const defaultGemId = (() => {
+    let bestId = 0,
+      bestAgi = 0;
+    for (const gem of gems) {
+      const agi = gem.stats?.agi || 0;
+      if (agi > bestAgi) {
+        bestAgi = agi;
+        bestId = gem.enchant_id || 0;
+      }
+    }
+    return bestId;
+  })();
+
+  if (defaultGemId) {
+    console.log(`Auto-detected default gem: enchant_id=${defaultGemId}`);
+  } else {
+    console.log("No agi gem found — _defaultGem not set.");
+  }
+
   // --- Write output ---
+  // ilvl_tiers, tier, embellishments, flagged come from gear-config.json.
+  // stat_allocations and sets are NOT stored here — generated at runtime in gear.js.
   const output = {
     version: 2,
     baseline: current.baseline || `apls/${specName}/profile.simc`,
-    ilvl_tiers: current.ilvl_tiers || [],
-    // tier config is always manually maintained — preserve as-is
-    ...(current.tier ? { tier: current.tier } : {}),
+    ilvl_tiers: sortedTiers,
+    ...(gearConfig.tier ? { tier: gearConfig.tier } : {}),
     paired_slots: {
       trinkets: {
         slots: ["trinket1", "trinket2"],
@@ -688,14 +739,11 @@ async function main() {
     },
     enchants: enchantSection,
     ...(gems.length ? { gems } : {}),
-    // Preserved fields: manually-maintained sections carried forward as-is
-    ...pick(
-      current,
-      "embellishments",
-      "stat_allocations",
-      "flagged",
-      "_defaultGem",
-    ),
+    ...(defaultGemId ? { _defaultGem: defaultGemId } : {}),
+    ...(gearConfig.embellishments
+      ? { embellishments: gearConfig.embellishments }
+      : {}),
+    ...(gearConfig.flagged ? { flagged: gearConfig.flagged } : {}),
   };
 
   writeFileSync(candidatesPath, JSON.stringify(output, null, 2));
@@ -708,8 +756,41 @@ async function main() {
   }
   console.log(`  Enchants: ${Object.keys(enchantSection).join(", ")}`);
   if (gems.length) console.log(`  Gems: ${gems.length}`);
+  if (gearConfig.tier)
+    console.log(
+      `  Tier: set_id=${gearConfig.tier.set_id} (from gear-config.json)`,
+    );
+  if (gearConfig.embellishments?.pairs?.length)
+    console.log(
+      `  Embellishments: ${gearConfig.embellishments.pairs.length} pairs (from gear-config.json)`,
+    );
+
+  // Log ilvl distribution across all candidates to confirm world boss capping
+  const ilvlCounts = new Map();
+  const allNewCandidates = [
+    ...newTrinkets.map((c) => c.simc_base),
+    ...newRings1.map((c) => c.simc),
+    ...Object.values(slots).flatMap((s) =>
+      s.candidates
+        .filter((c) => !CRAFTED_SIMC_RE.test(c.simc))
+        .map((c) => c.simc),
+    ),
+  ];
+  for (const simc of allNewCandidates) {
+    const m = (simc || "").match(/ilevel=(\d+)/);
+    if (m) {
+      const ilvl = parseInt(m[1], 10);
+      ilvlCounts.set(ilvl, (ilvlCounts.get(ilvl) || 0) + 1);
+    }
+  }
+  const ilvlSummary = [...ilvlCounts]
+    .sort((a, b) => a[0] - b[0])
+    .map(([ilvl, count]) => `${ilvl}:${count}`)
+    .join(", ");
+  console.log(`  ilvl distribution: ${ilvlSummary || "none"}`);
+
   console.log(
-    `\nNote: tier, embellishments.pairs, stat_allocations, and flagged are preserved from existing file.`,
+    `\nNote: edit data/{spec}/gear-config.json for ilvl_tiers, tier, embellishments, and flagged.`,
   );
 }
 
