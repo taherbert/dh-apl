@@ -455,29 +455,19 @@ async function main() {
   // and must have at least one known drop source so we can verify its max ilvl.
   // Items with no sources array (e.g. delve rewards not yet mapped in beta data)
   // are excluded — simming them at an unverified ilvl produces misleading rankings.
-  const eligible = items.filter(
+  const baseEligible = items.filter(
     (item) =>
       item.expansion === expansion &&
       item.quality >= 3 &&
       item.itemClass != null &&
-      item.sources?.length > 0 &&
       isDHUsable(item) &&
       !isPvp(item) &&
       !isCrafted(item) &&
       !isDNT(item),
   );
 
-  const noSource = items.filter(
-    (item) =>
-      item.expansion === expansion &&
-      item.quality >= 3 &&
-      item.itemClass != null &&
-      isDHUsable(item) &&
-      !isPvp(item) &&
-      !isCrafted(item) &&
-      !isDNT(item) &&
-      !(item.sources?.length > 0),
-  );
+  const eligible = baseEligible.filter((item) => item.sources?.length > 0);
+  const noSource = baseEligible.filter((item) => !item.sources?.length);
   if (noSource.length > 0) {
     console.log(
       `Skipped ${noSource.length} items with no known drop source: ${noSource.map((i) => i.name).join(", ")}`,
@@ -525,28 +515,21 @@ async function main() {
   );
 
   const ringItems = bySlot.get("finger") || [];
-  const newRings1 = ringItems.map((item) => {
-    const stats = extractStats(item);
-    const ilvl = getItemMaxIlvl(item);
-    return {
-      id: toSimcName(item.name),
-      label: item.name,
-      simc: buildSimcString("finger1", item, ilvl, placeholderGemId),
-      ...(stats ? { stats } : {}),
-      tags: [],
-    };
-  });
-  const newRings2 = ringItems.map((item) => {
-    const stats = extractStats(item);
-    const ilvl = getItemMaxIlvl(item);
-    return {
-      id: toSimcName(item.name),
-      label: item.name,
-      simc: buildSimcString("finger2", item, ilvl, placeholderGemId),
-      ...(stats ? { stats } : {}),
-      tags: [],
-    };
-  });
+  function buildRingCandidates(slotName) {
+    return ringItems.map((item) => {
+      const stats = extractStats(item);
+      const ilvl = getItemMaxIlvl(item);
+      return {
+        id: toSimcName(item.name),
+        label: item.name,
+        simc: buildSimcString(slotName, item, ilvl, placeholderGemId),
+        ...(stats ? { stats } : {}),
+        tags: [],
+      };
+    });
+  }
+  const newRings1 = buildRingCandidates("finger1");
+  const newRings2 = buildRingCandidates("finger2");
   const rings1 = mergePreservingCrafted(
     newRings1,
     current.slots?.finger1?.candidates,

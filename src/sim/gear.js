@@ -322,14 +322,15 @@ function isCraftedSimc(simcStr) {
 const ALWAYS_SIM_SLOTS = new Set(["main_hand", "off_hand"]);
 
 // All valid secondary stat combinations for crafted items.
-// These are SimC crafted_stats IDs (not Raidbots item stat IDs).
+// SimC crafted_stats IDs: Crit=32, Haste=36, Vers=40, Mastery=49.
+// Note: these differ from Raidbots item stat IDs used in extractStats().
+// Order within crafted_stats is irrelevant — SimC applies both stats unconditionally.
 const CRAFTED_STAT_PAIRS = [
-  { id: "haste_crit", label: "Haste/Crit", crafted_stats: "32/36" },
-  { id: "crit_haste", label: "Crit/Haste", crafted_stats: "36/32" },
-  { id: "haste_vers", label: "Haste/Vers", crafted_stats: "40/36" },
-  { id: "crit_vers", label: "Crit/Vers", crafted_stats: "40/32" },
-  { id: "haste_mastery", label: "Haste/Mastery", crafted_stats: "49/36" },
-  { id: "crit_mastery", label: "Crit/Mastery", crafted_stats: "49/32" },
+  { id: "crit_haste", label: "Crit/Haste", crafted_stats: "32/36" },
+  { id: "crit_vers", label: "Crit/Vers", crafted_stats: "32/40" },
+  { id: "crit_mastery", label: "Crit/Mastery", crafted_stats: "32/49" },
+  { id: "haste_vers", label: "Haste/Vers", crafted_stats: "36/40" },
+  { id: "haste_mastery", label: "Haste/Mastery", crafted_stats: "36/49" },
 ];
 
 // Detect crafted item slots from profile.simc (lines containing crafted_stats=).
@@ -520,13 +521,13 @@ async function cmdProcEval(args) {
     const baselineDps = baselineEntry?.weighted ?? 0;
     for (const r of ranked) {
       if (r.id === "__baseline__") continue;
+      r.delta_pct_weighted = baselineDps
+        ? ((r.weighted - baselineDps) / baselineDps) * 100
+        : 0;
       if (!isSignificant(r.weighted, baselineDps, targetError)) {
         r.eliminated = true;
-        const deltaPct = baselineDps
-          ? (((r.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
-          : "?";
         console.log(
-          `  ${r.label}: not significant vs profile baseline (${deltaPct}%, threshold ${targetError}%)`,
+          `  ${r.label}: not significant vs profile baseline (${r.delta_pct_weighted.toFixed(2)}%, threshold ${targetError}%)`,
         );
       }
     }
@@ -1404,10 +1405,8 @@ function generatePairedSlotCombinations(poolName, gearData, screenPhase) {
       const cB = candidateMap.get(b.candidate_id);
       if (!cA || !cB) continue;
 
-      // Check unique-equipped constraints (skip if both are unique-equipped)
-      const aUnique = gearData.flagged?.[cA.id]?.includes("Unique-Equipped");
-      const bUnique = gearData.flagged?.[cB.id]?.includes("Unique-Equipped");
-      if (aUnique && bUnique) continue;
+      // Skip pairs where both items are unique-equipped — they cannot be worn simultaneously.
+      if (cA.uniqueEquipped && cB.uniqueEquipped) continue;
 
       pairs.push({
         id: `${a.candidate_id}--${b.candidate_id}`,
@@ -1628,6 +1627,32 @@ function buildEnchantMap(gearData) {
   return enchantMap;
 }
 
+// Reconstruct SimC lines for the selected tier configuration.
+// Returns an array of { slot, simc } objects.
+function getTierLines(gearData) {
+  const phase0 = getSessionState("gear_phase0");
+  if (!phase0 || !gearData.tier) return [];
+
+  if (phase0.best === "all_tier_5pc") {
+    return Object.entries(gearData.tier.items).map(([slot, simc]) => ({
+      slot,
+      simc,
+    }));
+  }
+
+  const match = phase0.best.match(/^skip_([^_]+)_(.+)$/);
+  if (!match) return [];
+
+  const [, skipSlot, altId] = match;
+  return Object.entries(gearData.tier.items).map(([slot, simc]) => {
+    if (slot === skipSlot) {
+      const alt = gearData.tier.alternatives[slot]?.find((a) => a.id === altId);
+      return alt ? { slot, simc: alt.simc } : { slot, simc };
+    }
+    return { slot, simc };
+  });
+}
+
 // Collect best gear lines from all pipeline phases.
 // Priority (highest wins, each covers its slots):
 //   Phase 7:  embellishments
@@ -1652,28 +1677,8 @@ function buildGearLines(gearData) {
   }
 
   // Phase 0: tier config
-  const phase0 = getSessionState("gear_phase0");
-  if (phase0 && gearData.tier) {
-    if (phase0.best === "all_tier_5pc") {
-      for (const [s, simc] of Object.entries(gearData.tier.items)) {
-        addLine(simc, s);
-      }
-    } else {
-      const match = phase0.best.match(/^skip_([^_]+)_(.+)$/);
-      if (match) {
-        const [, skipSlot, altId] = match;
-        for (const [s, simc] of Object.entries(gearData.tier.items)) {
-          if (s === skipSlot) {
-            const alt = gearData.tier.alternatives[s]?.find(
-              (a) => a.id === altId,
-            );
-            if (alt) addLine(alt.simc, s);
-          } else {
-            addLine(simc, s);
-          }
-        }
-      }
-    }
+  for (const { slot, simc } of getTierLines(gearData)) {
+    addLine(simc, slot);
   }
 
   // Phase 7: embellishments (highest priority for those slots)
@@ -2200,29 +2205,12 @@ function cmdExport() {
   console.log("# Gear export — SimC overrides for best gear\n");
 
   // Phase 0: tier config
-  const phase0 = getSessionState("gear_phase0");
-  if (phase0) {
+  const tierLines = getTierLines(gearData);
+  if (tierLines.length > 0) {
+    const phase0 = getSessionState("gear_phase0");
     console.log(`# Tier config: ${phase0.best}`);
-    if (phase0.best === "all_tier_5pc") {
-      for (const simc of Object.values(gearData.tier.items)) {
-        console.log(simc);
-      }
-    } else {
-      // Parse "skip_<slot>_<alt_id>" to reconstruct
-      const match = phase0.best.match(/^skip_([^_]+)_(.+)$/);
-      if (match) {
-        const [, skipSlot, altId] = match;
-        for (const [slot, simc] of Object.entries(gearData.tier.items)) {
-          if (slot === skipSlot) {
-            const alt = gearData.tier.alternatives[slot]?.find(
-              (a) => a.id === altId,
-            );
-            if (alt) console.log(alt.simc);
-          } else {
-            console.log(simc);
-          }
-        }
-      }
+    for (const { simc } of tierLines) {
+      console.log(simc);
     }
   }
 
