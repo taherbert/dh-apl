@@ -16,6 +16,9 @@ import {
   existsSync,
   unlinkSync,
   mkdirSync,
+  copyFileSync,
+  chmodSync,
+  statSync,
 } from "node:fs";
 import { join, basename, dirname, resolve } from "node:path";
 import { cpus, homedir } from "node:os";
@@ -24,8 +27,36 @@ import { ROOT, config } from "../engine/startup.js";
 const execAsync = promisify(execFile);
 
 const STATE_PATH = join(ROOT, "results", ".remote-state.json");
+const FETCH_SENTINEL = join(ROOT, "results", ".simc-fetch-timestamp");
+const FETCH_STALE_MS = 60 * 60 * 1000; // 1 hour
 const REMOTE_DIR = "/tmp/sim";
 const REMOTE_SIMC = "/opt/simc/engine/simc";
+
+// c7i/c6i family vCPU counts — add other families as needed
+const VCPU_MAP = {
+  "c7i.large": 2,
+  "c7i.xlarge": 4,
+  "c7i.2xlarge": 8,
+  "c7i.4xlarge": 16,
+  "c7i.8xlarge": 32,
+  "c7i.12xlarge": 48,
+  "c7i.16xlarge": 64,
+  "c7i.24xlarge": 96,
+  "c7i.48xlarge": 192,
+  "c6i.large": 2,
+  "c6i.xlarge": 4,
+  "c6i.2xlarge": 8,
+  "c6i.4xlarge": 16,
+  "c6i.8xlarge": 32,
+  "c6i.12xlarge": 48,
+  "c6i.16xlarge": 64,
+  "c6i.24xlarge": 96,
+  "c6i.48xlarge": 192,
+};
+
+function resolveVcpus(instanceType) {
+  return VCPU_MAP[instanceType] ?? config.remote?.vCpus ?? 96;
+}
 
 const SSH_OPTS = [
   "-o",
@@ -48,14 +79,86 @@ function sshTarget(ip) {
   return `${config.remote?.sshUser || "ubuntu"}@${ip}`;
 }
 
+// --- SSH connection multiplexing ---
+
+function controlPath(ip) {
+  return `/tmp/ssh-remote-${ip.replace(/\./g, "-")}.sock`;
+}
+
+function controlOpts(ip) {
+  return ["-o", `ControlPath=${controlPath(ip)}`, "-o", "ControlPersist=10m"];
+}
+
+async function openSshMaster(ip) {
+  const t = sshTarget(ip);
+  const ka = sshKeyArgs();
+  const sock = controlPath(ip);
+
+  if (existsSync(sock)) {
+    try {
+      await execAsync(
+        "ssh",
+        [...SSH_OPTS, ...ka, ...controlOpts(ip), "-O", "check", t],
+        { timeout: 5000 },
+      );
+      return;
+    } catch {
+      // Dead socket — re-open
+    }
+  }
+
+  await execAsync(
+    "ssh",
+    [
+      ...SSH_OPTS,
+      ...ka,
+      "-o",
+      `ControlPath=${sock}`,
+      "-o",
+      "ControlMaster=yes",
+      "-o",
+      "ControlPersist=10m",
+      "-f",
+      "-N",
+      t,
+    ],
+    { timeout: 15000 },
+  );
+}
+
+async function closeSshMaster(ip) {
+  const t = sshTarget(ip);
+  const ka = sshKeyArgs();
+  try {
+    await execAsync(
+      "ssh",
+      [...SSH_OPTS, ...ka, ...controlOpts(ip), "-O", "exit", t],
+      { timeout: 5000 },
+    );
+  } catch {
+    // Best effort
+  }
+}
+
 // --- SimC version tracking ---
 
 async function getLocalSimcCommit({ fetch = false } = {}) {
   if (fetch) {
-    await execAsync("git", ["fetch", "origin", config.simc.branch], {
-      cwd: config.simc.dir,
-      timeout: 30000,
-    });
+    let skip = false;
+    if (existsSync(FETCH_SENTINEL)) {
+      const ts = parseInt(readFileSync(FETCH_SENTINEL, "utf-8").trim(), 10);
+      if (Date.now() - ts < FETCH_STALE_MS) skip = true;
+    }
+    if (skip) {
+      console.log("  (skipping git fetch — done within last hour)");
+    } else {
+      await execAsync("git", ["fetch", "origin", config.simc.branch], {
+        cwd: config.simc.dir,
+        timeout: 30000,
+      });
+      mkdirSync(join(ROOT, "results"), { recursive: true });
+      writeFileSync(FETCH_SENTINEL, String(Date.now()));
+    }
   }
   const { stdout } = await execAsync(
     "git",
@@ -110,6 +213,22 @@ async function ensureAmiCurrent({ onDemand, buildInstanceType } = {}) {
   );
   const amiId = await buildAmi({ onDemand, buildInstanceType });
   updateConfigAmiId(amiId);
+}
+
+function syncLocalSimcBin() {
+  const srcBin = join(config.simc.dir, "engine", "simc");
+  const dstBin = join(ROOT, "bin", "simc");
+  if (!existsSync(srcBin)) return;
+
+  const srcMtime = statSync(srcBin).mtimeMs;
+  const dstMtime = existsSync(dstBin) ? statSync(dstBin).mtimeMs : 0;
+
+  if (srcMtime > dstMtime) {
+    mkdirSync(join(ROOT, "bin"), { recursive: true });
+    copyFileSync(srcBin, dstBin);
+    chmodSync(dstBin, 0o755);
+    console.log("Synced bin/simc from simc source build.");
+  }
 }
 
 // --- State management ---
@@ -173,7 +292,9 @@ export function isRemoteActive() {
 }
 
 export function getSimCores() {
-  return isRemoteActive() ? config.remote?.vCpus || 96 : cpus().length;
+  if (!isRemoteActive()) return cpus().length;
+  const state = readState();
+  return state?.vcpus ?? resolveVcpus(state?.instanceType) ?? 96;
 }
 
 // Prevents metacharacters (|, &, etc.) from being interpreted by the remote shell.
@@ -227,13 +348,18 @@ export async function runSimcRemote(args) {
   });
   remoteArgs.push("report_progress=0");
 
+  const co = controlOpts(state.publicIp);
+
   try {
-    // SCP input up
+    const t0 = performance.now();
+
+    // SCP input up (uses multiplexed connection)
     await execAsync(
       "scp",
-      [...SSH_OPTS, ...ka, localSimcPath, `${t}:${remoteSimcPath}`],
+      [...SSH_OPTS, ...ka, ...co, localSimcPath, `${t}:${remoteSimcPath}`],
       { timeout: 30000 },
     );
+    const t1 = performance.now();
 
     // Execute remotely with NUMA interleaving for even memory distribution.
     const cmd = [
@@ -243,7 +369,7 @@ export async function runSimcRemote(args) {
       ...remoteArgs.map(shellEscape),
     ].join(" ");
     try {
-      await execAsync("ssh", [...SSH_OPTS, ...ka, t, cmd], {
+      await execAsync("ssh", [...SSH_OPTS, ...ka, ...co, t, cmd], {
         timeout: 1800000,
         maxBuffer: 100 * 1024 * 1024,
       });
@@ -251,15 +377,24 @@ export async function runSimcRemote(args) {
       if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
       throw new Error(`Remote SimC failed: ${e.message}`);
     }
+    const t2 = performance.now();
 
-    // SCP results back
+    // SCP results back (uses multiplexed connection)
     if (localJsonPath && remoteJsonPath) {
       await execAsync(
         "scp",
-        [...SSH_OPTS, ...ka, `${t}:${remoteJsonPath}`, localJsonPath],
+        [...SSH_OPTS, ...ka, ...co, `${t}:${remoteJsonPath}`, localJsonPath],
         { timeout: 60000 },
       );
     }
+    const t3 = performance.now();
+
+    const upload = ((t1 - t0) / 1000).toFixed(1);
+    const sim = ((t2 - t1) / 1000).toFixed(1);
+    const download = ((t3 - t2) / 1000).toFixed(1);
+    console.log(
+      `  [remote] upload=${upload}s  sim=${sim}s  download=${download}s`,
+    );
   } finally {
     if (tempSimcPath) {
       try {
@@ -270,10 +405,12 @@ export async function runSimcRemote(args) {
 }
 
 async function launchInstance({ instanceType, onDemand } = {}) {
-  // Ensure AMI matches local simc before launching
+  // Ensure AMI + local binary match origin/{branch}
   await ensureAmiCurrent({ onDemand });
+  syncLocalSimcBin();
 
   const c = config.remote ?? {};
+  const actualType = instanceType || c.instanceType || "c7i.24xlarge";
   const region = c.region || "us-east-1";
   const shutdownMin = c.shutdownMinutes || 45;
 
@@ -288,7 +425,7 @@ async function launchInstance({ instanceType, onDemand } = {}) {
     "--image-id",
     c.amiId,
     "--instance-type",
-    instanceType || c.instanceType || "c7i.24xlarge",
+    actualType,
     "--key-name",
     c.keyPairName || "dh-apl",
     "--user-data",
@@ -364,9 +501,12 @@ async function launchInstance({ instanceType, onDemand } = {}) {
       );
     }
 
+    const vcpus = resolveVcpus(actualType);
     const state = {
       instanceId,
       publicIp,
+      instanceType: actualType,
+      vcpus,
       launchTime: new Date().toISOString(),
       amiId: c.amiId,
       shutdownMinutes: shutdownMin,
@@ -376,18 +516,25 @@ async function launchInstance({ instanceType, onDemand } = {}) {
     console.log(`Waiting for SSH at ${publicIp}...`);
     await waitSsh(publicIp);
 
+    // Establish persistent SSH connection for multiplexing
+    await openSshMaster(publicIp);
+
+    const co = controlOpts(publicIp);
     await execAsync(
       "ssh",
       [
         ...SSH_OPTS,
         ...sshKeyArgs(),
+        ...co,
         sshTarget(publicIp),
         `mkdir -p ${REMOTE_DIR}`,
       ],
       { timeout: 10000 },
     );
 
-    console.log(`\nReady: ${instanceId} (${publicIp})`);
+    console.log(
+      `\nReady: ${instanceId} (${publicIp}) — ${actualType} (${vcpus} vCPUs)`,
+    );
     console.log(`Auto-shutdown in ${shutdownMin} minutes`);
     return state;
   } catch (e) {
@@ -407,11 +554,47 @@ async function launchInstance({ instanceType, onDemand } = {}) {
 
 async function terminateInstance() {
   const state = readState();
+  const region = config.remote?.region || "us-east-1";
+
   if (!state) {
-    console.log("No active instance.");
+    // No local state — check AWS for orphaned instances as safety net
+    console.log("No local state. Checking AWS for running dh-apl instances...");
+    try {
+      const desc = await awsJson([
+        "ec2",
+        "describe-instances",
+        "--filters",
+        "Name=tag:project,Values=dh-apl",
+        "Name=instance-state-name,Values=running,pending",
+        "--region",
+        region,
+      ]);
+      const orphans = desc.Reservations.flatMap((r) => r.Instances).map(
+        (i) => i.InstanceId,
+      );
+      if (orphans.length === 0) {
+        console.log("No running dh-apl instances found.");
+        return;
+      }
+      for (const id of orphans) {
+        console.log(`Terminating orphaned instance ${id}...`);
+        await awsCmd([
+          "ec2",
+          "terminate-instances",
+          "--instance-ids",
+          id,
+          "--region",
+          region,
+        ]);
+      }
+      console.log("Done.");
+    } catch (e) {
+      console.error(`AWS lookup failed: ${e.message}`);
+    }
     return;
   }
-  const region = config.remote?.region || "us-east-1";
+
+  await closeSshMaster(state.publicIp);
   console.log(`Terminating ${state.instanceId}...`);
   await awsCmd([
     "ec2",
@@ -456,6 +639,9 @@ async function getStatus() {
     const remaining = Math.max(0, state.shutdownMinutes - elapsed);
 
     console.log(`Instance: ${state.instanceId}`);
+    console.log(
+      `Type:     ${state.instanceType || "unknown"} (${state.vcpus || "?"} vCPUs)`,
+    );
     console.log(`State:    ${awsState}`);
     console.log(`IP:       ${state.publicIp}`);
     console.log(`Elapsed:  ${elapsed} min`);
