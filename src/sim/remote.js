@@ -231,6 +231,63 @@ function syncLocalSimcBin() {
   }
 }
 
+// --- AZ fallback for capacity errors ---
+
+// Errors that indicate the specific AZ lacks capacity — retrying another AZ may succeed
+const AZ_RETRIABLE_ERRORS = [
+  "InsufficientInstanceCapacity",
+  "Unsupported", // some AZs don't support certain instance types
+];
+
+function isCapacityError(e) {
+  const msg = (e.stderr || "") + (e.message || "");
+  return AZ_RETRIABLE_ERRORS.some((code) => msg.includes(code));
+}
+
+async function getAvailableAzs(region) {
+  const result = await awsJson([
+    "ec2",
+    "describe-availability-zones",
+    "--region",
+    region,
+    "--filters",
+    "Name=state,Values=available",
+    "--query",
+    "AvailabilityZones[].ZoneName",
+  ]);
+  return result;
+}
+
+// Try launching an instance, cycling through AZs on capacity errors.
+// If subnetId is set, skip AZ fallback (subnet pins to a specific AZ).
+async function launchWithAzFallback(launchArgs, region, { subnetId } = {}) {
+  try {
+    return await awsJson(launchArgs);
+  } catch (e) {
+    if (!isCapacityError(e) || subnetId) throw e;
+    console.log("No capacity in default AZ. Trying other zones...");
+    let lastError = e;
+    const azs = await getAvailableAzs(region);
+    for (const az of azs) {
+      try {
+        console.log(`  Trying ${az}...`);
+        const result = await awsJson([
+          ...launchArgs,
+          "--placement",
+          `AvailabilityZone=${az}`,
+        ]);
+        console.log(`  ${az}: OK`);
+        return result;
+      } catch (azError) {
+        if (!isCapacityError(azError)) throw azError;
+        console.log(`  ${az}: no capacity`);
+        lastError = azError;
+      }
+    }
+    throw lastError;
+  }
+}
+
 // --- State management ---
 
 function readState() {
@@ -492,7 +549,9 @@ async function launchInstance({ instanceType, onDemand } = {}) {
   }
 
   console.log(`Launching ${onDemand ? "on-demand" : "spot"} instance...`);
-  const result = await awsJson(launchArgs);
+  const result = await launchWithAzFallback(launchArgs, region, {
+    subnetId: c.subnetId,
+  });
   const instanceId = result.Instances[0].InstanceId;
   console.log(`Instance ${instanceId} launched. Waiting for running state...`);
 
@@ -761,7 +820,9 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
   }
 
   console.log("Launching build instance...");
-  const result = await awsJson(launchArgs);
+  const result = await launchWithAzFallback(launchArgs, region, {
+    subnetId: c.subnetId,
+  });
   const instanceId = result.Instances[0].InstanceId;
 
   try {
