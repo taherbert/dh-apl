@@ -311,6 +311,17 @@ export async function runSimcRemote(args) {
   const t = sshTarget(state.publicIp);
   const ka = sshKeyArgs();
 
+  // Re-establish multiplexed connection if master died (laptop sleep, network blip)
+  try {
+    await execAsync(
+      "ssh",
+      [...SSH_OPTS, ...ka, ...controlOpts(state.publicIp), "-O", "check", t],
+      { timeout: 5000 },
+    );
+  } catch {
+    await openSshMaster(state.publicIp);
+  }
+
   // Find the .simc input file — may not be args[0] due to ptr=1 unshift
   const simcIdx = args.findIndex((a) => a.endsWith(".simc"));
   if (simcIdx === -1) {
@@ -405,6 +416,19 @@ export async function runSimcRemote(args) {
 }
 
 async function launchInstance({ instanceType, onDemand } = {}) {
+  // Prevent duplicate launches that orphan running instances
+  const existing = readState();
+  if (existing) {
+    const elapsed =
+      (Date.now() - new Date(existing.launchTime).getTime()) / 60000;
+    if (elapsed < existing.shutdownMinutes) {
+      throw new Error(
+        `Instance ${existing.instanceId} already running (${Math.round(elapsed)} min elapsed). Run 'npm run remote:stop' first.`,
+      );
+    }
+    clearState();
+  }
+
   // Ensure AMI + local binary match origin/{branch}
   await ensureAmiCurrent({ onDemand });
   syncLocalSimcBin();
