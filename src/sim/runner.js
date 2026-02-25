@@ -1,7 +1,7 @@
 import { execFileSync, execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { isRemoteActive, runSimcRemote, getSimCores } from "./remote.js";
+import { shouldUseRemote, runSimcRemote, getSimCores } from "./remote.js";
 import { basename, resolve } from "node:path";
 
 import {
@@ -127,7 +127,7 @@ export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
 
   console.log(`Running ${config.name}...`);
   try {
-    if (isRemoteActive()) {
+    if (shouldUseRemote(args)) {
       await runSimcRemote(args);
     } else {
       await execFileAsync(SIMC, args, {
@@ -288,7 +288,7 @@ export async function runMultiActorAsync(
 
   console.log(`Running multi-actor ${config.name} (${label})...`);
   try {
-    if (isRemoteActive()) {
+    if (shouldUseRemote(args)) {
       await runSimcRemote(args);
     } else {
       await execFileAsync(SIMC, args, {

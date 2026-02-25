@@ -352,6 +352,21 @@ export function isRemoteActive() {
   return getActiveState() !== null;
 }
 
+// Fidelity-aware routing: quick sims (te >= 0.5) stay local even when remote
+// is active — the ~1.7s SCP overhead exceeds the sim time. Everything else
+// (standard, confirm) goes remote for the core count advantage.
+const QUICK_TE_THRESHOLD = 0.5;
+
+export function shouldUseRemote(args) {
+  if (!isRemoteActive()) return false;
+  const teArg = args.find((a) => a.startsWith("target_error="));
+  if (teArg) {
+    const te = parseFloat(teArg.split("=")[1]);
+    if (te >= QUICK_TE_THRESHOLD) return false;
+  }
+  return true;
+}
+
 export function getSimCores() {
   const state = getActiveState();
   if (!state) return cpus().length;

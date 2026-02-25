@@ -23,7 +23,7 @@ import {
   unlinkSync,
 } from "node:fs";
 import { join, dirname, basename, resolve, relative } from "node:path";
-import { getSimCores } from "./remote.js";
+import { getSimCores, isRemoteActive } from "./remote.js";
 import { runWorkflow } from "./workflow.js";
 import {
   SCENARIOS,
@@ -1127,6 +1127,12 @@ async function cmdInit(aplPath) {
     }
   }
 
+  if (!isRemoteActive()) {
+    console.log(
+      `\n  Tip: ${roster.builds.length} builds baseline — consider 'npm run remote:start' for faster sims\n`,
+    );
+  }
+
   console.log("Running multi-actor baseline across all scenarios...");
 
   const tierConfig = FIDELITY_TIERS.standard;
@@ -1348,6 +1354,13 @@ async function cmdCompare(candidatePath, tier, { staged = false } = {}) {
         "Multi-build state but no roster found. Regenerate roster first.",
       );
       process.exit(1);
+    }
+
+    // Hint: suggest remote for non-quick fidelity with many builds
+    if (tier !== "quick" && !staged && !isRemoteActive()) {
+      console.log(
+        `\n  Tip: ${roster.builds.length} builds at ${tier} fidelity — consider 'npm run remote:start' for faster sims\n`,
+      );
     }
 
     if (staged) {

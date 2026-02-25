@@ -8,7 +8,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { SCENARIOS, SIM_DEFAULTS, readRouteFile } from "./runner.js";
 import { SIMC_BIN, DATA_ENV, initSpec } from "../engine/startup.js";
-import { isRemoteActive, runSimcRemote } from "./remote.js";
+import { shouldUseRemote, runSimcRemote } from "./remote.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, resultsFile, dataFile } from "../engine/paths.js";
 
@@ -159,7 +159,7 @@ export async function runProfilesetAsync(
   );
 
   try {
-    if (isRemoteActive()) {
+    if (shouldUseRemote(args)) {
       await runSimcRemote(args);
     } else {
       await execFileAsync(SIMC, args, {
