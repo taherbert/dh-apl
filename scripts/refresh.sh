@@ -85,9 +85,10 @@ build_simc() {
   info "Updating SimC binary..."
   cd "$SIMC_DIR"
 
-  # Checkout and update branch
+  # Checkout and update branch from upstream simulationcraft/simc
   git checkout "$SIMC_BRANCH"
-  git pull
+  git fetch upstream
+  git reset --hard upstream/"$SIMC_BRANCH"
 
   # Clean stale objects to avoid linker mismatches (e.g. ASan-compiled artifacts)
   make -C engine clean
