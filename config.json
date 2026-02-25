@@ -11,7 +11,7 @@
     "instanceType": "c7i.24xlarge",
     "vCpus": 96,
     "amiId": null,
-    "spotMaxPrice": "1.50",
+    "spotMaxPrice": "2.50",
     "shutdownMinutes": 45,
     "region": "us-west-1",
     "securityGroup": null,
