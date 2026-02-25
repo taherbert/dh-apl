@@ -59,6 +59,7 @@
     "gear:validate": "node src/sim/gear.js validate",
     "gear:screen": "node src/sim/gear.js screen",
     "gear:run": "node src/sim/gear.js run",
+    "gear:run-confirm": "node src/sim/gear.js run --confirm",
     "gear:write-profile": "node src/sim/gear.js write-profile",
     "gear:status": "node src/sim/gear.js status",
     "remote:start": "AWS_PROFILE=simulationcraft node src/sim/remote.js start",

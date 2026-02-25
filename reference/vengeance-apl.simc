@@ -38,7 +38,7 @@ actions+=/variable,name=fracture_cap_soon,value=cooldown.fracture.full_recharge_
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react
 actions+=/infernal_strike,use_off_gcd=1
-actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&!target.cooldown.pause_action.remains&in_combat
+actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&in_combat
 actions+=/run_action_list,name=ar,if=hero_tree.aldrachi_reaver
 actions+=/run_action_list,name=anni,if=hero_tree.annihilator
 
@@ -109,7 +109,7 @@ actions.ar_cooldowns+=/immolation_aura,if=variable.fiery_demise_active&!talent.c
 # === Annihilator ===
 # Meta entry conditions: not in Meta, not in Voidfall spending, building stacks low, TTD safe
 actions.anni=/variable,name=meta_entry,value=!buff.metamorphosis.up&!buff.voidfall_spending.up&buff.voidfall_building.stack<2&variable.meta_ready
-# Coordinated burst: two phases — "entering" (SpB nearly ready) and "executing" (SpB just fired, remains>20)
+# Coordinated burst: two phases — entering (SpB nearly ready) and executing (SpB just fired, remains>20)
 # meta_entry check terminates burst cleanly after Meta fires (!buff.metamorphosis.up → false)
 actions.anni+=/variable,name=burst_ready,value=variable.meta_entry&cooldown.metamorphosis.ready&(cooldown.spirit_bomb.remains<(2*gcd.max)|cooldown.spirit_bomb.remains>20)&(cooldown.soul_carver.ready|cooldown.sigil_of_spite.ready|variable.execute)
 # UR fishing: last 6s of Meta without proc — maximize consumption for Seething Anger BLP

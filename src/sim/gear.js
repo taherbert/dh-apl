@@ -241,6 +241,13 @@ function getBaseProfile(gearData) {
   return profilePath;
 }
 
+// Where optimized gear lines are written back to. Separate from baseline (which may
+// be the full APL+profile composite used for sims). Falls back to baseline when not set.
+function getGearTarget(gearData) {
+  const target = gearData.gearTarget ?? gearData.baseline;
+  return resolve(ROOT, target);
+}
+
 // Reconstruct SimC override lines for a combination candidate ID.
 function resolveComboOverrides(candidateId, gearData) {
   // Null embellishment baseline
@@ -660,6 +667,90 @@ async function cmdEvalSets(args) {
     }
   }
 
+  // Explicit ring set-bonus pairs from gear-config (e.g., Voidlight Bindings)
+  for (const pair of gearData.ring_pairs ?? []) {
+    const memberA = gearData.slots.finger1?.candidates.find(
+      (c) => c.id === pair.finger1,
+    );
+    const memberB = gearData.slots.finger2?.candidates.find(
+      (c) => c.id === pair.finger2,
+    );
+    if (!memberA || !memberB) {
+      console.log(`Ring pair ${pair.id}: candidates not found, skipping`);
+      continue;
+    }
+
+    const pairId = `ring_${pair.id}`;
+    evaluatedPairIds.push(pairId);
+
+    const variants = [
+      { name: `${pairId}_A_alone`, overrides: [memberA.simc] },
+      { name: `${pairId}_B_alone`, overrides: [memberB.simc] },
+      { name: `${pairId}_full`, overrides: [memberA.simc, memberB.simc] },
+    ];
+
+    const scenarioCount = Object.keys(SCENARIOS).length;
+    console.log(
+      `\nRing pair eval: ${pair.label} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
+    );
+
+    const results = await runBuildScenarioSims(
+      variants,
+      builds,
+      baseProfile,
+      fidelity,
+      `gear_set_${pairId}`,
+    );
+    const candidateMeta = [
+      { id: `${pairId}_A_alone`, label: `${memberA.label} alone` },
+      { id: `${pairId}_B_alone`, label: `${memberB.label} alone` },
+      { id: `${pairId}_full`, label: `${pair.label}` },
+    ];
+    const ranked = aggregateGearResults(results, candidateMeta, builds);
+
+    const baselineEntry = ranked.find((r) => r.id === "__baseline__");
+    const baselineDps = baselineEntry?.weighted ?? 0;
+    const configs = ranked.filter((r) => r.id !== "__baseline__");
+    const bestConfig = configs[0];
+
+    const significant =
+      bestConfig &&
+      isSignificant(bestConfig.weighted, baselineDps, targetError);
+
+    if (!significant && bestConfig) {
+      const deltaPct = baselineDps
+        ? (((bestConfig.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
+        : "?";
+      console.log(
+        `  No significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
+      );
+    }
+
+    for (const r of configs) {
+      r.eliminated = !significant || r.id !== bestConfig.id;
+    }
+
+    printSlotResults(`set-eval: ${pairId}`, ranked, gearData);
+
+    clearGearResults(SET_EVAL_PHASE, pairId);
+    saveGearResults(SET_EVAL_PHASE, pairId, ranked, fidelity, "set_eval");
+
+    if (significant) {
+      setSessionState(`gear_set_eval_${pairId}`, {
+        winner: bestConfig.id,
+        member0: pair.finger1,
+        member1: pair.finger2,
+        slot0: "finger1",
+        slot1: "finger2",
+        fidelity,
+        timestamp: new Date().toISOString(),
+      });
+      console.log(`  Ring pair winner: ${bestConfig.label}`);
+    } else {
+      setSessionState(`gear_set_eval_${pairId}`, null);
+    }
+  }
+
   setSessionState("gear_set_eval_pairs", evaluatedPairIds);
 }
 
@@ -695,6 +786,7 @@ function cmdGems(gearData) {
     setSessionState("gear_gems", {
       best_id: best.id,
       best_enchant_id: best.enchant_id,
+      best_item_id: best.item_id || best.enchant_id,
       best_label: best.label,
       ep: 0,
       timestamp: new Date().toISOString(),
@@ -704,6 +796,7 @@ function cmdGems(gearData) {
   setSessionState("gear_gems", {
     best_id: best.id,
     best_enchant_id: best.enchant_id,
+    best_item_id: best.item_id || best.enchant_id,
     best_label: best.label,
     ep: best.ep,
     timestamp: new Date().toISOString(),
@@ -1428,8 +1521,8 @@ async function cmdStatOptimize(args) {
   const gearData = loadGearCandidates();
   const baseProfile = getBaseProfile(gearData);
 
-  // Auto-detect crafted slots from profile.simc (no manual config needed).
-  const craftedSlots = detectCraftedSlots(baseProfile);
+  // Auto-detect crafted slots from the gear target (profile.simc), not the sim baseline.
+  const craftedSlots = detectCraftedSlots(getGearTarget(gearData));
   if (craftedSlots.length === 0) {
     console.log(
       "No crafted items found in profile.simc, skipping stat optimization.",
@@ -1545,14 +1638,44 @@ async function cmdValidate(args) {
   clearGearResults(11);
   saveGearResults(11, null, ranked, fidelity);
 
+  // Compare assembled gear vs baseline (original profile).
+  // SAFETY GATE: If assembled gear is worse than the original profile, block write-profile.
+  const assembledEntry = ranked.find((r) => r.id === "assembled_gear");
+  const baselineEntry = ranked.find((r) => r.id === "__baseline__");
+  const assembledDps = assembledEntry?.weighted ?? 0;
+  const baselineDps = baselineEntry?.weighted ?? 0;
+  let validationPassed = true;
+
+  if (baselineDps > 0 && assembledDps > 0) {
+    const deltaPct = ((assembledDps - baselineDps) / baselineDps) * 100;
+    console.log(`\n--- Profile Comparison ---`);
+    console.log(
+      `  Original profile: ${Math.round(baselineDps).toLocaleString()} weighted`,
+    );
+    console.log(
+      `  Assembled gear:   ${Math.round(assembledDps).toLocaleString()} weighted`,
+    );
+    console.log(`  Delta: ${deltaPct >= 0 ? "+" : ""}${deltaPct.toFixed(2)}%`);
+    if (deltaPct < -tierConfig.target_error) {
+      console.log(
+        `\n  WARNING: Assembled gear is WORSE than original profile by ${Math.abs(deltaPct).toFixed(2)}%.`,
+      );
+      console.log(
+        `  write-profile will NOT run automatically. Fix gear candidates and re-run.`,
+      );
+      validationPassed = false;
+    } else {
+      console.log(`  Assembled gear meets quality gate.`);
+    }
+  }
+
   // Check for build divergence
-  const bestEntry = ranked.find((r) => r.id === "assembled_gear");
-  if (bestEntry?.buildDps) {
-    const buildKeys = Object.keys(bestEntry.buildDps);
+  if (assembledEntry?.buildDps) {
+    const buildKeys = Object.keys(assembledEntry.buildDps);
     if (buildKeys.length >= 2) {
       console.log("\n--- Build Divergence Check ---");
       for (const bk of buildKeys) {
-        const buildScenarios = bestEntry.buildDps[bk];
+        const buildScenarios = assembledEntry.buildDps[bk];
         let bWeighted = 0;
         for (const [s, w] of Object.entries(SCENARIO_WEIGHTS)) {
           bWeighted += (buildScenarios[s] || 0) * w;
@@ -1566,10 +1689,18 @@ async function cmdValidate(args) {
   }
 
   setSessionState("gear_phase11", {
-    validated: true,
+    validationPassed,
+    assembledDps,
+    baselineDps,
     fidelity,
     timestamp: new Date().toISOString(),
   });
+}
+
+// Returns true if Phase 11 validation passed (assembled gear >= original profile).
+export function isGearValidationPassed() {
+  const state = getSessionState("gear_phase11");
+  return state?.validationPassed !== false;
 }
 
 // --- Profile write ---
@@ -1772,17 +1903,17 @@ function buildGearLines(gearData) {
     addLine(applySlotEnchant(line, slot, enchantMap), slot);
   }
 
-  // Phase 9: apply best gem to all socketed items
+  // Phase 9: apply best gem to all socketed items.
+  // Uses item_id (SimC gem_id= expects item IDs, not enchant IDs).
   const gemState = getSessionState("gear_gems");
-  if (gemState?.best_enchant_id) {
+  const gemItemId = gemState?.best_item_id || gemState?.best_enchant_id;
+  if (gemItemId) {
     for (let i = 0; i < lines.length; i++) {
       if (!lines[i].includes("gem_id=")) continue;
       const match = lines[i].match(/gem_id=([\d/]+)/);
       if (match) {
         const socketCount = match[1].split("/").length;
-        const newGems = Array(socketCount)
-          .fill(gemState.best_enchant_id)
-          .join("/");
+        const newGems = Array(socketCount).fill(gemItemId).join("/");
         lines[i] = lines[i].replace(/gem_id=[\d/]+/, `gem_id=${newGems}`);
       }
     }
@@ -1803,7 +1934,7 @@ function cmdWriteProfile() {
     return;
   }
 
-  const profilePath = resolve(ROOT, gearData.baseline);
+  const profilePath = getGearTarget(gearData);
 
   const GEAR_SLOT_RE =
     /^(head|shoulder|chest|hands|legs|neck|back|wrist|wrists|waist|feet|finger\d|trinket\d|main_hand|off_hand)=/;
@@ -1964,8 +2095,19 @@ async function cmdRun(args) {
     await cmdValidate(fidelityArgs);
   }
 
-  console.log("\n========== Writing profile.simc ==========\n");
-  cmdWriteProfile();
+  const phase11State = getSessionState("gear_phase11");
+  if (phase11State?.validationPassed === false) {
+    console.log(
+      "\n========== PIPELINE BLOCKED: Gear regression detected ==========\n",
+    );
+    console.log(
+      "  Assembled gear is worse than the original profile. profile.simc NOT updated.",
+    );
+    console.log("  Fix gear candidates and re-run the pipeline to proceed.");
+  } else {
+    console.log("\n========== Writing profile.simc ==========\n");
+    cmdWriteProfile();
+  }
 
   console.log("\n========== Pipeline Complete ==========\n");
   cmdStatus();
@@ -2006,7 +2148,7 @@ function cmdStatus() {
 
   // Phase 2: stat optimization (crafted slots auto-detected from profile.simc)
   console.log("\nPhase 2 (Stat Optimization):");
-  const craftedSlotsStatus = detectCraftedSlots(getBaseProfile(gearData));
+  const craftedSlotsStatus = detectCraftedSlots(getGearTarget(gearData));
   if (craftedSlotsStatus.length > 0) {
     for (const craftedSlot of craftedSlotsStatus) {
       const state = getSessionState(`gear_phase2_${craftedSlot}`);
@@ -2265,7 +2407,7 @@ function cmdExport() {
   }
 
   // Phase 2 stat winners
-  for (const craftedSlot of detectCraftedSlots(getBaseProfile(gearData))) {
+  for (const craftedSlot of detectCraftedSlots(getGearTarget(gearData))) {
     const state = getSessionState(`gear_phase2_${craftedSlot}`);
     if (state?.best) {
       console.log(`# ${craftedSlot} stat alloc: ${state.best}`);

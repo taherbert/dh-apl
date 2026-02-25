@@ -841,6 +841,7 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
     subnetId: c.subnetId,
   });
   const instanceId = result.Instances[0].InstanceId;
+  const buildSpotRequestId = result.Instances[0].SpotInstanceRequestId ?? null;
 
   try {
     const publicIp = await waitForPublicIp(instanceId);
@@ -881,8 +882,13 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
     const target = sshTarget(publicIp);
     const ka = sshKeyArgs();
     let pgoProfile = null;
-    const aplPath = join(aplsDir(), "vengeance.simc");
-    if (existsSync(aplPath)) {
+    let aplPath = null;
+    try {
+      aplPath = join(aplsDir(), "vengeance.simc");
+    } catch {
+      // spec not initialized — PGO training profile unavailable
+    }
+    if (aplPath && existsSync(aplPath)) {
       const { resolveInputDirectives } = await import("./profilesets.js");
       const raw = readFileSync(aplPath, "utf-8");
       const resolved = resolveInputDirectives(raw, dirname(resolve(aplPath)));
@@ -991,6 +997,28 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
   } finally {
     console.log(`Terminating build instance ${instanceId}...`);
     await terminateById(instanceId).catch(() => {});
+    // Cancel the spot request explicitly so the quota releases before launchInstance()
+    // tries to launch the sim instance. terminateById() alone leaves the SIR active
+    // long enough to trigger MaxSpotInstanceCountExceeded on the next launch.
+    if (buildSpotRequestId) {
+      await awsCmd([
+        "ec2",
+        "cancel-spot-instance-requests",
+        "--region",
+        region(),
+        "--spot-instance-request-ids",
+        buildSpotRequestId,
+      ]).catch(() => {});
+      await awsCmd([
+        "ec2",
+        "wait",
+        "instance-terminated",
+        "--instance-ids",
+        instanceId,
+        "--region",
+        region(),
+      ]).catch(() => {});
+    }
   }
 }
 

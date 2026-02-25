@@ -257,12 +257,54 @@
           "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=devouring_banding",
           "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=devouring_banding"
         ]
+      },
+      {
+        "id": "hunt_loa_ring",
+        "label": "Sigil Hunt + Loa Worshiper's Band",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "banding_loa_ring",
+        "label": "Devouring Banding + Loa Worshiper's Band",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=devouring_banding",
+          "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
       }
     ]
   },
+  "gems": {
+    "item_ids": {
+      "7220": 241144,
+      "7221": 241143,
+      "7222": 241142
+    }
+  },
+  "manual_candidates": [
+    {
+      "slot": "main_hand",
+      "id": "lightless_lament",
+      "label": "Lightless Lament",
+      "simc": "main_hand=lightless_lament,id=260408,ilevel=289",
+      "stats": { "agi": 5259, "crit": 7000, "stamina": 7889 },
+      "tags": []
+    }
+  ],
+  "ring_pairs": [
+    {
+      "id": "voidlight_bindings",
+      "label": "Voidlight Bindings 2-piece",
+      "finger1": "omission_of_light",
+      "finger2": "occlusion_of_void"
+    }
+  ],
   "flagged": {
     "eye_of_midnight": "On-equip proc (spell 1266505) not fully modeled in SimC. DPS results may understate this ring.",
-    "radiant_plume": "Decaying stat mechanic — average value over fight is lower than tooltip. SimC models the decay.",
-    "umbral_plume": "Unique-Equipped with Radiant Plume — cannot equip both."
+    "radiant_plume": "Decaying stat mechanic - average value over fight is lower than tooltip. SimC models the decay.",
+    "umbral_plume": "Unique-Equipped with Radiant Plume - cannot equip both.",
+    "stabilizing_gemstone_bandolier": "DISABLED_EFFECT in SimC (spell 1251905) - proc not modeled. bandolier_mul() still applies 2x to Loa ring procs when equipped, but the Bandolier's own effect is missing. Defer until SimC implements it."
   }
 }
