@@ -95,6 +95,7 @@ const STAT_ID_MAP = {
 const ENCHANT_STAT_NAME_MAP = {
   agi: "agi",
   agility: "agi",
+  stragiint: "agi",
   haste: "haste",
   "haste rating": "haste",
   crit: "crit",
@@ -139,9 +140,10 @@ function extractStats(item) {
 
 function extractEnchantStats(enchant) {
   const out = {};
-  for (const { type, value } of enchant.stats || []) {
-    const key = ENCHANT_STAT_NAME_MAP[type.toLowerCase()];
-    if (key) out[key] = (out[key] || 0) + value;
+  for (const s of enchant.stats || []) {
+    const key = ENCHANT_STAT_NAME_MAP[s.type.toLowerCase()];
+    const val = s.value ?? s.amount ?? 0;
+    if (key && val) out[key] = (out[key] || 0) + val;
   }
   return Object.keys(out).length ? out : null;
 }
@@ -191,6 +193,17 @@ async function fetchWowheadStats(itemId, ilvl) {
   return null;
 }
 
+function toEnchantCandidate(e, includeStats = false) {
+  const stats = includeStats ? extractEnchantStats(e) : null;
+  return {
+    id: toSimcName(e.baseDisplayName || e.displayName),
+    label: e.displayName,
+    enchant_id: e.id,
+    ...(stats ? { stats } : {}),
+    tags: [],
+  };
+}
+
 // Convert a display name to a SimC-compatible identifier.
 // Matches SimC's internal naming: lowercase, apostrophes dropped,
 // hyphens → underscores, remaining non-alphanumeric-space dropped, spaces → underscores.
@@ -204,10 +217,25 @@ function toSimcName(name) {
     .replace(/\s+/g, "_");
 }
 
+// Inventory types that always have a fixed socket count in Midnight,
+// regardless of what Raidbots beta data reports.
+const FORCED_SOCKET_INVENTORY_TYPES = {
+  2: 2, // neck — always 2 sockets in Midnight
+  11: 2, // finger — always 2 sockets in Midnight
+};
+
+function getSocketCount(item) {
+  return (
+    FORCED_SOCKET_INVENTORY_TYPES[item.inventoryType] ??
+    item.socketInfo?.sockets?.length ??
+    0
+  );
+}
+
 function buildGemString(item, defaultGemId) {
-  if (!defaultGemId || !item.hasSockets || !item.socketInfo?.sockets?.length)
-    return "";
-  return Array(item.socketInfo.sockets.length).fill(defaultGemId).join("/");
+  const count = getSocketCount(item);
+  if (!defaultGemId || count === 0) return "";
+  return Array(count).fill(defaultGemId).join("/");
 }
 
 // Build a SimC item string. Without a slot prefix, produces a paired-slot simc_base.
@@ -414,8 +442,44 @@ async function main() {
   // World boss items are not upgradeable — cap at the second-highest tier (Hero track).
   const worldBossIlvl =
     sortedTiers.length >= 2 ? sortedTiers.at(-2).ilvl : maxIlvl;
-  // Use current _defaultGem as placeholder for simc string generation; recomputed after gem fetch.
-  const placeholderGemId = current._defaultGem || 0;
+  // Extract gems early so we can use the computed defaultGemId for simc string generation.
+  // Gems come from enchantments.json socket enchants; item_ids from gear-config.json.
+  const newGems = deduplicateEnchants(
+    enchants.filter(
+      (e) =>
+        e.expansion === expansion &&
+        e.slot === "socket" &&
+        (e.craftingQuality == null || e.craftingQuality === 3),
+    ),
+  ).map((e) => toEnchantCandidate(e, true));
+  const gems = newGems.length > 0 ? newGems : current.gems || [];
+
+  const gemItemIdMap = gearConfig.gems?.item_ids || {};
+  for (const gem of gems) {
+    const itemId = gemItemIdMap[String(gem.enchant_id)];
+    if (itemId) gem.item_id = itemId;
+  }
+
+  // Auto-detect _defaultGem: item_id of the gem with the highest agi stat value.
+  // SimC gem_id= expects item IDs, not enchant IDs.
+  const defaultGemId = (() => {
+    let bestItemId = 0,
+      bestAgi = 0;
+    for (const gem of gems) {
+      const agi = gem.stats?.agi || 0;
+      if (agi > bestAgi) {
+        bestAgi = agi;
+        bestItemId = gem.item_id || gem.enchant_id || 0;
+      }
+    }
+    return bestItemId;
+  })();
+
+  if (defaultGemId) {
+    console.log(`Auto-detected default gem: item_id=${defaultGemId}`);
+  } else {
+    console.log("No agi gem found — _defaultGem not set.");
+  }
 
   // Build world boss instance ID set from instances.json.
   // World bosses are raid-type instances with flags=2; items from only these sources
@@ -499,7 +563,7 @@ async function main() {
     return {
       id: toSimcName(item.name),
       label: item.name,
-      simc_base: buildSimcString(null, item, ilvl, placeholderGemId),
+      simc_base: buildSimcString(null, item, ilvl, defaultGemId),
       ...(stats ? { stats } : {}),
       tags: [
         item.onUseTrinket ? "on-use" : "passive",
@@ -522,7 +586,7 @@ async function main() {
       return {
         id: toSimcName(item.name),
         label: item.name,
-        simc: buildSimcString(slotName, item, ilvl, placeholderGemId),
+        simc: buildSimcString(slotName, item, ilvl, defaultGemId),
         ...(stats ? { stats } : {}),
         tags: [],
       };
@@ -549,7 +613,7 @@ async function main() {
       return {
         id: isOffHand ? `${toSimcName(item.name)}_oh` : toSimcName(item.name),
         label: isOffHand ? `${item.name} (OH)` : item.name,
-        simc: buildSimcString(simcSlot, item, ilvl, placeholderGemId),
+        simc: buildSimcString(simcSlot, item, ilvl, defaultGemId),
         ...(stats ? { stats } : {}),
         tags: [],
       };
@@ -625,19 +689,6 @@ async function main() {
 
   console.log(`${dhEnchants.length} DH-usable enchants`);
 
-  function toEnchantCandidate(e, includeStats = false) {
-    const stats = includeStats ? extractEnchantStats(e) : null;
-    return {
-      id: toSimcName(e.baseDisplayName || e.displayName),
-      label: e.displayName,
-      enchant_id: e.id,
-      ...(stats ? { stats } : {}),
-      tags: [],
-    };
-  }
-
-  // Group enchants by category and build output sections.
-  // Stat-only slots (cloak, wrist, foot) include stats for EP ranking.
   const ENCHANT_SECTIONS = [
     {
       category: "weapon",
@@ -689,36 +740,13 @@ async function main() {
     }
   }
 
-  // --- gems: socket enchants from enchantments.json ---
-  const newGems = deduplicateEnchants(
-    enchants.filter(
-      (e) =>
-        e.expansion === expansion &&
-        e.slot === "socket" &&
-        (e.craftingQuality == null || e.craftingQuality === 3),
-    ),
-  ).map((e) => toEnchantCandidate(e, true));
-  // Preserve existing gems if none fetched (data may not expose socket enchants)
-  const gems = newGems.length > 0 ? newGems : current.gems || [];
-
-  // Auto-detect _defaultGem: gem with the highest agi stat value
-  const defaultGemId = (() => {
-    let bestId = 0,
-      bestAgi = 0;
-    for (const gem of gems) {
-      const agi = gem.stats?.agi || 0;
-      if (agi > bestAgi) {
-        bestAgi = agi;
-        bestId = gem.enchant_id || 0;
-      }
+  // --- Merge manual_candidates from gear-config.json ---
+  for (const item of gearConfig.manual_candidates ?? []) {
+    const { slot, ...candidate } = item;
+    if (!slots[slot]) slots[slot] = { candidates: [] };
+    if (!slots[slot].candidates.find((c) => c.id === candidate.id)) {
+      slots[slot].candidates.push(candidate);
     }
-    return bestId;
-  })();
-
-  if (defaultGemId) {
-    console.log(`Auto-detected default gem: enchant_id=${defaultGemId}`);
-  } else {
-    console.log("No agi gem found — _defaultGem not set.");
   }
 
   // --- Write output ---
@@ -747,6 +775,7 @@ async function main() {
     ...(gearConfig.embellishments
       ? { embellishments: gearConfig.embellishments }
       : {}),
+    ...(gearConfig.ring_pairs ? { ring_pairs: gearConfig.ring_pairs } : {}),
     ...(gearConfig.flagged ? { flagged: gearConfig.flagged } : {}),
   };
 

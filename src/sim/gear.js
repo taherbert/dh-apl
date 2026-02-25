@@ -667,6 +667,90 @@ async function cmdEvalSets(args) {
     }
   }
 
+  // Explicit ring set-bonus pairs from gear-config (e.g., Voidlight Bindings)
+  for (const pair of gearData.ring_pairs ?? []) {
+    const memberA = gearData.slots.finger1?.candidates.find(
+      (c) => c.id === pair.finger1,
+    );
+    const memberB = gearData.slots.finger2?.candidates.find(
+      (c) => c.id === pair.finger2,
+    );
+    if (!memberA || !memberB) {
+      console.log(`Ring pair ${pair.id}: candidates not found, skipping`);
+      continue;
+    }
+
+    const pairId = `ring_${pair.id}`;
+    evaluatedPairIds.push(pairId);
+
+    const variants = [
+      { name: `${pairId}_A_alone`, overrides: [memberA.simc] },
+      { name: `${pairId}_B_alone`, overrides: [memberB.simc] },
+      { name: `${pairId}_full`, overrides: [memberA.simc, memberB.simc] },
+    ];
+
+    const scenarioCount = Object.keys(SCENARIOS).length;
+    console.log(
+      `\nRing pair eval: ${pair.label} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
+    );
+
+    const results = await runBuildScenarioSims(
+      variants,
+      builds,
+      baseProfile,
+      fidelity,
+      `gear_set_${pairId}`,
+    );
+    const candidateMeta = [
+      { id: `${pairId}_A_alone`, label: `${memberA.label} alone` },
+      { id: `${pairId}_B_alone`, label: `${memberB.label} alone` },
+      { id: `${pairId}_full`, label: `${pair.label}` },
+    ];
+    const ranked = aggregateGearResults(results, candidateMeta, builds);
+
+    const baselineEntry = ranked.find((r) => r.id === "__baseline__");
+    const baselineDps = baselineEntry?.weighted ?? 0;
+    const configs = ranked.filter((r) => r.id !== "__baseline__");
+    const bestConfig = configs[0];
+
+    const significant =
+      bestConfig &&
+      isSignificant(bestConfig.weighted, baselineDps, targetError);
+
+    if (!significant && bestConfig) {
+      const deltaPct = baselineDps
+        ? (((bestConfig.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
+        : "?";
+      console.log(
+        `  No significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
+      );
+    }
+
+    for (const r of configs) {
+      r.eliminated = !significant || r.id !== bestConfig.id;
+    }
+
+    printSlotResults(`set-eval: ${pairId}`, ranked, gearData);
+
+    clearGearResults(SET_EVAL_PHASE, pairId);
+    saveGearResults(SET_EVAL_PHASE, pairId, ranked, fidelity, "set_eval");
+
+    if (significant) {
+      setSessionState(`gear_set_eval_${pairId}`, {
+        winner: bestConfig.id,
+        member0: pair.finger1,
+        member1: pair.finger2,
+        slot0: "finger1",
+        slot1: "finger2",
+        fidelity,
+        timestamp: new Date().toISOString(),
+      });
+      console.log(`  Ring pair winner: ${bestConfig.label}`);
+    } else {
+      setSessionState(`gear_set_eval_${pairId}`, null);
+    }
+  }
+
   setSessionState("gear_set_eval_pairs", evaluatedPairIds);
 }
 
@@ -702,6 +786,7 @@ function cmdGems(gearData) {
     setSessionState("gear_gems", {
       best_id: best.id,
       best_enchant_id: best.enchant_id,
+      best_item_id: best.item_id || best.enchant_id,
       best_label: best.label,
       ep: 0,
       timestamp: new Date().toISOString(),
@@ -711,6 +796,7 @@ function cmdGems(gearData) {
   setSessionState("gear_gems", {
     best_id: best.id,
     best_enchant_id: best.enchant_id,
+    best_item_id: best.item_id || best.enchant_id,
     best_label: best.label,
     ep: best.ep,
     timestamp: new Date().toISOString(),
@@ -1603,7 +1689,6 @@ async function cmdValidate(args) {
   }
 
   setSessionState("gear_phase11", {
-    validated: validationPassed,
     validationPassed,
     assembledDps,
     baselineDps,
@@ -1818,17 +1903,17 @@ function buildGearLines(gearData) {
     addLine(applySlotEnchant(line, slot, enchantMap), slot);
   }
 
-  // Phase 9: apply best gem to all socketed items
+  // Phase 9: apply best gem to all socketed items.
+  // Uses item_id (SimC gem_id= expects item IDs, not enchant IDs).
   const gemState = getSessionState("gear_gems");
-  if (gemState?.best_enchant_id) {
+  const gemItemId = gemState?.best_item_id || gemState?.best_enchant_id;
+  if (gemItemId) {
     for (let i = 0; i < lines.length; i++) {
       if (!lines[i].includes("gem_id=")) continue;
       const match = lines[i].match(/gem_id=([\d/]+)/);
       if (match) {
         const socketCount = match[1].split("/").length;
-        const newGems = Array(socketCount)
-          .fill(gemState.best_enchant_id)
-          .join("/");
+        const newGems = Array(socketCount).fill(gemItemId).join("/");
         lines[i] = lines[i].replace(/gem_id=[\d/]+/, `gem_id=${newGems}`);
       }
     }
