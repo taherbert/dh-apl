@@ -1,6 +1,7 @@
 {
   "version": 2,
   "baseline": "apls/vengeance/current.simc",
+  "gearTarget": "apls/vengeance/profile.simc",
   "ilvl_tiers": [
     {
       "ilvl": 237,

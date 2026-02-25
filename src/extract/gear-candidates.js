@@ -754,7 +754,8 @@ async function main() {
   // stat_allocations and sets are NOT stored here — generated at runtime in gear.js.
   const output = {
     version: 2,
-    baseline: current.baseline || `apls/${specName}/profile.simc`,
+    baseline: current.baseline || `apls/${specName}/current.simc`,
+    gearTarget: current.gearTarget || `apls/${specName}/profile.simc`,
     ilvl_tiers: sortedTiers,
     ...(gearConfig.tier ? { tier: gearConfig.tier } : {}),
     paired_slots: {
