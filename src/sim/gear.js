@@ -241,6 +241,13 @@ function getBaseProfile(gearData) {
   return profilePath;
 }
 
+// Where optimized gear lines are written back to. Separate from baseline (which may
+// be the full APL+profile composite used for sims). Falls back to baseline when not set.
+function getGearTarget(gearData) {
+  const target = gearData.gearTarget ?? gearData.baseline;
+  return resolve(ROOT, target);
+}
+
 // Reconstruct SimC override lines for a combination candidate ID.
 function resolveComboOverrides(candidateId, gearData) {
   // Null embellishment baseline
@@ -1428,8 +1435,8 @@ async function cmdStatOptimize(args) {
   const gearData = loadGearCandidates();
   const baseProfile = getBaseProfile(gearData);
 
-  // Auto-detect crafted slots from profile.simc (no manual config needed).
-  const craftedSlots = detectCraftedSlots(baseProfile);
+  // Auto-detect crafted slots from the gear target (profile.simc), not the sim baseline.
+  const craftedSlots = detectCraftedSlots(getGearTarget(gearData));
   if (craftedSlots.length === 0) {
     console.log(
       "No crafted items found in profile.simc, skipping stat optimization.",
@@ -1545,14 +1552,44 @@ async function cmdValidate(args) {
   clearGearResults(11);
   saveGearResults(11, null, ranked, fidelity);
 
+  // Compare assembled gear vs baseline (original profile).
+  // SAFETY GATE: If assembled gear is worse than the original profile, block write-profile.
+  const assembledEntry = ranked.find((r) => r.id === "assembled_gear");
+  const baselineEntry = ranked.find((r) => r.id === "__baseline__");
+  const assembledDps = assembledEntry?.weighted ?? 0;
+  const baselineDps = baselineEntry?.weighted ?? 0;
+  let validationPassed = true;
+
+  if (baselineDps > 0 && assembledDps > 0) {
+    const deltaPct = ((assembledDps - baselineDps) / baselineDps) * 100;
+    console.log(`\n--- Profile Comparison ---`);
+    console.log(
+      `  Original profile: ${Math.round(baselineDps).toLocaleString()} weighted`,
+    );
+    console.log(
+      `  Assembled gear:   ${Math.round(assembledDps).toLocaleString()} weighted`,
+    );
+    console.log(`  Delta: ${deltaPct >= 0 ? "+" : ""}${deltaPct.toFixed(2)}%`);
+    if (deltaPct < -tierConfig.target_error) {
+      console.log(
+        `\n  WARNING: Assembled gear is WORSE than original profile by ${Math.abs(deltaPct).toFixed(2)}%.`,
+      );
+      console.log(
+        `  write-profile will NOT run automatically. Fix gear candidates and re-run.`,
+      );
+      validationPassed = false;
+    } else {
+      console.log(`  Assembled gear meets quality gate.`);
+    }
+  }
+
   // Check for build divergence
-  const bestEntry = ranked.find((r) => r.id === "assembled_gear");
-  if (bestEntry?.buildDps) {
-    const buildKeys = Object.keys(bestEntry.buildDps);
+  if (assembledEntry?.buildDps) {
+    const buildKeys = Object.keys(assembledEntry.buildDps);
     if (buildKeys.length >= 2) {
       console.log("\n--- Build Divergence Check ---");
       for (const bk of buildKeys) {
-        const buildScenarios = bestEntry.buildDps[bk];
+        const buildScenarios = assembledEntry.buildDps[bk];
         let bWeighted = 0;
         for (const [s, w] of Object.entries(SCENARIO_WEIGHTS)) {
           bWeighted += (buildScenarios[s] || 0) * w;
@@ -1566,10 +1603,19 @@ async function cmdValidate(args) {
   }
 
   setSessionState("gear_phase11", {
-    validated: true,
+    validated: validationPassed,
+    validationPassed,
+    assembledDps,
+    baselineDps,
     fidelity,
     timestamp: new Date().toISOString(),
   });
+}
+
+// Returns true if Phase 11 validation passed (assembled gear >= original profile).
+export function isGearValidationPassed() {
+  const state = getSessionState("gear_phase11");
+  return state?.validationPassed !== false;
 }
 
 // --- Profile write ---
@@ -1803,7 +1849,7 @@ function cmdWriteProfile() {
     return;
   }
 
-  const profilePath = resolve(ROOT, gearData.baseline);
+  const profilePath = getGearTarget(gearData);
 
   const GEAR_SLOT_RE =
     /^(head|shoulder|chest|hands|legs|neck|back|wrist|wrists|waist|feet|finger\d|trinket\d|main_hand|off_hand)=/;
@@ -1964,8 +2010,19 @@ async function cmdRun(args) {
     await cmdValidate(fidelityArgs);
   }
 
-  console.log("\n========== Writing profile.simc ==========\n");
-  cmdWriteProfile();
+  const phase11State = getSessionState("gear_phase11");
+  if (phase11State?.validationPassed === false) {
+    console.log(
+      "\n========== PIPELINE BLOCKED: Gear regression detected ==========\n",
+    );
+    console.log(
+      "  Assembled gear is worse than the original profile. profile.simc NOT updated.",
+    );
+    console.log("  Fix gear candidates and re-run the pipeline to proceed.");
+  } else {
+    console.log("\n========== Writing profile.simc ==========\n");
+    cmdWriteProfile();
+  }
 
   console.log("\n========== Pipeline Complete ==========\n");
   cmdStatus();
@@ -2006,7 +2063,7 @@ function cmdStatus() {
 
   // Phase 2: stat optimization (crafted slots auto-detected from profile.simc)
   console.log("\nPhase 2 (Stat Optimization):");
-  const craftedSlotsStatus = detectCraftedSlots(getBaseProfile(gearData));
+  const craftedSlotsStatus = detectCraftedSlots(getGearTarget(gearData));
   if (craftedSlotsStatus.length > 0) {
     for (const craftedSlot of craftedSlotsStatus) {
       const state = getSessionState(`gear_phase2_${craftedSlot}`);
@@ -2265,7 +2322,7 @@ function cmdExport() {
   }
 
   // Phase 2 stat winners
-  for (const craftedSlot of detectCraftedSlots(getBaseProfile(gearData))) {
+  for (const craftedSlot of detectCraftedSlots(getGearTarget(gearData))) {
     const state = getSessionState(`gear_phase2_${craftedSlot}`);
     if (state?.best) {
       console.log(`# ${craftedSlot} stat alloc: ${state.best}`);

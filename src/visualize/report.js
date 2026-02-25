@@ -504,7 +504,6 @@ function generateHtml(data) {
     renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
     renderTrinketRankings(trinketData),
-    renderRingRankings(ringData),
     renderEmbellishmentRankings(embellishmentData),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
     renderFooter(),
@@ -968,7 +967,7 @@ function renderTrinketRankings(trinketData) {
     const elimHtml =
       elim.length > 0
         ? `<details class="trinket-details">
-        <summary>Eliminated <span class="detail-count">(${elim.length})</span></summary>
+        <summary>Below advancement threshold <span class="detail-count">(${elim.length})</span></summary>
         <div class="trinket-list trinket-list--elim">${renderStrips(elim, showTags, maxDps)}</div>
       </details>`
         : "";
@@ -1049,7 +1048,7 @@ function renderPairRankingSection({
   const elimHtml =
     elim.length > 0
       ? `<details class="trinket-details">
-      <summary>Eliminated <span class="detail-count">(${elim.length})</span></summary>
+      <summary>Not significant — below threshold <span class="detail-count">(${elim.length})</span></summary>
       <div class="trinket-list trinket-list--elim">${renderStrips(elim, false)}</div>
     </details>`
       : "";
@@ -1074,11 +1073,48 @@ function renderEmbellishmentRankings(embData) {
   if (!embData?.pairs?.length) return "";
 
   const { pairs, nullEmb } = embData;
-  const active = pairs.filter((r) => !r.eliminated);
+  const allActive = pairs.filter((r) => !r.eliminated);
+  // Show top 3; remainder goes into the "more" section
+  const topActive = allActive.slice(0, 3);
+  const moreActive = allActive.slice(3);
+  const allElim = [...moreActive, ...pairs.filter((r) => r.eliminated)];
 
   function embDelta(r) {
     if (!nullEmb) return `${(r.delta_pct_weighted || 0).toFixed(1)}%`;
     return pctDelta(r, nullEmb);
+  }
+
+  // Delta-relative bar scaling: 0% = nullEmb (no embellishment), 100% = best pair
+  const best = topActive[0];
+  const floor = nullEmb?.weighted || 0;
+  const range = best ? best.weighted - floor : 1;
+  function embBarPct(r) {
+    if (range <= 0) return 0;
+    return Math.max(0, Math.min(100, ((r.weighted - floor) / range) * 100));
+  }
+
+  function renderEmbStrips(items, isActive) {
+    return items
+      .map((r, i) => {
+        const isBest = isActive && i === 0;
+        const delta = isBest ? "best" : embDelta(r);
+        const barPct = embBarPct(r);
+        const elimCls = r.eliminated === 1 ? " trinket-strip--elim" : "";
+        return `<div class="trinket-strip${elimCls}">
+        <div class="trinket-strip__rank">${i + 1}</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">${esc(r.label || r.candidate_id)}</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:${barPct.toFixed(1)}%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">${fmtDps(r.weighted)}</div>
+        <div class="trinket-strip__delta ${isBest ? "trinket-strip__delta--best" : ""}">${delta}</div>
+      </div>`;
+      })
+      .join("");
   }
 
   const nullRow = nullEmb
@@ -1089,21 +1125,30 @@ function renderEmbellishmentRankings(embData) {
         <span class="trinket-strip__name">${esc(nullEmb.label || "No Embellishment")}</span>
       </div>
       <div class="trinket-strip__bar-wrap">
-        <div class="trinket-strip__bar" style="width:${active[0]?.weighted ? ((nullEmb.weighted / active[0].weighted) * 100).toFixed(1) : 0}%"></div>
+        <div class="trinket-strip__bar" style="width:0%"></div>
       </div>
     </div>
     <div class="trinket-strip__dps">${fmtDps(nullEmb.weighted)}</div>
-    <div class="trinket-strip__delta">+0.0%</div>
+    <div class="trinket-strip__delta">baseline</div>
   </div>`
     : "";
 
-  return renderPairRankingSection({
-    title: "Embellishment Rankings",
-    desc: "DPS contribution from embellishment combinations (2-slot budget). Delta shown vs same crafted gear without embellishments.",
-    pairs,
-    deltaFn: embDelta,
-    extraListHtml: nullRow,
-  });
+  const moreHtml =
+    allElim.length > 0
+      ? `<details class="trinket-details">
+      <summary>More combinations <span class="detail-count">(${allElim.length})</span></summary>
+      <div class="trinket-list trinket-list--elim">${renderEmbStrips(allElim, false)}</div>
+    </details>`
+      : "";
+
+  return `<section>
+  <h2>Embellishment Rankings</h2>
+  <div class="subsection">
+    <p class="section-desc">DPS gain from embellishment combinations (2-slot budget). Bars show gain vs no-embellishment baseline. Delta shown vs same crafted gear without embellishments.</p>
+    <div class="trinket-list">${renderEmbStrips(topActive, true)}${nullRow}</div>
+    ${moreHtml}
+  </div>
+</section>`;
 }
 
 function renderRingRankings(ringData) {
