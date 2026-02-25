@@ -1,4 +1,5 @@
 # Project-specific
+config.local.json
 data/*/raw/
 data/*/talents-raw.json
 apls/*/candidate.simc

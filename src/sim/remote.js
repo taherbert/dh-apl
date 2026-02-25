@@ -187,10 +187,13 @@ async function getAmiSimcCommit(amiId) {
 }
 
 function updateConfigAmiId(amiId) {
-  const configPath = join(ROOT, "config.json");
-  const raw = JSON.parse(readFileSync(configPath, "utf-8"));
-  raw.remote.amiId = amiId;
-  writeFileSync(configPath, JSON.stringify(raw, null, 2) + "\n");
+  const localPath = join(ROOT, "config.local.json");
+  const local = existsSync(localPath)
+    ? JSON.parse(readFileSync(localPath, "utf-8"))
+    : {};
+  if (!local.remote) local.remote = {};
+  local.remote.amiId = amiId;
+  writeFileSync(localPath, JSON.stringify(local, null, 2) + "\n");
   config.remote.amiId = amiId;
 }
 
@@ -962,7 +965,7 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
 
     console.log(`\nAMI ready: ${amiId}`);
     updateConfigAmiId(amiId);
-    console.log(`Updated config.json remote.amiId -> ${amiId}`);
+    console.log(`Updated config.local.json remote.amiId -> ${amiId}`);
     return amiId;
   } finally {
     console.log(`Terminating build instance ${instanceId}...`);

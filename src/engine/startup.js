@@ -12,16 +12,23 @@ import { join } from "node:path";
 import { execSync } from "node:child_process";
 import { ROOT, setSpecName, REFERENCE_DIR } from "./paths.js";
 
-// --- Load and validate config.json ---
+// --- Load and validate config.json + config.local.json ---
 
 const CONFIG_PATH = join(ROOT, "config.json");
+const LOCAL_CONFIG_PATH = join(ROOT, "config.local.json");
 
 function loadConfig() {
   if (!existsSync(CONFIG_PATH)) {
     throw new Error(`Missing config.json at ${CONFIG_PATH}`);
   }
-  const raw = readFileSync(CONFIG_PATH, "utf-8");
-  const config = JSON.parse(raw);
+  const config = JSON.parse(readFileSync(CONFIG_PATH, "utf-8"));
+
+  // Deep-merge user-specific overrides (gitignored)
+  if (existsSync(LOCAL_CONFIG_PATH)) {
+    const local = JSON.parse(readFileSync(LOCAL_CONFIG_PATH, "utf-8"));
+    deepMerge(config, local);
+  }
+
   validateGlobal(config);
   return config;
 }

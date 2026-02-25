@@ -1,6 +1,6 @@
 {
   "simc": {
-    "dir": "/Users/tom/Documents/GitHub/simc",
+    "dir": null,
     "branch": "midnight"
   },
   "data": {
@@ -10,15 +10,15 @@
   "remote": {
     "instanceType": "c7i.24xlarge",
     "vCpus": 96,
-    "amiId": "ami-0b9ace4690d3d75b9",
+    "amiId": null,
     "spotMaxPrice": "1.50",
     "shutdownMinutes": 45,
     "region": "us-east-1",
-    "securityGroup": "sg-00d7f1bc4bf4138b2",
+    "securityGroup": null,
     "subnetId": null,
-    "sshKeyPath": "~/.ssh/simulationcraft",
+    "sshKeyPath": null,
     "sshUser": "ubuntu",
-    "keyPairName": "simulationcraft"
+    "keyPairName": null
   },
   "simulation": {
     "scenarios": {
