@@ -62,18 +62,13 @@ When fixing an error, trace downstream: what variables reference the corrected v
 
 ## Theory Revision
 
-After each iteration accept/reject, update theory confidence:
+Theory confidence is updated automatically by `iterate.js accept/reject` via `reviseFromIteration`. Rules:
 
-- **Accepted** -- boost confidence +0.15
-- **Rejected** -- penalize confidence -0.10
-- **3+ rejections, 0 accepts from same theory** -- flag for revision
-- **Confidence below 0.2** -- auto-refute, de-prioritize remaining hypotheses
+- **Accepted** -- confidence +0.15
+- **Rejected** -- confidence -0.10; auto-refutes below 0.2
+- **3+ rejections, 0 accepts** -- flagged for revision
 
-```javascript
-import { reviseFromIteration } from "../analyze/theory-revision.js";
-const revision = reviseFromIteration(iterationId);
-// revision.action: "boosted" | "penalized" | "refuted" | "needs_revision"
-```
+If `iterate.js` reports a theory revision (e.g., "Theory 3: refuted (confidence: 0.15)"), note it in your analysis and de-prioritize remaining hypotheses from that theory.
 
 ## Output Format
 

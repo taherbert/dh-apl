@@ -45,7 +45,6 @@ import {
   getRosterBuilds,
 } from "../util/db.js";
 import { createTheory, getTheorySummary } from "../analyze/theory.js";
-import { reviseFromIteration } from "../analyze/theory-revision.js";
 ```
 
 **Recovery after context compaction:**
@@ -432,7 +431,7 @@ node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
 
 #### Step 5b: Record
 
-1. Update theory confidence via `reviseFromIteration(iterationId)` (+0.15 accept, -0.10 reject, refute at 0.2)
+1. Theory confidence is updated automatically by `iterate.js accept/reject` — no manual call needed
 2. Record finding to DB via `addFinding()`
 3. Update `plan.md`, `dashboard.md`
 4. After accept: commit with `iterate: <hypothesis> (<+/-X.XX%> weighted)`
