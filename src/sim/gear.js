@@ -6,11 +6,12 @@
 //   0  tier-config    Tier set selection (sim-based)
 //   1  scale-factors  Single sim -> EP weights saved to session_state
 //   2  stat-optimize  Optimize crafted item stat budgets
-//   3  ep-rank        Pure EP scoring for stat-stick items (no sims)
-//   4  proc-eval      Sim proc/effect items vs Phase 3 EP winners
-//   5  trinkets       Screen + pair sims
+//   3  ep-rank        Pure EP scoring for stat-stick items only (proc/on-use/set items excluded)
+//   4  proc-eval      Sim proc/on-use items vs stat-stick baseline; significance gated
+//   4b set-eval       Set bonus evaluation: A-alone, B-alone, full-set; significance gated
+//   5  trinkets       Screen + pair sims; significance gated
 //   6  (removed — rings are EP-ranked in Phase 3)
-//   7  embellishments Screen + pair sims
+//   7  embellishments Screen + pair sims; significance gated
 //   8  stat-re-opt    Re-run Phase 2 if embellishments changed crafted slots
 //   9  gems           EP-rank gems, apply to all sockets
 //  10  enchants       EP-rank cloak/wrist/foot; sim weapon/ring
@@ -316,6 +317,20 @@ function isCraftedSimc(simcStr) {
   return (simcStr || "").includes("crafted_stats=");
 }
 
+// Proc/on-use/set items must be sim-evaluated (Phase 4 / set eval), never purely EP-ranked.
+function isSpecialItem(c) {
+  return (
+    c.tags?.includes("proc") || c.tags?.includes("on-use") || Boolean(c.set_id)
+  );
+}
+
+// Gate on statistical significance: winner must beat control by more than target_error%.
+function isSignificant(winnerDps, controlDps, targetError) {
+  if (!controlDps) return true;
+  const pct = ((winnerDps - controlDps) / controlDps) * 100;
+  return Math.abs(pct) > targetError;
+}
+
 // --- CLI: scale-factors (Phase 1) ---
 
 async function cmdScaleFactors(args) {
@@ -387,7 +402,8 @@ function cmdEpRank(gearData) {
 
   for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
     let candidates = (slotData.candidates || []).filter(
-      (c) => !hasEmbellishments || !isCraftedSimc(c.simc),
+      (c) =>
+        !isSpecialItem(c) && (!hasEmbellishments || !isCraftedSimc(c.simc)),
     );
 
     // Prevent the same ring from occupying both finger slots
@@ -441,39 +457,38 @@ function cmdEpRank(gearData) {
 
 async function cmdProcEval(args) {
   const fidelity = parseFidelity(args, "quick");
+  const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.quick;
+  const targetError = fidelityConfig.target_error;
   const gearData = loadGearCandidates();
   const builds = getRepresentativeBuilds();
   const baseProfile = getBaseProfile(gearData);
 
   for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
-    const procCandidates = (slotData.candidates || []).filter(
-      (c) => c.tags?.includes("proc") || c.tags?.includes("on-use"),
-    );
+    const procCandidates = (slotData.candidates || []).filter(isSpecialItem);
     if (procCandidates.length === 0) continue;
 
+    // Phase 3 winner is guaranteed to be a stat-stick (special items were excluded).
+    // It serves as the control baseline for significance gating.
     const epResults = getBestGear(3, slot);
     if (epResults.length === 0) {
-      console.log(`No EP results for slot ${slot}, skipping proc eval.`);
+      console.log(
+        `No stat-stick baseline for slot ${slot}, skipping proc eval.`,
+      );
       continue;
     }
 
-    const epWinnerId = epResults[0].candidate_id;
-    const epWinner = slotData.candidates.find((c) => c.id === epWinnerId);
-    if (!epWinner) continue;
+    const statStickId = epResults[0].candidate_id;
+    const statStick = slotData.candidates.find((c) => c.id === statStickId);
+    if (!statStick) continue;
 
-    // Include EP winner + proc candidates that differ from it
     const variants = [
-      { name: epWinnerId, overrides: [epWinner.simc] },
-      ...procCandidates
-        .filter((c) => c.id !== epWinnerId)
-        .map((c) => ({ name: c.id, overrides: [c.simc] })),
+      { name: statStickId, overrides: [statStick.simc] },
+      ...procCandidates.map((c) => ({ name: c.id, overrides: [c.simc] })),
     ];
-
-    if (variants.length <= 1) continue;
 
     const scenarioCount = Object.keys(SCENARIOS).length;
     console.log(
-      `\nProc eval: ${slot} (${variants.length} candidates x ${builds.length} builds x ${scenarioCount} scenarios)`,
+      `\nProc eval: ${slot} (1 stat-stick + ${procCandidates.length} proc x ${builds.length} builds x ${scenarioCount} scenarios)`,
     );
 
     const results = await runBuildScenarioSims(
@@ -489,10 +504,179 @@ async function cmdProcEval(args) {
     }));
     const ranked = aggregateGearResults(results, candidateMeta, builds);
 
+    // Significance gate: proc item must beat the stat-stick by more than target_error%.
+    // Non-significant proc items are eliminated and won't be selected by buildGearLines.
+    const statStickEntry = ranked.find((r) => r.id === statStickId);
+    const statStickDps = statStickEntry?.weighted ?? 0;
+    for (const r of ranked) {
+      if (r.id === statStickId || r.id === "__baseline__") continue;
+      if (!isSignificant(r.weighted, statStickDps, targetError)) {
+        r.eliminated = true;
+        const deltaPct = statStickDps
+          ? (((r.weighted - statStickDps) / statStickDps) * 100).toFixed(2)
+          : "?";
+        console.log(
+          `  ${r.label}: not significant vs stat-stick (${deltaPct}%, threshold ${targetError}%)`,
+        );
+      }
+    }
+
+    // Warn if proc_abilities defined — per-variant action data unavailable in profileset mode.
+    for (const proc of procCandidates) {
+      if (proc.proc_abilities?.length) {
+        console.log(
+          `  NOTE: proc_abilities defined for ${proc.id} but verification requires a separate single-player sim.`,
+        );
+      }
+    }
+
     printSlotResults(`proc-eval: ${slot}`, ranked, gearData);
 
+    // Save only proc items to Phase 4 (exclude stat-stick control and synthetic baseline).
+    // buildGearLines falls back to Phase 3 if no proc item passes significance.
     clearGearResults(4, slot);
-    saveGearResults(4, slot, ranked, fidelity);
+    saveGearResults(
+      4,
+      slot,
+      ranked.filter((r) => r.id !== statStickId && r.id !== "__baseline__"),
+      fidelity,
+    );
+  }
+}
+
+// Phase number for set evaluation results (between Phase 4 and Phase 5).
+const SET_EVAL_PHASE = 45;
+
+// --- CLI: set-eval (Phase 4b) ---
+
+async function cmdEvalSets(args) {
+  const fidelity = parseFidelity(args, "quick");
+  const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.quick;
+  const targetError = fidelityConfig.target_error;
+  const gearData = loadGearCandidates();
+  const sets = gearData.sets || [];
+
+  if (sets.length === 0) {
+    console.log("No sets defined in gear-candidates.json, skipping set eval.");
+    return;
+  }
+
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+
+  for (const set of sets) {
+    if (
+      !set.members ||
+      set.members.length !== 2 ||
+      !set.slots ||
+      set.slots.length !== 2
+    ) {
+      console.log(
+        `Set ${set.id}: requires exactly 2 members and 2 slots, skipping.`,
+      );
+      continue;
+    }
+
+    const [memberId0, memberId1] = set.members;
+    const [slot0, slot1] = set.slots;
+
+    const candidate0 = gearData.slots[slot0]?.candidates.find(
+      (c) => c.id === memberId0,
+    );
+    const candidate1 = gearData.slots[slot1]?.candidates.find(
+      (c) => c.id === memberId1,
+    );
+
+    if (!candidate0) {
+      console.log(
+        `Set ${set.id}: member ${memberId0} not found in slot ${slot0}, skipping.`,
+      );
+      continue;
+    }
+    if (!candidate1) {
+      console.log(
+        `Set ${set.id}: member ${memberId1} not found in slot ${slot1}, skipping.`,
+      );
+      continue;
+    }
+
+    const variants = [
+      {
+        name: `${set.id}_A_alone`,
+        overrides: [candidate0.simc],
+      },
+      {
+        name: `${set.id}_B_alone`,
+        overrides: [candidate1.simc],
+      },
+      {
+        name: `${set.id}_full`,
+        overrides: [candidate0.simc, candidate1.simc],
+      },
+    ];
+
+    const scenarioCount = Object.keys(SCENARIOS).length;
+    console.log(
+      `\nSet eval: ${set.name || set.id} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
+    );
+
+    const results = await runBuildScenarioSims(
+      variants,
+      builds,
+      baseProfile,
+      fidelity,
+      `gear_set_${set.id}`,
+    );
+    const candidateMeta = [
+      { id: `${set.id}_A_alone`, label: `${candidate0.label} alone` },
+      { id: `${set.id}_B_alone`, label: `${candidate1.label} alone` },
+      {
+        id: `${set.id}_full`,
+        label: `${set.name || set.id} (full set)`,
+      },
+    ];
+    const ranked = aggregateGearResults(results, candidateMeta, builds);
+
+    // Significance gate: best config must beat current profile baseline.
+    const baselineEntry = ranked.find((r) => r.id === "__baseline__");
+    const baselineDps = baselineEntry?.weighted ?? 0;
+    const configs = ranked.filter((r) => r.id !== "__baseline__");
+    const bestConfig = configs[0];
+
+    const significant =
+      bestConfig &&
+      isSignificant(bestConfig.weighted, baselineDps, targetError);
+
+    if (!significant && bestConfig) {
+      const deltaPct = baselineDps
+        ? (((bestConfig.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
+        : "?";
+      console.log(
+        `  Set ${set.id}: no significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
+      );
+    }
+
+    for (const r of configs) {
+      r.eliminated = !significant || r.id !== bestConfig.id;
+    }
+
+    printSlotResults(`set-eval: ${set.id}`, ranked, gearData);
+
+    clearGearResults(SET_EVAL_PHASE, set.id);
+    saveGearResults(SET_EVAL_PHASE, set.id, ranked, fidelity, "set_eval");
+
+    if (significant) {
+      setSessionState(`gear_set_eval_${set.id}`, {
+        winner: bestConfig.id,
+        set_members: set.members,
+        set_slots: set.slots,
+        fidelity,
+        timestamp: new Date().toISOString(),
+      });
+      console.log(`  Set winner: ${bestConfig.label}`);
+    } else {
+      setSessionState(`gear_set_eval_${set.id}`, null);
+    }
   }
 }
 
@@ -1165,6 +1349,32 @@ async function cmdCombinations(args) {
       }
     }
 
+    // Significance gate: only apply the winner if it beats the current profile
+    // baseline by more than target_error%. Otherwise mark all combos as eliminated.
+    const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.standard;
+    const targetError = fidelityConfig.target_error;
+    const baselineDps =
+      ranked.find((r) => r.id === "__baseline__")?.weighted ?? 0;
+    const bestCombo = ranked.find(
+      (r) =>
+        r.id !== "__baseline__" && r.id !== "__null_emb__" && !r.eliminated,
+    );
+    if (
+      bestCombo &&
+      !isSignificant(bestCombo.weighted, baselineDps, targetError)
+    ) {
+      const deltaPct = baselineDps
+        ? (((bestCombo.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
+        : "?";
+      console.log(
+        `  No significant improvement from ${type} swap (best delta ${deltaPct}%, threshold ${targetError}%) — keeping current.`,
+      );
+      for (const r of ranked) {
+        if (r.id !== "__baseline__" && r.id !== "__null_emb__")
+          r.eliminated = true;
+      }
+    }
+
     printSlotResults(type, ranked, gearData);
 
     clearGearResults(phase, type);
@@ -1435,12 +1645,12 @@ function buildEnchantMap(gearData) {
 
 // Collect best gear lines from all pipeline phases.
 // Priority (highest wins, each covers its slots):
-//   Phase 7: embellishments
-//   Phase 5: trinkets
-//   Phase 6: rings (with Phase 10 ring enchant)
-//   Phase 4: proc eval winners for individual slots
-//   Phase 3: EP ranking winners for remaining individual slots
-//   Phase 0: tier config (tier slots)
+//   Phase 7:  embellishments
+//   set_eval: set bonus winners for their slots
+//   Phase 5:  trinkets
+//   Phase 4:  proc eval winners for individual slots
+//   Phase 3:  EP ranking winners for remaining individual slots
+//   Phase 0:  tier config (tier slots)
 // Phase 2 stat alloc applied to crafted_stats lines.
 // Phase 9 gems applied to all socketed items.
 // Phase 10 enchants applied to all relevant slots.
@@ -1491,6 +1701,36 @@ function buildGearLines(gearData) {
       const slot = line.split("=")[0];
       if (!coveredSlots.has(slot)) {
         addLine(applyStatAlloc(line, slot, gearData), slot);
+      }
+    }
+  }
+
+  // Set eval: winners cover their specific slots before trinkets and proc eval
+  for (const set of gearData.sets || []) {
+    const state = getSessionState(`gear_set_eval_${set.id}`);
+    if (!state?.winner) continue;
+
+    const [member0, member1] = state.set_members;
+    const [slot0, slot1] = state.set_slots;
+    const winnerId = state.winner;
+
+    const includeA = !winnerId.endsWith("_B_alone");
+    const includeB = !winnerId.endsWith("_A_alone");
+
+    if (includeA) {
+      const c0 = gearData.slots[slot0]?.candidates.find(
+        (c) => c.id === member0,
+      );
+      if (c0 && !coveredSlots.has(slot0)) {
+        addLine(applySlotEnchant(c0.simc, slot0, enchantMap), slot0);
+      }
+    }
+    if (includeB) {
+      const c1 = gearData.slots[slot1]?.candidates.find(
+        (c) => c.id === member1,
+      );
+      if (c1 && !coveredSlots.has(slot1)) {
+        addLine(applySlotEnchant(c1.simc, slot1, enchantMap), slot1);
       }
     }
   }
@@ -1696,6 +1936,10 @@ async function cmdRun(args) {
   if (maxPhase >= 4) {
     console.log("\n========== PHASE 4: Proc Evaluation ==========\n");
     await cmdProcEval(fidelityArgs);
+    if (gearData.sets?.length > 0) {
+      console.log("\n========== PHASE 4b: Set Evaluation ==========\n");
+      await cmdEvalSets(fidelityArgs);
+    }
   }
   if (maxPhase >= 5) {
     console.log("\n========== PHASE 5: Trinkets ==========\n");
@@ -1816,6 +2060,26 @@ function cmdStatus() {
     }
   }
 
+  // Set evaluation (Phase 4b)
+  const gearSets = gearData.sets || [];
+  if (gearSets.length > 0) {
+    console.log("\nSet Evaluation (Phase 4b):");
+    for (const set of gearSets) {
+      const state = getSessionState(`gear_set_eval_${set.id}`);
+      if (state?.winner) {
+        console.log(
+          `  ${set.id.padEnd(20)} winner: ${state.winner} (${state.fidelity}, ${state.timestamp})`,
+        );
+      } else if (state === null) {
+        console.log(
+          `  ${set.id.padEnd(20)} completed — no significant improvement`,
+        );
+      } else {
+        console.log(`  ${set.id.padEnd(20)} not started`);
+      }
+    }
+  }
+
   // Phase 5: trinkets
   const trinketScreen = getSessionState("gear_phase5_trinkets");
   const trinketPairs = getSessionState("gear_phase5_trinkets_pairs");
@@ -1914,7 +2178,7 @@ function cmdResults(args) {
     }
     printDbResults(results, gearData);
   } else {
-    for (const p of [0, 2, 3, 4, 5, 6, 7, 10, 11]) {
+    for (const p of [0, 2, 3, 4, SET_EVAL_PHASE, 5, 6, 7, 10, 11]) {
       const results = getGearResults(p, values.slot);
       if (results.length === 0) continue;
       console.log(`\n--- Phase ${p} ---`);
@@ -2244,6 +2508,9 @@ switch (cmd) {
   case "proc-eval":
     await cmdProcEval(cleanArgs);
     break;
+  case "set-eval":
+    await cmdEvalSets(cleanArgs);
+    break;
   case "combinations":
     await cmdCombinations(cleanArgs);
     break;
@@ -2286,8 +2553,9 @@ Commands:
   tier-config     Phase 0:  Test tier set configurations (which slot to skip)
   scale-factors   Phase 1:  Compute EP stat weights via scale factors sim
   stat-optimize   Phase 2:  Optimize crafted stat allocations
-  ep-rank         Phase 3:  EP-rank individual slots (pure math, no sims)
-  proc-eval       Phase 4:  Sim proc/effect items vs EP winners
+  ep-rank         Phase 3:  EP-rank stat-stick items (proc/on-use excluded)
+  proc-eval       Phase 4:  Sim proc/on-use items vs stat-stick baseline
+  set-eval        Phase 4b: Evaluate set bonuses (A-alone, B-alone, full-set)
   combinations    Phase 5-7: Screen + pair sims for trinkets/rings/embellishments
   gems            Phase 9:  EP-rank gems
   enchants        Phase 10: EP-rank stat enchants; sim weapon/ring enchants

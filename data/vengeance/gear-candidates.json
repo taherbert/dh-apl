@@ -184,10 +184,7 @@
   },
   "paired_slots": {
     "trinkets": {
-      "slots": [
-        "trinket1",
-        "trinket2"
-      ],
+      "slots": ["trinket1", "trinket2"],
       "topK": 5,
       "candidates": [
         {
@@ -197,10 +194,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -210,10 +204,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -223,10 +214,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -236,10 +224,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -249,11 +234,7 @@
           "stats": {
             "crit": 6666
           },
-          "tags": [
-            "on-use",
-            "passive",
-            "raid"
-          ],
+          "tags": ["on-use", "passive", "raid"],
           "uniqueEquipped": true
         },
         {
@@ -263,21 +244,14 @@
           "stats": {
             "mastery": 6666
           },
-          "tags": [
-            "passive",
-            "raid"
-          ],
+          "tags": ["passive", "raid"],
           "uniqueEquipped": true
         },
         {
           "id": "gaze_of_the_alnseer",
           "label": "Gaze of the Alnseer",
           "simc_base": "gaze_of_the_alnseer,id=249343,ilevel=289",
-          "tags": [
-            "passive",
-            "mastery",
-            "raid"
-          ],
+          "tags": ["passive", "mastery", "raid"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -290,11 +264,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi",
-            "raid"
-          ],
+          "tags": ["on-use", "agi", "raid"],
           "uniqueEquipped": true
         },
         {
@@ -304,10 +274,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -317,11 +284,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "raid"
-          ],
+          "tags": ["passive", "agi", "raid"],
           "uniqueEquipped": true
         },
         {
@@ -331,11 +294,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "raid"
-          ]
+          "tags": ["passive", "agi", "raid"]
         },
         {
           "id": "the_eternal_egg",
@@ -344,20 +303,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "raid"
-          ],
+          "tags": ["passive", "agi", "raid"],
           "uniqueEquipped": true
         },
         {
           "id": "locus_walkers_ribbon",
           "label": "Locus-Walker's Ribbon",
           "simc_base": "locus_walkers_ribbon,id=249809,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -370,10 +323,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -383,10 +333,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -396,19 +343,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "mindpiercers_sigil",
           "label": "Mindpiercer's Sigil",
           "simc_base": "mindpiercers_sigil,id=250224,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -418,12 +360,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "on-use",
-            "dungeon"
-          ],
+          "tags": ["passive", "agi", "on-use", "dungeon"],
           "uniqueEquipped": true
         },
         {
@@ -433,11 +370,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi",
-            "dungeon"
-          ],
+          "tags": ["on-use", "agi", "dungeon"],
           "uniqueEquipped": true
         },
         {
@@ -447,11 +380,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "dungeon"
-          ],
+          "tags": ["passive", "agi", "dungeon"],
           "uniqueEquipped": true
         },
         {
@@ -461,11 +390,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "dungeon"
-          ],
+          "tags": ["passive", "agi", "dungeon"],
           "uniqueEquipped": true
         },
         {
@@ -475,9 +400,7 @@
           "stats": {
             "crit": 6666
           },
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -487,10 +410,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -500,19 +420,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "permafrost_essence",
           "label": "Permafrost Essence",
           "simc_base": "permafrost_essence,id=250244,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -522,10 +437,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -535,11 +447,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "dungeon"
-          ],
+          "tags": ["passive", "agi", "dungeon"],
           "uniqueEquipped": true
         },
         {
@@ -549,20 +457,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "dungeon"
-          ],
+          "tags": ["passive", "agi", "dungeon"],
           "uniqueEquipped": true
         },
         {
           "id": "vessel_of_tortured_souls",
           "label": "Vessel of Tortured Souls",
           "simc_base": "vessel_of_tortured_souls,id=250258,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -575,11 +477,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "dungeon"
-          ],
+          "tags": ["passive", "agi", "dungeon"],
           "uniqueEquipped": true
         },
         {
@@ -589,11 +487,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "raid"
-          ],
+          "tags": ["passive", "agi", "raid"],
           "uniqueEquipped": true
         },
         {
@@ -603,18 +497,14 @@
           "stats": {
             "mastery": 6666
           },
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
           "id": "lost_idol_of_the_hashey",
           "label": "Lost Idol of the Hash'ey",
           "simc_base": "lost_idol_of_the_hashey,id=251783,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "agi": 118
@@ -627,10 +517,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -640,10 +527,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -653,11 +537,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi",
-            "crafted"
-          ],
+          "tags": ["on-use", "agi", "crafted"],
           "uniqueEquipped": true
         },
         {
@@ -667,10 +547,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -680,10 +557,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -693,10 +567,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -706,10 +577,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -719,10 +587,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -732,10 +597,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -745,12 +607,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "crit",
-            "dungeon"
-          ],
+          "tags": ["passive", "agi", "crit", "dungeon"],
           "uniqueEquipped": true
         },
         {
@@ -760,10 +617,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -773,11 +627,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi",
-            "raid"
-          ]
+          "tags": ["passive", "agi", "raid"]
         },
         {
           "id": "crucible_of_erratic_energies",
@@ -786,10 +636,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -799,18 +646,14 @@
           "stats": {
             "vers": 6666
           },
-          "tags": [
-            "on-use"
-          ],
+          "tags": ["on-use"],
           "uniqueEquipped": true
         },
         {
           "id": "cosmic_bell",
           "label": "Cosmic Bell",
           "simc_base": "cosmic_bell,id=264701,ilevel=289",
-          "tags": [
-            "on-use"
-          ],
+          "tags": ["on-use"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -823,10 +666,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         }
       ]
@@ -844,9 +684,7 @@
             "crit": 13000,
             "mastery": 4500
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "eternal_voidsong_chain",
@@ -856,9 +694,7 @@
             "stamina": 7889,
             "mastery": 14700
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "nocturnal_thorncharm",
@@ -890,10 +726,7 @@
             "stamina": 7889,
             "mastery": 2500
           },
-          "tags": [
-            "raid",
-            "socket"
-          ]
+          "tags": ["raid", "socket"]
         },
         {
           "id": "chain_of_the_ancient_watcher",
@@ -903,9 +736,7 @@
             "stamina": 7889,
             "crit": 11500
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "pendant_of_aching_grief",
@@ -916,9 +747,7 @@
             "vers": 10500,
             "mastery": 7000
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "pendant_of_malefic_fury",
@@ -968,9 +797,7 @@
           "stats": {
             "stamina": 7889
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "amani_heartstring_pendant",
@@ -1022,9 +849,7 @@
           "id": "silvermoon_agents_deflectors",
           "label": "Silvermoon Agent's Deflectors (crafted)",
           "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": [
-            "crafted"
-          ]
+          "tags": ["crafted"]
         },
         {
           "id": "void_skinned_bracers",
@@ -1036,9 +861,7 @@
             "crit": 4686,
             "mastery": 2314
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "osseoclad_ivory_wrist",
@@ -1060,9 +883,7 @@
             "stamina": 7889,
             "mastery": 2199
           },
-          "tags": [
-            "class"
-          ]
+          "tags": ["class"]
         },
         {
           "id": "custodial_cuffs",
@@ -1074,9 +895,7 @@
             "vers": 4100,
             "mastery": 2900
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "fury_fletched_armlets",
@@ -1088,9 +907,7 @@
             "mastery": 4400,
             "crit": 2600
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "rootwarden_wraps",
@@ -1101,9 +918,7 @@
             "stamina": 7889,
             "crit": 4550
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "harati_rootwardens_bracelet",
@@ -1124,9 +939,7 @@
             "stamina": 7889,
             "vers": 2204
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "scorn_scarred_shulkas_belt",
@@ -1138,9 +951,7 @@
             "mastery": 4849,
             "crit": 2151
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "osseoclad_waistbone",
@@ -1164,9 +975,7 @@
             "mastery": 4966,
             "crit": 2034
           },
-          "tags": [
-            "class"
-          ]
+          "tags": ["class"]
         },
         {
           "id": "snapvine_cinch",
@@ -1177,9 +986,7 @@
             "stamina": 7889,
             "crit": 4250
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "falconers_cinch",
@@ -1191,9 +998,7 @@
             "mastery": 4250,
             "vers": 2750
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "rootwalker_harness",
@@ -1271,9 +1076,7 @@
             "stamina": 7889,
             "crit": 2414
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "osseoclad_bonecrushers",
@@ -1295,9 +1098,7 @@
             "stamina": 7889,
             "crit": 2103
           },
-          "tags": [
-            "class"
-          ]
+          "tags": ["class"]
         },
         {
           "id": "domanaars_dire_treads",
@@ -1308,9 +1109,7 @@
             "stamina": 7889,
             "vers": 2450
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "arctic_explorers_legwraps",
@@ -1334,9 +1133,7 @@
             "vers": 4250,
             "mastery": 2750
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "harati_rootwardens_soles",
@@ -1352,9 +1149,7 @@
             "agi": 5259,
             "stamina": 7889
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         }
       ]
     },
@@ -1384,10 +1179,7 @@
             "stamina": 7889,
             "crit": 4698
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "clutchmates_caress",
@@ -1419,10 +1211,7 @@
             "stamina": 7889,
             "mastery": 4606
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "turalyons_false_echo",
@@ -1445,10 +1234,7 @@
             "mastery": 4621,
             "vers": 2379
           },
-          "tags": [
-            "fist",
-            "raid"
-          ]
+          "tags": ["fist", "raid"]
         },
         {
           "id": "root_sculptors_verdaxe",
@@ -1492,10 +1278,7 @@
             "mastery": 4012,
             "crit": 2988
           },
-          "tags": [
-            "axe",
-            "raid"
-          ]
+          "tags": ["axe", "raid"]
         },
         {
           "id": "blooming_thornblade",
@@ -1505,10 +1288,7 @@
             "stamina": 7889,
             "crit": 3387
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "scepter_of_the_unbound_light",
@@ -1539,10 +1319,7 @@
             "crit": 4400,
             "vers": 2600
           },
-          "tags": [
-            "axe",
-            "dungeon"
-          ]
+          "tags": ["axe", "dungeon"]
         },
         {
           "id": "malfeasance_mallet",
@@ -1563,10 +1340,7 @@
             "stamina": 7889,
             "mastery": 4400
           },
-          "tags": [
-            "sword",
-            "dungeon"
-          ]
+          "tags": ["sword", "dungeon"]
         },
         {
           "id": "grim_harvest_gloves",
@@ -1600,10 +1374,7 @@
             "stamina": 7889,
             "crit": 4250
           },
-          "tags": [
-            "axe",
-            "dungeon"
-          ]
+          "tags": ["axe", "dungeon"]
         },
         {
           "id": "thorntalon_edge",
@@ -1669,9 +1440,7 @@
             "stamina": 7889,
             "mastery": 4900
           },
-          "tags": [
-            "proc"
-          ]
+          "tags": ["proc"]
         },
         {
           "id": "radiant_foil",
@@ -1683,9 +1452,7 @@
             "crit": 4200,
             "vers": 2800
           },
-          "tags": [
-            "proc"
-          ]
+          "tags": ["proc"]
         },
         {
           "id": "fangfin_flailer",
@@ -1718,10 +1485,7 @@
             "stamina": 7889,
             "mastery": 2600
           },
-          "tags": [
-            "fist",
-            "dungeon"
-          ]
+          "tags": ["fist", "dungeon"]
         },
         {
           "id": "grips_of_the_dark_viceroy",
@@ -1732,10 +1496,7 @@
             "stamina": 7889,
             "vers": 2600
           },
-          "tags": [
-            "fist",
-            "dungeon"
-          ]
+          "tags": ["fist", "dungeon"]
         },
         {
           "id": "scepter_of_the_endless_night",
@@ -1805,10 +1566,7 @@
             "crit": 4900,
             "mastery": 2100
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "lost_thunder_fist",
@@ -1938,10 +1696,7 @@
             "stamina": 7889,
             "crit": 4698
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "clutchmates_caress_oh",
@@ -1973,10 +1728,7 @@
             "stamina": 7889,
             "mastery": 4606
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "turalyons_false_echo_oh",
@@ -1999,10 +1751,7 @@
             "mastery": 4621,
             "vers": 2379
           },
-          "tags": [
-            "fist",
-            "raid"
-          ]
+          "tags": ["fist", "raid"]
         },
         {
           "id": "root_sculptors_verdaxe_oh",
@@ -2046,10 +1795,7 @@
             "mastery": 4012,
             "crit": 2988
           },
-          "tags": [
-            "axe",
-            "raid"
-          ]
+          "tags": ["axe", "raid"]
         },
         {
           "id": "blooming_thornblade_oh",
@@ -2059,10 +1805,7 @@
             "stamina": 7889,
             "crit": 3387
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "scepter_of_the_unbound_light_oh",
@@ -2093,10 +1836,7 @@
             "crit": 4400,
             "vers": 2600
           },
-          "tags": [
-            "axe",
-            "dungeon"
-          ]
+          "tags": ["axe", "dungeon"]
         },
         {
           "id": "malfeasance_mallet_oh",
@@ -2117,10 +1857,7 @@
             "stamina": 7889,
             "mastery": 4400
           },
-          "tags": [
-            "sword",
-            "dungeon"
-          ]
+          "tags": ["sword", "dungeon"]
         },
         {
           "id": "grim_harvest_gloves_oh",
@@ -2154,10 +1891,7 @@
             "stamina": 7889,
             "crit": 4250
           },
-          "tags": [
-            "axe",
-            "dungeon"
-          ]
+          "tags": ["axe", "dungeon"]
         },
         {
           "id": "thorntalon_edge_oh",
@@ -2223,9 +1957,7 @@
             "stamina": 7889,
             "mastery": 4900
           },
-          "tags": [
-            "proc"
-          ]
+          "tags": ["proc"]
         },
         {
           "id": "radiant_foil_oh",
@@ -2237,9 +1969,7 @@
             "crit": 4200,
             "vers": 2800
           },
-          "tags": [
-            "proc"
-          ]
+          "tags": ["proc"]
         },
         {
           "id": "fangfin_flailer_oh",
@@ -2272,10 +2002,7 @@
             "stamina": 7889,
             "mastery": 2600
           },
-          "tags": [
-            "fist",
-            "dungeon"
-          ]
+          "tags": ["fist", "dungeon"]
         },
         {
           "id": "grips_of_the_dark_viceroy_oh",
@@ -2286,10 +2013,7 @@
             "stamina": 7889,
             "vers": 2600
           },
-          "tags": [
-            "fist",
-            "dungeon"
-          ]
+          "tags": ["fist", "dungeon"]
         },
         {
           "id": "scepter_of_the_endless_night_oh",
@@ -2359,10 +2083,7 @@
             "crit": 4900,
             "mastery": 2100
           },
-          "tags": [
-            "sword",
-            "raid"
-          ]
+          "tags": ["sword", "raid"]
         },
         {
           "id": "lost_thunder_fist_oh",
@@ -2468,10 +2189,7 @@
           "id": "everforged_longsword",
           "label": "Everforged Longsword (Crafted)",
           "simc": "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": [
-            "crafted",
-            "sword"
-          ],
+          "tags": ["crafted", "sword"],
           "stats": {
             "agi": 62
           }
@@ -2939,10 +2657,7 @@
     ]
   },
   "stat_allocations": {
-    "crafted_slots": [
-      "off_hand",
-      "wrists"
-    ],
+    "crafted_slots": ["off_hand", "wrists"],
     "pairs": [
       {
         "id": "haste_crit",
@@ -2976,6 +2691,14 @@
       }
     ]
   },
+  "sets": [
+    {
+      "id": "glaive_set",
+      "name": "Glaive Set",
+      "members": ["radiant_foil", "abyss_sabre_oh"],
+      "slots": ["main_hand", "off_hand"]
+    }
+  ],
   "flagged": {
     "eye_of_midnight": "On-equip proc (spell 1266505) not fully modeled in SimC. DPS results may understate this ring.",
     "radiant_plume": "Decaying stat mechanic \u2014 average value over fight is lower than tooltip. SimC models the decay.",
