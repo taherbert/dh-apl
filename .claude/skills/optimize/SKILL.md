@@ -320,16 +320,16 @@ Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `chang
 Before starting heavy iteration, check if remote sim offloading is available:
 
 ```bash
-SPEC={spec} npm run remote:status
+npm run remote:status
 ```
 
-If no instance is active, suggest starting one — multi-build iteration at standard/confirm fidelity benefits significantly from remote (96 vCPUs vs local cores):
+If no instance is active, **start one automatically** — do not wait for user confirmation:
 
 ```bash
 npm run remote:start
 ```
 
-Quick-fidelity screening sims automatically stay local (SCP overhead exceeds sim time). Standard and confirm fidelity sims route to remote automatically when an instance is active.
+Standard and confirm sims route to remote automatically (96 vCPUs vs local cores — ~4x faster). Quick-fidelity screening sims always stay local (SCP overhead exceeds sim time). The remote instance self-destructs after 45 minutes; stop it explicitly with `npm run remote:stop` at the end of Phase 4 if still running.
 
 ### Build Roster Requirement
 
@@ -387,16 +387,23 @@ Before any change: locate the ability, understand its priority placement, trace 
 
 #### Step 4: Test
 
-Before launching any sim, write `results/{spec}/active-sim.json` (hypothesis, candidate path, fidelity, expected outcome, timestamp). This checkpoint enables `/sim-check` recovery after context compaction. The sim-runner agent does this automatically; for manual iteration, use `/sim-background` or write it directly.
+**Quick screening is synchronous** — always local, ~30-60s, worth waiting:
 
 ```bash
 node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick
-# If any scenario regresses >1% -> reject immediately
-# If promising:
-node src/sim/iterate.js compare apls/{spec}/candidate.simc
-# If marginal (0.1-0.3%):
-node src/sim/iterate.js compare apls/{spec}/candidate.simc --confirm
 ```
+
+If quick screening rejects (any scenario > 1% regression), go directly to Step 5 (reject).
+
+**Standard and confirm are always background** — do not block. Use `/sim-background` which writes the checkpoint and launches non-blocking:
+
+```bash
+/sim-background apls/{spec}/candidate.simc -- <hypothesis description>
+# or for confirm fidelity:
+/sim-background apls/{spec}/candidate.simc --confirm -- <hypothesis description>
+```
+
+**Immediately after launching a background sim, return to Step 1 for the next hypothesis.** Do not wait. The remote instance is running — sim time is not your bottleneck, thinking time is. Work on the next candidate while the current sim runs. Use `/sim-check` to review the result when it completes, then do Step 5 for that hypothesis before accepting/rejecting.
 
 SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ crashes -> stop loop.
 
@@ -448,15 +455,18 @@ node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
 
 ### Parallelism in Iteration
 
-When independent hypotheses exist (use `src/analyze/hypothesis-independence.js`):
+**Default: pipeline standard/confirm sims with next-hypothesis work.** As soon as you launch a standard/confirm sim in background, start Step 1 for the next hypothesis. The remote instance runs the sim while you reason. This is the normal working mode, not an exception.
+
+**Batch: multiple independent hypotheses.** When independent hypotheses exist (check `src/analyze/hypothesis-independence.js`):
 
 1. Group by independence (`groupIndependent()`)
-2. For each independent hypothesis, use `subagent_type: "apl-engineer"` (`model: "opus"`) to generate the candidate APL in parallel
-3. Launch parallel `subagent_type: "sim-runner"` agents (`model: "opus"`) with `run_in_background: true`, each testing one candidate at `--quick`
-4. Promote best to standard fidelity
-5. Re-baseline before next group
+2. For each independent hypothesis, use `subagent_type: "apl-engineer"` (`model: "opus"`) to generate all candidate APLs **in parallel** (single message, multiple Task calls)
+3. Run quick screening sequentially (fast and local — parallelizing doesn't help)
+4. Promote passing candidates to standard fidelity using `/sim-background` for each — all launched **before waiting for any results**
+5. Use `/sim-check` to collect results as they complete; accept/reject each
+6. Re-baseline before starting the next independent group
 
-For sequential iteration (the common case), you can still parallelize: generate the next candidate while reviewing the current sim results.
+This lets the remote instance run multiple sequential sims across candidates while you work on synthesis or the next batch.
 
 ### Stop Conditions
 
@@ -504,7 +514,15 @@ npm run db:dump                  # Verify DB state
 
 Build roster coverage, hypotheses tested/accepted/rejected, theories validated/refuted, per-build DPS improvement, APL branches created, remaining untested ideas, showcase location.
 
-### 4g. Commit
+### 4g. Stop Remote Instance
+
+Stop the remote instance if still running — don't leave it running post-session:
+
+```bash
+npm run remote:stop
+```
+
+### 4h. Commit
 
 ```bash
 git add apls/{spec}/{spec}.simc results/{spec}/

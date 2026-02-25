@@ -10,6 +10,20 @@ Launch a background simulation with a state checkpoint so context compaction or 
 
 Run `node src/engine/startup-cli.js` to determine the active spec.
 
+Check if remote sim offloading is active — standard/confirm sims route there automatically:
+
+```bash
+npm run remote:status
+```
+
+If no instance is active and fidelity is standard or confirm, start one before launching the sim (do not wait for user confirmation):
+
+```bash
+npm run remote:start
+```
+
+Quick-fidelity sims always run locally — no need to start remote for `--quick`.
+
 ## Parse Arguments
 
 From `$ARGUMENTS`, extract:

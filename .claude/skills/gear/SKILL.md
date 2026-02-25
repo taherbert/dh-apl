@@ -35,6 +35,18 @@ Arguments: $ARGUMENTS
 
 1. Determine spec from `SPEC` env var (default: vengeance).
 
+   Start the remote sim instance before running the pipeline — phases 0, 1, 4, 5, 6, 7, 10, and 11 all run sims, and each routes to remote automatically when active:
+
+   ```bash
+   npm run remote:status
+   ```
+
+   If not active, start it (do not wait for user confirmation):
+
+   ```bash
+   npm run remote:start
+   ```
+
 2. Show current pipeline state:
 
    ```bash
