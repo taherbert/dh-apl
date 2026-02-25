@@ -197,6 +197,45 @@ node src/analyze/strategic-hypotheses.js <workflow.json> [apl.simc]  # Generate 
 node src/analyze/theorycraft.js [workflow.json] [apl.simc]           # Temporal resource flow analysis
 node src/apl/condition-parser.js "condition"         # Parse APL condition to AST
 node src/apl/mutator.js <apl.simc> '<mutation-json>' # Apply mutation to APL
+
+# === Gear Optimization (all require SPEC env var or --spec flag) ===
+# Full pipeline — runs all 12 phases, writes profile.simc
+SPEC=vengeance npm run gear:run                      # Run all phases
+SPEC=vengeance npm run gear:run -- --through phase3  # Stop after Phase 3 (EP rank)
+SPEC=vengeance npm run gear:run -- --quick           # Quick fidelity (faster, less precise)
+SPEC=vengeance npm run gear:run -- --confirm         # Confirm fidelity (slower, most precise)
+
+# Individual phases
+SPEC=vengeance npm run gear:tier-config              # Phase 0: tier set selection (sim)
+SPEC=vengeance npm run gear:scale-factors            # Phase 1: derive EP weights (single sim)
+SPEC=vengeance npm run gear:stat-optimize            # Phase 2: optimize crafted item stat budgets
+SPEC=vengeance npm run gear:ep-rank                  # Phase 3: EP-rank stat-stick items (no sims)
+SPEC=vengeance npm run gear:proc-eval                # Phase 4: sim proc/effect items vs EP winners
+SPEC=vengeance npm run gear:combinations -- trinkets # Phase 5: trinket screen + pair sims
+SPEC=vengeance npm run gear:combinations -- rings    # Phase 6: ring screen + pair sims
+SPEC=vengeance npm run gear:combinations -- embellishments  # Phase 7: embellishment sims
+# Phase 8 (stat re-opt) runs automatically within gear:run if embellishments changed slots
+SPEC=vengeance npm run gear:gems                     # Phase 9: EP-rank gems for all sockets
+SPEC=vengeance npm run gear:enchants                 # Phase 10: EP enchants + weapon/ring sims
+SPEC=vengeance npm run gear:validate                 # Phase 11: validate assembled gear (high fidelity)
+
+# Profile and results
+SPEC=vengeance npm run gear:write-profile            # Apply pipeline results to profile.simc
+SPEC=vengeance npm run gear:status                   # Show phase completion and best selections
+SPEC=vengeance npm run gear:screen                   # Phase 1 diagnostic screen (not part of run pipeline)
+SPEC=vengeance node src/sim/gear.js results --slot neck    # Show candidates for a specific slot
+SPEC=vengeance node src/sim/gear.js results --phase 3      # Show all Phase 3 EP rankings
+SPEC=vengeance node src/sim/gear.js export                 # Export best gear as SimC overrides
+
+# Item pool maintenance
+SPEC=vengeance npm run gear:fetch-candidates         # Refresh gear-candidates.json from Raidbots
+
+# Report generation
+SPEC=vengeance npm run report:dashboard              # Generate HTML report (runs sims at standard fidelity)
+SPEC=vengeance npm run report:dashboard -- --skip-sims     # Generate from cached DB results only
+SPEC=vengeance npm run report:dashboard -- --fidelity quick  # Quick fidelity report sims
+SPEC=vengeance npm run report:update                 # gear:run + report:dashboard
+SPEC=vengeance npm run report:publish                # Push report to GitHub Pages (gh-pages branch)
 ```
 
 ## Internal Methodology

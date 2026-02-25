@@ -71,6 +71,14 @@ All mutable state lives in **`results/{spec}/theorycraft.db`** (SQLite). JSON fi
 
 Use `npm run db:status` to check DB contents. Use `npm run db:dump` for formatted summary.
 
+## Gear Optimization Pipeline
+
+Gear optimization is **separate from APL optimization** and has its own 12-phase pipeline (`src/sim/gear.js`). It uses EP weights from scale factors to rank stat-stick items without per-item sims, and sim-evaluates proc items, trinkets, rings, and embellishments.
+
+Key files: `data/{spec}/gear-candidates.json` (item pools + enchants + gems) and `apls/{spec}/profile.simc` (assembled output). The pipeline writes results to session_state and gear_results in the DB.
+
+Use the **`/gear`** skill to run the full pipeline and regenerate the report. Use `npm run gear:status` to inspect pipeline progress. See REFERENCE.md for all individual phase commands.
+
 ## Key Paths
 
 - **SimC binary:** `/Users/tom/Documents/GitHub/simc/engine/simc` (or `bin/simc` local copy)
@@ -91,13 +99,24 @@ See **[REFERENCE.md](REFERENCE.md)** for the complete command list, architecture
 Key commands:
 
 ```bash
+# Data pipeline
 npm run build-data                           # Run full data pipeline
 npm run discover -- --quick                  # Build discovery (~2-5 min)
 npm run roster generate                      # Generate cluster-based roster
 npm run roster show                          # Show roster with validation
 npm run db:status                            # Show DB record counts
+
+# APL iteration
 node src/sim/iterate.js status               # Iteration state
 node src/sim/iterate.js compare <candidate>  # Test candidate APL
+
+# Gear optimization
+SPEC=vengeance npm run gear:run              # Full gear pipeline (all phases)
+SPEC=vengeance npm run gear:status           # Pipeline progress
+SPEC=vengeance npm run gear:fetch-candidates # Refresh item pool data
+SPEC=vengeance npm run report:dashboard      # Generate report from DB
+SPEC=vengeance npm run report:update         # gear:run + report:dashboard
+SPEC=vengeance npm run report:publish        # Push report to GitHub Pages
 ```
 
 **Subagent model policy:** Use `model: "opus"` for domain agents (theorist, apl-engineer, sim-runner, reviewer) and any agent writing APL or analyzing sim data. Use `model: "sonnet"` for Explore, Plan, and general research subagents. Never use haiku.

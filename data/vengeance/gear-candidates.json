@@ -1036,6 +1036,10 @@
     }
   },
   "embellishments": {
+    "null_overrides": [
+      "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983",
+      "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+    ],
     "pairs": [
       {
         "id": "hunt_banding",

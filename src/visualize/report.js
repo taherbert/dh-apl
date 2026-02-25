@@ -177,6 +177,21 @@ function loadTrinketTagMap() {
   }
 }
 
+function loadEmbellishmentData() {
+  const db = getDb();
+  const spec = getSpecName();
+  const rows = db
+    .prepare(
+      "SELECT * FROM gear_results WHERE spec = ? AND phase = 2 AND combination_type = 'embellishments' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
+    )
+    .all(spec);
+  if (rows.length === 0) return null;
+
+  const nullEmb = rows.find((r) => r.candidate_id === "__null_emb__");
+  const pairs = rows.filter((r) => r.candidate_id !== "__null_emb__");
+  return { pairs, nullEmb };
+}
+
 function loadChangelog() {
   try {
     const iterations = getIterations({ decision: "accepted", limit: 200 });
@@ -457,6 +472,7 @@ function generateHtml(data) {
     defensiveTalentCosts,
     heroTrees,
     trinketData,
+    embellishmentData,
   } = data;
   const displaySpec = specName
     .replace(/_/g, " ")
@@ -475,6 +491,7 @@ function generateHtml(data) {
     renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
     renderTrinketRankings(trinketData),
+    renderEmbellishmentRankings(embellishmentData),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
     renderFooter(),
   ];
@@ -966,22 +983,83 @@ function renderTrinketRankings(trinketData) {
     );
   }
 
-  if (phase2.length > 0) {
-    sections.push(
-      renderPhase(
-        phase2,
-        "Trinket Pairs",
-        `Best trinket combinations (paired slot screen, top ${phase2.length} combos tested).`,
-        false,
-      ),
-    );
-  }
-
   if (sections.length === 0) return "";
 
   return `<section>
   <h2>Trinket Rankings</h2>
   ${sections.join("")}
+</section>`;
+}
+
+function renderEmbellishmentRankings(embData) {
+  if (!embData?.pairs?.length) return "";
+
+  const { pairs, nullEmb } = embData;
+  const active = pairs.filter((r) => !r.eliminated);
+  const elim = pairs.filter((r) => r.eliminated);
+
+  function embDelta(r) {
+    if (!nullEmb) return `${(r.delta_pct_weighted || 0).toFixed(1)}%`;
+    const pct = ((r.weighted - nullEmb.weighted) / nullEmb.weighted) * 100;
+    return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
+  }
+
+  function renderStrips(items, isActive) {
+    const maxDps = active[0]?.weighted || elim[0]?.weighted || 1;
+    return items
+      .map((r, i) => {
+        const isBest = isActive && i === 0;
+        const delta = isBest ? "best" : embDelta(r);
+        const barPct = maxDps > 0 ? (r.weighted / maxDps) * 100 : 0;
+        const elimCls = r.eliminated === 1 ? " trinket-strip--elim" : "";
+        return `<div class="trinket-strip${elimCls}">
+        <div class="trinket-strip__rank">${i + 1}</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">${esc(r.label || r.candidate_id)}</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:${barPct.toFixed(1)}%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">${fmtDps(r.weighted)}</div>
+        <div class="trinket-strip__delta ${isBest ? "trinket-strip__delta--best" : ""}">${delta}</div>
+      </div>`;
+      })
+      .join("");
+  }
+
+  const nullRow = nullEmb
+    ? `<div class="trinket-strip trinket-strip--ref">
+    <div class="trinket-strip__rank">—</div>
+    <div class="trinket-strip__body">
+      <div class="trinket-strip__name-row">
+        <span class="trinket-strip__name">${esc(nullEmb.label || "No Embellishment")}</span>
+      </div>
+      <div class="trinket-strip__bar-wrap">
+        <div class="trinket-strip__bar" style="width:${active[0]?.weighted ? ((nullEmb.weighted / active[0].weighted) * 100).toFixed(1) : 0}%"></div>
+      </div>
+    </div>
+    <div class="trinket-strip__dps">${fmtDps(nullEmb.weighted)}</div>
+    <div class="trinket-strip__delta">+0.0%</div>
+  </div>`
+    : "";
+
+  const elimHtml =
+    elim.length > 0
+      ? `<details class="trinket-details">
+      <summary>Eliminated <span class="detail-count">(${elim.length})</span></summary>
+      <div class="trinket-list trinket-list--elim">${renderStrips(elim, false)}</div>
+    </details>`
+      : "";
+
+  return `<section>
+  <h2>Embellishment Rankings</h2>
+  <div class="subsection">
+    <p class="section-desc">DPS contribution from embellishment combinations (2-slot budget). Delta shown vs same crafted gear without embellishments.</p>
+    <div class="trinket-list">${renderStrips(active, true)}${nullRow}</div>
+    ${elimHtml}
+  </div>
 </section>`;
 }
 
@@ -2061,6 +2139,7 @@ summary:hover { color: var(--accent); }
 .trinket-strip:hover { background: rgba(123, 147, 255, 0.05); }
 
 .trinket-strip--elim { opacity: 0.5; }
+.trinket-strip--ref { opacity: 0.6; border-top: 1px dashed var(--border); margin-top: 4px; }
 
 .trinket-strip__rank {
   font-family: "Outfit", sans-serif;
@@ -2719,6 +2798,13 @@ async function main() {
     console.log(`  Trinkets: ${parts.join(", ")} loaded from DB.`);
   }
 
+  const embellishmentData = loadEmbellishmentData();
+  if (embellishmentData) {
+    console.log(
+      `  Embellishments: ${embellishmentData.pairs.length} pairs${embellishmentData.nullEmb ? " + null baseline" : ""} loaded from DB.`,
+    );
+  }
+
   // Generate HTML
   const reportDir = join(resultsDir(), "report");
   mkdirSync(reportDir, { recursive: true });
@@ -2731,6 +2817,7 @@ async function main() {
     defensiveTalentCosts,
     heroTrees,
     trinketData,
+    embellishmentData,
   });
 
   const indexPath = join(reportDir, "index.html");

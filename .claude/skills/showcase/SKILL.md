@@ -1,12 +1,12 @@
 ---
-description: Generate a self-contained HTML dashboard report for APL optimization results across all roster builds.
+description: Generate the APL optimization report dashboard — build rankings, hero tree comparison, talent costs, and optimization history. Use /gear to run the gear pipeline first.
 argument-hint: "[--fidelity quick|standard|confirm] [--skip-sims]"
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
 # Report Dashboard
 
-Generate a self-contained HTML dashboard showing build rankings, hero tree comparison, talent costs, and optimization history.
+Generate a self-contained HTML dashboard showing APL build rankings, hero tree comparison, talent costs, and optimization history.
 
 ## Usage
 
@@ -21,10 +21,10 @@ Arguments: $ARGUMENTS
 3. Run the report generator:
 
 ```bash
-SPEC=$SPEC node src/visualize/report.js --fidelity $FIDELITY
+SPEC=${SPEC:-vengeance} npm run report:dashboard -- --fidelity $FIDELITY
 ```
 
-Use `--skip-sims` to regenerate HTML from cached DB data without running sims.
+Use `--skip-sims` to regenerate HTML from cached DB data without running new sims.
 
 4. Report the output location: `results/{spec}/report/index.html`
 5. Open in browser if possible: `open results/{spec}/report/index.html`
