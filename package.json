@@ -39,7 +39,6 @@
     "db:dump": "node src/util/db.js dump",
     "discover": "node src/discover/build-discovery.js",
     "roster": "node src/sim/build-roster.js",
-    "dashboard": "cat results/dashboard.md",
     "report:dashboard": "node src/visualize/report.js",
     "report:update": "npm run gear:run && npm run report:dashboard",
     "report:publish": "bash scripts/publish-report.sh",

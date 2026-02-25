@@ -101,7 +101,7 @@ const phase = getSessionState("phase");
 const sessionId = getSessionState("session_id");
 ```
 
-If a session exists, read `results/{spec}/plan.md` and query `getIterations({ sessionId })`. Resume from where we left off.
+If a session exists, query `getIterations({ sessionId })` to reconstruct history, then check `node src/sim/iterate.js status` for iteration state. Use `results/{spec}/plan.md` as supplementary context if it exists (human-written during Phase 3 progress updates). Resume from where we left off.
 
 If no DB session, check legacy: `node src/sim/iterate.js status`. If iteration state exists, check `results/{spec}/checkpoint.md`.
 
@@ -492,9 +492,7 @@ Record via `addFinding()`: id, timestamp, hypothesis, status, scope, archetype, 
 
 ### 4d. Generate Showcase Report
 
-```bash
-SPEC=$SPEC node src/visualize/showcase.js --fidelity standard
-```
+Use the `/showcase` skill (which runs the report generator and opens the result in a browser). Pass `--skip-sims` if the roster was just simmed in Phase 4b.
 
 ### 4e. Reports
 

@@ -58,6 +58,8 @@ When fixing an error, trace downstream: what variables reference the corrected v
 3. Check resource waste (fury overcap, fragment overflow) and cooldown utilization (% time ready but unused)
 4. Compare across builds for branching opportunities (cluster presence, apex rank, hero tree)
 
+**Partial Gains Protocol:** Mixed results (some builds gain, others regress) are a branching signal, not a reject. Before recommending rejection, sort builds by delta, check each discriminator axis (hero tree, apex rank, cluster presence), and determine if a gated condition can isolate the gaining subset. Only recommend rejection if no meaningful subset gains above noise and no valid discriminator exists. Never recommend rejection based on mean-weighted alone. See CLAUDE.md for the full protocol.
+
 ## Theory Revision
 
 After each iteration accept/reject, update theory confidence:

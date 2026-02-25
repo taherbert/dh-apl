@@ -1,5 +1,5 @@
-import { execFileSync, execFile } from "node:child_process";
-import { promisify } from "node:util";
+import { execFileSync } from "node:child_process";
+import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { shouldUseRemote, runSimcRemote, getSimCores } from "./remote.js";
 import { basename, resolve } from "node:path";
@@ -115,8 +115,6 @@ export function runSim(profilePath, scenario = "st", opts = {}) {
   }
   return result;
 }
-
-const execFileAsync = promisify(execFile);
 
 export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
   const { config, args, jsonPath, htmlPath } = prepareSim(

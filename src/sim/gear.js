@@ -33,8 +33,8 @@
 //   SPEC=vengeance node src/sim/gear.js screen [--slot X]  (diagnostic only)
 
 import { getSimCores } from "./remote.js";
-import { execFile } from "node:child_process";
-import { promisify, parseArgs } from "node:util";
+import { parseArgs } from "node:util";
+import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -66,7 +66,19 @@ import {
   withTransaction,
 } from "../util/db.js";
 
-const execFileAsync = promisify(execFile);
+// --- Fidelity parsing ---
+// Accepts --quick / --confirm shorthands in addition to --fidelity <tier>.
+// Pass defaultTier=null to detect "no flag given" (returns null).
+function parseFidelity(args, defaultTier = "standard") {
+  if (args.includes("--quick")) return "quick";
+  if (args.includes("--confirm")) return "confirm";
+  const { values } = parseArgs({
+    args,
+    options: { fidelity: { type: "string", default: defaultTier } },
+    strict: false,
+  });
+  return values.fidelity;
+}
 
 // --- Concurrency helpers ---
 
@@ -304,27 +316,19 @@ function scoreEp(stats, sf) {
 }
 
 function isCraftedSimc(simcStr) {
-  return /bonus_id=/.test(simcStr || "");
+  return (simcStr || "").includes("crafted_stats=");
 }
 
 // --- CLI: scale-factors (Phase 1) ---
 
 async function cmdScaleFactors(args) {
-  const { values } = parseArgs({
-    args,
-    options: {
-      fidelity: { type: "string", default: "standard" },
-    },
-    strict: false,
-  });
-
+  const fidelity = parseFidelity(args, "standard");
   const gearData = loadGearCandidates();
   const profilePath = getBaseProfile(gearData);
   const stConfig = SCENARIOS["st"];
   if (!stConfig) throw new Error("No 'st' scenario configured");
 
-  const fidelityConfig =
-    FIDELITY_TIERS[values.fidelity] || FIDELITY_TIERS.standard;
+  const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.standard;
   mkdirSync(resultsDir(), { recursive: true });
   const outputPath = resultsFile("gear_scale_factors.json");
 
@@ -345,7 +349,7 @@ async function cmdScaleFactors(args) {
   if (DATA_ENV === "ptr" || DATA_ENV === "beta") simArgs.unshift("ptr=1");
 
   console.log(
-    `\nPhase 1: Scale Factors (${values.fidelity} fidelity, ${threadsPerSim} threads)`,
+    `\nPhase 1: Scale Factors (${fidelity} fidelity, ${threadsPerSim} threads)`,
   );
   console.log("Running scale factors sim...");
 
@@ -432,15 +436,7 @@ function cmdEpRank(gearData) {
 // --- CLI: proc-eval (Phase 4) ---
 
 async function cmdProcEval(args) {
-  const { values } = parseArgs({
-    args,
-    options: {
-      fidelity: { type: "string", default: "quick" },
-    },
-    strict: false,
-  });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "quick");
   const gearData = loadGearCandidates();
   const builds = getRepresentativeBuilds();
   const baseProfile = getBaseProfile(gearData);
@@ -545,14 +541,10 @@ function cmdGems(gearData) {
 async function cmdEnchants(args) {
   const { values } = parseArgs({
     args,
-    options: {
-      slot: { type: "string" },
-      fidelity: { type: "string", default: "quick" },
-    },
+    options: { slot: { type: "string" } },
     strict: false,
   });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "quick");
   const gearData = loadGearCandidates();
   const builds = getRepresentativeBuilds();
   const sf = getSessionState("gear_scale_factors");
@@ -880,15 +872,7 @@ function printSlotResults(slot, ranked, gearData) {
 // --- CLI: tier-config (Phase 0) ---
 
 async function cmdTierConfig(args) {
-  const { values } = parseArgs({
-    args,
-    options: {
-      fidelity: { type: "string", default: "quick" },
-    },
-    strict: false,
-  });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "quick");
   const gearData = loadGearCandidates();
   const tier = gearData.tier;
 
@@ -980,14 +964,10 @@ async function cmdTierConfig(args) {
 async function cmdScreen(args) {
   const { values } = parseArgs({
     args,
-    options: {
-      slot: { type: "string" },
-      fidelity: { type: "string", default: "quick" },
-    },
+    options: { slot: { type: "string" } },
     strict: false,
   });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "quick");
   const gearData = loadGearCandidates();
   const builds = getRepresentativeBuilds();
 
@@ -1038,13 +1018,6 @@ async function cmdScreen(args) {
     if (pruned.length > 0) {
       console.log(`Eliminated ${pruned.length} candidates.`);
     }
-
-    setSessionState(`gear_phase1_${slot}`, {
-      advancing: advancing.map((r) => r.id),
-      pruned: pruned.map((r) => r.id),
-      fidelity,
-      timestamp: new Date().toISOString(),
-    });
   }
 }
 
@@ -1059,14 +1032,10 @@ const COMBO_PHASES = { trinkets: 5, rings: 6, embellishments: 7 };
 async function cmdCombinations(args) {
   const { values } = parseArgs({
     args,
-    options: {
-      type: { type: "string" },
-      fidelity: { type: "string", default: "standard" },
-    },
+    options: { type: { type: "string" } },
     strict: false,
   });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "standard");
   const gearData = loadGearCandidates();
   const builds = getRepresentativeBuilds();
   const baseProfile = getBaseProfile(gearData);
@@ -1249,15 +1218,7 @@ function generatePairedSlotCombinations(poolName, gearData, screenPhase) {
 // --- CLI: stat-optimize (Phase 2) ---
 
 async function cmdStatOptimize(args) {
-  const { values } = parseArgs({
-    args,
-    options: {
-      fidelity: { type: "string", default: "standard" },
-    },
-    strict: false,
-  });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "standard");
   const gearData = loadGearCandidates();
   const statAlloc = gearData.stat_allocations;
 
@@ -1331,15 +1292,7 @@ async function cmdStatOptimize(args) {
 // --- CLI: validate (Phase 11) ---
 
 async function cmdValidate(args) {
-  const { values } = parseArgs({
-    args,
-    options: {
-      fidelity: { type: "string", default: "confirm" },
-    },
-    strict: false,
-  });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "confirm");
   const gearData = loadGearCandidates();
   const builds = getRepresentativeBuilds();
   const tierConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.confirm;
@@ -1512,7 +1465,9 @@ function buildGearLines(gearData) {
   }
 
   // Phase 7: embellishments (highest priority for those slots)
-  const emb = getBestGear(7, "embellishments")[0];
+  const emb = getBestGear(7, "embellishments").find(
+    (r) => r.candidate_id !== "__baseline__",
+  );
   if (emb) {
     const overrides = resolveComboOverrides(emb.candidate_id, gearData);
     for (const line of overrides) {
@@ -1524,7 +1479,9 @@ function buildGearLines(gearData) {
   }
 
   // Phase 5: trinkets
-  const trinketWinner = getBestGear(5, "trinkets")[0];
+  const trinketWinner = getBestGear(5, "trinkets").find(
+    (r) => r.candidate_id !== "__baseline__",
+  );
   if (trinketWinner) {
     const overrides = resolveComboOverrides(
       trinketWinner.candidate_id,
@@ -1537,7 +1494,9 @@ function buildGearLines(gearData) {
   }
 
   // Phase 6: rings (with ring enchant)
-  const ringWinner = getBestGear(6, "rings")[0];
+  const ringWinner = getBestGear(6, "rings").find(
+    (r) => r.candidate_id !== "__baseline__",
+  );
   if (ringWinner) {
     const overrides = resolveComboOverrides(ringWinner.candidate_id, gearData);
     for (const line of overrides) {
@@ -1700,17 +1659,22 @@ async function cmdRun(args) {
   const phaseMatch = values.through.match(/^phase(\d+)$/);
   const maxPhase = phaseMatch ? parseInt(phaseMatch[1]) : 11;
 
+  // If an explicit fidelity flag was given, forward it to all phases.
+  // Otherwise each phase uses its own default.
+  const explicit = parseFidelity(args, null);
+  const fidelityArgs = explicit ? ["--fidelity", explicit] : [];
+
   if (maxPhase >= 0) {
     console.log("\n========== PHASE 0: Tier Configuration ==========\n");
-    await cmdTierConfig([]);
+    await cmdTierConfig(fidelityArgs);
   }
   if (maxPhase >= 1) {
     console.log("\n========== PHASE 1: Scale Factors ==========\n");
-    await cmdScaleFactors([]);
+    await cmdScaleFactors(fidelityArgs);
   }
   if (maxPhase >= 2) {
     console.log("\n========== PHASE 2: Stat Optimization ==========\n");
-    await cmdStatOptimize([]);
+    await cmdStatOptimize(fidelityArgs);
   }
 
   const gearData = loadGearCandidates();
@@ -1721,27 +1685,27 @@ async function cmdRun(args) {
   }
   if (maxPhase >= 4) {
     console.log("\n========== PHASE 4: Proc Evaluation ==========\n");
-    await cmdProcEval([]);
+    await cmdProcEval(fidelityArgs);
   }
   if (maxPhase >= 5) {
     console.log("\n========== PHASE 5: Trinkets ==========\n");
-    await cmdCombinations(["--type", "trinkets"]);
+    await cmdCombinations(["--type", "trinkets", ...fidelityArgs]);
   }
   if (maxPhase >= 6) {
     console.log("\n========== PHASE 6: Rings ==========\n");
-    await cmdCombinations(["--type", "rings"]);
+    await cmdCombinations(["--type", "rings", ...fidelityArgs]);
   }
   if (maxPhase >= 7) {
     console.log("\n========== PHASE 7: Embellishments ==========\n");
     if (gearData.embellishments?.pairs?.length > 0) {
-      await cmdCombinations(["--type", "embellishments"]);
+      await cmdCombinations(["--type", "embellishments", ...fidelityArgs]);
     } else {
       console.log("No embellishment pairs configured, skipping.");
     }
   }
   if (maxPhase >= 8) {
     console.log("\n========== PHASE 8: Stat Re-optimization ==========\n");
-    await cmdStatOptimize([]);
+    await cmdStatOptimize(fidelityArgs);
   }
   if (maxPhase >= 9) {
     console.log("\n========== PHASE 9: Gems ==========\n");
@@ -1749,11 +1713,11 @@ async function cmdRun(args) {
   }
   if (maxPhase >= 10) {
     console.log("\n========== PHASE 10: Enchants ==========\n");
-    await cmdEnchants([]);
+    await cmdEnchants(fidelityArgs);
   }
   if (maxPhase >= 11) {
     console.log("\n========== PHASE 11: Validation ==========\n");
-    await cmdValidate([]);
+    await cmdValidate(fidelityArgs);
   }
 
   console.log("\n========== Writing profile.simc ==========\n");
@@ -2025,7 +1989,9 @@ function cmdExport() {
 
   // Phase 5/6/7: combination winners (trinkets, rings, embellishments)
   for (const [type, phase] of Object.entries(COMBO_PHASES)) {
-    const winner = getBestGear(phase, type)[0];
+    const winner = getBestGear(phase, type).find(
+      (r) => r.candidate_id !== "__baseline__",
+    );
     if (!winner) continue;
     console.log(`# Best ${type}: ${winner.label}`);
     for (const override of resolveComboOverrides(
@@ -2172,15 +2138,7 @@ function clearGearIlvlResults() {
 }
 
 async function cmdTrinketChart(args) {
-  const { values } = parseArgs({
-    args,
-    options: {
-      fidelity: { type: "string", default: "quick" },
-    },
-    strict: false,
-  });
-
-  const fidelity = values.fidelity;
+  const fidelity = parseFidelity(args, "quick");
   const gearData = loadGearCandidates();
   const rawTiers = gearData.ilvl_tiers || [237, 250, 263, 276, 289];
   const ilvlTiers = rawTiers.map((t) => (typeof t === "object" ? t.ilvl : t));

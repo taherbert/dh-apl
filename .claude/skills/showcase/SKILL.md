@@ -44,7 +44,7 @@ Use `--skip-sims` to regenerate HTML from cached DB data without running new sim
 - 3-6 total sims: our APL x 3 scenarios (+ baseline if present)
 - Results stored in DB: our DPS in `dps_*` columns, baseline in `simc_dps_*` columns
 - `--skip-sims` reads DPS from DB without any sim runs
-- Dark theme, self-contained HTML (inline CSS + JS, Inter font from Google Fonts)
+- Dark theme, self-contained HTML (inline CSS + JS, Outfit and DM Sans from Google Fonts)
 - Interactive: sortable columns, hero tree filter, copy-to-clipboard, collapsible sections
 
 ## Notes

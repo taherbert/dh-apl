@@ -2,6 +2,17 @@
 // SSH-based remote execution as drop-in replacement for local simc.
 //
 // CLI: node src/sim/remote.js start|stop|status|build-ami
+//   (via npm: AWS_PROFILE=simulationcraft npm run remote:<cmd>)
+//
+// First-time setup:
+//   1. Run scripts/aws-setup.sh to create the IAM role, key pair, security group, and subnet
+//   2. Copy outputs into config.local.json (gitignored):
+//        { "remote": { "sshKeyPath": "...", "amiId": "...", "securityGroup": "...", "subnetId": "..." } }
+//   3. Build the PGO-enabled AMI (one-time, ~15 min): npm run remote:build-ami
+//
+// Routing policy:
+//   Standard/confirm fidelity sims route to remote when an instance is active.
+//   Quick fidelity sims (te >= 0.5) always run locally — SCP overhead exceeds sim time.
 //
 // Kill switches:
 //   1. shutdown -h +N in user-data (instance self-terminates at OS level)

@@ -62,6 +62,18 @@ Compare output shows deltas for ALL roster builds:
 - **Per-tree breakdown** -- average delta for each hero tree's builds
 - **Per-scenario** -- ST, small AoE, big AoE deltas separately
 
+## Partial Gains Protocol
+
+Mixed results (some builds gain, others regress) are a branching signal — NOT an automatic reject. Before recommending rejection on any hypothesis with mixed per-build results:
+
+1. Sort all builds by weighted delta; examine top/bottom 10
+2. Check each discriminator axis: hero tree, apex rank, hero variant, cluster presence/absence
+3. If any axis shows a clean split, create a gated condition with that SimC expression and re-test
+4. Only reject if no subset benefits meaningfully above the noise floor AND no valid discriminator exists
+5. Document which axes were checked and why none worked
+
+Never recommend rejection based on mean-weighted alone. See CLAUDE.md for full protocol.
+
 ## Fidelity Strategy
 
 Quick screen first (target_error=1.0, detects >1.0% deltas). Never accept on quick alone. Escalate to standard (target_error=0.3, detects >0.3%) for promising results. Use confirm (target_error=0.1, detects >0.1%) only for marginal results.

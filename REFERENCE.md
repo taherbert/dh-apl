@@ -236,6 +236,14 @@ SPEC=vengeance npm run report:dashboard -- --skip-sims     # Generate from cache
 SPEC=vengeance npm run report:dashboard -- --fidelity quick  # Quick fidelity report sims
 SPEC=vengeance npm run report:update                 # gear:run + report:dashboard
 SPEC=vengeance npm run report:publish                # Push report to GitHub Pages (gh-pages branch)
+
+# Remote sim offloading (EC2 spot) — requires AWS_PROFILE=simulationcraft + config.local.json
+# Standard/confirm sims auto-route to remote when active; quick sims always stay local
+# See src/sim/remote.js header for first-time setup (aws-setup.sh, config.local.json keys)
+AWS_PROFILE=simulationcraft npm run remote:status   # Check EC2 instance state
+AWS_PROFILE=simulationcraft npm run remote:start    # Launch spot instance (before heavy iteration)
+AWS_PROFILE=simulationcraft npm run remote:stop     # Terminate instance (after iteration)
+AWS_PROFILE=simulationcraft npm run remote:build-ami  # Build PGO AMI (one-time setup)
 ```
 
 ## Internal Methodology

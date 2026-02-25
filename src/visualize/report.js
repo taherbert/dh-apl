@@ -132,13 +132,13 @@ function loadTrinketData() {
 
   const phase1 = db
     .prepare(
-      "SELECT * FROM gear_results WHERE spec = ? AND phase = 1 AND slot = 'trinkets' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
+      "SELECT * FROM gear_results WHERE spec = ? AND phase = 5 AND slot = 'trinkets_screen' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
     )
     .all(spec);
 
   const phase2 = db
     .prepare(
-      "SELECT * FROM gear_results WHERE spec = ? AND phase = 2 AND combination_type = 'trinkets' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
+      "SELECT * FROM gear_results WHERE spec = ? AND phase = 5 AND combination_type = 'trinkets' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
     )
     .all(spec);
 
@@ -182,7 +182,7 @@ function loadEmbellishmentData() {
   const spec = getSpecName();
   const rows = db
     .prepare(
-      "SELECT * FROM gear_results WHERE spec = ? AND phase = 2 AND combination_type = 'embellishments' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
+      "SELECT * FROM gear_results WHERE spec = ? AND phase = 7 AND combination_type = 'embellishments' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
     )
     .all(spec);
   if (rows.length === 0) return null;
@@ -190,6 +190,18 @@ function loadEmbellishmentData() {
   const nullEmb = rows.find((r) => r.candidate_id === "__null_emb__");
   const pairs = rows.filter((r) => r.candidate_id !== "__null_emb__");
   return { pairs, nullEmb };
+}
+
+function loadRingData() {
+  const db = getDb();
+  const spec = getSpecName();
+  const rows = db
+    .prepare(
+      "SELECT * FROM gear_results WHERE spec = ? AND phase = 6 AND combination_type = 'rings' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
+    )
+    .all(spec);
+  if (rows.length === 0) return null;
+  return { pairs: rows };
 }
 
 function loadChangelog() {
@@ -472,6 +484,7 @@ function generateHtml(data) {
     defensiveTalentCosts,
     heroTrees,
     trinketData,
+    ringData,
     embellishmentData,
   } = data;
   const displaySpec = specName
@@ -491,6 +504,7 @@ function generateHtml(data) {
     renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
     renderTrinketRankings(trinketData),
+    renderRingRankings(ringData),
     renderEmbellishmentRankings(embellishmentData),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
     renderFooter(),
@@ -991,25 +1005,28 @@ function renderTrinketRankings(trinketData) {
 </section>`;
 }
 
-function renderEmbellishmentRankings(embData) {
-  if (!embData?.pairs?.length) return "";
+// Shared renderer for paired-slot ranking sections (rings, embellishments).
+// deltaFn(row, best) returns the delta string for non-best rows.
+// extraListHtml is appended inside the active list (e.g. nullEmb reference row).
+function renderPairRankingSection({
+  title,
+  desc,
+  pairs,
+  deltaFn,
+  extraListHtml = "",
+}) {
+  if (!pairs?.length) return "";
 
-  const { pairs, nullEmb } = embData;
   const active = pairs.filter((r) => !r.eliminated);
   const elim = pairs.filter((r) => r.eliminated);
-
-  function embDelta(r) {
-    if (!nullEmb) return `${(r.delta_pct_weighted || 0).toFixed(1)}%`;
-    const pct = ((r.weighted - nullEmb.weighted) / nullEmb.weighted) * 100;
-    return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
-  }
+  const best = active[0];
+  const maxDps = best?.weighted || elim[0]?.weighted || 1;
 
   function renderStrips(items, isActive) {
-    const maxDps = active[0]?.weighted || elim[0]?.weighted || 1;
     return items
       .map((r, i) => {
         const isBest = isActive && i === 0;
-        const delta = isBest ? "best" : embDelta(r);
+        const delta = isBest ? "best" : deltaFn(r, best);
         const barPct = maxDps > 0 ? (r.weighted / maxDps) * 100 : 0;
         const elimCls = r.eliminated === 1 ? " trinket-strip--elim" : "";
         return `<div class="trinket-strip${elimCls}">
@@ -1029,6 +1046,41 @@ function renderEmbellishmentRankings(embData) {
       .join("");
   }
 
+  const elimHtml =
+    elim.length > 0
+      ? `<details class="trinket-details">
+      <summary>Eliminated <span class="detail-count">(${elim.length})</span></summary>
+      <div class="trinket-list trinket-list--elim">${renderStrips(elim, false)}</div>
+    </details>`
+      : "";
+
+  return `<section>
+  <h2>${title}</h2>
+  <div class="subsection">
+    <p class="section-desc">${desc}</p>
+    <div class="trinket-list">${renderStrips(active, true)}${extraListHtml}</div>
+    ${elimHtml}
+  </div>
+</section>`;
+}
+
+function pctDelta(r, ref) {
+  if (!ref) return "";
+  const pct = ((r.weighted - ref.weighted) / ref.weighted) * 100;
+  return `${pct >= 0 ? "+" : ""}${pct.toFixed(1)}%`;
+}
+
+function renderEmbellishmentRankings(embData) {
+  if (!embData?.pairs?.length) return "";
+
+  const { pairs, nullEmb } = embData;
+  const active = pairs.filter((r) => !r.eliminated);
+
+  function embDelta(r) {
+    if (!nullEmb) return `${(r.delta_pct_weighted || 0).toFixed(1)}%`;
+    return pctDelta(r, nullEmb);
+  }
+
   const nullRow = nullEmb
     ? `<div class="trinket-strip trinket-strip--ref">
     <div class="trinket-strip__rank">—</div>
@@ -1045,22 +1097,22 @@ function renderEmbellishmentRankings(embData) {
   </div>`
     : "";
 
-  const elimHtml =
-    elim.length > 0
-      ? `<details class="trinket-details">
-      <summary>Eliminated <span class="detail-count">(${elim.length})</span></summary>
-      <div class="trinket-list trinket-list--elim">${renderStrips(elim, false)}</div>
-    </details>`
-      : "";
+  return renderPairRankingSection({
+    title: "Embellishment Rankings",
+    desc: "DPS contribution from embellishment combinations (2-slot budget). Delta shown vs same crafted gear without embellishments.",
+    pairs,
+    deltaFn: embDelta,
+    extraListHtml: nullRow,
+  });
+}
 
-  return `<section>
-  <h2>Embellishment Rankings</h2>
-  <div class="subsection">
-    <p class="section-desc">DPS contribution from embellishment combinations (2-slot budget). Delta shown vs same crafted gear without embellishments.</p>
-    <div class="trinket-list">${renderStrips(active, true)}${nullRow}</div>
-    ${elimHtml}
-  </div>
-</section>`;
+function renderRingRankings(ringData) {
+  return renderPairRankingSection({
+    title: "Ring Rankings",
+    desc: "DPS contribution from ring combinations (2-slot). Combinations screened then pair-simmed for accuracy.",
+    pairs: ringData?.pairs,
+    deltaFn: pctDelta,
+  });
 }
 
 // ilvl tier colors: muted → bright across the progression range
@@ -2798,6 +2850,11 @@ async function main() {
     console.log(`  Trinkets: ${parts.join(", ")} loaded from DB.`);
   }
 
+  const ringData = loadRingData();
+  if (ringData) {
+    console.log(`  Rings: ${ringData.pairs.length} pairs loaded from DB.`);
+  }
+
   const embellishmentData = loadEmbellishmentData();
   if (embellishmentData) {
     console.log(
@@ -2817,6 +2874,7 @@ async function main() {
     defensiveTalentCosts,
     heroTrees,
     trinketData,
+    ringData,
     embellishmentData,
   });
 

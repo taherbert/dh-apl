@@ -119,6 +119,8 @@ SPEC=vengeance npm run report:update         # gear:run + report:dashboard
 SPEC=vengeance npm run report:publish        # Push report to GitHub Pages
 ```
 
+**Remote sim routing:** Standard/confirm sims auto-route to EC2 when `remote:start` is active; quick sims always run locally. Check `remote:status` before heavy iteration.
+
 **Subagent model policy:** Use `model: "opus"` for domain agents (theorist, apl-engineer, sim-runner, reviewer) and any agent writing APL or analyzing sim data. Use `model: "sonnet"` for Explore, Plan, and general research subagents. Never use haiku.
 
 ## Conventions

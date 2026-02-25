@@ -103,6 +103,7 @@ import {
   summarizeUnified,
 } from "../analyze/unify-hypotheses.js";
 import { groupIndependent } from "../analyze/hypothesis-independence.js";
+import { reviseFromIteration } from "../analyze/theory-revision.js";
 import {
   ROOT,
   resultsDir,
@@ -1597,6 +1598,13 @@ async function cmdAccept(reason, hypothesisHint) {
     }
   }
 
+  const acceptRevision = reviseFromIteration(dbIterationId);
+  if (acceptRevision) {
+    console.log(
+      `  Theory ${acceptRevision.theoryId}: ${acceptRevision.action} (confidence: ${acceptRevision.newConfidence?.toFixed(2)})`,
+    );
+  }
+
   saveState(state);
   writeDashboard(state);
   writeChangelog(state);
@@ -1632,7 +1640,7 @@ function cmdReject(reason, hypothesisHint) {
   const dbIterAggregate = comparison.multiBuild
     ? comparison.aggregate || {}
     : computeWeightedDelta(comparison.results || {});
-  dbAddIteration({
+  const rejectIterationId = dbAddIteration({
     hypothesisId: hypothesis.dbId || null,
     sessionId,
     fidelity: comparison.tier || "standard",
@@ -1650,6 +1658,13 @@ function cmdReject(reason, hypothesisHint) {
       reason,
       tested_at: new Date().toISOString(),
     });
+  }
+
+  const rejectRevision = reviseFromIteration(rejectIterationId);
+  if (rejectRevision) {
+    console.log(
+      `  Theory ${rejectRevision.theoryId}: ${rejectRevision.action} (confidence: ${rejectRevision.newConfidence?.toFixed(2)})`,
+    );
   }
 
   state.consecutiveRejections = (state.consecutiveRejections || 0) + 1;
@@ -2469,6 +2484,17 @@ async function cmdSynthesize() {
   }
 
   const workflowResults = JSON.parse(readFileSync(workflowPath, "utf-8"));
+
+  // Warn if specialist outputs are stale BEFORE overwriting them
+  if (!areSpecialistOutputsFresh(24)) {
+    console.warn(
+      "\nWARNING: Specialist analysis outputs are stale or missing (>24h old).",
+    );
+    console.warn(
+      "  Run the specialist agents (/optimize Phase 2) before synthesizing for best results.",
+    );
+    console.warn("  Synthesizing from existing outputs anyway...\n");
+  }
 
   // Generate from all specialist sources
   console.log("Generating metric hypotheses...");

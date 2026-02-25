@@ -2,8 +2,8 @@
 // Supports talent, APL, and action line overrides per variant.
 // Usage: node src/sim/profilesets.js <base-profile.simc> [scenario]
 
-import { execFileSync, execFile } from "node:child_process";
-import { promisify } from "node:util";
+import { execFileSync } from "node:child_process";
+import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import { SCENARIOS, SIM_DEFAULTS, readRouteFile } from "./runner.js";
@@ -70,8 +70,6 @@ export function generateProfileset(baseProfilePath, variants) {
 
   return lines.join("\n");
 }
-
-const execFileAsync = promisify(execFile);
 
 // Prepare simc args and write the input file for a profileset run.
 function prepareProfileset(simcContent, scenario, label, simOverrides) {

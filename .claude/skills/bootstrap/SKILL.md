@@ -177,8 +177,9 @@ After bootstrap, you should have:
 ## Next Steps
 
 1. **Verify roster** — `npm run roster show` to confirm template × hero tree coverage
-2. **Refine APL** — add talent gates, hero tree routing, conditions
-3. **Run /optimize** — start the full optimization loop (deep reasoning + iteration)
+2. **Set up gear profile** — run `/gear` to generate `apls/{spec}/profile.simc` (required before production APL sims)
+3. **Refine APL** — add talent gates, hero tree routing, conditions
+4. **Run /optimize** — start the full optimization loop (deep reasoning + iteration)
 
 ## Common Issues
 

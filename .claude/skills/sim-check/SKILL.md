@@ -1,7 +1,7 @@
 ---
 description: Check on a background sim launched by /sim-background. Shows progress or presents results with accept/reject recommendation.
 argument-hint: "[--wait]"
-allowed-tools: Bash, Read, Glob, Grep, Task
+allowed-tools: Bash, Read, Glob, Grep, Task, TaskOutput
 ---
 
 Check the status of a background simulation launched by `/sim-background`. If the sim is done, present results and recommend accept/reject. If still running, report what's being tested.
