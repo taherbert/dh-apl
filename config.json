@@ -13,7 +13,7 @@
     "amiId": null,
     "spotMaxPrice": "1.50",
     "shutdownMinutes": 45,
-    "region": "us-east-1",
+    "region": "us-west-1",
     "securityGroup": null,
     "subnetId": null,
     "sshKeyPath": null,
@@ -33,7 +33,8 @@
         "maxTime": 1920,
         "desiredTargets": 1,
         "fightStyle": "DungeonRoute",
-        "routeFile": "apls/vengeance/routes/algethar-academy.simc"
+        "routeFile": "apls/vengeance/routes/algethar-academy.simc",
+        "overrides": ["override.chaos_brand=1"]
       },
       "small_aoe": {
         "name": "Patchwerk 5T",
