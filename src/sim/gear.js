@@ -13,7 +13,7 @@
 //   SPEC=vengeance node src/sim/gear.js results [--slot X]
 //   SPEC=vengeance node src/sim/gear.js export
 
-import { cpus } from "node:os";
+import { getSimCores } from "./remote.js";
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { parseArgs } from "node:util";
@@ -41,7 +41,7 @@ import {
 const MIN_THREADS_PER_SIM = 4;
 
 function simConcurrency(simCount) {
-  const totalCores = cpus().length;
+  const totalCores = getSimCores();
   const maxConcurrency = Math.max(
     1,
     Math.floor(totalCores / MIN_THREADS_PER_SIM),
