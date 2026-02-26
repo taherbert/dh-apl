@@ -12,6 +12,7 @@
 //   5  trinkets       Screen + pair sims; significance gated
 //   6  (removed — rings are EP-ranked in Phase 3)
 //   7  embellishments Screen + pair sims; significance gated
+//  7.5 resolve-conflicts Ring set vs embellishment conflict resolution
 //   8  stat-re-opt    Re-run Phase 2 if embellishments changed crafted slots
 //   9  gems           EP-rank gems, apply to all sockets
 //  10  enchants       EP-rank cloak/wrist/foot; sim weapon/ring
@@ -24,6 +25,7 @@
 //   SPEC=vengeance node src/sim/gear.js proc-eval
 //   SPEC=vengeance node src/sim/gear.js stat-optimize
 //   SPEC=vengeance node src/sim/gear.js combinations [--type trinkets|rings|embellishments]
+//   SPEC=vengeance node src/sim/gear.js resolve-conflicts
 //   SPEC=vengeance node src/sim/gear.js gems
 //   SPEC=vengeance node src/sim/gear.js enchants
 //   SPEC=vengeance node src/sim/gear.js validate [--fidelity confirm]
@@ -554,6 +556,9 @@ async function cmdProcEval(args) {
 // Phase number for set evaluation results (between Phase 4 and Phase 5).
 const SET_EVAL_PHASE = 45;
 
+// Phase number for ring/embellishment conflict resolution (between Phase 7 and Phase 8).
+const CONFLICT_RESOLUTION_PHASE = 75;
+
 // --- CLI: set-eval (Phase 4b) ---
 
 // Paired slot combos to check for cross-slot synergy after Phase 4.
@@ -568,6 +573,88 @@ async function cmdEvalSets(args) {
   const evaluatedPairIds = [];
   const builds = getRepresentativeBuilds();
   const baseProfile = getBaseProfile(gearData);
+
+  // Shared logic: sim a set pair (A-alone, B-alone, full), significance-gate, save results.
+  async function evalSetPair({
+    pairId,
+    memberA,
+    memberB,
+    fullLabel,
+    slot0,
+    slot1,
+    member0Id,
+    member1Id,
+    logPrefix,
+  }) {
+    evaluatedPairIds.push(pairId);
+
+    const variants = [
+      { name: `${pairId}_A_alone`, overrides: [memberA.simc] },
+      { name: `${pairId}_B_alone`, overrides: [memberB.simc] },
+      { name: `${pairId}_full`, overrides: [memberA.simc, memberB.simc] },
+    ];
+
+    const scenarioCount = Object.keys(SCENARIOS).length;
+    console.log(
+      `\n${logPrefix}: ${fullLabel} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
+    );
+
+    const results = await runBuildScenarioSims(
+      variants,
+      builds,
+      baseProfile,
+      fidelity,
+      `gear_set_${pairId}`,
+    );
+    const candidateMeta = [
+      { id: `${pairId}_A_alone`, label: `${memberA.label} alone` },
+      { id: `${pairId}_B_alone`, label: `${memberB.label} alone` },
+      { id: `${pairId}_full`, label: fullLabel },
+    ];
+    const ranked = aggregateGearResults(results, candidateMeta, builds);
+
+    const baselineEntry = ranked.find((r) => r.id === "__baseline__");
+    const baselineDps = baselineEntry?.weighted ?? 0;
+    const configs = ranked.filter((r) => r.id !== "__baseline__");
+    const bestConfig = configs[0];
+
+    const significant =
+      bestConfig &&
+      isSignificant(bestConfig.weighted, baselineDps, targetError);
+
+    if (!significant && bestConfig) {
+      const deltaPct = baselineDps
+        ? (((bestConfig.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
+        : "?";
+      console.log(
+        `  No significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
+      );
+    }
+
+    for (const r of configs) {
+      r.eliminated = !significant || r.id !== bestConfig.id;
+    }
+
+    printSlotResults(`set-eval: ${pairId}`, ranked, gearData);
+
+    clearGearResults(SET_EVAL_PHASE, pairId);
+    saveGearResults(SET_EVAL_PHASE, pairId, ranked, fidelity, "set_eval");
+
+    if (significant) {
+      setSessionState(`gear_set_eval_${pairId}`, {
+        winner: bestConfig.id,
+        member0: member0Id,
+        member1: member1Id,
+        slot0,
+        slot1,
+        fidelity,
+        timestamp: new Date().toISOString(),
+      });
+      console.log(`  ${logPrefix} winner: ${bestConfig.label}`);
+    } else {
+      setSessionState(`gear_set_eval_${pairId}`, null);
+    }
+  }
 
   // Auto-generate cross-slot pairs from Phase 4 winners in weapon slot pairs.
   for (const [slotA, slotB] of WEAPON_SLOT_PAIRS) {
@@ -595,76 +682,17 @@ async function cmdEvalSets(args) {
     );
     if (!memberA || !memberB) continue;
 
-    const pairId = `${wA.candidate_id}__${wB.candidate_id}`;
-    evaluatedPairIds.push(pairId);
-
-    const variants = [
-      { name: `${pairId}_A_alone`, overrides: [memberA.simc] },
-      { name: `${pairId}_B_alone`, overrides: [memberB.simc] },
-      { name: `${pairId}_full`, overrides: [memberA.simc, memberB.simc] },
-    ];
-
-    const scenarioCount = Object.keys(SCENARIOS).length;
-    console.log(
-      `\nSet eval: ${memberA.label} + ${memberB.label} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
-    );
-
-    const results = await runBuildScenarioSims(
-      variants,
-      builds,
-      baseProfile,
-      fidelity,
-      `gear_set_${pairId}`,
-    );
-    const candidateMeta = [
-      { id: `${pairId}_A_alone`, label: `${memberA.label} alone` },
-      { id: `${pairId}_B_alone`, label: `${memberB.label} alone` },
-      { id: `${pairId}_full`, label: `${memberA.label} + ${memberB.label}` },
-    ];
-    const ranked = aggregateGearResults(results, candidateMeta, builds);
-
-    // Significance gate: best config must beat current profile baseline.
-    const baselineEntry = ranked.find((r) => r.id === "__baseline__");
-    const baselineDps = baselineEntry?.weighted ?? 0;
-    const configs = ranked.filter((r) => r.id !== "__baseline__");
-    const bestConfig = configs[0];
-
-    const significant =
-      bestConfig &&
-      isSignificant(bestConfig.weighted, baselineDps, targetError);
-
-    if (!significant && bestConfig) {
-      const deltaPct = baselineDps
-        ? (((bestConfig.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
-        : "?";
-      console.log(
-        `  No significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
-      );
-    }
-
-    for (const r of configs) {
-      r.eliminated = !significant || r.id !== bestConfig.id;
-    }
-
-    printSlotResults(`set-eval: ${pairId}`, ranked, gearData);
-
-    clearGearResults(SET_EVAL_PHASE, pairId);
-    saveGearResults(SET_EVAL_PHASE, pairId, ranked, fidelity, "set_eval");
-
-    if (significant) {
-      setSessionState(`gear_set_eval_${pairId}`, {
-        winner: bestConfig.id,
-        member0: wA.candidate_id,
-        member1: wB.candidate_id,
-        slot0: slotA,
-        slot1: slotB,
-        fidelity,
-        timestamp: new Date().toISOString(),
-      });
-      console.log(`  Set winner: ${bestConfig.label}`);
-    } else {
-      setSessionState(`gear_set_eval_${pairId}`, null);
-    }
+    await evalSetPair({
+      pairId: `${wA.candidate_id}__${wB.candidate_id}`,
+      memberA,
+      memberB,
+      fullLabel: `${memberA.label} + ${memberB.label}`,
+      slot0: slotA,
+      slot1: slotB,
+      member0Id: wA.candidate_id,
+      member1Id: wB.candidate_id,
+      logPrefix: "Set eval",
+    });
   }
 
   // Explicit ring set-bonus pairs from gear-config (e.g., Voidlight Bindings)
@@ -680,75 +708,17 @@ async function cmdEvalSets(args) {
       continue;
     }
 
-    const pairId = `ring_${pair.id}`;
-    evaluatedPairIds.push(pairId);
-
-    const variants = [
-      { name: `${pairId}_A_alone`, overrides: [memberA.simc] },
-      { name: `${pairId}_B_alone`, overrides: [memberB.simc] },
-      { name: `${pairId}_full`, overrides: [memberA.simc, memberB.simc] },
-    ];
-
-    const scenarioCount = Object.keys(SCENARIOS).length;
-    console.log(
-      `\nRing pair eval: ${pair.label} (A-alone, B-alone, full-set x ${builds.length} builds x ${scenarioCount} scenarios, ${fidelity} fidelity)`,
-    );
-
-    const results = await runBuildScenarioSims(
-      variants,
-      builds,
-      baseProfile,
-      fidelity,
-      `gear_set_${pairId}`,
-    );
-    const candidateMeta = [
-      { id: `${pairId}_A_alone`, label: `${memberA.label} alone` },
-      { id: `${pairId}_B_alone`, label: `${memberB.label} alone` },
-      { id: `${pairId}_full`, label: `${pair.label}` },
-    ];
-    const ranked = aggregateGearResults(results, candidateMeta, builds);
-
-    const baselineEntry = ranked.find((r) => r.id === "__baseline__");
-    const baselineDps = baselineEntry?.weighted ?? 0;
-    const configs = ranked.filter((r) => r.id !== "__baseline__");
-    const bestConfig = configs[0];
-
-    const significant =
-      bestConfig &&
-      isSignificant(bestConfig.weighted, baselineDps, targetError);
-
-    if (!significant && bestConfig) {
-      const deltaPct = baselineDps
-        ? (((bestConfig.weighted - baselineDps) / baselineDps) * 100).toFixed(2)
-        : "?";
-      console.log(
-        `  No significant improvement (best ${deltaPct}%, threshold ${targetError}%)`,
-      );
-    }
-
-    for (const r of configs) {
-      r.eliminated = !significant || r.id !== bestConfig.id;
-    }
-
-    printSlotResults(`set-eval: ${pairId}`, ranked, gearData);
-
-    clearGearResults(SET_EVAL_PHASE, pairId);
-    saveGearResults(SET_EVAL_PHASE, pairId, ranked, fidelity, "set_eval");
-
-    if (significant) {
-      setSessionState(`gear_set_eval_${pairId}`, {
-        winner: bestConfig.id,
-        member0: pair.finger1,
-        member1: pair.finger2,
-        slot0: "finger1",
-        slot1: "finger2",
-        fidelity,
-        timestamp: new Date().toISOString(),
-      });
-      console.log(`  Ring pair winner: ${bestConfig.label}`);
-    } else {
-      setSessionState(`gear_set_eval_${pairId}`, null);
-    }
+    await evalSetPair({
+      pairId: `ring_${pair.id}`,
+      memberA,
+      memberB,
+      fullLabel: pair.label,
+      slot0: "finger1",
+      slot1: "finger2",
+      member0Id: pair.finger1,
+      member1Id: pair.finger2,
+      logPrefix: "Ring pair",
+    });
   }
 
   setSessionState("gear_set_eval_pairs", evaluatedPairIds);
@@ -779,28 +749,22 @@ function cmdGems(gearData) {
     console.log("No gems configured.");
     return;
   }
-  if (ranked.length === 0) {
-    console.log(
-      `Phase 9: Gems — no stat data, defaulting to first gem: ${best.label}`,
-    );
-    setSessionState("gear_gems", {
-      best_id: best.id,
-      best_enchant_id: best.enchant_id,
-      best_item_id: best.item_id || best.enchant_id,
-      best_label: best.label,
-      ep: 0,
-      timestamp: new Date().toISOString(),
-    });
-    return;
-  }
+
   setSessionState("gear_gems", {
     best_id: best.id,
     best_enchant_id: best.enchant_id,
     best_item_id: best.item_id || best.enchant_id,
     best_label: best.label,
-    ep: best.ep,
+    ep: best.ep ?? 0,
     timestamp: new Date().toISOString(),
   });
+
+  if (ranked.length === 0) {
+    console.log(
+      `Phase 9: Gems — no stat data, defaulting to first gem: ${best.label}`,
+    );
+    return;
+  }
 
   console.log(
     `\nPhase 9: Gems — best: ${best.label} (EP: ${best.ep.toFixed(1)})`,
@@ -1465,6 +1429,189 @@ async function cmdCombinations(args) {
   }
 }
 
+// --- CLI: resolve-conflicts (Phase 7.5) ---
+// Detects when the embellishment winner claims a ring slot that a ring set also needs.
+// Sims both configurations head-to-head and stores the winner for buildGearLines().
+
+async function cmdResolveConflicts(args) {
+  const fidelity = parseFidelity(args, "standard");
+  const gearData = loadGearCandidates();
+
+  function noConflict(reason) {
+    console.log(reason);
+    setSessionState("gear_conflict_resolution", { winner: "none" });
+  }
+
+  function embPairLabel(candidateId) {
+    return (
+      gearData.embellishments?.pairs?.find((p) => p.id === candidateId)
+        ?.label || candidateId
+    );
+  }
+
+  // Find the embellishment winner (non-baseline, non-eliminated)
+  const embWinner = getBestGear(7, "embellishments").find(
+    (r) =>
+      r.candidate_id !== "__baseline__" &&
+      r.candidate_id !== "__null_emb__" &&
+      !r.eliminated,
+  );
+  if (!embWinner) {
+    return noConflict("No embellishment winner, no conflict to resolve.");
+  }
+
+  // Check which ring slots the embellishment winner occupies
+  const embOverrides = resolveComboOverrides(embWinner.candidate_id, gearData);
+  const embFingerSlots = embOverrides
+    .map((line) => line.split("=")[0])
+    .filter((s) => s.startsWith("finger"));
+  if (embFingerSlots.length === 0) {
+    return noConflict(
+      "Embellishment winner does not use ring slots, no conflict.",
+    );
+  }
+
+  // Find the first ring set whose slots overlap with the embellishment
+  const setEvalPairs = getSessionState("gear_set_eval_pairs") || [];
+  let conflictingRingSet = null;
+  for (const pairId of setEvalPairs) {
+    if (!pairId.startsWith("ring_")) continue;
+    const state = getSessionState(`gear_set_eval_${pairId}`);
+    if (!state?.winner) continue;
+    if (embFingerSlots.some((s) => s === state.slot0 || s === state.slot1)) {
+      conflictingRingSet = { pairId, state };
+      break;
+    }
+  }
+  if (!conflictingRingSet) {
+    return noConflict("No ring set conflicts with embellishment winner.");
+  }
+
+  console.log(
+    `Conflict: embellishment "${embWinner.candidate_id}" uses ${embFingerSlots.join(", ")}`,
+  );
+  console.log(
+    `  Ring set "${conflictingRingSet.pairId}" also needs those slots`,
+  );
+
+  // Find the best non-ring-conflicting embellishment pair
+  const nonConflicting = getGearResults(7, "embellishments").find((r) => {
+    if (
+      r.candidate_id === "__baseline__" ||
+      r.candidate_id === "__null_emb__" ||
+      r.eliminated
+    )
+      return false;
+    const slots = resolveComboOverrides(r.candidate_id, gearData).map(
+      (line) => line.split("=")[0],
+    );
+    return !slots.some((s) => s.startsWith("finger"));
+  });
+
+  if (!nonConflicting) {
+    console.log(
+      "  No non-ring embellishment pairs available. Embellishment config wins by default.",
+    );
+    setSessionState("gear_conflict_resolution", {
+      winner: "embellishment",
+      ringSetPairId: conflictingRingSet.pairId,
+      embWinnerId: embWinner.candidate_id,
+      fidelity,
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  // Config A: ring set + best non-ring embellishment
+  const { state } = conflictingRingSet;
+  const ringA = gearData.slots[state.slot0]?.candidates.find(
+    (c) => c.id === state.member0,
+  );
+  const ringB = gearData.slots[state.slot1]?.candidates.find(
+    (c) => c.id === state.member1,
+  );
+
+  const configAOverrides = [];
+  if (!state.winner.endsWith("_B_alone") && ringA)
+    configAOverrides.push(ringA.simc);
+  if (!state.winner.endsWith("_A_alone") && ringB)
+    configAOverrides.push(ringB.simc);
+  configAOverrides.push(
+    ...resolveComboOverrides(nonConflicting.candidate_id, gearData),
+  );
+
+  const ncLabel = embPairLabel(nonConflicting.candidate_id);
+  const embLabel = embPairLabel(embWinner.candidate_id);
+  const ringLabel =
+    gearData.ring_pairs?.find(
+      (p) => `ring_${p.id}` === conflictingRingSet.pairId,
+    )?.label || conflictingRingSet.pairId;
+
+  console.log(`  Config A: ${ringLabel} + ${ncLabel}`);
+  console.log(`  Config B: ${embLabel} (no ring set)`);
+
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+
+  const variants = [
+    { name: "ring_set_config", overrides: configAOverrides },
+    { name: "emb_config", overrides: embOverrides },
+  ];
+
+  const scenarioCount = Object.keys(SCENARIOS).length;
+  console.log(
+    `\n  Head-to-head: 2 configs x ${builds.length} builds x ${scenarioCount} scenarios (${fidelity} fidelity)`,
+  );
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_conflict_resolution",
+  );
+  const ranked = aggregateGearResults(
+    results,
+    [
+      { id: "ring_set_config", label: `${ringLabel} + ${ncLabel}` },
+      { id: "emb_config", label: embLabel },
+    ],
+    builds,
+  );
+
+  printSlotResults("conflict-resolution", ranked, gearData);
+
+  const configs = ranked.filter((r) => r.id !== "__baseline__");
+  const winner = configs[0];
+  const loser = configs[1];
+
+  if (winner && loser) {
+    const delta = (
+      ((winner.weighted - loser.weighted) / winner.weighted) *
+      100
+    ).toFixed(2);
+    console.log(`\n  Winner: ${winner.label} (+${delta}% over ${loser.label})`);
+  }
+
+  setSessionState("gear_conflict_resolution", {
+    winner: winner?.id === "ring_set_config" ? "ring_set" : "embellishment",
+    ringSetPairId: conflictingRingSet.pairId,
+    embWinnerId: embWinner.candidate_id,
+    nonConflictingEmbId: nonConflicting.candidate_id,
+    fidelity,
+    timestamp: new Date().toISOString(),
+  });
+
+  clearGearResults(CONFLICT_RESOLUTION_PHASE, "conflict_resolution");
+  saveGearResults(
+    CONFLICT_RESOLUTION_PHASE,
+    "conflict_resolution",
+    ranked,
+    fidelity,
+    "conflict_resolution",
+  );
+}
+
 // Generate C(K,2) pairs from a single paired slot pool using screen phase results
 function generatePairedSlotCombinations(poolName, gearData, screenPhase) {
   const pairedData = gearData.paired_slots[poolName];
@@ -1729,9 +1876,11 @@ function applySlotEnchant(line, slot, enchantMap) {
 // Apply Phase 2 stat alloc to a crafted_stats simc line.
 function applyStatAlloc(line, slot) {
   if (!line.includes("crafted_stats=")) return line;
-  const statState = getSessionState(`gear_phase2_${slot}`);
+  // Normalize wrist/wrists — gear-candidates uses "wrists" as slot key
+  const stateSlot = slot === "wrist" ? "wrists" : slot;
+  const statState = getSessionState(`gear_phase2_${stateSlot}`);
   if (!statState?.best) return line;
-  const pairId = statState.best.replace(new RegExp(`^${slot}_`), "");
+  const pairId = statState.best.replace(new RegExp(`^${stateSlot}_`), "");
   const pair = CRAFTED_STAT_PAIRS.find((p) => p.id === pairId);
   return pair
     ? line.replace(
@@ -1786,7 +1935,7 @@ function getTierLines(gearData) {
 
 // Collect best gear lines from all pipeline phases.
 // Priority (highest wins, each covers its slots):
-//   Phase 7:  embellishments
+//   Phase 7:  embellishments (conflict-resolved against ring sets)
 //   set_eval: set bonus winners for their slots
 //   Phase 5:  trinkets
 //   Phase 4:  proc eval winners for individual slots
@@ -1812,12 +1961,25 @@ function buildGearLines(gearData) {
     addLine(simc, slot);
   }
 
+  // Check for ring/embellishment conflict resolution
+  const resolution = getSessionState("gear_conflict_resolution");
+
   // Phase 7: embellishments (highest priority for those slots)
-  const emb = getBestGear(7, "embellishments").find(
-    (r) => r.candidate_id !== "__baseline__",
-  );
-  if (emb) {
-    const overrides = resolveComboOverrides(emb.candidate_id, gearData);
+  // When ring set won the conflict, use the non-conflicting embellishment instead.
+  // When ring set won but no non-conflicting emb exists, skip embellishments entirely
+  // to avoid re-introducing the slot conflict.
+  let embCandidateId;
+  if (resolution?.winner === "ring_set") {
+    embCandidateId = resolution.nonConflictingEmbId;
+  } else {
+    const emb = getBestGear(7, "embellishments").find(
+      (r) =>
+        r.candidate_id !== "__baseline__" && r.candidate_id !== "__null_emb__",
+    );
+    embCandidateId = emb?.candidate_id;
+  }
+  if (embCandidateId) {
+    const overrides = resolveComboOverrides(embCandidateId, gearData);
     for (const line of overrides) {
       const slot = line.split("=")[0];
       if (!coveredSlots.has(slot)) {
@@ -1826,9 +1988,18 @@ function buildGearLines(gearData) {
     }
   }
 
-  // Set eval: auto-generated pair winners cover their specific slots
+  // Set eval: auto-generated pair winners cover their specific slots.
+  // Skip ring sets that lost the conflict resolution — applying half a set
+  // with no set bonus is worse than letting individual ring phases fill those slots.
   const setEvalPairs = getSessionState("gear_set_eval_pairs") || [];
   for (const pairId of setEvalPairs) {
+    if (
+      resolution?.winner === "embellishment" &&
+      pairId === resolution.ringSetPairId
+    ) {
+      continue;
+    }
+
     const state = getSessionState(`gear_set_eval_${pairId}`);
     if (!state?.winner) continue;
 
@@ -2077,6 +2248,10 @@ async function cmdRun(args) {
     } else {
       console.log("No embellishment pairs configured, skipping.");
     }
+    console.log(
+      "\n========== PHASE 7.5: Ring/Embellishment Conflict Resolution ==========\n",
+    );
+    await cmdResolveConflicts(fidelityArgs);
   }
   if (maxPhase >= 8) {
     console.log("\n========== PHASE 8: Stat Re-optimization ==========\n");
@@ -2243,6 +2418,21 @@ function cmdStatus() {
     console.log("  not started");
   }
 
+  // Phase 7.5: conflict resolution
+  const conflictRes = getSessionState("gear_conflict_resolution");
+  console.log("\nPhase 7.5 (Conflict Resolution):");
+  if (conflictRes?.winner === "ring_set") {
+    console.log(
+      `  Winner: ring set (${conflictRes.ringSetPairId}) + ${conflictRes.nonConflictingEmbId} (${conflictRes.fidelity})`,
+    );
+  } else if (conflictRes?.winner === "embellishment") {
+    console.log(
+      `  Winner: embellishment (${conflictRes.embWinnerId}) (${conflictRes.fidelity})`,
+    );
+  } else {
+    console.log("  no conflict detected");
+  }
+
   // Phase 9: gems
   const gemState = getSessionState("gear_gems");
   console.log("\nPhase 9 (Gems):");
@@ -2311,7 +2501,19 @@ function cmdResults(args) {
     }
     printDbResults(results, gearData);
   } else {
-    for (const p of [0, 2, 3, 4, SET_EVAL_PHASE, 5, 6, 7, 10, 11]) {
+    for (const p of [
+      0,
+      2,
+      3,
+      4,
+      SET_EVAL_PHASE,
+      5,
+      6,
+      7,
+      CONFLICT_RESOLUTION_PHASE,
+      10,
+      11,
+    ]) {
       const results = getGearResults(p, values.slot);
       if (results.length === 0) continue;
       console.log(`\n--- Phase ${p} ---`);
@@ -2627,6 +2829,9 @@ switch (cmd) {
   case "combinations":
     await cmdCombinations(cleanArgs);
     break;
+  case "resolve-conflicts":
+    await cmdResolveConflicts(cleanArgs);
+    break;
   case "stat-optimize":
     await cmdStatOptimize(cleanArgs);
     break;
@@ -2670,6 +2875,7 @@ Commands:
   proc-eval       Phase 4:  Sim proc/on-use items vs stat-stick baseline
   set-eval        Phase 4b: Evaluate set bonuses (A-alone, B-alone, full-set)
   combinations    Phase 5-7: Screen + pair sims for trinkets/rings/embellishments
+  resolve-conflicts Phase 7.5: Ring set vs embellishment conflict resolution
   gems            Phase 9:  EP-rank gems
   enchants        Phase 10: EP-rank stat enchants; sim weapon/ring enchants
   validate        Phase 11: Confirm assembled gear at high fidelity

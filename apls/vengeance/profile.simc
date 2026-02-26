@@ -18,14 +18,14 @@ neck=ribbon_of_coiled_malice,id=249337,ilevel=289
 shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289,enchant_id=7971
 back=potionstained_cloak,id=193712,ilevel=289
 chest=bloodfeather_chestguard,id=258586,ilevel=289
-wrist=void_skinned_bracers,id=249327,ilevel=289
+wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=36/49,embellishment=darkmoon_sigil_void
 hands=devouring_reavers_essence_grips,id=250034,ilevel=289
 waist=rootwalker_harness,id=251189,ilevel=289
 legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8161
 feet=arctic_explorers_legwraps,id=251153,ilevel=289
-finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36
+finger1=omission_of_light,id=251093,ilevel=289,gem_id=241144/241144
 finger2=occlusion_of_void,id=251217,ilevel=289
 trinket1=gaze_of_the_alnseer,id=249343,ilevel=289
 trinket2=radiant_plume,id=249806,ilevel=289
 main_hand=tormentors_bladed_fists,id=249298,ilevel=289
-off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt
+off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/49,enchant_id=7983,embellishment=darkmoon_sigil_hunt
