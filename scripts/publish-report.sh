@@ -48,7 +48,8 @@ fi
 # Clean and copy report
 git rm -rf --quiet . 2>/dev/null || true
 cp "$REPORT_FILE" index.html
-git add index.html
+echo "vengeance.jomdarbert.com" > CNAME
+git add index.html CNAME
 
 TIMESTAMP="$(date -u +"%Y-%m-%d %H:%M UTC")"
 git commit -m "Update report dashboard — $TIMESTAMP" --quiet --allow-empty
