@@ -5,36 +5,16 @@ model: opus
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, WebFetch, WebSearch
 ---
 
-The ONE command for all APL and build optimization. Runs everything autonomously: generate cluster roster, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, APL branching, and reporting.
+Autonomous APL optimization: roster, deep reasoning, parallel specialists, synthesis, multi-build iteration, APL branching, reporting.
 
-If `$ARGUMENTS` is provided (e.g., `/optimize Check soul fragment economy`), treat it as a **focus directive** -- prioritize that area while still analyzing the full system.
-
-**Invocation modes:**
-
-- `/optimize` -- Full pipeline (Phases 0-4)
-- `/optimize Check soul fragment economy` -- Focused analysis (same phases, prioritize area)
-- `/optimize test: Lower SBomb threshold to 4 during Meta` -- Direct hypothesis (skip Phases 1-2, go to Phase 3)
-- `/optimize test: Hyp A; Hyp B; Hyp C` -- Batch hypothesis testing
-
-## Architecture
-
-```
-/optimize (you are here)
-    |
-    +-- Phase 0: Setup + Build Discovery + Session Recovery
-    +-- Phase 1: Deep Reasoning + Parallel Specialists
-    +-- Phase 2: Synthesis + Hypothesis Ranking
-    +-- Phase 3: Multi-Build Iteration Loop + Theory Revision
-    +-- Phase 4: Showcase Report + Commit
-```
+If `$ARGUMENTS` starts with `test:`, skip Phases 1-2 and jump to Phase 3 with those hypotheses. Otherwise treat `$ARGUMENTS` as a focus directive.
 
 ## State Management
 
-All state flows through `results/{spec}/theorycraft.db`. No JSON snapshots — the DB is the single source of truth.
+All state flows through `results/{spec}/theorycraft.db`.
 
 ```javascript
 import {
-  getDb,
   setSessionState,
   getSessionState,
   addTheory,
@@ -47,389 +27,95 @@ import {
 import { createTheory, getTheorySummary } from "../analyze/theory.js";
 ```
 
-**Recovery after context compaction:**
-
-1. `getSessionState('phase')` -- current phase
-2. `getSessionState('session_id')` -- session UUID
-3. `getIterations({ sessionId })` -- full iteration history
-4. `getHypotheses({ status: 'pending' })` -- remaining work
-5. Read `results/{spec}/plan.md` -- human-readable progress
-
-Update `results/{spec}/plan.md` after every phase transition and iteration.
+**Recovery after context compaction:** `getSessionState('phase')`, `getSessionState('session_id')`, `getIterations({ sessionId })`, `getHypotheses({ status: 'pending' })`, read `results/{spec}/plan.md`. Update `plan.md` after every phase transition and iteration.
 
 ---
 
-## Phase 0: Setup + Build Discovery
+## Phases 0-2: Setup, Reasoning, Synthesis
 
-### 0a. Determine Active Spec + Data Freshness Gate
+Read `.claude/skills/optimize/PHASES.md` for detailed phase instructions before starting each phase. Key sequence:
 
-Run `node src/engine/startup-cli.js` to check config, spec, and simc sync status.
+**Phase 0:** startup-cli check -> session recovery -> roster generate -> baseline init -> pattern-analyze -> load knowledge base. Use `npm run data:query` for targeted lookups instead of reading full data files.
 
-**Staleness gate — auto-refresh if needed:**
+**Phase 1:** This is the most important phase. Deep mechanical reasoning FIRST: model the resource economy (equilibrium, marginal DPGCD, burst windows), identify systemic tensions (resource competition, cooldown misalignment, state machine incoherence, second-order chains), map build-specific tensions across cluster/apex axes. Form 2-3 root theories and persist via `createTheory()`. THEN launch specialists.
 
-1. Check the startup output for the `Sync:` line. If it says anything other than `up to date`, local data is stale (simc binary was updated but data pipeline hasn't been rebuilt).
+**Specialist launch mandate:** Launch all 4 specialists (spell data, talent interactions, resource flow, state machine) in a **SINGLE message** using Task tool with `subagent_type: "theorist"`, `model: "opus"`, `run_in_background: true`. Never launch sequentially. Each prompt MUST include your root theories verbatim, roster template structure, spec/data paths, and assigned focus area. See PHASES.md for the specialist table.
 
-2. Check for **upstream** simc changes that haven't been pulled yet:
+**Phase 2:** synthesize -> divergence-hypotheses -> strategic -> theorycraft -> unify -> rank -> write summary. Ranking: your deep theories > unified hypotheses with consensus_count > 1 > divergences with delta > 100 across archetypes > aligned specialist findings > single-source hypotheses.
 
-```bash
-git -C /Users/tom/Documents/GitHub/simc fetch origin midnight --quiet
-git -C /Users/tom/Documents/GitHub/simc rev-parse HEAD           # local
-git -C /Users/tom/Documents/GitHub/simc rev-parse origin/midnight # remote
-```
-
-If local and remote HEADs differ, upstream has new commits.
-
-3. **If either check shows staleness**, run the full refresh pipeline:
-
-```bash
-SPEC={spec} npm run refresh
-```
-
-This pulls simc, rebuilds the binary, extracts reference APL + wiki + spell data, runs the full data pipeline, verifies, and records metadata (~5-10 min). Non-interactive mode is automatic.
-
-4. After refresh completes, re-run `node src/engine/startup-cli.js` to confirm `Sync: up to date`.
-
-**If both checks pass**, data is fresh — continue to 0b.
-
-### 0b. Session Recovery
-
-Check DB for existing session:
-
-```javascript
-const phase = getSessionState("phase");
-const sessionId = getSessionState("session_id");
-```
-
-If a session exists, query `getIterations({ sessionId })` to reconstruct history, then check `node src/sim/iterate.js status` for iteration state. Use `results/{spec}/plan.md` as supplementary context if it exists (human-written during Phase 3 progress updates). Resume from where we left off.
-
-If no DB session, check legacy: `node src/sim/iterate.js status`. If iteration state exists, check `results/{spec}/checkpoint.md`.
-
-### 0c. Generate Build Roster
-
-```bash
-npm run roster generate               # Cluster-based roster from SPEC_CONFIG templates
-npm run roster show                   # Verify coverage
-```
-
-Templates are defined in SPEC_CONFIG (`rosterTemplates`). Each template specifies an apex rank and which talent clusters to include/exclude. Crossed with hero tree × variant = full roster. Hashes are generated automatically.
-
-### 0d. Establish Multi-Build Baseline
-
-Only if no active iteration session:
-
-```bash
-node src/sim/iterate.js init apls/{spec}/{spec}.simc
-```
-
-### 0f. Batch Divergence Analysis (Pre-Hypothesis Priming)
-
-Run the batch pattern-analyze pipeline across all representative builds. This chains optimal-timeline → apl-interpreter → divergence → pattern-analysis → cross-archetype-synthesis → theory-generator, producing mechanically-grounded hypotheses as a structured starting point for Phase 1a. Per-build scoring is automatically enriched with talent modifiers.
-
-```bash
-node src/sim/iterate.js pattern-analyze
-```
-
-Output: `results/{spec}/divergence-report-{build}.md`, `divergences-{build}.json`, `cross-archetype-synthesis.json`, and theory-generator hypotheses in the DB.
-
-**What it tells you:** Each divergence is a specific claim — "at state S (fury, frags, VF, buffs), 15s rollout prefers X over Y by Z rollout-score points." Divergences with high delta (>100) that recur across archetypes are strong theory candidates. The cross-archetype synthesis identifies universal vs build-specific patterns.
-
-**Limitation:** The rollout uses an approximate scoring model (enriched with talent modifiers but still deterministic). Treat every divergence as a hypothesis requiring causal reasoning before testing — not a proven improvement. Skip this step if resuming a session (divergences were already generated).
-
----
-
-### 0e. Load the Full Knowledge Base
-
-**Tier 1 -- Mechanical Blueprint (always load):** spec adapter (`src/spec/{spec}.js` SPEC_CONFIG), current APL, `spells-summary.json`
-
-**Tier 2 -- Interaction & Proc Data:** `interactions-summary.json`, `cpp-proc-mechanics.json`, SPEC_CONFIG talent clusters (`talentClusters`, `rosterTemplates`)
-
-**Tier 3 -- Accumulated Knowledge:** DB findings (`getFindings({status:'validated'})`), DB hypotheses (`getHypotheses()`), DB builds/synergies
-
-**Tier 4 -- External:** Wowhead/Icy Veins when internal data has gaps (treat as hypotheses).
-
-All data paths in `data/{spec}/` and `results/{spec}/`. See CLAUDE.md "Data File Selection" for full path reference.
-
-**In direct hypothesis mode (`test:`):** Load Tiers 1-3 only. Skip Phases 1-2.
-
----
-
-## Phase 1: Deep Reasoning + Parallel Specialists
-
-> **Skipped in direct hypothesis mode.** Jump to Phase 3.
-
-### 1a. Deep Reasoning (REQUIRED before specialists)
-
-**This is the most important step.**
-
-#### Study the Build Roster
-
-What talent clusters define each template? Which cluster combinations create compound value? How do different builds (apex ranks, cluster presence/absence) differ in rotation needs? Read SPEC_CONFIG `talentClusters` and `rosterTemplates` for the full roster structure.
-
-#### Model the Economy
-
-**Primary resource** -- Compute equilibrium: resource in/out per minute, marginal damage value per unit on each spender, burst window shifts.
-
-**Secondary resource** -- Steady-state generation rate by target count, waste sources, consumption value per unit.
-
-**GCD budget** -- ~48 GCDs/min at 20% haste. Map mandatory, discretionary, and negative-value abilities.
-
-#### Identify Systemic Tensions
-
-- **Resource competition** -- two consumers, same pool. Is APL arbitration correct?
-- **Cooldown misalignment** -- map periods, multiplicative overlaps, holding costs, LCM supercycle
-- **Burst window utilization** -- GCDs in window, filled with highest-DPGCD? Pre-pooling?
-- **State machine incoherence** -- hero tree cycles vs APL rhythm
-- **Second-order chains** -- indirect value chains invisible in single-ability analysis
-
-#### Map Build-Specific Tensions
-
-Where do different builds need different APL behavior? Cluster presence/absence and apex rank create the primary variation axes.
-
-#### Study Reference APL
-
-Read `reference/{spec}-apl.simc` for SimC syntax patterns (NOT priorities): variable patterns, trinket handling, state machine encoding, delegation, AoE breakpoints, cooldown sync.
-
-#### Form Root Theories
-
-Read `results/{spec}/divergence-report-*.md` (from Phase 0f). Each divergence is a candidate theory seed — it tells you WHERE the APL may deviate from optimal. Apply deep mechanical reasoning to each: WHY does the divergence exist? Is the rollout's reasoning sound in context? Does the APL's choice have justification the model doesn't capture (e.g., fire amp setup, burst window sync)?
-
-High-delta divergences (>100 rollout points) that appear across multiple archetypes are the most likely real improvements. Low-delta ones (<50) are likely model noise.
-
-2-3 theories that GUIDE everything. **Persist to DB** via `createTheory()`.
-
-Set session phase: `setSessionState('phase', '1_specialists')`
-
-#### Non-Obvious Discovery Techniques
-
-- **Inverse optimization** -- remove conditions one by one, measure delta. Builds "condition value map."
-- **Sensitivity analysis** -- vary numeric thresholds, plot DPS response for optimal breakpoints.
-- **Cross-scenario divergence** -- same APL at different target counts. Look for rank inversions, wasted casts.
-- **Execute phase detection** -- test `target.time_to_die` thresholds for cooldown/resource dumping.
-
-#### Target Count Regimes
-
-- **ST** -- cooldown alignment primary, resource pooling for burst, deterministic secondary resource
-- **Cleave (3-5T)** -- AoE spender DPGCD dominates, quadratic scaling loops, `active_enemies>=N` breakpoints
-- **Heavy AoE (8-10T)** -- GCD budget is binding, secondary resource abundant, passive ticking dominates
-
-### 1b. Parallel Specialist Launch
-
-Launch 4 specialists **IN PARALLEL** using the Task tool. All 4 calls in a **SINGLE message** — never sequentially. Each specialist uses `subagent_type: "theorist"`, `model: "opus"` to inherit the full theorist methodology (resource flow, DPGCD, cooldown optimization, etc.). Run all in background with `run_in_background: true` for maximum parallelism.
-
-Each specialist prompt MUST include:
-
-- The root theories you formed in 1a (verbatim)
-- Roster template structure (clusters, apex ranks)
-- The spec name and data paths
-- Which focus area to analyze and which output file to write
-
-| Specialist          | Focus                                                | Key Data                                              | Output                        |
-| ------------------- | ---------------------------------------------------- | ----------------------------------------------------- | ----------------------------- |
-| Spell Data          | DPGCD rankings, modifier stacking, proc mechanics    | spells-summary, cpp-proc-mechanics, interactions      | `analysis_spell_data.json`    |
-| Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | talents, interactions, SPEC_CONFIG clusters/templates | `analysis_talent.json`        |
-| Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | spells-summary, cpp-proc-mechanics, APL               | `analysis_resource_flow.json` |
-| State Machine       | Hero tree rhythms, variable correctness, dead code   | APL, SPEC_CONFIG clusters, spells-summary             | `analysis_state_machine.json` |
-
-While specialists run in background, continue reading the knowledge base or begin Phase 2 preparation. Check specialist output files when they complete.
-
----
-
-## Phase 2: Synthesis
-
-> **Skipped in direct hypothesis mode.** Jump to Phase 3.
-
-### 2a. Synthesize
-
-```bash
-node src/sim/iterate.js synthesize
-```
-
-Read all four `results/{spec}/analysis_*.json` files. Cross-reference with root theories.
-
-### 2b. Import Divergence Hypotheses
-
-Import state-sim divergences as DB hypotheses:
-
-```bash
-node src/sim/iterate.js divergence-hypotheses
-```
-
-This populates the hypothesis DB with cross-archetype divergences (delta > 100, >= 2 archetypes).
-
-### 2c. Generate Strategic Hypotheses
-
-```bash
-node src/sim/iterate.js strategic
-```
-
-Generates APL-level strategic hypotheses (ability ordering, condition gaps, dead conditions). Requires `loadState()` — init must have run.
-
-### 2d. Generate Theorycraft Hypotheses
-
-```bash
-node src/sim/iterate.js theorycraft
-```
-
-Generates resource-flow and temporal hypotheses (resource waste, cooldown misalignment, burst window utilization). Requires workflow results from init.
-
-### 2e. Unify All Hypothesis Sources
-
-Merge all 6 hypothesis sources (strategic, theorycraft, synthesized, divergence-analysis, theory-generator, specialist agents) into a consensus-ranked, mutation-enriched list:
-
-```bash
-node src/sim/iterate.js unify
-```
-
-This performs:
-
-1. **Fingerprinting** — semantic identity matching across heterogeneous formats
-2. **Consensus detection** — count distinct sources per hypothesis (e.g., strategic + divergence both flag the same swap)
-3. **Mutation inference** — generate `aplMutation` for sources that lack them (divergence, theory-generator, specialists)
-4. **Priority boosting** — +25% per additional confirming source; rejection memory reduces priority for previously-rejected fingerprints
-5. **DB persistence** — updates consensus_count, consensus_sources, fingerprint; marks duplicates as "merged"
-
-After unification, ALL hypotheses can produce candidates via `iterate.js generate`, not just sources 1-3.
-
-### 2f. Rank Hypotheses
-
-Ranking order (post-unification):
-
-1. **Your theories that specialists missed** -- highest priority (deep insights)
-2. **Unified hypotheses with consensus_count > 1** -- convergent evidence from multiple independent sources
-3. **Divergences with rollout_delta > 100 that recur across archetypes** -- strong mechanical signal
-4. **Specialist findings aligned with theories** -- high priority
-5. **Single-source hypotheses with mutation** -- moderate priority
-6. **Specialist findings with no causal backing** -- lower priority
-
-**Scope ranking:** Universal > Template-specific > Hero-tree-specific > Build-specific
-
-### 2g. Generate Summary
-
-Write `results/{spec}/analysis_summary.md`. Initialize `dashboard.md` and `changelog.md`.
-
-**Proceed directly to testing.**
+**In direct hypothesis mode (`test:`):** Skip Phases 1-2. Load knowledge base tiers 1-3 only. Jump to Phase 3.
 
 ---
 
 ## Phase 3: Multi-Build Iteration Loop
 
-**Every test runs against ALL roster builds simultaneously.**
+**Every test runs against ALL roster builds simultaneously.** Before entering the loop, read `.claude/skills/optimize/PHASES.md` section "Phase 3 Supplementary" for escape strategies and batch parallelism patterns.
 
-### Remote Sim Check
-
-Before starting heavy iteration, check if remote sim offloading is available:
+### Pre-Flight
 
 ```bash
 npm run remote:status
+npm run remote:start    # if not active — start automatically
 ```
 
-If no instance is active, **start one automatically** — do not wait for user confirmation:
+Query pending hypotheses (`iterate.js hypotheses`). For the top N (up to 10), create a task for each using TaskCreate. Set to in_progress when starting, completed when done (update description with "ACCEPTED +X.XX%: reason" or "REJECTED: reason").
 
-```bash
-npm run remote:start
-```
-
-Standard and confirm sims route to remote automatically (96 vCPUs vs local cores — ~4x faster). Quick-fidelity screening sims always stay local (SCP overhead exceeds sim time). The remote instance self-destructs after 45 minutes; stop it explicitly with `npm run remote:stop` at the end of Phase 4 if still running.
-
-### Build Roster Requirement
-
-1. Verify roster: `npm run roster show` -- must cover templates from both hero trees
-2. If empty: `npm run roster generate` -- cluster-based generation from SPEC_CONFIG
-3. `iterate.js init` requires the roster. Profileset mode auto-activates (all cluster builds have hashes).
-
-### Progress Tracking
-
-Before entering the iteration loop, query pending hypotheses (`iterate.js hypotheses`).
-For the top N (up to 10), create a task for each using TaskCreate:
-
-- subject: hypothesis summary (truncated to 60 chars)
-- activeForm: "Testing <topic from hypothesis>"
-- description: full summary + mutation type + source
-
-When starting an iteration (Step 1), set the task to in_progress via `TaskUpdate { taskId, status: "in_progress" }`.
-When recording the outcome (Step 5b), set the task to completed via `TaskUpdate { taskId, status: "completed" }` and update
-the description with the result: "ACCEPTED +X.XX%: reason" or "REJECTED: reason".
-
-If new hypotheses are generated mid-loop (escape strategies, theorycraft),
-create new tasks as they're selected.
-
-### Session Resilience
-
-If resuming: `node src/sim/iterate.js status`, read `dashboard.md`/`changelog.md`, check `git log --oneline -10`, read `current.simc`, query DB findings (`getFindings({status:'validated'})`). Resume from Step 1.
+**If resuming:** `iterate.js status`, read `dashboard.md`/`changelog.md`, `git log --oneline -10`, read `current.simc`, query DB findings. Resume from Step 1.
 
 ### Iteration Loop
 
 #### Step 1: Analyze
 
-Read current APL. Load Tiers 1-3. Form 1-3 causal theories with specific numbers. Then check screeners:
-
-```bash
-node src/sim/iterate.js hypotheses
-```
-
-Use screener output to validate or quantify your theories, not replace them.
+Read current APL. Form 1-3 causal theories with specific numbers. Then check screeners: `node src/sim/iterate.js hypotheses`. Use screener output to validate your theories, not replace them.
 
 #### Step 2: Choose
 
-Pick highest-value hypothesis. Priority: your deep theories > unified hypotheses with `consensus_count > 1` > aligned screener findings > high-confidence on high-DPS-share abilities > multi-part coherent changes.
-
-**Prefer consensus hypotheses** — when multiple independent sources (strategic, theorycraft, divergence, theory-generator) converge on the same finding, that's strong evidence. Use `node src/sim/iterate.js hypotheses` to see consensus counts.
-
-**Never test a hypothesis you can't explain causally.**
+Priority: your deep theories > unified hypotheses with `consensus_count > 1` > aligned screener findings > high-confidence on high-DPS-share abilities. **Never test a hypothesis you can't explain causally.**
 
 If exhausted: `node src/sim/iterate.js strategic` and `theorycraft` -- but reason about the APL FIRST.
 
 #### Step 3: Modify
 
-Read `current.simc`. Make ONE targeted change. Save as `candidate.simc`.
-
-Before any change: locate the ability, understand its priority placement, trace resource/cooldown impact, check cross-references, check all hero tree branches, predict direction and magnitude.
+Read `current.simc`. Make ONE targeted change. Save as `candidate.simc`. Before any change: locate the ability, understand its priority placement, trace resource/cooldown impact, check cross-references in all hero tree branches, predict direction and magnitude.
 
 #### Step 4: Test
 
-**Quick screening is synchronous** — always local, ~30-60s, worth waiting:
+**Quick screening (synchronous, local):**
 
 ```bash
 node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick
 ```
 
-If quick screening rejects (any scenario > 1% regression), go directly to Step 5 (reject).
+If quick screening rejects (any scenario > 1% regression), go to Step 5 (reject).
 
-**Standard and confirm are always background** — do not block. Use `/sim-background` which writes the checkpoint and launches non-blocking:
+**Standard/confirm (always background, remote):**
 
 ```bash
 /sim-background apls/{spec}/candidate.simc -- <hypothesis description>
-# or for confirm fidelity:
 /sim-background apls/{spec}/candidate.simc --confirm -- <hypothesis description>
 ```
 
-**Immediately after launching a background sim, return to Step 1 for the next hypothesis.** Do not wait. The remote instance is running — sim time is not your bottleneck, thinking time is. Work on the next candidate while the current sim runs. Use `/sim-check` to review the result when it completes, then do Step 5 for that hypothesis before accepting/rejecting.
+**Immediately return to Step 1 for the next hypothesis.** Do not wait. Use `/sim-check` when it completes.
 
 SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ crashes -> stop loop.
 
 #### Step 5: Decide
 
-- **Accept if:** mean weighted > target_error AND worst build > -1%. A change with impact below the sim's target_error is noise — do not accept it regardless of sign.
-- **Build-gate if:** ANY builds gain meaningfully (>+0.5%) even if others regress. This is NOT a reject — it's a branching signal. Follow the **Partial Gains Protocol** below.
-- **Reject if:** no subset of builds benefits meaningfully above the noise floor (±0.5% at standard fidelity), OR no valid SimC expression can discriminate the benefiting builds after systematic analysis of ALL discriminator axes. **Rejection requires documenting what you checked.**
+- **Accept if:** mean weighted > target_error AND worst build > -1%
+- **Reject if:** no subset benefits above noise floor, OR no valid SimC discriminator exists after checking ALL axes
 - **Inconclusive:** within noise after confirm -> log and move on
 
-**CRITICAL: Partial gains are opportunities, not failures.** A hypothesis that shows +2% for high-apex builds and -4% for low-apex builds is a STRONG signal for a gated implementation. The mean-weighted result is misleading in this case — look at per-build results and find the pattern.
+**CRITICAL: Partial gains are opportunities, not failures.** A hypothesis showing +2% for some builds and -4% for others is a STRONG signal for a gated implementation. Before rejecting ANY mixed result:
 
-**Partial Gains Protocol (MANDATORY before rejecting any mixed result):**
-
-1. Sort all builds by weighted delta. Identify the top 10 gainers and top 10 losers.
-2. Systematically check EACH discriminator axis for a clean split:
-   - Hero tree (`hero_tree.aldrachi_reaver` / `hero_tree.annihilator`)
-   - Apex rank (`apex.1`, `apex.2`, `apex.3`)
-   - Talent cluster presence (`talent.X` for each cluster-defining talent)
-   - Hero variant (hero-specific talent checks)
-   - Target count (`variable.small_aoe`, `variable.single_target`)
-3. A "clean split" means: gainers predominantly share a trait that losers lack, with minimal overlap.
-4. At standard fidelity (target_error=1), the noise floor is ±0.5%. Only count builds with deltas ABOVE this threshold as meaningful gainers/losers.
-5. If a discriminator exists: write a gated candidate using that SimC expression and re-test against the full roster.
+1. Sort all builds by weighted delta. Identify top/bottom 10 gainers/losers.
+2. Systematically check EACH discriminator axis: hero tree, apex rank, talent cluster presence, hero variant, target count.
+3. A "clean split" = gainers share a trait losers lack.
+4. At standard fidelity, only deltas above +/-0.5% are meaningful.
+5. If a discriminator exists: write a gated candidate and re-test the full roster.
 6. If no discriminator exists after checking all axes: reject and document the analysis.
 7. If gains are suggestive but ambiguous: escalate the top-gaining subset to `--confirm` fidelity before concluding.
+
+**Never reject based on mean-weighted alone.** Always examine per-build distribution.
 
 ```bash
 node src/sim/iterate.js accept "reason" --hypothesis "description fragment"
@@ -438,98 +124,30 @@ node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
 
 #### Step 5b: Record
 
-1. Theory confidence is updated automatically by `iterate.js accept/reject` — no manual call needed
-2. Record finding to DB via `addFinding()`
-3. Update `plan.md`, `dashboard.md`
-4. After accept: commit with `iterate: <hypothesis> (<+/-X.XX%> weighted)`
+1. Record finding to DB via `addFinding()`
+2. Update `plan.md`, `dashboard.md`
+3. After accept: commit with `iterate: <hypothesis> (<+/-X.XX%> weighted)`
 
 #### Step 6: Repeat
 
-### Escape Strategies (3+ consecutive rejections)
-
-1. **Compound mutation** -- try two individually-rejected changes that might synergize
-2. **Reversal test** -- reverse a previously accepted change
-3. **Radical reorder** -- swap top 3-5 priority actions in a sub-list
-4. **Reference import** -- compare against simc default APL in `reference/`
-5. **Category rotation** -- switch from threshold sweeps to reordering to conditions
-
-### Parallelism in Iteration
-
-**Default: pipeline standard/confirm sims with next-hypothesis work.** As soon as you launch a standard/confirm sim in background, start Step 1 for the next hypothesis. The remote instance runs the sim while you reason. This is the normal working mode, not an exception.
-
-**Batch: multiple independent hypotheses.** When independent hypotheses exist (check `src/analyze/hypothesis-independence.js`):
-
-1. Group by independence (`groupIndependent()`)
-2. For each independent hypothesis, use `subagent_type: "apl-engineer"` (`model: "opus"`) to generate all candidate APLs **in parallel** (single message, multiple Task calls)
-3. Run quick screening sequentially (fast and local — parallelizing doesn't help)
-4. Promote passing candidates to standard fidelity using `/sim-background` for each — all launched **before waiting for any results**
-5. Use `/sim-check` to collect results as they complete; accept/reject each
-6. Re-baseline before starting the next independent group
-
-This lets the remote instance run multiple sequential sims across candidates while you work on synthesis or the next batch.
-
 ### Stop Conditions
 
-- 3 consecutive rejections with no new hypotheses -> escape strategies
+- 3 consecutive rejections with no new hypotheses -> escape strategies (see PHASES.md)
 - 10 consecutive rejections -> stop
 - All categories + escape strategies exhausted -> stop
 - Context approaching ~180k tokens -> checkpoint and suggest restart
 
 ### Context Window Management
 
-- Don't read full sim JSON -- use `iterate.js status` and `compare` for summaries
-- Don't re-read guides every iteration -- once at startup
+- Use `iterate.js status` and `compare` for summaries, not full sim JSON
+- Use `npm run data:query` for targeted spell/talent/interaction lookups
 - Short reasons in accept/reject -- one sentence
 
 ---
 
-## Phase 4: Cross-Build Analysis + Final Report
+## Phase 4: Final Report + Commit
 
-### 4a. Re-rank Builds
-
-```bash
-npm run roster generate               # Regenerate roster with latest SPEC_CONFIG
-```
-
-### 4b. Audit APL Branch Coverage
-
-Every build template has appropriate branching, no dead branches, branch comments explain purpose, shared logic not duplicated.
-
-### 4c. Record Findings
-
-Record via `addFinding()`: id, timestamp, hypothesis, status, scope, archetype, impact, mechanism, aplBranch.
-
-### 4d. Generate Showcase Report
-
-Use the `/showcase` skill (which runs the report generator and opens the result in a browser). Pass `--skip-sims` if the roster was just simmed in Phase 4b.
-
-### 4e. Reports
-
-```bash
-node src/sim/iterate.js summary
-npm run db:dump                  # Verify DB state
-```
-
-### 4f. Session Summary
-
-Build roster coverage, hypotheses tested/accepted/rejected, theories validated/refuted, per-build DPS improvement, APL branches created, remaining untested ideas, showcase location.
-
-### 4g. Stop Remote Instance
-
-Stop the remote instance if still running — don't leave it running post-session:
-
-```bash
-npm run remote:stop
-```
-
-### 4h. Commit
-
-```bash
-git add apls/{spec}/{spec}.simc results/{spec}/
-git commit -m "optimize: {spec} -- N iterations, M accepted, +X.XX% mean weighted DPS"
-```
-
----
+Read `.claude/skills/optimize/PHASES.md` Phase 4 for full steps. Key sequence: re-rank builds -> audit branch coverage -> record findings -> `/showcase` -> summary -> `npm run remote:stop` -> commit.
 
 ## Checkpoint Protocol
 
@@ -539,9 +157,11 @@ On context limits or interruption, save to `results/{spec}/checkpoint.md`: curre
 
 - **Single-build testing** -- ALWAYS test against the full roster
 - **Specialists without theory** -- form root theories BEFORE launching specialists
-- **Sequential specialists** -- ALWAYS launch all 4 in parallel
-- **Flat APL for diverse builds** -- if builds differ (cluster presence, apex rank), the APL MUST branch
-- **Trusting screener output without reasoning** -- observations are not insights
+- **Sequential specialists** -- ALWAYS launch all 4 in a SINGLE message
+- **Flat APL for diverse builds** -- if builds differ, the APL MUST branch
+- **Trusting screener output** -- observations are not insights; reason first
 - **Grinding thresholds without theory** -- test values from mechanical reasoning, not sweeps
-- **Ignoring per-build results** -- aggregate mean hides per-template regressions
-- **Writing optimization results to memory files** -- ALL findings, hypotheses, and iteration results go to `theorycraft.db` via `addFinding()`, `addHypothesis()`, `addIteration()`. NEVER write session results, accepted/rejected hypotheses, or mechanical discoveries to auto-memory (`memory/*.md`). The DB is the canonical store; memory files are for durable workflow knowledge only.
+- **Ignoring per-build results** -- aggregate mean hides regressions; always check distribution
+- **Rejecting partial gains** -- gate them instead; see Step 5 protocol
+- **Writing results to memory** -- ALL findings go to `theorycraft.db`, never auto-memory
+- **Reading full data files** -- use `npm run data:query` for targeted lookups

@@ -23,6 +23,7 @@ import {
   unlinkSync,
 } from "node:fs";
 import { join, dirname, basename, resolve, relative } from "node:path";
+import { cpus } from "node:os";
 import { getSimCores, isRemoteActive } from "./remote.js";
 import { runWorkflow } from "./workflow.js";
 import {
@@ -501,8 +502,9 @@ async function runComparison(candidatePath, tier = "standard") {
   const tierConfig = FIDELITY_TIERS[tier] || FIDELITY_TIERS.standard;
   const simcContent = buildProfilesetContent(candidatePath);
 
-  // Parallel: each scenario gets cores/3 threads
-  const totalCores = getSimCores();
+  // Parallel: each scenario gets cores/N threads
+  const isLocal = tierConfig.target_error >= 0.5 || !isRemoteActive();
+  const totalCores = isLocal ? cpus().length : getSimCores();
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
@@ -664,8 +666,12 @@ async function runWithConcurrency(taskFactories, maxConcurrency) {
 const MIN_THREADS_PER_SIM = 4;
 
 // Calculate optimal concurrency and thread allocation for sim batching.
-function simConcurrency(simCount) {
-  const totalCores = getSimCores();
+// When tierConfig indicates quick fidelity, sims run locally even when remote
+// is active — use local core count to avoid oversubscription.
+function simConcurrency(simCount, tierConfig) {
+  const isLocal =
+    !tierConfig || tierConfig.target_error >= 0.5 || !isRemoteActive();
+  const totalCores = isLocal ? cpus().length : getSimCores();
   const maxConcurrency = Math.max(
     1,
     Math.floor(totalCores / MIN_THREADS_PER_SIM),
@@ -762,7 +768,10 @@ async function runMultiBuildBaseline(aplPath, roster, tierConfig) {
 
 // Profileset-based baseline: constant memory, uses talents= hash overrides.
 async function runMultiBuildBaselineProfileset(aplPath, roster, tierConfig) {
-  const { concurrency, threadsPerSim } = simConcurrency(SCENARIO_KEYS.length);
+  const { concurrency, threadsPerSim } = simConcurrency(
+    SCENARIO_KEYS.length,
+    tierConfig,
+  );
 
   const content = generateRosterProfilesetContent(roster, aplPath);
 
@@ -885,7 +894,7 @@ async function runMultiBuildComparison(
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonBatched(candidatePath, roster, tierConfig) {
   const simCount = SCENARIO_KEYS.length * 2;
-  const { concurrency, threadsPerSim } = simConcurrency(simCount);
+  const { concurrency, threadsPerSim } = simConcurrency(simCount, tierConfig);
 
   const batchSize = batchSizeForFidelity(tierConfig);
   const batches = chunkRoster(roster, batchSize);
@@ -949,7 +958,7 @@ async function runComparisonBatched(candidatePath, roster, tierConfig) {
 // Returns byScenario: { [scenario]: { current: Map, candidate: Map } }
 async function runComparisonProfileset(candidatePath, roster, tierConfig) {
   const simCount = SCENARIO_KEYS.length * 2;
-  const { concurrency, threadsPerSim } = simConcurrency(simCount);
+  const { concurrency, threadsPerSim } = simConcurrency(simCount, tierConfig);
 
   const currentContent = generateRosterProfilesetContent(roster, CURRENT_APL);
   const candidateContent = generateRosterProfilesetContent(

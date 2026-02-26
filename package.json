@@ -31,6 +31,7 @@
     "iterate:summary": "node src/sim/iterate.js summary",
     "iterate:synthesize": "node src/sim/iterate.js synthesize",
     "synthesize": "node src/analyze/synthesizer.js",
+    "data:query": "node src/util/data-query.js",
     "db": "node src/util/db.js",
     "db:migrate": "node src/util/db.js migrate",
     "db:migrate-theory": "node src/util/db.js migrate-theory",
