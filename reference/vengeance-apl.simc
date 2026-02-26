@@ -38,7 +38,7 @@ actions+=/variable,name=fracture_cap_soon,value=cooldown.fracture.full_recharge_
 actions+=/auto_attack
 actions+=/disrupt,if=target.debuff.casting.react
 actions+=/infernal_strike,use_off_gcd=1
-actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&in_combat
+actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&!target.cooldown.pause_action.remains&in_combat
 actions+=/run_action_list,name=ar,if=hero_tree.aldrachi_reaver
 actions+=/run_action_list,name=anni,if=hero_tree.annihilator
 
