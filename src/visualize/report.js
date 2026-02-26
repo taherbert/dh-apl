@@ -963,20 +963,23 @@ function renderTrinketRankings(trinketData) {
     const active = items.filter((r) => !r.eliminated);
     const elim = items.filter((r) => r.eliminated);
     const maxDps = items[0].weighted;
+    const topActive = active.slice(0, 5);
+    const moreActive = active.slice(5);
+    const allMore = [...moreActive, ...elim];
 
-    const elimHtml =
-      elim.length > 0
+    const moreHtml =
+      allMore.length > 0
         ? `<details class="trinket-details">
-        <summary>Below advancement threshold <span class="detail-count">(${elim.length})</span></summary>
-        <div class="trinket-list trinket-list--elim">${renderStrips(elim, showTags, maxDps)}</div>
+        <summary>More trinkets <span class="detail-count">(${allMore.length})</span></summary>
+        <div class="trinket-list trinket-list--elim">${renderStrips(allMore, showTags, maxDps)}</div>
       </details>`
         : "";
 
     return `<div class="subsection">
       <h3>${title}</h3>
       <p class="section-desc">${desc}</p>
-      <div class="trinket-list">${renderStrips(active, showTags, maxDps)}</div>
-      ${elimHtml}
+      <div class="trinket-list">${renderStrips(topActive, showTags, maxDps)}</div>
+      ${moreHtml}
     </div>`;
   }
 
@@ -1074,9 +1077,9 @@ function renderEmbellishmentRankings(embData) {
 
   const { pairs, nullEmb } = embData;
   const allActive = pairs.filter((r) => !r.eliminated);
-  // Show top 3; remainder goes into the "more" section
-  const topActive = allActive.slice(0, 3);
-  const moreActive = allActive.slice(3);
+  // Show top 5; remainder goes into the "more" section
+  const topActive = allActive.slice(0, 5);
+  const moreActive = allActive.slice(5);
   const allElim = [...moreActive, ...pairs.filter((r) => r.eliminated)];
 
   function embDelta(r) {
@@ -1136,7 +1139,7 @@ function renderEmbellishmentRankings(embData) {
   const moreHtml =
     allElim.length > 0
       ? `<details class="trinket-details">
-      <summary>More combinations <span class="detail-count">(${allElim.length})</span></summary>
+      <summary>More embellishments <span class="detail-count">(${allElim.length})</span></summary>
       <div class="trinket-list trinket-list--elim">${renderEmbStrips(allElim, false)}</div>
     </details>`
       : "";
@@ -1232,9 +1235,7 @@ function renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig) {
     .join("");
 
   // Rows
-  let rows = "";
-  for (let i = 0; i < sorted.length; i++) {
-    const trinket = sorted[i];
+  function renderIlvlRow(trinket, i) {
     const topDps = trinket.byIlvl.get(highestIlvl) || 0;
     const delta =
       i === 0
@@ -1255,7 +1256,7 @@ function renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig) {
       })
       .join("");
 
-    rows += `<div class="tc-row">
+    return `<div class="tc-row">
       <div class="tc-rank">${i + 1}</div>
       <div class="tc-body">
         <div class="tc-name-row">
@@ -1268,6 +1269,17 @@ function renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig) {
       <div class="tc-delta${i === 0 ? " tc-delta--best" : ""}">${delta}</div>
     </div>`;
   }
+
+  const topRows = sorted.slice(0, 5).map(renderIlvlRow).join("");
+  const moreRows = sorted.slice(5);
+  const moreHtml =
+    moreRows.length > 0
+      ? `<details class="trinket-details">
+      <summary>More trinkets <span class="detail-count">(${moreRows.length})</span></summary>
+      <div class="tc-chart-more">${moreRows.map((t, i) => renderIlvlRow(t, i + 5)).join("")}</div>
+    </details>`
+      : "";
+  const rows = topRows;
 
   // Best DPS per ilvl tier (for tooltip delta display)
   const bestPerIlvl = {};
@@ -1282,6 +1294,7 @@ function renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig) {
       <div class="tc-legend"><span class="tc-legend-label">Upgrade Track</span>${legend}</div>
       ${rows}
     </div>
+    ${moreHtml}
   </div>`;
 }
 
