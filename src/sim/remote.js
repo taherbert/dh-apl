@@ -44,6 +44,16 @@ const FETCH_STALE_MS = 60 * 60 * 1000; // 1 hour
 const REMOTE_DIR = "/tmp/sim";
 const REMOTE_SIMC = "/opt/simc/engine/simc";
 
+// Signals "remote infrastructure failed, retry locally."
+// Thrown only on SSH/SCP/infrastructure failures, NOT on SimC process errors.
+export class RemoteUnavailableError extends Error {
+  constructor(message, { cause } = {}) {
+    super(message);
+    this.name = "RemoteUnavailableError";
+    this.cause = cause;
+  }
+}
+
 // vCPU counts for compute-optimized families (c6i, c7i, etc.)
 // Pattern: "large" = 2, "xlarge" = 4, "{N}xlarge" = N*4, except 24xlarge = 96
 const SIZE_VCPUS = {
@@ -155,6 +165,130 @@ async function closeSshMaster(ip) {
   }
 }
 
+// --- AWS CLI retry logic ---
+
+const AWS_RETRIABLE = [
+  "Throttling",
+  "RequestLimitExceeded",
+  "ServiceUnavailable",
+  "ECONNRESET",
+  "ETIMEDOUT",
+];
+const AWS_MAX_RETRIES = 2;
+
+function isRetriableAwsError(e) {
+  const msg = (e.stderr || "") + (e.message || "");
+  return AWS_RETRIABLE.some((code) => msg.includes(code));
+}
+
+async function awsCmdOnce(args, opts = {}) {
+  const { stdout } = await execAsync("aws", args, {
+    timeout: 30000,
+    env: { ...process.env, AWS_RETRY_MODE: "standard" },
+    ...opts,
+  });
+  return stdout.trim();
+}
+
+async function awsCmd(args, opts = {}) {
+  for (let attempt = 0; attempt <= AWS_MAX_RETRIES; attempt++) {
+    try {
+      return await awsCmdOnce(args, opts);
+    } catch (e) {
+      if (attempt < AWS_MAX_RETRIES && isRetriableAwsError(e)) {
+        const delay = 1000 * (attempt + 1);
+        console.log(
+          `  AWS call retrying in ${delay}ms (${e.message?.slice(0, 60)})...`,
+        );
+        await new Promise((r) => setTimeout(r, delay));
+      } else {
+        throw e;
+      }
+    }
+  }
+}
+
+async function awsJson(args, opts = {}) {
+  return JSON.parse(await awsCmd([...args, "--output", "json"], opts));
+}
+
+// --- Security group auto-update ---
+
+async function ensureSecurityGroupAccess() {
+  const sgId = remoteConfig().securityGroup;
+  if (!sgId) return;
+
+  try {
+    const resp = await fetch("https://checkip.amazonaws.com", {
+      signal: AbortSignal.timeout(5000),
+    });
+    const currentIp = (await resp.text()).trim();
+    if (!currentIp || !/^\d+\.\d+\.\d+\.\d+$/.test(currentIp)) return;
+
+    const sg = await awsJson([
+      "ec2",
+      "describe-security-groups",
+      "--group-ids",
+      sgId,
+      "--region",
+      region(),
+    ]);
+    const rules = sg.SecurityGroups?.[0]?.IpPermissions || [];
+    const sshRules = rules.filter(
+      (r) => r.FromPort === 22 && r.ToPort === 22 && r.IpProtocol === "tcp",
+    );
+
+    const currentCidr = `${currentIp}/32`;
+    const alreadyAuthorized = sshRules.some((r) =>
+      r.IpRanges?.some((range) => range.CidrIp === currentCidr),
+    );
+
+    if (alreadyAuthorized) return;
+
+    // Revoke stale SSH rules
+    const staleCidrs = sshRules.flatMap((r) =>
+      (r.IpRanges || []).map((range) => range.CidrIp),
+    );
+    for (const cidr of staleCidrs) {
+      console.log(`  Revoking stale SG rule: ${cidr}`);
+      await awsCmd([
+        "ec2",
+        "revoke-security-group-ingress",
+        "--group-id",
+        sgId,
+        "--protocol",
+        "tcp",
+        "--port",
+        "22",
+        "--cidr",
+        cidr,
+        "--region",
+        region(),
+      ]).catch(() => {});
+    }
+
+    // Add current IP
+    console.log(`  Authorizing current IP: ${currentCidr}`);
+    await awsCmd([
+      "ec2",
+      "authorize-security-group-ingress",
+      "--group-id",
+      sgId,
+      "--protocol",
+      "tcp",
+      "--port",
+      "22",
+      "--cidr",
+      currentCidr,
+      "--region",
+      region(),
+    ]);
+  } catch (e) {
+    // Non-fatal — existing rule may still work
+    console.log(`  SG auto-update skipped: ${e.message}`);
+  }
+}
+
 // --- SimC version tracking ---
 
 function isFetchStale() {
@@ -208,7 +342,7 @@ function updateConfigAmiId(amiId) {
   config.remote.amiId = amiId;
 }
 
-async function ensureAmiCurrent({ onDemand, buildInstanceType } = {}) {
+async function ensureAmiCurrent({ buildInstanceType } = {}) {
   const c = remoteConfig();
   console.log("Checking simc version...");
   const localCommit = await getLocalSimcCommit({ fetch: true });
@@ -226,7 +360,7 @@ async function ensureAmiCurrent({ onDemand, buildInstanceType } = {}) {
     console.log(`No AMI configured. Building for simc @ ${localCommit}...`);
   }
 
-  const amiId = await buildAmi({ onDemand, buildInstanceType });
+  const amiId = await buildAmi({ buildInstanceType });
   updateConfigAmiId(amiId);
 }
 
@@ -248,15 +382,16 @@ function syncLocalSimcBin() {
 
 // --- AZ fallback for capacity errors ---
 
-// Errors that indicate the specific AZ lacks capacity — retrying another AZ may succeed
-const AZ_RETRIABLE_ERRORS = [
-  "InsufficientInstanceCapacity",
-  "Unsupported", // some AZs don't support certain instance types
-];
+const AZ_RETRIABLE_ERRORS = ["InsufficientInstanceCapacity", "Unsupported"];
 
 function isCapacityError(e) {
   const msg = (e.stderr || "") + (e.message || "");
   return AZ_RETRIABLE_ERRORS.some((code) => msg.includes(code));
+}
+
+function isQuotaError(e) {
+  const msg = (e.stderr || "") + (e.message || "");
+  return msg.includes("MaxSpotInstanceCountExceeded");
 }
 
 async function getAvailableAzs(regionName) {
@@ -302,6 +437,37 @@ async function launchWithAzFallback(launchArgs, regionName, { subnetId } = {}) {
   }
 }
 
+// --- Spot request cleanup ---
+
+async function cancelOrphanSpotRequests() {
+  try {
+    const sirs = await awsJson([
+      "ec2",
+      "describe-spot-instance-requests",
+      "--filters",
+      "Name=tag:project,Values=dh-apl",
+      "Name=state,Values=open,active",
+      "--region",
+      region(),
+      "--query",
+      "SpotInstanceRequests[].SpotInstanceRequestId",
+    ]);
+    if (sirs.length > 0) {
+      console.log(`  Cancelling ${sirs.length} orphan spot request(s)...`);
+      await awsCmd([
+        "ec2",
+        "cancel-spot-instance-requests",
+        "--spot-instance-request-ids",
+        ...sirs,
+        "--region",
+        region(),
+      ]);
+    }
+  } catch {
+    // Best effort
+  }
+}
+
 // --- State management ---
 
 function readState() {
@@ -320,18 +486,6 @@ function writeState(state) {
 
 function clearState() {
   if (existsSync(STATE_PATH)) unlinkSync(STATE_PATH);
-}
-
-async function awsCmd(args, opts = {}) {
-  const { stdout } = await execAsync("aws", args, {
-    timeout: 30000,
-    ...opts,
-  });
-  return stdout.trim();
-}
-
-async function awsJson(args, opts = {}) {
-  return JSON.parse(await awsCmd([...args, "--output", "json"], opts));
 }
 
 async function waitSsh(ip, attempts = 30) {
@@ -371,7 +525,7 @@ export function isRemoteActive() {
 // instance. Standard/confirm go remote only when the remote has meaningfully
 // more cores than local (the ~0.5s SCP overhead is negligible at those fidelities).
 const QUICK_TE_THRESHOLD = 0.5;
-const REMOTE_SPEEDUP_MIN = 2; // require at least 2× local core count to justify SSH overhead
+const REMOTE_SPEEDUP_MIN = 2; // require at least 2x local core count to justify SSH overhead
 
 export function shouldUseRemote(args) {
   if (!isRemoteActive()) return false;
@@ -402,13 +556,41 @@ export async function stopRemote() {
   await terminateInstance();
 }
 
+// --- Remote sim execution with error distinction ---
+
+async function scpWithRetry(scpArgs, opts, label, retryMs = 3000) {
+  try {
+    await execAsync("scp", scpArgs, opts);
+  } catch {
+    console.log(`  ${label} failed, retrying in ${retryMs / 1000}s...`);
+    await new Promise((r) => setTimeout(r, retryMs));
+    await execAsync("scp", scpArgs, opts);
+  }
+}
+
+async function checkInstanceState(instanceId) {
+  try {
+    const desc = await awsJson([
+      "ec2",
+      "describe-instances",
+      "--instance-ids",
+      instanceId,
+      "--region",
+      region(),
+    ]);
+    return desc.Reservations?.[0]?.Instances?.[0]?.State?.Name ?? "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
 export async function runSimcRemote(args) {
   const state = readState();
   if (!state) {
     throw new Error("No remote instance active. Run: npm run remote:start");
   }
 
-  const { publicIp } = state;
+  const { publicIp, instanceId } = state;
   const sa = sshArgs(publicIp);
   const target = sshTarget(publicIp);
 
@@ -462,11 +644,22 @@ export async function runSimcRemote(args) {
   try {
     const t0 = performance.now();
 
-    await execAsync(
-      "scp",
-      [...sa, localSimcPath, `${target}:${remoteSimcPath}`],
-      { timeout: 30000 },
-    );
+    // SCP upload — retry once, then throw RemoteUnavailableError
+    try {
+      await scpWithRetry(
+        [...sa, localSimcPath, `${target}:${remoteSimcPath}`],
+        { timeout: 30000 },
+        "SCP upload",
+        3000,
+      );
+    } catch (e) {
+      const awsState = await checkInstanceState(instanceId);
+      if (awsState !== "running") clearState();
+      throw new RemoteUnavailableError(
+        `SCP upload failed (instance ${awsState}): ${e.message}`,
+        { cause: e },
+      );
+    }
     const t1 = performance.now();
 
     // NUMA interleaving for even memory distribution across sockets
@@ -476,23 +669,50 @@ export async function runSimcRemote(args) {
       REMOTE_SIMC,
       ...remoteArgs.map(shellEscape),
     ].join(" ");
+
     try {
       await execAsync("ssh", [...sa, target, cmd], {
         timeout: 1800000,
         maxBuffer: 100 * 1024 * 1024,
       });
     } catch (e) {
+      // Exit code 255 = SSH connection failure (instance dead, network issue)
+      if (e.code === 255 || e.status === 255) {
+        const awsState = await checkInstanceState(instanceId);
+        if (awsState !== "running") {
+          console.log(
+            `  Instance ${instanceId} is ${awsState} — clearing remote state`,
+          );
+        }
+        clearState();
+        throw new RemoteUnavailableError(
+          `SSH connection lost (instance ${awsState}): ${e.message}`,
+          { cause: e },
+        );
+      }
+      // Any other exit code = SimC process error — do NOT fall back to local
       if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
       throw new Error(`Remote SimC failed: ${e.message}`);
     }
     const t2 = performance.now();
 
+    // SCP download — retry once, throw RemoteUnavailableError on persistent failure
     if (localJsonPath && remoteJsonPath) {
-      await execAsync(
-        "scp",
-        [...sa, `${target}:${remoteJsonPath}`, localJsonPath],
-        { timeout: 60000 },
-      );
+      try {
+        await scpWithRetry(
+          [...sa, `${target}:${remoteJsonPath}`, localJsonPath],
+          { timeout: 60000 },
+          "SCP download",
+          5000,
+        );
+      } catch (e) {
+        const awsState = await checkInstanceState(instanceId);
+        if (awsState !== "running") clearState();
+        throw new RemoteUnavailableError(
+          `SCP download failed (instance ${awsState}): ${e.message}`,
+          { cause: e },
+        );
+      }
     }
     const t3 = performance.now();
 
@@ -537,16 +757,22 @@ function tagSpec(name) {
         { Key: "project", Value: "dh-apl" },
       ],
     },
+    {
+      ResourceType: "spot-instances-request",
+      Tags: [
+        { Key: "Name", Value: name },
+        { Key: "project", Value: "dh-apl" },
+      ],
+    },
   ]);
 }
 
-// Build common EC2 run-instances args, then append optional spot/sg/subnet.
+// Always spot — on-demand vCPU quota is insufficient for c7i.24xlarge
 function buildLaunchArgs({
   imageId,
   instanceType,
   userData,
   tagName,
-  onDemand,
   extraArgs = [],
 }) {
   const c = remoteConfig();
@@ -567,12 +793,11 @@ function buildLaunchArgs({
     region(),
     "--count",
     "1",
+    "--instance-market-options",
+    spotMarketOptions(),
     ...extraArgs,
   ];
 
-  if (!onDemand) {
-    args.push("--instance-market-options", spotMarketOptions());
-  }
   if (c.securityGroup) {
     args.push("--security-group-ids", c.securityGroup);
   }
@@ -626,9 +851,27 @@ async function terminateById(instanceId) {
   ]);
 }
 
+async function getSpotRequestId(instanceId) {
+  try {
+    const desc = await awsJson([
+      "ec2",
+      "describe-instances",
+      "--instance-ids",
+      instanceId,
+      "--region",
+      region(),
+    ]);
+    return (
+      desc.Reservations?.[0]?.Instances?.[0]?.SpotInstanceRequestId ?? null
+    );
+  } catch {
+    return null;
+  }
+}
+
 // --- Instance lifecycle ---
 
-async function launchInstance({ instanceType, onDemand } = {}) {
+async function launchInstance({ instanceType } = {}) {
   // Prevent duplicate launches that orphan running instances
   const existing = readState();
   if (existing) {
@@ -642,8 +885,12 @@ async function launchInstance({ instanceType, onDemand } = {}) {
     clearState();
   }
 
+  // Auto-update SG rule if IP changed
+  console.log("Checking security group access...");
+  await ensureSecurityGroupAccess();
+
   // Ensure AMI + local binary match origin/{branch}
-  await ensureAmiCurrent({ onDemand });
+  await ensureAmiCurrent();
   syncLocalSimcBin();
 
   const c = remoteConfig();
@@ -660,13 +907,29 @@ async function launchInstance({ instanceType, onDemand } = {}) {
     instanceType: actualType,
     userData,
     tagName: "dh-apl-sim",
-    onDemand,
   });
 
-  console.log(`Launching ${onDemand ? "on-demand" : "spot"} instance...`);
-  const result = await launchWithAzFallback(launchArgs, region(), {
-    subnetId: c.subnetId,
-  });
+  console.log("Launching spot instance...");
+  let result;
+  try {
+    result = await launchWithAzFallback(launchArgs, region(), {
+      subnetId: c.subnetId,
+    });
+  } catch (e) {
+    if (isQuotaError(e)) {
+      // Quota exceeded — clean orphan spot requests and retry once
+      console.log("Spot quota exceeded. Cleaning orphan requests...");
+      await cancelOrphanSpotRequests();
+      console.log("  Waiting 10s for quota release...");
+      await new Promise((r) => setTimeout(r, 10000));
+      result = await launchWithAzFallback(launchArgs, region(), {
+        subnetId: c.subnetId,
+      });
+    } else {
+      throw e;
+    }
+  }
+
   const instanceId = result.Instances[0].InstanceId;
   console.log(`Instance ${instanceId} launched. Waiting for running state...`);
 
@@ -712,7 +975,7 @@ async function terminateInstance() {
   const state = readState();
 
   if (!state) {
-    // No local state -- check AWS for orphaned instances as safety net
+    // No local state -- check AWS for orphaned instances and spot requests
     console.log("No local state. Checking AWS for running dh-apl instances...");
     try {
       const desc = await awsJson([
@@ -729,12 +992,14 @@ async function terminateInstance() {
       );
       if (orphans.length === 0) {
         console.log("No running dh-apl instances found.");
-        return;
+      } else {
+        for (const id of orphans) {
+          console.log(`Terminating orphaned instance ${id}...`);
+          await terminateById(id);
+        }
       }
-      for (const id of orphans) {
-        console.log(`Terminating orphaned instance ${id}...`);
-        await terminateById(id);
-      }
+      // Also cancel any orphan spot requests that consume quota
+      await cancelOrphanSpotRequests();
       console.log("Done.");
     } catch (e) {
       console.error(`AWS lookup failed: ${e.message}`);
@@ -744,7 +1009,37 @@ async function terminateInstance() {
 
   await closeSshMaster(state.publicIp);
   console.log(`Terminating ${state.instanceId}...`);
+
+  // Get spot request ID before terminating so we can cancel it for quota release
+  const sirId = await getSpotRequestId(state.instanceId);
+
   await terminateById(state.instanceId);
+
+  if (sirId) {
+    await awsCmd([
+      "ec2",
+      "cancel-spot-instance-requests",
+      "--spot-instance-request-ids",
+      sirId,
+      "--region",
+      region(),
+    ]).catch(() => {});
+  }
+
+  // Wait for instance termination (best-effort, 120s timeout)
+  await awsCmd(
+    [
+      "ec2",
+      "wait",
+      "instance-terminated",
+      "--instance-ids",
+      state.instanceId,
+      "--region",
+      region(),
+    ],
+    { timeout: 120000 },
+  ).catch(() => {});
+
   clearState();
   console.log("Instance terminated.");
 }
@@ -798,7 +1093,7 @@ async function getStatus() {
   }
 }
 
-async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
+async function buildAmi({ buildInstanceType } = {}) {
   const c = remoteConfig();
 
   console.log("Finding latest Ubuntu 24.04 AMI...");
@@ -827,7 +1122,6 @@ async function buildAmi({ buildInstanceType, onDemand = false } = {}) {
     instanceType: buildInstanceType || c.instanceType || "c7i.24xlarge",
     userData: encodeUserData("#!/bin/bash\nshutdown -h +30"),
     tagName: "dh-apl-ami-build",
-    onDemand,
     extraArgs: [
       "--block-device-mappings",
       JSON.stringify([
@@ -1028,7 +1322,6 @@ function parseCliArgs() {
   const extra = process.argv.slice(3);
   return {
     positional: extra.find((a) => !a.startsWith("--")),
-    onDemand: extra.includes("--on-demand"),
   };
 }
 
@@ -1049,8 +1342,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   try {
     switch (cmd) {
       case "start": {
-        const { positional, onDemand } = parseCliArgs();
-        await launchInstance({ instanceType: positional, onDemand });
+        const { positional } = parseCliArgs();
+        await launchInstance({ instanceType: positional });
         break;
       }
       case "stop":
@@ -1060,8 +1353,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         await getStatus();
         break;
       case "build-ami": {
-        const { positional, onDemand } = parseCliArgs();
-        await buildAmi({ buildInstanceType: positional, onDemand });
+        const { positional } = parseCliArgs();
+        await buildAmi({ buildInstanceType: positional });
         break;
       }
     }
