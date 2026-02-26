@@ -1,7 +1,13 @@
 import { execFileSync } from "node:child_process";
 import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
-import { shouldUseRemote, runSimcRemote, getSimCores } from "./remote.js";
+import { cpus } from "node:os";
+import {
+  shouldUseRemote,
+  runSimcRemote,
+  getSimCores,
+  RemoteUnavailableError,
+} from "./remote.js";
 import { basename, resolve } from "node:path";
 
 import {
@@ -116,6 +122,33 @@ export function runSim(profilePath, scenario = "st", opts = {}) {
   return result;
 }
 
+function patchThreadsForLocal(args) {
+  const localCores = cpus().length;
+  return args.map((a) => {
+    if (a.startsWith("threads=")) return `threads=${localCores}`;
+    if (a.startsWith("profileset_work_threads="))
+      return `profileset_work_threads=${Math.max(1, Math.floor(localCores / 4))}`;
+    if (a.startsWith("profileset_init_threads="))
+      return `profileset_init_threads=${Math.min(4, Math.max(1, Math.floor(localCores / 3)))}`;
+    return a;
+  });
+}
+
+// Runs simc via remote when eligible, falling back to local on infrastructure failure.
+export async function execSimcWithFallback(args, execFn) {
+  if (shouldUseRemote(args)) {
+    try {
+      await runSimcRemote(args);
+    } catch (e) {
+      if (!(e instanceof RemoteUnavailableError)) throw e;
+      console.log(`  Remote unavailable: ${e.message} — falling back to local`);
+      await execFn(patchThreadsForLocal(args));
+    }
+  } else {
+    await execFn(args);
+  }
+}
+
 export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
   const { config, args, jsonPath, htmlPath } = prepareSim(
     profilePath,
@@ -125,15 +158,13 @@ export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
 
   console.log(`Running ${config.name}...`);
   try {
-    if (shouldUseRemote(args)) {
-      await runSimcRemote(args);
-    } else {
-      await execFileAsync(SIMC, args, {
+    await execSimcWithFallback(args, (a) =>
+      execFileAsync(SIMC, a, {
         encoding: "utf-8",
         maxBuffer: 50 * 1024 * 1024,
         timeout: 300000,
-      });
-    }
+      }),
+    );
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-5).join("\n"));
     throw new Error(`SimC failed: ${e.message}`);
@@ -286,14 +317,12 @@ export async function runMultiActorAsync(
 
   console.log(`Running multi-actor ${config.name} (${label})...`);
   try {
-    if (shouldUseRemote(args)) {
-      await runSimcRemote(args);
-    } else {
-      await execFileAsync(SIMC, args, {
+    await execSimcWithFallback(args, (a) =>
+      execFileAsync(SIMC, a, {
         maxBuffer: 100 * 1024 * 1024,
         timeout: 600000,
-      });
-    }
+      }),
+    );
   } catch (e) {
     if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
     throw new Error(`SimC multi-actor failed: ${e.message}`);

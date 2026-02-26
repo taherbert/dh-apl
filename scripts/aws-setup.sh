@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-REGION="${1:-us-east-1}"
+REGION="${1:-us-west-1}"
 PROJECT="dh-apl"
 SG_NAME="${PROJECT}-sim"
 KEY_NAME="${PROJECT}"
