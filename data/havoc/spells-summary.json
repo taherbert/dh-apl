@@ -1,0 +1,1822 @@
+[
+  {
+    "id": 162243,
+    "name": "Demon's Bite",
+    "school": "Physical",
+    "gcd": 1.5,
+    "generates": [
+      "25 fury"
+    ],
+    "description": "Quickly attack for 0 Physical damage. |cFFFFFFFFGenerates ${$m3+$258876s3} to ${$M3+$258876s4} Fury.|r"
+  },
+  {
+    "id": 162264,
+    "name": "Metamorphosis",
+    "school": "Chaos",
+    "gcd": 0,
+    "duration": 20,
+    "description": "Leap into the air and land with explosive force, dealing 0 Chaos damage to enemies within 8 yds, and stunning them for 3 sec. Players are Dazed for $247121d instead. Upon landing, you are transformed into a hellish demon for 20 sec, greatly empowering your Chaos Strike and Blade Dance abilities and gaining 20% Haste$?(s235893&s204909)[, 0% Versatility, and 0% Leech]?(s235893&!s204909[ and 0% Versatility]?(s204909&!s235893)[ and 0% Leech][]."
+  },
+  {
+    "id": 162794,
+    "name": "Chaos Strike",
+    "school": "Chaos",
+    "resource": "40 Fury",
+    "gcd": 1.5,
+    "description": "Slice your target for 0 Chaos damage. Chaos Strike has a ${$min($197125h,100)}% chance to refund 20 Fury."
+  },
+  {
+    "id": 179057,
+    "name": "Chaos Nova",
+    "school": "Chromatic",
+    "resource": "25 Fury",
+    "gcd": 1.5,
+    "cooldown": 45,
+    "duration": 3,
+    "aoeRadius": 8,
+    "description": "Unleash an eruption of fel energy, dealing 0 Chaos damage and stunning all nearby enemies for 3 sec."
+  },
+  {
+    "id": 183782,
+    "name": "Disrupting Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Disrupt generates 30 Fury on a successful interrupt."
+  },
+  {
+    "id": 185123,
+    "name": "Throw Glaive",
+    "school": "Physical",
+    "resource": "25 Fury",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 9
+    },
+    "description": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
+  },
+  {
+    "id": 185164,
+    "name": "Mastery: Demonic Presence",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your Chaos damage by 0.1% and your movement speed by 0.1%."
+  },
+  {
+    "id": 187827,
+    "name": "Metamorphosis",
+    "school": "Chaos",
+    "gcd": 0,
+    "cooldown": 1,
+    "charges": {
+      "count": 1,
+      "cooldown": 120
+    },
+    "duration": 15,
+    "description": "Transform to demon form for 15 sec, increasing current health by 40%, healing for that amount, and increasing Armor by 200%."
+  },
+  {
+    "id": 188499,
+    "name": "Blade Dance",
+    "school": "Physical",
+    "resource": "35 Fury",
+    "gcd": 1.5,
+    "cooldown": 15,
+    "duration": 1,
+    "aoeRadius": 8,
+    "categoryCooldown": 15,
+    "description": "Strike your primary target for $<firstbloodDmg> Chaos damage and nearby enemies for $<baseDmg> Physical damage. Deals reduced damage beyond 5 targets."
+  },
+  {
+    "id": 191427,
+    "name": "Metamorphosis",
+    "school": "Physical",
+    "gcd": 1.5,
+    "cooldown": 120,
+    "aoeRadius": 5,
+    "categoryCooldown": 120,
+    "description": "Leap into the air and land with explosive force, dealing 0 Chaos damage to enemies within 8 yds, and stunning them for 3 sec. Players are Dazed for $247121d instead. Upon landing, you are transformed into a hellish demon for 20 sec, greatly empowering your Chaos Strike and Blade Dance abilities and gaining 20% Haste$?(s235893&s204909)[, 0% Versatility, and 0% Leech]?(s235893&!s204909[ and 0% Versatility]?(s204909&!s235893)[ and 0% Leech][]."
+  },
+  {
+    "id": 192611,
+    "name": "Fel Rush",
+    "school": "Chaos",
+    "gcd": 0,
+    "aoeRadius": 23,
+    "description": "Rush forward, incinerating anything in your path for 0 Chaos damage."
+  },
+  {
+    "id": 193840,
+    "name": "Chaos Strike",
+    "school": "Physical",
+    "gcd": 0,
+    "generates": [
+      "20 fury"
+    ],
+    "description": "Slice your target for 0 Chaos damage. Chaos Strike has a ${$min($197125h,100)}% chance to refund 20 Fury."
+  },
+  {
+    "id": 195072,
+    "name": "Fel Rush",
+    "school": "Physical",
+    "gcd": 0.5,
+    "cooldown": 1,
+    "charges": {
+      "count": 1,
+      "cooldown": 10
+    },
+    "categoryCooldown": 0.5,
+    "description": "Rush forward, incinerating anything in your path for 0 Chaos damage."
+  },
+  {
+    "id": 196718,
+    "name": "Darkness",
+    "school": "Physical",
+    "gcd": 1.5,
+    "cooldown": 300,
+    "duration": 8,
+    "description": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec. Chance to avoid damage increased by 100% when not in a raid."
+  },
+  {
+    "id": 197125,
+    "name": "Chaos Strike (desc=Passive)",
+    "school": "Physical",
+    "passive": true,
+    "description": "Slice your target for 0 Chaos damage. Chaos Strike has a ${$min($197125h,100)}% chance to refund 20 Fury."
+  },
+  {
+    "id": 198013,
+    "name": "Eye Beam",
+    "school": "Chromatic",
+    "resource": "30 Fury",
+    "gcd": 1.5,
+    "cooldown": 30,
+    "duration": 2,
+    "categoryCooldown": 30,
+    "description": "Blasts all enemies in front of you, for up to $<dmg> Chaos damage over 2 sec. Deals reduced damage beyond 5 targets. When Eye Beam finishes fully channeling, your Haste is increased by an additional 8% for 8 sec."
+  },
+  {
+    "id": 198793,
+    "name": "Vengeful Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "cooldown": 0.5,
+    "duration": 1,
+    "categoryCooldown": 25,
+    "description": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
+  },
+  {
+    "id": 198813,
+    "name": "Vengeful Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 3,
+    "aoeRadius": 5,
+    "description": "Remove all snares and vault away. Nearby enemies take 0 Physical damage and have their movement speed reduced by -70% for 3 sec."
+  },
+  {
+    "id": 199547,
+    "name": "Chaos Strike",
+    "school": "Chaos",
+    "gcd": 0,
+    "description": "Slice your target for 0 Chaos damage. Chaos Strike has a ${$min($197125h,100)}% chance to refund 20 Fury."
+  },
+  {
+    "id": 199552,
+    "name": "Blade Dance",
+    "school": "Physical",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Strike your primary target for $<firstbloodDmg> Chaos damage and nearby enemies for $<baseDmg> Physical damage. Deals reduced damage beyond 5 targets."
+  },
+  {
+    "id": 200166,
+    "name": "Metamorphosis",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 3,
+    "aoeRadius": 8,
+    "description": "Leap into the air and land with explosive force, dealing 0 Chaos damage to enemies within 8 yds, and stunning them for 3 sec. Players are Dazed for $247121d instead. Upon landing, you are transformed into a hellish demon for 20 sec, greatly empowering your Chaos Strike and Blade Dance abilities and gaining 20% Haste$?(s235893&s204909)[, 0% Versatility, and 0% Leech]?(s235893&!s204909[ and 0% Versatility]?(s204909&!s235893)[ and 0% Leech][]."
+  },
+  {
+    "id": 201427,
+    "name": "Annihilation",
+    "school": "Magic",
+    "resource": "40 Fury",
+    "gcd": 1.5,
+    "description": "Slice your target for 0 Chaos damage. Annihilation has a $197125h% chance to refund 20 Fury."
+  },
+  {
+    "id": 201428,
+    "name": "Annihilation",
+    "school": "Chaos",
+    "gcd": 0,
+    "description": "Slice your target for 0 Chaos damage. Annihilation has a $197125h% chance to refund 20 Fury."
+  },
+  {
+    "id": 203550,
+    "name": "Blind Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Eye Beam generates 30 Fury every second, has 10% increased duration, and deals 10% increased damage."
+  },
+  {
+    "id": 203555,
+    "name": "Demon Blades",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your auto attacks deal an additional 0 Shadow damage and generate $203796m2-$203796M2 Fury."
+  },
+  {
+    "id": 203650,
+    "name": "Prepared",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 10,
+    "description": "$@spelldesc203551"
+  },
+  {
+    "id": 203796,
+    "name": "Demon Blades",
+    "school": "Shadow",
+    "gcd": 1.5,
+    "generates": [
+      "11.5 fury"
+    ],
+    "description": "Your auto attacks deal an additional 0 Shadow damage and generate $203796m2-$203796M2 Fury."
+  },
+  {
+    "id": 204909,
+    "name": "Soul Rending",
+    "school": "Physical",
+    "passive": true,
+    "description": "Leech increased by 6%. Gain an additional 6% leech while Metamorphosis is active."
+  },
+  {
+    "id": 205411,
+    "name": "Desperate Instincts",
+    "school": "Physical",
+    "passive": true,
+    "description": "Blur now reduces damage taken by an additional ${$abs($m3)}%. Additionally, damage taken below 35% Health is reduced by 10%."
+  },
+  {
+    "id": 206416,
+    "name": "First Blood",
+    "school": "Physical",
+    "passive": true,
+    "description": "Blade Dance deals $<firstbloodDmg> Chaos damage to the first target struck."
+  },
+  {
+    "id": 206476,
+    "name": "Exergy",
+    "school": "Physical",
+    "passive": true,
+    "description": "The Hunt and Vengeful Retreat increase your damage by 5% for 20 sec."
+  },
+  {
+    "id": 206478,
+    "name": "Demonic Appetite",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos Strike has a chance to spawn a Lesser Soul Fragment. Consuming any Soul Fragment grants 20 Fury."
+  },
+  {
+    "id": 207347,
+    "name": "Aura of Pain",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation grants 5 additional Fury over its duration.][Increases the critical strike chance of Immolation Aura by 6%.]"
+  },
+  {
+    "id": 207548,
+    "name": "Agonizing Flames",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura increases your movement speed by 10% and its duration is increased by 50%."
+  },
+  {
+    "id": 207684,
+    "name": "Sigil of Misery",
+    "school": "Physical",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 120
+    },
+    "duration": 2,
+    "aoeRadius": 8,
+    "description": "Place a Sigil of Misery at the target location that activates after 2 sec. Causes all enemies affected by the sigil to cower in fear, disorienting them for 15 sec."
+  },
+  {
+    "id": 207685,
+    "name": "Sigil of Misery",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 15,
+    "aoeRadius": 8,
+    "description": "Disorient affected enemies for 15 sec."
+  },
+  {
+    "id": 208628,
+    "name": "Exergy",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 20,
+    "description": "The Hunt and Vengeful Retreat increase your damage by 5% for 20 sec."
+  },
+  {
+    "id": 209281,
+    "name": "Quickened Sigils",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your Sigils activate 1 second faster."
+  },
+  {
+    "id": 209426,
+    "name": "Darkness",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Summons darkness around you in an 8 yd radius, granting friendly targets a 15% chance to avoid all damage from an attack. Lasts 8 sec. Chance to avoid damage increased by $s3% when not in a raid."
+  },
+  {
+    "id": 210152,
+    "name": "Death Sweep",
+    "school": "Physical",
+    "resource": "35 Fury",
+    "gcd": 1.5,
+    "cooldown": 9,
+    "aoeRadius": 8,
+    "categoryCooldown": 9,
+    "description": "Strike your primary target for $<firstbloodDmg> Chaos damage and 5 nearby enemies for $<baseDmg> Physical damage. Deals reduced damage beyond 5 targets."
+  },
+  {
+    "id": 210153,
+    "name": "Death Sweep",
+    "school": "Physical",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Strike your primary target for $<firstbloodDmg> Chaos damage and 5 nearby enemies for $<baseDmg> Physical damage. Deals reduced damage beyond 5 targets."
+  },
+  {
+    "id": 212106,
+    "name": "Fel Devastation",
+    "school": "Fire",
+    "gcd": 0,
+    "description": "$@spelldesc212084"
+  },
+  {
+    "id": 212612,
+    "name": "Havoc Demon Hunter",
+    "school": "Physical",
+    "passive": true
+  },
+  {
+    "id": 213010,
+    "name": "Charred Warblades",
+    "school": "Physical",
+    "passive": true,
+    "description": "You heal for 3% of all Fire damage you deal."
+  },
+  {
+    "id": 213243,
+    "name": "Felblade",
+    "school": "Fire",
+    "gcd": 0,
+    "generates": [
+      "15 fury"
+    ],
+    "description": "Charge to your target and deal $213243sw2 Fire damage. $?s263642[|cFFFFFFFFGenerates 15 Fury.|r]?s203513[|cFFFFFFFFGenerates 15 Fury.|r]?a203555[|cFFFFFFFFGenerates 15 Fury.|r][|cFFFFFFFFGenerates 15 Fury.|r]"
+  },
+  {
+    "id": 213405,
+    "name": "Master of the Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by -50% for 6 sec."
+  },
+  {
+    "id": 213410,
+    "name": "Demonic",
+    "school": "Physical",
+    "passive": true,
+    "description": "Eye Beam causes you to enter demon form for 5 sec after it finishes dealing damage."
+  },
+  {
+    "id": 217832,
+    "name": "Imprison",
+    "school": "Shadow",
+    "gcd": 1.5,
+    "cooldown": 45,
+    "duration": 60,
+    "description": "Imprisons a demon, beast, or humanoid, incapacitating them for 60 sec. Damage may cancel the effect. Limit 1."
+  },
+  {
+    "id": 218903,
+    "name": "Disrupt",
+    "school": "Chaos",
+    "gcd": 0,
+    "generates": [
+      "30 fury",
+      "300 none"
+    ],
+    "description": "$@spelldesc183752"
+  },
+  {
+    "id": 222031,
+    "name": "Chaos Strike",
+    "school": "Chaos",
+    "gcd": 0,
+    "description": "Slice your target for 0 Chaos damage. Chaos Strike has a ${$min($197125h,100)}% chance to refund 20 Fury."
+  },
+  {
+    "id": 227518,
+    "name": "Annihilation",
+    "school": "Chaos",
+    "gcd": 0,
+    "description": "Slice your target for 0 Chaos damage. Annihilation has a $197125h% chance to refund 20 Fury."
+  },
+  {
+    "id": 232893,
+    "name": "Felblade",
+    "school": "Physical",
+    "gcd": 0.5,
+    "cooldown": 12,
+    "description": "Charge to your target and deal $213243sw2 Fire damage. $?s263642[|cFFFFFFFFGenerates 15 Fury.|r]?s203513[|cFFFFFFFFGenerates 15 Fury.|r]?a203555[|cFFFFFFFFGenerates 15 Fury.|r][|cFFFFFFFFGenerates 15 Fury.|r]"
+  },
+  {
+    "id": 258860,
+    "name": "Essence Break",
+    "school": "Chaos",
+    "gcd": 1.5,
+    "cooldown": 40,
+    "aoeRadius": 10,
+    "description": "Slash all enemies in front of you for 0 Chaos damage, causing Chaos Strike and Blade Dance to deal 0 Chaos damage to them for 4 sec. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 258876,
+    "name": "Insatiable Hunger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Demon's Bite deals 50% more damage and generates 5 to 10 additional Fury."
+  },
+  {
+    "id": 258881,
+    "name": "Trail of Ruin",
+    "school": "Physical",
+    "passive": true,
+    "description": "The final slash of Blade Dance inflicts an additional 0 Chaos damage over 4 sec."
+  },
+  {
+    "id": 258883,
+    "name": "Trail of Ruin",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 4,
+    "description": "The final slash of Blade Dance inflicts an additional 0 Chaos damage over 4 sec."
+  },
+  {
+    "id": 258887,
+    "name": "Cycle of Hatred",
+    "school": "Physical",
+    "passive": true,
+    "description": "Activating Eye Beam reduces the cooldown of your next Eye Beam by 2.5.1 sec, stacking up to 10 sec."
+  },
+  {
+    "id": 258920,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 1.5,
+    "cooldown": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 30
+    },
+    "duration": 6,
+    "generates": [
+      "20 fury",
+      "8 fury"
+    ],
+    "categoryCooldown": 1.5,
+    "description": "Engulf yourself in flames, radiating 0 Chaos damage over 6 sec. |cFFFFFFFFGenerates $<havocTalentFury> Fury over 6 sec.|r$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][]"
+  },
+  {
+    "id": 258921,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d. |cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][]"
+  },
+  {
+    "id": 258922,
+    "name": "Immolation Aura",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "generates": [
+      "4 fury",
+      "2 fury"
+    ],
+    "description": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d. |cFFFFFFFFGenerates $<havocTalentFury> Fury over $d.|r$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][]"
+  },
+  {
+    "id": 278326,
+    "name": "Consume Magic",
+    "school": "Chromatic",
+    "gcd": 1.5,
+    "cooldown": 10,
+    "aoeRadius": 8,
+    "description": "Consume 1 beneficial Magic effect removing it from the target and granting you 20 Fury."
+  },
+  {
+    "id": 320313,
+    "name": "Swallowed Anger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Consume Magic generates 1 Fury when a beneficial Magic effect is successfully removed from the target."
+  },
+  {
+    "id": 320331,
+    "name": "Infernal Armor",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura increases your armor by 20% and causes melee attackers to suffer 0 Fire damage."
+  },
+  {
+    "id": 320334,
+    "name": "Infernal Armor",
+    "school": "Fire",
+    "gcd": 0,
+    "description": "Immolation Aura increases your armor by 0% and causes melee attackers to suffer ${$320334s1/$s3} Fire damage."
+  },
+  {
+    "id": 320338,
+    "name": "Essence Break",
+    "school": "Chromastrike",
+    "gcd": 0,
+    "duration": 4,
+    "description": "Slash all enemies in front of you for 80 Chaos damage, causing Chaos Strike and Blade Dance to deal 0 Chaos damage to them for 4 sec. Deals reduced damage beyond $s2 targets."
+  },
+  {
+    "id": 320361,
+    "name": "Improved Disrupt",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the range of Disrupt to 10 yds."
+  },
+  {
+    "id": 320374,
+    "name": "Burning Hatred",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura generates an additional 24 Fury over 6 sec."
+  },
+  {
+    "id": 320386,
+    "name": "Bouncing Glaives",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive ricochets to 1 additional $ltarget:targets;."
+  },
+  {
+    "id": 320413,
+    "name": "Critical Chaos",
+    "school": "Physical",
+    "passive": true,
+    "description": "The chance that Chaos Strike will refund 20 Fury is increased by 30% of your critical strike chance."
+  },
+  {
+    "id": 320416,
+    "name": "Blazing Path",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212613[Infernal Strike]?s195072[Fel Rush][Shift] gains an additional charge."
+  },
+  {
+    "id": 320418,
+    "name": "Improved Sigil of Misery",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Sigil of Misery by 30 sec."
+  },
+  {
+    "id": 320635,
+    "name": "Vengeful Bonds",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat reduces the movement speed of all nearby enemies by -70% for 3 sec."
+  },
+  {
+    "id": 320654,
+    "name": "Pursuit",
+    "school": "Physical",
+    "passive": true,
+    "description": "Mastery increases your movement speed."
+  },
+  {
+    "id": 320770,
+    "name": "Unrestrained Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases maximum Fury by 20."
+  },
+  {
+    "id": 328725,
+    "name": "Mortal Dance",
+    "school": "Physical",
+    "passive": true,
+    "description": "Blade Dance now reduces targets' healing received by -50% for 6 sec."
+  },
+  {
+    "id": 337567,
+    "name": "Chaotic Blades",
+    "school": "Physical",
+    "gcd": 0,
+    "cooldown": 120,
+    "duration": 8,
+    "description": "Increases the damage of Chaos Strike by 50% for 8 sec. While active, your Chaos Strikes have a ${$s2+$197125h}% chance to refund 20 Fury."
+  },
+  {
+    "id": 337819,
+    "name": "Throw Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Throw a demonic glaive at the target, dealing 0 Physical damage. The glaive can ricochet to 1 additional enemies within 10 yards."
+  },
+  {
+    "id": 342817,
+    "name": "Glaive Tempest",
+    "school": "Magic",
+    "resource": "25 Fury",
+    "gcd": 0,
+    "duration": 3,
+    "description": "The final slash of Blade Dance consumes 0 Fury when it strikes 8 or more enemies, launching two demonic glaives in a whirlwind of energy, causing 0 Chaos damage over 3 sec to all nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 342857,
+    "name": "Glaive Tempest",
+    "school": "Chaos",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "The final slash of Blade Dance consumes 0 Fury when it strikes $s2 or more enemies, launching two demonic glaives in a whirlwind of energy, causing 0 Chaos damage over 3 sec to all nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 343206,
+    "name": "Improved Chaos Strike",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos Strike damage increased by 10%."
+  },
+  {
+    "id": 343311,
+    "name": "Furious Gaze",
+    "school": "Physical",
+    "passive": true,
+    "description": "When Eye Beam finishes fully channeling, your Haste is increased by an additional 8% for 8 sec."
+  },
+  {
+    "id": 343312,
+    "name": "Furious Gaze",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 8,
+    "description": "$@spelldesc273231"
+  },
+  {
+    "id": 346278,
+    "name": "Burning Wound",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 15,
+    "description": "Demon's Bite leaves an open wound on your enemy dealing 0 Chaos damage over 15 sec and increasing damage taken from your Immolation Aura by 65%."
+  },
+  {
+    "id": 346279,
+    "name": "Burning Wound",
+    "school": "Physical",
+    "passive": true,
+    "description": "Demon's Bite leaves an open wound on your enemy dealing 0 Chaos damage over 15 sec and increasing damage taken from your Immolation Aura by 65%."
+  },
+  {
+    "id": 347461,
+    "name": "Unbound Chaos",
+    "school": "Physical",
+    "passive": true,
+    "description": "The Hunt and Vengeful Retreat increase the damage of your next Fel Rush or Felblade by 300%. Lasts 12 sec."
+  },
+  {
+    "id": 347462,
+    "name": "Unbound Chaos",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 12,
+    "description": "The Hunt and Vengeful Retreat increase the damage of your next Fel Rush or Felblade by $s2%. Lasts 12 sec."
+  },
+  {
+    "id": 356608,
+    "name": "Mortal Dance",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Grievously wounds the target, reducing the effectiveness of any healing received for $115804d."
+  },
+  {
+    "id": 370965,
+    "name": "The Hunt",
+    "school": "Chromatic",
+    "gcd": 1.5,
+    "cooldown": 90,
+    "duration": 2,
+    "categoryCooldown": 90,
+    "description": "Charge to your target, striking them for 0 Chaos damage, rooting them in place for 1.5 sec and inflicting 0 Chaos damage over 6 sec to up to $370967s2 enemies in your path."
+  },
+  {
+    "id": 370966,
+    "name": "The Hunt",
+    "school": "Chromatic",
+    "gcd": 0,
+    "description": "Charge to your target, striking them for 0 Chaos damage, rooting them in place for 1.5 sec and inflicting 0 Chaos damage over 6 sec to up to $370967s2 enemies in your path."
+  },
+  {
+    "id": 370967,
+    "name": "The Hunt",
+    "school": "Nature",
+    "duration": 1.5
+  },
+  {
+    "id": 370969,
+    "name": "The Hunt",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Charge to your target, striking them for 0 Chaos damage, rooting them in place for 1.5 sec and inflicting 0 Chaos damage over 6 sec to up to $370967s2 enemies in your path."
+  },
+  {
+    "id": 370970,
+    "name": "The Hunt",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 1.5,
+    "description": "Charge to your target, striking them for 0 Chaos damage, rooting them in place for 1.5 sec and inflicting 0 Chaos damage over 6 sec to up to $370967s2 enemies in your path."
+  },
+  {
+    "id": 388106,
+    "name": "Soulscar",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive causes targets to take an additional 80% of damage dealt as Chaos over 6 sec."
+  },
+  {
+    "id": 388107,
+    "name": "Ragefire",
+    "school": "Physical",
+    "passive": true,
+    "description": "Each time Immolation Aura deals damage, 30% of the damage dealt by up to 3 critical strikes is gathered as Ragefire. When Immolation Aura expires you explode, dealing all stored Ragefire damage to nearby enemies."
+  },
+  {
+    "id": 388108,
+    "name": "Initiative",
+    "school": "Physical",
+    "passive": true,
+    "description": "Damaging an enemy before they damage you increases your critical strike chance by 10% for 5 sec. Vengeful Retreat refreshes your potential to trigger this effect on any enemies you are in combat with."
+  },
+  {
+    "id": 388112,
+    "name": "Chaotic Transformation",
+    "school": "Physical",
+    "passive": true,
+    "description": "When you activate Metamorphosis, the cooldowns of Blade Dance and Eye Beam are immediately reset."
+  },
+  {
+    "id": 388113,
+    "name": "Isolated Prey",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos Nova, Eye Beam, and Immolation Aura gain bonuses when striking 1 target. $@spellicon179057 $@spellname179057: Stun duration increased by 2 sec. $@spellicon198013 $@spellname198013: Deals 30% increased damage. $@spellicon258920 $@spellname258920: Always critically strikes."
+  },
+  {
+    "id": 388116,
+    "name": "Shattered Destiny",
+    "school": "Physical",
+    "passive": true,
+    "description": "The duration of your active demon form is extended by 0.1.1 sec per 12 Fury spent."
+  },
+  {
+    "id": 388118,
+    "name": "Know Your Enemy",
+    "school": "Physical",
+    "passive": true,
+    "description": "Gain critical strike damage equal to 40% of your critical strike chance."
+  },
+  {
+    "id": 389687,
+    "name": "Chaos Theory",
+    "school": "Physical",
+    "passive": true,
+    "description": "Blade Dance causes your next Chaos Strike within 8 sec to have a 14-30% increased critical strike chance and will always refund Fury."
+  },
+  {
+    "id": 389688,
+    "name": "Tactical Retreat",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat has a 5 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
+  },
+  {
+    "id": 389693,
+    "name": "Inner Demon",
+    "school": "Physical",
+    "passive": true,
+    "description": "Entering demon form causes your next Chaos Strike to unleash your inner demon, causing it to crash into your target and deal 0 Chaos damage to all nearby enemies. Deals reduced damage beyond 5 targets."
+  },
+  {
+    "id": 389695,
+    "name": "Will of the Illidari",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases maximum health by 3%."
+  },
+  {
+    "id": 389696,
+    "name": "Illidari Knowledge",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces magic damage taken by -3%."
+  },
+  {
+    "id": 389715,
+    "name": "Chains of Anger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the duration of your Sigils by 2 sec and radius by 2 yds."
+  },
+  {
+    "id": 389763,
+    "name": "Master of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive has 2 charges and snares all enemies hit by -50% for 6 sec."
+  },
+  {
+    "id": 389781,
+    "name": "Long Night",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases the duration of Darkness by 3 sec."
+  },
+  {
+    "id": 389783,
+    "name": "Pitch Black",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reduces the cooldown of Darkness by 120 sec."
+  },
+  {
+    "id": 389824,
+    "name": "Shattered Restoration",
+    "school": "Physical",
+    "passive": true,
+    "description": "The healing of Shattered Souls is increased by 10%."
+  },
+  {
+    "id": 389846,
+    "name": "Felfire Haste",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by 10% for 8 sec."
+  },
+  {
+    "id": 389847,
+    "name": "Felfire Haste",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 8,
+    "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by 10% for 8 sec."
+  },
+  {
+    "id": 389849,
+    "name": "Lost in Darkness",
+    "school": "Physical",
+    "passive": true,
+    "description": "Spectral Sight has 5 sec reduced cooldown and no longer reduces movement speed."
+  },
+  {
+    "id": 389890,
+    "name": "Tactical Retreat",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 10,
+    "generates": [
+      "8 unknown"
+    ],
+    "description": "Vengeful Retreat has a -0.01 sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over 10 sec."
+  },
+  {
+    "id": 389977,
+    "name": "Relentless Onslaught",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos Strike has a 10% chance to trigger a second Chaos Strike."
+  },
+  {
+    "id": 389978,
+    "name": "Dancing with Fate",
+    "school": "Physical",
+    "passive": true,
+    "description": "The final slash of Blade Dance deals an additional 25% damage."
+  },
+  {
+    "id": 390137,
+    "name": "Inner Demon",
+    "school": "Chaos",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Entering demon form causes your next Chaos Strike to unleash your inner demon, causing it to crash into your target and deal 0 Chaos damage to all nearby enemies. Deals reduced damage beyond $s2 targets."
+  },
+  {
+    "id": 390152,
+    "name": "Collective Anguish",
+    "school": "Physical",
+    "passive": true,
+    "description": "Eye Beam summons an allied Vengeance Demon Hunter who casts Fel Devastation, dealing ${$393834s1*(2/$393831t1)} Fire damage over 2 sec. Dealing damage heals you for up to ${$212106s1*(2/$t1)} health."
+  },
+  {
+    "id": 390154,
+    "name": "Serrated Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Enemies hit by Chaos Strike or Throw Glaive take 15% increased damage from Chaos Strike and Throw Glaive for 15 sec."
+  },
+  {
+    "id": 390155,
+    "name": "Serrated Glaive",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 15,
+    "description": "Enemies hit by Chaos Strike or Throw Glaive take 0% increased damage from Chaos Strike and Throw Glaive for 15 sec."
+  },
+  {
+    "id": 390158,
+    "name": "Growing Inferno",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura's damage increases by 10% each time it deals damage."
+  },
+  {
+    "id": 390181,
+    "name": "Soulscar",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Throw Glaive causes targets to take an additional 0% of damage dealt as Chaos over 6 sec."
+  },
+  {
+    "id": 390195,
+    "name": "Chaos Theory",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 8,
+    "description": "Blade Dance causes your next Chaos Strike within 8 sec to have a 0-80% increased critical strike chance and will always refund Fury."
+  },
+  {
+    "id": 390213,
+    "name": "Burning Blood",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fire damage increased by 8%."
+  },
+  {
+    "id": 391057,
+    "name": "Eye Beam",
+    "school": "Physical",
+    "duration": 2
+  },
+  {
+    "id": 391058,
+    "name": "Eye Beam",
+    "school": "Chromatic",
+    "gcd": 0,
+    "aoeRadius": 20,
+    "description": "Blasts all enemies in front of you, dealing guaranteed critical strikes for up to 0 Chaos damage over $d. Deals reduced damage to secondary targets."
+  },
+  {
+    "id": 391189,
+    "name": "Burning Wound",
+    "school": "Physical",
+    "passive": true,
+    "description": "Demon Blades and Throw Glaive leave open wounds on your enemies, dealing 0 Chaos damage over 15 sec and increasing damage taken from your Immolation Aura by 40%. May be applied to up to 3 targets."
+  },
+  {
+    "id": 391191,
+    "name": "Burning Wound",
+    "school": "Chromatic",
+    "gcd": 0,
+    "duration": 15,
+    "description": "Demon Blades and Throw Glaive leave open wounds on your enemies, dealing 0 Chaos damage over 15 sec and increasing damage taken from your Immolation Aura by 40%. May be applied to up to 40 targets."
+  },
+  {
+    "id": 391215,
+    "name": "Initiative",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 5,
+    "description": "Damaging an enemy before they damage you increases your critical strike chance by 10% for 5 sec. Vengeful Retreat refreshes your potential to trigger this effect on any enemies you are in combat with."
+  },
+  {
+    "id": 391275,
+    "name": "Accelerated Blade",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive deals 60% increased damage, reduced by 30% for each previous enemy hit."
+  },
+  {
+    "id": 391397,
+    "name": "Erratic Felheart",
+    "school": "Physical",
+    "passive": true,
+    "description": "The cooldown of $?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] is reduced by ${-$s1/1000}.1 sec."
+  },
+  {
+    "id": 391409,
+    "name": "Aldrachi Design",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your chance to parry by 3%."
+  },
+  {
+    "id": 393029,
+    "name": "Furious Throws",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive now costs 25 Fury and throws a second glaive at the target."
+  },
+  {
+    "id": 393822,
+    "name": "Internal Struggle",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases your mastery by ${$s1*$mas}.1%."
+  },
+  {
+    "id": 393831,
+    "name": "Fel Devastation",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 2,
+    "description": "Unleash the fel within you, damaging enemies directly in front of you for ${$393834s1*(2/$t1)} Fire damage over 2 sec. Causing damage also heals you for up to ${$333120s1*(2/$t1)} health."
+  },
+  {
+    "id": 393834,
+    "name": "Fel Devastation",
+    "school": "Fire",
+    "gcd": 0,
+    "aoeRadius": 13,
+    "description": "$@spelldesc212084"
+  },
+  {
+    "id": 395020,
+    "name": "Any Means Necessary",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fire"
+  },
+  {
+    "id": 395041,
+    "name": "Any Means Necessary",
+    "school": "Physical",
+    "passive": true,
+    "description": "Shadow"
+  },
+  {
+    "id": 427640,
+    "name": "Inertia",
+    "school": "Physical",
+    "passive": true,
+    "description": "The Hunt and Vengeful Retreat cause your next Fel Rush or Felblade to empower you, increasing damage by 18% for 5 sec."
+  },
+  {
+    "id": 427641,
+    "name": "Inertia",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 5,
+    "description": "The Hunt and Vengeful Retreat cause your next Fel Rush or Felblade to empower you, increasing damage by 18% for 5 sec."
+  },
+  {
+    "id": 427775,
+    "name": "A Fire Inside",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura has 1676 (Category) additional $Lcharge:charges;, has 6 sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 427776,
+    "name": "Deflecting Dance",
+    "school": "Physical",
+    "passive": true,
+    "description": "You deflect incoming attacks while Blade Dancing, absorbing damage up to 15% of your maximum health."
+  },
+  {
+    "id": 427794,
+    "name": "Dash of Chaos",
+    "school": "Physical",
+    "passive": true,
+    "description": "For ${$427793D-($428160s1/10)} sec after using Fel Rush, activating it again will dash back towards your initial location."
+  },
+  {
+    "id": 428160,
+    "name": "Dash of Chaos",
+    "school": "Physical",
+    "gcd": 0,
+    "cooldown": 0.5,
+    "categoryCooldown": 1
+  },
+  {
+    "id": 428232,
+    "name": "Scars of Suffering",
+    "school": "Physical",
+    "passive": true,
+    "description": "Increases Versatility by 4% and reduces threat generated by 8%."
+  },
+  {
+    "id": 428241,
+    "name": "Demon Hide",
+    "school": "Physical",
+    "passive": true,
+    "description": "Magical damage increased by 3%, and Physical damage taken reduced by -5%."
+  },
+  {
+    "id": 428492,
+    "name": "Chaotic Disposition",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your Chaos damage has a 7.77.2% chance to be increased by 17%, occurring up to $m1 total $Ltime:times;."
+  },
+  {
+    "id": 428607,
+    "name": "Live by the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury. This effect may only occur once every 5 sec."
+  },
+  {
+    "id": 428608,
+    "name": "Live by the Glaive",
+    "school": "Physical",
+    "gcd": 0,
+    "generates": [
+      "10 fury"
+    ],
+    "description": "When you parry an attack or have one of your attacks parried, restore 2% of max health and 10 Fury. This effect may only occur once every 10 sec."
+  },
+  {
+    "id": 429211,
+    "name": "Champion of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive has 2 charges and 10 yard increased range."
+  },
+  {
+    "id": 433719,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433721,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433724,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 433737,
+    "name": "Immolation Aura",
+    "school": "Physical",
+    "duration": 10,
+    "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire. You can have multiple Immolation Auras active at a time."
+  },
+  {
+    "id": 442290,
+    "name": "Art of the Glaive",
+    "school": "Physical",
+    "passive": true,
+    "description": "Consuming 6 Soul Fragments or casting The Hunt converts your next Throw Glaive into Reaver's Glaive. $@spellicon442294 $@spellname442294: Throw a glaive enhanced with the essence of consumed souls at your target, dealing 6 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Blade Dance. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 20 Fury.|R"
+  },
+  {
+    "id": 442294,
+    "name": "Reaver's Glaive",
+    "school": "Physical",
+    "gcd": 1.5,
+    "description": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to 2 additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Blade Dance. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 0 Fury.|R"
+  },
+  {
+    "id": 442492,
+    "name": "Incisive Blade",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos Strike deals 10% increased damage."
+  },
+  {
+    "id": 442497,
+    "name": "Keen Engagement",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reaver's Glaive generates 20 Fury."
+  },
+  {
+    "id": 442502,
+    "name": "Warblade's Hunger",
+    "school": "Physical",
+    "passive": true,
+    "description": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal 0 additional Physical damage. Felblade consumes up to 5 nearby Soul Fragments."
+  },
+  {
+    "id": 442507,
+    "name": "Warblade's Hunger",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal 0 additional Physical damage. Felblade consumes up to $s2 nearby Soul Fragments."
+  },
+  {
+    "id": 442624,
+    "name": "Reaver's Mark",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 20,
+    "description": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take 7% increased damage for 20 sec. Max $442624u stacks. Applies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after Blade Dance."
+  },
+  {
+    "id": 442679,
+    "name": "Reaver's Mark",
+    "school": "Physical",
+    "passive": true,
+    "description": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take 7% increased damage for 20 sec. Max $442624u stacks. Applies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after Blade Dance."
+  },
+  {
+    "id": 442683,
+    "name": "Aldrachi Tactics",
+    "school": "Physical",
+    "passive": true,
+    "description": "The second enhanced ability in a pattern shatters an additional Soul Fragment."
+  },
+  {
+    "id": 442686,
+    "name": "Thrill of the Fight",
+    "school": "Physical",
+    "passive": true,
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+  },
+  {
+    "id": 442688,
+    "name": "Thrill of the Fight",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 30,
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+  },
+  {
+    "id": 442695,
+    "name": "Thrill of the Fight",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 30,
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+  },
+  {
+    "id": 442714,
+    "name": "Army Unto Oneself",
+    "school": "Physical",
+    "passive": true,
+    "description": "Felblade surrounds you with a Blade Ward, reducing damage taken by -10% for 5 sec."
+  },
+  {
+    "id": 442715,
+    "name": "Blade Ward",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 5,
+    "description": "Felblade surrounds you with a Blade Ward, reducing damage taken by -10% for 5 sec."
+  },
+  {
+    "id": 442718,
+    "name": "Fury of the Aldrachi",
+    "school": "Physical",
+    "passive": true,
+    "description": "When enhanced by Reaver's Glaive, Blade Dance casts 3 additional glaive slashes to nearby targets. Deals reduced damage beyond 8 targets. If cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast 12 slashes instead."
+  },
+  {
+    "id": 442736,
+    "name": "Incorruptible Spirit",
+    "school": "Physical",
+    "passive": true,
+    "description": "Each Soul Fragment you consume shields you for an additional 15% of the amount healed."
+  },
+  {
+    "id": 442806,
+    "name": "Wounded Quarry",
+    "school": "Physical",
+    "passive": true,
+    "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal 20% of the damage dealt to your marked target as Chaos, and sometimes shatter a Soul Fragment."
+  },
+  {
+    "id": 444806,
+    "name": "Fury of the Aldrachi",
+    "school": "Physical",
+    "gcd": 0,
+    "aoeRadius": 8,
+    "description": "Consuming 0 Soul Fragments or casting The Hunt converts your next Throw Glaive into Reaver's Glaive. $@spellicon442294 $@spellname442294: Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Blade Dance. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 8 Fury.|R"
+  },
+  {
+    "id": 444926,
+    "name": "Evasive Action",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat can be cast a second time within 3 sec."
+  },
+  {
+    "id": 444929,
+    "name": "Evasive Action",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 3,
+    "description": "Vengeful Retreat can be cast a second time within 3 sec."
+  },
+  {
+    "id": 444931,
+    "name": "Unhindered Assault",
+    "school": "Physical",
+    "passive": true,
+    "description": "Vengeful Retreat resets the cooldown of Felblade."
+  },
+  {
+    "id": 444979,
+    "name": "Preemptive Strike",
+    "school": "Physical",
+    "gcd": 0,
+    "aoeRadius": 5,
+    "description": "Throw Glaive deals 0 Physical damage to enemies near its initial target."
+  },
+  {
+    "id": 444997,
+    "name": "Preemptive Strike",
+    "school": "Physical",
+    "passive": true,
+    "description": "Throw Glaive deals 0 Physical damage to enemies near its initial target."
+  },
+  {
+    "id": 452402,
+    "name": "Demonsurge",
+    "school": "Physical",
+    "passive": true,
+    "description": "Metamorphosis now also causes Demon Blades to generate 3 additional Fury. While demon form is active, the first cast of each empowered ability induces a Demonsurge, causing you to explode with Fel energy, dealing 0 Chaos damage to nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 452403,
+    "name": "Wave of Debilitation",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c1[Chaos][Void] Nova slows enemies by 60% and reduces attack and cast speed by -15% for 5 sec after its stun fades."
+  },
+  {
+    "id": 452404,
+    "name": "Pursuit of Angriness",
+    "school": "Physical",
+    "passive": true,
+    "description": "Movement speed increased by 1% per 10 Fury."
+  },
+  {
+    "id": 452405,
+    "name": "Focused Hatred",
+    "school": "Physical",
+    "passive": true,
+    "description": "Demonsurge deals 50% increased damage when it strikes a single target. Each additional target reduces this bonus by 10%."
+  },
+  {
+    "id": 452406,
+    "name": "Set Fire to the Pain",
+    "school": "Physical",
+    "passive": true,
+    "description": "5% of all non-Fire damage taken is instead taken as Fire damage over 6 sec. Fire damage taken reduced by $S3%."
+  },
+  {
+    "id": 452407,
+    "name": "Improved Soul Rending",
+    "school": "Physical",
+    "passive": true,
+    "description": "Leech granted by Soul Rending increased by 2% and an additional 2% while Metamorphosis is active."
+  },
+  {
+    "id": 452408,
+    "name": "Burning Blades",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your blades burn with Fel energy, causing the damage from Chaos Strike, Throw Glaive, Blade Dance's First Blood, and auto-attacks to burn for an additional 35% damage as Fire over 6 sec."
+  },
+  {
+    "id": 452409,
+    "name": "Violent Transformation",
+    "school": "Physical",
+    "passive": true,
+    "description": "When you activate Metamorphosis, reset the cooldown of Immolation Aura."
+  },
+  {
+    "id": 452410,
+    "name": "Enduring Torment",
+    "school": "Physical",
+    "passive": true,
+    "description": "The effects of your demon form persist outside of it in a weakened state, increasing Chaos Strike and Blade Dance damage by 15%, and Haste by 5%."
+  },
+  {
+    "id": 452411,
+    "name": "Untethered Fury",
+    "school": "Physical",
+    "passive": true,
+    "description": "Maximum Fury increased by 50."
+  },
+  {
+    "id": 452412,
+    "name": "Student of Suffering",
+    "school": "Physical",
+    "passive": true,
+    "description": "Eye Beam applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting 5 Fury every $453239t2 sec, for 6 sec."
+  },
+  {
+    "id": 452413,
+    "name": "Flamebound",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura has 2 yd increased radius and 50% increased critical strike damage bonus."
+  },
+  {
+    "id": 452414,
+    "name": "Monster Rising",
+    "school": "Physical",
+    "passive": true,
+    "description": "Agility increased by 8% while not in demon form."
+  },
+  {
+    "id": 452415,
+    "name": "Demonic Intensity",
+    "school": "Physical",
+    "passive": true,
+    "description": "Activating Metamorphosis greatly empowers Eye Beam, Immolation Aura. Demonsurge damage is increased by 5% for each time it previously triggered while your demon form is active."
+  },
+  {
+    "id": 452416,
+    "name": "Demonsurge",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 15,
+    "aoeRadius": 10,
+    "description": "Metamorphosis now also causes Demon Blades to generate 3 additional Fury. While demon form is active, the first cast of each empowered ability induces a Demonsurge, causing you to explode with Fel energy, dealing 0 Chaos damage to nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 452435,
+    "name": "Demonsurge",
+    "school": "Chaos"
+  },
+  {
+    "id": 452489,
+    "name": "Demonsurge",
+    "school": "Chaos"
+  },
+  {
+    "id": 452550,
+    "name": "Monster Rising",
+    "school": "Physical",
+    "description": "Agility increased by 8% while not in demon form."
+  },
+  {
+    "id": 453177,
+    "name": "Burning Blades",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Throw Glaive causes targets to take an additional 0% of damage dealt as Chaos over 6 sec."
+  },
+  {
+    "id": 453236,
+    "name": "Student of Suffering",
+    "school": "Chaos",
+    "gcd": 0,
+    "generates": [
+      "5 fury"
+    ],
+    "description": "Eye Beam applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting 5 Fury every $453239t2 sec, for 6 sec."
+  },
+  {
+    "id": 453239,
+    "name": "Student of Suffering",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 6,
+    "description": "Eye Beam applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting 5 Fury every $453239t2 sec, for 6 sec."
+  },
+  {
+    "id": 453263,
+    "name": "Wave of Debilitation",
+    "school": "Physical",
+    "gcd": 0,
+    "duration": 5,
+    "description": "$?c1[Chaos][Void] Nova slows enemies by 60% and reduces attack and cast speed by -15% for 5 sec after its stun fades."
+  },
+  {
+    "id": 453286,
+    "name": "Set Fire to the Pain",
+    "school": "Fire",
+    "gcd": 0,
+    "duration": 6,
+    "description": "$s2% of all non-Fire damage taken is instead taken as Fire damage over 6 sec. Fire damage taken reduced by $S3%."
+  },
+  {
+    "id": 453314,
+    "name": "Enduring Torment",
+    "school": "Physical",
+    "gcd": 0,
+    "description": "Agility increased by 8% while not in demon form."
+  },
+  {
+    "id": 471306,
+    "name": "Void Metamorphosis",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "Collecting $1225789u Soul Fragments grants access to Void Metamorphosis. $@spellicon1217605 $@spellname1217605 |CFFffffffRequires $1225789u Soul Fragments|R You ascend to a higher state of being, substantially empowering your abilities. While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury."
+  },
+  {
+    "id": 1217605,
+    "name": "Void Metamorphosis",
+    "school": "Physical",
+    "gcd": 1.5,
+    "description": "|CFFffffffRequires $1225789u Soul Fragments|R You ascend to a higher state of being, substantially empowering your abilities. While in Void Metamorphosis, your Consume and Reap are enhanced and your Fury will slowly drain. Additionally, Void Ray reduces your Fury drain, deals increased damage, and no longer consumes Fury."
+  },
+  {
+    "id": 1220506,
+    "name": "Screaming Brutality",
+    "school": "Physical",
+    "passive": true,
+    "description": "Blade Dance automatically triggers Throw Glaive on your primary target for 100% damage and each slash has a 50% chance to Throw Glaive an enemy for 35% damage."
+  },
+  {
+    "id": 1223171,
+    "name": "Guile",
+    "school": "Spellshadow",
+    "passive": true,
+    "description": "The cast range of Voidblade, Consume Magic, and Disrupt are increased by 20 yds."
+  },
+  {
+    "id": 1224451,
+    "name": "A Fire Inside",
+    "school": "Physical",
+    "passive": true,
+    "description": "Chaos"
+  },
+  {
+    "id": 1236360,
+    "name": "Demon Hunter Aldrachi Reaver 11.2 Class Set 4pc",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fury of the Aldrachi further empowers Blade Dance when cast after $?s263642[Fracture]?a212613[Shear][Chaos Strike], increasing slashes to 12. Reaver's Mark now stacks up to $442624u times and further empowers $?s263642[Fracture]?a212613[Shear][Chaos Strike] when cast after Blade Dance, applying an additional stack for 100% of normal duration."
+  },
+  {
+    "id": 1241937,
+    "name": "Soul Immolation",
+    "school": "Fire",
+    "gcd": 1.5,
+    "charges": {
+      "count": 1,
+      "cooldown": 60
+    },
+    "duration": 5,
+    "description": "Light your soul aflame, dealing 0 Fire damage to yourself, generating ${$1242475s1*$s3} Fury and shattering 3 Soul Fragments over 5 sec."
+  },
+  {
+    "id": 1244557,
+    "name": "Glaive Tempest",
+    "school": "Physical",
+    "passive": true,
+    "description": "The final slash of Blade Dance consumes 25 Fury when it strikes 3 or more enemies, launching two demonic glaives in a whirlwind of energy, causing 0 Chaos damage over 3 sec to all nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 1245496,
+    "name": "Demonsurge",
+    "school": "Chaos"
+  },
+  {
+    "id": 1245759,
+    "name": "Essence Break",
+    "school": "Chaos",
+    "gcd": 0,
+    "description": "Slash all enemies in front of you for 0 Chaos damage, causing Chaos Strike and Blade Dance to deal 0 Chaos damage to them for 4 sec. Deals reduced damage beyond $s2 targets."
+  },
+  {
+    "id": 1246160,
+    "name": "Voidsurge",
+    "school": "Cosmic",
+    "gcd": 0,
+    "duration": 12,
+    "aoeRadius": 10,
+    "description": "Metamorphosis now also causes Demon Blades to generate 3 additional Fury. While demon form is active, the first cast of each empowered ability induces a Demonsurge, causing you to explode with Fel energy, dealing 0 Chaos damage to nearby enemies. Deals reduced damage beyond 8 targets."
+  },
+  {
+    "id": 1256955,
+    "name": "Havoc Demon Hunter",
+    "school": "Physical",
+    "passive": true
+  },
+  {
+    "id": 1265818,
+    "name": "Vengeful Beast",
+    "school": "Physical",
+    "passive": true,
+    "description": "Metamorphosis has 5 sec increased duration and increases the damage of Fracture, Soul Cleave, and Spirit Bomb by 20%."
+  },
+  {
+    "id": 1266296,
+    "name": "Focused Ire",
+    "school": "Physical",
+    "passive": true,
+    "description": "The primary target of $?c3[Void Nova][Chaos Nova] is stunned for an additional 2 sec."
+  },
+  {
+    "id": 1266307,
+    "name": "Demonic Resilience",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c2[Demon Spikes][Blur] gains 1 additional $Lcharge:charges;."
+  },
+  {
+    "id": 1266316,
+    "name": "Burn It Out",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation][Immolation Aura] removes 1 Disease $Leffect:effects;."
+  },
+  {
+    "id": 1266326,
+    "name": "Furious",
+    "school": "Physical",
+    "passive": true,
+    "description": "Attacks and abilities that generate Fury deal 3% increased damage."
+  },
+  {
+    "id": 1266328,
+    "name": "Remorseless",
+    "school": "Physical",
+    "passive": true,
+    "description": "Attacks and abilities that spend Fury deal 3% increased damage."
+  },
+  {
+    "id": 1266329,
+    "name": "Demon Muzzle",
+    "school": "Physical",
+    "passive": true,
+    "description": "Interrupting a spell with Disrupt decreases your magic damage taken by -15% for 12 sec."
+  },
+  {
+    "id": 1266330,
+    "name": "Soul Splitter",
+    "school": "Physical",
+    "passive": true,
+    "description": "Any time you would generate one or more Soul Fragments, you have a 2% chance to generate an additional Soul Fragment."
+  },
+  {
+    "id": 1266493,
+    "name": "Wings of Wrath",
+    "school": "Physical",
+    "passive": true,
+    "description": "Glide speed increased by 10%."
+  },
+  {
+    "id": 1266496,
+    "name": "Soul Cleanse",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?c3[Soul Immolation][Immolation Aura] removes 1 Curse $Leffect:effects;."
+  },
+  {
+    "id": 1266497,
+    "name": "First In, Last Out",
+    "school": "Physical",
+    "passive": true,
+    "description": "$?a212612[Fel Rush]?a212613[Infernal Strike][Shift] grants you a rapidly decaying shield equal to 6% of your maximum health."
+  },
+  {
+    "id": 1266500,
+    "name": "Final Breath",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fully channeling $?a212612[Eye Beam]?a212613[Fel Devastation][Void Ray] increases the damage of its final tick by 300%."
+  },
+  {
+    "id": 1266616,
+    "name": "Demon Muzzle",
+    "school": "Magic",
+    "gcd": 0,
+    "duration": 12,
+    "description": "Interrupting a spell with Disrupt decreases your magic damage taken by -15% for 12 sec."
+  },
+  {
+    "id": 1266762,
+    "name": "Felbound",
+    "school": "Physical",
+    "passive": true,
+    "description": "Your movement speed is increased by 3%."
+  },
+  {
+    "id": 1270898,
+    "name": "Eternal Hunt",
+    "school": "Physical",
+    "passive": true,
+    "description": "The Hunt empowers your next Eye Beam, increasing damage by 100% and affecting enemies in a wider area."
+  },
+  {
+    "id": 1270900,
+    "name": "Eternal Hunt",
+    "school": "Physical",
+    "passive": true,
+    "description": "The Hunt has 15 sec reduced cooldown, deals 15% more damage, and its damage over time effect applies to 2 additional enemies."
+  },
+  {
+    "id": 1270901,
+    "name": "Eternal Hunt",
+    "school": "Physical",
+    "passive": true,
+    "description": "Blade Dance damage increased by 20%. Fully channeling Eye Beam causes your next Blade Dance to refresh its own cooldown."
+  },
+  {
+    "id": 1272138,
+    "name": "Keen Edge",
+    "school": "Physical",
+    "passive": true,
+    "description": "Reaver's Glaive damage is increased by 20% and other Physical-only damage is increased by 10%."
+  },
+  {
+    "id": 1272143,
+    "name": "Broken Spirit",
+    "school": "Physical",
+    "passive": true,
+    "description": "The Hunt shatters 1 Soul $LFragment:Fragments;. Blade Dance and Chaos Strike have a 15% chance to shatter a Soul Fragment."
+  },
+  {
+    "id": 1272153,
+    "name": "Bladecraft",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fury of the Aldrachi further empowers Blade Dance when cast after Chaos Strike, increasing slashes to 12. Reaver's Mark now stacks up to $442624u times and further empowers Chaos Strike when cast after Blade Dance, applying an additional stack."
+  },
+  {
+    "id": 1272364,
+    "name": "Blind Focus",
+    "school": "Physical",
+    "passive": true,
+    "description": "Fire damage increased by 5%. Effect is doubled while in demon form."
+  },
+  {
+    "id": 1272405,
+    "name": "Undying Embers",
+    "school": "Physical",
+    "passive": true,
+    "description": "Immolation Aura has a 25% chance to reignite after it expires, reapplying its effect."
+  },
+  {
+    "id": 1272432,
+    "name": "Soulforged Blades",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Hungering Slash and Voidblade's critical strike chance is increased by 15%."
+  },
+  {
+    "id": 1272453,
+    "name": "Volatile Instinct",
+    "school": "Physical",
+    "passive": true,
+    "description": "Entering demon form immediately induces a Demonsurge."
+  },
+  {
+    "id": 1272770,
+    "name": "Singular Strikes",
+    "school": "Cosmic",
+    "passive": true,
+    "description": "Voidblade damage increased by 25%. Hungering Slash deals 50% increased damage to its primary target."
+  },
+  {
+    "id": 1277738,
+    "name": "Consume Magic",
+    "school": "Cosmic",
+    "gcd": 0,
+    "generates": [
+      "20 fury"
+    ],
+    "description": "Consume $m1 beneficial Magic effect removing it from the target and granting you 20 Fury."
+  }
+]

@@ -1202,30 +1202,44 @@ export function generateHashes() {
 // --- Show ---
 
 // Cluster column definitions for compact roster display.
-// Order matches the display column order.
-const CLUSTER_COLS = [
-  { key: "brand", label: "Brand", width: 7 },
-  { key: "vuln", label: "Vuln", width: 6 },
-  { key: "feldev", label: "FelDev", width: 8 },
-  { key: "sc", label: "SC", width: 4 },
-  { key: "binding", label: "Bind", width: 6 },
-];
+// Generated dynamically from SPEC_CONFIG talentClusters.
+function getClusterCols() {
+  let specConfig;
+  try {
+    specConfig = getSpecAdapter().getSpecConfig();
+  } catch {
+    return [];
+  }
+  const clusters = specConfig?.talentClusters || {};
+  return Object.entries(clusters).map(([key, cluster]) => {
+    const parts = key.split("_");
+    const label =
+      parts.length === 1
+        ? key.charAt(0).toUpperCase() + key.slice(1)
+        : parts.map((w) => w.charAt(0).toUpperCase()).join("");
+    return {
+      key,
+      label,
+      coreName: cluster.core?.[0] || key,
+      width: Math.max(label.length + 2, 6),
+    };
+  });
+}
 
 // Resolve cluster status for a build from its archetype → template mapping.
 // Key is "apexRank:templateName" to avoid collisions between same-named templates
 // at different apex ranks.
-function resolveClusterStatus(archetype, templates) {
+function resolveClusterStatus(archetype, templates, clusterCols) {
   const match = archetype?.match(/^Apex (\d+):\s*(.+)$/);
   if (!match) {
-    // Baseline or unknown: assume all clusters present
-    return Object.fromEntries(CLUSTER_COLS.map((c) => [c.key, "full"]));
+    return Object.fromEntries(clusterCols.map((c) => [c.key, "full"]));
   }
   const tmpl = templates.get(`${match[1]}:${match[2]}`);
   if (!tmpl) {
-    return Object.fromEntries(CLUSTER_COLS.map((c) => [c.key, "full"]));
+    return Object.fromEntries(clusterCols.map((c) => [c.key, "full"]));
   }
   return Object.fromEntries(
-    CLUSTER_COLS.map((c) => [c.key, tmpl[c.key] || "absent"]),
+    clusterCols.map((c) => [c.key, tmpl[c.key] || "absent"]),
   );
 }
 
@@ -1250,6 +1264,7 @@ export function showRoster() {
   }
 
   const hasAnyDps = builds.some((b) => b.weighted);
+  const clusterCols = getClusterCols();
 
   // Group builds by hero tree
   const byTree = {};
@@ -1258,11 +1273,14 @@ export function showRoster() {
     (byTree[tree] ||= []).push(b);
   }
 
-  // Legend
-  console.log(
-    "  Brand=Fiery Brand cluster  Vuln=Vulnerability cluster  FelDev=Fel Devastation cluster",
-  );
-  console.log("  SC=Soul Carver  Bind=Cycle of Binding  * = core only\n");
+  // Legend from cluster definitions
+  if (clusterCols.length > 0) {
+    const legend = clusterCols
+      .map((c) => `${c.label}=${c.coreName} cluster`)
+      .join("  ");
+    console.log(`  ${legend}`);
+    console.log("  * = core only\n");
+  }
 
   console.log(`=== Build Roster (${builds.length} builds) ===`);
 
@@ -1285,7 +1303,7 @@ export function showRoster() {
 
     // Column header
     let header = "  " + "Apex".padEnd(6);
-    for (const col of CLUSTER_COLS) header += col.label.padEnd(col.width);
+    for (const col of clusterCols) header += col.label.padEnd(col.width);
     if (hasAnyDps) header += "Weighted".padStart(10);
     console.log(header);
     console.log("  " + "-".repeat(header.length - 2));
@@ -1293,10 +1311,10 @@ export function showRoster() {
     for (const b of treeBuilds) {
       const apexMatch = b.archetype?.match(/^Apex (\d+)/);
       const apexStr = apexMatch ? `A${apexMatch[1]}` : "BL";
-      const status = resolveClusterStatus(b.archetype, templates);
+      const status = resolveClusterStatus(b.archetype, templates, clusterCols);
 
       let line = "  " + apexStr.padEnd(6);
-      for (const col of CLUSTER_COLS) {
+      for (const col of clusterCols) {
         const s = status[col.key];
         let cell;
         if (s === "full") cell = col.label;

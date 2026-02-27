@@ -1,0 +1,32 @@
+{
+  "spec": {
+    "className": "demonhunter",
+    "specName": "havoc",
+    "specId": 577
+  },
+  "data": {
+    "env": "beta"
+  },
+  "communityBuilds": [],
+  "talents": {
+    "locked": [
+      "Eye Beam",
+      "First Blood",
+      "Critical Chaos",
+      "Improved Chaos Strike"
+    ],
+    "banned": [
+      "Illidari Knowledge",
+      "Soul Rending",
+      "Shattered Restoration",
+      "Charred Warblades",
+      "Will of the Illidari",
+      "Lost in Darkness",
+      "Demon Hide",
+      "Desperate Instincts",
+      "Scars of Suffering",
+      "Wings of Wrath"
+    ],
+    "excluded": ["Deflecting Dance", "Demonic Resilience"]
+  }
+}
