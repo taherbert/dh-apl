@@ -26,11 +26,8 @@ export function analyzeResourceFlow(aplTrace, specConfig) {
       const pre = evt.pre;
       const post = evt.post;
 
-      const preLevel = name === "fury" ? pre.fury : pre.soul_fragments;
-      const postLevel =
-        name === "fury"
-          ? (post?.fury ?? preLevel)
-          : (post?.soul_fragments ?? preLevel);
+      const preLevel = pre[name] ?? 0;
+      const postLevel = post?.[name] ?? preLevel;
       totalLevels += preLevel;
 
       if (postLevel > preLevel) {
@@ -58,7 +55,7 @@ export function analyzeResourceFlow(aplTrace, specConfig) {
     };
   }
 
-  const fillers = new Set(["throw_glaive", "felblade", "sigil_of_flame"]);
+  const fillers = new Set(specConfig.fillerAbilities || []);
   const onGcdEvents = aplTrace.events.filter((e) => !e.off_gcd);
   const deadGcds = onGcdEvents.filter((e) => fillers.has(e.ability)).length;
 
@@ -85,13 +82,11 @@ export function analyzeCooldownInteractions(aplTrace, specConfig) {
 
     for (const evt of events) {
       const preHasBuff =
-        buffName === "fiery_brand"
-          ? (evt.pre.dots?.[buffName] ?? 0) > 0
-          : (evt.pre.buffs?.[buffName] ?? 0) > 0;
+        (evt.pre.dots?.[buffName] ?? 0) > 0 ||
+        (evt.pre.buffs?.[buffName] ?? 0) > 0;
       const postHasBuff =
-        buffName === "fiery_brand"
-          ? (evt.post?.dots?.[buffName] ?? 0) > 0
-          : (evt.post?.buffs?.[buffName] ?? 0) > 0;
+        (evt.post?.dots?.[buffName] ?? 0) > 0 ||
+        (evt.post?.buffs?.[buffName] ?? 0) > 0;
 
       if (!preHasBuff && postHasBuff) {
         windowStart = evt.t;

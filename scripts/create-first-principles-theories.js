@@ -4,7 +4,8 @@
 import { initSpec } from "../src/engine/startup.js";
 import { addTheory, addHypothesis } from "../src/util/db.js";
 
-await initSpec("vengeance");
+const spec = process.env.SPEC || process.argv[2] || "vengeance";
+await initSpec(spec);
 
 const theories = [
   {

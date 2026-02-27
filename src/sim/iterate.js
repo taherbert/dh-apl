@@ -281,11 +281,12 @@ function generateHypotheses(workflowResults) {
 
   // 6. General threshold sweep suggestions for top abilities
   if (st) {
+    const resNames = getSpecAdapter().getSpecConfig().resourceNames;
     const topAbilities = (st.majorDamage || []).slice(0, 5);
     for (const a of topAbilities) {
       hypotheses.push({
         category: "threshold_sweep",
-        description: `Sweep resource thresholds for ${a.name} (${a.fraction}% of ST damage) — try varying fury/soul_fragment conditions`,
+        description: `Sweep resource thresholds for ${a.name} (${a.fraction}% of ST damage) — try varying ${resNames.join("/")} conditions`,
         priority: a.fraction * 0.2,
       });
     }
@@ -325,12 +326,11 @@ function generateStaticResourceHypotheses(aplText, spellData) {
 
   // Extract resource conditions: fury>=N, soul_fragments>=N, etc.
   const thresholdPattern = /(\w+)\s*(>=|<=|>|<|=)\s*(\d+)/g;
+  const specConfig = getSpecAdapter().getSpecConfig();
   const resourceKeywords = new Set([
-    "fury",
-    "soul_fragments",
-    "pain",
+    ...specConfig.resourceNames,
     "health",
-    "sigil_of_flame",
+    "active_enemies",
   ]);
   const thresholdsByResource = new Map();
 

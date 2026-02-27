@@ -2,6 +2,8 @@
 // Detects when different sources flag the same underlying APL issue
 // by extracting a canonical identity from heterogeneous hypothesis formats.
 
+import { getSpecAdapter } from "../engine/startup.js";
+
 // Normalize ability name: lowercase, strip suffixes, collapse variants
 function normalizeAbility(name) {
   if (!name) return "";
@@ -21,10 +23,12 @@ function extractPhase(h) {
   if (text.includes("opener")) return "opener";
   if (text.includes("execute") || text.includes("time_to_die"))
     return "execute";
+  const cooldownBuffs = getSpecAdapter().getSpecConfig().cooldownBuffs || [];
   if (
     text.includes("burst") ||
-    text.includes("fiery_brand") ||
-    text.includes("fiery brand")
+    cooldownBuffs.some(
+      (b) => text.includes(b) || text.includes(b.replace(/_/g, " ")),
+    )
   )
     return "burst";
   return "midFight";

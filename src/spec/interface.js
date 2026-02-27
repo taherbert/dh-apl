@@ -56,6 +56,11 @@
 //     Use for talents that must be taken (e.g., SimC crashes without them, or they are
 //     fundamental to the spec's core loop and never worth dropping).
 //
+// SPEC_CONFIG optional fields (for analysis/simulation):
+//   - fillerAbilities: string[] — lowest-priority GCD-fill abilities (for divergence noise filtering)
+//   - cooldownDurations: { [ability]: seconds | (cfg) => seconds } — base CD durations for apl-interpreter
+//   - chargeAbilities: { [ability]: { maxCharges, rechargeCd } } — charge tracking in apl-interpreter
+//
 // SPEC_CONFIG optional fields (for data-driven analysis modules):
 //   - resourceModels: Array of { name, cap, baseCap?, generators[], consumers[] }
 //     Detailed resource generation/consumption models used by theorycraft and

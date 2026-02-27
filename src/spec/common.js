@@ -4,6 +4,7 @@
 
 import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
+import { decodeAllTalents } from "../util/talent-fingerprint.js";
 
 /**
  * Merges spells-summary.json with spec domain overrides to produce ability data.
@@ -220,4 +221,99 @@ export function deriveKeySpellIds(config) {
       .replace(/\b\w/g, (c) => c.toUpperCase());
     return [id, display];
   });
+}
+
+// ================================================================
+// Build/roster utilities — shared across all specs
+// ================================================================
+
+/**
+ * Flatten scenario-grouped archetypes into a single name->config map.
+ * Used by CLI tools (optimal-timeline, divergence, apl-interpreter) that take --build.
+ */
+export function flattenArchetypes(archetypes) {
+  const flat = {};
+  for (const [scenario, builds] of Object.entries(archetypes)) {
+    if (typeof builds !== "object") continue;
+    if (builds.heroTree !== undefined) {
+      flat[scenario] = builds;
+    } else {
+      for (const [name, config] of Object.entries(builds)) {
+        flat[name] = { ...config, _scenario: scenario };
+      }
+    }
+  }
+  return flat;
+}
+
+/**
+ * Convert a roster DB row into a state-sim-compatible buildConfig.
+ * Decodes the talent hash to derive talent flags.
+ */
+export function rosterBuildToConfig(dbRow) {
+  const { hash, hero_tree, archetype } = dbRow;
+  const { specTalents, heroTalents } = decodeAllTalents(hash);
+
+  const talents = {};
+  for (const name of [...specTalents, ...heroTalents]) {
+    const key = name.toLowerCase().replace(/['']/g, "").replace(/\s+/g, "_");
+    talents[key] = true;
+  }
+
+  const apexMatch = archetype?.match(/Apex\s+(\d+)/i);
+  const apexRank = apexMatch ? parseInt(apexMatch[1], 10) : 0;
+
+  return {
+    heroTree: hero_tree,
+    apexRank,
+    haste: 0.2,
+    talents,
+    _rosterHash: hash,
+    _name: dbRow.name || `${hero_tree}-apex${apexRank}`,
+  };
+}
+
+/**
+ * Select representative builds covering distinct (heroTree x apexRank) axes.
+ * Returns one build per combo (first match wins).
+ */
+function selectRepresentativeBuilds(configs) {
+  const seen = new Set();
+  const reps = [];
+  for (const cfg of configs) {
+    const key = `${cfg.heroTree}|${cfg.apexRank}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      reps.push(cfg);
+    }
+  }
+  return reps;
+}
+
+/**
+ * Build scenario-grouped analysis configs from roster builds + SPEC_CONFIG scenarios.
+ * Returns the same structure as analysisArchetypes for drop-in compatibility.
+ */
+export function buildAnalysisFromRoster(rosterBuilds, specConfig) {
+  const scenarios = specConfig.scenarios;
+  if (!scenarios || rosterBuilds.length === 0) return null;
+
+  const allConfigs = rosterBuilds.map((b) => rosterBuildToConfig(b));
+  const reps = selectRepresentativeBuilds(allConfigs);
+  const result = {};
+
+  for (const [scenarioName, scenarioCfg] of Object.entries(scenarios)) {
+    result[scenarioName] = {};
+    for (const cfg of reps) {
+      const suffix =
+        scenarioCfg.target_count > 1 ? `-${scenarioCfg.target_count}t` : "";
+      const key = `${cfg._name}${suffix}`;
+      result[scenarioName][key] = {
+        ...cfg,
+        target_count: scenarioCfg.target_count,
+      };
+    }
+  }
+
+  return result;
 }

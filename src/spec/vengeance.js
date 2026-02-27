@@ -16,10 +16,12 @@ import {
   deriveSpecSpellFilter,
   deriveTalentTreePattern,
   deriveKeySpellIds,
+  flattenArchetypes as _flattenArchetypes,
+  rosterBuildToConfig,
+  buildAnalysisFromRoster as _buildAnalysisFromRoster,
 } from "./common.js";
 import { dataDir } from "../engine/paths.js";
 import { config } from "../engine/startup.js";
-import { decodeAllTalents } from "../util/talent-fingerprint.js";
 
 // ================================================================
 // SECTION 1: HUMAN DOMAIN KNOWLEDGE
@@ -722,6 +724,23 @@ export const SPEC_CONFIG = {
     Shadowflame: "shadowflame-damage",
   },
 
+  fillerAbilities: ["throw_glaive", "felblade", "sigil_of_flame"],
+
+  cooldownDurations: {
+    metamorphosis: 180,
+    fiery_brand: 60,
+    fel_devastation: (cfg) => (cfg.talents?.darkglare_boon ? 30 : 40),
+    soul_carver: 60,
+    sigil_of_spite: 60,
+    sigil_of_flame: 30,
+    felblade: 15,
+  },
+
+  chargeAbilities: {
+    fracture: { maxCharges: 2, rechargeCd: 4.5 },
+    immolation_aura: { maxCharges: 2, rechargeCd: 30 },
+  },
+
   // Scenario definitions for pattern analysis. Each scenario defines the fight
   // parameters; builds come from the roster (or fallback analysisArchetypes).
   scenarios: {
@@ -958,89 +977,14 @@ export const SPEC_CONFIG = {
   },
 };
 
-// Flatten scenario-grouped archetypes into a single name→config map.
-// Used by CLI tools (optimal-timeline, divergence, apl-interpreter) that take --build.
 export function flattenArchetypes(archetypes = SPEC_CONFIG.analysisArchetypes) {
-  const flat = {};
-  for (const [scenario, builds] of Object.entries(archetypes)) {
-    if (typeof builds !== "object") continue;
-    // Handle both flat (legacy) and grouped (scenario-keyed) structures
-    if (builds.heroTree !== undefined) {
-      flat[scenario] = builds; // legacy flat entry
-    } else {
-      for (const [name, config] of Object.entries(builds)) {
-        flat[name] = { ...config, _scenario: scenario };
-      }
-    }
-  }
-  return flat;
+  return _flattenArchetypes(archetypes);
 }
 
-// Convert a roster DB row into a state-sim-compatible buildConfig.
-// Decodes the talent hash to derive talent flags, avoiding hardcoded duplication.
-export function rosterBuildToConfig(dbRow) {
-  const { hash, hero_tree, archetype } = dbRow;
-  const { specTalents, heroTalents } = decodeAllTalents(hash);
+export { rosterBuildToConfig };
 
-  const talents = {};
-  for (const name of [...specTalents, ...heroTalents]) {
-    const key = name.toLowerCase().replace(/['']/g, "").replace(/\s+/g, "_");
-    talents[key] = true;
-  }
-
-  const apexMatch = archetype?.match(/Apex\s+(\d+)/i);
-  const apexRank = apexMatch ? parseInt(apexMatch[1], 10) : 0;
-
-  return {
-    heroTree: hero_tree,
-    apexRank,
-    haste: 0.2,
-    talents,
-    _rosterHash: hash,
-    _name: dbRow.name || `${hero_tree}-apex${apexRank}`,
-  };
-}
-
-// Select representative builds covering distinct (heroTree × apexRank) axes.
-// Returns one build per combo (first match wins), keeping the build count manageable.
-function selectRepresentativeBuilds(configs) {
-  const seen = new Set();
-  const reps = [];
-  for (const cfg of configs) {
-    const key = `${cfg.heroTree}|${cfg.apexRank}`;
-    if (!seen.has(key)) {
-      seen.add(key);
-      reps.push(cfg);
-    }
-  }
-  return reps;
-}
-
-// Build scenario-grouped analysis configs from roster builds + scenarios config.
-// Returns the same structure as analysisArchetypes for drop-in compatibility.
-// Selects representative builds per (heroTree × apexRank) to keep analysis tractable.
 export function buildAnalysisFromRoster(rosterBuilds) {
-  const scenarios = SPEC_CONFIG.scenarios;
-  if (!scenarios || rosterBuilds.length === 0) return null;
-
-  const allConfigs = rosterBuilds.map((b) => rosterBuildToConfig(b));
-  const reps = selectRepresentativeBuilds(allConfigs);
-  const result = {};
-
-  for (const [scenarioName, scenarioCfg] of Object.entries(scenarios)) {
-    result[scenarioName] = {};
-    for (const cfg of reps) {
-      const suffix =
-        scenarioCfg.target_count > 1 ? `-${scenarioCfg.target_count}t` : "";
-      const key = `${cfg._name}${suffix}`;
-      result[scenarioName][key] = {
-        ...cfg,
-        target_count: scenarioCfg.target_count,
-      };
-    }
-  }
-
-  return result;
+  return _buildAnalysisFromRoster(rosterBuilds, SPEC_CONFIG);
 }
 
 export const SET_BONUS_SPELL_IDS = new Set([

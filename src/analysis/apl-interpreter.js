@@ -42,21 +42,16 @@ function evalSimcExpr(expr, state, vars, cfg) {
   const num = Number(expr);
   if (!isNaN(num) && expr !== "") return num;
 
-  // Top-level resources
+  // Generic numeric state property (fury, soul_fragments, etc.)
+  if (parts[0] in state && typeof state[parts[0]] === "number") {
+    return state[parts[0]];
+  }
+
   switch (parts[0]) {
-    case "fury":
-      return state.fury;
-
-    case "soul_fragments":
-      if (parts[1] === "total") return state.soul_fragments; // approximation
-      return state.soul_fragments;
-
     case "health":
       return 100; // Always full in simulation
 
     case "active_enemies":
-      return state.target_count;
-
     case "spell_targets":
       return state.target_count;
 
@@ -113,9 +108,12 @@ function evalSimcExpr(expr, state, vars, cfg) {
       const spellName = parts[1];
       const prop = parts[2] || "remains";
 
-      if (spellName === "fracture") {
-        const charges = state.charges.fracture;
-        const recharge = state.recharge.fracture;
+      const chargeAbilities =
+        getSpecAdapter().getSpecConfig().chargeAbilities || {};
+      if (spellName in chargeAbilities) {
+        const charges = state.charges?.[spellName] ?? 0;
+        const recharge = state.recharge?.[spellName] ?? 0;
+        const { maxCharges, rechargeCd } = chargeAbilities[spellName];
         switch (prop) {
           case "ready":
             return charges > 0 ? 1 : 0;
@@ -125,32 +123,15 @@ function evalSimcExpr(expr, state, vars, cfg) {
             return charges;
           case "charges_fractional":
             return (
-              charges + (charges < 2 ? Math.max(0, 1 - recharge / 4.5) : 0)
+              charges +
+              (charges < maxCharges
+                ? Math.max(0, 1 - recharge / rechargeCd)
+                : 0)
             );
           case "full_recharge_time": {
-            if (charges >= 2) return 0;
-            if (charges === 1) return recharge;
-            return recharge + 4.5; // Two charges needed
-          }
-          default:
-            return charges > 0 ? 0 : recharge;
-        }
-      }
-
-      if (spellName === "immolation_aura") {
-        const charges = state.charges.immolation_aura;
-        const recharge = state.recharge.immolation_aura;
-        switch (prop) {
-          case "ready":
-            return charges > 0 ? 1 : 0;
-          case "remains":
-            return charges > 0 ? 0 : recharge;
-          case "charges":
-            return charges;
-          case "full_recharge_time": {
-            if (charges >= 2) return 0;
-            if (charges === 1) return recharge;
-            return recharge + 30;
+            if (charges >= maxCharges) return 0;
+            const missing = maxCharges - charges;
+            return recharge + (missing - 1) * rechargeCd;
           }
           default:
             return charges > 0 ? 0 : recharge;
@@ -200,18 +181,11 @@ function evalSimcExpr(expr, state, vars, cfg) {
   return 0;
 }
 
-// Get base cooldown duration for a spell (for trinket-style duration comparisons)
 function getCdDuration(spell, cfg) {
-  const durations = {
-    metamorphosis: 180,
-    fiery_brand: 60,
-    fel_devastation: cfg.talents?.darkglare_boon ? 30 : 40,
-    soul_carver: 60,
-    sigil_of_spite: 60,
-    sigil_of_flame: 30,
-    felblade: 15,
-  };
-  return durations[spell] || 30;
+  const durations = getSpecAdapter().getSpecConfig().cooldownDurations || {};
+  const val = durations[spell];
+  if (typeof val === "function") return val(cfg);
+  return val ?? 30;
 }
 
 // ---------------------------------------------------------------------------
@@ -280,8 +254,11 @@ function evalConditionAst(ast, state, vars, cfg) {
       const cd = state.cooldowns[spellName] || 0;
       const charges = state.charges[spellName] || 0;
       switch (ast.property) {
-        case "ready":
-          return spellName === "fracture" ? charges > 0 : cd <= 0;
+        case "ready": {
+          const chargeAbils =
+            getSpecAdapter().getSpecConfig().chargeAbilities || {};
+          return spellName in chargeAbils ? charges > 0 : cd <= 0;
+        }
         default:
           return cd <= 0;
       }
@@ -577,9 +554,10 @@ export function simulateApl(aplText, buildConfig, durationSeconds = 120) {
     // Compute variables fresh for this GCD
     const vars = computeVariables(actionLists, state, buildConfig);
 
-    // Start from the hero-tree-appropriate entry point
-    // The default list does: run_action_list,name=ar/anni based on hero_tree
-    const heroList = buildConfig.heroTree === "annihilator" ? "anni" : "ar";
+    // Hero-tree-appropriate entry point from spec adapter
+    const heroList =
+      getSpecAdapter().getHeroTrees()[buildConfig.heroTree]?.aplBranch ||
+      "default";
 
     // First evaluate default list to handle variables and routing
     const decision = evalDefaultList(
@@ -716,31 +694,35 @@ function evalDefaultList(actionLists, state, vars, cfg, heroList) {
 }
 
 function snapshotState(s) {
-  return {
-    fury: s.fury,
-    soul_fragments: s.soul_fragments,
-    vf_building: s.buffStacks?.voidfall_building ?? s.vf_building ?? 0,
-    vf_spending: s.buffStacks?.voidfall_spending ?? s.vf_spending ?? 0,
-    gcd: s.gcd,
-    buffs: Object.fromEntries(
-      Object.entries(s.buffs)
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const snap = { gcd: s.gcd };
+
+  // Resources — generic from spec config
+  snap[specConfig.resources.primary.name] =
+    s[specConfig.resources.primary.name];
+  if (specConfig.resources.secondary) {
+    snap[specConfig.resources.secondary.name] =
+      s[specConfig.resources.secondary.name];
+  }
+
+  // Buffs, dots, cooldowns — filter to active
+  for (const dict of ["buffs", "dots", "cooldowns"]) {
+    snap[dict] = Object.fromEntries(
+      Object.entries(s[dict] || {})
         .filter(([, v]) => v > 0)
-        .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
-    ),
-    dots: Object.fromEntries(
-      Object.entries(s.dots)
-        .filter(([, v]) => v > 0)
-        .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
-    ),
-    cooldowns: Object.fromEntries(
-      Object.entries(s.cooldowns)
-        .filter(([, v]) => v > 0)
-        .map(([k, v]) => [k, parseFloat(v.toFixed(1))]),
-    ),
-    fracture_charges: s.charges.fracture,
-    ia_charges: s.charges?.immolation_aura,
-    ia_recharge: s.recharge?.immolation_aura,
-  };
+        .map(([k, v]) => [k, +v.toFixed(1)]),
+    );
+  }
+
+  // Charges — generic over all tracked abilities
+  if (s.charges) {
+    snap.charges = { ...s.charges };
+    snap.recharge = { ...s.recharge };
+  }
+
+  // Spec-specific extra state (e.g. voidfall stacks for VDH)
+  if (engine?.snapshotExtra) Object.assign(snap, engine.snapshotExtra(s));
+  return snap;
 }
 
 // ---------------------------------------------------------------------------
@@ -792,32 +774,32 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const trace = simulateApl(aplText, archetype, duration);
 
   // Print first 30 GCDs
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const priName = specConfig.resources.primary.name;
+  const secName = specConfig.resources.secondary?.name;
   console.log("\nFirst 30 GCDs (APL decisions):");
   console.log("─".repeat(90));
-  const header = [
+  const cols = [
     "GCD".padEnd(4),
     "t".padEnd(7),
     "Ability".padEnd(22),
-    "Fury".padEnd(6),
-    "Frags".padEnd(6),
-    "VF B/S".padEnd(8),
-    "APL Reason",
-  ].join(" ");
-  console.log(header);
+    priName.slice(0, 6).padEnd(6),
+  ];
+  if (secName) cols.push(secName.slice(0, 6).padEnd(6));
+  cols.push("APL Reason");
+  console.log(cols.join(" "));
   console.log("─".repeat(90));
 
   for (const evt of trace.events.slice(0, 30)) {
-    const vf = `${evt.pre.vf_building}/${evt.pre.vf_spending}`;
     const row = [
       String(evt.gcd).padEnd(4),
       `${evt.t}s`.padEnd(7),
       evt.ability.padEnd(22),
-      String(evt.pre.fury).padEnd(6),
-      String(evt.pre.soul_fragments).padEnd(6),
-      vf.padEnd(8),
-      (evt.apl_reason || "").slice(0, 55),
-    ].join(" ");
-    console.log(row);
+      String(evt.pre[priName] ?? "").padEnd(6),
+    ];
+    if (secName) row.push(String(evt.pre[secName] ?? "").padEnd(6));
+    row.push((evt.apl_reason || "").slice(0, 55));
+    console.log(row.join(" "));
   }
 
   console.log(`\nTotal APL decisions: ${trace.events.length}`);

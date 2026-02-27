@@ -48,7 +48,7 @@ fi
 # Clean and copy report
 git rm -rf --quiet . 2>/dev/null || true
 cp "$REPORT_FILE" index.html
-echo "vengeance.jomdarbert.com" > CNAME
+echo "${PUBLISH_DOMAIN:-vengeance.jomdarbert.com}" > CNAME
 git add index.html CNAME
 
 TIMESTAMP="$(date -u +"%Y-%m-%d %H:%M UTC")"

@@ -1178,7 +1178,9 @@ async function buildAmi({ buildInstanceType } = {}) {
     let pgoProfile = null;
     let aplPath = null;
     try {
-      aplPath = join(aplsDir(), "vengeance.simc");
+      const { getSpecAdapter } = await import("../engine/startup.js");
+      const specId = getSpecAdapter().getSpecConfig().specId;
+      aplPath = join(aplsDir(), `${specId}.simc`);
     } catch {
       // spec not initialized — PGO training profile unavailable
     }

@@ -858,3 +858,18 @@ export function getOffGcdTrigger(state) {
 
   return null;
 }
+
+// Snapshot VDH-specific state fields for generic snapshot/restore in apl-interpreter
+export function snapshotExtra(s) {
+  return {
+    vf_building: s.buffStacks?.voidfall_building ?? s.vf_building ?? 0,
+    vf_spending: s.buffStacks?.voidfall_spending ?? s.vf_spending ?? 0,
+  };
+}
+
+export function restoreExtra(state, snap) {
+  state.buffStacks.voidfall_building = snap.vf_building ?? 0;
+  state.buffStacks.voidfall_spending = snap.vf_spending ?? 0;
+  state.vf_building = snap.vf_building ?? 0;
+  state.vf_spending = snap.vf_spending ?? 0;
+}

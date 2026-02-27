@@ -245,43 +245,35 @@ async function generateReport() {
   lines.push("## Resource Flow");
   lines.push("");
 
-  lines.push("### Fury Generators");
-  const isFury = (g) => g.resourceType.toLowerCase() === "fury";
-  const furyGen = spells.filter((s) => s.generates?.some(isFury) && !s.passive);
-  for (const s of furyGen) {
-    const amounts = s.generates.filter(isFury).map((g) => g.amount);
-    lines.push(`- ${s.name} (${s.id}): ${amounts.join("+")} Fury`);
+  const resources = getSpecAdapter().getSpecConfig().resources;
+  for (const res of Object.values(resources)) {
+    if (!res) continue;
+    const displayName =
+      res.name.charAt(0).toUpperCase() + res.name.slice(1).replace(/_/g, " ");
+    const resLower = res.name.toLowerCase().replace(/_/g, " ");
+
+    lines.push(`### ${displayName} Generators`);
+    const resGen = spells.filter(
+      (s) =>
+        s.generates?.some((g) => g.resourceType.toLowerCase() === resLower) &&
+        !s.passive,
+    );
+    for (const s of resGen) {
+      const amounts = s.generates
+        .filter((g) => g.resourceType.toLowerCase() === resLower)
+        .map((g) => g.amount);
+      lines.push(`- ${s.name} (${s.id}): ${amounts.join("+")} ${displayName}`);
+    }
+
+    lines.push("");
+    lines.push(`### ${displayName} Spenders`);
+    const resSpend = spells.filter(
+      (s) => s.resource?.type?.toLowerCase() === resLower && !s.passive,
+    );
+    for (const s of resSpend)
+      lines.push(`- ${s.name} (${s.id}): ${s.resource.cost} ${displayName}`);
+    lines.push("");
   }
-
-  lines.push("");
-  lines.push("### Fury Spenders");
-  const furySpend = spells.filter(
-    (s) => s.resource?.type === "Fury" && !s.passive,
-  );
-  for (const s of furySpend)
-    lines.push(`- ${s.name} (${s.id}): ${s.resource.cost} Fury`);
-
-  lines.push("");
-  lines.push("### Soul Fragment Generators");
-  const soulGen = spells.filter((s) =>
-    s.generates?.some((g) => g.resourceType === "Soul Fragments"),
-  );
-  for (const s of soulGen) {
-    const amount = s.generates.find(
-      (g) => g.resourceType === "Soul Fragments",
-    )?.amount;
-    lines.push(`- ${s.name} (${s.id}): ${amount} fragments`);
-  }
-
-  lines.push("");
-  lines.push("### Soul Fragment Consumers");
-  const soulConsume = spells.filter(
-    (s) =>
-      s.triggeredBy?.some((t) => t.name?.includes("Soul Fragment")) ||
-      (s.description?.toLowerCase().includes("consume") &&
-        s.description?.toLowerCase().includes("soul fragment")),
-  );
-  for (const s of soulConsume) lines.push(`- ${s.name} (${s.id})`);
 
   lines.push("");
 

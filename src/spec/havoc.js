@@ -16,6 +16,9 @@ import {
   deriveSpecSpellFilter,
   deriveTalentTreePattern,
   deriveKeySpellIds,
+  flattenArchetypes as _flattenArchetypes,
+  rosterBuildToConfig,
+  buildAnalysisFromRoster as _buildAnalysisFromRoster,
 } from "./common.js";
 import { dataDir } from "../engine/paths.js";
 import { config } from "../engine/startup.js";
@@ -551,7 +554,40 @@ export const SPEC_CONFIG = {
     Fire: "fire-damage",
     Physical: "physical-damage",
   },
+
+  fillerAbilities: ["throw_glaive", "demons_bite"],
+
+  cooldownDurations: {
+    metamorphosis: 240,
+    eye_beam: 40,
+    essence_break: 25,
+    the_hunt: 90,
+    vengeful_retreat: 25,
+    fel_rush: 10,
+  },
+
+  chargeAbilities: {
+    fel_rush: { maxCharges: 2, rechargeCd: 10 },
+  },
+
+  scenarios: {
+    st: { target_count: 1, durations: [120, 300] },
+    small_aoe: { target_count: 5, durations: [75] },
+    big_aoe: { target_count: 10, durations: [60] },
+  },
+
+  analysisArchetypes: {},
 };
+
+export function flattenArchetypes(archetypes = SPEC_CONFIG.analysisArchetypes) {
+  return _flattenArchetypes(archetypes);
+}
+
+export { rosterBuildToConfig };
+
+export function buildAnalysisFromRoster(rosterBuilds) {
+  return _buildAnalysisFromRoster(rosterBuilds, SPEC_CONFIG);
+}
 
 export const SET_BONUS_SPELL_IDS = new Set([
   // Populate when Havoc tier sets are added to SimC

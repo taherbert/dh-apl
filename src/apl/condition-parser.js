@@ -315,15 +315,7 @@ export function extractSemantics(ast) {
       case "Comparison":
         // Check if left side is a known resource or buff property
         const leftParts = node.left.split(".");
-        if (
-          [
-            "fury",
-            "soul_fragments",
-            "health",
-            "souls_consumed",
-            "active_enemies",
-          ].includes(leftParts[0])
-        ) {
+        if (getKnownResources().includes(leftParts[0])) {
           result.resourceGates.push({
             resource: leftParts[0],
             property: leftParts.slice(1).join(".") || "current",

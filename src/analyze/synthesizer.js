@@ -5,7 +5,7 @@
 
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { initSpec } from "../engine/startup.js";
+import { initSpec, getSpecAdapter } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir } from "../engine/paths.js";
 
@@ -296,19 +296,20 @@ export function resolveConflicts(hypotheses, conflicts) {
 // --- Archetype-Specific Grouping ---
 
 export function groupByArchetype(hypotheses) {
-  const groups = {
-    universal: [],
-    aldrachi_reaver: [],
-    annihilator: [],
-  };
+  const heroTrees = getSpecAdapter().getHeroTrees();
+  const groups = { universal: [] };
+  for (const name of Object.keys(heroTrees)) {
+    groups[name] = [];
+  }
 
   for (const h of hypotheses) {
     if (h.archetypeSpecific) {
       const tree =
         h.archetype?.heroTree ||
-        (h.proposedChanges?.[0]?.list === "anni"
-          ? "annihilator"
-          : "aldrachi_reaver");
+        Object.entries(heroTrees).find(
+          ([, ht]) => h.proposedChanges?.[0]?.list === ht.aplBranch,
+        )?.[0] ||
+        Object.keys(heroTrees)[0];
       groups[tree]?.push(h);
     } else {
       groups.universal.push(h);

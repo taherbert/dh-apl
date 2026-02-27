@@ -25,13 +25,23 @@ import {
 } from "./apl-interpreter.js";
 import { ROOT } from "../engine/paths.js";
 
-// State engine — loaded dynamically based on --spec
+// State engine and spec hint module — loaded dynamically based on --spec
 let engine;
+let hintMod;
+let _fillers;
 
 export async function initEngine(specName) {
   if (engine) return engine;
   engine = await import(`./${specName}/state-sim.js`);
-  // Also initialize the shared engine in the sub-tools so they don't re-import
+  _fillers = null; // reset so isFillerAbility re-reads from the new spec
+  try {
+    hintMod = await import(`./${specName}/divergence-hints.js`);
+  } catch {
+    hintMod = {
+      estimateFrequency: () => "intermittent",
+      generateFixHint: (...args) => args[4],
+    };
+  }
   await initTimelineEngine(specName);
   await initInterpreterEngine(specName);
   return engine;
@@ -62,12 +72,15 @@ function hashConfig(archetype) {
 
 function snapshotToState(snap, buildConfig, fightDuration) {
   const state = engine.createInitialState(buildConfig);
-  state.fury = snap.fury;
-  state.soul_fragments = snap.soul_fragments;
-  state.buffStacks.voidfall_building = snap.vf_building;
-  state.buffStacks.voidfall_spending = snap.vf_spending;
-  state.vf_building = snap.vf_building;
-  state.vf_spending = snap.vf_spending;
+  const specConfig = getSpecAdapter().getSpecConfig();
+
+  // Restore resources by name
+  state[specConfig.resources.primary.name] =
+    snap[specConfig.resources.primary.name];
+  if (specConfig.resources.secondary) {
+    state[specConfig.resources.secondary.name] =
+      snap[specConfig.resources.secondary.name];
+  }
 
   // Restore buff durations, dots, and cooldowns from snapshot
   for (const [dict, snapDict] of [
@@ -83,14 +96,24 @@ function snapshotToState(snap, buildConfig, fightDuration) {
     }
   }
 
-  state.charges.fracture = snap.fracture_charges ?? 2;
-  if (snap.ia_charges !== undefined) {
-    state.charges.immolation_aura = snap.ia_charges;
-    state.recharge.immolation_aura = snap.ia_recharge ?? 30;
+  // Restore charges generically
+  if (snap.charges) {
+    for (const [ability, count] of Object.entries(snap.charges)) {
+      if (ability in state.charges) state.charges[ability] = count;
+    }
+  }
+  if (snap.recharge) {
+    for (const [ability, remaining] of Object.entries(snap.recharge)) {
+      if (ability in state.recharge) state.recharge[ability] = remaining;
+    }
   }
 
   // Sync fury_cap from Meta
-  if (state.buffs.metamorphosis > 0) state.fury_cap = 120;
+  if (state.buffs.metamorphosis > 0 && state.fury_cap !== undefined)
+    state.fury_cap = specConfig.resources.primary.cap + 20;
+
+  // Spec-specific extra state (voidfall stacks, etc.)
+  if (engine.restoreExtra) engine.restoreExtra(state, snap);
 
   state.fight_end = fightDuration ?? Infinity;
   return state;
@@ -106,6 +129,7 @@ function snapshotToState(snap, buildConfig, fightDuration) {
 // all subsequent GCDs to compare different game states).
 export function computeDivergence(aplTrace, buildConfig) {
   const divergences = [];
+  const specConfig = getSpecAdapter().getSpecConfig();
 
   // Single pass: accumulate total fight score AND detect divergences.
   // totalFightScore = sum of immediate scoreDpgcd for all on-GCD APL choices,
@@ -148,17 +172,18 @@ export function computeDivergence(aplTrace, buildConfig) {
     // and meaningfully so), confidence is high. Otherwise low.
     const threeGcdAgreesWithRollout = threeGcdDelta > 10;
 
+    const { primary, secondary } = specConfig.resources;
+    const divState = {
+      [primary.name]: event.pre[primary.name],
+      buffs: event.pre.buffs,
+      dots: event.pre.dots,
+    };
+    if (secondary) divState[secondary.name] = event.pre[secondary.name];
+
     divergences.push({
       gcd: event.gcd,
       t: event.t,
-      state: {
-        fury: event.pre.fury,
-        soul_fragments: event.pre.soul_fragments,
-        vf_building: event.pre.vf_building,
-        vf_spending: event.pre.vf_spending,
-        buffs: event.pre.buffs,
-        dots: event.pre.dots,
-      },
+      state: divState,
       optimal: { ability: optAbility, score: optScore },
       actual: {
         ability: event.ability,
@@ -169,7 +194,7 @@ export function computeDivergence(aplTrace, buildConfig) {
       confidence: threeGcdAgreesWithRollout ? "high" : "low",
       three_gcd_delta: Math.round(threeGcdDelta),
       // actual_occurrences and estimated_dps_impact filled in post-loop
-      fix_hint: generateFixHint(
+      fix_hint: hintMod.generateFixHint(
         opt,
         apl,
         state,
@@ -203,9 +228,10 @@ export function computeDivergence(aplTrace, buildConfig) {
   return divergences;
 }
 
-// Filler abilities: lowest priority, differences between them are noise
 function isFillerAbility(ability) {
-  return ["throw_glaive", "felblade", "sigil_of_flame"].includes(ability);
+  if (!_fillers)
+    _fillers = new Set(getSpecAdapter().getSpecConfig().fillerAbilities || []);
+  return _fillers.has(ability);
 }
 
 // Count-based DPS impact estimate
@@ -221,24 +247,8 @@ function computeImpact(dpgcdDelta, occurrences, totalFightScore) {
   };
 }
 
-// Human-readable frequency description (kept for report context alongside actual count)
 function estimateFrequency(opt, apl) {
-  const optAbility = opt.ability;
-  const aplAbility = apl.ability;
-
-  if (optAbility === "metamorphosis" || aplAbility === "metamorphosis")
-    return "Meta CD (~3min)";
-  if (optAbility === "spirit_bomb" && aplAbility === "fracture")
-    return "SpB window";
-  if (optAbility === "spirit_bomb" || aplAbility === "spirit_bomb")
-    return "SpB window (~8-10s)";
-  if (optAbility === "fel_devastation" || aplAbility === "fel_devastation")
-    return "FelDev CD (~30-40s)";
-  if (optAbility === "fiery_brand" || aplAbility === "fiery_brand")
-    return "FB CD (~60s)";
-  if (optAbility === "reavers_glaive" || aplAbility === "reavers_glaive")
-    return "RG proc";
-  return "intermittent";
+  return hintMod.estimateFrequency(opt, apl);
 }
 
 // ---------------------------------------------------------------------------
@@ -297,103 +307,18 @@ function compareRolloutBranches(state, optAbility, aplAbility, steps = 3) {
     `${steps}-GCD score: ${optAbility}=${optBranch.score.toFixed(0)} vs ${aplAbility}=${aplBranch.score.toFixed(0)} (Δ${diff >= 0 ? "+" : ""}${diff.toFixed(0)})`,
   ];
 
-  if (Math.abs(o.soul_fragments - a.soul_fragments) >= 2)
-    details.push(
-      `frags: opt_path=${o.soul_fragments} APL_path=${a.soul_fragments}`,
-    );
-  if (Math.abs(o.fury - a.fury) >= 20)
-    details.push(`fury: opt_path=${o.fury} APL_path=${a.fury}`);
-  const oVfs = o.buffStacks?.voidfall_spending ?? 0;
-  const aVfs = a.buffStacks?.voidfall_spending ?? 0;
-  if (oVfs !== aVfs)
-    details.push(`VF spending: opt_path=${oVfs} APL_path=${aVfs}`);
-  if ((o.dots?.fiery_brand ?? 0) > 0 !== (a.dots?.fiery_brand ?? 0) > 0)
-    details.push(
-      `FB active: opt_path=${(o.dots?.fiery_brand ?? 0) > 0} APL_path=${(a.dots?.fiery_brand ?? 0) > 0}`,
-    );
+  // Resource comparison — generic from spec config
+  const specConfig = getSpecAdapter().getSpecConfig();
+  const pri = specConfig.resources.primary.name;
+  if (Math.abs((o[pri] ?? 0) - (a[pri] ?? 0)) >= 20)
+    details.push(`${pri}: opt_path=${o[pri]} APL_path=${a[pri]}`);
+  if (specConfig.resources.secondary) {
+    const sec = specConfig.resources.secondary.name;
+    if (Math.abs((o[sec] ?? 0) - (a[sec] ?? 0)) >= 2)
+      details.push(`${sec}: opt_path=${o[sec]} APL_path=${a[sec]}`);
+  }
 
   return { description: details.join("; "), delta: diff };
-}
-
-// Generate a fix hint based on the divergence pattern
-function generateFixHint(opt, apl, preState, buildConfig, branchDesc) {
-  const optAbility = opt.ability;
-  const aplAbility = apl.ability;
-  const frags = preState.soul_fragments;
-  const inMeta = preState.buffs.metamorphosis > 0;
-  const vfSpending = preState.buffStacks.voidfall_spending;
-  const fbActive = (preState.dots?.fiery_brand || 0) > 0;
-
-  // SpB was optimal but APL chose Fracture
-  if (optAbility === "spirit_bomb" && aplAbility === "fracture") {
-    const base = inMeta
-      ? `spb_threshold condition during Meta may be too high (frags=${frags}, threshold likely${frags >= 4 ? " correct" : ` requires ${frags}>=threshold`})`
-      : fbActive
-        ? `SpB under Fiery Demise: APL spb_threshold or fiery_demise_active condition may not be triggering (frags=${frags}, fb_active=${fbActive})`
-        : `SpB gating condition too strict at frags=${frags}; APL chose Fracture instead`;
-    return `${base}. ${branchDesc}`;
-  }
-
-  // Meta was optimal but APL delayed
-  if (optAbility === "metamorphosis" && aplAbility !== "metamorphosis") {
-    if (frags < 3) {
-      return `APL gates Meta on soul_fragments>=3; at frags=${frags} APL delays. Consider whether pre-loading Fracture costs more than it gains. ${branchDesc}`;
-    }
-    if (vfSpending > 0) {
-      return `APL blocks Meta during VF spending phase (spending=${vfSpending}); timing interaction with VF dump. ${branchDesc}`;
-    }
-    return `Meta timing: APL delays while optimal fires. ${branchDesc}`;
-  }
-
-  // FelDev timing vs. other abilities
-  if (optAbility === "fel_devastation" && aplAbility !== "fel_devastation") {
-    if (fbActive) {
-      return `FelDev should fire under Fiery Demise (+30% fire amp); APL chose ${aplAbility} instead — check fb_active gating in anni_cooldowns. ${branchDesc}`;
-    }
-    if (inMeta) {
-      return `FelDev in Meta: APL may be gating on !apex.3|talent.darkglare_boon; verify DGB flag. ${branchDesc}`;
-    }
-    return `FelDev opportunity: APL chose ${aplAbility}; check anni_cooldowns priority or voidfall_spending gate. ${branchDesc}`;
-  }
-
-  // Fiery Brand timing
-  if (optAbility === "fiery_brand" && !fbActive) {
-    return `FB should be applied to enable Fiery Demise; APL chose ${aplAbility}. Check anni_voidfall or anni_cooldowns fire brand condition. ${branchDesc}`;
-  }
-
-  // APL chose SC but optimal wants SpB (fragment mismatch)
-  if (optAbility === "spirit_bomb" && aplAbility === "soul_cleave") {
-    const base =
-      vfSpending > 0
-        ? `VF spending phase: optimal wants SpB at spending=${vfSpending} but APL chose SC; check voidfall spending conditions`
-        : `SpB vs SC: ${frags} frags available, optimal prefers SpB for fragment efficiency`;
-    return `${base}. ${branchDesc}`;
-  }
-
-  // Fragment generator vs. spender mismatch
-  if (isFragmentGenerator(optAbility) && isFragmentSpender(aplAbility)) {
-    return `APL spending fragments when optimal would generate; frags=${frags} may be above optimal spending threshold at this point. ${branchDesc}`;
-  }
-
-  if (isFragmentSpender(optAbility) && isFragmentGenerator(aplAbility)) {
-    return `APL generating fragments when optimal would spend; frags=${frags} sufficient for ${optAbility} but APL generated more first. ${branchDesc}`;
-  }
-
-  // Default: show rollout branch comparison
-  return branchDesc;
-}
-
-function isFragmentGenerator(ability) {
-  return [
-    "fracture",
-    "soul_carver",
-    "sigil_of_spite",
-    "immolation_aura",
-  ].includes(ability);
-}
-
-function isFragmentSpender(ability) {
-  return ["spirit_bomb", "soul_cleave"].includes(ability);
 }
 
 // ---------------------------------------------------------------------------
@@ -466,9 +391,11 @@ export function generateReport(divergences, buildName, metadata) {
       .map(([k, v]) => `${k}:${v}s`)
       .join(", ");
 
-    lines.push(
-      `**State:** fury=${d.state.fury}, frags=${d.state.soul_fragments}, VF=${d.state.vf_building}/${d.state.vf_spending}`,
-    );
+    const stateFields = Object.entries(d.state)
+      .filter(([k, v]) => typeof v === "number")
+      .map(([k, v]) => `${k}=${v}`)
+      .join(", ");
+    lines.push(`**State:** ${stateFields}`);
     if (buffsStr) lines.push(`**Buffs:** ${buffsStr}`);
     if (dotsStr) lines.push(`**DoTs:** ${dotsStr}`);
     lines.push("");
@@ -606,7 +533,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   if (existsSync(traceFile) && !values["force-retrace"]) {
     const cached = JSON.parse(readFileSync(traceFile, "utf-8"));
     const currentHash = hashConfig(archetype);
-    if (cached.metadata?.config_hash === currentHash) {
+    const TRACE_FORMAT = 2; // bumped when snapshot schema changes (e.g. generic charges)
+    if (
+      cached.metadata?.config_hash === currentHash &&
+      (cached.metadata?.trace_format ?? 1) >= TRACE_FORMAT
+    ) {
       console.log(`Loading APL trace from cache: ${traceFile}`);
       aplTrace = cached;
     } else {
@@ -629,6 +560,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     aplTrace = simulateApl(aplText, archetype, duration);
     aplTrace.metadata = aplTrace.metadata || {};
     aplTrace.metadata.config_hash = hashConfig(archetype);
+    aplTrace.metadata.trace_format = 2;
     writeFileSync(traceFile, JSON.stringify(aplTrace));
     console.log(`  Saved to ${traceFile}`);
   }

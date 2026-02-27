@@ -264,17 +264,16 @@ function analyzeResourceWaste(result) {
     result.combatLength || SCENARIOS[result.scenario]?.maxTime || 300;
   const waste = {};
 
-  // Estimate primary resource (fury) generation and spending
-  if (
-    resources.primary &&
-    resourceFlow.furyGenerators &&
-    resourceFlow.furyConsumers
-  ) {
+  // Estimate primary resource generation and spending
+  const primaryName = resources.primary.name;
+  const genKey = `${primaryName}Generators`;
+  const conKey = `${primaryName}Consumers`;
+  if (resources.primary && resourceFlow[genKey] && resourceFlow[conKey]) {
     const cap = resources.primary.cap;
     let totalGenPerSec = 0;
     let totalSpendPerSec = 0;
 
-    for (const gen of resourceFlow.furyGenerators) {
+    for (const gen of resourceFlow[genKey]) {
       const ability = result.abilities.find(
         (a) => a.name.toLowerCase().replace(/ /g, "_") === gen.ability,
       );
@@ -283,7 +282,7 @@ function analyzeResourceWaste(result) {
       totalGenPerSec += castsPerSec * (gen.base || gen.amount || 0);
     }
 
-    for (const con of resourceFlow.furyConsumers) {
+    for (const con of resourceFlow[conKey]) {
       const ability = result.abilities.find(
         (a) => a.name.toLowerCase().replace(/ /g, "_") === con.ability,
       );

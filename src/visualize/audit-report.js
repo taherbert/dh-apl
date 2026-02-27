@@ -1,7 +1,7 @@
 // Generates a comprehensive interaction audit report in Markdown.
 
 import { readFileSync, writeFileSync } from "node:fs";
-import { initSpec } from "../engine/startup.js";
+import { initSpec, getSpecAdapter } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { dataFile } from "../engine/paths.js";
 
@@ -155,11 +155,11 @@ function generateAuditReport() {
   w();
   w("Interactions involving resource generation/spending:");
   w();
+  const resNames = getSpecAdapter().getSpecConfig().resourceNames;
   const resourceInteractions = interactions.interactions.filter(
     (i) =>
       i.type === "resource_modifier" ||
-      i.mechanism?.includes("fury") ||
-      i.mechanism?.includes("soul"),
+      resNames.some((r) => i.mechanism?.includes(r)),
   );
   for (const i of resourceInteractions) {
     w(
