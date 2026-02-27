@@ -503,8 +503,7 @@ async function runComparison(candidatePath, tier = "standard") {
   const simcContent = buildProfilesetContent(candidatePath);
 
   // Parallel: each scenario gets cores/N threads
-  const isLocal = tierConfig.target_error >= 0.5 || !isRemoteActive();
-  const totalCores = isLocal ? cpus().length : getSimCores();
+  const totalCores = isLocalTier(tierConfig) ? cpus().length : getSimCores();
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
@@ -665,13 +664,14 @@ async function runWithConcurrency(taskFactories, maxConcurrency) {
 
 const MIN_THREADS_PER_SIM = 4;
 
+// Quick fidelity sims always run locally even when remote is active.
+function isLocalTier(tierConfig) {
+  return !tierConfig || tierConfig.target_error >= 0.5 || !isRemoteActive();
+}
+
 // Calculate optimal concurrency and thread allocation for sim batching.
-// When tierConfig indicates quick fidelity, sims run locally even when remote
-// is active — use local core count to avoid oversubscription.
 function simConcurrency(simCount, tierConfig) {
-  const isLocal =
-    !tierConfig || tierConfig.target_error >= 0.5 || !isRemoteActive();
-  const totalCores = isLocal ? cpus().length : getSimCores();
+  const totalCores = isLocalTier(tierConfig) ? cpus().length : getSimCores();
   const maxConcurrency = Math.max(
     1,
     Math.floor(totalCores / MIN_THREADS_PER_SIM),
@@ -1246,7 +1246,7 @@ async function cmdInit(aplPath) {
 function cmdStatus() {
   const state = loadState();
   if (!state) {
-    console.log(
+    console.error(
       "No iteration state found. Run: node src/sim/iterate.js init <apl.simc>",
     );
     process.exit(1);
@@ -1262,6 +1262,10 @@ function cmdStatus() {
 
   const consecRej = state.consecutiveRejections || 0;
 
+  const orchPhase = getSessionState("orchestrator_phase");
+  if (orchPhase) {
+    console.log(`Orchestrator: ${orchPhase}`);
+  }
   console.log("=== APL Iteration Progress ===");
   console.log(
     `Started: ${formatElapsed(state.startedAt)} | Iterations: ${iterCount} (${accepted} accepted, ${rejected} rejected)`,
@@ -3290,6 +3294,18 @@ switch (cmd) {
     break;
   }
 
+  case "phase": {
+    if (rawArgs.length > 0) {
+      const value = rawArgs.join(" ");
+      setSessionState("orchestrator_phase", value);
+      console.log(`Orchestrator phase: ${value}`);
+    } else {
+      const phase = getSessionState("orchestrator_phase");
+      console.log(phase || "not set");
+    }
+    break;
+  }
+
   case "checkpoint": {
     // Parse checkpoint flags
     const checkpointOpts = {};
@@ -3332,6 +3348,7 @@ Usage:
   node src/sim/iterate.js rollback <iteration-id>    Rollback an accepted iteration
   node src/sim/iterate.js summary                    Generate iteration report
   node src/sim/iterate.js group-independent           Group hypotheses into independent sets
+  node src/sim/iterate.js phase [value]               Get/set orchestrator phase
   node src/sim/iterate.js checkpoint                 Save checkpoint for session resume`);
     break;
 }

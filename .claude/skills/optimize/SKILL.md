@@ -5,163 +5,289 @@ model: opus
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, WebFetch, WebSearch
 ---
 
-Autonomous APL optimization: roster, deep reasoning, parallel specialists, synthesis, multi-build iteration, APL branching, reporting.
+Autonomous APL optimization using **phase-as-subagent architecture**. Each phase runs in its own subagent with a fresh context window. The main thread is a thin state machine that reads summaries and launches subagents. Results persist to DB + files, never accumulate in the main conversation.
 
 If `$ARGUMENTS` starts with `test:`, skip Phases 1-2 and jump to Phase 3 with those hypotheses. Otherwise treat `$ARGUMENTS` as a focus directive.
 
-## State Management
+## Architecture
 
-All state flows through `results/{spec}/theorycraft.db`.
-
-```javascript
-import {
-  setSessionState,
-  getSessionState,
-  addTheory,
-  addHypothesis,
-  addIteration,
-  addFinding,
-  getIterations,
-  getRosterBuilds,
-} from "../util/db.js";
-import { createTheory, getTheorySummary } from "../analyze/theory.js";
+```
+Main Thread (thin orchestrator — never reads data files):
+  ├── Phase 0: Setup (inline CLI commands)
+  ├── Phase 1: Launch Deep Reasoning subagent → writes deep_reasoning.md + theories to DB
+  │           Launch 4 Specialist subagents → each writes analysis_{focus}.json
+  ├── Phase 2: Launch Synthesis subagent → reads files, writes hypotheses to DB
+  ├── Phase 3: Loop: Launch Iteration Batch subagents → each tests 3-5 hypotheses
+  └── Phase 4: Report (inline CLI commands)
 ```
 
-**Recovery after context compaction:** `getSessionState('phase')`, `getSessionState('session_id')`, `getIterations({ sessionId })`, `getHypotheses({ status: 'pending' })`, read `results/{spec}/plan.md`. Update `plan.md` after every phase transition and iteration.
+**Context budget for main thread:** The main thread should NEVER read large data files (spells-summary.json, interactions-summary.json, talents.json). All analysis happens in subagents. The main thread reads only: `iterate.js status` output, `iterate.js phase` output, `dashboard.md`, `checkpoint.md`, DB query results (compact), and 1-line subagent return summaries.
+
+## State Management
+
+All state flows through `results/{spec}/theorycraft.db`. The orchestrator tracks its own phase:
+
+```bash
+node src/sim/iterate.js phase "1_reasoning"    # Set phase
+node src/sim/iterate.js phase                   # Get phase
+node src/sim/iterate.js status                  # Shows orchestrator phase + iteration state
+```
+
+**Recovery after context compaction:** The pre-compact hook auto-checkpoints and injects a recovery manifest. On resume: `iterate.js phase` to get current phase, `iterate.js status` for iteration state, read `checkpoint.md` and `plan.md` for context. Launch the appropriate phase subagent to continue.
 
 ---
 
-## Phases 0-2: Setup, Reasoning, Synthesis
+## Phase 0: Setup (inline)
 
-Read `.claude/skills/optimize/PHASES.md` for detailed phase instructions before starting each phase. Key sequence:
+Run these directly in the main thread — they produce small outputs.
 
-**Phase 0:** startup-cli check -> session recovery -> roster generate -> baseline init -> pattern-analyze -> load knowledge base. Use `npm run data:query` for targeted lookups instead of reading full data files.
+### 0a. Spec + Data Freshness
 
-**Phase 1:** This is the most important phase. Deep mechanical reasoning FIRST: model the resource economy (equilibrium, marginal DPGCD, burst windows), identify systemic tensions (resource competition, cooldown misalignment, state machine incoherence, second-order chains), map build-specific tensions across cluster/apex axes. Form 2-3 root theories and persist via `createTheory()`. THEN launch specialists.
+```bash
+node src/engine/startup-cli.js
+```
 
-**Specialist launch mandate:** Launch all 4 specialists (spell data, talent interactions, resource flow, state machine) in a **SINGLE message** using Task tool with `subagent_type: "theorist"`, `model: "opus"`, `run_in_background: true`. Never launch sequentially. Each prompt MUST include your root theories verbatim, roster template structure, spec/data paths, and assigned focus area. See PHASES.md for the specialist table.
+If simc data is stale, run `SPEC={spec} npm run refresh` before continuing.
 
-**Phase 2:** synthesize -> divergence-hypotheses -> strategic -> theorycraft -> unify -> rank -> write summary. Ranking: your deep theories > unified hypotheses with consensus_count > 1 > divergences with delta > 100 across archetypes > aligned specialist findings > single-source hypotheses.
+### 0b. Session Recovery
 
-**In direct hypothesis mode (`test:`):** Skip Phases 1-2. Load knowledge base tiers 1-3 only. Jump to Phase 3.
+```bash
+node src/sim/iterate.js phase         # Check orchestrator phase
+node src/sim/iterate.js status        # Check iteration state
+```
+
+If a session exists, skip to the appropriate phase. If the orchestrator phase shows a partially-complete phase, resume from there.
+
+### 0c. Generate Roster + Baseline
+
+```bash
+npm run roster generate
+npm run roster show
+node src/sim/iterate.js init apls/{spec}/{spec}.simc   # Only if no active session
+```
+
+### 0d. Pattern Analysis (optional, skip if resuming)
+
+```bash
+node src/sim/iterate.js pattern-analyze
+```
+
+### 0e. Set Phase
+
+```bash
+node src/sim/iterate.js phase "0_complete"
+```
+
+Update `results/{spec}/plan.md` with Phase 0 summary.
 
 ---
 
-## Phase 3: Multi-Build Iteration Loop
+## Phase 1: Deep Reasoning + Specialists (subagents)
 
-**Every test runs against ALL roster builds simultaneously.** Before entering the loop, read `.claude/skills/optimize/PHASES.md` section "Phase 3 Supplementary" for escape strategies and batch parallelism patterns.
+> **Skipped in direct hypothesis mode (`test:`).** Jump to Phase 3.
+
+### 1a. Launch Deep Reasoning Subagent
+
+Set phase, then launch a **single subagent** that does all the heavy reading and reasoning:
+
+```bash
+node src/sim/iterate.js phase "1_reasoning"
+```
+
+Launch with Task tool:
+
+- `subagent_type: "general-purpose"`
+- `model: "opus"`
+- `run_in_background: false` (wait for completion)
+
+**Subagent prompt must include:**
+
+- Spec name and key paths (data dir, results dir, APL path)
+- Focus directive (from `$ARGUMENTS`) if any
+- Instruction: "Read `.claude/skills/optimize/PHASES.md` section 'Phase 1: Deep Reasoning Subagent Instructions' and execute fully."
+
+**What the subagent does (details in PHASES.md):**
+
+1. Loads all data files (spells-summary, interactions-summary, talents, SPEC_CONFIG, APL, DB findings) — in its own context, not yours
+2. Studies the build roster and models the resource economy
+3. Identifies systemic tensions and maps build-specific tensions
+4. Forms 2-3 root theories, persists via `createTheory()`
+5. Writes `results/{spec}/deep_reasoning.md` — the full reasoning document
+6. Returns: "Created N theories: [short titles]. Deep reasoning written to deep_reasoning.md."
+
+**Main thread receives:** A 1-2 line summary. Never sees the data files or reasoning text.
+
+### 1b. Launch 4 Specialist Subagents
+
+After deep reasoning completes, launch all 4 specialists **in a SINGLE message**:
+
+```bash
+node src/sim/iterate.js phase "1_specialists"
+```
+
+Each specialist:
+
+- `subagent_type: "theorist"`
+- `model: "opus"`
+- `run_in_background: true`
+
+**Each specialist prompt must include:**
+
+- Spec name, data dir path, results dir path
+- "Read `results/{spec}/deep_reasoning.md` for root theories and context"
+- Assigned focus area and output filename
+- "Read `.claude/skills/optimize/PHASES.md` specialist table for framework details"
+
+| Specialist          | Focus                                                | Output                        |
+| ------------------- | ---------------------------------------------------- | ----------------------------- |
+| Spell Data          | DPGCD rankings, modifier stacking, proc mechanics    | `analysis_spell_data.json`    |
+| Talent Interactions | Synergy clusters, anti-synergies, build-APL coupling | `analysis_talent.json`        |
+| Resource Flow       | Resource equilibrium, GCD budget, cooldown cycles    | `analysis_resource_flow.json` |
+| State Machine       | Hero tree rhythms, variable correctness, dead code   | `analysis_state_machine.json` |
+
+**Main thread receives:** Background completion notifications (1 line each). No analysis text enters the main context.
+
+Update `plan.md` after specialists launch. Proceed to Phase 2 when all 4 complete.
+
+---
+
+## Phase 2: Synthesis (subagent)
+
+> **Skipped in direct hypothesis mode (`test:`).** Jump to Phase 3.
+
+```bash
+node src/sim/iterate.js phase "2_synthesis"
+```
+
+Launch with Task tool:
+
+- `subagent_type: "general-purpose"`
+- `model: "opus"`
+- `run_in_background: false` (wait for completion)
+
+**Subagent prompt must include:**
+
+- Spec name and key paths
+- "Read `.claude/skills/optimize/PHASES.md` section 'Phase 2: Synthesis Subagent Instructions' and execute fully."
+
+**What the subagent does (details in PHASES.md):**
+
+1. Reads `deep_reasoning.md` + all 4 `analysis_*.json` files + DB theories — in its own context
+2. Runs `iterate.js synthesize`, `divergence-hypotheses`, `strategic`, `theorycraft`, `unify`
+3. Ranks hypotheses per the ranking protocol
+4. Writes `results/{spec}/analysis_summary.md`, initializes `dashboard.md` and `changelog.md`
+5. Returns: "Synthesis complete. N hypotheses generated (M unified). Top 5: [brief list]"
+
+**Main thread receives:** A 2-3 line summary with hypothesis count and top priorities.
+
+Update `plan.md`. Set phase:
+
+```bash
+node src/sim/iterate.js phase "2_complete"
+```
+
+---
+
+## Phase 3: Iteration (batched subagents)
 
 ### Pre-Flight
 
 ```bash
 npm run remote:status
-npm run remote:start    # if not active — start automatically
+npm run remote:start    # if not active
+node src/sim/iterate.js phase "3_iteration"
 ```
 
-Query pending hypotheses (`iterate.js hypotheses`). For the top N (up to 10), create a task for each using TaskCreate. Set to in_progress when starting, completed when done (update description with "ACCEPTED +X.XX%: reason" or "REJECTED: reason").
-
-**If resuming:** `iterate.js status`, read `dashboard.md`/`changelog.md`, `git log --oneline -10`, read `current.simc`, query DB findings. Resume from Step 1.
-
-### Iteration Loop
-
-#### Step 1: Analyze
-
-Read current APL. Form 1-3 causal theories with specific numbers. Then check screeners: `node src/sim/iterate.js hypotheses`. Use screener output to validate your theories, not replace them.
-
-#### Step 2: Choose
-
-Priority: your deep theories > unified hypotheses with `consensus_count > 1` > aligned screener findings > high-confidence on high-DPS-share abilities. **Never test a hypothesis you can't explain causally.**
-
-If exhausted: `node src/sim/iterate.js strategic` and `theorycraft` -- but reason about the APL FIRST.
-
-#### Step 3: Modify
-
-Read `current.simc`. Make ONE targeted change. Save as `candidate.simc`. Before any change: locate the ability, understand its priority placement, trace resource/cooldown impact, check cross-references in all hero tree branches, predict direction and magnitude.
-
-#### Step 4: Test
-
-**Quick screening (synchronous, local):**
+Check pending hypotheses:
 
 ```bash
-node src/sim/iterate.js compare apls/{spec}/candidate.simc --quick
+node src/sim/iterate.js hypotheses | head -30
 ```
 
-If quick screening rejects (any scenario > 1% regression), go to Step 5 (reject).
+### Iteration Batch Loop
 
-**Standard/confirm (always background, remote):**
+Launch iteration batches as subagents. Each batch tests 3-5 hypotheses in a fresh context window:
 
-```bash
-/sim-background apls/{spec}/candidate.simc -- <hypothesis description>
-/sim-background apls/{spec}/candidate.simc --confirm -- <hypothesis description>
+```
+while pending hypotheses remain AND stop conditions not met:
+  1. Launch Iteration Batch subagent (foreground)
+  2. Read 1-line return summary
+  3. Read dashboard.md for progress
+  4. Check stop conditions
+  5. If continuing: launch next batch
 ```
 
-**Immediately return to Step 1 for the next hypothesis.** Do not wait. Use `/sim-check` when it completes.
+**Batch subagent config:**
 
-SimC failure: syntax error -> fix and retry. Timeout -> kill and reject. 3+ crashes -> stop loop.
+- `subagent_type: "general-purpose"`
+- `model: "opus"`
+- `run_in_background: false`
 
-#### Step 5: Decide
+**Batch subagent prompt must include:**
 
-- **Accept if:** mean weighted > target_error AND worst build > -1%
-- **Reject if:** no subset benefits above noise floor, OR no valid SimC discriminator exists after checking ALL axes
-- **Inconclusive:** within noise after confirm -> log and move on
+- Spec name and key paths
+- Current APL path (`apls/{spec}/current.simc`)
+- "Read `.claude/skills/optimize/PHASES.md` section 'Phase 3: Iteration Batch Subagent Instructions' and execute fully."
+- Batch size (3-5 hypotheses)
+- Whether remote sims are available (`npm run remote:status` result)
 
-**CRITICAL: Partial gains are opportunities, not failures.** A hypothesis showing +2% for some builds and -4% for others is a STRONG signal for a gated implementation. Before rejecting ANY mixed result:
+**What the batch subagent does (details in PHASES.md):**
 
-1. Sort all builds by weighted delta. Identify top/bottom 10 gainers/losers.
-2. Systematically check EACH discriminator axis: hero tree, apex rank, talent cluster presence, hero variant, target count.
-3. A "clean split" = gainers share a trait losers lack.
-4. At standard fidelity, only deltas above +/-0.5% are meaningful.
-5. If a discriminator exists: write a gated candidate and re-test the full roster.
-6. If no discriminator exists after checking all axes: reject and document the analysis.
-7. If gains are suggestive but ambiguous: escalate the top-gaining subset to `--confirm` fidelity before concluding.
+1. Reads current APL and queries DB for top pending hypotheses
+2. For each hypothesis: analyze → write candidate → compare → accept/reject
+3. All state persisted to DB via iterate.js accept/reject
+4. Updates dashboard.md and changelog.md
+5. Returns: "Batch: N tested, M accepted (+X.XX% best), P rejected. Consecutive rejections: R."
 
-**Never reject based on mean-weighted alone.** Always examine per-build distribution.
+**Main thread receives:** A 1-line summary per batch.
 
-```bash
-node src/sim/iterate.js accept "reason" --hypothesis "description fragment"
-node src/sim/iterate.js reject "reason" --hypothesis "description fragment"
-```
+### Stop Conditions (checked by main thread between batches)
 
-#### Step 5b: Record
+- 3 consecutive rejections with no new hypotheses → try escape strategies
+- 10 consecutive rejections → stop
+- All categories + escape strategies exhausted → stop
+- No pending hypotheses remaining → stop
 
-1. Record finding to DB via `addFinding()`
-2. Update `plan.md`, `dashboard.md`
-3. After accept: commit with `iterate: <hypothesis> (<+/-X.XX%> weighted)`
+### Escape Strategies
 
-#### Step 6: Repeat
+If consecutive rejections hit 3, pass escape directives to the next batch subagent prompt:
 
-### Stop Conditions
-
-- 3 consecutive rejections with no new hypotheses -> escape strategies (see PHASES.md)
-- 10 consecutive rejections -> stop
-- All categories + escape strategies exhausted -> stop
-- Context approaching ~180k tokens -> checkpoint and suggest restart
-
-### Context Window Management
-
-- Use `iterate.js status` and `compare` for summaries, not full sim JSON
-- Use `npm run data:query` for targeted spell/talent/interaction lookups
-- Short reasons in accept/reject -- one sentence
+- Compound mutation: try two individually-rejected changes together
+- Reversal test: reverse a previously accepted change
+- Radical reorder: swap top 3-5 priorities in a sub-list
+- Reference import: compare against `reference/` APL
+- Category rotation: switch from thresholds to reordering to conditions
 
 ---
 
-## Phase 4: Final Report + Commit
+## Phase 4: Report + Commit (inline)
 
-Read `.claude/skills/optimize/PHASES.md` Phase 4 for full steps. Key sequence: re-rank builds -> audit branch coverage -> record findings -> `/showcase` -> summary -> `npm run remote:stop` -> commit.
+```bash
+node src/sim/iterate.js phase "4_report"
+npm run roster generate
+node src/sim/iterate.js summary
+npm run db:dump
+```
 
-## Checkpoint Protocol
+Use `/showcase` for report generation. Then:
 
-On context limits or interruption, save to `results/{spec}/checkpoint.md`: current phase, hypothesis, per-build progress, templates analyzed, APL branches created, remaining work.
+```bash
+npm run remote:stop
+node src/sim/iterate.js phase "complete"
+```
+
+Commit: `optimize: {spec} - N iterations, M accepted, +X.XX% mean weighted DPS`
+
+---
 
 ## Anti-Patterns
 
-- **Single-build testing** -- ALWAYS test against the full roster
-- **Specialists without theory** -- form root theories BEFORE launching specialists
-- **Sequential specialists** -- ALWAYS launch all 4 in a SINGLE message
-- **Flat APL for diverse builds** -- if builds differ, the APL MUST branch
-- **Trusting screener output** -- observations are not insights; reason first
-- **Grinding thresholds without theory** -- test values from mechanical reasoning, not sweeps
-- **Ignoring per-build results** -- aggregate mean hides regressions; always check distribution
-- **Rejecting partial gains** -- gate them instead; see Step 5 protocol
-- **Writing results to memory** -- ALL findings go to `theorycraft.db`, never auto-memory
-- **Reading full data files** -- use `npm run data:query` for targeted lookups
+- **Reading data files in main thread** — NEVER. All data reading happens in subagents.
+- **Large return values from subagents** — subagents persist to DB/files and return 1-line summaries
+- **Single-build testing** — ALWAYS test against the full roster
+- **Specialists without theory** — deep reasoning BEFORE specialists
+- **Sequential specialists** — ALWAYS launch all 4 in a SINGLE message
+- **Skipping phase tracking** — always `iterate.js phase <value>` at transitions
+- **Ignoring per-build results** — aggregate mean hides regressions
+- **Rejecting partial gains** — gate them instead (see PHASES.md Phase 3)
+- **Writing results to memory** — ALL findings go to `theorycraft.db`, never auto-memory
