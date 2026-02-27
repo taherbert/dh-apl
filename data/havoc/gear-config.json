@@ -1,0 +1,333 @@
+{
+  "ilvl_tiers": [
+    {
+      "ilvl": 237,
+      "track": "Adventurer"
+    },
+    {
+      "ilvl": 250,
+      "track": "Veteran"
+    },
+    {
+      "ilvl": 263,
+      "track": "Champion"
+    },
+    {
+      "ilvl": 276,
+      "track": "Hero"
+    },
+    {
+      "ilvl": 289,
+      "track": "Myth"
+    }
+  ],
+  "tier": {
+    "set_id": 1979,
+    "required_count": 4,
+    "items": {
+      "head": "head=devouring_reavers_intake,id=250033,ilevel=289",
+      "shoulders": "shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289",
+      "chest": "chest=devouring_reavers_engine,id=250036,ilevel=289",
+      "hands": "hands=devouring_reavers_essence_grips,id=250034,ilevel=289",
+      "legs": "legs=devouring_reavers_pistons,id=250032,ilevel=289"
+    },
+    "alternatives": {
+      "head": [
+        {
+          "id": "devouring_nights_visage",
+          "simc": "head=devouring_nights_visage,id=249306,ilevel=289"
+        },
+        {
+          "id": "mask_of_darkest_intent",
+          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289"
+        },
+        {
+          "id": "spellsnap_shadowmask",
+          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289"
+        },
+        {
+          "id": "vilefiends_guise",
+          "simc": "head=vilefiends_guise,id=251140,ilevel=289"
+        },
+        {
+          "id": "fetid_vilecrown",
+          "simc": "head=fetid_vilecrown,id=251177,ilevel=289"
+        },
+        {
+          "id": "voidlashed_hood",
+          "simc": "head=voidlashed_hood,id=151336,ilevel=289"
+        }
+      ],
+      "shoulders": [
+        {
+          "id": "blooming_barklight_spaulders",
+          "simc": "shoulder=blooming_barklight_spaulders,id=249333,ilevel=289"
+        },
+        {
+          "id": "fallen_grunts_mantle",
+          "simc": "shoulder=fallen_grunts_mantle,id=251092,ilevel=289"
+        },
+        {
+          "id": "scavengers_spaulders",
+          "simc": "shoulder=scavengers_spaulders,id=251146,ilevel=289"
+        },
+        {
+          "id": "enthralled_bonespines",
+          "simc": "shoulder=enthralled_bonespines,id=251171,ilevel=289"
+        },
+        {
+          "id": "somber_spaulders",
+          "simc": "shoulder=somber_spaulders,id=251223,ilevel=289"
+        },
+        {
+          "id": "bloodfeather_mantle",
+          "simc": "shoulder=bloodfeather_mantle,id=258581,ilevel=289"
+        },
+        {
+          "id": "ancient_hornswog_spaulders",
+          "simc": "shoulder=ancient_hornswog_spaulders,id=193725,ilevel=289"
+        },
+        {
+          "id": "twilights_edge_spaulders",
+          "simc": "shoulder=twilights_edge_spaulders,id=151319,ilevel=289"
+        }
+      ],
+      "chest": [
+        {
+          "id": "radiant_clutchtenders_jerkin",
+          "simc": "chest=radiant_clutchtenders_jerkin,id=249322,ilevel=289"
+        },
+        {
+          "id": "vest_of_the_howling_gale",
+          "simc": "chest=vest_of_the_howling_gale,id=251099,ilevel=289"
+        },
+        {
+          "id": "war_trial_vestments",
+          "simc": "chest=war_trial_vestments,id=251159,ilevel=289"
+        },
+        {
+          "id": "rootwalker_harness",
+          "simc": "chest=rootwalker_harness,id=251189,ilevel=289"
+        },
+        {
+          "id": "maledict_vest",
+          "simc": "chest=maledict_vest,id=251216,ilevel=289"
+        },
+        {
+          "id": "bloodfeather_chestguard",
+          "simc": "chest=bloodfeather_chestguard,id=258586,ilevel=289"
+        },
+        {
+          "id": "vest_of_the_voids_embrace",
+          "simc": "chest=vest_of_the_voids_embrace,id=151313,ilevel=289"
+        }
+      ],
+      "hands": [
+        {
+          "id": "vaelgors_fearsome_grasp",
+          "simc": "hands=vaelgors_fearsome_grasp,id=249321,ilevel=289"
+        },
+        {
+          "id": "gloves_of_viscous_goo",
+          "simc": "hands=gloves_of_viscous_goo,id=251113,ilevel=289"
+        },
+        {
+          "id": "gauntlets_of_fevered_defense",
+          "simc": "hands=gauntlets_of_fevered_defense,id=251124,ilevel=289"
+        },
+        {
+          "id": "corewrights_zappers",
+          "simc": "hands=corewrights_zappers,id=251204,ilevel=289"
+        },
+        {
+          "id": "ruby_contestants_gloves",
+          "simc": "hands=ruby_contestants_gloves,id=193721,ilevel=289"
+        },
+        {
+          "id": "gloves_of_the_dark_shroud",
+          "simc": "hands=gloves_of_the_dark_shroud,id=151318,ilevel=289"
+        }
+      ],
+      "legs": [
+        {
+          "id": "nightblades_pantaloons",
+          "simc": "legs=nightblades_pantaloons,id=249312,ilevel=289"
+        },
+        {
+          "id": "devouring_outriders_chausses",
+          "simc": "legs=devouring_outriders_chausses,id=250457,ilevel=289"
+        },
+        {
+          "id": "power_stance_breeches",
+          "simc": "legs=power_stance_breeches,id=260373,ilevel=289"
+        },
+        {
+          "id": "legwraps_of_lingering_legacies",
+          "simc": "legs=legwraps_of_lingering_legacies,id=251087,ilevel=289"
+        },
+        {
+          "id": "breeches_of_deft_deals",
+          "simc": "legs=breeches_of_deft_deals,id=251130,ilevel=289"
+        },
+        {
+          "id": "lightspore_leggings",
+          "simc": "legs=lightspore_leggings,id=251198,ilevel=289"
+        },
+        {
+          "id": "shifting_stalker_hide_pants",
+          "simc": "legs=shifting_stalker_hide_pants,id=151314,ilevel=289"
+        }
+      ]
+    }
+  },
+  "embellishments": {
+    "null_overrides": [
+      "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983",
+      "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+    ],
+    "pairs": [
+      {
+        "id": "hunt_banding",
+        "label": "Sigil Hunt + Devouring Banding",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=devouring_banding"
+        ]
+      },
+      {
+        "id": "hunt_blood",
+        "label": "Sigil Hunt + Sigil Blood",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_blood"
+        ]
+      },
+      {
+        "id": "hunt_void",
+        "label": "Sigil Hunt + Sigil Void",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_void"
+        ]
+      },
+      {
+        "id": "hunt_rot",
+        "label": "Sigil Hunt + Sigil Rot",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_rot"
+        ]
+      },
+      {
+        "id": "hunt_arcanoweave",
+        "label": "Sigil Hunt + Arcanoweave Lining",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=arcanoweave_lining"
+        ]
+      },
+      {
+        "id": "hunt_sunfire",
+        "label": "Sigil Hunt + Sunfire Silk Lining",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=sunfire_silk_lining"
+        ]
+      },
+      {
+        "id": "double_arcanoweave",
+        "label": "Double Arcanoweave Lining",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=arcanoweave_lining",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=arcanoweave_lining"
+        ]
+      },
+      {
+        "id": "double_banding",
+        "label": "Double Devouring Banding",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=devouring_banding",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=devouring_banding"
+        ]
+      },
+      {
+        "id": "hunt_prismatic_iris",
+        "label": "Sigil Hunt + Prismatic Focusing Iris",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=prismatic_focusing_iris"
+        ]
+      },
+      {
+        "id": "hunt_spore_binding",
+        "label": "Sigil Hunt + Primal Spore Binding",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=primal_spore_binding"
+        ]
+      },
+      {
+        "id": "hunt_loa_ring",
+        "label": "Sigil Hunt + Loa Worshiper's Band",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "banding_loa_ring",
+        "label": "Devouring Banding + Loa Worshiper's Band",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=devouring_banding",
+          "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "arcanoweave_loa_ring",
+        "label": "Arcanoweave Lining + Loa Worshiper's Band",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=arcanoweave_lining",
+          "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      }
+    ]
+  },
+  "gems": {
+    "item_ids": {
+      "7220": 241144,
+      "7221": 241143,
+      "7222": 241142
+    }
+  },
+  "manual_candidates": [
+    {
+      "slot": "main_hand",
+      "id": "lightless_lament",
+      "label": "Lightless Lament",
+      "simc": "main_hand=lightless_lament,id=260408,ilevel=289",
+      "stats": { "agi": 5259, "crit": 7000, "stamina": 7889 },
+      "tags": []
+    },
+    {
+      "slot": "off_hand",
+      "id": "lightless_lament_oh",
+      "label": "Lightless Lament (OH)",
+      "simc": "off_hand=lightless_lament,id=260408,ilevel=289",
+      "stats": { "agi": 5259, "crit": 7000, "stamina": 7889 },
+      "tags": []
+    }
+  ],
+  "ring_pairs": [
+    {
+      "id": "voidlight_bindings",
+      "label": "Voidlight Bindings 2-piece",
+      "finger1": "omission_of_light",
+      "finger2": "occlusion_of_void"
+    }
+  ],
+  "flagged": {
+    "eye_of_midnight": "On-equip proc (spell 1266505) not fully modeled in SimC. DPS results may understate this ring.",
+    "radiant_plume": "Decaying stat mechanic - average value over fight is lower than tooltip. SimC models the decay.",
+    "umbral_plume": "Unique-Equipped with Radiant Plume - cannot equip both."
+  }
+}
