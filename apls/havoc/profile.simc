@@ -26,8 +26,7 @@ override.skyfury=1
 override.mark_of_the_wild=1
 override.hunters_mark=1
 override.bleeding=1
-
-# Generic Midnight gear (same item IDs as other DH specs, stat type from spec)
+override.bloodlust=1
 
 head=devouring_reavers_intake,id=250033,ilevel=289
 neck=pendant_of_aching_grief,id=251096,ilevel=289,gem_id=241144/241144
