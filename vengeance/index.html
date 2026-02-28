@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vengeance — APL Optimization Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg: #0c0e14;
+  --bg-elevated: #10121a;
+  --surface: #161822;
+  --surface-alt: #1a1d2a;
+  --border: #252838;
+  --border-subtle: #1e2130;
+  --fg: #e4e6f0;
+  --fg-dim: #c0c3d4;
+  --fg-muted: #7c8098;
+  --accent: #7b93ff;
+  --accent-dim: #3d4f8a;
+  --accent-glow: rgba(123, 147, 255, 0.12);
+  --positive: #34d399;
+  --positive-bg: rgba(52, 211, 153, 0.07);
+  --negative: #fb7185;
+  --negative-bg: rgba(251, 113, 133, 0.07);
+  --gold: #f5c842;
+  --gold-bg: rgba(245, 200, 66, 0.08);
+  --anni: #a78bfa;
+  --anni-glow: rgba(167, 139, 250, 0.10);
+  --ar: #fb923c;
+  --ar-glow: rgba(251, 146, 60, 0.10);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+header {
+  padding: 3rem 0 1.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+header h1 {
+  font-family: "Outfit", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--anni) 60%, var(--ar) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  font-family: "Outfit", sans-serif;
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin-top: 0.15rem;
+  letter-spacing: 0.01em;
+}
+
+.header-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+
+/* Section basics */
+section { margin-bottom: 3rem; }
+
+h2 {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--border);
+}
+
+h3 {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--fg);
+}
+
+h4 {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.section-desc {
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.subsection { margin-bottom: 2.5rem; }
+
+/* Hero Showcase */
+.hero-showcase { margin-bottom: 3rem; }
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
+
+.showcase-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.showcase-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--ar), transparent); }
+.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--anni), transparent); }
+.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--ar-glow); }
+.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--anni-glow); }
+
+.showcase-header {
+  margin-bottom: 1rem;
+}
+
+.showcase-build-name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.showcase-weighted {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.75rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.6rem;
+  letter-spacing: -0.02em;
+}
+
+.showcase-weighted-label {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.showcase-scenarios {
+  display: flex;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.showcase-scenario {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.showcase-scenario-label {
+  display: block;
+  color: var(--fg-muted);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  margin-bottom: 0.1em;
+}
+
+.showcase-tree-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-top: 1rem;
+  position: relative;
+  aspect-ratio: 4 / 5;
+}
+
+.showcase-tree-wrap iframe {
+  position: absolute;
+  width: 1100px;
+  height: 700px;
+  border: none;
+  background: var(--bg);
+  pointer-events: none;
+  clip-path: inset(0% 0% 15% 57%);
+  left: 50%;
+  top: 50%;
+  transform-origin: 78.5% 42.5%;
+}
+
+/* Dual panel layout */
+/* Hero comparison — paired bars with delta */
+.hc-legend {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.hc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  font-weight: 500;
+}
+
+
+.hc-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.hc-rows {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.hc-row {
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.hc-row:last-child { border-bottom: none; }
+
+.hc-row--weighted {
+  border-top: 1px solid var(--border);
+  padding-top: 0.65rem;
+  margin-top: 0.15rem;
+  background: rgba(228, 230, 240, 0.04);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.5rem 0.45rem;
+}
+
+.hc-label {
+  font-size: 0.74rem;
+  font-weight: 500;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.hc-row--weighted .hc-label { font-weight: 700; }
+
+.hc-split-track {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.hc-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hc-split-bar {
+  height: 16px;
+  border-radius: 3px;
+  min-width: 2px;
+  transition: opacity 0.15s;
+}
+
+.hc-bar-val {
+  font-size: 0.74rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.hc-row:hover .hc-split-bar { opacity: 1 !important; }
+
+.hc-delta {
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Comparison grid (hero bars + apex chart side by side) */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.apex-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.hc-panel h3, .apex-panel h3 {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--fg-dim);
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Apex SVG chart */
+.apex-chart {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  display: block;
+}
+
+.apex-axis-label {
+  font-family: "Outfit", sans-serif;
+  font-size: 10px;
+  fill: var(--fg-muted);
+}
+
+.apex-node {
+  cursor: default;
+  transition: r 0.15s;
+}
+
+.apex-point .apex-tooltip {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.apex-point:hover .apex-tooltip {
+  opacity: 1;
+}
+
+.apex-tip-text {
+  font-family: "DM Sans", sans-serif;
+  font-size: 10px;
+  fill: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* Tree badges */
+.tree-badge {
+  display: inline-block;
+  padding: 0.2em 0.6em;
+  border-radius: 4px;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.tree-badge.anni { background: rgba(167, 139, 250, 0.13); color: var(--anni); }
+.tree-badge.ar { background: rgba(251, 146, 60, 0.13); color: var(--ar); }
+.tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: "DM Sans", sans-serif;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--fg-muted);
+  padding: 0.4em 1em;
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.filter-btn:hover { border-color: var(--accent-dim); color: var(--fg); }
+.filter-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--fg); }
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+th, td {
+  padding: 0.55rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+th {
+  background: var(--surface);
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th.sortable { cursor: pointer; user-select: none; }
+th.sortable:hover { color: var(--accent); }
+th.sortable.sorted-asc::after { content: " \25B2"; font-size: 0.6em; }
+th.sortable.sorted-desc::after { content: " \25BC"; font-size: 0.6em; }
+
+th.num, td.num, td.dps-cell { text-align: right; }
+
+tbody tr { background: var(--bg-elevated); }
+tbody tr:nth-child(even) { background: var(--surface-alt); }
+tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
+
+.dps-cell {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.dps-cell.top-build { background: var(--gold-bg); }
+
+/* Instant styled tooltip */
+[data-tip] { position: relative; cursor: default; }
+[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 4px);
+  right: 0;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  padding: 0.3em 0.55em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 20;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.build-name {
+  font-weight: 500;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.78rem;
+  word-break: break-word;
+  white-space: nowrap;
+}
+
+.archetype-cell {
+  color: var(--fg-muted);
+  font-size: 0.76rem;
+}
+/* Copy hash button */
+.copy-hash {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 0.15em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.35em;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+}
+tr:hover .copy-hash, .build-name:hover .copy-hash,
+.best-name:hover .copy-hash, .showcase-build-name:hover .copy-hash { opacity: 1; }
+.copy-hash:hover { color: var(--accent); border-color: var(--border); }
+.copy-hash.copied { color: var(--positive); opacity: 1; }
+.copy-hash svg { width: 13px; height: 13px; }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  background: var(--gold);
+  color: #0c0e14;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.55rem;
+  font-weight: 700;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-left: 0.4em;
+  letter-spacing: 0.06em;
+}
+
+/* Positive / negative */
+.positive { color: var(--positive); font-weight: 600; }
+.negative { color: var(--negative); font-weight: 600; }
+
+/* Defensive cost strips */
+.def-cost-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.def-strip-header {
+  padding-left: 3px;
+}
+
+.def-strip-header__body {
+  display: grid;
+  grid-template-columns: 160px 1fr 75px 90px 90px;
+  gap: 0 0.75rem;
+  padding: 0.35rem 1rem 0.25rem 0.85rem;
+}
+
+.def-strip-header__label,
+.def-strip__tree-header {
+  font-size: 0.68rem;
+  color: var(--fg-muted);
+  font-weight: 600;
+  text-align: right;
+}
+
+.def-strip {
+  display: flex;
+  background: var(--bg-elevated);
+  transition: background 0.15s;
+}
+
+.def-strip:nth-child(even) { background: var(--surface-alt); }
+.def-strip:hover { background: rgba(123, 147, 255, 0.05); }
+
+.def-strip__indicator {
+  flex: 0 0 3px;
+  align-self: stretch;
+}
+
+.def-strip__body {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 160px 1fr 75px 90px 90px;
+  align-items: center;
+  gap: 0 0.75rem;
+  padding: 0.55rem 1rem 0.55rem 0.85rem;
+}
+
+.def-strip__name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.def-strip__bar-wrap {
+  min-width: 0;
+  height: 6px;
+  background: var(--border-subtle);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.def-strip__bar {
+  height: 100%;
+  border-radius: 3px;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.def-strip:hover .def-strip__bar { opacity: 1; }
+
+.def-strip__cost {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.def-strip__tree {
+  font-size: 0.72rem;
+  color: var(--fg-dim);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.def-strip__tree--divergent {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+/* Details / collapsible */
+details {
+  margin-bottom: 1.25rem;
+}
+
+summary {
+  cursor: pointer;
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 0.5rem 0;
+  color: var(--fg);
+  user-select: none;
+  transition: color 0.15s;
+}
+
+summary:hover { color: var(--accent); }
+
+.detail-count {
+  font-family: "DM Sans", sans-serif;
+  font-weight: 400;
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+}
+
+/* Optimization journey */
+.journey-table .desc-cell {
+  max-width: 420px;
+  white-space: normal;
+  line-height: 1.45;
+}
+
+
+
+/* Trinket rankings */
+.trinket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.trinket-list--elim { margin-top: 0.5rem; }
+
+.trinket-strip {
+  display: grid;
+  grid-template-columns: 32px 1fr 90px 60px;
+  align-items: center;
+  gap: 0 0.75rem;
+  padding: 0.55rem 1rem;
+  background: var(--bg-elevated);
+  transition: background 0.15s;
+}
+
+.trinket-strip:nth-child(even) { background: var(--surface-alt); }
+.trinket-strip:hover { background: rgba(123, 147, 255, 0.05); }
+
+.trinket-strip--elim { opacity: 0.5; }
+.trinket-strip--ref { opacity: 0.6; border-top: 1px dashed var(--border); margin-top: 4px; }
+
+.trinket-strip__rank {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-align: center;
+}
+
+.trinket-strip__body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trinket-strip__name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.trinket-strip__name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.trinket-strip__tags {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.trinket-tag {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface);
+  color: var(--fg-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.trinket-tag--use { color: var(--accent); border-color: var(--accent-dim); }
+.trinket-tag--passive { color: var(--fg-muted); }
+.trinket-tag--raid { color: var(--gold); border-color: rgba(245, 200, 66, 0.25); }
+.trinket-tag--dungeon { color: var(--positive); border-color: rgba(52, 211, 153, 0.25); }
+.trinket-tag--crafted { color: var(--ar); border-color: rgba(251, 146, 60, 0.25); }
+
+.trinket-strip__bar-wrap {
+  height: 5px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.trinket-strip__bar {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.trinket-strip:hover .trinket-strip__bar { opacity: 0.8; }
+
+.trinket-strip__dps {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+
+.trinket-strip__delta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+}
+
+.trinket-strip__delta--best {
+  color: var(--gold);
+}
+
+.trinket-details { margin-top: 0.75rem; }
+
+/* Trinket ilvl chart */
+.tc-chart {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.tc-legend {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.55rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.tc-legend-label {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: 0.25rem;
+}
+
+.tc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: "Outfit", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--fg-dim);
+}
+
+.tc-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tc-row {
+  display: grid;
+  grid-template-columns: 28px 1fr 90px 60px;
+  align-items: start;
+  gap: 0 0.75rem;
+  padding: 0.65rem 1rem;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s;
+}
+
+.tc-row:nth-child(even) { background: var(--surface-alt); }
+.tc-row:last-child { border-bottom: none; }
+.tc-row:hover { background: rgba(123, 147, 255, 0.05); }
+
+.tc-rank {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--fg-muted);
+  text-align: center;
+  padding-top: 0.2rem;
+}
+
+.tc-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tc-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.tc-name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.84rem;
+  color: var(--fg);
+  white-space: nowrap;
+}
+
+.tc-bar-track {
+  position: relative;
+  height: 22px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.tc-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 4px;
+  opacity: 0.85;
+  transition: opacity 0.15s;
+}
+
+.tc-row:hover .tc-bar { opacity: 1; }
+
+.tc-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  opacity: 0;
+  transition: opacity 0.1s;
+  white-space: nowrap;
+}
+.tc-tooltip.visible { opacity: 1; }
+.tc-tooltip__track {
+  font-weight: 700;
+  margin-bottom: 0.15rem;
+}
+.tc-tooltip__dps {
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+}
+.tc-tooltip__delta {
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  font-size: 0.72rem;
+}
+
+.tc-best-dps {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg);
+  padding-top: 0.2rem;
+  white-space: nowrap;
+}
+
+.tc-delta {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  padding-top: 0.2rem;
+}
+
+.tc-delta--best { color: var(--gold); }
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 2rem 0;
+  text-align: center;
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+}
+
+footer p { margin-bottom: 0.25rem; }
+footer a { color: var(--accent); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* Weighted tooltip */
+.info-icon {
+  cursor: help;
+  font-size: 0.75rem;
+  color: var(--fg-muted);
+  position: relative;
+  vertical-align: middle;
+}
+
+.weighted-header {
+  position: relative;
+}
+
+.info-popup {
+  display: none;
+  position: fixed;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65em 0.85em;
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--fg-dim);
+  line-height: 1.5;
+  width: 260px;
+  white-space: normal;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Load animation */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+section, header, footer {
+  animation: fadeUp 0.4s ease-out both;
+}
+
+section:nth-child(2) { animation-delay: 0.05s; }
+section:nth-child(3) { animation-delay: 0.1s; }
+section:nth-child(4) { animation-delay: 0.15s; }
+section:nth-child(5) { animation-delay: 0.2s; }
+section:nth-child(6) { animation-delay: 0.25s; }
+section:nth-child(7) { animation-delay: 0.3s; }
+footer { animation-delay: 0.35s; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  body { padding: 0 1rem; }
+  header { flex-direction: column; align-items: flex-start; }
+  .showcase-grid { grid-template-columns: 1fr; }
+  .hc-row { grid-template-columns: 70px 1fr 60px; gap: 0.5rem; }
+  .comparison-grid { grid-template-columns: 1fr; }
+  .def-strip__body, .def-strip-header__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
+  table { font-size: 0.72rem; }
+  th, td { padding: 0.35rem 0.5rem; }
+  .filter-bar { gap: 0.35rem; }
+  .build-name { font-size: 0.7rem; }
+  .showcase-weighted { font-size: 1.4rem; }
+  .trinket-strip { grid-template-columns: 28px 1fr 75px 50px; gap: 0 0.5rem; padding: 0.45rem 0.75rem; }
+  .trinket-strip__name { font-size: 0.76rem; }
+  .trinket-strip__dps { font-size: 0.76rem; }
+  .tc-row { grid-template-columns: 24px 1fr 75px 50px; padding: 0.5rem 0.6rem; }
+  .tc-name { font-size: 0.76rem; }
+  .tc-best-dps { font-size: 0.76rem; }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <div class="header-content">
+    <h1>Vengeance</h1>
+    <p class="subtitle">Midnight — APL Optimization Report</p>
+  </div>
+  <div class="header-meta">
+    <span class="meta-item">Updated 2026-02-28</span>
+  </div>
+</header>
+<section class="hero-showcase">
+  <h2>Top Builds</h2>
+  <div class="showcase-grid"><div class="showcase-panel">
+      <div class="showcase-header">
+        <span class="tree-badge ar">Aldrachi Reaver</span>
+      </div>
+      <div class="showcase-build-name">Brand + Vuln + SC (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+      <div class="showcase-weighted">106,002 <span class="showcase-weighted-label">weighted</span></div>
+      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 47,210</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#a78bfa">DRoute</span> 80,926</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 142,242</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 247,056</span></div>
+      <div class="showcase-tree-wrap">
+        <iframe src="https://mimiron.raidbots.com/simbot/render/talents/CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA?bgcolor=0f1117&width=1100&hideHeader=true" title="Aldrachi Reaver spec tree" scrolling="no"></iframe>
+      </div>
+    </div>
+<div class="showcase-panel">
+      <div class="showcase-header">
+        <span class="tree-badge anni">Annihilator</span>
+      </div>
+      <div class="showcase-build-name">Brand + Vuln (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+      <div class="showcase-weighted">179,392 <span class="showcase-weighted-label">weighted</span></div>
+      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 59,134</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#a78bfa">DRoute</span> 95,110</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 270,263</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 472,993</span></div>
+      <div class="showcase-tree-wrap">
+        <iframe src="https://mimiron.raidbots.com/simbot/render/talents/CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA?bgcolor=0f1117&width=1100&hideHeader=true" title="Annihilator spec tree" scrolling="no"></iframe>
+      </div>
+    </div></div>
+</section>
+<section>
+  <h2>Hero Tree Comparison</h2>
+  <div class="comparison-grid">
+    <div class="hc-panel">
+    <h3>By Scenario</h3>
+    <p class="section-desc">Best build DPS per hero tree at each target count.</p>
+    <div class="hc-rows">
+      <div class="hc-row">
+        <span class="hc-label" style="color:#60a5fa">Patchwerk 1T</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:10.0%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">47,210</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:12.8%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">60,614</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+28.4%</span>
+      </div>
+<div class="hc-row">
+        <span class="hc-label" style="color:#a78bfa">DRoute</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:17.1%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">80,926</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:20.3%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">95,989</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+18.6%</span>
+      </div>
+<div class="hc-row">
+        <span class="hc-label" style="color:#f59e0b">Patchwerk 5T</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:30.2%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">142,908</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:57.1%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">270,263</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+89.1%</span>
+      </div>
+<div class="hc-row">
+        <span class="hc-label" style="color:#ef4444">Patchwerk 10T</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:52.7%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">249,460</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:100.0%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">472,993</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+89.6%</span>
+      </div>
+<div class="hc-row hc-row--weighted">
+        <span class="hc-label" style="color:var(--fg)">Weighted</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:22.4%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">106,002</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:37.9%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">179,392</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+69.2%</span>
+      </div>
+    </div>
+    <div class="hc-legend"><span class="hc-legend-item"><span class="tree-badge sm ar">AR</span> Aldrachi Reaver</span><span class="hc-legend-item"><span class="tree-badge sm anni">Anni</span> Annihilator</span></div>
+  </div>
+    <div class="apex-panel">
+    <h3>Apex Scaling</h3>
+    <p class="section-desc">Weighted DPS gain by apex rank (best build per hero tree), relative to each tree's rank 0 baseline.</p>
+    <svg class="apex-chart" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
+      <line x1="48" y1="210.0" x2="370" y2="210.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="213.5" text-anchor="end" class="apex-axis-label">0%</text><line x1="48" y1="171.0" x2="370" y2="171.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="174.5" text-anchor="end" class="apex-axis-label">10%</text><line x1="48" y1="132.0" x2="370" y2="132.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="135.5" text-anchor="end" class="apex-axis-label">20%</text><line x1="48" y1="93.0" x2="370" y2="93.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="96.5" text-anchor="end" class="apex-axis-label">30%</text><line x1="48" y1="54.0" x2="370" y2="54.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="57.5" text-anchor="end" class="apex-axis-label">40%</text><line x1="48" y1="15.0" x2="370" y2="15.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="18.5" text-anchor="end" class="apex-axis-label">50%</text>
+      <text x="48.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 0</text><text x="128.5" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 1</text><text x="209.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 2</text><text x="289.5" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 3</text><text x="370.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 4</text>
+      <path d="M48.0,210.0 L128.5,213.2 L209.0,203.7 L289.5,213.2 L370.0,201.9 L370.0,210.0 L48.0,210.0Z" fill="rgba(251, 146, 60, 0.15)"/><path d="M48.0,210.0 L128.5,213.2 L209.0,203.7 L289.5,213.2 L370.0,201.9" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-linejoin="round"/><path d="M48.0,210.0 L128.5,180.8 L209.0,176.0 L289.5,185.8 L370.0,71.6 L370.0,210.0 L48.0,210.0Z" fill="rgba(167, 139, 250, 0.15)"/><path d="M48.0,210.0 L128.5,180.8 L209.0,176.0 L289.5,185.8 L370.0,71.6" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/>
+      <g class="apex-point"><circle cx="48.0" cy="210.0" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="166.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="180.0" text-anchor="middle" class="apex-tip-text">103,845 (+0.0%)</text></g></g><g class="apex-point"><circle cx="128.5" cy="213.2" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="63.5" y="169.2" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="128.5" y="183.2" text-anchor="middle" class="apex-tip-text">102,994 (-0.8%)</text></g></g><g class="apex-point"><circle cx="209.0" cy="203.7" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="144.0" y="159.7" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="209.0" y="173.7" text-anchor="middle" class="apex-tip-text">105,530 (+1.6%)</text></g></g><g class="apex-point"><circle cx="289.5" cy="213.2" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="224.5" y="169.2" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="289.5" y="183.2" text-anchor="middle" class="apex-tip-text">102,990 (-0.8%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="201.9" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="157.9" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="171.9" text-anchor="middle" class="apex-tip-text">106,002 (+2.1%)</text></g></g><g class="apex-point"><circle cx="48.0" cy="210.0" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="166.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="180.0" text-anchor="middle" class="apex-tip-text">132,414 (+0.0%)</text></g></g><g class="apex-point"><circle cx="128.5" cy="180.8" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="63.5" y="136.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="128.5" y="150.8" text-anchor="middle" class="apex-tip-text">142,325 (+7.5%)</text></g></g><g class="apex-point"><circle cx="209.0" cy="176.0" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="144.0" y="132.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="209.0" y="146.0" text-anchor="middle" class="apex-tip-text">143,952 (+8.7%)</text></g></g><g class="apex-point"><circle cx="289.5" cy="185.8" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="224.5" y="141.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="289.5" y="155.8" text-anchor="middle" class="apex-tip-text">140,645 (+6.2%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="71.6" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="27.6" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="41.6" text-anchor="middle" class="apex-tip-text">179,392 (+35.5%)</text></g></g>
+    </svg>
+    <div class="hc-legend"><span class="hc-legend-item"><span class="tree-badge sm ar">AR</span> Aldrachi Reaver</span><span class="hc-legend-item"><span class="tree-badge sm anni">Anni</span> Annihilator</span></div>
+  </div>
+  </div>
+</section>
+<section id="rankings">
+  <h2>Build Rankings</h2>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-tree="all">All (35)</button>
+    <button class="filter-btn" data-tree="aldrachi_reaver">Aldrachi Reaver</button>
+      <button class="filter-btn" data-tree="annihilator">Annihilator</button>
+  </div>
+  <div class="table-wrap">
+    <table class="roster-table" id="rankings-table">
+      <thead><tr>
+        <th class="sortable" data-col="name">Build</th>
+        <th>Tree</th>
+        <th class="sortable num" data-col="st" style="color:#60a5fa">Patchwerk 1T</th>
+      <th class="sortable num" data-col="dungeon_route" style="color:#a78bfa">DRoute</th>
+      <th class="sortable num" data-col="small_aoe" style="color:#f59e0b">Patchwerk 5T</th>
+      <th class="sortable num" data-col="big_aoe" style="color:#ef4444">Patchwerk 10T</th>
+        <th class="sortable num weighted-header" data-col="weighted" style="color:var(--fg)">Weighted <span class="info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg><span class="info-popup">Weighted DPS combines all scenarios into a single score.<br><br><span style="color:#60a5fa">Patchwerk 1T</span> 45% · <span style="color:#a78bfa">DRoute</span> 15% · <span style="color:#f59e0b">Patchwerk 5T</span> 25% · <span style="color:#ef4444">Patchwerk 10T</span> 15%</span></span></th>
+      </tr></thead>
+      <tbody><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 59,075">59,134</td><td class="dps-cell has-tip" data-tip="SimC baseline: 91,851">95,110</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 270,955">270,263<span class="badge">TOP</span></td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 473,543">472,993<span class="badge">TOP</span></td>
+  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 179,132">179,392<span class="badge">TOP</span></td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln + SC (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 60,662">60,614<span class="badge">TOP</span></td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 92,952">95,989<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 269,329">269,460</td><td class="dps-cell has-tip" data-tip="SimC baseline: 464,838">465,483</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 178,299">178,862</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 55,066">55,150</td><td class="dps-cell has-tip" data-tip="SimC baseline: 85,834">89,133</td><td class="dps-cell has-tip" data-tip="SimC baseline: 258,571">258,049</td><td class="dps-cell has-tip" data-tip="SimC baseline: 447,408">447,867</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 169,409">169,880</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Vuln + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 58,268">58,390</td><td class="dps-cell has-tip" data-tip="SimC baseline: 89,591">93,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 244,549">243,718</td><td class="dps-cell has-tip" data-tip="SimC baseline: 415,132">414,838</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 163,066">163,389</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln + Fel Dev + SC (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,309">48,352</td><td class="dps-cell has-tip" data-tip="SimC baseline: 80,282">81,187</td><td class="dps-cell has-tip" data-tip="SimC baseline: 213,642">213,953</td><td class="dps-cell has-tip" data-tip="SimC baseline: 377,502">376,851</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 143,817">143,952</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Full Build (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,970">48,134</td><td class="dps-cell has-tip" data-tip="SimC baseline: 79,057">80,133</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,146">212,321</td><td class="dps-cell has-tip" data-tip="SimC baseline: 370,463">370,432</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 142,051">142,325</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln + Fel Dev (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,827">47,831</td><td class="dps-cell has-tip" data-tip="SimC baseline: 79,353">80,601</td><td class="dps-cell has-tip" data-tip="SimC baseline: 211,633">212,113</td><td class="dps-cell has-tip" data-tip="SimC baseline: 368,420">367,759</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 141,596">141,806</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,764">47,921</td><td class="dps-cell has-tip" data-tip="SimC baseline: 79,364">80,531</td><td class="dps-cell has-tip" data-tip="SimC baseline: 209,707">209,374</td><td class="dps-cell has-tip" data-tip="SimC baseline: 363,882">364,383</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 140,407">140,645</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,515">47,659</td><td class="dps-cell has-tip" data-tip="SimC baseline: 79,239">80,316</td><td class="dps-cell has-tip" data-tip="SimC baseline: 208,231">207,646</td><td class="dps-cell has-tip" data-tip="SimC baseline: 365,529">367,079</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 140,155">140,467</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,791">45,695</td><td class="dps-cell has-tip" data-tip="SimC baseline: 76,023">77,173</td><td class="dps-cell has-tip" data-tip="SimC baseline: 202,442">203,384</td><td class="dps-cell has-tip" data-tip="SimC baseline: 353,063">352,799</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 135,579">135,905</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,966">46,229</td><td class="dps-cell has-tip" data-tip="SimC baseline: 76,252">77,214</td><td class="dps-cell has-tip" data-tip="SimC baseline: 200,612">200,512</td><td class="dps-cell has-tip" data-tip="SimC baseline: 347,014">347,184</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 134,328">134,591</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Full Build <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,436">45,475</td><td class="dps-cell has-tip" data-tip="SimC baseline: 75,586">76,471</td><td class="dps-cell has-tip" data-tip="SimC baseline: 196,671">196,882</td><td class="dps-cell has-tip" data-tip="SimC baseline: 341,508">341,728</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,178">132,414</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 41,271">41,449</td><td class="dps-cell has-tip" data-tip="SimC baseline: 68,731">69,658</td><td class="dps-cell has-tip" data-tip="SimC baseline: 190,818">191,529</td><td class="dps-cell has-tip" data-tip="SimC baseline: 332,605">333,240</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 126,477">126,969</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Vuln <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,576">43,642</td><td class="dps-cell has-tip" data-tip="SimC baseline: 72,897">73,405</td><td class="dps-cell has-tip" data-tip="SimC baseline: 186,781">186,673</td><td class="dps-cell has-tip" data-tip="SimC baseline: 322,982">322,852</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 125,686">125,746</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Brand + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 38,825">38,926</td><td class="dps-cell has-tip" data-tip="SimC baseline: 65,455">65,781</td><td class="dps-cell has-tip" data-tip="SimC baseline: 177,366">176,921</td><td class="dps-cell has-tip" data-tip="SimC baseline: 309,668">308,795</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 118,081">117,933</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Vuln + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,859">43,889</td><td class="dps-cell has-tip" data-tip="SimC baseline: 71,761">72,609</td><td class="dps-cell has-tip" data-tip="SimC baseline: 164,043">163,590</td><td class="dps-cell has-tip" data-tip="SimC baseline: 279,847">279,021</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 113,489">113,392</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln + SC (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,960">47,210</td><td class="dps-cell has-tip" data-tip="SimC baseline: 80,557">80,926</td><td class="dps-cell has-tip" data-tip="SimC baseline: 142,054">142,242</td><td class="dps-cell has-tip" data-tip="SimC baseline: 247,391">247,056</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 105,838">106,002</td>
+</tr><tr data-tree="annihilator">
+  <td class="build-name">Vuln + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm anni">Anni</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 41,326">41,454</td><td class="dps-cell has-tip" data-tip="SimC baseline: 68,206">68,749</td><td class="dps-cell has-tip" data-tip="SimC baseline: 151,369">151,282</td><td class="dps-cell has-tip" data-tip="SimC baseline: 258,916">258,712</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 105,507">105,594</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln + Fel Dev + SC (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,456">45,665</td><td class="dps-cell has-tip" data-tip="SimC baseline: 78,568">78,899</td><td class="dps-cell has-tip" data-tip="SimC baseline: 142,669">142,908</td><td class="dps-cell has-tip" data-tip="SimC baseline: 249,821">249,460</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 105,381">105,530</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,382">46,658</td><td class="dps-cell has-tip" data-tip="SimC baseline: 79,684">80,008</td><td class="dps-cell has-tip" data-tip="SimC baseline: 138,534">138,162</td><td class="dps-cell has-tip" data-tip="SimC baseline: 242,111">242,806</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 103,775">103,959</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Full Build <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 44,089">44,178</td><td class="dps-cell has-tip" data-tip="SimC baseline: 76,739">77,004</td><td class="dps-cell has-tip" data-tip="SimC baseline: 142,819">142,847</td><td class="dps-cell has-tip" data-tip="SimC baseline: 244,815">244,681</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 103,778">103,845</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln + Fel Dev (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 44,996">45,158</td><td class="dps-cell has-tip" data-tip="SimC baseline: 77,365">77,894</td><td class="dps-cell has-tip" data-tip="SimC baseline: 138,875">138,934</td><td class="dps-cell has-tip" data-tip="SimC baseline: 245,169">245,207</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 103,347">103,520</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Full Build (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 44,039">44,158</td><td class="dps-cell has-tip" data-tip="SimC baseline: 76,208">76,754</td><td class="dps-cell has-tip" data-tip="SimC baseline: 139,088">139,576</td><td class="dps-cell has-tip" data-tip="SimC baseline: 244,667">244,771</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 102,721">102,994</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,294">45,518</td><td class="dps-cell has-tip" data-tip="SimC baseline: 78,115">78,611</td><td class="dps-cell has-tip" data-tip="SimC baseline: 137,455">137,399</td><td class="dps-cell has-tip" data-tip="SimC baseline: 241,700">242,438</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 102,718">102,990</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Vuln + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,561">46,844</td><td class="dps-cell has-tip" data-tip="SimC baseline: 78,928">79,193</td><td class="dps-cell has-tip" data-tip="SimC baseline: 136,873">136,594</td><td class="dps-cell has-tip" data-tip="SimC baseline: 237,603">236,982</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 102,650">102,655</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,226">45,421</td><td class="dps-cell has-tip" data-tip="SimC baseline: 77,658">77,817</td><td class="dps-cell has-tip" data-tip="SimC baseline: 137,447">137,494</td><td class="dps-cell has-tip" data-tip="SimC baseline: 239,533">239,976</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 102,292">102,482</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 41,686">41,788</td><td class="dps-cell has-tip" data-tip="SimC baseline: 74,406">74,849</td><td class="dps-cell has-tip" data-tip="SimC baseline: 140,731">140,825</td><td class="dps-cell has-tip" data-tip="SimC baseline: 243,844">243,596</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 101,679">101,778</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,491">43,642</td><td class="dps-cell has-tip" data-tip="SimC baseline: 75,438">75,800</td><td class="dps-cell has-tip" data-tip="SimC baseline: 134,725">134,855</td><td class="dps-cell has-tip" data-tip="SimC baseline: 238,320">238,564</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 100,316">100,507</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 42,836">42,925</td><td class="dps-cell has-tip" data-tip="SimC baseline: 74,720">74,986</td><td class="dps-cell has-tip" data-tip="SimC baseline: 134,027">134,066</td><td class="dps-cell has-tip" data-tip="SimC baseline: 229,229">229,064</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 98,375">98,440</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Vuln <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 42,840">42,864</td><td class="dps-cell has-tip" data-tip="SimC baseline: 74,553">74,858</td><td class="dps-cell has-tip" data-tip="SimC baseline: 133,804">133,470</td><td class="dps-cell has-tip" data-tip="SimC baseline: 228,620">228,665</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 98,205">98,185</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">baseline_AR <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,222">43,213</td><td class="dps-cell has-tip" data-tip="SimC baseline: 73,466">73,591</td><td class="dps-cell has-tip" data-tip="SimC baseline: 126,993">127,232</td><td class="dps-cell has-tip" data-tip="SimC baseline: 224,302">225,159</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 95,863">96,066</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 37,372">37,416</td><td class="dps-cell has-tip" data-tip="SimC baseline: 67,626">68,209</td><td class="dps-cell has-tip" data-tip="SimC baseline: 130,389">130,744</td><td class="dps-cell has-tip" data-tip="SimC baseline: 226,852">227,271</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 93,586">93,845</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Brand + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 37,166">37,280</td><td class="dps-cell has-tip" data-tip="SimC baseline: 67,193">67,672</td><td class="dps-cell has-tip" data-tip="SimC baseline: 129,745">129,897</td><td class="dps-cell has-tip" data-tip="SimC baseline: 225,678">225,131</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 93,092">93,171</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Vuln + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 41,008">41,047</td><td class="dps-cell has-tip" data-tip="SimC baseline: 70,904">71,174</td><td class="dps-cell has-tip" data-tip="SimC baseline: 121,614">121,711</td><td class="dps-cell has-tip" data-tip="SimC baseline: 207,863">207,556</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 90,672">90,708</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Vuln + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm ar">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 40,596">40,853</td><td class="dps-cell has-tip" data-tip="SimC baseline: 70,493">70,808</td><td class="dps-cell has-tip" data-tip="SimC baseline: 121,151">120,697</td><td class="dps-cell has-tip" data-tip="SimC baseline: 206,699">206,462</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 90,135">90,149</td>
+</tr></tbody>
+    </table>
+  </div>
+</section>
+<section>
+  <h2>Trinket Rankings</h2>
+  <div class="subsection">
+    <h3>Trinket Scaling by Item Level</h3>
+    <p class="section-desc">Weighted DPS per trinket at each upgrade track (top of track ilvl). Sorted by Myth (289) performance.</p>
+    <div class="tc-chart" data-best-per-ilvl='{"237":174373.39975818637,"250":176757.32655200292,"263":177336.16937459577,"276":178627.28615476575,"289":180098.82100228828}'>
+      <div class="tc-legend"><span class="tc-legend-label">Upgrade Track</span><span class="tc-legend-item"><span class="tc-legend-swatch" style="background:#7c8098"></span>Adventurer 237</span><span class="tc-legend-item"><span class="tc-legend-swatch" style="background:#60a5fa"></span>Veteran 250</span><span class="tc-legend-item"><span class="tc-legend-swatch" style="background:#34d399"></span>Champion 263</span><span class="tc-legend-item"><span class="tc-legend-swatch" style="background:#f5c842"></span>Hero 276</span><span class="tc-legend-item"><span class="tc-legend-swatch" style="background:#fb923c"></span>Myth 289</span></div>
+      <div class="tc-row">
+      <div class="tc-rank">1</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Gaze of the Alnseer</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="180099" style="width:100.0%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="178627" style="width:93.5%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="177336" style="width:87.7%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="176757" style="width:85.2%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="174373" style="width:74.6%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">180,099</div>
+      <div class="tc-delta tc-delta--best">best</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">2</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Light Company Guidon</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--use">on-use</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="178435" style="width:92.6%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="176290" style="width:83.1%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="175531" style="width:79.7%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="173957" style="width:72.8%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="173350" style="width:70.1%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">178,435</div>
+      <div class="tc-delta">-0.9%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">3</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Void Execution Mandate</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="178238" style="width:91.7%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="176827" style="width:85.5%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="176030" style="width:82.0%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="174893" style="width:76.9%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="173849" style="width:72.3%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">178,238</div>
+      <div class="tc-delta">-1.0%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">4</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Radiant Plume</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="177139" style="width:86.9%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="175709" style="width:80.5%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="174784" style="width:76.4%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="173977" style="width:72.8%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="173033" style="width:68.7%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">177,139</div>
+      <div class="tc-delta">-1.6%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">5</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Algeth'ar Puzzle Box</span>
+          
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="176537" style="width:84.2%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="175150" style="width:78.0%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="173833" style="width:72.2%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="172880" style="width:68.0%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="171438" style="width:61.6%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">176,537</div>
+      <div class="tc-delta">-2.0%</div>
+    </div>
+    </div>
+    <details class="trinket-details">
+      <summary>More trinkets <span class="detail-count">(19)</span></summary>
+      <div class="tc-chart-more"><div class="tc-row">
+      <div class="tc-rank">6</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Heart of Wind</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="175867" style="width:81.2%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="173962" style="width:72.8%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="173555" style="width:71.0%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="172709" style="width:67.2%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="172472" style="width:66.2%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">175,867</div>
+      <div class="tc-delta">-2.3%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">7</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Solarflare Prism</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="175102" style="width:77.8%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="174402" style="width:74.7%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="173088" style="width:68.9%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="172158" style="width:64.8%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="171479" style="width:61.8%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">175,102</div>
+      <div class="tc-delta">-2.8%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">8</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Resonant Bellowstone</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="174403" style="width:74.7%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="172826" style="width:67.7%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="171833" style="width:63.3%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="171640" style="width:62.5%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="170550" style="width:57.6%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">174,403</div>
+      <div class="tc-delta">-3.2%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">9</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Latch's Crooked Hook</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--use">on-use</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="173831" style="width:72.2%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="172292" style="width:65.4%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="171752" style="width:63.0%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="170882" style="width:59.1%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169816" style="width:54.4%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">173,831</div>
+      <div class="tc-delta">-3.5%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">10</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Sapling of the Dawnroot</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="173256" style="width:69.6%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171661" style="width:62.6%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="170960" style="width:59.5%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="170472" style="width:57.3%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169982" style="width:55.1%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">173,256</div>
+      <div class="tc-delta">-3.8%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">11</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Ranger-Captain's Iridescent Insignia</span>
+          
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="173218" style="width:69.5%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171921" style="width:63.7%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="170917" style="width:59.3%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="169773" style="width:54.2%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169462" style="width:52.8%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">173,218</div>
+      <div class="tc-delta">-3.8%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">12</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Undreamt God's Oozing Vestige</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="172858" style="width:67.9%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171573" style="width:62.2%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="171014" style="width:59.7%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="169947" style="width:55.0%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169495" style="width:53.0%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">172,858</div>
+      <div class="tc-delta">-4.0%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">13</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Eye of the Drowning Void</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="172530" style="width:66.4%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171855" style="width:63.4%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="170890" style="width:59.2%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="170156" style="width:55.9%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="170316" style="width:56.6%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">172,530</div>
+      <div class="tc-delta">-4.2%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">14</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Forgotten Farstrider's Insignia</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="172080" style="width:64.4%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171082" style="width:60.0%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="169970" style="width:55.1%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="169667" style="width:53.7%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169318" style="width:52.2%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">172,080</div>
+      <div class="tc-delta">-4.5%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">15</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Vaelgor's Final Stare</span>
+          
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="172062" style="width:64.3%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171613" style="width:62.4%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="171220" style="width:60.6%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="170861" style="width:59.0%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169937" style="width:54.9%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">172,062</div>
+      <div class="tc-delta">-4.5%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">16</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Kroluk's Warbanner</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="171975" style="width:64.0%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171450" style="width:61.6%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="171275" style="width:60.9%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="170611" style="width:57.9%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169719" style="width:54.0%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">171,975</div>
+      <div class="tc-delta">-4.5%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">17</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">The Eternal Egg</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="171563" style="width:62.1%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="171598" style="width:62.3%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="170020" style="width:55.3%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="170191" style="width:56.0%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="169275" style="width:52.0%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">171,563</div>
+      <div class="tc-delta">-4.7%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">18</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Volatile Void Suffuser</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="169310" style="width:52.1%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="168942" style="width:50.5%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="168672" style="width:49.3%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="168805" style="width:49.9%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="167806" style="width:45.5%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">169,310</div>
+      <div class="tc-delta">-6.0%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">19</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Heart of Ancient Hunger</span>
+          
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="168826" style="width:50.0%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="168948" style="width:50.5%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="168266" style="width:47.5%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="167766" style="width:45.3%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="167542" style="width:44.3%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">168,826</div>
+      <div class="tc-delta">-6.3%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">20</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Gloom-Spattered Dreadscale</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--use">on-use</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="168558" style="width:48.8%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="168364" style="width:47.9%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="167091" style="width:42.3%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="167572" style="width:44.4%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="167526" style="width:44.2%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">168,558</div>
+      <div class="tc-delta">-6.4%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">21</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Sealed Chaos Urn</span>
+          
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="168136" style="width:46.9%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="166630" style="width:40.3%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="165212" style="width:34.0%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="163639" style="width:27.0%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="162428" style="width:21.6%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">168,136</div>
+      <div class="tc-delta">-6.6%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">22</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Umbral Plume</span>
+          <span class="trinket-strip__tags"><span class="trinket-tag trinket-tag--passive">passive</span><span class="trinket-tag">agi</span></span>
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="167279" style="width:43.1%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="166573" style="width:40.0%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="165822" style="width:36.7%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="164738" style="width:31.9%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="164564" style="width:31.1%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">167,279</div>
+      <div class="tc-delta">-7.1%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">23</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Shadow of the Empyrean Requiem</span>
+          
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="166685" style="width:40.5%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="166437" style="width:39.4%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="165910" style="width:37.1%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="166058" style="width:37.7%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="166281" style="width:38.7%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">166,685</div>
+      <div class="tc-delta">-7.4%</div>
+    </div><div class="tc-row">
+      <div class="tc-rank">24</div>
+      <div class="tc-body">
+        <div class="tc-name-row">
+          <span class="tc-name">Wraps of Cosmic Madness</span>
+          
+        </div>
+        <div class="tc-bar-track"><div class="tc-bar" data-ilvl="289" data-track="Myth" data-dps="165008" style="width:33.1%;background:#fb923c"></div><div class="tc-bar" data-ilvl="276" data-track="Hero" data-dps="165263" style="width:34.2%;background:#f5c842"></div><div class="tc-bar" data-ilvl="263" data-track="Champion" data-dps="164816" style="width:32.2%;background:#34d399"></div><div class="tc-bar" data-ilvl="250" data-track="Veteran" data-dps="164989" style="width:33.0%;background:#60a5fa"></div><div class="tc-bar" data-ilvl="237" data-track="Adventurer" data-dps="164858" style="width:32.4%;background:#7c8098"></div></div>
+      </div>
+      <div class="tc-best-dps">165,008</div>
+      <div class="tc-delta">-8.4%</div>
+    </div></div>
+    </details>
+  </div>
+</section>
+<section>
+  <h2>Embellishment Rankings</h2>
+  <div class="subsection">
+    <p class="section-desc">DPS gain from embellishment combinations (2-slot budget). Bars show gain vs no-embellishment baseline. Delta shown vs same crafted gear without embellishments.</p>
+    <div class="trinket-list"><div class="trinket-strip">
+        <div class="trinket-strip__rank">1</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Sigil Void</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:100.0%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,794</div>
+        <div class="trinket-strip__delta trinket-strip__delta--best">best</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">2</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Arcanoweave Lining</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:98.1%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,735</div>
+        <div class="trinket-strip__delta ">+1.8%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">3</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Devouring Banding</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:95.3%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,643</div>
+        <div class="trinket-strip__delta ">+1.7%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">4</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Sunfire Silk Lining</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:87.6%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,399</div>
+        <div class="trinket-strip__delta ">+1.6%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">5</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Prismatic Focusing Iris</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:83.5%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,269</div>
+        <div class="trinket-strip__delta ">+1.5%</div>
+      </div><div class="trinket-strip trinket-strip--ref">
+    <div class="trinket-strip__rank">—</div>
+    <div class="trinket-strip__body">
+      <div class="trinket-strip__name-row">
+        <span class="trinket-strip__name">No Embellishment (Crafted Base)</span>
+      </div>
+      <div class="trinket-strip__bar-wrap">
+        <div class="trinket-strip__bar" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="trinket-strip__dps">177,606</div>
+    <div class="trinket-strip__delta">baseline</div>
+  </div></div>
+    <details class="trinket-details">
+      <summary>More embellishments <span class="detail-count">(6)</span></summary>
+      <div class="trinket-list trinket-list--elim"><div class="trinket-strip">
+        <div class="trinket-strip__rank">1</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Sigil Blood</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:82.8%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,247</div>
+        <div class="trinket-strip__delta ">+1.5%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">2</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Loa Worshiper's Band</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:81.3%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,197</div>
+        <div class="trinket-strip__delta ">+1.5%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">3</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Sigil Rot</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:81.0%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,188</div>
+        <div class="trinket-strip__delta ">+1.5%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">4</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Double Devouring Banding</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:77.2%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">180,066</div>
+        <div class="trinket-strip__delta ">+1.4%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">5</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Sigil Hunt + Primal Spore Binding</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:72.4%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">179,915</div>
+        <div class="trinket-strip__delta ">+1.3%</div>
+      </div><div class="trinket-strip">
+        <div class="trinket-strip__rank">6</div>
+        <div class="trinket-strip__body">
+          <div class="trinket-strip__name-row">
+            <span class="trinket-strip__name">Devouring Banding + Loa Worshiper's Band</span>
+          </div>
+          <div class="trinket-strip__bar-wrap">
+            <div class="trinket-strip__bar" style="width:54.5%"></div>
+          </div>
+        </div>
+        <div class="trinket-strip__dps">179,345</div>
+        <div class="trinket-strip__delta ">+1.0%</div>
+      </div></div>
+    </details>
+  </div>
+</section>
+<section>
+  <h2>Talent Impact</h2>
+  <div class="subsection">
+    <h3>Defensive Talent Costs</h3>
+    <p class="section-desc">DPS cost of taking each defensive talent (averaged across hero trees, vs Brand + Vuln (Apex 4)).</p>
+    <div class="def-cost-list">
+    <div class="def-strip-header"><div class="def-strip-header__body"><span></span><span></span><span class="def-strip-header__label" style="color:var(--fg)">Avg</span><span class="def-strip__tree-header"><span class="tree-badge sm anni">Anni</span></span><span class="def-strip__tree-header"><span class="tree-badge sm ar">AR</span></span></div></div><div class="def-strip def-strip--moderate">
+      <div class="def-strip__indicator" style="background:var(--gold)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Last Resort</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:51.2%;background:var(--gold)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--gold)">-7.35%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-11.71%</span><span class="def-strip__tree">-3.00%</span>
+      </div>
+    </div><div class="def-strip def-strip--moderate">
+      <div class="def-strip__indicator" style="background:var(--gold)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Void Reaver</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:54.2%;background:var(--gold)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--gold)">-7.79%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-11.35%</span><span class="def-strip__tree">-4.23%</span>
+      </div>
+    </div><div class="def-strip def-strip--moderate">
+      <div class="def-strip__indicator" style="background:var(--gold)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Calcified Spikes</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:54.3%;background:var(--gold)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--gold)">-7.80%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-11.48%</span><span class="def-strip__tree">-4.12%</span>
+      </div>
+    </div><div class="def-strip def-strip--moderate">
+      <div class="def-strip__indicator" style="background:var(--gold)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Soul Barrier</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:64.6%;background:var(--gold)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--gold)">-9.28%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-11.63%</span><span class="def-strip__tree">-6.93%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Revel in Pain</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:67.5%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-9.70%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-13.50%</span><span class="def-strip__tree">-5.90%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Roaring Fire</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:67.8%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-9.74%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-13.64%</span><span class="def-strip__tree">-5.84%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Feast of Souls</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:67.9%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-9.76%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-13.61%</span><span class="def-strip__tree">-5.90%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Sigil of Chains</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:67.9%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-9.76%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-13.68%</span><span class="def-strip__tree">-5.85%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Sigil of Silence</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:68.0%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-9.77%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-13.58%</span><span class="def-strip__tree">-5.95%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Feed the Demon</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:80.9%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-11.62%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-15.65%</span><span class="def-strip__tree">-7.59%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Painbringer</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:83.7%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-12.02%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-16.17%</span><span class="def-strip__tree">-7.87%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Soulmonger</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:99.8%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-14.34%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-18.46%</span><span class="def-strip__tree">-10.23%</span>
+      </div>
+    </div><div class="def-strip def-strip--heavy">
+      <div class="def-strip__indicator" style="background:var(--negative)"></div>
+      <div class="def-strip__body">
+        <span class="def-strip__name">Ruinous Bulwark</span>
+        <div class="def-strip__bar-wrap">
+          <div class="def-strip__bar" style="width:100.0%;background:var(--negative)"></div>
+        </div>
+        <span class="def-strip__cost" style="color:var(--negative)">-14.37%</span>
+        <span class="def-strip__tree def-strip__tree--divergent">-17.15%</span><span class="def-strip__tree">-11.59%</span>
+      </div>
+    </div></div></div>
+</section>
+<footer>
+  <p>Generated by <a href="https://github.com/taherbert/dh-apl">dh-apl</a></p>
+</footer>
+<script>
+
+// Responsive spec tree scaling
+document.querySelectorAll('.showcase-tree-wrap').forEach(wrap => {
+  const iframe = wrap.querySelector('iframe');
+  if (!iframe) return;
+  const TREE_W = 473, TREE_H = 595;
+  const fit = () => {
+    const s = Math.min(wrap.clientWidth / TREE_W, wrap.clientHeight / TREE_H);
+    iframe.style.transform = 'translate(-78.5%, -42.5%) scale(' + s + ')';
+  };
+  fit();
+  new ResizeObserver(fit).observe(wrap);
+});
+
+// Table sorting
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const col = th.dataset.col;
+    const isNum = th.classList.contains('num');
+
+    const wasAsc = th.classList.contains('sorted-asc');
+    table.querySelectorAll('th.sortable').forEach(h => {
+      h.classList.remove('sorted-asc', 'sorted-desc');
+    });
+    const dir = wasAsc ? 'desc' : 'asc';
+    th.classList.add('sorted-' + dir);
+
+    const headers = Array.from(th.parentNode.children);
+    const colIdx = headers.indexOf(th);
+
+    rows.sort((a, b) => {
+      const cellA = a.children[colIdx];
+      const cellB = b.children[colIdx];
+      let va, vb;
+
+      if (isNum) {
+        va = parseFloat(cellA?.textContent?.replace(/[^\d.-]/g, '') || '0');
+        vb = parseFloat(cellB?.textContent?.replace(/[^\d.-]/g, '') || '0');
+      } else {
+        va = cellA?.textContent?.trim() || '';
+        vb = cellB?.textContent?.trim() || '';
+      }
+
+      if (dir === 'asc') return va > vb ? 1 : va < vb ? -1 : 0;
+      return va < vb ? 1 : va > vb ? -1 : 0;
+    });
+
+    for (const row of rows) tbody.appendChild(row);
+  });
+});
+
+// Hero tree filter
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tree = btn.dataset.tree;
+    const table = document.getElementById('rankings-table');
+    if (!table) return;
+
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    table.querySelectorAll('tbody tr').forEach(row => {
+      if (tree === 'all' || row.dataset.tree === tree) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+});
+
+// Copy talent hash to clipboard
+// Info popup positioning
+document.querySelectorAll('.info-icon').forEach(icon => {
+  const popup = icon.querySelector('.info-popup');
+  if (!popup) return;
+  document.body.appendChild(popup);
+  icon.addEventListener('mouseenter', () => {
+    const r = icon.getBoundingClientRect();
+    popup.style.display = 'block';
+    popup.style.right = (document.documentElement.clientWidth - r.right) + 'px';
+    popup.style.left = 'auto';
+    popup.style.top = (r.top - popup.offsetHeight - 8) + 'px';
+  });
+  icon.addEventListener('mouseleave', () => {
+    popup.style.display = 'none';
+  });
+});
+
+document.querySelectorAll('.copy-hash').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const hash = btn.dataset.hash;
+    if (!hash) return;
+
+    const doCopy = text => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      }
+      return fallbackCopy(text);
+    };
+
+    const fallbackCopy = text => {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    };
+
+    function flash(el) {
+      el.classList.add('copied');
+      el.querySelector('svg').innerHTML = '<polyline points="4 8.5 6.5 11 12 5" stroke-width="2"/>';
+      setTimeout(() => {
+        el.classList.remove('copied');
+        el.querySelector('svg').innerHTML = '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/>';
+      }, 1500);
+    }
+
+    const result = doCopy(hash);
+    if (result && result.then) {
+      result.then(() => flash(btn));
+    } else {
+      flash(btn);
+    }
+  });
+});
+
+// Trinket ilvl chart tooltip
+(() => {
+  const chart = document.querySelector('.tc-chart');
+  if (!chart) return;
+  const tooltip = document.createElement('div');
+  tooltip.className = 'tc-tooltip';
+  document.body.appendChild(tooltip);
+
+  const bestPerIlvl = JSON.parse(chart.dataset.bestPerIlvl || '{}');
+  const fmtNum = n => Number(n).toLocaleString();
+
+  function positionTooltip(e) {
+    const pad = 12;
+    let x = e.clientX + pad;
+    let y = e.clientY + pad;
+    const tw = tooltip.offsetWidth;
+    const th = tooltip.offsetHeight;
+    if (x + tw > window.innerWidth - pad) x = e.clientX - tw - pad;
+    if (y + th > window.innerHeight - pad) y = e.clientY - th - pad;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  chart.addEventListener('mouseover', e => {
+    const bar = e.target.closest('.tc-bar');
+    if (!bar) return;
+    const ilvl = bar.dataset.ilvl;
+    const dps = Number(bar.dataset.dps);
+    const track = bar.dataset.track;
+    const best = bestPerIlvl[ilvl] || dps;
+    const deltaPct = best > 0 ? ((dps - best) / best * 100).toFixed(1) : '0.0';
+    const deltaStr = dps >= best ? 'best' : deltaPct + '%';
+    const deltaClass = dps >= best ? 'style="color:var(--gold)"' : '';
+
+    tooltip.innerHTML =
+      '<div class="tc-tooltip__track" style="color:' + bar.style.background + '">' +
+        (track || 'ilvl') + ' ' + ilvl +
+      '</div>' +
+      '<div class="tc-tooltip__dps">' + fmtNum(dps) + ' DPS</div>' +
+      '<div class="tc-tooltip__delta" ' + deltaClass + '>' + deltaStr + ' at this tier</div>';
+    tooltip.classList.add('visible');
+    positionTooltip(e);
+  });
+
+  chart.addEventListener('mousemove', e => {
+    if (!tooltip.classList.contains('visible')) return;
+    positionTooltip(e);
+  });
+
+  chart.addEventListener('mouseout', e => {
+    const bar = e.target.closest('.tc-bar');
+    if (!bar) return;
+    if (!e.relatedTarget || !e.relatedTarget.closest('.tc-bar')) {
+      tooltip.classList.remove('visible');
+    }
+  });
+})();
+
+
+</script>
+</body>
+</html>
