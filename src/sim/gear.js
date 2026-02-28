@@ -35,7 +35,7 @@
 //   SPEC=vengeance node src/sim/gear.js export
 //   SPEC=vengeance node src/sim/gear.js screen [--slot X]  (diagnostic only)
 
-import { getSimCores, stopRemote } from "./remote.js";
+import { getSimCores } from "./remote.js";
 import { parseArgs } from "node:util";
 import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
@@ -790,7 +790,7 @@ async function cmdEnchants(args) {
   const sf = getSessionState("gear_scale_factors");
 
   // Stat-only enchant slots that can be EP-ranked (no sims needed)
-  const EP_ENCHANT_SLOTS = new Set(["cloak", "wrist", "foot"]);
+  const EP_ENCHANT_SLOTS = new Set(["cloak", "wrist", "foot", "chest", "legs"]);
 
   const enchantSlots = values.slot
     ? [values.slot]
@@ -1863,8 +1863,10 @@ function applySlotEnchant(line, slot, enchantMap) {
     main_hand: "weapon_mh",
     off_hand: "weapon_oh",
     back: "cloak",
+    chest: "chest",
     wrists: "wrist",
     wrist: "wrist",
+    legs: "legs",
     feet: "foot",
     finger1: "ring",
     finger2: "ring",
@@ -1958,7 +1960,7 @@ function buildGearLines(gearData) {
 
   // Phase 0: tier config
   for (const { slot, simc } of getTierLines(gearData)) {
-    addLine(simc, slot);
+    addLine(applySlotEnchant(simc, slot, enchantMap), slot);
   }
 
   // Check for ring/embellishment conflict resolution
@@ -1983,7 +1985,10 @@ function buildGearLines(gearData) {
     for (const line of overrides) {
       const slot = line.split("=")[0];
       if (!coveredSlots.has(slot)) {
-        addLine(applyStatAlloc(line, slot), slot);
+        addLine(
+          applySlotEnchant(applyStatAlloc(line, slot), slot, enchantMap),
+          slot,
+        );
       }
     }
   }
@@ -2135,8 +2140,14 @@ function cmdWriteProfile() {
     const slot = line.split("=")[0];
     const cur = currentGear.get(slot);
     if (!cur || itemId(cur) !== itemId(line)) return line;
-    // Pipeline controls embellishment and crafted_stats — use pipeline line but copy gem_id
-    if (line.includes("embellishment=") || line.includes("crafted_stats=")) {
+    // Pipeline controls embellishment, crafted_stats, and enchant_id — use pipeline
+    // line but copy gem_id from current. Manual enchants on slots the pipeline doesn't
+    // touch (e.g., head) are preserved because the pipeline won't add enchant_id there.
+    if (
+      line.includes("embellishment=") ||
+      line.includes("crafted_stats=") ||
+      line.includes("enchant_id=")
+    ) {
       if (!line.includes("gem_id=")) {
         const curGem = cur.match(/gem_id=([\d/]+)/);
         if (curGem) return `${line},gem_id=${curGem[1]}`;
@@ -2286,8 +2297,6 @@ async function cmdRun(args) {
 
   console.log("\n========== Pipeline Complete ==========\n");
   cmdStatus();
-
-  await stopRemote();
 }
 
 // --- CLI: status ---
