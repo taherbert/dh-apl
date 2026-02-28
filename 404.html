@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DH APL Reports</title>
+<script>
+(function() {
+  var host = location.hostname;
+  var parts = host.split('.');
+  if (parts.length >= 3) {
+    var sub = parts[0];
+    if (sub !== 'www') {
+      location.replace('/' + sub + '/');
+      return;
+    }
+  }
+  location.replace('/');
+})();
+</script>
+</head>
+<body></body>
+</html>
