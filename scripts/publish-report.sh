@@ -14,7 +14,7 @@ REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || echo "$(cd "$(dirname 
 REPORT_FILE="$REPO_ROOT/results/$SPEC/report/index.html"
 STAGING="${TMPDIR:-/tmp}/gh-pages-staging"
 REMOTE_URL="$(git remote get-url origin)"
-CNAME_DOMAIN="${CNAME_DOMAIN:-jomdarbert.com}"
+CNAME_DOMAIN="${CNAME_DOMAIN:-$SPEC.jomdarbert.com}"
 
 # Parse args - pass everything through to report.js, default to --skip-sims
 PUBLISH_ONLY=false
@@ -90,6 +90,19 @@ cat > index.html << 'LANDING_EOF'
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DH APL Reports</title>
+<script>
+// Subdomain routing: vengeance.jomdarbert.com -> /vengeance/
+(function() {
+  var host = location.hostname;
+  var parts = host.split('.');
+  if (parts.length >= 3) {
+    var sub = parts[0];
+    if (sub !== 'www' && location.pathname === '/') {
+      location.replace('/' + sub + '/');
+    }
+  }
+})();
+</script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0a0a0f; color: #e0e0e0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
@@ -109,7 +122,7 @@ cat > index.html << 'LANDING_EOF'
 LANDING_EOF
 
 for s in "${SPECS[@]}"; do
-  echo "  <a class=\"spec\" href=\"/$s/\">$s</a>" >> index.html
+  echo "  <a class=\"spec\" href=\"https://$s.$CNAME_DOMAIN/\">$s</a>" >> index.html
 done
 
 cat >> index.html << 'LANDING_EOF'
@@ -120,6 +133,33 @@ cat >> index.html << 'LANDING_EOF'
 LANDING_EOF
 
 git add index.html
+
+# 404.html with subdomain routing (GitHub Pages serves this for missing paths)
+cat > 404.html << 'FOUROHFOUR_EOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DH APL Reports</title>
+<script>
+(function() {
+  var host = location.hostname;
+  var parts = host.split('.');
+  if (parts.length >= 3) {
+    var sub = parts[0];
+    if (sub !== 'www') {
+      location.replace('/' + sub + '/');
+      return;
+    }
+  }
+  location.replace('/');
+})();
+</script>
+</head>
+<body></body>
+</html>
+FOUROHFOUR_EOF
+git add 404.html
 
 # Write CNAME
 echo "$CNAME_DOMAIN" > CNAME
