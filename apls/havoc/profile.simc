@@ -1,5 +1,5 @@
 # Havoc DH Midnight Profile
-# Melee DPS spec - generic gear, no expansion-specific enchants/gems
+# Melee DPS spec - Fel-Scarred / Aldrachi Reaver hero trees
 
 ptr=1
 demonhunter="Havoc_DH"
@@ -11,24 +11,37 @@ role=attack
 position=back
 talents=
 
-# Consumables disabled - no Midnight consumables in SimC yet
-flask=disabled
+food=blooming_feast
+potion=recklessness_2
+flask=flask_of_the_shattered_sun_2
+augmentation=void_touched
+temporary_enchant=main_hand:refulgent_weightstone_2/off_hand:refulgent_weightstone_2
+
+override.arcane_intellect=1
+override.power_word_fortitude=1
+override.battle_shout=1
+override.mystic_touch=1
+override.chaos_brand=1
+override.skyfury=1
+override.mark_of_the_wild=1
+override.hunters_mark=1
+override.bleeding=1
 
 # Generic Midnight gear (same item IDs as other DH specs, stat type from spec)
 
 head=devouring_reavers_intake,id=250033,ilevel=289
-neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=241144/241144
+neck=pendant_of_aching_grief,id=251096,ilevel=289,gem_id=241144/241144
 shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289
 back=,id=153865,ilevel=289
 chest=devouring_reavers_engine,id=250036,ilevel=289
-wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=primal_spore_binding
+wrist=custodial_cuffs,id=251103,ilevel=289
 hands=devouring_reavers_essence_grips,id=250034,ilevel=289
-waist=scorn_scarred_shulkas_belt,id=249374,ilevel=289
+waist=rootwalker_harness,id=251189,ilevel=289
 legs=breeches_of_deft_deals,id=251130,ilevel=289
-feet=arctic_explorers_legwraps,id=251153,ilevel=289
-finger1=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=241144/241144
-finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=241144/241144
+feet=void_claimed_shinkickers,id=249334,ilevel=289
+finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36
+finger2=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=241144/241144
 trinket1=gaze_of_the_alnseer,id=249343,ilevel=289
-trinket2=umbral_plume,id=260235,ilevel=289
+trinket2=radiant_plume,id=249806,ilevel=289
 main_hand=lightless_lament,id=260408,ilevel=289
 off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt
