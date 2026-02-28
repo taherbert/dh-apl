@@ -176,34 +176,29 @@ const AWS_RETRIABLE = [
 ];
 const AWS_MAX_RETRIES = 2;
 
-function isRetriableAwsError(e) {
-  const msg = (e.stderr || "") + (e.message || "");
-  return AWS_RETRIABLE.some((code) => msg.includes(code));
-}
-
-async function awsCmdOnce(args, opts = {}) {
-  const { stdout } = await execAsync("aws", args, {
-    timeout: 30000,
-    env: { ...process.env, AWS_RETRY_MODE: "standard" },
-    ...opts,
-  });
-  return stdout.trim();
+function errorMsg(e) {
+  return (e.stderr || "") + (e.message || "");
 }
 
 async function awsCmd(args, opts = {}) {
   for (let attempt = 0; attempt <= AWS_MAX_RETRIES; attempt++) {
     try {
-      return await awsCmdOnce(args, opts);
+      const { stdout } = await execAsync("aws", args, {
+        timeout: 30000,
+        env: { ...process.env, AWS_RETRY_MODE: "standard" },
+        ...opts,
+      });
+      return stdout.trim();
     } catch (e) {
-      if (attempt < AWS_MAX_RETRIES && isRetriableAwsError(e)) {
-        const delay = 1000 * (attempt + 1);
-        console.log(
-          `  AWS call retrying in ${delay}ms (${e.message?.slice(0, 60)})...`,
-        );
-        await new Promise((r) => setTimeout(r, delay));
-      } else {
-        throw e;
-      }
+      const retriable =
+        attempt < AWS_MAX_RETRIES &&
+        AWS_RETRIABLE.some((c) => errorMsg(e).includes(c));
+      if (!retriable) throw e;
+      const delay = 1000 * (attempt + 1);
+      console.log(
+        `  AWS call retrying in ${delay}ms (${e.message?.slice(0, 60)})...`,
+      );
+      await new Promise((r) => setTimeout(r, delay));
     }
   }
 }
@@ -385,13 +380,11 @@ function syncLocalSimcBin() {
 const AZ_RETRIABLE_ERRORS = ["InsufficientInstanceCapacity", "Unsupported"];
 
 function isCapacityError(e) {
-  const msg = (e.stderr || "") + (e.message || "");
-  return AZ_RETRIABLE_ERRORS.some((code) => msg.includes(code));
+  return AZ_RETRIABLE_ERRORS.some((code) => errorMsg(e).includes(code));
 }
 
 function isQuotaError(e) {
-  const msg = (e.stderr || "") + (e.message || "");
-  return msg.includes("MaxSpotInstanceCountExceeded");
+  return errorMsg(e).includes("MaxSpotInstanceCountExceeded");
 }
 
 async function getAvailableAzs(regionName) {
@@ -504,15 +497,31 @@ async function waitSsh(ip, attempts = 30) {
   throw new Error(`SSH to ${ip} timed out after ${attempts * 5}s`);
 }
 
-// Returns active state or null, auto-clearing stale entries
+// Returns active state or null, auto-clearing stale entries.
+// Uses lastActivity (updated each time a remote sim completes) so the
+// instance stays "active" as long as we're sending it work.
 function getActiveState() {
   const state = readState();
   if (!state) return null;
-  const elapsed = (Date.now() - new Date(state.launchTime).getTime()) / 60000;
-  if (elapsed > state.shutdownMinutes + 5) {
+
+  const now = Date.now();
+  const launchMs = new Date(state.launchTime).getTime();
+
+  // Hard ceiling — no instance lives longer than maxLifetimeMinutes
+  const maxLifetime = remoteConfig().maxLifetimeMinutes || 180;
+  if ((now - launchMs) / 60000 > maxLifetime) {
     clearState();
     return null;
   }
+
+  // Idle check — expires shutdownMinutes after last activity (or launch)
+  const anchor = state.lastActivity || state.launchTime;
+  const idle = (now - new Date(anchor).getTime()) / 60000;
+  if (idle > state.shutdownMinutes + 5) {
+    clearState();
+    return null;
+  }
+
   return state;
 }
 
@@ -551,6 +560,26 @@ function shellEscape(s) {
   return "'" + s.replace(/'/g, "'\\''") + "'";
 }
 
+// Record activity after a completed sim: stamp lastActivity and reset the OS
+// shutdown timer so the instance stays alive between batches. Fire-and-forget
+// on the SSH — if it fails, the original timer or maxLifetime cap still apply.
+function recordSimActivity(ip, shutdownMin) {
+  const state = readState();
+  if (state) {
+    state.lastActivity = new Date().toISOString();
+    writeState(state);
+  }
+  execAsync(
+    "ssh",
+    [
+      ...sshArgs(ip),
+      sshTarget(ip),
+      `sudo shutdown -c 2>/dev/null; sudo shutdown -h +${shutdownMin}`,
+    ],
+    { timeout: 10000 },
+  ).catch(() => {});
+}
+
 export async function stopRemote() {
   if (!isRemoteActive()) return;
   await terminateInstance();
@@ -582,6 +611,17 @@ async function checkInstanceState(instanceId) {
   } catch {
     return "unknown";
   }
+}
+
+// Check AWS state after an SCP/SSH failure and throw RemoteUnavailableError.
+// Clears local state if the instance is no longer running.
+async function throwRemoteError(instanceId, label, cause) {
+  const awsState = await checkInstanceState(instanceId);
+  if (awsState !== "running") clearState();
+  throw new RemoteUnavailableError(
+    `${label} (instance ${awsState}): ${cause.message}`,
+    { cause },
+  );
 }
 
 export async function runSimcRemote(args) {
@@ -644,7 +684,6 @@ export async function runSimcRemote(args) {
   try {
     const t0 = performance.now();
 
-    // SCP upload — retry once, then throw RemoteUnavailableError
     try {
       await scpWithRetry(
         [...sa, localSimcPath, `${target}:${remoteSimcPath}`],
@@ -653,12 +692,7 @@ export async function runSimcRemote(args) {
         3000,
       );
     } catch (e) {
-      const awsState = await checkInstanceState(instanceId);
-      if (awsState !== "running") clearState();
-      throw new RemoteUnavailableError(
-        `SCP upload failed (instance ${awsState}): ${e.message}`,
-        { cause: e },
-      );
+      await throwRemoteError(instanceId, "SCP upload failed", e);
     }
     const t1 = performance.now();
 
@@ -696,7 +730,6 @@ export async function runSimcRemote(args) {
     }
     const t2 = performance.now();
 
-    // SCP download — retry once, throw RemoteUnavailableError on persistent failure
     if (localJsonPath && remoteJsonPath) {
       try {
         await scpWithRetry(
@@ -706,15 +739,12 @@ export async function runSimcRemote(args) {
           5000,
         );
       } catch (e) {
-        const awsState = await checkInstanceState(instanceId);
-        if (awsState !== "running") clearState();
-        throw new RemoteUnavailableError(
-          `SCP download failed (instance ${awsState}): ${e.message}`,
-          { cause: e },
-        );
+        await throwRemoteError(instanceId, "SCP download failed", e);
       }
     }
     const t3 = performance.now();
+
+    recordSimActivity(publicIp, state.shutdownMinutes || 45);
 
     const upload = ((t1 - t0) / 1000).toFixed(1);
     const sim = ((t2 - t1) / 1000).toFixed(1);
@@ -1045,7 +1075,7 @@ async function terminateInstance() {
 }
 
 async function getStatus() {
-  const state = readState();
+  const state = getActiveState();
   if (!state) {
     console.log("No active instance.");
     return null;
@@ -1068,10 +1098,16 @@ async function getStatus() {
     }
 
     const awsState = inst.State.Name;
+    const now = Date.now();
     const elapsed = Math.round(
-      (Date.now() - new Date(state.launchTime).getTime()) / 60000,
+      (now - new Date(state.launchTime).getTime()) / 60000,
     );
-    const remaining = Math.max(0, state.shutdownMinutes - elapsed);
+
+    const anchor = state.lastActivity || state.launchTime;
+    const idle = Math.round((now - new Date(anchor).getTime()) / 60000);
+    const remaining = Math.max(0, state.shutdownMinutes - idle);
+    const maxLifetime = remoteConfig().maxLifetimeMinutes || 180;
+    const maxRemaining = Math.max(0, maxLifetime - elapsed);
 
     console.log(`Instance: ${state.instanceId}`);
     console.log(
@@ -1079,14 +1115,16 @@ async function getStatus() {
     );
     console.log(`State:    ${awsState}`);
     console.log(`IP:       ${state.publicIp}`);
-    console.log(`Elapsed:  ${elapsed} min`);
-    console.log(`Shutdown: ~${remaining} min remaining`);
+    console.log(`Elapsed:  ${elapsed} min (idle: ${idle} min)`);
+    console.log(
+      `Shutdown: ~${remaining} min remaining (max: ${maxRemaining} min)`,
+    );
 
     if (awsState === "terminated" || awsState === "shutting-down") {
       clearState();
     }
 
-    return { ...state, awsState, elapsed, remaining };
+    return { ...state, awsState, elapsed, idle, remaining, maxRemaining };
   } catch (e) {
     console.error(`Error checking status: ${e.message}`);
     return null;

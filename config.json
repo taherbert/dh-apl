@@ -13,6 +13,7 @@
     "amiId": null,
     "spotMaxPrice": "2.50",
     "shutdownMinutes": 45,
+    "maxLifetimeMinutes": 180,
     "region": "us-west-1",
     "securityGroup": null,
     "subnetId": null,
