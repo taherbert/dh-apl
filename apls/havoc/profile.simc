@@ -1,0 +1,34 @@
+# Havoc DH Midnight Profile
+# Melee DPS spec - generic gear, no expansion-specific enchants/gems
+
+ptr=1
+demonhunter="Havoc_DH"
+spec=havoc
+level=90
+race=night_elf
+timeofday=night
+role=attack
+position=back
+talents=
+
+# Consumables disabled - no Midnight consumables in SimC yet
+flask=disabled
+
+# Generic Midnight gear (same item IDs as other DH specs, stat type from spec)
+
+head=devouring_reavers_intake,id=250033,ilevel=289
+neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=241144/241144
+shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289
+back=,id=153865,ilevel=289
+chest=devouring_reavers_engine,id=250036,ilevel=289
+wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=primal_spore_binding
+hands=devouring_reavers_essence_grips,id=250034,ilevel=289
+waist=scorn_scarred_shulkas_belt,id=249374,ilevel=289
+legs=breeches_of_deft_deals,id=251130,ilevel=289
+feet=arctic_explorers_legwraps,id=251153,ilevel=289
+finger1=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=241144/241144
+finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=241144/241144
+trinket1=gaze_of_the_alnseer,id=249343,ilevel=289
+trinket2=umbral_plume,id=260235,ilevel=289
+main_hand=lightless_lament,id=260408,ilevel=289
+off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt

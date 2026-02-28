@@ -1,0 +1,2847 @@
+{
+  "class": {
+    "name": "Demon Hunter",
+    "talents": [
+      {
+        "name": "Vengeful Retreat",
+        "nodeId": 90942,
+        "entryId": 112853,
+        "definitionId": 117858,
+        "maxRank": 1,
+        "spellId": 198793,
+        "spellName": "Vengeful Retreat",
+        "school": "Physical",
+        "passive": false,
+        "description": "Remove all snares and vault away. Nearby enemies take $198813s2 Physical damage$?s320635[ and have their movement speed reduced by $198813s1% for $198813d][].$?a203551[\n|cFFFFFFFFGenerates ${($203650s1/5)*$203650d} Fury over $203650d if you damage an enemy.|r][]",
+        "entryType": "active",
+        "posX": 2700,
+        "posY": 1500,
+        "freeNode": true,
+        "entryNode": true,
+        "type": "off_gcd_ability",
+        "cooldown": 0.5,
+        "duration": 1,
+        "affectedBy": [
+          {
+            "name": "Prepared",
+            "id": 203551,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Tactical Retreat",
+            "id": 389688,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Evasive Action",
+            "id": 444929,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Demonsurge",
+            "id": 1245496,
+            "effects": [
+              3
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Felblade",
+        "nodeId": 91008,
+        "entryId": 112928,
+        "definitionId": 117933,
+        "maxRank": 1,
+        "spellId": 232893,
+        "spellName": "Felblade",
+        "school": "Physical",
+        "passive": false,
+        "description": "Charge to your target and deal $213243sw2 $@spelldesc395020 damage.\n$?s263642[|cFFFFFFFFGenerates $213243s3 Fury.|r]?s203513[|cFFFFFFFFGenerates $213243s3 Fury.|r]?a203555[|cFFFFFFFFGenerates $213243s3 Fury.|r][|cFFFFFFFFGenerates $213243s3 Fury.|r]",
+        "entryType": "active",
+        "posX": 3900,
+        "posY": 1500,
+        "entryNode": true,
+        "type": "active_ability",
+        "cooldown": 12,
+        "gcd": 0.5,
+        "affectedBy": [
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 212612,
+            "effects": [
+              7
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 212613,
+            "effects": [
+              7,
+              14
+            ]
+          },
+          {
+            "name": "Any Means Necessary",
+            "id": 388114,
+            "effects": [
+              3,
+              4
+            ]
+          },
+          {
+            "name": "Demonsurge",
+            "id": 452435,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Guile",
+            "id": 1223171,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Demonsurge",
+            "id": 1245496,
+            "effects": [
+              5
+            ]
+          },
+          {
+            "name": "Reaper's Toll",
+            "id": 1245523,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Duty Eternal",
+            "id": 1246562,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Furious",
+            "id": 1266326,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Soulforged Blades",
+            "id": 1272432,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Singular Strikes",
+            "id": 1272770,
+            "effects": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Sigil of Misery",
+        "nodeId": 90946,
+        "entryId": 112859,
+        "definitionId": 117864,
+        "maxRank": 1,
+        "spellId": 207684,
+        "spellName": "Sigil of Misery",
+        "school": "Physical",
+        "passive": false,
+        "description": "Place a Sigil of Misery at the target location that activates after $d.\nCauses all enemies affected by the sigil to cower in fear, disorienting them for $207685d.",
+        "entryType": "active",
+        "posX": 5100,
+        "posY": 1500,
+        "entryNode": true,
+        "type": "active_ability",
+        "charges": {
+          "count": 1,
+          "cooldown": 120
+        },
+        "gcd": 1.5,
+        "duration": 2,
+        "affectedBy": [
+          {
+            "name": "Quickened Sigils",
+            "id": 209281,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 212612,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 212613,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Any Means Necessary",
+            "id": 388114,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Chains of Anger",
+            "id": 389715,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Vengeful Bonds",
+        "nodeId": 90930,
+        "entryId": 112840,
+        "definitionId": 117845,
+        "maxRank": 1,
+        "spellId": 320635,
+        "spellName": "Vengeful Bonds",
+        "school": "Physical",
+        "passive": true,
+        "description": "Vengeful Retreat reduces the movement speed of all nearby enemies by $198813s1% for $198813d.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 2100,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Unrestrained Fury",
+        "nodeId": 90941,
+        "entryId": 112852,
+        "definitionId": 117857,
+        "maxRank": 1,
+        "spellId": 320770,
+        "spellName": "Unrestrained Fury",
+        "school": "Physical",
+        "passive": true,
+        "description": "Increases maximum Fury by $s1.",
+        "entryType": "passive",
+        "posX": 3300,
+        "posY": 2100,
+        "type": "passive"
+      },
+      {
+        "name": "Shattered Restoration",
+        "nodeId": 90950,
+        "entryId": 112863,
+        "definitionId": 117868,
+        "maxRank": 1,
+        "spellId": 389824,
+        "spellName": "Shattered Restoration",
+        "school": "Physical",
+        "passive": true,
+        "description": "The healing of Shattered Souls is increased by $s1%.",
+        "entryType": "passive",
+        "posX": 4500,
+        "posY": 2100,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Improved Sigil of Misery",
+        "nodeId": 90945,
+        "entryId": 112858,
+        "definitionId": 117863,
+        "maxRank": 1,
+        "spellId": 320418,
+        "spellName": "Improved Sigil of Misery",
+        "school": "Physical",
+        "passive": true,
+        "description": "Reduces the cooldown of Sigil of $?s202138[Chains][Misery] by $?s202138[${$s2/-1000}][${$s1/-1000}] sec.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 2100,
+        "type": "passive"
+      },
+      {
+        "name": "Bouncing Glaives",
+        "nodeId": 90931,
+        "entryId": 112841,
+        "definitionId": 117846,
+        "maxRank": 1,
+        "spellId": 320386,
+        "spellName": "Bouncing Glaives",
+        "school": "Physical",
+        "passive": true,
+        "description": "Throw Glaive ricochets to $s1 additional $ltarget:targets;.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 2700,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Imprison",
+        "nodeId": 91007,
+        "entryId": 112927,
+        "definitionId": 117932,
+        "maxRank": 1,
+        "spellId": 217832,
+        "spellName": "Imprison",
+        "school": "Shadow",
+        "passive": false,
+        "description": "Imprisons a demon, beast, or humanoid, incapacitating them for $d. Damage may cancel the effect. Limit 1.",
+        "entryType": "active",
+        "posX": 3900,
+        "posY": 2700,
+        "type": "active_ability",
+        "cooldown": 45,
+        "gcd": 1.5,
+        "duration": 60,
+        "affectedBy": [
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 212612,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 212613,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Charred Warblades",
+        "nodeId": 90948,
+        "entryId": 112861,
+        "definitionId": 117866,
+        "maxRank": 1,
+        "spellId": 213010,
+        "spellName": "Charred Warblades",
+        "school": "Physical",
+        "passive": true,
+        "description": "You heal for $s1% of all Fire damage you deal.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 2700,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Chaos Nova",
+        "nodeId": 90993,
+        "entryId": 112911,
+        "definitionId": 117916,
+        "maxRank": 1,
+        "spellId": 179057,
+        "spellName": "Chaos Nova",
+        "school": "Chromatic",
+        "passive": false,
+        "description": "Unleash an eruption of fel energy, dealing $s2 Chaos damage and stunning all nearby enemies for $d.$?s320412[\nEach enemy stunned by Chaos Nova has a $s3% chance to generate a Lesser Soul Fragment.][]",
+        "entryType": "active",
+        "posX": 2100,
+        "posY": 3300,
+        "type": "active_ability",
+        "resource": {
+          "cost": 25,
+          "type": "Fury",
+          "typeId": 17,
+          "spellId": 10418
+        },
+        "cooldown": 45,
+        "gcd": 1.5,
+        "duration": 3,
+        "affectedBy": [
+          {
+            "name": "Demon Soul",
+            "id": 163073,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Mastery: Demonic Presence",
+            "id": 185164,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Fiery Brand",
+            "id": 207744,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Fiery Brand",
+            "id": 207771,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Exergy",
+            "id": 208628,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 212612,
+            "effects": [
+              1,
+              2,
+              6
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 212613,
+            "effects": [
+              1,
+              2,
+              6
+            ]
+          },
+          {
+            "name": "Frailty",
+            "id": 247456,
+            "effects": [
+              4
+            ]
+          },
+          {
+            "name": "Chaos Blades",
+            "id": 247938,
+            "effects": [
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Demon Soul",
+            "id": 347765,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Burning Blood",
+            "id": 390213,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Seething Chaos",
+            "id": 394934,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Fiery Resolve",
+            "id": 425653,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Inertia",
+            "id": 427641,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hide",
+            "id": 428241,
+            "effects": [
+              1,
+              3
+            ]
+          },
+          {
+            "name": "Reaver's Mark",
+            "id": 442624,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Void Metamorphosis",
+            "id": 471306,
+            "effects": [
+              3
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          },
+          {
+            "name": "Luck of the Draw!",
+            "id": 1219012,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 1256955,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 1256959,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Blind Focus",
+            "id": 1272364,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc",
+            "id": 1283625,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc",
+            "id": 1283628,
+            "effects": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Improved Disrupt",
+        "nodeId": 90938,
+        "entryId": 112849,
+        "definitionId": 117854,
+        "maxRank": 1,
+        "spellId": 320361,
+        "spellName": "Improved Disrupt",
+        "school": "Physical",
+        "passive": true,
+        "description": "Increases the range of Disrupt to ${$s2+$s1} yds.",
+        "entryType": "passive",
+        "posX": 3300,
+        "posY": 3300,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Consume Magic",
+        "nodeId": 91006,
+        "entryId": 112926,
+        "definitionId": 117931,
+        "maxRank": 1,
+        "spellId": 278326,
+        "spellName": "Consume Magic",
+        "school": "Chromatic",
+        "passive": false,
+        "description": "Consume $m1 beneficial Magic effect removing it from the target$?s320313[ and granting you $1277738s1 Fury][].",
+        "entryType": "active",
+        "posX": 4500,
+        "posY": 3300,
+        "type": "active_ability",
+        "cooldown": 10,
+        "gcd": 1.5,
+        "affectedBy": [
+          {
+            "name": "Guile",
+            "id": 1223171,
+            "effects": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Aldrachi Design",
+        "nodeId": 90999,
+        "entryId": 112917,
+        "definitionId": 117922,
+        "maxRank": 1,
+        "spellId": 391409,
+        "spellName": "Aldrachi Design",
+        "school": "Physical",
+        "passive": true,
+        "description": "Increases your chance to parry by $s1%.",
+        "entryType": "passive",
+        "posX": 5700,
+        "posY": 3300,
+        "type": "passive"
+      },
+      {
+        "name": "Focused Ire",
+        "nodeId": 95154,
+        "entryId": 117767,
+        "definitionId": 122779,
+        "maxRank": 1,
+        "spellId": 1266296,
+        "spellName": "Focused Ire",
+        "school": "Physical",
+        "passive": true,
+        "description": "The primary target of $?c3[Void Nova][Chaos Nova] is stunned for an additional ${$s1/1000} sec.",
+        "entryType": "passive",
+        "posX": 2100,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Master of the Glaive",
+        "nodeId": 90994,
+        "entryId": 112912,
+        "definitionId": 117917,
+        "maxRank": 1,
+        "spellId": 389763,
+        "spellName": "Master of the Glaive",
+        "school": "Physical",
+        "passive": true,
+        "description": "Throw Glaive has ${$s2+1} charges and snares all enemies hit by $213405s1% for $213405d.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 3900,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "reqPoints": 8,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Champion of the Glaive",
+        "nodeId": 90994,
+        "entryId": 117768,
+        "definitionId": 122780,
+        "maxRank": 1,
+        "spellId": 429211,
+        "spellName": "Champion of the Glaive",
+        "school": "Physical",
+        "passive": true,
+        "description": "Throw Glaive has ${$s2+1} charges and $s1 yard increased range.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 3900,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Disrupting Fury",
+        "nodeId": 90937,
+        "entryId": 112848,
+        "definitionId": 117853,
+        "maxRank": 1,
+        "spellId": 183782,
+        "spellName": "Disrupting Fury",
+        "school": "Physical",
+        "passive": true,
+        "description": "Disrupt generates $218903s1 Fury on a successful interrupt.",
+        "entryType": "passive",
+        "posX": 3300,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Blazing Path",
+        "nodeId": 95150,
+        "entryId": 117759,
+        "definitionId": 122771,
+        "maxRank": 1,
+        "spellId": 320416,
+        "spellName": "Blazing Path",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?a212613[Infernal Strike]?s195072[Fel Rush][Shift] gains an additional charge.",
+        "entryType": "passive",
+        "posX": 3900,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "passive"
+      },
+      {
+        "name": "Swallowed Anger",
+        "nodeId": 91005,
+        "entryId": 112925,
+        "definitionId": 117930,
+        "maxRank": 1,
+        "spellId": 320313,
+        "spellName": "Swallowed Anger",
+        "school": "Physical",
+        "passive": true,
+        "description": "Consume Magic generates $278326s2 Fury when a beneficial Magic effect is successfully removed from the target.",
+        "entryType": "passive",
+        "posX": 4500,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Aura of Pain",
+        "nodeId": 90933,
+        "entryId": 112844,
+        "definitionId": 117849,
+        "maxRank": 1,
+        "spellId": 207347,
+        "spellName": "Aura of Pain",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?c3[Soul Immolation grants ${$s2*$1241937d} additional Fury over its duration.][Increases the critical strike chance of Immolation Aura by $s1%.]",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Live by the Glaive",
+        "nodeId": 95151,
+        "entryId": 117761,
+        "definitionId": 122773,
+        "maxRank": 1,
+        "spellId": 428607,
+        "spellName": "Live by the Glaive",
+        "school": "Physical",
+        "passive": true,
+        "description": "When you parry an attack or have one of your attacks parried, restore $428608s2% of max health and $428608s1 Fury.\nThis effect may only occur once every $s1 sec.",
+        "entryType": "passive",
+        "posX": 5700,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Pursuit",
+        "nodeId": 90940,
+        "entryId": 112851,
+        "definitionId": 117856,
+        "maxRank": 1,
+        "spellId": 320654,
+        "spellName": "Pursuit",
+        "school": "Physical",
+        "passive": true,
+        "description": "Mastery increases your movement speed.",
+        "entryType": "passive",
+        "posX": 2100,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "passive"
+      },
+      {
+        "name": "Soul Rending",
+        "nodeId": 90936,
+        "entryId": 112847,
+        "definitionId": 117852,
+        "maxRank": 2,
+        "spellId": 204909,
+        "spellName": "Soul Rending",
+        "school": "Physical",
+        "passive": true,
+        "description": "Leech increased by $s1%.\nGain an additional $s2% leech while Metamorphosis is active.",
+        "entryType": "passive",
+        "posX": 3300,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Felfire Haste",
+        "nodeId": 90939,
+        "entryId": 112850,
+        "definitionId": 117855,
+        "maxRank": 1,
+        "spellId": 389846,
+        "spellName": "Felfire Haste",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] increases your movement speed by $389847s1% for $389847d.",
+        "entryType": "passive",
+        "posX": 3900,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Infernal Armor",
+        "nodeId": 91004,
+        "entryId": 112924,
+        "definitionId": 117929,
+        "maxRank": 2,
+        "spellId": 320331,
+        "spellName": "Infernal Armor",
+        "school": "Physical",
+        "passive": true,
+        "description": "Immolation Aura increases your armor by $s1% and causes melee attackers to suffer ${$320334s1/$s3} $@spelldesc395020 damage.",
+        "entryType": "passive",
+        "posX": 4500,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Burn It Out",
+        "nodeId": 90927,
+        "entryId": 112837,
+        "definitionId": 117842,
+        "maxRank": 1,
+        "spellId": 1266316,
+        "spellName": "Burn It Out",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?c3[Soul Immolation][Immolation Aura] removes $s1 Disease $Leffect:effects;.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 4500,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Soul Cleanse",
+        "nodeId": 90927,
+        "entryId": 136502,
+        "definitionId": 141275,
+        "maxRank": 1,
+        "spellId": 1266496,
+        "spellName": "Soul Cleanse",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?c3[Soul Immolation][Immolation Aura] removes $s1 Curse $Leffect:effects;.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 4500,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Lost in Darkness",
+        "nodeId": 90947,
+        "entryId": 112860,
+        "definitionId": 117865,
+        "maxRank": 1,
+        "spellId": 389849,
+        "spellName": "Lost in Darkness",
+        "school": "Physical",
+        "passive": true,
+        "description": "Spectral Sight has ${$s1/-1000} sec reduced cooldown and no longer reduces movement speed.",
+        "entryType": "passive",
+        "posX": 5700,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Illidari Knowledge",
+        "nodeId": 90935,
+        "entryId": 112846,
+        "definitionId": 117851,
+        "maxRank": 2,
+        "spellId": 389696,
+        "spellName": "Illidari Knowledge",
+        "school": "Physical",
+        "passive": true,
+        "description": "Reduces magic damage taken by $s1%.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 5100,
+        "reqPoints": 8,
+        "type": "passive"
+      },
+      {
+        "name": "Felbound",
+        "nodeId": 91003,
+        "entryId": 112923,
+        "definitionId": 117928,
+        "maxRank": 1,
+        "spellId": 1266762,
+        "spellName": "Felbound",
+        "school": "Physical",
+        "passive": true,
+        "description": "Your movement speed is increased by $s1%.",
+        "entryType": "passive",
+        "posX": 3900,
+        "posY": 5100,
+        "reqPoints": 8,
+        "type": "passive"
+      },
+      {
+        "name": "Will of the Illidari",
+        "nodeId": 91000,
+        "entryId": 112918,
+        "definitionId": 117923,
+        "maxRank": 2,
+        "spellId": 389695,
+        "spellName": "Will of the Illidari",
+        "school": "Physical",
+        "passive": true,
+        "description": "Increases maximum health by $s1%.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 5100,
+        "reqPoints": 8,
+        "type": "passive"
+      },
+      {
+        "name": "Internal Struggle",
+        "nodeId": 90934,
+        "entryId": 112845,
+        "definitionId": 117850,
+        "maxRank": 1,
+        "spellId": 393822,
+        "spellName": "Internal Struggle",
+        "school": "Physical",
+        "passive": true,
+        "description": "Increases your mastery by ${$s1*$mas}.1%.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 5700,
+        "reqPoints": 23,
+        "type": "passive"
+      },
+      {
+        "name": "Furious",
+        "nodeId": 95152,
+        "entryId": 117762,
+        "definitionId": 122774,
+        "maxRank": 1,
+        "spellId": 1266326,
+        "spellName": "Furious",
+        "school": "Physical",
+        "passive": true,
+        "description": "Attacks and abilities that generate Fury deal $s1% increased damage.",
+        "entryType": "passive",
+        "posX": 3300,
+        "posY": 5700,
+        "reqPoints": 23,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Remorseless",
+        "nodeId": 90929,
+        "entryId": 112839,
+        "definitionId": 117844,
+        "maxRank": 1,
+        "spellId": 1266328,
+        "spellName": "Remorseless",
+        "school": "Physical",
+        "passive": true,
+        "description": "Attacks and abilities that spend Fury deal $s1% increased damage.",
+        "entryType": "passive",
+        "posX": 4500,
+        "posY": 5700,
+        "reqPoints": 23,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "First In, Last Out",
+        "nodeId": 95149,
+        "entryId": 117758,
+        "definitionId": 122770,
+        "maxRank": 1,
+        "spellId": 1266497,
+        "spellName": "First In, Last Out",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?a212612[Fel Rush]?a212613[Infernal Strike][Shift] grants you a rapidly decaying shield equal to $s1% of your maximum health.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 5700,
+        "reqPoints": 23,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Erratic Felheart",
+        "nodeId": 90996,
+        "entryId": 112914,
+        "definitionId": 117919,
+        "maxRank": 2,
+        "spellId": 391397,
+        "spellName": "Erratic Felheart",
+        "school": "Physical",
+        "passive": true,
+        "description": "The cooldown of $?a212613[Infernal Strike]?a1213636[Shift][Fel Rush] is reduced by ${-$s1/1000}.1 sec.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 6300,
+        "reqPoints": 23,
+        "type": "passive"
+      },
+      {
+        "name": "Final Breath",
+        "nodeId": 110011,
+        "entryId": 136501,
+        "definitionId": 141274,
+        "maxRank": 1,
+        "spellId": 1266500,
+        "spellName": "Final Breath",
+        "school": "Physical",
+        "passive": true,
+        "description": "Fully channeling $?a212612[Eye Beam]?a212613[Fel Devastation][Void Ray] increases the damage of its final tick by $s1%.",
+        "entryType": "passive",
+        "posX": 3300,
+        "posY": 6300,
+        "reqPoints": 23,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Darkness",
+        "nodeId": 91002,
+        "entryId": 112921,
+        "definitionId": 117926,
+        "maxRank": 1,
+        "spellId": 196718,
+        "spellName": "Darkness",
+        "school": "Physical",
+        "passive": false,
+        "description": "Summons darkness around you in a$?a357419[ 12 yd][n 8 yd] radius, granting friendly targets a $209426s2% chance to avoid all damage from an attack. Lasts $d.\nChance to avoid damage increased by $s3% when not in a raid.",
+        "entryType": "active",
+        "posX": 3900,
+        "posY": 6300,
+        "reqPoints": 23,
+        "type": "active_ability",
+        "cooldown": 300,
+        "gcd": 1.5,
+        "duration": 8,
+        "affectedBy": [
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 212612,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 212613,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Cover of Darkness",
+            "id": 357419,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Long Night",
+            "id": 389781,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Pitch Black",
+            "id": 389783,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Demon Muzzle",
+        "nodeId": 90928,
+        "entryId": 112838,
+        "definitionId": 117843,
+        "maxRank": 1,
+        "spellId": 1266329,
+        "spellName": "Demon Muzzle",
+        "school": "Physical",
+        "passive": true,
+        "description": "Interrupting a spell with Disrupt decreases your magic damage taken by $1266616s1% for $1266616d.",
+        "entryType": "passive",
+        "posX": 4500,
+        "posY": 6300,
+        "reqPoints": 23,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Soul Splitter",
+        "nodeId": 90949,
+        "entryId": 112862,
+        "definitionId": 117867,
+        "maxRank": 2,
+        "spellId": 1266330,
+        "spellName": "Soul Splitter",
+        "school": "Physical",
+        "passive": true,
+        "description": "Any time you would generate one or more Soul Fragments, you have a $s1% chance to generate an additional Soul Fragment.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 6300,
+        "reqPoints": 23,
+        "type": "passive"
+      },
+      {
+        "name": "Wings of Wrath",
+        "nodeId": 110010,
+        "entryId": 136500,
+        "definitionId": 141273,
+        "maxRank": 1,
+        "spellId": 1266493,
+        "spellName": "Wings of Wrath",
+        "school": "Physical",
+        "passive": true,
+        "description": "Glide speed increased by $s1%.",
+        "entryType": "passive",
+        "posX": 2700,
+        "posY": 6900,
+        "reqPoints": 23,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Long Night",
+        "nodeId": 91001,
+        "entryId": 112920,
+        "definitionId": 117925,
+        "maxRank": 1,
+        "spellId": 389781,
+        "spellName": "Long Night",
+        "school": "Physical",
+        "passive": true,
+        "description": "Increases the duration of Darkness by ${$s1/1000} sec.",
+        "entryType": "passive",
+        "posX": 3900,
+        "posY": 6900,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "reqPoints": 23,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Pitch Black",
+        "nodeId": 91001,
+        "entryId": 112919,
+        "definitionId": 117924,
+        "maxRank": 1,
+        "spellId": 389783,
+        "spellName": "Pitch Black",
+        "school": "Physical",
+        "passive": true,
+        "description": "Reduces the cooldown of Darkness by ${$s1/-1000} sec.",
+        "entryType": "passive",
+        "posX": 3900,
+        "posY": 6900,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "reqPoints": 23,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Demonic Resilience",
+        "nodeId": 90997,
+        "entryId": 117755,
+        "definitionId": 122767,
+        "maxRank": 1,
+        "spellId": 1266307,
+        "spellName": "Demonic Resilience",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?c2[Demon Spikes][Blur] gains $s1 additional $Lcharge:charges;.",
+        "entryType": "passive",
+        "posX": 5100,
+        "posY": 6900,
+        "reqPoints": 23,
+        "type": "passive"
+      }
+    ]
+  },
+  "spec": {
+    "name": "Havoc",
+    "talents": [
+      {
+        "name": "Eye Beam",
+        "nodeId": 91018,
+        "entryId": 112939,
+        "definitionId": 117944,
+        "maxRank": 1,
+        "spellId": 198013,
+        "spellName": "Eye Beam",
+        "school": "Chromatic",
+        "passive": false,
+        "description": "Blasts all enemies in front of you,$?s320415[ dealing guaranteed critical strikes][] for up to $<dmg> Chaos damage over $d. Deals reduced damage beyond $s5 targets.$?s343311[\nWhen Eye Beam finishes fully channeling, your Haste is increased by an additional $343312s1% for $343312d.][]",
+        "entryType": "active",
+        "posX": 12300,
+        "posY": 1500,
+        "entryNode": true,
+        "type": "active_ability",
+        "resource": {
+          "cost": 30,
+          "type": "Fury",
+          "typeId": 17,
+          "spellId": 10720
+        },
+        "cooldown": 30,
+        "gcd": 1.5,
+        "duration": 2,
+        "affectedBy": [
+          {
+            "name": "Blind Fury",
+            "id": 203550,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Soul Flame of Insight",
+            "id": 226334,
+            "effects": [
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Critical Chaos",
+        "nodeId": 91028,
+        "entryId": 112951,
+        "definitionId": 117956,
+        "maxRank": 1,
+        "spellId": 320413,
+        "spellName": "Critical Chaos",
+        "school": "Physical",
+        "passive": true,
+        "description": "The chance that Chaos Strike will refund $193840s1 Fury is increased by $s2% of your critical strike chance.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 2100,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Burning Hatred",
+        "nodeId": 90923,
+        "entryId": 112832,
+        "definitionId": 117837,
+        "maxRank": 1,
+        "spellId": 320374,
+        "spellName": "Burning Hatred",
+        "school": "Physical",
+        "passive": true,
+        "description": "Immolation Aura generates an additional ${$258922s2*$258920d} Fury over $258920d.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 2100,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Dash of Chaos",
+        "nodeId": 93014,
+        "entryId": 115245,
+        "definitionId": 120257,
+        "maxRank": 1,
+        "spellId": 427794,
+        "spellName": "Dash of Chaos",
+        "school": "Physical",
+        "passive": true,
+        "description": "For ${$427793D-($428160s1/10)} sec after using Fel Rush, activating it again will dash back towards your initial location.",
+        "entryType": "passive",
+        "posX": 10500,
+        "posY": 2700,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Improved Chaos Strike",
+        "nodeId": 91030,
+        "entryId": 112953,
+        "definitionId": 117958,
+        "maxRank": 1,
+        "spellId": 343206,
+        "spellName": "Improved Chaos Strike",
+        "school": "Physical",
+        "passive": true,
+        "description": "Chaos Strike damage increased by $s1%.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 2700,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "First Blood",
+        "nodeId": 90925,
+        "entryId": 112834,
+        "definitionId": 117839,
+        "maxRank": 1,
+        "spellId": 206416,
+        "spellName": "First Blood",
+        "school": "Physical",
+        "passive": true,
+        "description": "Blade Dance deals $<firstbloodDmg> Chaos damage to the first target struck.",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 2700,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Accelerated Blade",
+        "nodeId": 91011,
+        "entryId": 112932,
+        "definitionId": 117937,
+        "maxRank": 1,
+        "spellId": 391275,
+        "spellName": "Accelerated Blade",
+        "school": "Physical",
+        "passive": true,
+        "description": "Throw Glaive deals $s2% increased damage, reduced by ${$s2/2}% for each previous enemy hit.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 2700,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Demon Hide",
+        "nodeId": 91017,
+        "entryId": 112938,
+        "definitionId": 117943,
+        "maxRank": 1,
+        "spellId": 428241,
+        "spellName": "Demon Hide",
+        "school": "Physical",
+        "passive": true,
+        "description": "Magical damage increased by $s1%, and Physical damage taken reduced by $s2%.",
+        "entryType": "passive",
+        "posX": 14100,
+        "posY": 2700,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Desperate Instincts",
+        "nodeId": 93016,
+        "entryId": 115248,
+        "definitionId": 120260,
+        "maxRank": 1,
+        "spellId": 205411,
+        "spellName": "Desperate Instincts",
+        "school": "Physical",
+        "passive": true,
+        "description": "Blur now reduces damage taken by an additional ${$abs($m3)}%.\nAdditionally, damage taken below $s1% Health is reduced by $s2%.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 3300,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Deflecting Dance",
+        "nodeId": 93015,
+        "entryId": 115246,
+        "definitionId": 120258,
+        "maxRank": 1,
+        "spellId": 427776,
+        "spellName": "Deflecting Dance",
+        "school": "Physical",
+        "passive": true,
+        "description": "You deflect incoming attacks while Blade Dancing, absorbing damage up to $s1% of your maximum health.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 3300,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Mortal Dance",
+        "nodeId": 93015,
+        "entryId": 117743,
+        "definitionId": 122755,
+        "maxRank": 1,
+        "spellId": 328725,
+        "spellName": "Mortal Dance",
+        "school": "Physical",
+        "passive": true,
+        "description": "Blade Dance now reduces targets' healing received by $356608s1% for $356608d.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 3300,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Initiative",
+        "nodeId": 91027,
+        "entryId": 112950,
+        "definitionId": 117955,
+        "maxRank": 1,
+        "spellId": 388108,
+        "spellName": "Initiative",
+        "school": "Physical",
+        "passive": true,
+        "description": "Damaging an enemy before they damage you increases your critical strike chance by $391215s1% for $391215d.\nVengeful Retreat refreshes your potential to trigger this effect on any enemies you are in combat with.",
+        "entryType": "passive",
+        "posX": 10500,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Scars of Suffering",
+        "nodeId": 90914,
+        "entryId": 112823,
+        "definitionId": 117828,
+        "maxRank": 1,
+        "spellId": 428232,
+        "spellName": "Scars of Suffering",
+        "school": "Physical",
+        "passive": true,
+        "description": "Increases Versatility by $s1% and reduces threat generated by ${$s2*-1}%.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "passive"
+      },
+      {
+        "name": "Demonic",
+        "nodeId": 90922,
+        "entryId": 112831,
+        "definitionId": 117836,
+        "maxRank": 1,
+        "spellId": 213410,
+        "spellName": "Demonic",
+        "school": "Physical",
+        "passive": true,
+        "description": "Eye Beam causes you to enter demon form for ${$s1/1000} sec after it finishes dealing damage.",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Furious Throws",
+        "nodeId": 93013,
+        "entryId": 115244,
+        "definitionId": 120256,
+        "maxRank": 1,
+        "spellId": 393029,
+        "spellName": "Furious Throws",
+        "school": "Physical",
+        "passive": true,
+        "description": "Throw Glaive now costs $s1 Fury and throws a second glaive at the target.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Trail of Ruin",
+        "nodeId": 90915,
+        "entryId": 112824,
+        "definitionId": 117829,
+        "maxRank": 1,
+        "spellId": 258881,
+        "spellName": "Trail of Ruin",
+        "school": "Physical",
+        "passive": true,
+        "description": "The final slash of Blade Dance inflicts an additional $258883o1 Chaos damage over $258883d.",
+        "entryType": "passive",
+        "posX": 14100,
+        "posY": 3900,
+        "reqPoints": 8,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Tactical Retreat",
+        "nodeId": 91022,
+        "entryId": 112944,
+        "definitionId": 117949,
+        "maxRank": 1,
+        "spellId": 389688,
+        "spellName": "Tactical Retreat",
+        "school": "Physical",
+        "passive": true,
+        "description": "Vengeful Retreat has a ${$s1/-1000} sec reduced cooldown and generates ${$389890m1/$389890t*$389890d} Fury over $389890d.",
+        "entryType": "passive",
+        "posX": 10500,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Blind Fury",
+        "nodeId": 91026,
+        "entryId": 112949,
+        "definitionId": 117954,
+        "maxRank": 2,
+        "spellId": 203550,
+        "spellName": "Blind Fury",
+        "school": "Physical",
+        "passive": true,
+        "description": "Eye Beam generates ${$s3/5} Fury every second, has $s1% increased duration, and deals $s2% increased damage.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Furious Gaze",
+        "nodeId": 91025,
+        "entryId": 112948,
+        "definitionId": 117953,
+        "maxRank": 1,
+        "spellId": 343311,
+        "spellName": "Furious Gaze",
+        "school": "Physical",
+        "passive": true,
+        "description": "When Eye Beam finishes fully channeling, your Haste is increased by an additional $343312s1% for $343312d.",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Dancing with Fate",
+        "nodeId": 91015,
+        "entryId": 112936,
+        "definitionId": 117941,
+        "maxRank": 2,
+        "spellId": 389978,
+        "spellName": "Dancing with Fate",
+        "school": "Physical",
+        "passive": true,
+        "description": "The final slash of Blade Dance deals an additional $s1% damage.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Growing Inferno",
+        "nodeId": 90916,
+        "entryId": 112825,
+        "definitionId": 117830,
+        "maxRank": 1,
+        "spellId": 390158,
+        "spellName": "Growing Inferno",
+        "school": "Physical",
+        "passive": true,
+        "description": "Immolation Aura's damage increases by $s1% each time it deals damage.",
+        "entryType": "passive",
+        "posX": 14100,
+        "posY": 4500,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Exergy",
+        "nodeId": 91021,
+        "entryId": 112943,
+        "definitionId": 117948,
+        "maxRank": 1,
+        "spellId": 206476,
+        "spellName": "Exergy",
+        "school": "Physical",
+        "passive": true,
+        "description": "The Hunt and Vengeful Retreat increase your damage by $208628s1% for $208628d.",
+        "entryType": "passive",
+        "posX": 10500,
+        "posY": 5100,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Inertia",
+        "nodeId": 91021,
+        "entryId": 117744,
+        "definitionId": 122756,
+        "maxRank": 1,
+        "spellId": 427640,
+        "spellName": "Inertia",
+        "school": "Physical",
+        "passive": true,
+        "description": "The Hunt and Vengeful Retreat cause your next Fel Rush or Felblade to empower you, increasing damage by $427641s1% for $427641d.",
+        "entryType": "passive",
+        "posX": 10500,
+        "posY": 5100,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Isolated Prey",
+        "nodeId": 91036,
+        "entryId": 112959,
+        "definitionId": 117964,
+        "maxRank": 1,
+        "spellId": 388113,
+        "spellName": "Isolated Prey",
+        "school": "Physical",
+        "passive": true,
+        "description": "Chaos Nova, Eye Beam, and Immolation Aura gain bonuses when striking 1 target.\n$@spellicon179057 $@spellname179057:\nStun duration increased by ${$s1/1000} sec.\n$@spellicon198013 $@spellname198013:\nDeals $s2% increased damage.\n$@spellicon258920 $@spellname258920:\nAlways critically strikes.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 5100,
+        "reqPoints": 8,
+        "type": "passive_buff"
+      },
+      {
+        "name": "The Hunt",
+        "nodeId": 90921,
+        "entryId": 112830,
+        "definitionId": 117835,
+        "maxRank": 1,
+        "spellId": 370965,
+        "spellName": "The Hunt",
+        "school": "Chromatic",
+        "passive": false,
+        "description": "Charge to your target, striking them for $370966s1 Chaos damage, rooting them in place for $370970d and inflicting $370969o1 Chaos damage over $370969d to up to $370967s2 enemies in your path.",
+        "entryType": "active",
+        "posX": 12300,
+        "posY": 5100,
+        "reqPoints": 8,
+        "type": "active_ability",
+        "cooldown": 90,
+        "gcd": 1.5,
+        "duration": 2,
+        "affectedBy": [
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 212612,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 212613,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Any Means Necessary",
+            "id": 388114,
+            "effects": [
+              1,
+              3,
+              4
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          },
+          {
+            "name": "Demonsurge",
+            "id": 1245496,
+            "effects": [
+              3,
+              6
+            ]
+          },
+          {
+            "name": "Eternal Hunt",
+            "id": 1270900,
+            "effects": [
+              1
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Serrated Glaive",
+        "nodeId": 91013,
+        "entryId": 112934,
+        "definitionId": 117939,
+        "maxRank": 1,
+        "spellId": 390154,
+        "spellName": "Serrated Glaive",
+        "school": "Physical",
+        "passive": true,
+        "description": "Enemies hit by Chaos Strike or Throw Glaive take $s1% increased damage from Chaos Strike and Throw Glaive for $390155d.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 5100,
+        "reqPoints": 8,
+        "type": "passive"
+      },
+      {
+        "name": "Burning Wound",
+        "nodeId": 90917,
+        "entryId": 112826,
+        "definitionId": 117831,
+        "maxRank": 1,
+        "spellId": 391189,
+        "spellName": "Burning Wound",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?s203555[Demon Blades][Demon's Bite] and Throw Glaive leave open wounds on your enemies, dealing $391191o1 Chaos damage over $391191d and increasing damage taken from your Immolation Aura by $391191s2%.\nMay be applied to up to $s2 targets.",
+        "entryType": "passive",
+        "posX": 14100,
+        "posY": 5100,
+        "reqPoints": 8,
+        "type": "proc_trigger"
+      },
+      {
+        "name": "Unbound Chaos",
+        "nodeId": 91020,
+        "entryId": 112942,
+        "definitionId": 117947,
+        "maxRank": 1,
+        "spellId": 347461,
+        "spellName": "Unbound Chaos",
+        "school": "Physical",
+        "passive": true,
+        "description": "The Hunt and Vengeful Retreat increase the damage of your next Fel Rush or Felblade by $s2%. Lasts $347462d.",
+        "entryType": "passive",
+        "posX": 10500,
+        "posY": 5700,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Chaos Theory",
+        "nodeId": 91035,
+        "entryId": 112958,
+        "definitionId": 117963,
+        "maxRank": 1,
+        "spellId": 389687,
+        "spellName": "Chaos Theory",
+        "school": "Physical",
+        "passive": true,
+        "description": "Blade Dance causes your next Chaos Strike within $337567d to have a $s1-$s2% increased critical strike chance and will always refund Fury.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 5700,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Inner Demon",
+        "nodeId": 91024,
+        "entryId": 112947,
+        "definitionId": 117952,
+        "maxRank": 1,
+        "spellId": 389693,
+        "spellName": "Inner Demon",
+        "school": "Physical",
+        "passive": true,
+        "description": "Entering demon form causes your next Chaos Strike to unleash your inner demon, causing it to crash into your target and deal $390137s1 Chaos damage to all nearby enemies. Deals reduced damage beyond $s2 targets.",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 5700,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Chaotic Transformation",
+        "nodeId": 91024,
+        "entryId": 117765,
+        "definitionId": 122777,
+        "maxRank": 1,
+        "spellId": 388112,
+        "spellName": "Chaotic Transformation",
+        "school": "Physical",
+        "passive": true,
+        "description": "When you activate Metamorphosis, the cooldowns of Blade Dance and Eye Beam are immediately reset.",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 5700,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Relentless Onslaught",
+        "nodeId": 91012,
+        "entryId": 112933,
+        "definitionId": 117938,
+        "maxRank": 1,
+        "spellId": 389977,
+        "spellName": "Relentless Onslaught",
+        "school": "Physical",
+        "passive": true,
+        "description": "Chaos Strike has a $s1% chance to trigger a second Chaos Strike.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 5700,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Soulscar",
+        "nodeId": 91012,
+        "entryId": 117764,
+        "definitionId": 122776,
+        "maxRank": 1,
+        "spellId": 388106,
+        "spellName": "Soulscar",
+        "school": "Physical",
+        "passive": true,
+        "description": "Throw Glaive causes targets to take an additional $s1% of damage dealt as Chaos over $390181d.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 5700,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Ragefire",
+        "nodeId": 90918,
+        "entryId": 112827,
+        "definitionId": 117832,
+        "maxRank": 1,
+        "spellId": 388107,
+        "spellName": "Ragefire",
+        "school": "Physical",
+        "passive": true,
+        "description": "Each time Immolation Aura deals damage, $s1% of the damage dealt by up to $s2 critical strikes is gathered as Ragefire.\nWhen Immolation Aura expires you explode, dealing all stored Ragefire damage to nearby enemies.",
+        "entryType": "passive",
+        "posX": 14100,
+        "posY": 5700,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Know Your Enemy",
+        "nodeId": 91034,
+        "entryId": 112957,
+        "definitionId": 117962,
+        "maxRank": 2,
+        "spellId": 388118,
+        "spellName": "Know Your Enemy",
+        "school": "Physical",
+        "passive": true,
+        "description": "Gain critical strike damage equal to $s2% of your critical strike chance.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 6300,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Cycle of Hatred",
+        "nodeId": 91032,
+        "entryId": 112955,
+        "definitionId": 117960,
+        "maxRank": 1,
+        "spellId": 258887,
+        "spellName": "Cycle of Hatred",
+        "school": "Physical",
+        "passive": true,
+        "description": "Activating Eye Beam reduces the cooldown of your next Eye Beam by ${$s1/1000}.1 sec, stacking up to $s2 sec.",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 6300,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Chaotic Disposition",
+        "nodeId": 95147,
+        "entryId": 117754,
+        "definitionId": 122766,
+        "maxRank": 2,
+        "spellId": 428492,
+        "spellName": "Chaotic Disposition",
+        "school": "Physical",
+        "passive": true,
+        "description": "Your Chaos damage has a ${$s2/100}.2% chance to be increased by $s3%, occurring up to $m1 total $Ltime:times;.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 6300,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Essence Break",
+        "nodeId": 91033,
+        "entryId": 112956,
+        "definitionId": 117961,
+        "maxRank": 1,
+        "spellId": 258860,
+        "spellName": "Essence Break",
+        "school": "Chaos",
+        "passive": false,
+        "description": "Slash all enemies in front of you for $s1 Chaos damage, causing Chaos Strike and Blade Dance to deal $1245759s1 Chaos damage to them for $320338d. Deals reduced damage beyond $s2 targets.",
+        "entryType": "active",
+        "posX": 10500,
+        "posY": 6900,
+        "reqPoints": 20,
+        "type": "active_ability",
+        "cooldown": 40,
+        "gcd": 1.5,
+        "affectedBy": [
+          {
+            "name": "Demon Soul",
+            "id": 163073,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Mastery: Demonic Presence",
+            "id": 185164,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Fiery Brand",
+            "id": 207744,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Fiery Brand",
+            "id": 207771,
+            "effects": [
+              2
+            ]
+          },
+          {
+            "name": "Exergy",
+            "id": 208628,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 212612,
+            "effects": [
+              1,
+              2,
+              6
+            ]
+          },
+          {
+            "name": "Vengeance Demon Hunter",
+            "id": 212613,
+            "effects": [
+              6
+            ]
+          },
+          {
+            "name": "Chaos Blades",
+            "id": 247938,
+            "effects": [
+              2,
+              3
+            ]
+          },
+          {
+            "name": "Demon Soul",
+            "id": 347765,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Burning Blood",
+            "id": 390213,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Seething Chaos",
+            "id": 394934,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Inertia",
+            "id": 427641,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hide",
+            "id": 428241,
+            "effects": [
+              1,
+              3
+            ]
+          },
+          {
+            "name": "Reaver's Mark",
+            "id": 442624,
+            "effects": [
+              1
+            ]
+          },
+          {
+            "name": "Void Metamorphosis",
+            "id": 471306,
+            "effects": [
+              3
+            ]
+          },
+          {
+            "name": "Devourer Demon Hunter",
+            "id": 1213636,
+            "effects": [
+              5
+            ]
+          },
+          {
+            "name": "Havoc Demon Hunter",
+            "id": 1256955,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Blind Focus",
+            "id": 1272364,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 2pc",
+            "id": 1283625,
+            "effects": [
+              1,
+              2
+            ]
+          },
+          {
+            "name": "Demon Hunter- Midnight PrePatch - 11.2 Class Set 4pc",
+            "id": 1283628,
+            "effects": [
+              1,
+              2
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Glaive Tempest",
+        "nodeId": 108669,
+        "entryId": 134203,
+        "definitionId": 138983,
+        "maxRank": 1,
+        "spellId": 1244557,
+        "spellName": "Glaive Tempest",
+        "school": "Physical",
+        "passive": true,
+        "description": "The final slash of Blade Dance consumes $s1 Fury when it strikes $s2 or more enemies, launching two demonic glaives in a whirlwind of energy, causing ${14*$342857s1} Chaos damage over $342817d to all nearby enemies. Deals reduced damage beyond $342817s2 targets.",
+        "entryType": "passive",
+        "posX": 11400,
+        "posY": 6900,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Shattered Destiny",
+        "nodeId": 91031,
+        "entryId": 112954,
+        "definitionId": 117959,
+        "maxRank": 1,
+        "spellId": 388116,
+        "spellName": "Shattered Destiny",
+        "school": "Physical",
+        "passive": true,
+        "description": "The duration of your active demon form is extended by ${$s1/1000}.1 sec per $s2 Fury spent.",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 6900,
+        "choiceNode": true,
+        "choiceIndex": 100,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Collective Anguish",
+        "nodeId": 91031,
+        "entryId": 134227,
+        "definitionId": 139005,
+        "maxRank": 1,
+        "spellId": 390152,
+        "spellName": "Collective Anguish",
+        "school": "Physical",
+        "passive": true,
+        "description": "$?a212613[Fel Devastation][Eye Beam] summons an allied $?a212613[Havoc][Vengeance] Demon Hunter who casts $?a212613[Eye Beam][Fel Devastation], dealing $?a212613[${$391058s1*10*2} Chaos][${$393834s1*(2/$393831t1)} Fire] damage over $?a212613[$391057d][$393831d]. $?a212613[Deals reduced damage beyond $198013s5 targets.][Dealing damage heals you for up to ${$212106s1*(2/$t1)} health.]",
+        "entryType": "passive",
+        "posX": 12300,
+        "posY": 6900,
+        "choiceNode": true,
+        "choiceIndex": 200,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Screaming Brutality",
+        "nodeId": 90919,
+        "entryId": 112828,
+        "definitionId": 117833,
+        "maxRank": 1,
+        "spellId": 1220506,
+        "spellName": "Screaming Brutality",
+        "school": "Physical",
+        "passive": true,
+        "description": "Blade Dance automatically triggers Throw Glaive on your primary target for $s3% damage and each slash has a $s2% chance to Throw Glaive an enemy for $s1% damage.",
+        "entryType": "passive",
+        "posX": 13200,
+        "posY": 6900,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "A Fire Inside",
+        "nodeId": 95143,
+        "entryId": 117741,
+        "definitionId": 122753,
+        "maxRank": 1,
+        "spellId": 427775,
+        "spellName": "A Fire Inside",
+        "school": "Physical",
+        "passive": true,
+        "description": "Immolation Aura has $m1 additional $Lcharge:charges;, has ${$s3/-1000} sec reduced cooldown, and deals Chaos damage instead of Fire.\nYou can have multiple Immolation Auras active at a time.",
+        "entryType": "passive",
+        "posX": 14100,
+        "posY": 6900,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Eternal Hunt",
+        "nodeId": 110427,
+        "entryId": 137049,
+        "definitionId": 141812,
+        "maxRank": 1,
+        "spellId": 1270898,
+        "spellName": "Eternal Hunt",
+        "school": "Physical",
+        "passive": false,
+        "description": "The Hunt empowers your next Eye Beam, increasing damage by $s1% and affecting enemies in a wider area.",
+        "entryType": "tierrank",
+        "posX": 12300,
+        "posY": 7650,
+        "entryNode": true,
+        "reqPoints": 20,
+        "type": "passive_buff"
+      },
+      {
+        "name": "Eternal Hunt",
+        "nodeId": 110427,
+        "entryId": 137048,
+        "definitionId": 141811,
+        "maxRank": 2,
+        "spellId": 1270900,
+        "spellName": "Eternal Hunt",
+        "school": "Physical",
+        "passive": false,
+        "description": "The Hunt has ${$s2/-1000} sec reduced cooldown, deals $s1% more damage, and its damage over time effect applies to $s3 additional enemies.",
+        "entryType": "tierrank",
+        "posX": 12300,
+        "posY": 7650,
+        "entryNode": true,
+        "reqPoints": 20,
+        "type": "spell_modifier"
+      },
+      {
+        "name": "Eternal Hunt",
+        "nodeId": 110427,
+        "entryId": 137047,
+        "definitionId": 141810,
+        "maxRank": 1,
+        "spellId": 1270901,
+        "spellName": "Eternal Hunt",
+        "school": "Physical",
+        "passive": false,
+        "description": "Blade Dance damage increased by $s1%.\nFully channeling Eye Beam causes your next Blade Dance to refresh its own cooldown.",
+        "entryType": "tierrank",
+        "posX": 12300,
+        "posY": 7650,
+        "entryNode": true,
+        "reqPoints": 20,
+        "type": "spell_modifier"
+      }
+    ]
+  },
+  "hero": {
+    "Fel-Scarred": {
+      "talents": [
+        {
+          "name": "Demonsurge",
+          "nodeId": 94917,
+          "entryId": 117514,
+          "definitionId": 122526,
+          "maxRank": 1,
+          "spellId": 452402,
+          "spellName": "Demonsurge",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[][Void ]Metamorphosis now also $?a212612[causes Demon Blades to generate $162264s10 additional Fury][greatly empowers Voidblade and Hungering Slash].\nWhile demon form is active, the first cast of each empowered ability induces a $?a212612[Demonsurge][Voidsurge], causing you to explode with $?a212612[Fel][Void] energy, dealing $?a212612[$452416s1 Chaos][$1246160s1 Cosmic] damage to nearby enemies. Deals reduced damage beyond $452416s3 targets.",
+          "entryType": "passive",
+          "posX": 8100,
+          "posY": 4200,
+          "freeNode": true,
+          "entryNode": true,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Blind Focus",
+          "nodeId": 109773,
+          "entryId": 136031,
+          "definitionId": 140786,
+          "maxRank": 1,
+          "spellId": 1272364,
+          "spellName": "Blind Focus",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Fire][Cosmic] damage increased by $?a212612[$s1][$s3]%.\nEffect is doubled while in demon form.",
+          "entryType": "passive",
+          "posX": 9000,
+          "posY": 4800,
+          "type": "spell_modifier"
+        },
+        {
+          "name": "Wave of Debilitation",
+          "nodeId": 94913,
+          "entryId": 117510,
+          "definitionId": 122522,
+          "maxRank": 1,
+          "spellId": 452403,
+          "spellName": "Wave of Debilitation",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?c1[Chaos][Void] Nova slows enemies by $453263s1% and reduces attack and cast speed by $453263s2% for $453263d after its stun fades.",
+          "entryType": "passive",
+          "posX": 7250,
+          "posY": 4850,
+          "choiceNode": true,
+          "choiceIndex": 100,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Pursuit of Angriness",
+          "nodeId": 94913,
+          "entryId": 124011,
+          "definitionId": 128849,
+          "maxRank": 1,
+          "spellId": 452404,
+          "spellName": "Pursuit of Angriness",
+          "school": "Physical",
+          "passive": true,
+          "description": "Movement speed increased by $s1% per $s2 Fury.",
+          "entryType": "passive",
+          "posX": 7250,
+          "posY": 4850,
+          "choiceNode": true,
+          "choiceIndex": 200,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Focused Hatred",
+          "nodeId": 94918,
+          "entryId": 117515,
+          "definitionId": 122527,
+          "maxRank": 1,
+          "spellId": 452405,
+          "spellName": "Focused Hatred",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Demonsurge][Voidsurge] deals $s1% increased damage when it strikes a single target.\nEach additional target reduces this bonus by $s2%.",
+          "entryType": "passive",
+          "posX": 7850,
+          "posY": 4850,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Set Fire to the Pain",
+          "nodeId": 94899,
+          "entryId": 117496,
+          "definitionId": 122508,
+          "maxRank": 1,
+          "spellId": 452406,
+          "spellName": "Set Fire to the Pain",
+          "school": "Physical",
+          "passive": true,
+          "description": "$s2% of all non-Fire damage taken is instead taken as Fire damage over $453286d.\nFire damage taken reduced by $S3%.",
+          "entryType": "passive",
+          "posX": 8450,
+          "posY": 4850,
+          "choiceNode": true,
+          "choiceIndex": 100,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Improved Soul Rending",
+          "nodeId": 94899,
+          "entryId": 124010,
+          "definitionId": 128848,
+          "maxRank": 1,
+          "spellId": 452407,
+          "spellName": "Improved Soul Rending",
+          "school": "Physical",
+          "passive": true,
+          "description": "Leech granted by Soul Rending increased by $s1% and an additional $s2% while $?a212612[][Void ]Metamorphosis is active.",
+          "entryType": "passive",
+          "posX": 8450,
+          "posY": 4850,
+          "choiceNode": true,
+          "choiceIndex": 200,
+          "type": "passive"
+        },
+        {
+          "name": "Undying Embers",
+          "nodeId": 109774,
+          "entryId": 136032,
+          "definitionId": 140787,
+          "maxRank": 1,
+          "spellId": 1272405,
+          "spellName": "Undying Embers",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Immolation Aura][Soul Immolation] has a $?a212612[$s1][$s2]% chance to reignite after it expires, reapplying its effect.",
+          "entryType": "passive",
+          "posX": 9000,
+          "posY": 5400,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Burning Blades",
+          "nodeId": 94905,
+          "entryId": 117502,
+          "definitionId": 122514,
+          "maxRank": 1,
+          "spellId": 452408,
+          "spellName": "Burning Blades",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Your blades burn with Fel energy, causing the damage from Chaos Strike, Throw Glaive, Blade Dance's First Blood, and auto-attacks to burn for an additional $s1% damage as Fire over $453177d][Your blades burn with Cosmic energy, causing your Voidblade, Reap, and Throw Glaive to deal an additional $s2% damage as Cosmic damage].",
+          "entryType": "passive",
+          "posX": 7250,
+          "posY": 5450,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Violent Transformation",
+          "nodeId": 94912,
+          "entryId": 117509,
+          "definitionId": 122521,
+          "maxRank": 1,
+          "spellId": 452409,
+          "spellName": "Violent Transformation",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[When you activate Metamorphosis, reset the cooldown of Immolation Aura][Entering Void Metamorphosis resets the cooldown of Voidblade and The Hunt].",
+          "entryType": "passive",
+          "posX": 7850,
+          "posY": 5450,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Enduring Torment",
+          "nodeId": 94916,
+          "entryId": 117513,
+          "definitionId": 122525,
+          "maxRank": 1,
+          "spellId": 452410,
+          "spellName": "Enduring Torment",
+          "school": "Physical",
+          "passive": true,
+          "description": "The effects of your demon form persist outside of it in a weakened state, increasing $?a212612[Chaos Strike and Blade Dance damage by $453314s2%, and Haste by $453314s1%][Mastery: Monster Within's effectiveness by $453314s4%].",
+          "entryType": "passive",
+          "posX": 8450,
+          "posY": 5450,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Volatile Instinct",
+          "nodeId": 109772,
+          "entryId": 136030,
+          "definitionId": 140785,
+          "maxRank": 1,
+          "spellId": 1272453,
+          "spellName": "Volatile Instinct",
+          "school": "Physical",
+          "passive": true,
+          "description": "Entering demon form $?a212612[immediately induces a Demonsurge][causes your next Voidsurge to repeat after a short delay].",
+          "entryType": "passive",
+          "posX": 9000,
+          "posY": 6000,
+          "type": "passive"
+        },
+        {
+          "name": "Untethered Fury",
+          "nodeId": 94904,
+          "entryId": 117501,
+          "definitionId": 122513,
+          "maxRank": 1,
+          "spellId": 452411,
+          "spellName": "Untethered Fury",
+          "school": "Physical",
+          "passive": true,
+          "description": "Maximum Fury increased by $?a212612[$s1][$s2].",
+          "entryType": "passive",
+          "posX": 7250,
+          "posY": 6050,
+          "type": "passive"
+        },
+        {
+          "name": "Student of Suffering",
+          "nodeId": 94902,
+          "entryId": 117499,
+          "definitionId": 122511,
+          "maxRank": 1,
+          "spellId": 452412,
+          "spellName": "Student of Suffering",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Eye Beam][Void Ray] applies Student of Suffering to you, increasing Mastery by ${$453239s1*$mas}.1% and granting $453236s1 Fury every $453239t2 sec, for $453239d.",
+          "entryType": "passive",
+          "posX": 7850,
+          "posY": 6050,
+          "choiceNode": true,
+          "choiceIndex": 100,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Flamebound",
+          "nodeId": 94902,
+          "entryId": 124009,
+          "definitionId": 128847,
+          "maxRank": 1,
+          "spellId": 452413,
+          "spellName": "Flamebound",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Immolation Aura][Hungering Slash] has $s1 yd increased radius and $s2% increased critical strike damage bonus.",
+          "entryType": "passive",
+          "posX": 7850,
+          "posY": 6050,
+          "choiceNode": true,
+          "choiceIndex": 200,
+          "type": "spell_modifier"
+        },
+        {
+          "name": "Monster Rising",
+          "nodeId": 94909,
+          "entryId": 117506,
+          "definitionId": 122518,
+          "maxRank": 1,
+          "spellId": 452414,
+          "spellName": "Monster Rising",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Agility][Intellect] increased by $?a212612[$452550s1][$452550s2]% while not in demon form.",
+          "entryType": "passive",
+          "posX": 8450,
+          "posY": 6050,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Demonic Intensity",
+          "nodeId": 94901,
+          "entryId": 117498,
+          "definitionId": 122510,
+          "maxRank": 1,
+          "spellId": 452415,
+          "spellName": "Demonic Intensity",
+          "school": "Physical",
+          "passive": true,
+          "description": "Activating $?a212612[][Void ]Metamorphosis greatly empowers $?a212612[Eye Beam, Immolation Aura][The Hunt].\n$?a212612[Demonsurge][Voidsurge] damage is increased by $?a212612[${$452416s2}][${$1246160s2}]% for each time it previously triggered while your demon form is active.",
+          "entryType": "passive",
+          "posX": 8100,
+          "posY": 6600,
+          "type": "passive_buff"
+        }
+      ]
+    },
+    "Aldrachi Reaver": {
+      "talents": [
+        {
+          "name": "Art of the Glaive",
+          "nodeId": 94915,
+          "entryId": 117512,
+          "definitionId": 122524,
+          "maxRank": 1,
+          "spellId": 442290,
+          "spellName": "Art of the Glaive",
+          "school": "Physical",
+          "passive": true,
+          "description": "Consuming $?a212612[$s1][$s2] Soul Fragments or casting $?a212612[The Hunt][Sigil of Spite] converts your next Throw Glaive into Reaver's Glaive.\n$@spellicon442294 $@spellname442294:\n$@spelldesc442294",
+          "entryType": "passive",
+          "posX": 8100,
+          "posY": 1200,
+          "freeNode": true,
+          "entryNode": true,
+          "type": "proc_trigger"
+        },
+        {
+          "name": "Fury of the Aldrachi",
+          "nodeId": 94898,
+          "entryId": 117495,
+          "definitionId": 122519,
+          "maxRank": 1,
+          "spellId": 442718,
+          "spellName": "Fury of the Aldrachi",
+          "school": "Physical",
+          "passive": true,
+          "description": "When enhanced by Reaver's Glaive, $?a212612[Blade Dance][Soul Cleave] casts $s2 additional glaive slashes to nearby targets. Deals reduced damage beyond $444806s2 targets.\nIf cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast $?a1236360[${($s2*($s1/100+1))+$1236360s1}][${$s2*($s1/100+1)}] slashes instead.",
+          "entryType": "passive",
+          "posX": 7200,
+          "posY": 1800,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Evasive Action",
+          "nodeId": 94911,
+          "entryId": 117508,
+          "definitionId": 122520,
+          "maxRank": 1,
+          "spellId": 444926,
+          "spellName": "Evasive Action",
+          "school": "Physical",
+          "passive": true,
+          "description": "Vengeful Retreat can be cast a second time within $444929d.",
+          "entryType": "passive",
+          "posX": 7800,
+          "posY": 1800,
+          "choiceNode": true,
+          "choiceIndex": 100,
+          "type": "proc_trigger"
+        },
+        {
+          "name": "Unhindered Assault",
+          "nodeId": 94911,
+          "entryId": 123047,
+          "definitionId": 127928,
+          "maxRank": 1,
+          "spellId": 444931,
+          "spellName": "Unhindered Assault",
+          "school": "Physical",
+          "passive": true,
+          "description": "Vengeful Retreat resets the cooldown of Felblade.",
+          "entryType": "passive",
+          "posX": 7800,
+          "posY": 1800,
+          "choiceNode": true,
+          "choiceIndex": 200,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Reaver's Mark",
+          "nodeId": 94903,
+          "entryId": 117500,
+          "definitionId": 122512,
+          "maxRank": 1,
+          "spellId": 442679,
+          "spellName": "Reaver's Mark",
+          "school": "Physical",
+          "passive": true,
+          "description": "When enhanced by Reaver's Glaive, $?a212612[Chaos Strike]?s263642[Fracture][Shear] applies Reaver's Mark, which causes the target to take $442624s1% increased damage for $442624d. Max $442624u stacks.\nApplies $m2 additional $Lstack:stacks; of Reaver's Mark If cast after $?a212612[Blade Dance][Soul Cleave].",
+          "entryType": "passive",
+          "posX": 8400,
+          "posY": 1800,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Broken Spirit",
+          "nodeId": 109771,
+          "entryId": 136029,
+          "definitionId": 140784,
+          "maxRank": 1,
+          "spellId": 1272143,
+          "spellName": "Broken Spirit",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212613[Sigil of Spite][The Hunt] shatters $?a212613[$s1 additional][$s2] Soul $LFragment:Fragments;. $?a212613[Soul Cleave has][Blade Dance and Chaos Strike have] a $?a212613[$s3][$s4]% chance to shatter a Soul Fragment.",
+          "entryType": "passive",
+          "posX": 9000,
+          "posY": 1800,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Aldrachi Tactics",
+          "nodeId": 94914,
+          "entryId": 117511,
+          "definitionId": 122523,
+          "maxRank": 1,
+          "spellId": 442683,
+          "spellName": "Aldrachi Tactics",
+          "school": "Physical",
+          "passive": true,
+          "description": "The second enhanced ability in a pattern shatters an additional Soul Fragment.",
+          "entryType": "passive",
+          "posX": 7200,
+          "posY": 2400,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Army Unto Oneself",
+          "nodeId": 94896,
+          "entryId": 117493,
+          "definitionId": 122505,
+          "maxRank": 1,
+          "spellId": 442714,
+          "spellName": "Army Unto Oneself",
+          "school": "Physical",
+          "passive": true,
+          "description": "Felblade surrounds you with a Blade Ward, reducing damage taken by $442715s1% for $442715d.",
+          "entryType": "passive",
+          "posX": 7800,
+          "posY": 2400,
+          "choiceNode": true,
+          "choiceIndex": 100,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Incorruptible Spirit",
+          "nodeId": 94896,
+          "entryId": 123046,
+          "definitionId": 127927,
+          "maxRank": 1,
+          "spellId": 442736,
+          "spellName": "Incorruptible Spirit",
+          "school": "Physical",
+          "passive": true,
+          "description": "Each Soul Fragment you consume shields you for an additional $s1% of the amount healed.",
+          "entryType": "passive",
+          "posX": 7800,
+          "posY": 2400,
+          "choiceNode": true,
+          "choiceIndex": 200,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Wounded Quarry",
+          "nodeId": 94897,
+          "entryId": 117494,
+          "definitionId": 122506,
+          "maxRank": 1,
+          "spellId": 442806,
+          "spellName": "Wounded Quarry",
+          "school": "Physical",
+          "passive": true,
+          "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal $s1% of the damage dealt to your marked target as Chaos, and sometimes shatter a Soul Fragment.",
+          "entryType": "passive",
+          "posX": 8400,
+          "posY": 2400,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Keen Edge",
+          "nodeId": 109770,
+          "entryId": 136028,
+          "definitionId": 140783,
+          "maxRank": 1,
+          "spellId": 1272138,
+          "spellName": "Keen Edge",
+          "school": "Physical",
+          "passive": true,
+          "description": "Reaver's Glaive damage is increased by $s1% and other Physical-only damage is increased by $s2%.",
+          "entryType": "passive",
+          "posX": 9000,
+          "posY": 2400,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Incisive Blade",
+          "nodeId": 94895,
+          "entryId": 117492,
+          "definitionId": 122504,
+          "maxRank": 1,
+          "spellId": 442492,
+          "spellName": "Incisive Blade",
+          "school": "Physical",
+          "passive": true,
+          "description": "$?a212612[Chaos Strike][Soul Cleave] deals $s1% increased damage.",
+          "entryType": "passive",
+          "posX": 7200,
+          "posY": 3000,
+          "type": "spell_modifier"
+        },
+        {
+          "name": "Keen Engagement",
+          "nodeId": 94910,
+          "entryId": 117507,
+          "definitionId": 122507,
+          "maxRank": 1,
+          "spellId": 442497,
+          "spellName": "Keen Engagement",
+          "school": "Physical",
+          "passive": true,
+          "description": "Reaver's Glaive generates $s1 Fury.",
+          "entryType": "passive",
+          "posX": 7800,
+          "posY": 3000,
+          "choiceNode": true,
+          "choiceIndex": 100,
+          "type": "passive"
+        },
+        {
+          "name": "Preemptive Strike",
+          "nodeId": 94910,
+          "entryId": 122422,
+          "definitionId": 127322,
+          "maxRank": 1,
+          "spellId": 444997,
+          "spellName": "Preemptive Strike",
+          "school": "Physical",
+          "passive": true,
+          "description": "Throw Glaive deals $444979s1 Physical damage to enemies near its initial target.",
+          "entryType": "passive",
+          "posX": 7800,
+          "posY": 3000,
+          "choiceNode": true,
+          "choiceIndex": 200,
+          "type": "proc_trigger"
+        },
+        {
+          "name": "Bladecraft",
+          "nodeId": 94906,
+          "entryId": 117503,
+          "definitionId": 122515,
+          "maxRank": 1,
+          "spellId": 1272153,
+          "spellName": "Bladecraft",
+          "school": "Physical",
+          "passive": true,
+          "description": "Fury of the Aldrachi further empowers $?a212613[Soul Cleave][Blade Dance] when cast after $?a212613[Fracture][Chaos Strike], increasing slashes to ${$442718s2*($442718s1/100+1)+$s1}.\nReaver's Mark now stacks up to $442624u times and further empowers $?a212613[Fracture][Chaos Strike] when cast after $?a212613[Soul Cleave][Blade Dance], applying an additional stack.",
+          "entryType": "passive",
+          "posX": 8400,
+          "posY": 3000,
+          "type": "passive_buff"
+        },
+        {
+          "name": "Warblade's Hunger",
+          "nodeId": 109769,
+          "entryId": 136027,
+          "definitionId": 140782,
+          "maxRank": 1,
+          "spellId": 442502,
+          "spellName": "Warblade's Hunger",
+          "school": "Physical",
+          "passive": true,
+          "description": "Consuming a Soul Fragment causes your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] to deal $442507s1 additional Physical damage.$?a212612[\nFelblade consumes up to $s2 nearby Soul Fragments.][]",
+          "entryType": "passive",
+          "posX": 9000,
+          "posY": 3000,
+          "type": "proc_trigger"
+        },
+        {
+          "name": "Thrill of the Fight",
+          "nodeId": 94919,
+          "entryId": 117516,
+          "definitionId": 122528,
+          "maxRank": 1,
+          "spellId": 442686,
+          "spellName": "Thrill of the Fight",
+          "school": "Physical",
+          "passive": true,
+          "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by $442695s1% and increasing Haste by $442688s1% for $442688d.",
+          "entryType": "passive",
+          "posX": 8100,
+          "posY": 3600,
+          "type": "passive_buff"
+        }
+      ]
+    }
+  }
+}
