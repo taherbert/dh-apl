@@ -585,7 +585,7 @@ export const STRUCT_TO_ABILITY_MAP = {
   relentless_onslaught: "Relentless Onslaught",
   ragefire: "Ragefire",
   collective_anguish: "Collective Anguish",
-  pick_up_fragment: "Consume Soul",
+  pick_up_fragment: "Pick Up Fragment",
   // AR hero
   art_of_the_glaive: "Art of the Glaive",
   reavers_glaive: "Reaver's Glaive",
@@ -695,9 +695,8 @@ export function getTalentTreePattern() {
 }
 
 export function getSetBonusSpells() {
-  return new Map([
-    // Populate when tier sets exist
-  ]);
+  // Populate when Havoc tier sets are added
+  return new Map();
 }
 
 export function getClassSpellQuery() {

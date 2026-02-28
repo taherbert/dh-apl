@@ -79,6 +79,9 @@ const HERO_ABBREVS = {
   void_scarred: "VS",
   "Void Scarred": "VS",
   "Void-Scarred": "VS",
+  fel_scarred: "FS",
+  "Fel Scarred": "FS",
+  "Fel-Scarred": "FS",
 };
 
 function heroAbbrev(tree) {

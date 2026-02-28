@@ -503,8 +503,7 @@ async function runComparison(candidatePath, tier = "standard") {
   const simcContent = buildProfilesetContent(candidatePath);
 
   // Parallel: each scenario gets cores/N threads
-  const isLocal = tierConfig.target_error >= 0.5 || !isRemoteActive();
-  const totalCores = isLocal ? cpus().length : getSimCores();
+  const totalCores = isLocalTier(tierConfig) ? cpus().length : getSimCores();
   const threadsPerSim = Math.max(
     1,
     Math.floor(totalCores / SCENARIO_KEYS.length),
@@ -665,13 +664,14 @@ async function runWithConcurrency(taskFactories, maxConcurrency) {
 
 const MIN_THREADS_PER_SIM = 4;
 
+// Quick fidelity sims always run locally even when remote is active.
+function isLocalTier(tierConfig) {
+  return !tierConfig || tierConfig.target_error >= 0.5 || !isRemoteActive();
+}
+
 // Calculate optimal concurrency and thread allocation for sim batching.
-// When tierConfig indicates quick fidelity, sims run locally even when remote
-// is active — use local core count to avoid oversubscription.
 function simConcurrency(simCount, tierConfig) {
-  const isLocal =
-    !tierConfig || tierConfig.target_error >= 0.5 || !isRemoteActive();
-  const totalCores = isLocal ? cpus().length : getSimCores();
+  const totalCores = isLocalTier(tierConfig) ? cpus().length : getSimCores();
   const maxConcurrency = Math.max(
     1,
     Math.floor(totalCores / MIN_THREADS_PER_SIM),
