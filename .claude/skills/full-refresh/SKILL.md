@@ -172,7 +172,7 @@ If `--publish` was passed:
 SPEC=vengeance npm run report:publish
 ```
 
-Pushes to the `gh-pages` branch. Report will be live at https://taherbert.github.io/dh-apl/
+Pushes to the `gh-pages` branch. Each spec publishes to its own subdirectory (`/$SPEC/`).
 
 ---
 
