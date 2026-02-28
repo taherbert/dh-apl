@@ -283,6 +283,152 @@
       "7222": 241142
     }
   },
+  "manual_enchants": {
+    "weapon_mh": [
+      {
+        "id": "berserkers_rage",
+        "label": "Berserker's Rage R2",
+        "enchant_id": 7983,
+        "tags": []
+      },
+      {
+        "id": "janalais_precision",
+        "label": "Jan'alai's Precision R2",
+        "enchant_id": 7981,
+        "tags": []
+      },
+      {
+        "id": "strength_of_halazzi",
+        "label": "Strength of Halazzi R2",
+        "enchant_id": 7979,
+        "tags": []
+      },
+      {
+        "id": "flames_of_the_sindorei",
+        "label": "Flames of the Sindorei R2",
+        "enchant_id": 8037,
+        "tags": []
+      },
+      {
+        "id": "acuity_of_the_rendorei",
+        "label": "Acuity of the Ren'dorei R2",
+        "enchant_id": 8039,
+        "tags": []
+      },
+      {
+        "id": "arcane_mastery",
+        "label": "Arcane Mastery R2",
+        "enchant_id": 8041,
+        "tags": []
+      }
+    ],
+    "weapon_oh": [
+      {
+        "id": "berserkers_rage",
+        "label": "Berserker's Rage R2",
+        "enchant_id": 7983,
+        "tags": []
+      },
+      {
+        "id": "janalais_precision",
+        "label": "Jan'alai's Precision R2",
+        "enchant_id": 7981,
+        "tags": []
+      },
+      {
+        "id": "strength_of_halazzi",
+        "label": "Strength of Halazzi R2",
+        "enchant_id": 7979,
+        "tags": []
+      },
+      {
+        "id": "flames_of_the_sindorei",
+        "label": "Flames of the Sindorei R2",
+        "enchant_id": 8037,
+        "tags": []
+      },
+      {
+        "id": "acuity_of_the_rendorei",
+        "label": "Acuity of the Ren'dorei R2",
+        "enchant_id": 8039,
+        "tags": []
+      },
+      {
+        "id": "arcane_mastery",
+        "label": "Arcane Mastery R2",
+        "enchant_id": 8041,
+        "tags": []
+      }
+    ],
+    "ring": [
+      {
+        "id": "zuljins_mastery",
+        "label": "Zul'jin's Mastery R2",
+        "enchant_id": 7969,
+        "stats": { "mastery": 1 },
+        "tags": []
+      },
+      {
+        "id": "natures_fury",
+        "label": "Nature's Fury R2",
+        "enchant_id": 7997,
+        "stats": { "crit": 1 },
+        "tags": []
+      },
+      {
+        "id": "silvermoons_alacrity",
+        "label": "Silvermoon's Alacrity R2",
+        "enchant_id": 8025,
+        "stats": { "haste": 1 },
+        "tags": []
+      },
+      {
+        "id": "silvermoons_tenacity",
+        "label": "Silvermoon's Tenacity R2",
+        "enchant_id": 8027,
+        "stats": { "vers": 1 },
+        "tags": []
+      },
+      {
+        "id": "eyes_of_the_eagle",
+        "label": "Eyes of the Eagle R2",
+        "enchant_id": 7967,
+        "tags": []
+      }
+    ],
+    "chest": [
+      {
+        "id": "mark_of_the_worldsoul",
+        "label": "Mark of the Worldsoul R2",
+        "enchant_id": 7987,
+        "stats": { "agi": 1 },
+        "tags": []
+      }
+    ],
+    "legs": [
+      {
+        "id": "forest_hunters_armor_kit",
+        "label": "Forest Hunter's Armor Kit R2",
+        "enchant_id": 8159,
+        "stats": { "agi": 1 },
+        "tags": []
+      },
+      {
+        "id": "thalassian_scout_armor_kit",
+        "label": "Thalassian Scout Armor Kit R2",
+        "enchant_id": 8161,
+        "stats": { "agi": 1 },
+        "tags": []
+      },
+      {
+        "id": "blood_knights_armor_kit",
+        "label": "Blood Knight's Armor Kit R2",
+        "enchant_id": 8163,
+        "stats": { "agi": 1 },
+        "tags": []
+      }
+    ]
+  },
   "manual_candidates": [
     {
       "slot": "main_hand",
@@ -291,6 +437,46 @@
       "simc": "main_hand=lightless_lament,id=260408,ilevel=289",
       "stats": { "agi": 5259, "crit": 7000, "stamina": 7889 },
       "tags": []
+    },
+    {
+      "slot": "back",
+      "id": "imperators_banner",
+      "label": "Imperator's Banner",
+      "simc": "back=imperators_banner,id=249335,ilevel=289",
+      "stats": { "agi": 3506, "mastery": 4000, "haste": 3500 },
+      "tags": ["raid"]
+    },
+    {
+      "slot": "back",
+      "id": "draconic_nullcape",
+      "label": "Draconic Nullcape",
+      "simc": "back=draconic_nullcape,id=249335,ilevel=289",
+      "stats": { "agi": 3506, "crit": 4000, "vers": 3500 },
+      "tags": ["raid"]
+    },
+    {
+      "slot": "back",
+      "id": "speakeasy_shroud",
+      "label": "Speakeasy Shroud",
+      "simc": "back=speakeasy_shroud,id=251132,ilevel=289",
+      "stats": { "agi": 3506, "mastery": 4000, "crit": 3500 },
+      "tags": ["dungeon"]
+    },
+    {
+      "slot": "back",
+      "id": "bloodthorn_burnous",
+      "label": "Bloodthorn Burnous",
+      "simc": "back=bloodthorn_burnous,id=251190,ilevel=289",
+      "stats": { "agi": 3506, "haste": 4000, "mastery": 3500 },
+      "tags": ["dungeon"]
+    },
+    {
+      "slot": "back",
+      "id": "soulhunters_mask",
+      "label": "Soulhunter's Mask",
+      "simc": "back=soulhunters_mask,id=251161,ilevel=289",
+      "stats": { "agi": 3506, "haste": 4000, "vers": 3500 },
+      "tags": ["dungeon"]
     }
   ],
   "ring_pairs": [

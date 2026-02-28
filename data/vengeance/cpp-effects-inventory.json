@@ -148,43 +148,43 @@
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
+      "line": 12381,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.metamorphosis )"
+    },
+    {
+      "buff": "blur",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12382,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.blur )"
+    },
+    {
+      "buff": "metamorphosis",
+      "secondarySource": null,
+      "effectMask": null,
+      "line": 12388,
+      "context": "parse_player_effects",
+      "contextType": "member_function",
+      "raw": "parse_effects( buff.metamorphosis )"
+    },
+    {
+      "buff": "blur",
+      "secondarySource": null,
+      "effectMask": null,
       "line": 12389,
       "context": "parse_player_effects",
       "contextType": "member_function",
-      "raw": "parse_effects( buff.metamorphosis )"
-    },
-    {
-      "buff": "blur",
-      "secondarySource": null,
-      "effectMask": null,
-      "line": 12390,
-      "context": "parse_player_effects",
-      "contextType": "member_function",
       "raw": "parse_effects( buff.blur )"
     },
     {
       "buff": "metamorphosis",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12396,
-      "context": "parse_player_effects",
-      "contextType": "member_function",
-      "raw": "parse_effects( buff.metamorphosis )"
-    },
-    {
-      "buff": "blur",
-      "secondarySource": null,
-      "effectMask": null,
-      "line": 12397,
-      "context": "parse_player_effects",
-      "contextType": "member_function",
-      "raw": "parse_effects( buff.blur )"
-    },
-    {
-      "buff": "metamorphosis",
-      "secondarySource": null,
-      "effectMask": null,
-      "line": 12403,
+      "line": 12395,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.metamorphosis )"
@@ -193,7 +193,7 @@
       "buff": "demon_spikes",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12404,
+      "line": 12396,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.demon_spikes )"
@@ -202,7 +202,7 @@
       "buff": "seething_anger",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12405,
+      "line": 12397,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.seething_anger )"
@@ -211,7 +211,7 @@
       "buff": "fel_blood_rank_2",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12406,
+      "line": 12398,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( mastery.fel_blood_rank_2 )"
@@ -220,7 +220,7 @@
       "buff": "thrill_of_the_fight_haste",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12410,
+      "line": 12402,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.thrill_of_the_fight_haste )"
@@ -229,7 +229,7 @@
       "buff": "voidfall_building",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12413,
+      "line": 12405,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_building )"
@@ -238,7 +238,7 @@
       "buff": "voidfall_spending",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12414,
+      "line": 12406,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_spending )"
@@ -247,7 +247,7 @@
       "buff": "voidfall_final_hour",
       "secondarySource": null,
       "effectMask": null,
-      "line": 12415,
+      "line": 12407,
       "context": "parse_player_effects",
       "contextType": "member_function",
       "raw": "parse_effects( buff.voidfall_final_hour )"
@@ -326,7 +326,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 3277,
+      "line": 3269,
       "context": "otherworldly_focus_benefit_t",
       "contextType": "struct",
       "talentChecks": [
@@ -339,7 +339,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 5571,
+      "line": 5563,
       "context": "surge_base_t",
       "contextType": "struct",
       "talentChecks": [
@@ -352,7 +352,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 6122,
+      "line": 6114,
       "context": "reap_t",
       "contextType": "struct",
       "talentChecks": [
@@ -365,7 +365,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 6525,
+      "line": 6517,
       "context": "hungering_slash_base_t",
       "contextType": "struct",
       "talentChecks": [
@@ -378,7 +378,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 6864,
+      "line": 6856,
       "context": "auto_attack_t",
       "contextType": "struct",
       "talentChecks": [
@@ -391,7 +391,7 @@
     },
     {
       "function": "composite_da_multiplier",
-      "line": 7944,
+      "line": 7936,
       "context": "inner_demon_t",
       "contextType": "struct",
       "talentChecks": [

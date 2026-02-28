@@ -185,7 +185,10 @@
   },
   "paired_slots": {
     "trinkets": {
-      "slots": ["trinket1", "trinket2"],
+      "slots": [
+        "trinket1",
+        "trinket2"
+      ],
       "topK": 5,
       "candidates": [
         {
@@ -195,7 +198,9 @@
           "stats": {
             "crit": 6666
           },
-          "tags": ["on-use"],
+          "tags": [
+            "on-use"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -205,14 +210,18 @@
           "stats": {
             "mastery": 6666
           },
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "gaze_of_the_alnseer",
           "label": "Gaze of the Alnseer",
           "simc_base": "gaze_of_the_alnseer,id=249343,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -225,7 +234,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -235,7 +247,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -245,7 +260,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -255,7 +273,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"]
+          "tags": [
+            "passive",
+            "agi"
+          ]
         },
         {
           "id": "the_eternal_egg",
@@ -264,14 +285,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "locus_walkers_ribbon",
           "label": "Locus-Walker's Ribbon",
           "simc_base": "locus_walkers_ribbon,id=249809,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -284,7 +310,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -294,7 +323,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -304,14 +336,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "mindpiercers_sigil",
           "label": "Mindpiercer's Sigil",
           "simc_base": "mindpiercers_sigil,id=250224,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -321,7 +358,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -331,7 +371,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -341,7 +384,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -351,7 +397,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -361,7 +410,9 @@
           "stats": {
             "crit": 6666
           },
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -371,7 +422,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -381,14 +435,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "permafrost_essence",
           "label": "Permafrost Essence",
           "simc_base": "permafrost_essence,id=250244,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -398,7 +457,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -408,7 +470,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -418,14 +483,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "vessel_of_tortured_souls",
           "label": "Vessel of Tortured Souls",
           "simc_base": "vessel_of_tortured_souls,id=250258,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -438,7 +508,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -448,7 +521,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -458,7 +534,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -468,7 +547,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -478,7 +560,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -488,7 +573,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"]
+          "tags": [
+            "passive",
+            "agi"
+          ]
         }
       ]
     }
@@ -645,7 +733,9 @@
           "id": "silvermoon_agents_deflectors",
           "label": "Silvermoon Agent's Deflectors (crafted)",
           "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": ["crafted"],
+          "tags": [
+            "crafted"
+          ],
           "stats": {
             "agi": 67
           }
@@ -1397,7 +1487,10 @@
           "id": "everforged_longsword",
           "label": "Everforged Longsword (Crafted)",
           "simc": "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": ["crafted", "sword"],
+          "tags": [
+            "crafted",
+            "sword"
+          ],
           "stats": {
             "agi": 62
           }
@@ -1788,14 +1881,6 @@
           "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=devouring_banding",
           "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
         ]
-      },
-      {
-        "id": "bandolier_loa_ring",
-        "label": "Bandolier + Loa Worshiper's Band",
-        "overrides": [
-          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=stabilizing_gemstone_bandolier",
-          "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
-        ]
       }
     ]
   },
@@ -1811,6 +1896,6 @@
     "eye_of_midnight": "On-equip proc (spell 1266505) not fully modeled in SimC. DPS results may understate this ring.",
     "radiant_plume": "Decaying stat mechanic - average value over fight is lower than tooltip. SimC models the decay.",
     "umbral_plume": "Unique-Equipped with Radiant Plume - cannot equip both.",
-    "stabilizing_gemstone_bandolier": "Own proc DISABLED_EFFECT in SimC (spell 1251905), but bandolier_mul() is functional and doubles all JC embellishment procs (Loa ring, Prismatic Iris, etc). Sim results are conservative — real value may be higher once own proc is implemented."
+    "stabilizing_gemstone_bandolier": "DISABLED_EFFECT in SimC (spell 1251905) - proc not modeled. bandolier_mul() still applies 2x to Loa ring procs when equipped, but the Bandolier's own effect is missing. Defer until SimC implements it."
   }
 }
