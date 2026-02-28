@@ -439,7 +439,7 @@ async function cancelOrphanSpotRequests() {
       "describe-spot-instance-requests",
       "--filters",
       "Name=tag:project,Values=dh-apl",
-      "Name=state,Values=open,active",
+      "Name=state,Values=open,active,request-canceled-and-instance-running",
       "--region",
       region(),
       "--query",
@@ -459,6 +459,37 @@ async function cancelOrphanSpotRequests() {
   } catch {
     // Best effort
   }
+}
+
+// Poll until a spot instance request leaves quota-holding states.
+// Terminal states (closed, cancelled, disabled) don't consume vCPU quota.
+const SIR_TERMINAL_STATES = new Set(["closed", "cancelled", "disabled"]);
+const SIR_POLL_INTERVAL_MS = 5000;
+const SIR_POLL_TIMEOUT_MS = 60000;
+
+async function waitForSirQuotaRelease(sirId) {
+  const deadline = Date.now() + SIR_POLL_TIMEOUT_MS;
+  while (Date.now() < deadline) {
+    try {
+      const sirs = await awsJson([
+        "ec2",
+        "describe-spot-instance-requests",
+        "--spot-instance-request-ids",
+        sirId,
+        "--region",
+        region(),
+        "--query",
+        "SpotInstanceRequests[0].State",
+      ]);
+      if (SIR_TERMINAL_STATES.has(sirs)) return;
+    } catch {
+      return; // SIR gone or API error — quota is released
+    }
+    await new Promise((r) => setTimeout(r, SIR_POLL_INTERVAL_MS));
+  }
+  console.log(
+    `  SIR ${sirId} still active after ${SIR_POLL_TIMEOUT_MS / 1000}s — proceeding anyway.`,
+  );
 }
 
 // --- State management ---
@@ -1069,6 +1100,13 @@ async function terminateInstance() {
     ],
     { timeout: 120000 },
   ).catch(() => {});
+
+  // Wait for spot request to leave quota-holding state so a subsequent
+  // launchInstance() doesn't hit MaxSpotInstanceCountExceeded
+  if (sirId) {
+    console.log("Waiting for spot request quota release...");
+    await waitForSirQuotaRelease(sirId);
+  }
 
   clearState();
   console.log("Instance terminated.");

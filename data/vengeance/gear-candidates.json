@@ -28,7 +28,7 @@
     "set_id": 1979,
     "required_count": 4,
     "items": {
-      "head": "head=devouring_reavers_intake,id=250033,ilevel=289",
+      "head": "head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=241144",
       "shoulders": "shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289",
       "chest": "chest=devouring_reavers_engine,id=250036,ilevel=289",
       "hands": "hands=devouring_reavers_essence_grips,id=250034,ilevel=289",
@@ -38,27 +38,27 @@
       "head": [
         {
           "id": "devouring_nights_visage",
-          "simc": "head=devouring_nights_visage,id=249306,ilevel=289"
+          "simc": "head=devouring_nights_visage,id=249306,ilevel=289,gem_id=241144"
         },
         {
           "id": "mask_of_darkest_intent",
-          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289"
+          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289,gem_id=241144"
         },
         {
           "id": "spellsnap_shadowmask",
-          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289"
+          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289,gem_id=241144"
         },
         {
           "id": "vilefiends_guise",
-          "simc": "head=vilefiends_guise,id=251140,ilevel=289"
+          "simc": "head=vilefiends_guise,id=251140,ilevel=289,gem_id=241144"
         },
         {
           "id": "fetid_vilecrown",
-          "simc": "head=fetid_vilecrown,id=251177,ilevel=289"
+          "simc": "head=fetid_vilecrown,id=251177,ilevel=289,gem_id=241144"
         },
         {
           "id": "voidlashed_hood",
-          "simc": "head=voidlashed_hood,id=151336,ilevel=289"
+          "simc": "head=voidlashed_hood,id=151336,ilevel=289,gem_id=241144"
         }
       ],
       "shoulders": [
@@ -185,7 +185,10 @@
   },
   "paired_slots": {
     "trinkets": {
-      "slots": ["trinket1", "trinket2"],
+      "slots": [
+        "trinket1",
+        "trinket2"
+      ],
       "topK": 5,
       "candidates": [
         {
@@ -195,7 +198,9 @@
           "stats": {
             "crit": 6666
           },
-          "tags": ["on-use"],
+          "tags": [
+            "on-use"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -205,14 +210,18 @@
           "stats": {
             "mastery": 6666
           },
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "gaze_of_the_alnseer",
           "label": "Gaze of the Alnseer",
           "simc_base": "gaze_of_the_alnseer,id=249343,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -225,7 +234,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -235,7 +247,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -245,7 +260,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -255,7 +273,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"]
+          "tags": [
+            "passive",
+            "agi"
+          ]
         },
         {
           "id": "the_eternal_egg",
@@ -264,14 +285,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "locus_walkers_ribbon",
           "label": "Locus-Walker's Ribbon",
           "simc_base": "locus_walkers_ribbon,id=249809,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -284,7 +310,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -294,7 +323,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -304,14 +336,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "mindpiercers_sigil",
           "label": "Mindpiercer's Sigil",
           "simc_base": "mindpiercers_sigil,id=250224,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -321,7 +358,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -331,7 +371,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -341,7 +384,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -351,7 +397,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -361,7 +410,9 @@
           "stats": {
             "crit": 6666
           },
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -371,7 +422,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -381,14 +435,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "permafrost_essence",
           "label": "Permafrost Essence",
           "simc_base": "permafrost_essence,id=250244,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -398,7 +457,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -408,7 +470,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -418,14 +483,19 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
           "id": "vessel_of_tortured_souls",
           "label": "Vessel of Tortured Souls",
           "simc_base": "vessel_of_tortured_souls,id=250258,ilevel=289",
-          "tags": ["passive"],
+          "tags": [
+            "passive"
+          ],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -438,7 +508,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -448,7 +521,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -458,7 +534,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -468,7 +547,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"],
+          "tags": [
+            "passive",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -478,7 +560,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["on-use", "agi"],
+          "tags": [
+            "on-use",
+            "agi"
+          ],
           "uniqueEquipped": true
         },
         {
@@ -488,7 +573,10 @@
           "stats": {
             "agi": 6666
           },
-          "tags": ["passive", "agi"]
+          "tags": [
+            "passive",
+            "agi"
+          ]
         }
       ]
     }
@@ -645,10 +733,25 @@
           "id": "silvermoon_agents_deflectors",
           "label": "Silvermoon Agent's Deflectors (crafted)",
           "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": ["crafted"],
+          "tags": [
+            "crafted"
+          ],
           "stats": {
             "agi": 67
           }
+        },
+        {
+          "id": "chewed_leather_wristguards",
+          "label": "Chewed Leather Wristguards",
+          "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289,gem_id=241144",
+          "stats": {
+            "agi": 3506,
+            "crit": 4100,
+            "haste": 2900
+          },
+          "tags": [
+            "dungeon"
+          ]
         }
       ]
     },
@@ -1397,10 +1500,95 @@
           "id": "everforged_longsword",
           "label": "Everforged Longsword (Crafted)",
           "simc": "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": ["crafted", "sword"],
+          "tags": [
+            "crafted",
+            "sword"
+          ],
           "stats": {
             "agi": 62
           }
+        }
+      ]
+    },
+    "back": {
+      "candidates": [
+        {
+          "id": "imperators_banner",
+          "label": "Imperator's Banner",
+          "simc": "back=imperators_banner,id=249335,ilevel=289",
+          "stats": {
+            "agi": 3506,
+            "mastery": 4000,
+            "haste": 3500
+          },
+          "tags": [
+            "raid"
+          ]
+        },
+        {
+          "id": "draconic_nullcape",
+          "label": "Draconic Nullcape",
+          "simc": "back=draconic_nullcape,id=249335,ilevel=289",
+          "stats": {
+            "agi": 3506,
+            "crit": 4000,
+            "vers": 3500
+          },
+          "tags": [
+            "raid"
+          ]
+        },
+        {
+          "id": "speakeasy_shroud",
+          "label": "Speakeasy Shroud",
+          "simc": "back=speakeasy_shroud,id=251132,ilevel=289",
+          "stats": {
+            "agi": 3506,
+            "mastery": 4000,
+            "crit": 3500
+          },
+          "tags": [
+            "dungeon"
+          ]
+        },
+        {
+          "id": "bloodthorn_burnous",
+          "label": "Bloodthorn Burnous",
+          "simc": "back=bloodthorn_burnous,id=251190,ilevel=289",
+          "stats": {
+            "agi": 3506,
+            "haste": 4000,
+            "mastery": 3500
+          },
+          "tags": [
+            "dungeon"
+          ]
+        },
+        {
+          "id": "soulhunters_mask",
+          "label": "Soulhunter's Mask",
+          "simc": "back=soulhunters_mask,id=251161,ilevel=289",
+          "stats": {
+            "agi": 3506,
+            "haste": 4000,
+            "vers": 3500
+          },
+          "tags": [
+            "dungeon"
+          ]
+        },
+        {
+          "id": "rigid_scale_greatcloak",
+          "label": "Rigid Scale Greatcloak",
+          "simc": "back=rigid_scale_greatcloak,id=258575,ilevel=289",
+          "stats": {
+            "agi": 3506,
+            "crit": 3800,
+            "mastery": 3200
+          },
+          "tags": [
+            "dungeon"
+          ]
         }
       ]
     },
@@ -1661,7 +1849,206 @@
       ]
     }
   },
-  "enchants": {},
+  "enchants": {
+    "weapon_mh": {
+      "base_item": "main_hand=,id=0,ilevel=289",
+      "candidates": [
+        {
+          "id": "berserkers_rage",
+          "label": "Berserker's Rage R2",
+          "enchant_id": 7983,
+          "tags": []
+        },
+        {
+          "id": "janalais_precision",
+          "label": "Jan'alai's Precision R2",
+          "enchant_id": 7981,
+          "tags": []
+        },
+        {
+          "id": "strength_of_halazzi",
+          "label": "Strength of Halazzi R2",
+          "enchant_id": 7979,
+          "tags": []
+        },
+        {
+          "id": "flames_of_the_sindorei",
+          "label": "Flames of the Sindorei R2",
+          "enchant_id": 8037,
+          "tags": []
+        },
+        {
+          "id": "acuity_of_the_rendorei",
+          "label": "Acuity of the Ren'dorei R2",
+          "enchant_id": 8039,
+          "tags": []
+        },
+        {
+          "id": "arcane_mastery",
+          "label": "Arcane Mastery R2",
+          "enchant_id": 8041,
+          "tags": []
+        }
+      ]
+    },
+    "weapon_oh": {
+      "base_item": "off_hand=,id=0,ilevel=289",
+      "candidates": [
+        {
+          "id": "berserkers_rage",
+          "label": "Berserker's Rage R2",
+          "enchant_id": 7983,
+          "tags": []
+        },
+        {
+          "id": "janalais_precision",
+          "label": "Jan'alai's Precision R2",
+          "enchant_id": 7981,
+          "tags": []
+        },
+        {
+          "id": "strength_of_halazzi",
+          "label": "Strength of Halazzi R2",
+          "enchant_id": 7979,
+          "tags": []
+        },
+        {
+          "id": "flames_of_the_sindorei",
+          "label": "Flames of the Sindorei R2",
+          "enchant_id": 8037,
+          "tags": []
+        },
+        {
+          "id": "acuity_of_the_rendorei",
+          "label": "Acuity of the Ren'dorei R2",
+          "enchant_id": 8039,
+          "tags": []
+        },
+        {
+          "id": "arcane_mastery",
+          "label": "Arcane Mastery R2",
+          "enchant_id": 8041,
+          "tags": []
+        }
+      ]
+    },
+    "ring": {
+      "base_item": "finger1=,id=0,ilevel=289",
+      "candidates": [
+        {
+          "id": "zuljins_mastery",
+          "label": "Zul'jin's Mastery R2",
+          "enchant_id": 7969,
+          "stats": {
+            "mastery": 1
+          },
+          "tags": []
+        },
+        {
+          "id": "natures_fury",
+          "label": "Nature's Fury R2",
+          "enchant_id": 7997,
+          "stats": {
+            "crit": 1
+          },
+          "tags": []
+        },
+        {
+          "id": "silvermoons_alacrity",
+          "label": "Silvermoon's Alacrity R2",
+          "enchant_id": 8025,
+          "stats": {
+            "haste": 1
+          },
+          "tags": []
+        },
+        {
+          "id": "silvermoons_tenacity",
+          "label": "Silvermoon's Tenacity R2",
+          "enchant_id": 8027,
+          "stats": {
+            "vers": 1
+          },
+          "tags": []
+        },
+        {
+          "id": "eyes_of_the_eagle",
+          "label": "Eyes of the Eagle R2",
+          "enchant_id": 7967,
+          "tags": []
+        }
+      ]
+    },
+    "chest": {
+      "base_item": "chest=,id=0,ilevel=289",
+      "candidates": [
+        {
+          "id": "mark_of_the_worldsoul",
+          "label": "Mark of the Worldsoul R2",
+          "enchant_id": 7987,
+          "stats": {
+            "agi": 1
+          },
+          "tags": []
+        }
+      ]
+    },
+    "foot": {
+      "base_item": "feet=,id=0,ilevel=289",
+      "candidates": [
+        {
+          "id": "lynxs_dexterity",
+          "label": "Lynx's Dexterity R2",
+          "enchant_id": 7963,
+          "tags": []
+        },
+        {
+          "id": "shaladrassils_roots",
+          "label": "Shaladrassil's Roots R2",
+          "enchant_id": 7993,
+          "tags": []
+        },
+        {
+          "id": "farstriders_hunt",
+          "label": "Farstrider's Hunt R2",
+          "enchant_id": 8019,
+          "tags": []
+        }
+      ]
+    },
+    "legs": {
+      "base_item": "legs=,id=0,ilevel=289",
+      "candidates": [
+        {
+          "id": "forest_hunters_armor_kit",
+          "label": "Forest Hunter's Armor Kit R2",
+          "enchant_id": 8159,
+          "stats": {
+            "agi": 1
+          },
+          "tags": []
+        },
+        {
+          "id": "thalassian_scout_armor_kit",
+          "label": "Thalassian Scout Armor Kit R2",
+          "enchant_id": 8161,
+          "stats": {
+            "agi": 1
+          },
+          "tags": []
+        },
+        {
+          "id": "blood_knights_armor_kit",
+          "label": "Blood Knight's Armor Kit R2",
+          "enchant_id": 8163,
+          "stats": {
+            "agi": 1
+          },
+          "tags": []
+        }
+      ]
+    }
+  },
   "gems": [
     {
       "id": "12_primary_5_damage_reduction_when_affected_by_crowd_control",
@@ -1790,10 +2177,34 @@
         ]
       },
       {
-        "id": "bandolier_loa_ring",
-        "label": "Bandolier + Loa Worshiper's Band",
+        "id": "hunt_rootwraps",
+        "label": "Sigil Hunt + World Tree Rootwraps",
         "overrides": [
-          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=stabilizing_gemstone_bandolier",
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "arcanoweave_rootwraps",
+        "label": "Arcanoweave Lining + World Tree Rootwraps",
+        "overrides": [
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=arcanoweave_lining",
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "banding_rootwraps",
+        "label": "Devouring Banding + World Tree Rootwraps",
+        "overrides": [
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=devouring_banding",
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "rootwraps_loa_ring",
+        "label": "World Tree Rootwraps + Loa Worshiper's Band",
+        "overrides": [
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
           "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
         ]
       }
@@ -1811,6 +2222,6 @@
     "eye_of_midnight": "On-equip proc (spell 1266505) not fully modeled in SimC. DPS results may understate this ring.",
     "radiant_plume": "Decaying stat mechanic - average value over fight is lower than tooltip. SimC models the decay.",
     "umbral_plume": "Unique-Equipped with Radiant Plume - cannot equip both.",
-    "stabilizing_gemstone_bandolier": "Own proc DISABLED_EFFECT in SimC (spell 1251905), but bandolier_mul() is functional and doubles all JC embellishment procs (Loa ring, Prismatic Iris, etc). Sim results are conservative — real value may be higher once own proc is implemented."
+    "stabilizing_gemstone_bandolier": "DISABLED_EFFECT in SimC (spell 1251905) - proc not modeled. bandolier_mul() still applies 2x to Loa ring procs when equipped, but the Bandolier's own effect is missing. Defer until SimC implements it."
   }
 }

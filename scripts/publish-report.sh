@@ -2,10 +2,9 @@
 set -euo pipefail
 
 # Publish the report dashboard to GitHub Pages (gh-pages branch).
-# Usage: npm run report:publish [-- --skip-sims] [-- --fidelity quick|standard|confirm]
+# Each spec publishes to its own subdirectory ($SPEC/index.html).
+# URLs: jomdarbert.com/vengeance/, jomdarbert.com/havoc/
 #
-# Multi-spec: each spec publishes to its own subdirectory ($SPEC/index.html).
-# A root index.html landing page is auto-generated listing all published specs.
 # Worktree-safe: uses a temp clone to push to gh-pages without
 # touching the current working tree or branch.
 
@@ -61,19 +60,12 @@ else
   git checkout --orphan gh-pages --quiet
 fi
 
-# Migrate legacy layout: bare index.html at root -> vengeance/index.html
-if [[ -f index.html && ! -d vengeance && ! -d havoc ]]; then
-  echo "Migrating legacy layout: root index.html -> vengeance/index.html"
-  mkdir -p vengeance
-  git mv index.html vengeance/index.html
-fi
-
 # Copy report into spec subdirectory
 mkdir -p "$SPEC"
 cp "$REPORT_FILE" "$SPEC/index.html"
 git add "$SPEC/index.html"
 
-# Generate root landing page by scanning for published spec directories
+# Generate root landing page listing all published specs
 SPECS=()
 for dir in */; do
   dir="${dir%/}"
@@ -135,4 +127,4 @@ echo "=== Pushed to gh-pages ==="
 # Clean up
 rm -rf "$STAGING"
 
-echo "Done. $SPEC report published to /$SPEC/ on gh-pages."
+echo "Done. $SPEC report published to https://$CNAME_DOMAIN/$SPEC/"

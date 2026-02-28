@@ -25,7 +25,7 @@
     "set_id": 1979,
     "required_count": 4,
     "items": {
-      "head": "head=devouring_reavers_intake,id=250033,ilevel=289",
+      "head": "head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=241144",
       "shoulders": "shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289",
       "chest": "chest=devouring_reavers_engine,id=250036,ilevel=289",
       "hands": "hands=devouring_reavers_essence_grips,id=250034,ilevel=289",
@@ -35,27 +35,27 @@
       "head": [
         {
           "id": "devouring_nights_visage",
-          "simc": "head=devouring_nights_visage,id=249306,ilevel=289"
+          "simc": "head=devouring_nights_visage,id=249306,ilevel=289,gem_id=241144"
         },
         {
           "id": "mask_of_darkest_intent",
-          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289"
+          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289,gem_id=241144"
         },
         {
           "id": "spellsnap_shadowmask",
-          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289"
+          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289,gem_id=241144"
         },
         {
           "id": "vilefiends_guise",
-          "simc": "head=vilefiends_guise,id=251140,ilevel=289"
+          "simc": "head=vilefiends_guise,id=251140,ilevel=289,gem_id=241144"
         },
         {
           "id": "fetid_vilecrown",
-          "simc": "head=fetid_vilecrown,id=251177,ilevel=289"
+          "simc": "head=fetid_vilecrown,id=251177,ilevel=289,gem_id=241144"
         },
         {
           "id": "voidlashed_hood",
-          "simc": "head=voidlashed_hood,id=151336,ilevel=289"
+          "simc": "head=voidlashed_hood,id=151336,ilevel=289,gem_id=241144"
         }
       ],
       "shoulders": [
@@ -289,6 +289,38 @@
           "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=arcanoweave_lining",
           "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
         ]
+      },
+      {
+        "id": "hunt_rootwraps",
+        "label": "Sigil Hunt + World Tree Rootwraps",
+        "overrides": [
+          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "arcanoweave_rootwraps",
+        "label": "Arcanoweave Lining + World Tree Rootwraps",
+        "overrides": [
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=arcanoweave_lining",
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "banding_rootwraps",
+        "label": "Devouring Banding + World Tree Rootwraps",
+        "overrides": [
+          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=devouring_banding",
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
+      },
+      {
+        "id": "rootwraps_loa_ring",
+        "label": "World Tree Rootwraps + Loa Worshiper's Band",
+        "overrides": [
+          "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36"
+        ]
       }
     ]
   },
@@ -298,6 +330,172 @@
       "7221": 241143,
       "7222": 241142
     }
+  },
+  "manual_enchants": {
+    "weapon_mh": [
+      {
+        "id": "berserkers_rage",
+        "label": "Berserker's Rage R2",
+        "enchant_id": 7983,
+        "tags": []
+      },
+      {
+        "id": "janalais_precision",
+        "label": "Jan'alai's Precision R2",
+        "enchant_id": 7981,
+        "tags": []
+      },
+      {
+        "id": "strength_of_halazzi",
+        "label": "Strength of Halazzi R2",
+        "enchant_id": 7979,
+        "tags": []
+      },
+      {
+        "id": "flames_of_the_sindorei",
+        "label": "Flames of the Sindorei R2",
+        "enchant_id": 8037,
+        "tags": []
+      },
+      {
+        "id": "acuity_of_the_rendorei",
+        "label": "Acuity of the Ren'dorei R2",
+        "enchant_id": 8039,
+        "tags": []
+      },
+      {
+        "id": "arcane_mastery",
+        "label": "Arcane Mastery R2",
+        "enchant_id": 8041,
+        "tags": []
+      }
+    ],
+    "weapon_oh": [
+      {
+        "id": "berserkers_rage",
+        "label": "Berserker's Rage R2",
+        "enchant_id": 7983,
+        "tags": []
+      },
+      {
+        "id": "janalais_precision",
+        "label": "Jan'alai's Precision R2",
+        "enchant_id": 7981,
+        "tags": []
+      },
+      {
+        "id": "strength_of_halazzi",
+        "label": "Strength of Halazzi R2",
+        "enchant_id": 7979,
+        "tags": []
+      },
+      {
+        "id": "flames_of_the_sindorei",
+        "label": "Flames of the Sindorei R2",
+        "enchant_id": 8037,
+        "tags": []
+      },
+      {
+        "id": "acuity_of_the_rendorei",
+        "label": "Acuity of the Ren'dorei R2",
+        "enchant_id": 8039,
+        "tags": []
+      },
+      {
+        "id": "arcane_mastery",
+        "label": "Arcane Mastery R2",
+        "enchant_id": 8041,
+        "tags": []
+      }
+    ],
+    "ring": [
+      {
+        "id": "zuljins_mastery",
+        "label": "Zul'jin's Mastery R2",
+        "enchant_id": 7969,
+        "stats": { "mastery": 1 },
+        "tags": []
+      },
+      {
+        "id": "natures_fury",
+        "label": "Nature's Fury R2",
+        "enchant_id": 7997,
+        "stats": { "crit": 1 },
+        "tags": []
+      },
+      {
+        "id": "silvermoons_alacrity",
+        "label": "Silvermoon's Alacrity R2",
+        "enchant_id": 8025,
+        "stats": { "haste": 1 },
+        "tags": []
+      },
+      {
+        "id": "silvermoons_tenacity",
+        "label": "Silvermoon's Tenacity R2",
+        "enchant_id": 8027,
+        "stats": { "vers": 1 },
+        "tags": []
+      },
+      {
+        "id": "eyes_of_the_eagle",
+        "label": "Eyes of the Eagle R2",
+        "enchant_id": 7967,
+        "tags": []
+      }
+    ],
+    "chest": [
+      {
+        "id": "mark_of_the_worldsoul",
+        "label": "Mark of the Worldsoul R2",
+        "enchant_id": 7987,
+        "stats": { "agi": 1 },
+        "tags": []
+      }
+    ],
+    "foot": [
+      {
+        "id": "lynxs_dexterity",
+        "label": "Lynx's Dexterity R2",
+        "enchant_id": 7963,
+        "tags": []
+      },
+      {
+        "id": "shaladrassils_roots",
+        "label": "Shaladrassil's Roots R2",
+        "enchant_id": 7993,
+        "tags": []
+      },
+      {
+        "id": "farstriders_hunt",
+        "label": "Farstrider's Hunt R2",
+        "enchant_id": 8019,
+        "tags": []
+      }
+    ],
+    "legs": [
+      {
+        "id": "forest_hunters_armor_kit",
+        "label": "Forest Hunter's Armor Kit R2",
+        "enchant_id": 8159,
+        "stats": { "agi": 1 },
+        "tags": []
+      },
+      {
+        "id": "thalassian_scout_armor_kit",
+        "label": "Thalassian Scout Armor Kit R2",
+        "enchant_id": 8161,
+        "stats": { "agi": 1 },
+        "tags": []
+      },
+      {
+        "id": "blood_knights_armor_kit",
+        "label": "Blood Knight's Armor Kit R2",
+        "enchant_id": 8163,
+        "stats": { "agi": 1 },
+        "tags": []
+      }
+    ]
   },
   "manual_candidates": [
     {
@@ -315,6 +513,62 @@
       "simc": "off_hand=lightless_lament,id=260408,ilevel=289",
       "stats": { "agi": 5259, "crit": 7000, "stamina": 7889 },
       "tags": []
+    },
+    {
+      "slot": "back",
+      "id": "imperators_banner",
+      "label": "Imperator's Banner",
+      "simc": "back=imperators_banner,id=249335,ilevel=289",
+      "stats": { "agi": 3506, "mastery": 4000, "haste": 3500 },
+      "tags": ["raid"]
+    },
+    {
+      "slot": "back",
+      "id": "draconic_nullcape",
+      "label": "Draconic Nullcape",
+      "simc": "back=draconic_nullcape,id=249370,ilevel=289",
+      "stats": { "agi": 3506, "crit": 4000, "vers": 3500 },
+      "tags": ["raid"]
+    },
+    {
+      "slot": "back",
+      "id": "speakeasy_shroud",
+      "label": "Speakeasy Shroud",
+      "simc": "back=speakeasy_shroud,id=251132,ilevel=289",
+      "stats": { "agi": 3506, "mastery": 4000, "crit": 3500 },
+      "tags": ["dungeon"]
+    },
+    {
+      "slot": "back",
+      "id": "bloodthorn_burnous",
+      "label": "Bloodthorn Burnous",
+      "simc": "back=bloodthorn_burnous,id=251190,ilevel=289",
+      "stats": { "agi": 3506, "haste": 4000, "mastery": 3500 },
+      "tags": ["dungeon"]
+    },
+    {
+      "slot": "back",
+      "id": "soulhunters_mask",
+      "label": "Soulhunter's Mask",
+      "simc": "back=soulhunters_mask,id=251161,ilevel=289",
+      "stats": { "agi": 3506, "vers": 4000, "crit": 3500 },
+      "tags": ["dungeon"]
+    },
+    {
+      "slot": "back",
+      "id": "rigid_scale_greatcloak",
+      "label": "Rigid Scale Greatcloak",
+      "simc": "back=rigid_scale_greatcloak,id=258575,ilevel=289",
+      "stats": { "agi": 3506, "crit": 3800, "mastery": 3200 },
+      "tags": ["dungeon"]
+    },
+    {
+      "slot": "wrists",
+      "id": "chewed_leather_wristguards",
+      "label": "Chewed Leather Wristguards",
+      "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289,gem_id=241144",
+      "stats": { "agi": 3506, "crit": 4100, "haste": 2900 },
+      "tags": ["dungeon"]
     }
   ],
   "ring_pairs": [

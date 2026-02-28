@@ -35,7 +35,7 @@
 //   SPEC=vengeance node src/sim/gear.js export
 //   SPEC=vengeance node src/sim/gear.js screen [--slot X]  (diagnostic only)
 
-import { getSimCores, stopRemote } from "./remote.js";
+import { getSimCores } from "./remote.js";
 import { parseArgs } from "node:util";
 import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
@@ -322,6 +322,11 @@ function scoreEp(stats, sf) {
   );
 }
 
+function countSockets(simcStr) {
+  const match = (simcStr || "").match(/gem_id=([\d/]+)/);
+  return match ? match[1].split("/").length : 0;
+}
+
 function isCraftedSimc(simcStr) {
   return (simcStr || "").includes("crafted_stats=");
 }
@@ -433,6 +438,12 @@ function cmdEpRank(gearData) {
   let totalRanked = 0;
   let finger1WinnerId = null;
 
+  // Pre-compute best gem EP so socketed items get socket value in rankings.
+  // Gems in simc strings are invisible to scoreEp() which only reads base stats.
+  const bestGemEp = (gearData.gems || [])
+    .filter((g) => g.stats)
+    .reduce((max, g) => Math.max(max, scoreEp(g.stats, sf)), 0);
+
   for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
     // ALWAYS_SIM_SLOTS (weapons) are evaluated via sim in Phase 4 — skip EP ranking.
     if (ALWAYS_SIM_SLOTS.has(slot)) continue;
@@ -449,7 +460,10 @@ function cmdEpRank(gearData) {
     if (candidates.length === 0) continue;
 
     const ranked = candidates
-      .map((c) => ({ ...c, ep: scoreEp(c.stats, sf) }))
+      .map((c) => ({
+        ...c,
+        ep: scoreEp(c.stats, sf) + countSockets(c.simc) * bestGemEp,
+      }))
       .sort((a, b) => b.ep - a.ep);
 
     const best = ranked[0];
@@ -790,7 +804,23 @@ async function cmdEnchants(args) {
   const sf = getSessionState("gear_scale_factors");
 
   // Stat-only enchant slots that can be EP-ranked (no sims needed)
-  const EP_ENCHANT_SLOTS = new Set(["cloak", "wrist", "foot"]);
+  const EP_ENCHANT_SLOTS = new Set(["cloak", "wrist", "foot", "chest", "legs"]);
+
+  // Override weapon enchant base_items with actual assembled gear lines.
+  // Manual enchants produce placeholder base_items (id=0) when no Raidbots data exists.
+  const WEAPON_ENCHANT_SLOT = { weapon_mh: "main_hand", weapon_oh: "off_hand" };
+  let cachedGearLines;
+  for (const [enchantKey, gearSlot] of Object.entries(WEAPON_ENCHANT_SLOT)) {
+    const enchantData = gearData.enchants?.[enchantKey];
+    if (!enchantData || !enchantData.base_item.includes("id=0")) continue;
+    cachedGearLines ??= buildGearLines(gearData);
+    const weaponLine = cachedGearLines.find((l) =>
+      l.startsWith(`${gearSlot}=`),
+    );
+    if (weaponLine) {
+      enchantData.base_item = weaponLine.replace(/,enchant_id=\d+/, "");
+    }
+  }
 
   const enchantSlots = values.slot
     ? [values.slot]
@@ -1853,7 +1883,10 @@ export function isGearValidationPassed() {
 // --- Profile write ---
 
 function applyEnchant(line, enchantId) {
-  if (!enchantId || line.includes("enchant_id=")) return line;
+  if (!enchantId) return line;
+  if (line.includes("enchant_id=")) {
+    return line.replace(/enchant_id=\d+/, `enchant_id=${enchantId}`);
+  }
   return `${line},enchant_id=${enchantId}`;
 }
 
@@ -1863,8 +1896,10 @@ function applySlotEnchant(line, slot, enchantMap) {
     main_hand: "weapon_mh",
     off_hand: "weapon_oh",
     back: "cloak",
+    chest: "chest",
     wrists: "wrist",
     wrist: "wrist",
+    legs: "legs",
     feet: "foot",
     finger1: "ring",
     finger2: "ring",
@@ -1958,7 +1993,7 @@ function buildGearLines(gearData) {
 
   // Phase 0: tier config
   for (const { slot, simc } of getTierLines(gearData)) {
-    addLine(simc, slot);
+    addLine(applySlotEnchant(simc, slot, enchantMap), slot);
   }
 
   // Check for ring/embellishment conflict resolution
@@ -1983,7 +2018,10 @@ function buildGearLines(gearData) {
     for (const line of overrides) {
       const slot = line.split("=")[0];
       if (!coveredSlots.has(slot)) {
-        addLine(applyStatAlloc(line, slot), slot);
+        addLine(
+          applySlotEnchant(applyStatAlloc(line, slot), slot, enchantMap),
+          slot,
+        );
       }
     }
   }
@@ -2129,21 +2167,28 @@ function cmdWriteProfile() {
   const itemId = (line) => line.match(/,id=(\d+)/)?.[1] ?? null;
 
   // Preserve current line when item is unchanged (keeps gems/enchants not tracked by pipeline).
-  // Exception: if the pipeline line specifies embellishment= or crafted_stats=, those are
-  // pipeline-controlled and must NOT be overridden by the current line.
+  // Exception: pipeline-controlled attributes (embellishment, crafted_stats, enchant_id,
+  // gem_id) must come from the pipeline line, not the current profile.
+  const PIPELINE_ATTRS = [
+    "embellishment=",
+    "crafted_stats=",
+    "enchant_id=",
+    "gem_id=",
+  ];
   const finalLines = newLines.map((line) => {
     const slot = line.split("=")[0];
     const cur = currentGear.get(slot);
     if (!cur || itemId(cur) !== itemId(line)) return line;
-    // Pipeline controls embellishment and crafted_stats — use pipeline line but copy gem_id
-    if (line.includes("embellishment=") || line.includes("crafted_stats=")) {
-      if (!line.includes("gem_id=")) {
-        const curGem = cur.match(/gem_id=([\d/]+)/);
-        if (curGem) return `${line},gem_id=${curGem[1]}`;
-      }
-      return line;
+    const pipelineControlled = PIPELINE_ATTRS.some((attr) =>
+      line.includes(attr),
+    );
+    if (!pipelineControlled) return cur;
+    // Pipeline line wins, but carry over gem_id from current if pipeline didn't set one
+    if (!line.includes("gem_id=")) {
+      const curGem = cur.match(/gem_id=([\d/]+)/);
+      if (curGem) return `${line},gem_id=${curGem[1]}`;
     }
-    return cur;
+    return line;
   });
 
   // Any slot in the current profile not covered by the pipeline is preserved as-is.
@@ -2286,8 +2331,6 @@ async function cmdRun(args) {
 
   console.log("\n========== Pipeline Complete ==========\n");
   cmdStatus();
-
-  await stopRemote();
 }
 
 // --- CLI: status ---

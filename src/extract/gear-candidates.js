@@ -75,7 +75,10 @@ const ENCHANT_CATEGORY_MAP = {
   "Ring Enchantments": "ring",
   "Cloak Enchantments": "cloak",
   "Wrist Enchantments": "wrist",
+  "Bracer Enchantments": "wrist",
   "Foot Enchantments": "foot",
+  "Boot Enchantments": "foot",
+  "Chest Enchantments": "chest",
 };
 
 // Stat IDs → normalized stat key (for item stat extraction)
@@ -720,6 +723,18 @@ async function main() {
       baseSlots: ["feet"],
       includeStats: true,
     },
+    {
+      category: "chest",
+      keys: ["chest"],
+      baseSlots: ["chest"],
+      includeStats: true,
+    },
+    {
+      category: "legs",
+      keys: ["legs"],
+      baseSlots: ["legs"],
+      includeStats: true,
+    },
   ];
 
   const enchantSection = {};
@@ -738,6 +753,40 @@ async function main() {
         candidates,
       };
     }
+  }
+
+  // --- Merge manual_enchants from gear-config.json ---
+  // Manual enchants supplement extracted ones (useful when Raidbots beta data
+  // lacks current-expansion enchants or certain categories like weapon enchants).
+  for (const [key, manualCandidates] of Object.entries(
+    gearConfig.manual_enchants ?? {},
+  )) {
+    if (!enchantSection[key]) {
+      // Determine base slot from ENCHANT_SECTIONS config or key name
+      const sectionDef = ENCHANT_SECTIONS.find((s) => s.keys.includes(key));
+      const baseSlot =
+        sectionDef?.baseSlots[sectionDef.keys.indexOf(key)] ??
+        sectionDef?.baseSlots[0] ??
+        key;
+      const defaultBase = `${baseSlot}=,id=0,ilevel=${maxIlvl}`;
+      enchantSection[key] = {
+        base_item: current.enchants?.[key]?.base_item || defaultBase,
+        candidates: [],
+      };
+    }
+    for (const mc of manualCandidates) {
+      if (!enchantSection[key].candidates.find((c) => c.id === mc.id)) {
+        enchantSection[key].candidates.push(mc);
+      }
+    }
+  }
+
+  if (Object.keys(enchantSection).length > 0) {
+    console.log(
+      `Enchant sections: ${Object.entries(enchantSection)
+        .map(([k, v]) => `${k}(${v.candidates.length})`)
+        .join(", ")}`,
+    );
   }
 
   // --- Merge manual_candidates from gear-config.json ---
