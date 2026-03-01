@@ -25,8 +25,6 @@ actions+=/variable,name=eb_aligned,op=set,value=!talent.inertia&(!talent.initiat
 # Blade Dance not blocking: BD is on cooldown or we are not using it
 actions+=/variable,name=bd_not_blocking,op=set,value=cooldown.blade_dance.remains>=gcd.max|!variable.use_blade_dance
 
-# Archetype flags: TG spender (Furious Throws makes TG a fury-costing rotational ability)
-actions+=/variable,name=tg_spender,op=set,value=talent.furious_throws&talent.soulscar
 # CS Machine: RO procs free CS, CT gives BD-crit CS bonus -- lower fury thresholds for CS
 actions+=/variable,name=cs_machine,op=set,value=talent.relentless_onslaught&talent.chaos_theory
 
@@ -68,9 +66,6 @@ actions.fel_scarred+=/vengeful_retreat,if=talent.inertia&!buff.inertia_trigger.u
 actions.fel_scarred+=/vengeful_retreat,use_off_gcd=1,if=talent.initiative&!talent.inertia&((cooldown.eye_beam.remains<=gcd.remains|cooldown.blade_dance.remains<=3&(cooldown.eye_beam.remains>=15-buff.cycle_of_hatred.stack*2.5)|buff.metamorphosis.remains>=5&(!talent.cycle_of_hatred|buff.cycle_of_hatred.stack<4))&!buff.initiative.up&gcd.remains<=0.3&time>5|fight_remains<10)
 
 actions.fel_scarred+=/run_action_list,name=fs_meta,if=buff.metamorphosis.up
-
-# TG priority for Furious Throws builds: maintain Serrated Glaive debuff and spend fury on TG
-actions.fel_scarred+=/call_action_list,name=tg_priority,if=variable.tg_spender
 
 # Non-meta FS rotation
 actions.fel_scarred+=/immolation_aura,if=(active_enemies>(1-talent.burning_wound))&variable.bd_not_blocking&(!talent.growing_inferno|buff.immolation_aura.remains<2)
@@ -129,9 +124,6 @@ actions.fs_meta+=/eye_beam,if=debuff.essence_break.down&!buff.inner_demon.up&var
 actions.fs_meta+=/death_sweep,if=variable.use_blade_dance&!buff.chaos_theory.up
 actions.fs_meta+=/annihilation,if=buff.chaos_theory.up&cooldown.blade_dance.up&buff.metamorphosis.remains>=gcd.max
 
-# TG priority in meta for Furious Throws builds
-actions.fs_meta+=/call_action_list,name=tg_priority,if=variable.tg_spender
-
 actions.fs_meta+=/throw_glaive,if=talent.soulscar&(!talent.screaming_brutality|charges=2|full_recharge_time<cooldown.blade_dance.remains)&(!talent.furious_throws&variable.use_filler|(variable.bd_not_blocking)&(fury.deficit<variable.fury_gen_per_sec*gcd.max|active_enemies>1))&debuff.essence_break.down
 # Annihilation filler: also cast at low fury if Blind Fury EB is about to refill
 actions.fs_meta+=/annihilation,if=((fury>=75-variable.fury_gen_per_sec*gcd.max-(!variable.use_blade_dance*15)-15*variable.cs_machine+25*variable.pool_glaive_tempest)|soul_fragments.total>0|talent.blind_fury&cooldown.eye_beam.remains<gcd.max*2)&(cooldown.blade_dance.remains|!variable.use_blade_dance)|buff.metamorphosis.remains<5&(!variable.use_blade_dance|variable.use_blade_dance&cooldown.blade_dance.remains>=buff.metamorphosis.remains&cooldown.blade_dance.remains>gcd.max|buff.metamorphosis.remains<gcd.max|fury>=75|buff.inertia.up)
@@ -168,9 +160,6 @@ actions.aldrachi_reaver+=/felblade,if=variable.inertia_ready&(variable.inertia_c
 actions.aldrachi_reaver+=/fel_rush,if=variable.inertia_ready&(variable.inertia_consumer_soon_rush)&(active_enemies>2|cooldown.felblade.remains)
 
 actions.aldrachi_reaver+=/run_action_list,name=ar_meta,if=buff.metamorphosis.up
-
-# TG priority for Furious Throws builds: maintain Serrated Glaive debuff and spend fury on TG
-actions.aldrachi_reaver+=/call_action_list,name=tg_priority,if=variable.tg_spender
 
 # Non-meta AR rotation with Thrill of the Fight awareness
 actions.aldrachi_reaver+=/immolation_aura,if=(active_enemies>(1-talent.burning_wound))&variable.bd_not_blocking&(!talent.growing_inferno|buff.immolation_aura.remains<2)
@@ -240,9 +229,6 @@ actions.ar_meta+=/eye_beam,if=debuff.essence_break.down&!buff.inner_demon.up&(va
 actions.ar_meta+=/death_sweep,if=variable.use_blade_dance&!buff.chaos_theory.up&buff.rending_strike.down
 actions.ar_meta+=/annihilation,target_if=max:debuff.reavers_mark.remains,if=buff.chaos_theory.up&cooldown.blade_dance.up&buff.metamorphosis.remains>=gcd.max
 
-# TG priority in meta for Furious Throws builds
-actions.ar_meta+=/call_action_list,name=tg_priority,if=variable.tg_spender
-
 actions.ar_meta+=/throw_glaive,target_if=max:debuff.reavers_mark.remains,if=talent.soulscar&(!talent.screaming_brutality|charges=2|full_recharge_time<cooldown.blade_dance.remains)&(!talent.furious_throws&variable.use_filler|(variable.bd_not_blocking)&(fury.deficit<variable.fury_gen_per_sec*gcd.max|active_enemies>1))&debuff.essence_break.down
 # Annihilation filler: also cast at low fury if Blind Fury EB is about to refill
 actions.ar_meta+=/annihilation,target_if=max:debuff.reavers_mark.remains,if=((fury>=75-variable.fury_gen_per_sec*gcd.max-(!variable.use_blade_dance*15)-15*variable.cs_machine+25*variable.pool_glaive_tempest)|soul_fragments.total>0|talent.blind_fury&cooldown.eye_beam.remains<gcd.max*2)&(cooldown.blade_dance.remains|!variable.use_blade_dance)|buff.metamorphosis.remains<5&(!variable.use_blade_dance|variable.use_blade_dance&cooldown.blade_dance.remains>=buff.metamorphosis.remains&cooldown.blade_dance.remains>gcd.max|buff.metamorphosis.remains<gcd.max|fury>=75|buff.inertia.up)
@@ -250,6 +236,3 @@ actions.ar_meta+=/annihilation,target_if=max:debuff.reavers_mark.remains,if=((fu
 actions.ar_meta+=/felblade,if=!buff.inertia_trigger.up&(fury.deficit>15+variable.fury_gen_per_sec*0.5)&(!talent.inertia|cooldown.vengeful_retreat.remains>4)
 actions.ar_meta+=/immolation_aura,if=buff.out_of_range.down&(active_enemies>=desired_targets+raid_event.adds.count|raid_event.adds.in>full_recharge_time)
 
-# TG Priority: Furious Throws makes TG a fury-costing rotational ability with Soulscar DoT
-actions.tg_priority=throw_glaive,if=debuff.serrated_glaive.remains<3&variable.bd_not_blocking
-actions.tg_priority+=/throw_glaive,if=fury>=30&variable.bd_not_blocking&debuff.essence_break.down&cooldown.eye_beam.remains>gcd.max*2
