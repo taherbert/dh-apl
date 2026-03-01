@@ -113,7 +113,7 @@ function abilitiesSection(cfg) {
     if (overrides.school) props.push(overrides.school);
     if (overrides.aoeTargets) props.push(`${overrides.aoeTargets}T AoE`);
     if (overrides.channel) props.push("channel");
-    if (overrides.gcd === false || overrides.offGcd === false) props.push("off-GCD");
+    if (overrides.gcd === false) props.push("off-GCD");
     if (overrides.charges) props.push(`${overrides.charges} charges`);
     if (overrides.furyGen != null) props.push(`gen ${overrides.furyGen} fury`);
     if (overrides.furyRefundChance) props.push(`${(overrides.furyRefundChance * 100).toFixed(0)}% refund`);

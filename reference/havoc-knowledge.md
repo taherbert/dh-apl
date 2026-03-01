@@ -26,7 +26,7 @@
 | blade_dance | 188499 | Physical, 8T AoE |
 | death_sweep | 210152 | - |
 | eye_beam | 198013 | Chaos, 8T AoE, channel |
-| fel_rush | 195072 | Chaos, off-GCD |
+| fel_rush | 195072 | Chaos |
 | fel_rush_damage | 192611 | - |
 | metamorphosis | 187827 | 24s, +20% amp |
 | immolation_aura | 258920 | Fire |
