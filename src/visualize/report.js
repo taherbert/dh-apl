@@ -15,6 +15,7 @@ import {
   SCENARIO_WEIGHTS,
   FIDELITY_TIERS,
   initSpec,
+  toTitleCase,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { resultsDir, aplsDir, dataFile, getSpecName } from "../engine/paths.js";
@@ -126,7 +127,7 @@ function loadReportData(roster) {
   return { builds, iterations, apexBuilds };
 }
 
-function loadTrinketData() {
+function loadTrinketData(gearCandidates) {
   const db = getDb();
   const spec = getSpecName();
 
@@ -151,30 +152,34 @@ function loadTrinketData() {
   if (phase1.length === 0 && phase2.length === 0 && ilvlRows.length === 0)
     return null;
 
-  const { tagMap, ilvlTierConfig } = loadTrinketTagMap();
+  const { tagMap, ilvlTierConfig } = loadTrinketTagMap(gearCandidates);
   return { phase1, phase2, ilvlRows, tagMap, ilvlTierConfig };
 }
 
-function loadTrinketTagMap() {
+function loadGearCandidatesFile() {
   const candidatePath = dataFile("gear-candidates.json");
-  if (!existsSync(candidatePath)) return { tagMap: {}, ilvlTierConfig: null };
-
+  if (!existsSync(candidatePath)) return null;
   try {
-    const gearData = JSON.parse(readFileSync(candidatePath, "utf-8"));
-    const candidates = gearData.paired_slots?.trinkets?.candidates || [];
-    const tagMap = Object.fromEntries(
-      candidates.map((c) => [c.id, { label: c.label, tags: c.tags || [] }]),
-    );
-    const rawTiers = gearData.ilvl_tiers;
-    const ilvlTierConfig = rawTiers?.length
-      ? rawTiers.map((t) =>
-          typeof t === "object" ? t : { ilvl: t, track: String(t) },
-        )
-      : null;
-    return { tagMap, ilvlTierConfig };
+    return JSON.parse(readFileSync(candidatePath, "utf-8"));
   } catch {
-    return { tagMap: {}, ilvlTierConfig: null };
+    return null;
   }
+}
+
+function loadTrinketTagMap(gearCandidates) {
+  if (!gearCandidates) return { tagMap: {}, ilvlTierConfig: null };
+
+  const candidates = gearCandidates.paired_slots?.trinkets?.candidates || [];
+  const tagMap = Object.fromEntries(
+    candidates.map((c) => [c.id, { label: c.label, tags: c.tags || [] }]),
+  );
+  const rawTiers = gearCandidates.ilvl_tiers;
+  const ilvlTierConfig = rawTiers?.length
+    ? rawTiers.map((t) =>
+        typeof t === "object" ? t : { ilvl: t, track: String(t) },
+      )
+    : null;
+  return { tagMap, ilvlTierConfig };
 }
 
 function loadEmbellishmentData() {
@@ -202,6 +207,187 @@ function loadRingData() {
     .all(spec);
   if (rows.length === 0) return null;
   return { pairs: rows };
+}
+
+// Slot display order and human-readable labels
+const GEAR_SLOTS = [
+  { key: "head", label: "Head" },
+  { key: "neck", label: "Neck" },
+  { key: "shoulder", label: "Shoulders" },
+  { key: "back", label: "Back" },
+  { key: "chest", label: "Chest" },
+  { key: "wrist", label: "Wrists" },
+  { key: "hands", label: "Hands" },
+  { key: "waist", label: "Waist" },
+  { key: "legs", label: "Legs" },
+  { key: "feet", label: "Feet" },
+  { key: "finger1", label: "Ring 1" },
+  { key: "finger2", label: "Ring 2" },
+  { key: "trinket1", label: "Trinket 1" },
+  { key: "trinket2", label: "Trinket 2" },
+  { key: "main_hand", label: "Main Hand" },
+  { key: "off_hand", label: "Off Hand" },
+];
+
+// "wrists" is a SimC alias that maps to the "wrist" canonical slot key
+const GEAR_SLOT_RE = new RegExp(
+  `^(${GEAR_SLOTS.map((s) => s.key)
+    .concat(["wrists"])
+    .join("|")})=`,
+);
+
+const GEAR_SLOT_MAP = Object.fromEntries(GEAR_SLOTS.map((s) => [s.key, s]));
+
+// Left column = armor slots, right column = accessories + weapons
+const GEAR_COL_LEFT = [
+  "head",
+  "shoulder",
+  "chest",
+  "wrist",
+  "hands",
+  "waist",
+  "legs",
+  "feet",
+];
+const GEAR_COL_RIGHT = [
+  "neck",
+  "back",
+  "finger1",
+  "finger2",
+  "trinket1",
+  "trinket2",
+  "main_hand",
+  "off_hand",
+];
+
+async function loadGearData(gearCandidates) {
+  const profilePath = join(aplsDir(), "profile.simc");
+  if (!existsSync(profilePath)) return null;
+
+  const lines = readFileSync(profilePath, "utf-8").split("\n");
+  const gear = new Map();
+  const consumables = {};
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (GEAR_SLOT_RE.test(trimmed)) {
+      const slot = trimmed.split("=")[0];
+      gear.set(slot === "wrists" ? "wrist" : slot, parseGearLine(trimmed));
+    } else if (
+      /^(flask|potion|food|augmentation|temporary_enchant)=/.test(trimmed)
+    ) {
+      const [key, ...rest] = trimmed.split("=");
+      consumables[key] = rest.join("=");
+    }
+  }
+
+  // Build enchant lookup: Raidbots enchantments.json for complete coverage,
+  // gear-candidates.json labels as fallback
+  const enchantMap = new Map();
+  try {
+    const url = `${config.data.raidbots}/${config.data.env}/enchantments.json`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const data = await res.json();
+      for (const e of data) {
+        if (e.id && (e.itemName || e.displayName))
+          enchantMap.set(e.id, e.itemName || e.displayName);
+      }
+    }
+  } catch {
+    // Network unavailable — fall back to gear-candidates.json below
+  }
+  if (gearCandidates) {
+    for (const slotData of Object.values(gearCandidates.enchants || {})) {
+      for (const c of slotData.candidates || []) {
+        if (c.enchant_id && c.label && !enchantMap.has(c.enchant_id)) {
+          enchantMap.set(c.enchant_id, c.label);
+        }
+      }
+    }
+  }
+
+  // Build gem lookup: use name field (item name), fall back to label (effect text)
+  const gemMap = new Map();
+  if (gearCandidates) {
+    for (const g of gearCandidates.gems || []) {
+      if (g.item_id) gemMap.set(g.item_id, g.name || g.label || null);
+    }
+  }
+
+  // Detect built-in embellishment items from embellishment pairs.
+  // These are items that ARE embellishments (count toward the cap) but use
+  // no embellishment= tag in SimC — e.g., Loa Worshiper's Band, World Tree Rootwraps.
+  const builtInEmbItems = new Set();
+  if (gearCandidates?.embellishments?.pairs) {
+    for (const pair of gearCandidates.embellishments.pairs) {
+      for (const override of pair.overrides || []) {
+        if (!override.includes("embellishment=")) {
+          const m = override.match(/^[^=]+=([^,]+)/);
+          if (m) builtInEmbItems.add(m[1]);
+        }
+      }
+    }
+  }
+
+  // Resolve labels for enchants and gems on each item
+  for (const item of gear.values()) {
+    if (item.enchantId) {
+      item.enchantLabel = enchantMap.get(item.enchantId) || null;
+    }
+    if (item.gemIds?.length) {
+      item.gemLabels = item.gemIds.map((id) => gemMap.get(id) || null);
+    }
+    if (!item.embellishment && builtInEmbItems.has(item.name)) {
+      item.builtInEmbellishment = true;
+    }
+  }
+
+  if (gear.size === 0) return null;
+  return { gear, consumables };
+}
+
+function parseGearLine(line) {
+  const parts = line.split(",");
+  const [slot, ...nameParts] = parts[0].split("=");
+  const name = nameParts.join("=");
+
+  const item = {
+    slot,
+    name,
+    id: null,
+    ilvl: null,
+    enchantId: null,
+    gemIds: [],
+    embellishment: null,
+    crafted: false,
+  };
+
+  for (let i = 1; i < parts.length; i++) {
+    const [k, v] = parts[i].split("=");
+    switch (k) {
+      case "id":
+        item.id = Number(v);
+        break;
+      case "ilevel":
+        item.ilvl = Number(v);
+        break;
+      case "enchant_id":
+        item.enchantId = Number(v);
+        break;
+      case "gem_id":
+        item.gemIds = v.split("/").map(Number);
+        break;
+      case "embellishment":
+        item.embellishment = v;
+        break;
+      case "crafted_stats":
+        item.crafted = true;
+        break;
+    }
+  }
+
+  return item;
 }
 
 function loadChangelog() {
@@ -486,10 +672,9 @@ function generateHtml(data) {
     trinketData,
     ringData,
     embellishmentData,
+    gearData,
   } = data;
-  const displaySpec = specName
-    .replace(/_/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const displaySpec = toTitleCase(specName);
 
   const latestDate = builds
     .map((b) => b.lastTestedAt)
@@ -503,6 +688,7 @@ function generateHtml(data) {
     renderHeroShowcase(builds, heroTrees),
     renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
+    renderGearDisplay(gearData),
     renderTrinketRankings(trinketData),
     renderEmbellishmentRankings(embellishmentData),
     renderTalentImpact(apexBuilds, defensiveTalentCosts, builds),
@@ -1440,6 +1626,101 @@ function renderOptimizationJourney(iterations) {
 </section>`;
 }
 
+function renderGearDisplay(gearData) {
+  if (!gearData?.gear?.size) return "";
+
+  const { gear, consumables } = gearData;
+
+  function renderItemRow(slotKey) {
+    const slotDef = GEAR_SLOT_MAP[slotKey];
+    const item = gear.get(slotKey);
+    if (!slotDef || !item) return "";
+
+    const displayName = toTitleCase(item.name);
+
+    const tags = [];
+
+    if (item.gemIds.length) {
+      // Group identical gems by ID, preserving label from first occurrence
+      const seen = new Map();
+      item.gemIds.forEach((id, i) => {
+        if (!seen.has(id)) {
+          seen.set(id, { count: 0, name: item.gemLabels?.[i] || `Gem #${id}` });
+        }
+        seen.get(id).count++;
+      });
+      const gemLabels = [...seen.values()].map(({ count, name }) =>
+        count > 1 ? `${count}x ${name}` : name,
+      );
+      tags.push(
+        `<span class="gear-anno gear-anno--gem">${esc(gemLabels.join(", "))}</span>`,
+      );
+    }
+
+    if (item.enchantId) {
+      const label = item.enchantLabel || `#${item.enchantId}`;
+      tags.push(
+        `<span class="gear-anno gear-anno--enchant">${esc(label)}</span>`,
+      );
+    }
+
+    const isEmb = item.embellishment || item.builtInEmbellishment;
+    if (item.crafted && !isEmb)
+      tags.push(`<span class="gear-anno gear-anno--crafted">Crafted</span>`);
+    if (item.embellishment)
+      tags.push(
+        `<span class="gear-anno gear-anno--emb">${esc(toTitleCase(item.embellishment))}</span>`,
+      );
+    if (item.builtInEmbellishment)
+      tags.push(`<span class="gear-anno gear-anno--emb">Embellishment</span>`);
+
+    return `<div class="gear-row">
+      <span class="gear-slot">${esc(slotDef.label)}</span>
+      <span class="gear-name">${esc(displayName)}</span>
+      <span class="gear-tags">${tags.join("")}</span>
+    </div>`;
+  }
+
+  const leftRows = GEAR_COL_LEFT.map(renderItemRow).filter(Boolean).join("");
+  const rightRows = GEAR_COL_RIGHT.map(renderItemRow).filter(Boolean).join("");
+
+  const cons = [];
+  for (const [key, label] of [
+    ["flask", "Flask"],
+    ["potion", "Potion"],
+    ["food", "Food"],
+    ["augmentation", "Augment"],
+  ]) {
+    if (consumables[key])
+      cons.push(
+        `<span class="gear-con"><b>${label}</b> ${esc(toTitleCase(consumables[key]))}</span>`,
+      );
+  }
+  if (consumables.temporary_enchant) {
+    // temporary_enchant may be "main_hand:oil_name/off_hand:oil_name" — strip slot prefixes
+    const label = consumables.temporary_enchant
+      .split("/")
+      .map((p) => toTitleCase(p.replace(/^(main_hand|off_hand):/, "")))
+      .join(" / ");
+    cons.push(`<span class="gear-con"><b>Oils</b> ${esc(label)}</span>`);
+  }
+
+  const consHtml = cons.length
+    ? `<div class="gear-cons-bar">${cons.join('<span class="gear-con-sep"></span>')}</div>`
+    : "";
+
+  return `<section>
+  <h2>Gear Profile</h2>
+  <div class="gear-display">
+    <div class="gear-columns">
+      <div class="gear-col">${leftRows}</div>
+      <div class="gear-col">${rightRows}</div>
+    </div>
+    ${consHtml}
+  </div>
+</section>`;
+}
+
 function renderFooter() {
   return `<footer>
   <p>Generated by <a href="https://github.com/taherbert/dh-apl">dh-apl</a></p>
@@ -2223,6 +2504,131 @@ summary:hover { color: var(--accent); }
 
 
 
+/* Gear profile */
+.gear-display {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.gear-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.gear-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.gear-col:first-child { border-right: 1px solid var(--border-subtle); }
+
+.gear-row {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s;
+  min-height: 0;
+}
+
+.gear-row:nth-child(even) { background: rgba(255,255,255,0.015); }
+.gear-col .gear-row:last-child { border-bottom: none; }
+.gear-row:hover { background: rgba(123, 147, 255, 0.04); }
+
+.gear-slot {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.gear-name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.gear-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  justify-content: flex-end;
+}
+
+.gear-anno {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.gear-anno--gem { color: var(--positive); }
+.gear-anno--enchant { color: var(--accent); opacity: 0.8; }
+.gear-anno--crafted {
+  color: var(--ar);
+  text-transform: uppercase;
+  font-size: 0.55rem;
+  letter-spacing: 0.03em;
+}
+
+.gear-anno--emb {
+  color: var(--anni);
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Consumables bar */
+.gear-cons-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.85rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elevated);
+  flex-wrap: wrap;
+}
+
+.gear-con {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.68rem;
+  color: var(--fg-dim);
+}
+
+.gear-con b {
+  color: var(--fg-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.58rem;
+  letter-spacing: 0.03em;
+  margin-right: 0.3em;
+}
+
+.gear-con-sep {
+  width: 1px;
+  height: 10px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+@media (max-width: 800px) {
+  .gear-columns { grid-template-columns: 1fr; }
+  .gear-col:first-child { border-right: none; }
+}
+
 /* Trinket rankings */
 .trinket-list {
   display: flex;
@@ -2895,8 +3301,14 @@ async function main() {
     }
   }
 
+  // Load gear candidates once for trinket tags and gear label resolution
+  const gearCandidates = loadGearCandidatesFile();
+
+  // Start gear load early — its fetch() runs concurrently with sync DB reads below
+  const gearDataPromise = loadGearData(gearCandidates);
+
   // Load trinket data from gear pipeline
-  const trinketData = loadTrinketData();
+  const trinketData = loadTrinketData(gearCandidates);
   if (trinketData) {
     const p1 = trinketData.phase1.length;
     const p2 = trinketData.phase2.length;
@@ -2920,6 +3332,12 @@ async function main() {
     );
   }
 
+  // Resolve gear data (fetch completes during the sync DB reads above)
+  const gearData = await gearDataPromise;
+  if (gearData) {
+    console.log(`  Gear: ${gearData.gear.size} slots loaded from profile.simc`);
+  }
+
   // Generate HTML
   const reportDir = join(resultsDir(), "report");
   mkdirSync(reportDir, { recursive: true });
@@ -2934,6 +3352,7 @@ async function main() {
     trinketData,
     ringData,
     embellishmentData,
+    gearData,
   });
 
   const indexPath = join(reportDir, "index.html");

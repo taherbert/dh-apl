@@ -185,10 +185,7 @@
   },
   "paired_slots": {
     "trinkets": {
-      "slots": [
-        "trinket1",
-        "trinket2"
-      ],
+      "slots": ["trinket1", "trinket2"],
       "topK": 5,
       "candidates": [
         {
@@ -198,9 +195,7 @@
           "stats": {
             "crit": 6666
           },
-          "tags": [
-            "on-use"
-          ],
+          "tags": ["on-use"],
           "uniqueEquipped": true
         },
         {
@@ -210,18 +205,14 @@
           "stats": {
             "mastery": 6666
           },
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
           "id": "gaze_of_the_alnseer",
           "label": "Gaze of the Alnseer",
           "simc_base": "gaze_of_the_alnseer,id=249343,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -234,10 +225,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -247,10 +235,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -260,10 +245,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -273,10 +255,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ]
+          "tags": ["passive", "agi"]
         },
         {
           "id": "the_eternal_egg",
@@ -285,19 +264,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "locus_walkers_ribbon",
           "label": "Locus-Walker's Ribbon",
           "simc_base": "locus_walkers_ribbon,id=249809,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -310,10 +284,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -323,10 +294,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -336,19 +304,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "mindpiercers_sigil",
           "label": "Mindpiercer's Sigil",
           "simc_base": "mindpiercers_sigil,id=250224,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -358,10 +321,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -371,10 +331,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -384,10 +341,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -397,10 +351,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -410,9 +361,7 @@
           "stats": {
             "crit": 6666
           },
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -422,10 +371,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -435,19 +381,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "permafrost_essence",
           "label": "Permafrost Essence",
           "simc_base": "permafrost_essence,id=250244,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -457,10 +398,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -470,10 +408,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -483,19 +418,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "vessel_of_tortured_souls",
           "label": "Vessel of Tortured Souls",
           "simc_base": "vessel_of_tortured_souls,id=250258,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -508,10 +438,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -521,10 +448,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -534,10 +458,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -547,10 +468,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -560,10 +478,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -573,10 +488,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ]
+          "tags": ["passive", "agi"]
         }
       ]
     }
@@ -733,9 +645,7 @@
           "id": "silvermoon_agents_deflectors",
           "label": "Silvermoon Agent's Deflectors (crafted)",
           "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": [
-            "crafted"
-          ],
+          "tags": ["crafted"],
           "stats": {
             "agi": 67
           }
@@ -749,9 +659,7 @@
             "crit": 4100,
             "haste": 2900
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         }
       ]
     },
@@ -1500,10 +1408,7 @@
           "id": "everforged_longsword",
           "label": "Everforged Longsword (Crafted)",
           "simc": "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": [
-            "crafted",
-            "sword"
-          ],
+          "tags": ["crafted", "sword"],
           "stats": {
             "agi": 62
           }
@@ -1521,9 +1426,7 @@
             "mastery": 4000,
             "haste": 3500
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "draconic_nullcape",
@@ -1534,9 +1437,7 @@
             "crit": 4000,
             "vers": 3500
           },
-          "tags": [
-            "raid"
-          ]
+          "tags": ["raid"]
         },
         {
           "id": "speakeasy_shroud",
@@ -1547,9 +1448,7 @@
             "mastery": 4000,
             "crit": 3500
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "bloodthorn_burnous",
@@ -1560,9 +1459,7 @@
             "haste": 4000,
             "mastery": 3500
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "soulhunters_mask",
@@ -1573,9 +1470,7 @@
             "haste": 4000,
             "vers": 3500
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         },
         {
           "id": "rigid_scale_greatcloak",
@@ -1586,9 +1481,7 @@
             "crit": 3800,
             "mastery": 3200
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": ["dungeon"]
         }
       ]
     },
@@ -2052,6 +1945,7 @@
   "gems": [
     {
       "id": "12_primary_5_damage_reduction_when_affected_by_crowd_control",
+      "name": "Enduring Heliotrope",
       "label": "12 Primary / +5% Damage Reduction when affected by Crowd Control",
       "enchant_id": 7220,
       "stats": {
@@ -2062,6 +1956,7 @@
     },
     {
       "id": "12_primary_opponents_failed_interrupt_attempts_grant_precognition",
+      "name": "Cognitive Heliotrope",
       "label": "12 Primary / opponent's failed interrupt attempts grant Precognition",
       "enchant_id": 7221,
       "stats": {
@@ -2072,6 +1967,7 @@
     },
     {
       "id": "12_primary_getting_snared_increases_damage_of_your_next_attack_by_per_stack",
+      "name": "Determined Heliotrope",
       "label": "12 Primary / getting snared increases damage of your next attack by  per stack",
       "enchant_id": 7222,
       "stats": {
