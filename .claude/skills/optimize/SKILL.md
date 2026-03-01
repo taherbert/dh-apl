@@ -103,6 +103,8 @@ Launch with Task tool:
 **Subagent prompt must include:**
 
 - Spec name and key paths (data dir, results dir, APL path)
+- Path to spec knowledge file: `reference/{spec}-knowledge.md`
+  (read first; eliminates need for Explore agents on structural knowledge)
 - Focus directive (from `$ARGUMENTS`) if any
 - Instruction: "Read `.claude/skills/optimize/PHASES.md` section 'Phase 1: Deep Reasoning Subagent Instructions' and execute fully."
 
