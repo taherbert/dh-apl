@@ -1,9 +1,9 @@
 {
-  "refreshed_at": "2026-02-28T16:55:28Z",
+  "refreshed_at": "2026-03-01T03:14:45Z",
   "data_env": "beta",
   "simc": {
-    "commit": "89a73406fd877cd00b0b2b096b8b105d417dd02a",
-    "branch": "midnight",
-    "commit_date": "2026-02-28 10:37:11 +0000"
+    "commit": "d0a957ce9216ab0759f3f4f1186d5019eb5f0190",
+    "branch": "havoc/essence-break-icd",
+    "commit_date": "2026-02-28 14:11:52 -0800"
   }
 }

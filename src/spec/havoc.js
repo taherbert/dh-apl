@@ -112,9 +112,11 @@ export const SPEC_CONFIG = {
   },
 
   // Roster templates: apex rank x cluster inclusion -> crossed with hero trees.
-  // Conservative initial set; refine after talent tree analysis.
+  // Each template produces 1 build per hero tree (all hero choice nodes locked).
+  // Target: ~30 templates -> ~60 builds (balanced AR/FS).
   rosterTemplates: [
     // --- Apex 0 (no apex, max S3 budget) ---
+    // 4-cluster combos: all C(4,3) selections from {EB, Burn, Hunt, Glaive} + Inertia
     {
       name: "EB+Burn",
       apexRank: 0,
@@ -144,6 +146,44 @@ export const SPEC_CONFIG = {
         hunt: "full",
         glaive: "full",
       },
+    },
+    {
+      name: "EB+Burn+Hunt",
+      apexRank: 0,
+      include: {
+        essence_break: "full",
+        inertia: "full",
+        burn: "full",
+        hunt: "full",
+      },
+    },
+    // 5-cluster: all at mixed investment
+    {
+      name: "All Clusters",
+      apexRank: 0,
+      include: {
+        essence_break: "core",
+        inertia: "full",
+        burn: "core",
+        hunt: "core",
+        glaive: "core",
+      },
+    },
+    // 3-cluster: leaner builds testing cluster value
+    {
+      name: "EB+Glaive",
+      apexRank: 0,
+      include: { essence_break: "full", inertia: "full", glaive: "full" },
+    },
+    {
+      name: "Burn+Glaive",
+      apexRank: 0,
+      include: { inertia: "full", burn: "full", glaive: "full" },
+    },
+    {
+      name: "Hunt+Glaive",
+      apexRank: 0,
+      include: { inertia: "full", hunt: "full", glaive: "full" },
     },
 
     // --- Apex 1 (Eternal Hunt rank 1) ---
@@ -177,6 +217,31 @@ export const SPEC_CONFIG = {
         glaive: "full",
       },
     },
+    {
+      name: "EB+Burn+Hunt",
+      apexRank: 1,
+      include: {
+        essence_break: "full",
+        inertia: "core",
+        burn: "full",
+        hunt: "full",
+      },
+    },
+    {
+      name: "Hunt+Glaive",
+      apexRank: 1,
+      include: { inertia: "full", hunt: "full", glaive: "full" },
+    },
+    {
+      name: "EB+Glaive",
+      apexRank: 1,
+      include: { essence_break: "full", inertia: "full", glaive: "full" },
+    },
+    {
+      name: "Burn+Glaive",
+      apexRank: 1,
+      include: { inertia: "full", burn: "full", glaive: "full" },
+    },
 
     // --- Apex 2 (Eternal Hunt rank 2) ---
     {
@@ -197,27 +262,59 @@ export const SPEC_CONFIG = {
     {
       name: "Hunt Focus",
       apexRank: 2,
-      include: {
-        inertia: "core",
-        essence_break: "full",
-        hunt: "full",
-      },
+      include: { inertia: "core", essence_break: "full", hunt: "full" },
+    },
+    {
+      name: "Glaive Focus",
+      apexRank: 2,
+      include: { inertia: "full", glaive: "full" },
+    },
+    {
+      name: "EB+Hunt",
+      apexRank: 2,
+      include: { essence_break: "full", inertia: "core", hunt: "full" },
+    },
+    {
+      name: "Burn+Hunt",
+      apexRank: 2,
+      include: { inertia: "core", burn: "full", hunt: "full" },
+    },
+    {
+      name: "EB+Burn",
+      apexRank: 2,
+      include: { essence_break: "full", inertia: "core", burn: "full" },
     },
 
     // --- Apex 3 (Eternal Hunt rank 3) ---
     {
       name: "EB Core",
       apexRank: 3,
-      include: {
-        inertia: "core",
-        essence_break: "full",
-        glaive: "core",
-      },
+      include: { inertia: "core", essence_break: "full", glaive: "core" },
     },
     {
       name: "Burn Core",
       apexRank: 3,
       include: { inertia: "core", burn: "full", glaive: "core" },
+    },
+    {
+      name: "Hunt Core",
+      apexRank: 3,
+      include: { inertia: "core", hunt: "full", glaive: "core" },
+    },
+    {
+      name: "Glaive Core",
+      apexRank: 3,
+      include: { inertia: "core", glaive: "full" },
+    },
+    {
+      name: "EB+Burn",
+      apexRank: 3,
+      include: { essence_break: "core", inertia: "core", burn: "core" },
+    },
+    {
+      name: "EB+Hunt",
+      apexRank: 3,
+      include: { essence_break: "core", inertia: "core", hunt: "core" },
     },
   ],
 
@@ -256,10 +353,11 @@ export const SPEC_CONFIG = {
       ],
       aplBranch: "fs",
       profileKeywords: ["fel_scarred", "fel-scarred", "felscarred"],
-      // 94913: Wave of Debilitation vs Pursuit of Angriness - evaluate after data pipeline
-      // 94899: Set Fire to the Pain vs Improved Soul Rending - evaluate after data pipeline
-      // 94902: Student of Suffering vs Flamebound - evaluate after data pipeline
-      choiceLocks: {},
+      // 94913: Wave of Debilitation vs Pursuit of Angriness (both utility, zero DPS)
+      // 94899: Set Fire to the Pain vs Improved Soul Rending (both defensive, zero DPS)
+      // 94902: Student of Suffering vs Flamebound (both DPS; Student gives Mastery + Fury
+      //        from Eye Beam which is higher ST value than Flamebound's Immo Aura crit bonus)
+      choiceLocks: { 94913: 0, 94899: 0, 94902: 0 },
     },
   },
 
