@@ -551,9 +551,7 @@ export const SPEC_CONFIG = {
       profileKeywords: ["fel_scarred", "fel-scarred", "felscarred"],
       // 94913: Wave of Debilitation vs Pursuit of Angriness (both utility, zero DPS)
       // 94899: Set Fire to the Pain vs Improved Soul Rending (both defensive, zero DPS)
-      // 94902: Student of Suffering vs Flamebound (both DPS; Student gives Mastery + Fury
-      //        from Eye Beam which is higher ST value than Flamebound's Immo Aura crit bonus)
-      choiceLocks: { 94913: 0, 94899: 0, 94902: 0 },
+      choiceLocks: { 94913: 0, 94899: 0 },
     },
   },
 
