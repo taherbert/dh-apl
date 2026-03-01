@@ -68,7 +68,7 @@ import {
 
 function normalizeTreeName(tree) {
   if (!tree) return tree;
-  return tree.replace(/\s+/g, "_").toLowerCase();
+  return tree.replace(/[\s-]+/g, "_").toLowerCase();
 }
 
 const HERO_ABBREVS = {
@@ -277,14 +277,14 @@ export function generateDisplayNames(builds) {
 
     // Disambiguate collisions using hero choice variant name
     const specConfig = getSpecAdapter().getSpecConfig();
+    const treeCfg = specConfig?.heroTrees?.[normalizeTreeName(tree)];
+    const choiceLocks = treeCfg?.choiceLocks || {};
     for (const [name, dupes] of nameMap) {
       if (dupes.length <= 1) continue;
 
       // Try hero variant disambiguation
       const variantNames = new Map();
       for (const b of dupes) {
-        const treeCfg = specConfig?.heroTrees?.[tree];
-        const choiceLocks = treeCfg?.choiceLocks || {};
         try {
           const { variant } = detectHeroVariant(b.hash, null, choiceLocks);
           if (variant) variantNames.set(b, abbrev(variant));
@@ -1289,7 +1289,7 @@ export function showRoster() {
 
   for (const [tree, treeBuilds] of Object.entries(byTree)) {
     const displayTree =
-      specConfig?.heroTrees?.[tree]?.displayName ||
+      specConfig?.heroTrees?.[normalizeTreeName(tree)]?.displayName ||
       tree.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
     // Sort flat: baseline first, then by apex rank, then by template name
