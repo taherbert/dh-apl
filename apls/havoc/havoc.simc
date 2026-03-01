@@ -71,8 +71,8 @@ actions.fel_scarred+=/immolation_aura,if=fight_remains<15&(variable.use_blade_da
 # Eye Beam: at 5+ targets raw AoE damage outweighs alignment benefits, skip eb_aligned check
 actions.fel_scarred+=/eye_beam,if=(variable.use_blade_dance&cooldown.blade_dance.remains<7|raid_event.adds.up|!variable.use_blade_dance)&(active_enemies>desired_targets*2|raid_event.adds.in>30-buff.cycle_of_hatred.stack*2.5|fight_style.dungeonroute&!raid_event.adds.in<=30-buff.cycle_of_hatred.stack*2.5)&(variable.eb_aligned|active_enemies>=5)&!buff.inner_demon.up&(!talent.eternal_hunt|cooldown.the_hunt.remains>5)|fight_remains<10
 
-# Essence Break outside meta: cast when eye beam is not imminent and inertia aligned
-actions.fel_scarred+=/essence_break,if=talent.essence_break&fury>=35&!buff.inertia_trigger.up&cooldown.eye_beam.remains>5&(buff.inertia.up|cooldown.vengeful_retreat.remains>10|!talent.inertia)&buff.out_of_range.remains<gcd.max
+# Essence Break outside meta: softer inertia gate allows EB when trigger is down
+actions.fel_scarred+=/essence_break,if=talent.essence_break&fury>=35&(buff.inertia_trigger.down|buff.inertia.up&buff.inertia.remains>=gcd.max*3|!talent.inertia)&cooldown.eye_beam.remains>5&buff.out_of_range.remains<gcd.max
 
 # Pack BD first into EB window for Chaos Theory proc, then CS gets guaranteed crit
 actions.fel_scarred+=/blade_dance,if=talent.essence_break&debuff.essence_break.up&variable.use_blade_dance
@@ -102,11 +102,11 @@ actions.fs_meta+=/annihilation,if=action.annihilation.demonsurge_available&coold
 # Prevent IA charge capping in meta for AFI builds
 actions.fs_meta+=/immolation_aura,if=talent.a_fire_inside&charges=2&variable.bd_not_blocking&(!action.annihilation.demonsurge_available&!action.death_sweep.demonsurge_available)
 
-# Vengeful Retreat during meta for inertia: proc trigger then consume on next ability
-actions.fs_meta+=/vengeful_retreat,use_off_gcd=1,if=talent.inertia&(gcd.remains<0.3|cooldown.eye_beam.remains>gcd.remains&(buff.cycle_of_hatred.stack=2|buff.cycle_of_hatred.stack=3))&cooldown.metamorphosis.remains&!buff.inertia_trigger.up&(cooldown.eye_beam.remains>5|cooldown.eye_beam.remains<=3|cooldown.eye_beam.up)
+# Vengeful Retreat during meta: skip when DS charges active to avoid wasting GCDs
+actions.fs_meta+=/vengeful_retreat,use_off_gcd=1,if=talent.inertia&(gcd.remains<0.3|cooldown.eye_beam.remains>gcd.remains&(buff.cycle_of_hatred.stack=2|buff.cycle_of_hatred.stack=3))&cooldown.metamorphosis.remains&!buff.inertia_trigger.up&(buff.demonsurge_annihilation.down&buff.demonsurge_death_sweep.down)&(cooldown.eye_beam.remains>5|cooldown.eye_beam.remains<=3|cooldown.eye_beam.up)
 
-# Essence Break in meta: align with blade dance and inertia for maximum window value
-actions.fs_meta+=/essence_break,if=talent.essence_break&fury>=35&!buff.inertia_trigger.up&(cooldown.blade_dance.remains<gcd.max*2|active_enemies<3)&(buff.inertia.up|cooldown.vengeful_retreat.remains>10|!talent.inertia)&cooldown.eye_beam.remains>5&cooldown.metamorphosis.remains>5&buff.out_of_range.remains<gcd.max&(!action.annihilation.demonsurge_available&!action.death_sweep.demonsurge_available)|fight_remains<10&talent.essence_break
+# Essence Break in meta: softer inertia gate, still require BD alignment and no DS active
+actions.fs_meta+=/essence_break,if=talent.essence_break&fury>=35&(buff.inertia_trigger.down|buff.inertia.up&buff.inertia.remains>=gcd.max*3|!talent.inertia)&(cooldown.blade_dance.remains<gcd.max*2|active_enemies<3)&cooldown.eye_beam.remains>5&cooldown.metamorphosis.remains>5&buff.out_of_range.remains<gcd.max&(!action.annihilation.demonsurge_available&!action.death_sweep.demonsurge_available)|fight_remains<10&talent.essence_break
 
 # Pack Death Sweep and Annihilation into essence break window
 actions.fs_meta+=/death_sweep,if=talent.essence_break&debuff.essence_break.up
@@ -161,8 +161,8 @@ actions.aldrachi_reaver+=/immolation_aura,if=fight_remains<15&(variable.use_blad
 # Eye Beam: at 5+ targets bypass alignment to match FS behavior, align with glaive cycle otherwise
 actions.aldrachi_reaver+=/eye_beam,if=(variable.use_blade_dance&cooldown.blade_dance.remains<7|raid_event.adds.up|!variable.use_blade_dance)&(active_enemies>desired_targets*2|raid_event.adds.in>30-buff.cycle_of_hatred.stack*2.5|fight_style.dungeonroute&!raid_event.adds.in<=30-buff.cycle_of_hatred.stack*2.5)&(variable.eb_aligned|active_enemies>=5)&!buff.inner_demon.up&(buff.rending_strike.down&buff.glaive_flurry.down|buff.thrill_of_the_fight_damage.up|active_enemies>=3)&(!talent.eternal_hunt|cooldown.the_hunt.remains>5)|fight_remains<10
 
-# Essence Break outside meta: cast when eye beam is not imminent, avoid glaive cycle
-actions.aldrachi_reaver+=/essence_break,if=talent.essence_break&fury>=35&!buff.inertia_trigger.up&cooldown.eye_beam.remains>5&(buff.inertia.up|cooldown.vengeful_retreat.remains>10|!talent.inertia)&buff.out_of_range.remains<gcd.max&buff.rending_strike.down&buff.glaive_flurry.down
+# Essence Break outside meta: softer inertia gate, avoid glaive cycle
+actions.aldrachi_reaver+=/essence_break,if=talent.essence_break&fury>=35&(buff.inertia_trigger.down|buff.inertia.up&buff.inertia.remains>=gcd.max*3|!talent.inertia)&cooldown.eye_beam.remains>5&buff.out_of_range.remains<gcd.max&buff.rending_strike.down&buff.glaive_flurry.down
 
 # Pack BD first into EB window for Chaos Theory proc, then CS gets guaranteed crit
 actions.aldrachi_reaver+=/blade_dance,target_if=max:debuff.reavers_mark.remains,if=talent.essence_break&debuff.essence_break.up&variable.use_blade_dance
@@ -206,8 +206,8 @@ actions.ar_meta+=/immolation_aura,if=talent.a_fire_inside&charges=2&variable.bd_
 # Vengeful Retreat during meta for inertia: proc trigger then consume on next ability
 actions.ar_meta+=/vengeful_retreat,use_off_gcd=1,if=talent.inertia&(gcd.remains<0.3|cooldown.eye_beam.remains>gcd.remains&(buff.cycle_of_hatred.stack=2|buff.cycle_of_hatred.stack=3))&cooldown.metamorphosis.remains&!buff.inertia_trigger.up&(cooldown.eye_beam.remains>5|cooldown.eye_beam.remains<=3|cooldown.eye_beam.up)
 
-# Essence Break in AR meta: align with blade dance, avoid during glaive cycle
-actions.ar_meta+=/essence_break,if=talent.essence_break&fury>=35&!buff.inertia_trigger.up&(cooldown.blade_dance.remains<gcd.max*3|active_enemies<3)&(buff.inertia.up|cooldown.vengeful_retreat.remains>10|!talent.inertia)&cooldown.eye_beam.remains>5&cooldown.metamorphosis.remains>5&buff.out_of_range.remains<gcd.max&buff.rending_strike.down&buff.glaive_flurry.down|fight_remains<10&talent.essence_break
+# Essence Break in AR meta: softer inertia gate, avoid glaive cycle
+actions.ar_meta+=/essence_break,if=talent.essence_break&fury>=35&(buff.inertia_trigger.down|buff.inertia.up&buff.inertia.remains>=gcd.max*3|!talent.inertia)&(cooldown.blade_dance.remains<gcd.max*3|active_enemies<3)&cooldown.eye_beam.remains>5&cooldown.metamorphosis.remains>5&buff.out_of_range.remains<gcd.max&buff.rending_strike.down&buff.glaive_flurry.down|fight_remains<10&talent.essence_break
 
 # Pack Death Sweep and Annihilation into essence break window
 actions.ar_meta+=/death_sweep,target_if=max:debuff.reavers_mark.remains,if=talent.essence_break&debuff.essence_break.up
