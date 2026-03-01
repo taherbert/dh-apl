@@ -6,8 +6,8 @@ actions.precombat+=/immolation_aura
 
 actions=auto_attack
 
-# Blade Dance threshold: use on 3+ targets (2+ with Trail of Ruin), always with First Blood
-actions+=/variable,name=use_blade_dance,op=set,value=active_enemies>=3-talent.trail_of_ruin|talent.first_blood
+# Blade Dance threshold: use on 3+ targets (2+ with Trail of Ruin), always with First Blood or SB
+actions+=/variable,name=use_blade_dance,op=set,value=active_enemies>=3-talent.trail_of_ruin|talent.first_blood|talent.screaming_brutality
 # Pool extra fury when Glaive Tempest passive will trigger from Blade Dance at 3+ targets
 actions+=/variable,name=pool_glaive_tempest,op=set,value=talent.glaive_tempest&active_enemies>=3
 # Fury generated per second for resource planning
@@ -25,6 +25,8 @@ actions+=/variable,name=eb_aligned,op=set,value=!talent.inertia&(!talent.initiat
 # Blade Dance not blocking: BD is on cooldown or we are not using it
 actions+=/variable,name=bd_not_blocking,op=set,value=cooldown.blade_dance.remains>=gcd.max|!variable.use_blade_dance
 
+# Archetype flags: TG spender (Furious Throws makes TG a fury-costing rotational ability)
+actions+=/variable,name=tg_spender,op=set,value=talent.furious_throws&talent.soulscar
 # CS Machine: RO procs free CS, CT gives BD-crit CS bonus -- lower fury thresholds for CS
 actions+=/variable,name=cs_machine,op=set,value=talent.relentless_onslaught&talent.chaos_theory
 
@@ -52,7 +54,7 @@ actions.cooldown+=/the_hunt,if=debuff.essence_break.down&buff.reavers_glaive.dow
 actions.cooldown+=/potion,if=fight_remains<35|cooldown.eye_beam.remains<20
 
 # Prevent IA charge capping for A Fire Inside builds (2 charges available)
-actions.fel_scarred=immolation_aura,if=talent.a_fire_inside&charges=2&variable.bd_not_blocking
+actions.fel_scarred=immolation_aura,if=talent.a_fire_inside&full_recharge_time<gcd.max*2&variable.bd_not_blocking
 actions.fel_scarred+=/immolation_aura,if=(active_enemies>(1-talent.burning_wound+buff.metamorphosis.up))&variable.bd_not_blocking&(!talent.growing_inferno|buff.immolation_aura.remains<2)
 
 # Felblade/Fel Rush to consume inertia trigger
@@ -95,7 +97,7 @@ actions.fel_scarred+=/immolation_aura,if=raid_event.adds.in>full_recharge_time|a
 actions.fel_scarred+=/fel_rush,if=!buff.inertia_trigger.up&debuff.essence_break.down&(variable.use_filler|active_enemies>2)
 
 # FS Meta: Demonsurge management is the priority during Meta
-actions.fs_meta=death_sweep,if=buff.metamorphosis.remains<gcd.max|variable.pool_glaive_tempest&cooldown.eye_beam.up&cooldown.metamorphosis.remains>=5|cooldown.eye_beam.remains<gcd.max&talent.blind_fury&fury>90-variable.fury_gen_per_sec*3
+actions.fs_meta=death_sweep,if=buff.metamorphosis.remains<gcd.max|variable.pool_glaive_tempest&fury>=60&cooldown.eye_beam.up&cooldown.metamorphosis.remains>=5|cooldown.eye_beam.remains<gcd.max&talent.blind_fury&fury>90-variable.fury_gen_per_sec*3
 actions.fs_meta+=/annihilation,if=buff.metamorphosis.remains<gcd.max
 
 # CT opener: Meta resets BD+EB. Burn the free resets immediately at start of real Meta.
@@ -107,7 +109,7 @@ actions.fs_meta+=/death_sweep,if=action.death_sweep.demonsurge_available
 actions.fs_meta+=/annihilation,if=action.annihilation.demonsurge_available&cooldown.blade_dance.remains
 
 # Prevent IA charge capping in meta for AFI builds
-actions.fs_meta+=/immolation_aura,if=talent.a_fire_inside&charges=2&variable.bd_not_blocking&(!action.annihilation.demonsurge_available&!action.death_sweep.demonsurge_available)
+actions.fs_meta+=/immolation_aura,if=talent.a_fire_inside&full_recharge_time<gcd.max*2&variable.bd_not_blocking&(!action.annihilation.demonsurge_available&!action.death_sweep.demonsurge_available)
 
 # Vengeful Retreat during meta: skip when DS charges active to avoid wasting GCDs
 actions.fs_meta+=/vengeful_retreat,use_off_gcd=1,if=talent.inertia&(gcd.remains<0.3|cooldown.eye_beam.remains>gcd.remains&(buff.cycle_of_hatred.stack=2|buff.cycle_of_hatred.stack=3))&cooldown.metamorphosis.remains&!buff.inertia_trigger.up&(buff.demonsurge_annihilation.down&buff.demonsurge_death_sweep.down)&(cooldown.eye_beam.remains>5|cooldown.eye_beam.remains<=3|cooldown.eye_beam.up)
@@ -150,7 +152,7 @@ actions.aldrachi_reaver+=/vengeful_retreat,if=talent.inertia&!buff.inertia_trigg
 actions.aldrachi_reaver+=/vengeful_retreat,use_off_gcd=1,if=talent.initiative&!talent.inertia&((cooldown.eye_beam.remains<=gcd.remains|cooldown.blade_dance.remains<=3&(cooldown.eye_beam.remains>=15-buff.cycle_of_hatred.stack*2.5)|buff.metamorphosis.remains>=5&(!talent.cycle_of_hatred|buff.cycle_of_hatred.stack<4))&!buff.initiative.up&gcd.remains<=0.3&time>5|fight_remains<10)
 
 # Prevent IA charge capping for AFI builds in AR
-actions.aldrachi_reaver+=/immolation_aura,if=talent.a_fire_inside&charges=2&variable.bd_not_blocking
+actions.aldrachi_reaver+=/immolation_aura,if=talent.a_fire_inside&full_recharge_time<gcd.max*2&variable.bd_not_blocking
 
 # Immolation Aura: higher prio in AoE or with Burning Wound during meta
 actions.aldrachi_reaver+=/immolation_aura,if=(active_enemies>(1-talent.burning_wound+buff.metamorphosis.up))&variable.bd_not_blocking&(!talent.growing_inferno|buff.immolation_aura.remains<2)
@@ -200,7 +202,7 @@ actions.ar_glaive_cycle+=/annihilation,target_if=max:debuff.reavers_mark.remains
 actions.ar_glaive_cycle+=/blade_dance,target_if=max:debuff.reavers_mark.remains,if=buff.glaive_flurry.up&!buff.rending_strike.up
 
 # AR Meta: prioritize glaive cycle completion and Thrill of the Fight alignment
-actions.ar_meta=death_sweep,if=buff.metamorphosis.remains<gcd.max|variable.pool_glaive_tempest&cooldown.eye_beam.up&cooldown.metamorphosis.remains>=5|cooldown.eye_beam.remains<gcd.max&talent.blind_fury&fury>90-variable.fury_gen_per_sec*3
+actions.ar_meta=death_sweep,if=buff.metamorphosis.remains<gcd.max|variable.pool_glaive_tempest&fury>=60&cooldown.eye_beam.up&cooldown.metamorphosis.remains>=5|cooldown.eye_beam.remains<gcd.max&talent.blind_fury&fury>90-variable.fury_gen_per_sec*3
 actions.ar_meta+=/annihilation,if=buff.metamorphosis.remains<gcd.max
 
 # CT opener: Meta resets BD+EB. Burn the free resets immediately at start of real Meta.
@@ -212,7 +214,7 @@ actions.ar_meta+=/call_action_list,name=ar_glaive_cycle,if=buff.rending_strike.u
 actions.ar_meta+=/reavers_glaive,target_if=max:debuff.reavers_mark.remains,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(buff.metamorphosis.remains>2|fight_remains<10)
 
 # Prevent IA charge capping in AR meta for AFI builds
-actions.ar_meta+=/immolation_aura,if=talent.a_fire_inside&charges=2&variable.bd_not_blocking
+actions.ar_meta+=/immolation_aura,if=talent.a_fire_inside&full_recharge_time<gcd.max*2&variable.bd_not_blocking
 
 # Vengeful Retreat during meta for inertia: proc trigger then consume on next ability
 actions.ar_meta+=/vengeful_retreat,use_off_gcd=1,if=talent.inertia&(gcd.remains<0.3|cooldown.eye_beam.remains>gcd.remains&(buff.cycle_of_hatred.stack=2|buff.cycle_of_hatred.stack=3))&cooldown.metamorphosis.remains&!buff.inertia_trigger.up&(cooldown.eye_beam.remains>5|cooldown.eye_beam.remains<=3|cooldown.eye_beam.up)
