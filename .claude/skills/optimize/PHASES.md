@@ -62,6 +62,11 @@ Output: divergence reports, theory-generator hypotheses in DB.
 
 Read these files (in YOUR context, not the orchestrator's):
 
+- **Spec knowledge file:** `reference/{spec}-knowledge.md` — pre-computed structural
+  knowledge (resource system, abilities, hero trees, APL structure, roster overview).
+  Read this FIRST. When this file exists and is current, you do NOT need to launch
+  Explore agents for structural knowledge — skip directly to loading DB state and
+  forming hypotheses.
 - **Spec adapter:** `src/spec/{spec}.js` — SPEC_CONFIG (abilities, resources, hero trees, clusters, templates)
 - **Current APL:** `apls/{spec}/{spec}.simc` or `apls/{spec}/current.simc`
 - **Spells summary:** `data/{spec}/spells-summary.json` (~57KB)

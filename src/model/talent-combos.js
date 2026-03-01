@@ -1709,6 +1709,14 @@ export function generateClusterRoster() {
       }
     }
 
+    // Template-level explicit requires/excludes (e.g., choice node partners, synergy talents)
+    if (template.require) {
+      for (const name of template.require) require.push(name);
+    }
+    if (template.exclude) {
+      for (const name of template.exclude) exclude.push(name);
+    }
+
     // Handle apex rank
     if (template.apexRank > 0) {
       require.push({ name: apexName, maxRank: template.apexRank });

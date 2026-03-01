@@ -109,6 +109,19 @@ export const SPEC_CONFIG = {
       core: ["Glaive Tempest"],
       extended: ["Screaming Brutality"],
     },
+    throw_glaive: {
+      core: ["Furious Throws"],
+    },
+    immo_focus: {
+      core: ["Isolated Prey"],
+      extended: ["Growing Inferno"],
+    },
+    collective_anguish: {
+      core: ["Collective Anguish"],
+    },
+    chaotic_transform: {
+      core: ["Chaotic Transformation"],
+    },
   },
 
   // Roster templates: apex rank x cluster inclusion -> crossed with hero trees.
@@ -315,6 +328,160 @@ export const SPEC_CONFIG = {
       name: "EB+Hunt",
       apexRank: 3,
       include: { essence_break: "core", inertia: "core", hunt: "core" },
+    },
+
+    // --- Throw Glaive archetype (Soulscar side of RO/Soulscar choice node) ---
+    {
+      name: "TG+EB",
+      apexRank: 0,
+      include: {
+        throw_glaive: "core",
+        essence_break: "full",
+        inertia: "full",
+        glaive: "full",
+      },
+      require: ["Serrated Glaive", "Soulscar"],
+      exclude: ["Relentless Onslaught"],
+    },
+    {
+      name: "TG+Burn",
+      apexRank: 0,
+      include: {
+        throw_glaive: "core",
+        burn: "full",
+        immo_focus: "full",
+        glaive: "core",
+      },
+      require: ["Serrated Glaive", "Soulscar"],
+      exclude: ["Relentless Onslaught"],
+    },
+    {
+      name: "TG+EB",
+      apexRank: 1,
+      include: {
+        throw_glaive: "core",
+        essence_break: "full",
+        inertia: "core",
+        glaive: "core",
+      },
+      require: ["Serrated Glaive", "Soulscar"],
+      exclude: ["Relentless Onslaught"],
+    },
+
+    // --- CS Machine archetype (RO side of RO/Soulscar choice node) ---
+    {
+      name: "CS+EB",
+      apexRank: 0,
+      include: {
+        essence_break: "full",
+        inertia: "full",
+        glaive: "full",
+      },
+      require: ["Relentless Onslaught", "Chaos Theory"],
+      exclude: ["Soulscar"],
+    },
+    {
+      name: "CS+Burn",
+      apexRank: 0,
+      include: {
+        burn: "full",
+        inertia: "full",
+        glaive: "core",
+      },
+      require: ["Relentless Onslaught", "Chaos Theory"],
+      exclude: ["Soulscar"],
+    },
+    {
+      name: "CS+EB",
+      apexRank: 1,
+      include: {
+        essence_break: "full",
+        inertia: "core",
+        glaive: "core",
+      },
+      require: ["Relentless Onslaught", "Chaos Theory"],
+      exclude: ["Soulscar"],
+    },
+
+    // --- Full Immo archetype (Isolated Prey + Growing Inferno) ---
+    {
+      name: "Immo+EB",
+      apexRank: 0,
+      include: {
+        immo_focus: "full",
+        burn: "full",
+        essence_break: "full",
+        inertia: "full",
+      },
+    },
+    {
+      name: "Immo+Glaive",
+      apexRank: 0,
+      include: {
+        immo_focus: "full",
+        burn: "full",
+        inertia: "full",
+        glaive: "full",
+      },
+    },
+
+    // --- Collective Anguish archetype (CA side of SD/CA choice node) ---
+    {
+      name: "CA+EB",
+      apexRank: 0,
+      include: {
+        collective_anguish: "core",
+        essence_break: "full",
+        inertia: "full",
+        glaive: "core",
+      },
+      exclude: ["Shattered Destiny"],
+    },
+    {
+      name: "CA+EB",
+      apexRank: 1,
+      include: {
+        collective_anguish: "core",
+        essence_break: "full",
+        inertia: "core",
+        glaive: "core",
+      },
+      exclude: ["Shattered Destiny"],
+    },
+
+    // --- Chaotic Transformation archetype (CT side of Inner Demon/CT choice node) ---
+    {
+      name: "CT+EB",
+      apexRank: 0,
+      include: {
+        chaotic_transform: "core",
+        essence_break: "full",
+        inertia: "full",
+        burn: "full",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+EB",
+      apexRank: 1,
+      include: {
+        chaotic_transform: "core",
+        essence_break: "full",
+        inertia: "full",
+        glaive: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+Burn",
+      apexRank: 0,
+      include: {
+        chaotic_transform: "core",
+        burn: "full",
+        inertia: "full",
+        glaive: "full",
+      },
+      exclude: ["Inner Demon"],
     },
   ],
 
