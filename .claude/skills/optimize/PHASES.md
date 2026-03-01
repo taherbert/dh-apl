@@ -57,6 +57,8 @@ Output: divergence reports, theory-generator hypotheses in DB.
 
 > **Agent config:** `subagent_type: "general-purpose"`, `model: "opus"`
 > **Skipped in direct hypothesis mode (`test:`)**
+>
+> **Focused mode behavior:** When the orchestrator provides a specific focus directive (named abilities, talents, or builds), the deep reasoning subagent must persist hypotheses directly to the DB via `iterate.js hypothesis create`. In focused mode, there are no specialists or synthesis phase — the deep reasoning subagent is the ONLY analysis phase before iteration. Make hypotheses concrete and actionable with specific APL mutations.
 
 ### Inputs
 
@@ -144,10 +146,11 @@ Do NOT return the full reasoning text. The orchestrator should never see it — 
 
 ---
 
-## Specialist Subagent Details
+## Specialist Subagent Details (EXPLORATION MODE ONLY)
 
 > **Agent config:** `subagent_type: "theorist"`, `model: "opus"`, `run_in_background: true`
 > See `/.claude/agents/theorist.md` for the full theorist agent framework.
+> **Skip entirely in focused mode.** Only run specialists when exploring without a specific directive.
 
 Each specialist reads `results/{spec}/deep_reasoning.md` for root theories before starting analysis.
 
@@ -162,10 +165,10 @@ Each specialist writes JSON output to `results/{spec}/analysis_{focus}.json` per
 
 ---
 
-## Phase 2: Synthesis Subagent Instructions
+## Phase 2: Synthesis Subagent Instructions (EXPLORATION MODE ONLY)
 
 > **Agent config:** `subagent_type: "general-purpose"`, `model: "opus"`
-> **Skipped in direct hypothesis mode (`test:`)**
+> **Skipped in focused mode and direct hypothesis mode (`test:`).** In focused mode, deep reasoning persists hypotheses directly to DB — go straight to Phase 3.
 
 ### Inputs
 

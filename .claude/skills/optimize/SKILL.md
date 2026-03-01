@@ -1,5 +1,5 @@
 ---
-description: The ONE command for all APL and build optimization. Runs everything autonomously — generates cluster roster, deep reasoning, parallel specialist analysis, synthesis, multi-build iteration, and reporting.
+description: The ONE command for all APL and build optimization. Adaptive pipeline - focused tasks skip specialists and go straight to iteration; exploration mode runs full analysis. Always starts remote before sims.
 argument-hint: "[focus directive or 'test: hypothesis']"
 model: opus
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, WebFetch, WebSearch
@@ -7,16 +7,29 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Task, WebFetch, WebSearch
 
 Autonomous APL optimization using **phase-as-subagent architecture**. Each phase runs in its own subagent with a fresh context window. The main thread is a thin state machine that reads summaries and launches subagents. Results persist to DB + files, never accumulate in the main conversation.
 
-If `$ARGUMENTS` starts with `test:`, skip Phases 1-2 and jump to Phase 3 with those hypotheses. Otherwise treat `$ARGUMENTS` as a focus directive.
+## Mode Detection
+
+**Before starting, classify the task:**
+
+| Mode            | Trigger                                                              | Path                                                           |
+| --------------- | -------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Focused**     | `$ARGUMENTS` names specific abilities, talents, builds, or mechanics | Phase 0 → Phase 1a ONLY (deep reasoning) → Phase 3 (iteration) |
+| **Exploration** | `$ARGUMENTS` is empty or generic ("optimize", "find improvements")   | Phase 0 → Phase 1a+1b → Phase 2 → Phase 3                      |
+| **Direct test** | `$ARGUMENTS` starts with `test:`                                     | Phase 0 → Phase 3 with those hypotheses                        |
+
+**Focused mode skips specialists and synthesis.** The deep reasoning subagent already identifies actionable hypotheses when given a specific focus. Specialists are only valuable for broad, undirected exploration where you don't know what to look for. Never run specialists when the user has told you what to investigate.
 
 ## Architecture
 
 ```
 Main Thread (thin orchestrator — never reads data files):
-  ├── Phase 0: Setup (inline CLI commands)
-  ├── Phase 1: Launch Deep Reasoning subagent → writes deep_reasoning.md + theories to DB
-  │           Launch 4 Specialist subagents → each writes analysis_{focus}.json
-  ├── Phase 2: Launch Synthesis subagent → reads files, writes hypotheses to DB
+  ├── Phase 0: Setup + remote start (inline CLI commands)
+  │
+  ├── [FOCUSED] Phase 1a: Deep Reasoning subagent → hypotheses to DB
+  │             Skip 1b + Phase 2, go directly to Phase 3
+  │
+  ├── [EXPLORATION] Phase 1a: Deep Reasoning → 1b: Specialists → Phase 2: Synthesis
+  │
   ├── Phase 3: Loop: Launch Iteration Batch subagents → each tests 3-5 hypotheses
   └── Phase 4: Report (inline CLI commands)
 ```
@@ -49,7 +62,18 @@ node src/engine/startup-cli.js
 
 If simc data is stale, run `SPEC={spec} npm run refresh` before continuing.
 
-### 0b. Session Recovery
+### 0b. Start Remote Instance
+
+**Always start the remote before any analysis.** Standard/confirm sims need it, and it takes ~30s to launch. Start it now so it's ready by Phase 3. If remote is already active, skip.
+
+```bash
+npm run remote:status        # Check if already active
+npm run remote:start         # Start if not active (requires dangerouslyDisableSandbox for SSH)
+```
+
+If spot capacity is unavailable, note it and proceed — sims will run locally. **Never run standard/confirm fidelity locally when remote is available.** If remote fails to start due to sandbox restrictions, retry with `dangerouslyDisableSandbox: true`.
+
+### 0c. Session Recovery
 
 ```bash
 node src/sim/iterate.js phase         # Check orchestrator phase
@@ -58,7 +82,7 @@ node src/sim/iterate.js status        # Check iteration state
 
 If a session exists, skip to the appropriate phase. If the orchestrator phase shows a partially-complete phase, resume from there.
 
-### 0c. Generate Roster + Baseline
+### 0d. Generate Roster + Baseline
 
 ```bash
 npm run roster generate
@@ -66,13 +90,13 @@ npm run roster show
 node src/sim/iterate.js init apls/{spec}/{spec}.simc   # Only if no active session
 ```
 
-### 0d. Pattern Analysis (optional, skip if resuming)
+### 0e. Pattern Analysis (optional, skip if resuming)
 
 ```bash
 node src/sim/iterate.js pattern-analyze
 ```
 
-### 0e. Set Phase
+### 0f. Set Phase
 
 ```bash
 node src/sim/iterate.js phase "0_complete"
@@ -119,7 +143,9 @@ Launch with Task tool:
 
 **Main thread receives:** A 1-2 line summary. Never sees the data files or reasoning text.
 
-### 1b. Launch 4 Specialist Subagents
+### 1b. Launch 4 Specialist Subagents (EXPLORATION MODE ONLY)
+
+> **Skip this entirely in focused mode.** The deep reasoning subagent already produces actionable hypotheses when given a specific focus. Specialists add 30-40 minutes of wall time and produce redundant findings. Only run specialists when exploring an unknown optimization space with no specific directive.
 
 After deep reasoning completes, launch all 4 specialists **in a SINGLE message**:
 
@@ -153,9 +179,9 @@ Update `plan.md` after specialists launch. Proceed to Phase 2 when all 4 complet
 
 ---
 
-## Phase 2: Synthesis (subagent)
+## Phase 2: Synthesis (EXPLORATION MODE ONLY)
 
-> **Skipped in direct hypothesis mode (`test:`).** Jump to Phase 3.
+> **Skipped in focused mode and direct hypothesis mode (`test:`).** In focused mode, the deep reasoning subagent writes hypotheses directly to the DB — go straight to Phase 3. Only run synthesis when specialists produced analysis files that need cross-referencing.
 
 ```bash
 node src/sim/iterate.js phase "2_synthesis"
@@ -194,9 +220,11 @@ node src/sim/iterate.js phase "2_complete"
 
 ### Pre-Flight
 
+Remote should already be running from Phase 0b. Verify and start if somehow not active:
+
 ```bash
-npm run remote:status
-npm run remote:start    # if not active
+npm run remote:status          # Should show active from Phase 0b
+npm run remote:start           # Only if not active (dangerouslyDisableSandbox for SSH)
 node src/sim/iterate.js phase "3_iteration"
 ```
 
@@ -284,11 +312,14 @@ Commit: `optimize: {spec} - N iterations, M accepted, +X.XX% mean weighted DPS`
 
 ## Anti-Patterns
 
+- **Running specialists in focused mode** — NEVER. When the user names specific abilities/talents/builds, deep reasoning alone produces the hypotheses. Specialists add 30-40 min of redundant analysis.
+- **Running standard/confirm sims locally** — NEVER when remote can be started. Always `npm run remote:start` in Phase 0. Quick fidelity is fine locally.
+- **Waiting until Phase 3 to start remote** — Start in Phase 0b so it's ready when needed.
 - **Reading data files in main thread** — NEVER. All data reading happens in subagents.
 - **Large return values from subagents** — subagents persist to DB/files and return 1-line summaries
 - **Single-build testing** — ALWAYS test against the full roster
-- **Specialists without theory** — deep reasoning BEFORE specialists
-- **Sequential specialists** — ALWAYS launch all 4 in a SINGLE message
+- **Specialists without theory** — deep reasoning BEFORE specialists (exploration mode only)
+- **Sequential specialists** — ALWAYS launch all 4 in a SINGLE message (exploration mode only)
 - **Skipping phase tracking** — always `iterate.js phase <value>` at transitions
 - **Ignoring per-build results** — aggregate mean hides regressions
 - **Rejecting partial gains** — gate them instead (see PHASES.md Phase 3)
