@@ -28,10 +28,10 @@
   --negative-bg: rgba(251, 113, 133, 0.07);
   --gold: #f5c842;
   --gold-bg: rgba(245, 200, 66, 0.08);
-  --anni: #a78bfa;
-  --anni-glow: rgba(167, 139, 250, 0.10);
-  --ar: #fb923c;
-  --ar-glow: rgba(251, 146, 60, 0.10);
+  --tree-b: #a78bfa;
+  --tree-b-glow: rgba(167, 139, 250, 0.10);
+  --tree-a: #fb923c;
+  --tree-a-glow: rgba(251, 146, 60, 0.10);
   --radius: 10px;
   --radius-sm: 6px;
 }
@@ -66,7 +66,7 @@ header h1 {
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--anni) 60%, var(--ar) 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--tree-b) 60%, var(--tree-a) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -159,10 +159,10 @@ h4 {
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
-.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--ar), transparent); }
-.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--anni), transparent); }
-.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--ar-glow); }
-.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--anni-glow); }
+.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--tree-a), transparent); }
+.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--tree-b), transparent); }
+.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--tree-a-glow); }
+.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--tree-b-glow); }
 
 .showcase-header {
   margin-bottom: 1rem;
@@ -417,8 +417,8 @@ h4 {
   letter-spacing: 0.03em;
 }
 
-.tree-badge.anni { background: rgba(167, 139, 250, 0.13); color: var(--anni); }
-.tree-badge.ar { background: rgba(251, 146, 60, 0.13); color: var(--ar); }
+.tree-badge.tree-b { background: rgba(167, 139, 250, 0.13); color: var(--tree-b); }
+.tree-badge.tree-a { background: rgba(251, 146, 60, 0.13); color: var(--tree-a); }
 .tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
 
 /* Filter bar */
@@ -784,7 +784,7 @@ summary:hover { color: var(--accent); }
 .trinket-tag--passive { color: var(--fg-muted); }
 .trinket-tag--raid { color: var(--gold); border-color: rgba(245, 200, 66, 0.25); }
 .trinket-tag--dungeon { color: var(--positive); border-color: rgba(52, 211, 153, 0.25); }
-.trinket-tag--crafted { color: var(--ar); border-color: rgba(251, 146, 60, 0.25); }
+.trinket-tag--crafted { color: var(--tree-a); border-color: rgba(251, 146, 60, 0.25); }
 
 .trinket-strip__bar-wrap {
   height: 5px;
@@ -1088,16 +1088,26 @@ footer { animation-delay: 0.35s; }
   <h2>Top Builds</h2>
   <div class="showcase-grid"><div class="showcase-panel">
       <div class="showcase-header">
-        <span class="tree-badge ar">Aldrachi Reaver</span>
+        <span class="tree-badge tree-a">Aldrachi Reaver</span>
       </div>
       <div class="showcase-build-name">Scars of Suffering + Growing Inferno + Unbound Chaos + Screaming Brutality <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYmZmZmZWMmZmZmZmYmZAAAAAAAz2MzwAzsNzMjZZmZGzMDjZWmBDjlFmwMMzMWAAAAAAAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
-      <div class="showcase-weighted">152,614 <span class="showcase-weighted-label">weighted</span></div>
-      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 74,147</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#a78bfa">DRoute</span> 116,128</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 210,129</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 328,640</span></div>
+      <div class="showcase-weighted">152,887 <span class="showcase-weighted-label">weighted</span></div>
+      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 73,913</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#a78bfa">DRoute</span> 116,187</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 210,500</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 330,484</span></div>
       <div class="showcase-tree-wrap">
         <iframe src="https://mimiron.raidbots.com/simbot/render/talents/CEkAAAAAAAAAAAAAAAAAAAAAAYmZmZmZWMmZmZmZmYmZAAAAAAAz2MzwAzsNzMjZZmZGzMDjZWmBDjlFmwMMzMWAAAAAAAAzMADAAAAA?bgcolor=0f1117&width=1100&hideHeader=true" title="Aldrachi Reaver spec tree" scrolling="no"></iframe>
       </div>
     </div>
-</div>
+<div class="showcase-panel">
+      <div class="showcase-header">
+        <span class="tree-badge tree-b">Fel-Scarred</span>
+      </div>
+      <div class="showcase-build-name">CT+EB [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNbzMzYmxY2GYZWMjhZhpxMmZGbAAAAAAAAMzgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
+      <div class="showcase-weighted">184,863 <span class="showcase-weighted-label">weighted</span></div>
+      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 85,481</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#a78bfa">DRoute</span> 122,407</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 254,775</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 428,948</span></div>
+      <div class="showcase-tree-wrap">
+        <iframe src="https://mimiron.raidbots.com/simbot/render/talents/CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNbzMzYmxY2GYZWMjhZhpxMmZGbAAAAAAAAMzgBAAAA?bgcolor=0f1117&width=1100&hideHeader=true" title="Fel-Scarred spec tree" scrolling="no"></iframe>
+      </div>
+    </div></div>
 </section>
 <section>
   <h2>Hero Tree Comparison</h2>
@@ -1108,31 +1118,31 @@ footer { animation-delay: 0.35s; }
     <div class="hc-rows">
       <div class="hc-row">
         <span class="hc-label" style="color:#60a5fa">Patchwerk 1T</span>
-        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:24.2%;background:#fb923c;opacity:0.9"></div><span class="hc-bar-val" style="color:#fb923c">80,352</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:0.0%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">0</span></div></div>
-        <span class="hc-delta" style="color:var(--fg-muted)">~tied</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:18.7%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">80,049</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:19.9%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">85,481</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+6.8%</span>
       </div>
 <div class="hc-row">
         <span class="hc-label" style="color:#a78bfa">DRoute</span>
-        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:35.0%;background:#fb923c;opacity:0.9"></div><span class="hc-bar-val" style="color:#fb923c">116,455</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:0.0%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">0</span></div></div>
-        <span class="hc-delta" style="color:var(--fg-muted)">~tied</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:27.2%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">116,733</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:29.0%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">124,636</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+6.8%</span>
       </div>
 <div class="hc-row">
         <span class="hc-label" style="color:#f59e0b">Patchwerk 5T</span>
-        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:63.2%;background:#fb923c;opacity:0.9"></div><span class="hc-bar-val" style="color:#fb923c">210,129</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:0.0%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">0</span></div></div>
-        <span class="hc-delta" style="color:var(--fg-muted)">~tied</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:49.1%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">210,500</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:59.4%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">254,775</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+21.0%</span>
       </div>
 <div class="hc-row">
         <span class="hc-label" style="color:#ef4444">Patchwerk 10T</span>
-        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:100.0%;background:#fb923c;opacity:0.9"></div><span class="hc-bar-val" style="color:#fb923c">332,703</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:0.0%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">0</span></div></div>
-        <span class="hc-delta" style="color:var(--fg-muted)">~tied</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:77.5%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">332,466</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:100.0%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">429,135</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+29.1%</span>
       </div>
 <div class="hc-row hc-row--weighted">
         <span class="hc-label" style="color:var(--fg)">Weighted</span>
-        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:45.9%;background:#fb923c;opacity:0.9"></div><span class="hc-bar-val" style="color:#fb923c">152,614</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:0.0%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">0</span></div></div>
-        <span class="hc-delta" style="color:var(--fg-muted)">~tied</span>
+        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:35.6%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">152,887</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:43.1%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">184,863</span></div></div>
+        <span class="hc-delta" style="color:#a78bfa">+20.9%</span>
       </div>
     </div>
-    <div class="hc-legend"><span class="hc-legend-item"><span class="tree-badge sm ar">AR</span> Aldrachi Reaver</span><span class="hc-legend-item"><span class="tree-badge sm ar">AR</span> Fel-Scarred</span></div>
+    <div class="hc-legend"><span class="hc-legend-item"><span class="tree-badge sm tree-a">AR</span> Aldrachi Reaver</span><span class="hc-legend-item"><span class="tree-badge sm tree-b">FS</span> Fel-Scarred</span></div>
   </div>
     <div class="apex-panel">
     <h3>Apex Scaling</h3>
@@ -1140,10 +1150,10 @@ footer { animation-delay: 0.35s; }
     <svg class="apex-chart" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
       <line x1="48" y1="210.0" x2="370" y2="210.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="213.5" text-anchor="end" class="apex-axis-label">0%</text><line x1="48" y1="112.5" x2="370" y2="112.5" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="116.0" text-anchor="end" class="apex-axis-label">5%</text><line x1="48" y1="15.0" x2="370" y2="15.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="18.5" text-anchor="end" class="apex-axis-label">10%</text>
       <text x="48.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 0</text><text x="155.3" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 1</text><text x="262.7" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 2</text><text x="370.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 3</text>
-      <path d="M48.0,210.0 L155.3,204.1 L262.7,230.7 L370.0,371.7 L370.0,210.0 L48.0,210.0Z" fill="rgba(251, 146, 60, 0.15)"/><path d="M48.0,210.0 L155.3,204.1 L262.7,230.7 L370.0,371.7" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-linejoin="round"/>
-      <g class="apex-point"><circle cx="48.0" cy="210.0" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="166.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="180.0" text-anchor="middle" class="apex-tip-text">148,873 (+0.0%)</text></g></g><g class="apex-point"><circle cx="155.3" cy="204.1" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="90.3" y="160.1" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="155.3" y="174.1" text-anchor="middle" class="apex-tip-text">149,322 (+0.3%)</text></g></g><g class="apex-point"><circle cx="262.7" cy="230.7" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="197.7" y="186.7" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="262.7" y="200.7" text-anchor="middle" class="apex-tip-text">147,295 (-1.1%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="371.7" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="327.7" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="341.7" text-anchor="middle" class="apex-tip-text">136,529 (-8.3%)</text></g></g>
+      <path d="M48.0,210.0 L155.3,199.3 L262.7,232.5 L370.0,375.5 L370.0,210.0 L48.0,210.0Z" fill="rgba(251, 146, 60, 0.15)"/><path d="M48.0,210.0 L155.3,199.3 L262.7,232.5 L370.0,375.5" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-linejoin="round"/><path d="M48.0,210.0 L155.3,239.8 L262.7,257.8 L370.0,476.4 L370.0,210.0 L48.0,210.0Z" fill="rgba(167, 139, 250, 0.15)"/><path d="M48.0,210.0 L155.3,239.8 L262.7,257.8 L370.0,476.4" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/>
+      <g class="apex-point"><circle cx="48.0" cy="210.0" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="166.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="180.0" text-anchor="middle" class="apex-tip-text">148,939 (+0.0%)</text></g></g><g class="apex-point"><circle cx="155.3" cy="199.3" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="90.3" y="155.3" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="155.3" y="169.3" text-anchor="middle" class="apex-tip-text">149,754 (+0.5%)</text></g></g><g class="apex-point"><circle cx="262.7" cy="232.5" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="197.7" y="188.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="262.7" y="202.5" text-anchor="middle" class="apex-tip-text">147,223 (-1.2%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="375.5" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="331.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="345.5" text-anchor="middle" class="apex-tip-text">136,299 (-8.5%)</text></g></g><g class="apex-point"><circle cx="48.0" cy="210.0" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="166.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="180.0" text-anchor="middle" class="apex-tip-text">184,863 (+0.0%)</text></g></g><g class="apex-point"><circle cx="155.3" cy="239.8" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="90.3" y="195.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="155.3" y="209.8" text-anchor="middle" class="apex-tip-text">182,041 (-1.5%)</text></g></g><g class="apex-point"><circle cx="262.7" cy="257.8" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="197.7" y="213.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="262.7" y="227.8" text-anchor="middle" class="apex-tip-text">180,331 (-2.5%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="476.4" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="432.4" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="446.4" text-anchor="middle" class="apex-tip-text">159,607 (-13.7%)</text></g></g>
     </svg>
-    <div class="hc-legend"><span class="hc-legend-item"><span class="tree-badge sm ar">AR</span> Aldrachi Reaver</span><span class="hc-legend-item"><span class="tree-badge sm ar">AR</span> Fel-Scarred</span></div>
+    <div class="hc-legend"><span class="hc-legend-item"><span class="tree-badge sm tree-a">AR</span> Aldrachi Reaver</span><span class="hc-legend-item"><span class="tree-badge sm tree-b">FS</span> Fel-Scarred</span></div>
   </div>
   </div>
 </section>
@@ -1165,351 +1175,351 @@ footer { animation-delay: 0.35s; }
       <th class="sortable num" data-col="big_aoe" style="color:#ef4444">Patchwerk 10T</th>
         <th class="sortable num weighted-header" data-col="weighted" style="color:var(--fg)">Weighted <span class="info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg><span class="info-popup">Weighted DPS combines all scenarios into a single score.<br><br><span style="color:#60a5fa">Patchwerk 1T</span> 45% · <span style="color:#a78bfa">DRoute</span> 15% · <span style="color:#f59e0b">Patchwerk 5T</span> 25% · <span style="color:#ef4444">Patchwerk 10T</span> 15%</span></span></th>
       </tr></thead>
-      <tbody><tr data-tree="fel-scarred">
+      <tbody><tr data-tree="fel_scarred">
   <td class="build-name">CT+EB [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNbzMzYmxY2GYZWMjhZhpxMmZGbAAAAAAAAMzgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 85,431">85,656<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 122,763">122,671</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 254,174">253,909<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 428,547">426,776</td>
-  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 184,684">184,440<span class="badge">TOP</span></td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 85,610">85,481<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 123,069">122,407</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 254,072">254,775<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 428,046">428,948</td>
+  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 184,710">184,863<span class="badge">TOP</span></td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Burn (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzwYmtZxMzYmxY2GYZWMjhZhpxMmZGbAAAADAAAgZGMAAAA8A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 81,625">81,730</td><td class="dps-cell has-tip" data-tip="SimC baseline: 122,011">122,233</td><td class="dps-cell has-tip" data-tip="SimC baseline: 250,819">250,345</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 428,478">427,414<span class="badge">TOP</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 182,009">181,812</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 81,892">81,508</td><td class="dps-cell has-tip" data-tip="SimC baseline: 122,099">122,070</td><td class="dps-cell has-tip" data-tip="SimC baseline: 251,662">250,728</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 430,410">429,135<span class="badge">TOP</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 182,643">182,041</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Burn+Hunt (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGjtZxMzYmZGz2ALziZMMLMNmxMzYDAAAAAAAgZGMAAAA8A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,911">82,855</td><td class="dps-cell has-tip" data-tip="SimC baseline: 123,159">123,203</td><td class="dps-cell has-tip" data-tip="SimC baseline: 248,883">247,401</td><td class="dps-cell has-tip" data-tip="SimC baseline: 421,772">423,055</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 181,270">181,074</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,963">82,781</td><td class="dps-cell has-tip" data-tip="SimC baseline: 123,170">123,320</td><td class="dps-cell has-tip" data-tip="SimC baseline: 247,332">248,095</td><td class="dps-cell has-tip" data-tip="SimC baseline: 422,722">421,659</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 181,050">181,022</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Burn (Apex 2) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzwYsNLmZGzMzY2GYZWMjhZhpxMmZGbAAAAAAAAMzgBAAAgLA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,432">82,308</td><td class="dps-cell has-tip" data-tip="SimC baseline: 122,184">121,884</td><td class="dps-cell has-tip" data-tip="SimC baseline: 247,787">248,498</td><td class="dps-cell has-tip" data-tip="SimC baseline: 420,036">420,787</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 180,374">180,564</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,348">81,784</td><td class="dps-cell has-tip" data-tip="SimC baseline: 122,158">122,088</td><td class="dps-cell has-tip" data-tip="SimC baseline: 248,666">247,877</td><td class="dps-cell has-tip" data-tip="SimC baseline: 420,155">421,638</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 180,570">180,331</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Burn+Hunt [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNLzMzYmxY2GYZWMjhZhpxMmZGbAAAAAAAAMzgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,922">85,122</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 124,712">124,685<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 243,943">243,543</td><td class="dps-cell has-tip" data-tip="SimC baseline: 414,083">415,336</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 180,020">180,194</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,645">85,052</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 124,608">124,636<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 245,129">243,678</td><td class="dps-cell has-tip" data-tip="SimC baseline: 413,426">414,895</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 180,078">180,123</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Burn [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGGzsNLegZGzMmZ2GYZWMjhZhpxMmZGbAAAADAAAgZGMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,354">82,297</td><td class="dps-cell has-tip" data-tip="SimC baseline: 123,589">123,644</td><td class="dps-cell has-tip" data-tip="SimC baseline: 245,746">245,055</td><td class="dps-cell has-tip" data-tip="SimC baseline: 414,307">413,240</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 179,180">178,830</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 81,870">81,968</td><td class="dps-cell has-tip" data-tip="SimC baseline: 123,683">123,627</td><td class="dps-cell has-tip" data-tip="SimC baseline: 245,613">245,672</td><td class="dps-cell has-tip" data-tip="SimC baseline: 412,571">414,107</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 178,683">178,964</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Burn+Hunt (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGGjthZmhZmZmtBWmFzYYWYaMjZmxGAAAwAAAAYmBDAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,702">78,988</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,741">115,641</td><td class="dps-cell has-tip" data-tip="SimC baseline: 245,310">246,750</td><td class="dps-cell has-tip" data-tip="SimC baseline: 405,514">406,211</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 174,932">175,510</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,596">78,618</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,724">115,606</td><td class="dps-cell has-tip" data-tip="SimC baseline: 245,806">245,312</td><td class="dps-cell has-tip" data-tip="SimC baseline: 408,203">406,200</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 175,409">174,977</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Burn+Hunt [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmthZmhZMzsNwysYGDzCTjZMzM2AAAAGAAAAzMYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,135">80,496</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,907">115,971</td><td class="dps-cell has-tip" data-tip="SimC baseline: 241,371">241,337</td><td class="dps-cell has-tip" data-tip="SimC baseline: 397,939">396,769</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 173,480">173,468</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,246">80,177</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,829">115,853</td><td class="dps-cell has-tip" data-tip="SimC baseline: 241,795">242,514</td><td class="dps-cell has-tip" data-tip="SimC baseline: 396,340">395,388</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 173,385">173,394</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Burn+Hunt (Apex 2) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGjthZmhZmxsNwysYGDzCTjZMzM2AAAAGAAAAzMYAAAA4CA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,621">78,586</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,218">114,159</td><td class="dps-cell has-tip" data-tip="SimC baseline: 242,942">242,417</td><td class="dps-cell has-tip" data-tip="SimC baseline: 400,738">402,167</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 173,358">173,417</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,378">78,774</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,172">114,177</td><td class="dps-cell has-tip" data-tip="SimC baseline: 242,974">241,076</td><td class="dps-cell has-tip" data-tip="SimC baseline: 400,558">403,359</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 173,223">173,348</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">CT+EB (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmZ2mtZmZMzMMbDsMLmxwsw0wYmZsBAAAMAAAAmZwAAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 83,850">84,001</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,423">119,394</td><td class="dps-cell has-tip" data-tip="SimC baseline: 230,117">229,375</td><td class="dps-cell has-tip" data-tip="SimC baseline: 357,158">357,157</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 166,749">166,627</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,024">83,735</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,518">119,211</td><td class="dps-cell has-tip" data-tip="SimC baseline: 230,438">229,748</td><td class="dps-cell has-tip" data-tip="SimC baseline: 356,482">357,329</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 166,820">166,599</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">TG+EB (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsNjx2sMzMjZmxMbDsMLmxwsw0wYmZsBAAAMAAAAmZwAAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,136">84,520</td><td class="dps-cell has-tip" data-tip="SimC baseline: 120,173">120,368</td><td class="dps-cell has-tip" data-tip="SimC baseline: 223,113">223,132</td><td class="dps-cell has-tip" data-tip="SimC baseline: 341,873">339,736</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 162,946">162,833</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,152">84,068</td><td class="dps-cell has-tip" data-tip="SimC baseline: 120,185">120,412</td><td class="dps-cell has-tip" data-tip="SimC baseline: 222,869">222,755</td><td class="dps-cell has-tip" data-tip="SimC baseline: 341,804">341,638</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 162,884">162,827</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">CS+EB (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYGYmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzM2mlZmZMzMMbDsMLmxwsw0wYmZsBAAAMAAAAmZwAAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,614">84,735</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,830">120,008</td><td class="dps-cell has-tip" data-tip="SimC baseline: 218,644">218,959</td><td class="dps-cell has-tip" data-tip="SimC baseline: 343,222">342,978</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 162,195">162,318</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,089">84,300</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,923">120,141</td><td class="dps-cell has-tip" data-tip="SimC baseline: 218,485">218,354</td><td class="dps-cell has-tip" data-tip="SimC baseline: 343,479">343,216</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 161,972">162,027</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">CA+EB (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmx2sMzMz2MzwsNwysYGDzCTDjZmxGAAAwAAAAYmBDAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,915">82,964</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,445">118,937</td><td class="dps-cell has-tip" data-tip="SimC baseline: 216,588">216,486</td><td class="dps-cell has-tip" data-tip="SimC baseline: 342,538">343,190</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 160,756">160,774</td>
-</tr><tr data-tree="fel-scarred">
-  <td class="build-name">EB Core (Apex 3) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2mlZmZMzMMbDsMLmxwsw0wYmZsBAAAMAAAAmZwAAAAwHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,550">82,522</td><td class="dps-cell has-tip" data-tip="SimC baseline: 116,934">116,966</td><td class="dps-cell has-tip" data-tip="SimC baseline: 222,251">221,294</td><td class="dps-cell has-tip" data-tip="SimC baseline: 331,962">331,784</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 160,045">159,771</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,857">82,845</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,248">119,281</td><td class="dps-cell has-tip" data-tip="SimC baseline: 216,028">215,762</td><td class="dps-cell has-tip" data-tip="SimC baseline: 342,206">341,946</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 160,511">160,405</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">TG+EB [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsNjZ2mlZmZMzMmZbglZxMGmFmGGzMjNAAAgBAAAwMDGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,421">84,622</td><td class="dps-cell has-tip" data-tip="SimC baseline: 121,343">121,614</td><td class="dps-cell has-tip" data-tip="SimC baseline: 216,732">216,432</td><td class="dps-cell has-tip" data-tip="SimC baseline: 329,283">328,740</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 159,766">159,741</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,524">84,814</td><td class="dps-cell has-tip" data-tip="SimC baseline: 121,407">121,636</td><td class="dps-cell has-tip" data-tip="SimC baseline: 217,327">217,235</td><td class="dps-cell has-tip" data-tip="SimC baseline: 328,989">329,318</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 159,927">160,118</td>
+</tr><tr data-tree="fel_scarred">
+  <td class="build-name">EB Core (Apex 3) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2mlZmZMzMMbDsMLmxwsw0wYmZsBAAAMAAAAmZwAAAAwHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,435">82,412</td><td class="dps-cell has-tip" data-tip="SimC baseline: 117,130">116,837</td><td class="dps-cell has-tip" data-tip="SimC baseline: 220,904">221,873</td><td class="dps-cell has-tip" data-tip="SimC baseline: 330,358">330,182</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 159,445">159,607</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">CT+Burn [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmtZbmZGDmZ2GYZWMjhZhpxMmZGbAAAADAAAgZGMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,609">77,243</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,889">114,873</td><td class="dps-cell has-tip" data-tip="SimC baseline: 216,475">216,892</td><td class="dps-cell has-tip" data-tip="SimC baseline: 353,975">352,548</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 159,372">159,096</td>
-</tr><tr data-tree="fel-scarred">
-  <td class="build-name">Burn Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGjtZZmZGDGz2ALziZMMLMNmxMzYDAAAYAAAAMzgBAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,057">77,093</td><td class="dps-cell has-tip" data-tip="SimC baseline: 113,327">113,319</td><td class="dps-cell has-tip" data-tip="SimC baseline: 216,649">218,221</td><td class="dps-cell has-tip" data-tip="SimC baseline: 345,568">345,497</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 157,672">158,070</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,268">77,567</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,932">114,814</td><td class="dps-cell has-tip" data-tip="SimC baseline: 217,002">216,694</td><td class="dps-cell has-tip" data-tip="SimC baseline: 355,602">353,248</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 159,601">159,288</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Burn+Glaive (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmtZxMzYwMz2ALziZMMLMNmxMzYDAAAYAAAAMzgBAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,309">76,543</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,183">115,157</td><td class="dps-cell has-tip" data-tip="SimC baseline: 213,771">213,529</td><td class="dps-cell has-tip" data-tip="SimC baseline: 352,934">352,336</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 157,999">157,951</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,451">76,518</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,054">115,076</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,983">214,173</td><td class="dps-cell has-tip" data-tip="SimC baseline: 352,354">352,675</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 157,760">158,139</td>
+</tr><tr data-tree="fel_scarred">
+  <td class="build-name">Burn Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGjtZZmZGDGz2ALziZMMLMNmxMzYDAAAYAAAAMzgBAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,060">77,074</td><td class="dps-cell has-tip" data-tip="SimC baseline: 113,253">113,295</td><td class="dps-cell has-tip" data-tip="SimC baseline: 217,579">216,980</td><td class="dps-cell has-tip" data-tip="SimC baseline: 347,007">346,591</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 158,111">157,911</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">CA+EB [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmZ2mlZmZ2mZGmtBWmFzYYWYaYMzM2AAAAGAAAAzMYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 83,410">83,328</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,873">120,102</td><td class="dps-cell has-tip" data-tip="SimC baseline: 210,128">209,690</td><td class="dps-cell has-tip" data-tip="SimC baseline: 328,905">328,258</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 157,383">157,174</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 83,241">83,170</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,954">120,349</td><td class="dps-cell has-tip" data-tip="SimC baseline: 209,609">209,679</td><td class="dps-cell has-tip" data-tip="SimC baseline: 329,700">328,476</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 157,309">157,170</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Glaive (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbglZxMGmFmGeAzMjNAAAgBAAAwMDGAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,829">81,430</td><td class="dps-cell has-tip" data-tip="SimC baseline: 117,097">117,212</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,314">213,538</td><td class="dps-cell has-tip" data-tip="SimC baseline: 329,655">329,014</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 156,464">156,962</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,917">81,226</td><td class="dps-cell has-tip" data-tip="SimC baseline: 117,160">117,115</td><td class="dps-cell has-tip" data-tip="SimC baseline: 213,133">213,035</td><td class="dps-cell has-tip" data-tip="SimC baseline: 328,659">328,518</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 156,569">156,655</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Burn Focus (Apex 2) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGGzsNLmZGDmZ2GYZWMjhZhpxMmZGbAAAADAAAgZGMAAAAcB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 74,946">75,042</td><td class="dps-cell has-tip" data-tip="SimC baseline: 112,994">113,022</td><td class="dps-cell has-tip" data-tip="SimC baseline: 213,663">214,116</td><td class="dps-cell has-tip" data-tip="SimC baseline: 350,449">351,013</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 156,658">156,903</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 74,990">75,071</td><td class="dps-cell has-tip" data-tip="SimC baseline: 112,593">112,630</td><td class="dps-cell has-tip" data-tip="SimC baseline: 214,303">213,790</td><td class="dps-cell has-tip" data-tip="SimC baseline: 349,798">350,024</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 156,680">156,628</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Glaive [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbglZxMGmFmGGzMjNAAAgBAAAwMDGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,964">83,108</td><td class="dps-cell has-tip" data-tip="SimC baseline: 119,127">118,947</td><td class="dps-cell has-tip" data-tip="SimC baseline: 208,322">208,479</td><td class="dps-cell has-tip" data-tip="SimC baseline: 320,193">320,370</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 155,312">155,416</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 82,921">82,914</td><td class="dps-cell has-tip" data-tip="SimC baseline: 118,990">118,917</td><td class="dps-cell has-tip" data-tip="SimC baseline: 209,304">207,914</td><td class="dps-cell has-tip" data-tip="SimC baseline: 319,888">320,125</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 155,472">155,146</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Burn+Glaive [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmtZZmZGDmZ2GYZWMjhZhpxMmZGbAAAADAAAgZGMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,608">76,412</td><td class="dps-cell has-tip" data-tip="SimC baseline: 116,034">115,354</td><td class="dps-cell has-tip" data-tip="SimC baseline: 207,175">208,006</td><td class="dps-cell has-tip" data-tip="SimC baseline: 340,491">339,879</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 154,746">154,672</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,464">76,670</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,671">115,545</td><td class="dps-cell has-tip" data-tip="SimC baseline: 206,500">207,002</td><td class="dps-cell has-tip" data-tip="SimC baseline: 339,128">338,730</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 154,254">154,393</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB Focus (Apex 2) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNLzMzYmhZ2GYZWMjhZhpBmZGbAAAADAAAgZGMAAAAcB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,880">78,187</td><td class="dps-cell has-tip" data-tip="SimC baseline: 113,590">113,700</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,425">213,202</td><td class="dps-cell has-tip" data-tip="SimC baseline: 325,437">325,489</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 154,006">154,363</td>
-</tr><tr data-tree="fel-scarred">
-  <td class="build-name">Hunt Core (Apex 3) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMDzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2GzMzwMDz2ALziZMMLMNMmZGbAAAADAAAgZGMAAAA8B" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,210">78,375</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,850">108,733</td><td class="dps-cell has-tip" data-tip="SimC baseline: 218,966">218,282</td><td class="dps-cell has-tip" data-tip="SimC baseline: 318,069">317,271</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 153,974">153,740</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,750">77,941</td><td class="dps-cell has-tip" data-tip="SimC baseline: 113,520">113,568</td><td class="dps-cell has-tip" data-tip="SimC baseline: 213,170">212,247</td><td class="dps-cell has-tip" data-tip="SimC baseline: 326,179">326,576</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 154,235">154,157</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Hunt (Apex 1) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNLzMzYmZMz2ALziZMMLMNwMzYDAAAYAAAAMzgBAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,727">77,794</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,523">114,710</td><td class="dps-cell has-tip" data-tip="SimC baseline: 209,969">210,801</td><td class="dps-cell has-tip" data-tip="SimC baseline: 325,587">324,751</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 153,486">153,627</td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,786">78,147</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,376">114,429</td><td class="dps-cell has-tip" data-tip="SimC baseline: 210,954">210,825</td><td class="dps-cell has-tip" data-tip="SimC baseline: 325,047">326,429</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 153,656">154,001</td>
+</tr><tr data-tree="fel_scarred">
+  <td class="build-name">Hunt Core (Apex 3) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMDzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2GzMzwMDz2ALziZMMLMNMmZGbAAAADAAAgZGMAAAA8B" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,922">78,447</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,891">108,855</td><td class="dps-cell has-tip" data-tip="SimC baseline: 218,986">218,520</td><td class="dps-cell has-tip" data-tip="SimC baseline: 317,611">317,598</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 153,787">153,899</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Scars of Suffering + Growing Inferno + Unbound Chaos + Screaming Brutality <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYmZmZmZWMmZmZmZmYmZAAAAAAAz2MzwAzsNzMjZZmZGzMDjZWmBDjlFmwMMzMWAAAAAAAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 74,258">74,147</td><td class="dps-cell has-tip" data-tip="SimC baseline: 116,080">116,128</td><td class="dps-cell has-tip" data-tip="SimC baseline: 210,815">210,129</td><td class="dps-cell has-tip" data-tip="SimC baseline: 329,274">328,640</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 152,923">152,614</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 73,946">73,913</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,895">116,187</td><td class="dps-cell has-tip" data-tip="SimC baseline: 210,372">210,500</td><td class="dps-cell has-tip" data-tip="SimC baseline: 329,080">330,484</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 152,615">152,887</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">TG+Burn <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYmtZmBLzMzYYmZ2GYZWMjhZhpxMmZGbAAAADAAAgZGMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,322">76,179</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,241">114,180</td><td class="dps-cell has-tip" data-tip="SimC baseline: 206,370">206,805</td><td class="dps-cell has-tip" data-tip="SimC baseline: 329,454">328,453</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 152,492">152,377</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,666">76,254</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,204">114,160</td><td class="dps-cell has-tip" data-tip="SimC baseline: 206,040">206,763</td><td class="dps-cell has-tip" data-tip="SimC baseline: 327,973">329,010</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 152,336">152,481</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">All Clusters [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYmZYmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzMz2YmZGmZY2GYZWMjhZhphxMzYDAAAYAAAAMzgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,170">80,208</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,825">110,783</td><td class="dps-cell has-tip" data-tip="SimC baseline: 208,290">208,526</td><td class="dps-cell has-tip" data-tip="SimC baseline: 315,324">316,233</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 152,071">152,278</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,251">80,187</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,770">110,878</td><td class="dps-cell has-tip" data-tip="SimC baseline: 208,098">208,891</td><td class="dps-cell has-tip" data-tip="SimC baseline: 316,205">315,419</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 152,184">152,251</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">CS+Burn <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMMjZbglZxMGmFmGzYmZsBAAAMAAAAmZwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,190">76,416</td><td class="dps-cell has-tip" data-tip="SimC baseline: 113,536">113,804</td><td class="dps-cell has-tip" data-tip="SimC baseline: 200,724">200,885</td><td class="dps-cell has-tip" data-tip="SimC baseline: 332,266">331,102</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 151,337">151,344</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,431">76,326</td><td class="dps-cell has-tip" data-tip="SimC baseline: 113,584">113,689</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,893">200,970</td><td class="dps-cell has-tip" data-tip="SimC baseline: 331,514">330,748</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 151,132">151,255</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Hunt Focus (Apex 2) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMDzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2mlZmZMzMMbDsMLmxwsw0wDYmZsBAAAMAAAAmZwAAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,106">77,905</td><td class="dps-cell has-tip" data-tip="SimC baseline: 113,107">112,980</td><td class="dps-cell has-tip" data-tip="SimC baseline: 205,517">205,125</td><td class="dps-cell has-tip" data-tip="SimC baseline: 318,582">318,766</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 151,280">151,100</td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 77,955">78,082</td><td class="dps-cell has-tip" data-tip="SimC baseline: 112,935">112,780</td><td class="dps-cell has-tip" data-tip="SimC baseline: 205,661">204,255</td><td class="dps-cell has-tip" data-tip="SimC baseline: 318,786">319,592</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 151,253">151,056</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">TG+EB (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsNjx2sMzMjZmxMbzsMDGGLbMhxYmZsAAAAMAAAwMDwAAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 79,411">79,243</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,878">116,034</td><td class="dps-cell has-tip" data-tip="SimC baseline: 205,267">205,628</td><td class="dps-cell has-tip" data-tip="SimC baseline: 300,842">299,004</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 149,560">149,322</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 79,539">79,386</td><td class="dps-cell has-tip" data-tip="SimC baseline: 115,923">115,892</td><td class="dps-cell has-tip" data-tip="SimC baseline: 205,218">206,168</td><td class="dps-cell has-tip" data-tip="SimC baseline: 300,707">300,697</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 149,592">149,754</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">TG+EB <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsNjZ2mlZmZMzMmZbmlZwwYZjJMGzMjFAAAgBAAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,006">80,352</td><td class="dps-cell has-tip" data-tip="SimC baseline: 116,623">116,455</td><td class="dps-cell has-tip" data-tip="SimC baseline: 204,853">204,051</td><td class="dps-cell has-tip" data-tip="SimC baseline: 296,074">294,889</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 149,121">148,873</td>
-</tr><tr data-tree="fel-scarred">
-  <td class="build-name">EB+Hunt [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbglZxMGmFmGYmZsBAAAMAAAAmZwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,390">78,224</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,296">114,198</td><td class="dps-cell has-tip" data-tip="SimC baseline: 200,461">200,297</td><td class="dps-cell has-tip" data-tip="SimC baseline: 306,537">306,966</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,516">148,450</td>
-</tr><tr data-tree="aldrachi_reaver">
-  <td class="build-name">EB+Burn+Hunt <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNLzMzYmxY2mZZGMMW2YCzMmZGLAAAAAAAgZGgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,138">72,168</td><td class="dps-cell has-tip" data-tip="SimC baseline: 112,404">112,346</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,427">199,123</td><td class="dps-cell has-tip" data-tip="SimC baseline: 326,434">327,162</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,145">148,183</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 80,175">80,049</td><td class="dps-cell has-tip" data-tip="SimC baseline: 116,709">116,733</td><td class="dps-cell has-tip" data-tip="SimC baseline: 203,613">203,850</td><td class="dps-cell has-tip" data-tip="SimC baseline: 296,226">296,297</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,922">148,939</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Burn <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGGzsNLegZGzMmZ2mZZGMMW2YCzMmZGLAAAADAAAMzAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,230">71,132</td><td class="dps-cell has-tip" data-tip="SimC baseline: 112,087">112,274</td><td class="dps-cell has-tip" data-tip="SimC baseline: 201,187">200,599</td><td class="dps-cell has-tip" data-tip="SimC baseline: 327,505">327,325</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,289">148,099</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,447">71,572</td><td class="dps-cell has-tip" data-tip="SimC baseline: 112,395">111,895</td><td class="dps-cell has-tip" data-tip="SimC baseline: 202,087">201,527</td><td class="dps-cell has-tip" data-tip="SimC baseline: 327,564">328,349</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,667">148,626</td>
+</tr><tr data-tree="fel_scarred">
+  <td class="build-name">EB+Hunt [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbglZxMGmFmGYmZsBAAAMAAAAmZwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 78,000">78,319</td><td class="dps-cell has-tip" data-tip="SimC baseline: 114,454">114,442</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,724">200,001</td><td class="dps-cell has-tip" data-tip="SimC baseline: 306,475">305,884</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,170">148,293</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Burn (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzwYmtZxMzYmxY2mZZGMMW2YCzMmZGLAAAADAAAMzAMAAAA8A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,930">69,676</td><td class="dps-cell has-tip" data-tip="SimC baseline: 109,780">109,485</td><td class="dps-cell has-tip" data-tip="SimC baseline: 201,074">201,073</td><td class="dps-cell has-tip" data-tip="SimC baseline: 332,851">332,703</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,132">147,951</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,659">69,695</td><td class="dps-cell has-tip" data-tip="SimC baseline: 109,924">109,760</td><td class="dps-cell has-tip" data-tip="SimC baseline: 201,507">201,150</td><td class="dps-cell has-tip" data-tip="SimC baseline: 334,177">332,466</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,338">147,984</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">EB+Burn+Hunt <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNLzMzYmxY2mZZGMMW2YCzMmZGLAAAAAAAgZGgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,194">72,274</td><td class="dps-cell has-tip" data-tip="SimC baseline: 112,345">112,146</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,402">198,038</td><td class="dps-cell has-tip" data-tip="SimC baseline: 325,717">326,351</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 148,047">147,807</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Burn+Hunt (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGjtZxMzYmZGz2MLzghxyGTYmxMzYBAAAAAAAMzAMAAAA8A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,260">70,986</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,726">110,485</td><td class="dps-cell has-tip" data-tip="SimC baseline: 198,845">199,000</td><td class="dps-cell has-tip" data-tip="SimC baseline: 328,295">328,014</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 147,631">147,469</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,190">71,116</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,364">110,732</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,584">199,155</td><td class="dps-cell has-tip" data-tip="SimC baseline: 328,446">327,469</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 147,753">147,521</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Burn (Apex 2) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzwYsNLmZGzMzY2mZZGMMW2YCzMmZGLAAAAAAAgZGgBAAAgLA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 70,000">70,146</td><td class="dps-cell has-tip" data-tip="SimC baseline: 109,613">109,469</td><td class="dps-cell has-tip" data-tip="SimC baseline: 200,916">200,690</td><td class="dps-cell has-tip" data-tip="SimC baseline: 327,919">327,577</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 147,359">147,295</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 70,230">70,385</td><td class="dps-cell has-tip" data-tip="SimC baseline: 109,279">109,307</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,899">199,369</td><td class="dps-cell has-tip" data-tip="SimC baseline: 326,889">328,744</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 147,003">147,223</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Burn+Hunt <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmthZmhZMzsNzyMYYssxEmZMzMWAAAAGAAAYmBYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,981">71,853</td><td class="dps-cell has-tip" data-tip="SimC baseline: 109,971">110,167</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,188">199,730</td><td class="dps-cell has-tip" data-tip="SimC baseline: 317,880">318,037</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 146,366">146,497</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,832">71,679</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,140">109,981</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,513">198,606</td><td class="dps-cell has-tip" data-tip="SimC baseline: 315,709">318,160</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 146,080">146,128</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">CT+EB <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNbzMzYmxY2mZZGMMW2YCzMmZGLAAAAAAAgZGgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,972">71,968</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,764">111,233</td><td class="dps-cell has-tip" data-tip="SimC baseline: 195,223">195,483</td><td class="dps-cell has-tip" data-tip="SimC baseline: 316,821">315,605</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 145,331">145,282</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,966">71,952</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,853">110,965</td><td class="dps-cell has-tip" data-tip="SimC baseline: 194,952">196,636</td><td class="dps-cell has-tip" data-tip="SimC baseline: 316,469">315,505</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 145,221">145,508</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Burn+Hunt (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGGjthZmhZmZmtZWmBDjlNmwMjZmxCAAAwAAAAzMADAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,768">69,680</td><td class="dps-cell has-tip" data-tip="SimC baseline: 107,884">107,638</td><td class="dps-cell has-tip" data-tip="SimC baseline: 198,209">198,171</td><td class="dps-cell has-tip" data-tip="SimC baseline: 318,893">318,948</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 144,964">144,887</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,324">69,327</td><td class="dps-cell has-tip" data-tip="SimC baseline: 107,949">107,889</td><td class="dps-cell has-tip" data-tip="SimC baseline: 198,774">199,578</td><td class="dps-cell has-tip" data-tip="SimC baseline: 320,353">318,690</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 145,135">145,079</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Burn+Hunt (Apex 2) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGjthZmhZmxsNzyMYYssxEmZMzMWAAAAGAAAYmBYAAAA4CA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,550">69,738</td><td class="dps-cell has-tip" data-tip="SimC baseline: 105,410">105,306</td><td class="dps-cell has-tip" data-tip="SimC baseline: 194,483">193,290</td><td class="dps-cell has-tip" data-tip="SimC baseline: 311,560">311,495</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 142,464">142,225</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,665">69,406</td><td class="dps-cell has-tip" data-tip="SimC baseline: 105,627">105,620</td><td class="dps-cell has-tip" data-tip="SimC baseline: 193,751">193,620</td><td class="dps-cell has-tip" data-tip="SimC baseline: 311,925">312,501</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 142,420">142,356</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Glaive Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzM2mlZmZMMmZbglZxMGmFmGGzMjNAAAgBAAAwMDGAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,978">76,911</td><td class="dps-cell has-tip" data-tip="SimC baseline: 111,895">111,766</td><td class="dps-cell has-tip" data-tip="SimC baseline: 193,006">193,676</td><td class="dps-cell has-tip" data-tip="SimC baseline: 276,068">276,877</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 141,086">141,325</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,957">77,071</td><td class="dps-cell has-tip" data-tip="SimC baseline: 111,559">111,580</td><td class="dps-cell has-tip" data-tip="SimC baseline: 193,283">193,591</td><td class="dps-cell has-tip" data-tip="SimC baseline: 276,346">276,380</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 141,137">141,274</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">Glaive Focus (Apex 2) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzMz2sMzMjhxMbDsMLmxwsw0wYmZsBAAAMAAAAmZwAAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,776">76,899</td><td class="dps-cell has-tip" data-tip="SimC baseline: 111,043">111,094</td><td class="dps-cell has-tip" data-tip="SimC baseline: 187,734">187,737</td><td class="dps-cell has-tip" data-tip="SimC baseline: 278,788">279,066</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 139,957">140,063</td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 76,979">76,653</td><td class="dps-cell has-tip" data-tip="SimC baseline: 111,114">111,133</td><td class="dps-cell has-tip" data-tip="SimC baseline: 187,313">187,805</td><td class="dps-cell has-tip" data-tip="SimC baseline: 279,764">279,059</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 140,101">139,974</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">TG+Burn <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYmtZmBLzMzYYmZ2mZZGMMW2YCzMmZGLAAAADAAAMzAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,342">71,925</td><td class="dps-cell has-tip" data-tip="SimC baseline: 111,380">111,620</td><td class="dps-cell has-tip" data-tip="SimC baseline: 186,725">187,663</td><td class="dps-cell has-tip" data-tip="SimC baseline: 281,731">281,456</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 138,202">138,243</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,782">72,119</td><td class="dps-cell has-tip" data-tip="SimC baseline: 111,137">111,527</td><td class="dps-cell has-tip" data-tip="SimC baseline: 187,486">187,639</td><td class="dps-cell has-tip" data-tip="SimC baseline: 282,163">282,481</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 138,168">138,465</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">CS+EB (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYGYmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzM2mlZmZMzMMbzsMDGGLbMhxYmZsAAAAMAAAwMDwAAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,933">72,654</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,804">108,851</td><td class="dps-cell has-tip" data-tip="SimC baseline: 184,482">184,175</td><td class="dps-cell has-tip" data-tip="SimC baseline: 283,789">282,378</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 137,829">137,422</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,708">72,660</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,796">108,825</td><td class="dps-cell has-tip" data-tip="SimC baseline: 184,134">183,810</td><td class="dps-cell has-tip" data-tip="SimC baseline: 281,086">282,007</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 137,234">137,274</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Glaive (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbmlZwwYZjJMeAzMjFAAAgBAAAmZAGAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,035">72,088</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,208">108,072</td><td class="dps-cell has-tip" data-tip="SimC baseline: 185,362">185,046</td><td class="dps-cell has-tip" data-tip="SimC baseline: 280,663">280,423</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 137,087">136,975</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,149">71,937</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,541">108,211</td><td class="dps-cell has-tip" data-tip="SimC baseline: 186,245">186,362</td><td class="dps-cell has-tip" data-tip="SimC baseline: 280,908">280,466</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 137,446">137,264</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Glaive <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbmlZwwYZjJMGzMjFAAAgBAAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 73,344">73,497</td><td class="dps-cell has-tip" data-tip="SimC baseline: 110,117">110,157</td><td class="dps-cell has-tip" data-tip="SimC baseline: 183,419">183,060</td><td class="dps-cell has-tip" data-tip="SimC baseline: 275,315">276,018</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 136,674">136,765</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 73,498">73,429</td><td class="dps-cell has-tip" data-tip="SimC baseline: 109,801">110,050</td><td class="dps-cell has-tip" data-tip="SimC baseline: 183,079">183,315</td><td class="dps-cell has-tip" data-tip="SimC baseline: 275,364">275,348</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 136,619">136,682</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2mlZmZMzMMbzsMDGGLbMhxYmZsAAAAMAAAwMDwAAAAwHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,633">72,792</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,554">108,729</td><td class="dps-cell has-tip" data-tip="SimC baseline: 185,978">186,743</td><td class="dps-cell has-tip" data-tip="SimC baseline: 271,083">271,847</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 136,125">136,529</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,433">72,628</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,500">108,710</td><td class="dps-cell has-tip" data-tip="SimC baseline: 187,411">186,439</td><td class="dps-cell has-tip" data-tip="SimC baseline: 270,252">271,337</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 136,260">136,299</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">CA+EB (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmx2sMzMz2MzwsNzyMYYssxEGjZmxCAAAwAAAAzMADAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,363">71,258</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,008">108,208</td><td class="dps-cell has-tip" data-tip="SimC baseline: 182,727">182,628</td><td class="dps-cell has-tip" data-tip="SimC baseline: 282,567">281,493</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 136,381">136,178</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,185">71,326</td><td class="dps-cell has-tip" data-tip="SimC baseline: 107,938">108,002</td><td class="dps-cell has-tip" data-tip="SimC baseline: 182,707">182,167</td><td class="dps-cell has-tip" data-tip="SimC baseline: 282,944">281,352</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 136,342">136,042</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">CA+EB <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmZ2mlZmZ2mZGmtZWmBDjlNmwYMzMWAAAAGAAAYmBYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,931">72,516</td><td class="dps-cell has-tip" data-tip="SimC baseline: 109,168">109,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 180,291">180,360</td><td class="dps-cell has-tip" data-tip="SimC baseline: 278,328">276,876</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 135,566">135,612</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 72,447">72,079</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,957">109,031</td><td class="dps-cell has-tip" data-tip="SimC baseline: 180,557">179,822</td><td class="dps-cell has-tip" data-tip="SimC baseline: 277,220">277,933</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 135,667">135,436</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB Focus (Apex 2) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNLzMzYmhZ2mZZGMMW2YCDmZGLAAAADAAAMzAMAAAAcB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 70,010">69,902</td><td class="dps-cell has-tip" data-tip="SimC baseline: 105,434">106,052</td><td class="dps-cell has-tip" data-tip="SimC baseline: 183,884">185,295</td><td class="dps-cell has-tip" data-tip="SimC baseline: 276,427">277,171</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 134,755">135,263</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,716">69,856</td><td class="dps-cell has-tip" data-tip="SimC baseline: 106,012">106,001</td><td class="dps-cell has-tip" data-tip="SimC baseline: 185,870">185,335</td><td class="dps-cell has-tip" data-tip="SimC baseline: 277,230">277,657</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 135,326">135,318</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Hunt (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGzsNLzMzYmZMz2MLzghxyGTYwMzYBAAAYAAAgZGgBAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,218">69,432</td><td class="dps-cell has-tip" data-tip="SimC baseline: 106,558">106,397</td><td class="dps-cell has-tip" data-tip="SimC baseline: 183,228">184,649</td><td class="dps-cell has-tip" data-tip="SimC baseline: 276,240">277,568</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 134,375">135,001</td>
-</tr><tr data-tree="aldrachi_reaver">
-  <td class="build-name">EB+Hunt <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbmlZwwYZjJMYmZsAAAAMAAAwMDwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 70,480">70,166</td><td class="dps-cell has-tip" data-tip="SimC baseline: 106,738">107,003</td><td class="dps-cell has-tip" data-tip="SimC baseline: 179,195">179,313</td><td class="dps-cell has-tip" data-tip="SimC baseline: 269,131">268,806</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,895">132,774</td>
-</tr><tr data-tree="aldrachi_reaver">
-  <td class="build-name">Hunt Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMDzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2GzMzwMDz2MLzghxyGTYMmZGLAAAADAAAMzAMAAAA8B" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 70,309">70,345</td><td class="dps-cell has-tip" data-tip="SimC baseline: 104,215">104,064</td><td class="dps-cell has-tip" data-tip="SimC baseline: 184,192">184,272</td><td class="dps-cell has-tip" data-tip="SimC baseline: 261,581">261,719</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,556">132,591</td>
-</tr><tr data-tree="aldrachi_reaver">
-  <td class="build-name">CT+EB (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmZ2mtZmZMzMMbzsMDGGLbMhxYmZsAAAAMAAAwMDwAAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,071">71,370</td><td class="dps-cell has-tip" data-tip="SimC baseline: 104,659">104,744</td><td class="dps-cell has-tip" data-tip="SimC baseline: 179,084">179,156</td><td class="dps-cell has-tip" data-tip="SimC baseline: 268,999">266,323</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,802">132,566</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 69,217">69,554</td><td class="dps-cell has-tip" data-tip="SimC baseline: 106,169">106,607</td><td class="dps-cell has-tip" data-tip="SimC baseline: 183,995">183,778</td><td class="dps-cell has-tip" data-tip="SimC baseline: 277,695">277,512</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 134,726">134,862</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">All Clusters <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYmZYmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzMz2YmZGmZY2mZZGMMW2YCjxMzYBAAAYAAAgZGgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,234">71,435</td><td class="dps-cell has-tip" data-tip="SimC baseline: 104,797">104,835</td><td class="dps-cell has-tip" data-tip="SimC baseline: 177,877">178,462</td><td class="dps-cell has-tip" data-tip="SimC baseline: 267,875">266,593</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,425">132,475</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,412">71,828</td><td class="dps-cell has-tip" data-tip="SimC baseline: 104,734">104,844</td><td class="dps-cell has-tip" data-tip="SimC baseline: 178,632">178,094</td><td class="dps-cell has-tip" data-tip="SimC baseline: 267,365">267,978</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,608">132,769</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">EB+Hunt <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMjZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMzMmZbmlZwwYZjJMYmZsAAAAMAAAwMDwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 70,337">70,105</td><td class="dps-cell has-tip" data-tip="SimC baseline: 106,733">106,910</td><td class="dps-cell has-tip" data-tip="SimC baseline: 178,590">179,188</td><td class="dps-cell has-tip" data-tip="SimC baseline: 267,477">268,234</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,431">132,616</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">CT+EB (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwAzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmZ2mtZmZMzMMbzsMDGGLbMhxYmZsAAAAMAAAwMDwAAAAwDA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 71,298">71,185</td><td class="dps-cell has-tip" data-tip="SimC baseline: 104,635">104,795</td><td class="dps-cell has-tip" data-tip="SimC baseline: 179,251">179,225</td><td class="dps-cell has-tip" data-tip="SimC baseline: 267,860">266,809</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,771">132,580</td>
+</tr><tr data-tree="aldrachi_reaver">
+  <td class="build-name">Hunt Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMDzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2GzMzwMDz2MLzghxyGTYMmZGLAAAADAAAMzAMAAAA8B" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 70,181">70,470</td><td class="dps-cell has-tip" data-tip="SimC baseline: 104,090">104,156</td><td class="dps-cell has-tip" data-tip="SimC baseline: 184,186">183,265</td><td class="dps-cell has-tip" data-tip="SimC baseline: 260,904">262,044</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,377">132,458</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Burn+Glaive (Apex 1) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmtZxMzYwMz2MLzghxyGTYmxMzYBAAAYAAAgZGgBAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 66,501">66,254</td><td class="dps-cell has-tip" data-tip="SimC baseline: 105,134">105,096</td><td class="dps-cell has-tip" data-tip="SimC baseline: 177,714">177,478</td><td class="dps-cell has-tip" data-tip="SimC baseline: 280,176">281,067</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,150">132,108</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 66,494">66,491</td><td class="dps-cell has-tip" data-tip="SimC baseline: 104,913">105,215</td><td class="dps-cell has-tip" data-tip="SimC baseline: 178,098">177,579</td><td class="dps-cell has-tip" data-tip="SimC baseline: 281,319">280,711</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 132,382">132,205</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Burn Focus (Apex 2) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGGzsNLmZGDmZ2mZZGMMW2YCzMmZGLAAAADAAAMzAMAAAAcB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 65,397">65,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,185">102,818</td><td class="dps-cell has-tip" data-tip="SimC baseline: 176,809">176,822</td><td class="dps-cell has-tip" data-tip="SimC baseline: 278,461">278,756</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 130,878">130,717</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 65,215">65,196</td><td class="dps-cell has-tip" data-tip="SimC baseline: 102,722">102,623</td><td class="dps-cell has-tip" data-tip="SimC baseline: 177,069">177,770</td><td class="dps-cell has-tip" data-tip="SimC baseline: 279,142">277,603</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 130,894">130,815</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Hunt Focus (Apex 2) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMDzMzixMzMzMzEzMDAAAAAAYWmZGGYmlZM2mlZmZMzMMbzsMDGGLbMhxDYmZsAAAAMAAAwMDwAAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 68,674">69,051</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,236">103,232</td><td class="dps-cell has-tip" data-tip="SimC baseline: 176,477">175,907</td><td class="dps-cell has-tip" data-tip="SimC baseline: 267,440">267,728</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 130,624">130,694</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 68,578">68,932</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,155">103,393</td><td class="dps-cell has-tip" data-tip="SimC baseline: 176,121">176,457</td><td class="dps-cell has-tip" data-tip="SimC baseline: 266,929">267,603</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 130,403">130,783</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Burn+Glaive <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmtZZmZGDmZ2mZZGMMW2YCzMmZGLAAAADAAAMzAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 66,951">67,185</td><td class="dps-cell has-tip" data-tip="SimC baseline: 105,496">106,034</td><td class="dps-cell has-tip" data-tip="SimC baseline: 173,091">172,820</td><td class="dps-cell has-tip" data-tip="SimC baseline: 273,180">272,325</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 130,202">130,192</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 66,864">66,959</td><td class="dps-cell has-tip" data-tip="SimC baseline: 105,746">105,707</td><td class="dps-cell has-tip" data-tip="SimC baseline: 173,592">173,474</td><td class="dps-cell has-tip" data-tip="SimC baseline: 272,137">271,963</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 130,169">130,151</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Burn Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzYGjtZZmZGDGz2MLzghxyGTYmxMzYBAAAYAAAgZGgBAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 66,279">66,611</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,881">104,005</td><td class="dps-cell has-tip" data-tip="SimC baseline: 175,513">175,612</td><td class="dps-cell has-tip" data-tip="SimC baseline: 268,123">267,035</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 129,504">129,534</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 66,603">66,412</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,705">103,753</td><td class="dps-cell has-tip" data-tip="SimC baseline: 175,165">175,153</td><td class="dps-cell has-tip" data-tip="SimC baseline: 267,352">266,878</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 129,421">129,268</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">CT+Burn <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzMzMzixMzMzMzEzMDAAAAAAYWmZGGYGzYmtZbmZGDmZ2mZZGMMW2YCzMmZGLAAAADAAAMzAMAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 67,119">66,914</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,188">103,383</td><td class="dps-cell has-tip" data-tip="SimC baseline: 169,531">170,334</td><td class="dps-cell has-tip" data-tip="SimC baseline: 262,458">262,607</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 127,433">127,593</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 67,072">67,126</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,168">103,131</td><td class="dps-cell has-tip" data-tip="SimC baseline: 169,767">170,270</td><td class="dps-cell has-tip" data-tip="SimC baseline: 262,713">262,400</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 127,506">127,604</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">CS+Burn <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwMzYmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMjZ2mlZmZMMjZbmlZwwYZjJMzYmZsAAAAMAAAwMDwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 65,781">65,555</td><td class="dps-cell has-tip" data-tip="SimC baseline: 102,224">102,183</td><td class="dps-cell has-tip" data-tip="SimC baseline: 166,296">166,934</td><td class="dps-cell has-tip" data-tip="SimC baseline: 266,003">264,527</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 126,410">126,240</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 65,714">65,611</td><td class="dps-cell has-tip" data-tip="SimC baseline: 102,274">102,372</td><td class="dps-cell has-tip" data-tip="SimC baseline: 166,670">165,988</td><td class="dps-cell has-tip" data-tip="SimC baseline: 265,298">265,092</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 126,375">126,142</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Glaive Core (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzM2mlZmZMMmZbmlZwwYZjJMGzMjFAAAgBAAAmZAGAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 68,761">68,648</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,164">103,410</td><td class="dps-cell has-tip" data-tip="SimC baseline: 167,247">166,617</td><td class="dps-cell has-tip" data-tip="SimC baseline: 231,473">231,388</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 122,950">122,766</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 68,803">69,020</td><td class="dps-cell has-tip" data-tip="SimC baseline: 103,515">103,312</td><td class="dps-cell has-tip" data-tip="SimC baseline: 167,069">167,385</td><td class="dps-cell has-tip" data-tip="SimC baseline: 231,293">231,775</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 122,950">123,168</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Glaive Focus (Apex 2) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAwgZmZWMmZmZmZmYmZAAAAAAAzyMzwAzsMzMz2sMzMjhxMbzsMDGGLbMhxYmZsAAAAMAAAwMDwAAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 68,228">67,588</td><td class="dps-cell has-tip" data-tip="SimC baseline: 101,783">102,126</td><td class="dps-cell has-tip" data-tip="SimC baseline: 163,715">164,197</td><td class="dps-cell has-tip" data-tip="SimC baseline: 237,056">237,108</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 122,457">122,349</td>
-</tr><tr data-tree="fel-scarred">
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 68,015">67,914</td><td class="dps-cell has-tip" data-tip="SimC baseline: 101,961">101,888</td><td class="dps-cell has-tip" data-tip="SimC baseline: 163,728">163,370</td><td class="dps-cell has-tip" data-tip="SimC baseline: 238,531">237,457</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 122,613">122,306</td>
+</tr><tr data-tree="fel_scarred">
   <td class="build-name">EB+Burn (Apex 3) [Wave of Debilitation] <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYmZwMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmx2YmZGmZY2GYZWMjhZhphxMzYDAAAAAAAgZGMAAAA8B" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,191">50,144</td><td class="dps-cell has-tip" data-tip="SimC baseline: 71,394">71,336</td><td class="dps-cell has-tip" data-tip="SimC baseline: 133,560">133,349</td><td class="dps-cell has-tip" data-tip="SimC baseline: 200,271">198,656</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 96,726">96,401</td>
+  <td><span class="tree-badge sm tree-b">FS</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,369">50,207</td><td class="dps-cell has-tip" data-tip="SimC baseline: 71,390">71,367</td><td class="dps-cell has-tip" data-tip="SimC baseline: 132,919">132,645</td><td class="dps-cell has-tip" data-tip="SimC baseline: 199,679">200,331</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 96,556">96,509</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">EB+Burn (Apex 3) <button class="copy-hash" data-hash="CEkAAAAAAAAAAAAAAAAAAAAAAYmZwMzixMzMzMzEzMDAAAAAAYWmZGGYmlZmx2YmZGmZY2mZZGMMW2YCjxMzYBAAAAAAAMzAMAAAA8B" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
-  <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,108">51,222</td><td class="dps-cell has-tip" data-tip="SimC baseline: 74,703">74,847</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,150">107,941</td><td class="dps-cell has-tip" data-tip="SimC baseline: 154,104">154,578</td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,357">84,449</td>
+  <td><span class="tree-badge sm tree-a">AR</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,176">51,164</td><td class="dps-cell has-tip" data-tip="SimC baseline: 74,850">75,006</td><td class="dps-cell has-tip" data-tip="SimC baseline: 108,592">108,128</td><td class="dps-cell has-tip" data-tip="SimC baseline: 154,078">153,554</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 84,516">84,340</td>
 </tr></tbody>
     </table>
   </div>
@@ -2156,134 +2166,7 @@ footer { animation-delay: 0.35s; }
     </details>
   </div>
 </section>
-<section>
-  <h2>Talent Impact</h2>
-  <div class="subsection">
-    <h3>Defensive Talent Costs</h3>
-    <p class="section-desc">DPS cost of taking each defensive talent (averaged across hero trees, vs CT+EB (Apex 0)).</p>
-    <div class="def-cost-list">
-    <div class="def-strip-header"><div class="def-strip-header__body"><span></span><span></span><span class="def-strip-header__label" style="color:var(--fg)">Avg</span><span class="def-strip__tree-header"><span class="tree-badge sm ar">AR</span></span><span class="def-strip__tree-header"><span class="tree-badge sm ar">AR</span></span></div></div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Soul Rending</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:81.6%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-10.96%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.10%</span><span class="def-strip__tree">-6.83%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Wings of Wrath</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:82.2%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.05%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.08%</span><span class="def-strip__tree">-7.03%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Lost in Darkness</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:82.5%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.09%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.22%</span><span class="def-strip__tree">-6.95%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Illidari Knowledge</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:82.6%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.11%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.09%</span><span class="def-strip__tree">-7.12%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Demon Hide</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:82.9%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.14%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.33%</span><span class="def-strip__tree">-6.96%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Deflecting Dance</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:82.9%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.15%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.19%</span><span class="def-strip__tree">-7.11%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Shattered Restoration</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:83.0%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.16%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.28%</span><span class="def-strip__tree">-7.03%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Will of the Illidari</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:83.0%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.16%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.21%</span><span class="def-strip__tree">-7.12%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Charred Warblades</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:83.2%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.18%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.25%</span><span class="def-strip__tree">-7.11%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Demonic Resilience</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:83.6%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-11.24%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-15.30%</span><span class="def-strip__tree">-7.19%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Scars of Suffering</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:97.3%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-13.08%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-16.76%</span><span class="def-strip__tree">-9.40%</span>
-      </div>
-    </div><div class="def-strip def-strip--heavy">
-      <div class="def-strip__indicator" style="background:var(--negative)"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">Desperate Instincts</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:100.0%;background:var(--negative)"></div>
-        </div>
-        <span class="def-strip__cost" style="color:var(--negative)">-13.44%</span>
-        <span class="def-strip__tree def-strip__tree--divergent">-17.40%</span><span class="def-strip__tree">-9.49%</span>
-      </div>
-    </div></div></div>
-</section>
+
 <footer>
   <p>Generated by <a href="https://github.com/taherbert/dh-apl">dh-apl</a></p>
 </footer>
