@@ -100,21 +100,19 @@ export const SPEC_CONFIG = {
     },
     burn: {
       core: ["Burning Wound"],
-      extended: ["A Fire Inside", "Ragefire"],
+      extended: [
+        "A Fire Inside",
+        "Ragefire",
+        "Isolated Prey",
+        "Growing Inferno",
+      ],
     },
     hunt: {
       core: ["The Hunt"],
     },
     glaive: {
       core: ["Glaive Tempest"],
-      extended: ["Screaming Brutality"],
-    },
-    throw_glaive: {
-      core: ["Furious Throws"],
-    },
-    immo_focus: {
-      core: ["Isolated Prey"],
-      extended: ["Growing Inferno"],
+      extended: ["Screaming Brutality", "Furious Throws"],
     },
     collective_anguish: {
       core: ["Collective Anguish"],
@@ -146,6 +144,7 @@ export const SPEC_CONFIG = {
       include: {
         essence_break: "full",
         inertia: "full",
+        burn: "core",
         hunt: "full",
         glaive: "full",
       },
@@ -154,6 +153,7 @@ export const SPEC_CONFIG = {
       name: "Burn+Hunt",
       apexRank: 0,
       include: {
+        essence_break: "core",
         inertia: "full",
         burn: "full",
         hunt: "full",
@@ -196,7 +196,13 @@ export const SPEC_CONFIG = {
     {
       name: "Hunt+Glaive",
       apexRank: 0,
-      include: { inertia: "full", hunt: "full", glaive: "full" },
+      include: {
+        essence_break: "core",
+        inertia: "full",
+        burn: "core",
+        hunt: "full",
+        glaive: "full",
+      },
     },
 
     // --- Apex 1 (Eternal Hunt rank 1) ---
@@ -216,6 +222,7 @@ export const SPEC_CONFIG = {
       include: {
         essence_break: "full",
         inertia: "full",
+        burn: "core",
         hunt: "full",
         glaive: "full",
       },
@@ -224,6 +231,7 @@ export const SPEC_CONFIG = {
       name: "Burn+Hunt",
       apexRank: 1,
       include: {
+        essence_break: "core",
         inertia: "core",
         burn: "full",
         hunt: "full",
@@ -243,7 +251,13 @@ export const SPEC_CONFIG = {
     {
       name: "Hunt+Glaive",
       apexRank: 1,
-      include: { inertia: "full", hunt: "full", glaive: "full" },
+      include: {
+        essence_break: "core",
+        inertia: "full",
+        burn: "core",
+        hunt: "full",
+        glaive: "full",
+      },
     },
     {
       name: "EB+Glaive",
@@ -275,7 +289,13 @@ export const SPEC_CONFIG = {
     {
       name: "Hunt Focus",
       apexRank: 2,
-      include: { inertia: "core", essence_break: "full", hunt: "full" },
+      include: {
+        essence_break: "full",
+        inertia: "core",
+        burn: "core",
+        hunt: "full",
+        glaive: "core",
+      },
     },
     {
       name: "Glaive Focus",
@@ -285,12 +305,24 @@ export const SPEC_CONFIG = {
     {
       name: "EB+Hunt",
       apexRank: 2,
-      include: { essence_break: "full", inertia: "core", hunt: "full" },
+      include: {
+        essence_break: "full",
+        inertia: "core",
+        burn: "core",
+        hunt: "full",
+        glaive: "core",
+      },
     },
     {
       name: "Burn+Hunt",
       apexRank: 2,
-      include: { inertia: "core", burn: "full", hunt: "full" },
+      include: {
+        essence_break: "core",
+        inertia: "core",
+        burn: "full",
+        hunt: "full",
+        glaive: "core",
+      },
     },
     {
       name: "EB+Burn",
@@ -312,7 +344,13 @@ export const SPEC_CONFIG = {
     {
       name: "Hunt Core",
       apexRank: 3,
-      include: { inertia: "core", hunt: "full", glaive: "core" },
+      include: {
+        essence_break: "core",
+        inertia: "core",
+        burn: "core",
+        hunt: "full",
+        glaive: "core",
+      },
     },
     {
       name: "Glaive Core",
@@ -327,7 +365,13 @@ export const SPEC_CONFIG = {
     {
       name: "EB+Hunt",
       apexRank: 3,
-      include: { essence_break: "core", inertia: "core", hunt: "core" },
+      include: {
+        essence_break: "core",
+        inertia: "core",
+        burn: "core",
+        hunt: "core",
+        glaive: "core",
+      },
     },
 
     // --- Throw Glaive archetype (Soulscar side of RO/Soulscar choice node) ---
@@ -335,7 +379,6 @@ export const SPEC_CONFIG = {
       name: "TG+EB",
       apexRank: 0,
       include: {
-        throw_glaive: "core",
         essence_break: "full",
         inertia: "full",
         glaive: "full",
@@ -347,10 +390,8 @@ export const SPEC_CONFIG = {
       name: "TG+Burn",
       apexRank: 0,
       include: {
-        throw_glaive: "core",
         burn: "full",
-        immo_focus: "full",
-        glaive: "core",
+        glaive: "full",
       },
       require: ["Serrated Glaive", "Soulscar"],
       exclude: ["Relentless Onslaught"],
@@ -359,10 +400,9 @@ export const SPEC_CONFIG = {
       name: "TG+EB",
       apexRank: 1,
       include: {
-        throw_glaive: "core",
         essence_break: "full",
         inertia: "core",
-        glaive: "core",
+        glaive: "full",
       },
       require: ["Serrated Glaive", "Soulscar"],
       exclude: ["Relentless Onslaught"],
@@ -403,25 +443,14 @@ export const SPEC_CONFIG = {
       exclude: ["Soulscar"],
     },
 
-    // --- Full Immo archetype (Isolated Prey + Growing Inferno) ---
+    // --- Full Burn+Immo archetype (BW + IP + GI via burn: "full") ---
     {
-      name: "Immo+EB",
+      name: "Burn+EB",
       apexRank: 0,
       include: {
-        immo_focus: "full",
         burn: "full",
         essence_break: "full",
         inertia: "full",
-      },
-    },
-    {
-      name: "Immo+Glaive",
-      apexRank: 0,
-      include: {
-        immo_focus: "full",
-        burn: "full",
-        inertia: "full",
-        glaive: "full",
       },
     },
 

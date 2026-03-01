@@ -66,11 +66,9 @@
 ## Talent Clusters
 - **essence_break:** Core: Essence Break | Extended: Know Your Enemy, Cycle of Hatred
 - **inertia:** Core: Inertia | Extended: Unbound Chaos
-- **burn:** Core: Burning Wound | Extended: A Fire Inside, Ragefire
+- **burn:** Core: Burning Wound | Extended: A Fire Inside, Ragefire, Isolated Prey, Growing Inferno
 - **hunt:** Core: The Hunt
-- **glaive:** Core: Glaive Tempest | Extended: Screaming Brutality
-- **throw_glaive:** Core: Furious Throws
-- **immo_focus:** Core: Isolated Prey | Extended: Growing Inferno
+- **glaive:** Core: Glaive Tempest | Extended: Screaming Brutality, Furious Throws
 - **collective_anguish:** Core: Collective Anguish
 - **chaotic_transform:** Core: Chaotic Transformation
 
@@ -81,18 +79,17 @@
 
 ## APL Structure
 - File: `apls/havoc/havoc.simc`
-- Action lists: 9
+- Action lists: 8
 
 ### Action Lists
 - **precombat:** 3 actions
-- **default:** 20 actions; delegates: call_action_list -> cooldown, run_action_list -> fel_scarred, run_action_list -> aldrachi_reaver
+- **default:** 19 actions; delegates: call_action_list -> cooldown, run_action_list -> fel_scarred, run_action_list -> aldrachi_reaver
 - **cooldown:** 3 actions
-- **fel_scarred:** 24 actions; delegates: run_action_list -> fs_meta, call_action_list -> tg_priority
-- **fs_meta:** 22 actions; delegates: call_action_list -> tg_priority
-- **aldrachi_reaver:** 27 actions; delegates: call_action_list -> ar_glaive_cycle, run_action_list -> ar_meta, call_action_list -> tg_priority
+- **fel_scarred:** 23 actions; delegates: run_action_list -> fs_meta
+- **fs_meta:** 21 actions
+- **aldrachi_reaver:** 26 actions; delegates: call_action_list -> ar_glaive_cycle, run_action_list -> ar_meta
 - **ar_glaive_cycle:** 6 actions
-- **ar_meta:** 19 actions; delegates: call_action_list -> ar_glaive_cycle, call_action_list -> tg_priority
-- **tg_priority:** 2 actions
+- **ar_meta:** 18 actions; delegates: call_action_list -> ar_glaive_cycle
 
 ### APL Variables
 - **tab_target_burning_wound** (precombat): `1`
@@ -104,7 +101,6 @@
 - **inertia_consumer_soon_rush** (default): `buff.inertia_trigger.remains<=gcd.max|cooldown.the_hunt.remains<=gcd.max+0.5|...`
 - **eb_aligned** (default): `!talent.inertia&(!talent.initiative|cooldown.vengeful_retreat.remains>=3|buff...`
 - **bd_not_blocking** (default): `cooldown.blade_dance.remains>=gcd.max|!variable.use_blade_dance`
-- **tg_spender** (default): `talent.furious_throws&talent.soulscar`
 - **cs_machine** (default): `talent.relentless_onslaught&talent.chaos_theory`
 - **use_filler** (default): `cooldown.felblade.remains>=gcd.max&cooldown.immolation_aura.remains>=gcd.max&...`
 - **rg_inc** (aldrachi_reaver): `buff.rending_strike.down&buff.glaive_flurry.up&cooldown.blade_dance.up&gcd.re...`
@@ -115,10 +111,10 @@
 - `run_action_list -> aldrachi_reaver`: `(unconditional)`
 
 ## Roster Overview
-- Templates: 41
+- Templates: 40
 - Hero trees: Aldrachi Reaver, Fel-Scarred
 - Apex range: 0-3
-- Per rank: Apex 0: 17, Apex 1: 11, Apex 2: 7, Apex 3: 6
+- Per rank: Apex 0: 16, Apex 1: 11, Apex 2: 7, Apex 3: 6
 - Variation axes: hero tree, apex rank, talent variant (require/exclude)
 
 ## Design Constraints
