@@ -111,7 +111,7 @@ function loadReportData(roster) {
       id: build.id,
       displayName: formatBuildName(build),
       archetype: build.archetype || "",
-      heroTree: build.heroTree || "",
+      heroTree: normalizeTreeKey(build.heroTree) || "",
       hash: build.hash,
       source: build.source || "",
       dps,
@@ -305,7 +305,7 @@ function mergeSimResults(roster, baselineMaps, oursMaps) {
       id: build.id,
       displayName: build.displayName || build.id,
       archetype: build.archetype || "",
-      heroTree: build.heroTree || "",
+      heroTree: normalizeTreeKey(build.heroTree) || "",
       hash: build.hash,
       source: build.source || "",
       dps,
@@ -748,7 +748,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
   for (const tree of treeNames) {
     if (!gains[tree]) continue;
     const color = treeColor(tree);
-    const fill = isAnni(tree)
+    const fill = isSecondTree(tree)
       ? "rgba(167, 139, 250, 0.15)"
       : "rgba(251, 146, 60, 0.15)";
 
@@ -1469,20 +1469,38 @@ const COPY_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" st
 
 const INFO_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg>`;
 
-function isAnni(heroTree) {
-  return heroTree?.toLowerCase().startsWith("anni");
+// Tree helpers — position-based, set by initTreeHelpers() at startup
+let _treeKeys = [];
+let _treeDisplayNames = {};
+
+function initTreeHelpers(heroTrees) {
+  _treeKeys = Object.keys(heroTrees);
+  _treeDisplayNames = Object.fromEntries(
+    _treeKeys.map((k) => [k, heroTrees[k].displayName]),
+  );
+}
+
+function normalizeTreeKey(heroTree) {
+  return heroTree?.replace(/[\s-]+/g, "_").toLowerCase();
+}
+
+function isSecondTree(heroTree) {
+  return normalizeTreeKey(heroTree) === _treeKeys[1];
 }
 
 function treeClass(heroTree) {
-  return isAnni(heroTree) ? "anni" : "ar";
+  return isSecondTree(heroTree) ? "tree-b" : "tree-a";
 }
 
 function treeAbbr(heroTree) {
-  return isAnni(heroTree) ? "Anni" : "AR";
+  const name = _treeDisplayNames[normalizeTreeKey(heroTree)] || heroTree;
+  const words = name.split(/[\s-]+/);
+  if (words.length >= 2) return words.map((w) => w[0].toUpperCase()).join("");
+  return name.slice(0, 4);
 }
 
 function treeColor(heroTree) {
-  return isAnni(heroTree) ? "#a78bfa" : "#fb923c";
+  return isSecondTree(heroTree) ? "#a78bfa" : "#fb923c";
 }
 
 function scenarioLabel(s) {
@@ -1547,10 +1565,10 @@ const CSS = `
   --negative-bg: rgba(251, 113, 133, 0.07);
   --gold: #f5c842;
   --gold-bg: rgba(245, 200, 66, 0.08);
-  --anni: #a78bfa;
-  --anni-glow: rgba(167, 139, 250, 0.10);
-  --ar: #fb923c;
-  --ar-glow: rgba(251, 146, 60, 0.10);
+  --tree-b: #a78bfa;
+  --tree-b-glow: rgba(167, 139, 250, 0.10);
+  --tree-a: #fb923c;
+  --tree-a-glow: rgba(251, 146, 60, 0.10);
   --radius: 10px;
   --radius-sm: 6px;
 }
@@ -1585,7 +1603,7 @@ header h1 {
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--anni) 60%, var(--ar) 100%);
+  background: linear-gradient(135deg, var(--accent) 0%, var(--tree-b) 60%, var(--tree-a) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1678,10 +1696,10 @@ h4 {
   border-radius: var(--radius) var(--radius) 0 0;
 }
 
-.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--ar), transparent); }
-.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--anni), transparent); }
-.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--ar-glow); }
-.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--anni-glow); }
+.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--tree-a), transparent); }
+.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--tree-b), transparent); }
+.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--tree-a-glow); }
+.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--tree-b-glow); }
 
 .showcase-header {
   margin-bottom: 1rem;
@@ -1936,8 +1954,8 @@ h4 {
   letter-spacing: 0.03em;
 }
 
-.tree-badge.anni { background: rgba(167, 139, 250, 0.13); color: var(--anni); }
-.tree-badge.ar { background: rgba(251, 146, 60, 0.13); color: var(--ar); }
+.tree-badge.tree-b { background: rgba(167, 139, 250, 0.13); color: var(--tree-b); }
+.tree-badge.tree-a { background: rgba(251, 146, 60, 0.13); color: var(--tree-a); }
 .tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
 
 /* Filter bar */
@@ -2303,7 +2321,7 @@ summary:hover { color: var(--accent); }
 .trinket-tag--passive { color: var(--fg-muted); }
 .trinket-tag--raid { color: var(--gold); border-color: rgba(245, 200, 66, 0.25); }
 .trinket-tag--dungeon { color: var(--positive); border-color: rgba(52, 211, 153, 0.25); }
-.trinket-tag--crafted { color: var(--ar); border-color: rgba(251, 146, 60, 0.25); }
+.trinket-tag--crafted { color: var(--tree-a); border-color: rgba(251, 146, 60, 0.25); }
 
 .trinket-strip__bar-wrap {
   height: 5px;
@@ -2795,6 +2813,7 @@ async function main() {
   const specName = config.spec.specName;
   const specConfig = specAdapter.getSpecConfig();
   const heroTrees = specConfig.heroTrees;
+  initTreeHelpers(heroTrees);
   const opts = parseArgs();
 
   console.log(`Generating report for ${specName}...`);
