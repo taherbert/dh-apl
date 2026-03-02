@@ -3314,17 +3314,19 @@ async function main() {
 
     reportData = loadReportData(roster);
 
-    console.log(`\n  Running defensive talent cost sims...`);
-    defensiveTalentCosts = await simDefensiveCosts(
-      oursPath,
-      fidelityOpts,
-      reportData,
-      specConfig,
-    );
-    writeFileSync(defCostPath, JSON.stringify(defensiveTalentCosts, null, 2));
-    console.log(
-      `  ${defensiveTalentCosts.costs.length} defensive talent costs computed (vs ${defensiveTalentCosts.refName}).`,
-    );
+    if (specConfig.role === "tank") {
+      console.log(`\n  Running defensive talent cost sims...`);
+      defensiveTalentCosts = await simDefensiveCosts(
+        oursPath,
+        fidelityOpts,
+        reportData,
+        specConfig,
+      );
+      writeFileSync(defCostPath, JSON.stringify(defensiveTalentCosts, null, 2));
+      console.log(
+        `  ${defensiveTalentCosts.costs.length} defensive talent costs computed (vs ${defensiveTalentCosts.refName}).`,
+      );
+    }
   } else {
     console.log("  Loading cached DPS from DB...");
     reportData = loadReportData(roster);
@@ -3333,7 +3335,7 @@ async function main() {
       `  ${reportData.builds.length} builds loaded (${withDps} with DPS data)`,
     );
 
-    if (existsSync(defCostPath)) {
+    if (specConfig.role === "tank" && existsSync(defCostPath)) {
       defensiveTalentCosts = JSON.parse(readFileSync(defCostPath, "utf-8"));
       console.log(
         `  ${defensiveTalentCosts.costs?.length || 0} cached defensive costs loaded.`,

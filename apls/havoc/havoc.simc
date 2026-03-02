@@ -88,7 +88,8 @@ actions.fel_scarred+=/essence_break,if=talent.essence_break&fury>=35&(buff.inert
 actions.fel_scarred+=/blade_dance,if=talent.essence_break&debuff.essence_break.up&variable.use_blade_dance
 actions.fel_scarred+=/chaos_strike,if=talent.essence_break&debuff.essence_break.up
 
-actions.fel_scarred+=/blade_dance,if=variable.use_blade_dance&(!talent.demonic|cooldown.eye_beam.remains>=gcd.max*2|active_enemies>=5)&(!variable.pool_glaive_tempest|fury>=60)
+# SB builds: BD is too valuable (auto-TG + GT proc) to delay for Demonic EB reset
+actions.fel_scarred+=/blade_dance,if=variable.use_blade_dance&(!talent.demonic|cooldown.eye_beam.remains>=gcd.max*2|active_enemies>=5|talent.screaming_brutality)&(!variable.pool_glaive_tempest|fury>=60)
 
 actions.fel_scarred+=/felblade,if=!buff.inertia_trigger.up&(fury.deficit>=15+variable.fury_gen_per_sec*0.5)&(!buff.out_of_range.up|!buff.inertia.up)&(cooldown.blade_dance.remains>=0.5|!variable.use_blade_dance|fury<40|cooldown.eye_beam.remains<gcd.max*2)
 actions.fel_scarred+=/immolation_aura,if=active_enemies>desired_targets&(active_enemies>=desired_targets+raid_event.adds.count|raid_event.adds.in>full_recharge_time)
@@ -184,7 +185,8 @@ actions.aldrachi_reaver+=/blade_dance,target_if=max:debuff.reavers_mark.remains,
 actions.aldrachi_reaver+=/chaos_strike,target_if=max:debuff.reavers_mark.remains,if=talent.essence_break&debuff.essence_break.up
 
 # Blade Dance: skip during active glaive cycle to avoid wasting empowered buff
-actions.aldrachi_reaver+=/blade_dance,if=variable.use_blade_dance&(!talent.demonic|cooldown.eye_beam.remains>=gcd.max*2|active_enemies>=5)&(!variable.pool_glaive_tempest|fury>=60)&buff.rending_strike.down
+# SB builds: BD is too valuable (auto-TG + GT proc) to delay for Demonic EB reset
+actions.aldrachi_reaver+=/blade_dance,if=variable.use_blade_dance&(!talent.demonic|cooldown.eye_beam.remains>=gcd.max*2|active_enemies>=5|talent.screaming_brutality)&(!variable.pool_glaive_tempest|fury>=60)&buff.rending_strike.down
 
 actions.aldrachi_reaver+=/felblade,if=!buff.inertia_trigger.up&(fury.deficit>=15+variable.fury_gen_per_sec*0.5)&(!buff.out_of_range.up|!buff.inertia.up)&(cooldown.blade_dance.remains>=0.5|!variable.use_blade_dance|fury<40|cooldown.eye_beam.remains<gcd.max*2)
 actions.aldrachi_reaver+=/immolation_aura,if=active_enemies>desired_targets&(active_enemies>=desired_targets+raid_event.adds.count|raid_event.adds.in>full_recharge_time)

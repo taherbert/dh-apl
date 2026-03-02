@@ -1,4 +1,4 @@
-SimulationCraft 1201-01 for World of Warcraft 12.0.1.66192 Live (hotfix 2026-02-28/66192, git build midnight 2db6c20dcb, no-networking)
+SimulationCraft 1201-01 for World of Warcraft 12.0.1.66198 Live (hotfix 2026-03-01/66198, git build midnight f05f7b217f)
 Name             : Demon's Bite (id=162243) [Spell Family (107)] 
 Replaces         : Demon's Bite (id=344859)
 Class            : Havoc Demon Hunter
