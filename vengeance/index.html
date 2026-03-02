@@ -32,6 +32,8 @@
   --anni-glow: rgba(167, 139, 250, 0.10);
   --ar: #fb923c;
   --ar-glow: rgba(251, 146, 60, 0.10);
+  --fs: var(--anni);
+  --fs-glow: var(--anni-glow);
   --radius: 10px;
   --radius-sm: 6px;
 }
@@ -157,12 +159,12 @@ h4 {
   right: 0;
   height: 3px;
   border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(90deg, var(--panel-color, var(--accent)), transparent);
 }
 
-.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--ar), transparent); }
-.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--anni), transparent); }
-.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--ar-glow); }
-.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--anni-glow); }
+.showcase-panel {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%);
+}
 
 .showcase-header {
   margin-bottom: 1rem;
@@ -235,10 +237,10 @@ h4 {
   border: none;
   background: var(--bg);
   pointer-events: none;
-  clip-path: inset(0% 0% 15% 57%);
+  clip-path: inset(0% 0% 15% 62%);
   left: 50%;
   top: 50%;
-  transform-origin: 78.5% 42.5%;
+  transform-origin: 81% 42.5%;
 }
 
 /* Dual panel layout */
@@ -419,6 +421,8 @@ h4 {
 
 .tree-badge.anni { background: rgba(167, 139, 250, 0.13); color: var(--anni); }
 .tree-badge.ar { background: rgba(251, 146, 60, 0.13); color: var(--ar); }
+.tree-badge.fs { background: rgba(167, 139, 250, 0.13); color: var(--fs); }
+.tree-badge.other { background: rgba(148, 163, 184, 0.13); color: #94a3b8; }
 .tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
 
 /* Filter bar */
@@ -448,6 +452,8 @@ h4 {
 /* Tables */
 .table-wrap {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 70vh;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg-elevated);
@@ -703,6 +709,126 @@ summary:hover { color: var(--accent); }
 }
 
 
+
+/* Gear profile */
+.gear-display {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.gear-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.gear-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.gear-col:first-child { border-right: 1px solid var(--border-subtle); }
+
+.gear-row {
+  display: grid;
+  grid-template-columns: 78px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s;
+  min-height: 0;
+}
+
+.gear-row:nth-child(even) { background: rgba(255,255,255,0.015); }
+.gear-col .gear-row:last-child { border-bottom: none; }
+.gear-row:hover { background: rgba(123, 147, 255, 0.04); }
+
+.gear-slot {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.gear-name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.gear-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  justify-content: flex-end;
+}
+
+.gear-anno {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.55rem;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+}
+
+.gear-anno--gem { color: var(--positive); border-color: rgba(52, 211, 153, 0.25); }
+.gear-anno--enchant { color: var(--accent); border-color: var(--accent-dim); }
+.gear-anno--crafted { color: var(--ar); border-color: rgba(251, 146, 60, 0.25); }
+.gear-anno--emb { color: var(--anni); border-color: rgba(167, 139, 250, 0.25); }
+
+/* Consumables bar */
+.gear-cons-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.85rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elevated);
+  flex-wrap: wrap;
+}
+
+.gear-con {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.68rem;
+  color: var(--fg-dim);
+}
+
+.gear-con b {
+  color: var(--fg-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.58rem;
+  letter-spacing: 0.03em;
+  margin-right: 0.3em;
+}
+
+.gear-con-sep {
+  width: 1px;
+  height: 10px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+@media (max-width: 800px) {
+  .gear-columns { grid-template-columns: 1fr; }
+  .gear-col:first-child { border-right: none; }
+}
 
 /* Trinket rankings */
 .trinket-list {
@@ -1086,24 +1212,24 @@ footer { animation-delay: 0.35s; }
 </header>
 <section class="hero-showcase">
   <h2>Top Builds</h2>
-  <div class="showcase-grid"><div class="showcase-panel">
+  <div class="showcase-grid"><div class="showcase-panel" style="box-shadow: 0 0 40px rgba(251, 146, 60, 0.15); --panel-color: #fb923c">
       <div class="showcase-header">
         <span class="tree-badge ar">Aldrachi Reaver</span>
       </div>
       <div class="showcase-build-name">Brand + Vuln + SC (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
       <div class="showcase-weighted">110,854 <span class="showcase-weighted-label">weighted</span></div>
-      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 50,322</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#a78bfa">DRoute</span> 85,136</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 149,616</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 253,565</span></div>
+      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 50,322</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 149,616</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 253,565</span></div>
       <div class="showcase-tree-wrap">
         <iframe src="https://mimiron.raidbots.com/simbot/render/talents/CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA?bgcolor=0f1117&width=1100&hideHeader=true" title="Aldrachi Reaver spec tree" scrolling="no"></iframe>
       </div>
     </div>
-<div class="showcase-panel">
+<div class="showcase-panel" style="box-shadow: 0 0 40px rgba(167, 139, 250, 0.15); --panel-color: #a78bfa">
       <div class="showcase-header">
         <span class="tree-badge anni">Annihilator</span>
       </div>
       <div class="showcase-build-name">Brand + Vuln (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></div>
       <div class="showcase-weighted">190,826 <span class="showcase-weighted-label">weighted</span></div>
-      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 62,739</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#a78bfa">DRoute</span> 100,596</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 286,309</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 506,181</span></div>
+      <div class="showcase-scenarios"><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#60a5fa">Patchwerk 1T</span> 62,739</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#f59e0b">Patchwerk 5T</span> 286,309</span><span class="showcase-scenario"><span class="showcase-scenario-label" style="color:#ef4444">Patchwerk 10T</span> 506,181</span></div>
       <div class="showcase-tree-wrap">
         <iframe src="https://mimiron.raidbots.com/simbot/render/talents/CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA?bgcolor=0f1117&width=1100&hideHeader=true" title="Annihilator spec tree" scrolling="no"></iframe>
       </div>
@@ -1120,11 +1246,6 @@ footer { animation-delay: 0.35s; }
         <span class="hc-label" style="color:#60a5fa">Patchwerk 1T</span>
         <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:9.9%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">50,322</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:12.8%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">64,556</span></div></div>
         <span class="hc-delta" style="color:#a78bfa">+28.3%</span>
-      </div>
-<div class="hc-row">
-        <span class="hc-label" style="color:#a78bfa">DRoute</span>
-        <div class="hc-split-track"><div class="hc-bar-row"><div class="hc-split-bar" style="width:16.8%;background:#fb923c;opacity:0.75"></div><span class="hc-bar-val" style="color:#fb923c">85,136</span></div><div class="hc-bar-row"><div class="hc-split-bar" style="width:20.1%;background:#a78bfa;opacity:0.9"></div><span class="hc-bar-val" style="color:#a78bfa">101,738</span></div></div>
-        <span class="hc-delta" style="color:#a78bfa">+19.5%</span>
       </div>
 <div class="hc-row">
         <span class="hc-label" style="color:#f59e0b">Patchwerk 5T</span>
@@ -1148,10 +1269,10 @@ footer { animation-delay: 0.35s; }
     <h3>Apex Scaling</h3>
     <p class="section-desc">Weighted DPS gain by apex rank (best build per hero tree), relative to each tree's rank 0 baseline.</p>
     <svg class="apex-chart" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg">
-      <line x1="48" y1="210.0" x2="370" y2="210.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="213.5" text-anchor="end" class="apex-axis-label">0%</text><line x1="48" y1="171.0" x2="370" y2="171.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="174.5" text-anchor="end" class="apex-axis-label">10%</text><line x1="48" y1="132.0" x2="370" y2="132.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="135.5" text-anchor="end" class="apex-axis-label">20%</text><line x1="48" y1="93.0" x2="370" y2="93.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="96.5" text-anchor="end" class="apex-axis-label">30%</text><line x1="48" y1="54.0" x2="370" y2="54.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="57.5" text-anchor="end" class="apex-axis-label">40%</text><line x1="48" y1="15.0" x2="370" y2="15.0" stroke="var(--border-subtle)" stroke-width="1"/><text x="40" y="18.5" text-anchor="end" class="apex-axis-label">50%</text>
+      <line x1="48" y1="210.0" x2="370" y2="210.0" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="213.5" text-anchor="end" class="apex-axis-label">-5%</text><line x1="48" y1="190.5" x2="370" y2="190.5" stroke="var(--text-muted)" stroke-width="1.5" stroke-dasharray="4,3"/><text x="40" y="194.0" text-anchor="end" class="apex-axis-label">0%</text><line x1="48" y1="171.0" x2="370" y2="171.0" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="174.5" text-anchor="end" class="apex-axis-label">5%</text><line x1="48" y1="151.5" x2="370" y2="151.5" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="155.0" text-anchor="end" class="apex-axis-label">10%</text><line x1="48" y1="132.0" x2="370" y2="132.0" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="135.5" text-anchor="end" class="apex-axis-label">15%</text><line x1="48" y1="112.5" x2="370" y2="112.5" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="116.0" text-anchor="end" class="apex-axis-label">20%</text><line x1="48" y1="93.0" x2="370" y2="93.0" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="96.5" text-anchor="end" class="apex-axis-label">25%</text><line x1="48" y1="73.5" x2="370" y2="73.5" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="77.0" text-anchor="end" class="apex-axis-label">30%</text><line x1="48" y1="54.0" x2="370" y2="54.0" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="57.5" text-anchor="end" class="apex-axis-label">35%</text><line x1="48" y1="34.5" x2="370" y2="34.5" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="38.0" text-anchor="end" class="apex-axis-label">40%</text><line x1="48" y1="15.0" x2="370" y2="15.0" stroke="var(--border-subtle)" stroke-width="1" /><text x="40" y="18.5" text-anchor="end" class="apex-axis-label">45%</text>
       <text x="48.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 0</text><text x="128.5" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 1</text><text x="209.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 2</text><text x="289.5" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 3</text><text x="370.0" y="228.0" text-anchor="middle" class="apex-axis-label">Rank 4</text>
-      <path d="M48.0,210.0 L128.5,208.7 L209.0,197.5 L289.5,203.5 L370.0,193.0 L370.0,210.0 L48.0,210.0Z" fill="rgba(251, 146, 60, 0.15)"/><path d="M48.0,210.0 L128.5,208.7 L209.0,197.5 L289.5,203.5 L370.0,193.0" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-linejoin="round"/><path d="M48.0,210.0 L128.5,182.8 L209.0,178.5 L289.5,181.8 L370.0,69.9 L370.0,210.0 L48.0,210.0Z" fill="rgba(167, 139, 250, 0.15)"/><path d="M48.0,210.0 L128.5,182.8 L209.0,178.5 L289.5,181.8 L370.0,69.9" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/>
-      <g class="apex-point"><circle cx="48.0" cy="210.0" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="166.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="180.0" text-anchor="middle" class="apex-tip-text">106,217 (+0.0%)</text></g></g><g class="apex-point"><circle cx="128.5" cy="208.7" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="63.5" y="164.7" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="128.5" y="178.7" text-anchor="middle" class="apex-tip-text">106,577 (+0.3%)</text></g></g><g class="apex-point"><circle cx="209.0" cy="197.5" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="144.0" y="153.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="209.0" y="167.5" text-anchor="middle" class="apex-tip-text">109,615 (+3.2%)</text></g></g><g class="apex-point"><circle cx="289.5" cy="203.5" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="224.5" y="159.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="289.5" y="173.5" text-anchor="middle" class="apex-tip-text">107,976 (+1.7%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="193.0" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="149.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="163.0" text-anchor="middle" class="apex-tip-text">110,854 (+4.4%)</text></g></g><g class="apex-point"><circle cx="48.0" cy="210.0" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="166.0" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="180.0" text-anchor="middle" class="apex-tip-text">140,404 (+0.0%)</text></g></g><g class="apex-point"><circle cx="128.5" cy="182.8" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="63.5" y="138.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="128.5" y="152.8" text-anchor="middle" class="apex-tip-text">150,182 (+7.0%)</text></g></g><g class="apex-point"><circle cx="209.0" cy="178.5" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="144.0" y="134.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="209.0" y="148.5" text-anchor="middle" class="apex-tip-text">151,736 (+8.1%)</text></g></g><g class="apex-point"><circle cx="289.5" cy="181.8" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="224.5" y="137.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="289.5" y="151.8" text-anchor="middle" class="apex-tip-text">150,544 (+7.2%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="69.9" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="25.9" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="39.9" text-anchor="middle" class="apex-tip-text">190,826 (+35.9%)</text></g></g>
+      <path d="M48.0,190.5 L128.5,189.2 L209.0,151.7 L289.5,159.8 L370.0,152.8 L370.0,190.5 L48.0,190.5Z" fill="rgba(251, 146, 60, 0.15)"/><path d="M48.0,190.5 L128.5,189.2 L209.0,151.7 L289.5,159.8 L370.0,152.8" fill="none" stroke="#fb923c" stroke-width="1.5" stroke-linejoin="round"/><path d="M48.0,190.5 L128.5,162.6 L209.0,118.4 L289.5,128.9 L370.0,24.5 L370.0,190.5 L48.0,190.5Z" fill="rgba(167, 139, 250, 0.15)"/><path d="M48.0,190.5 L128.5,162.6 L209.0,118.4 L289.5,128.9 L370.0,24.5" fill="none" stroke="#a78bfa" stroke-width="1.5" stroke-linejoin="round"/>
+      <g class="apex-point"><circle cx="48.0" cy="190.5" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="146.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="160.5" text-anchor="middle" class="apex-tip-text">99,056 (+0.0%)</text></g></g><g class="apex-point"><circle cx="128.5" cy="189.2" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="63.5" y="145.2" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="128.5" y="159.2" text-anchor="middle" class="apex-tip-text">99,385 (+0.3%)</text></g></g><g class="apex-point"><circle cx="209.0" cy="151.7" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="144.0" y="107.7" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="209.0" y="121.7" text-anchor="middle" class="apex-tip-text">108,901 (+9.9%)</text></g></g><g class="apex-point"><circle cx="289.5" cy="159.8" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="224.5" y="115.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="289.5" y="129.8" text-anchor="middle" class="apex-tip-text">106,852 (+7.9%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="152.8" r="3.5" fill="var(--bg)" stroke="#fb923c" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="108.8" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="122.8" text-anchor="middle" class="apex-tip-text">108,642 (+9.7%)</text></g></g><g class="apex-point"><circle cx="48.0" cy="190.5" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="0.0" y="146.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="65.0" y="160.5" text-anchor="middle" class="apex-tip-text">127,874 (+0.0%)</text></g></g><g class="apex-point"><circle cx="128.5" cy="162.6" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="63.5" y="118.6" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="128.5" y="132.6" text-anchor="middle" class="apex-tip-text">137,037 (+7.2%)</text></g></g><g class="apex-point"><circle cx="209.0" cy="118.4" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="144.0" y="74.4" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="209.0" y="88.4" text-anchor="middle" class="apex-tip-text">151,502 (+18.5%)</text></g></g><g class="apex-point"><circle cx="289.5" cy="128.9" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="224.5" y="84.9" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="289.5" y="98.9" text-anchor="middle" class="apex-tip-text">148,080 (+15.8%)</text></g></g><g class="apex-point"><circle cx="370.0" cy="24.5" r="3.5" fill="var(--bg)" stroke="#a78bfa" stroke-width="1.5" class="apex-node"/><g class="apex-tooltip"><rect x="270.0" y="-19.5" width="130" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="335.0" y="-5.5" text-anchor="middle" class="apex-tip-text">182,290 (+42.6%)</text></g></g>
     </svg>
     <div class="hc-legend"><span class="hc-legend-item"><span class="tree-badge sm ar">AR</span> Aldrachi Reaver</span><span class="hc-legend-item"><span class="tree-badge sm anni">Anni</span> Annihilator</span></div>
   </div>
@@ -1170,188 +1291,261 @@ footer { animation-delay: 0.35s; }
         <th class="sortable" data-col="name">Build</th>
         <th>Tree</th>
         <th class="sortable num" data-col="st" style="color:#60a5fa">Patchwerk 1T</th>
-      <th class="sortable num" data-col="dungeon_route" style="color:#a78bfa">DRoute</th>
       <th class="sortable num" data-col="small_aoe" style="color:#f59e0b">Patchwerk 5T</th>
       <th class="sortable num" data-col="big_aoe" style="color:#ef4444">Patchwerk 10T</th>
-        <th class="sortable num weighted-header" data-col="weighted" style="color:var(--fg)">Weighted <span class="info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg><span class="info-popup">Weighted DPS combines all scenarios into a single score.<br><br><span style="color:#60a5fa">Patchwerk 1T</span> 45% · <span style="color:#a78bfa">DRoute</span> 15% · <span style="color:#f59e0b">Patchwerk 5T</span> 25% · <span style="color:#ef4444">Patchwerk 10T</span> 15%</span></span></th>
+        <th class="sortable num weighted-header" data-col="weighted" style="color:var(--fg)">Weighted <span class="info-icon"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg><span class="info-popup">Weighted DPS combines all scenarios into a single score.<br><br><span style="color:#60a5fa">Patchwerk 1T</span> 53% · <span style="color:#f59e0b">Patchwerk 5T</span> 29% · <span style="color:#ef4444">Patchwerk 10T</span> 18%</span></span></th>
       </tr></thead>
       <tbody><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 62,900">62,739</td><td class="dps-cell has-tip" data-tip="SimC baseline: 97,113">100,596</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 286,688">286,309<span class="badge">TOP</span></td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 504,047">506,181<span class="badge">TOP</span></td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 62,900">62,739</td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 286,688">286,309<span class="badge">TOP</span></td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 504,047">506,181<span class="badge">TOP</span></td>
   <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 190,151">190,826<span class="badge">TOP</span></td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln + SC (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAMA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 64,238">64,556<span class="badge">TOP</span></td><td class="dps-cell top-build has-tip" data-tip="SimC baseline: 98,568">101,738<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 282,601">281,812</td><td class="dps-cell has-tip" data-tip="SimC baseline: 490,398">491,307</td>
+  <td class="dps-cell top-build has-tip" data-tip="SimC baseline: 64,238">64,556<span class="badge">TOP</span></td><td class="dps-cell has-tip" data-tip="SimC baseline: 282,601">281,812</td><td class="dps-cell has-tip" data-tip="SimC baseline: 490,398">491,307</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 187,902">188,460</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAAAAAwMzYDAAAADMzMzMbtNzMDAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 58,642">58,597</td><td class="dps-cell has-tip" data-tip="SimC baseline: 90,262">94,128</td><td class="dps-cell has-tip" data-tip="SimC baseline: 272,135">270,147</td><td class="dps-cell has-tip" data-tip="SimC baseline: 471,860">469,201</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 58,642">58,597</td><td class="dps-cell has-tip" data-tip="SimC baseline: 272,135">270,147</td><td class="dps-cell has-tip" data-tip="SimC baseline: 471,860">469,201</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 178,741">178,405</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Vuln + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 61,897">61,984</td><td class="dps-cell has-tip" data-tip="SimC baseline: 94,620">98,182</td><td class="dps-cell has-tip" data-tip="SimC baseline: 255,020">255,337</td><td class="dps-cell has-tip" data-tip="SimC baseline: 432,100">433,426</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 61,897">61,984</td><td class="dps-cell has-tip" data-tip="SimC baseline: 255,020">255,337</td><td class="dps-cell has-tip" data-tip="SimC baseline: 432,100">433,426</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 170,617">171,468</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln + Fel Dev (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,051">51,248</td><td class="dps-cell has-tip" data-tip="SimC baseline: 84,320">85,210</td><td class="dps-cell has-tip" data-tip="SimC baseline: 226,327">227,167</td><td class="dps-cell has-tip" data-tip="SimC baseline: 394,840">394,007</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,051">51,248</td><td class="dps-cell has-tip" data-tip="SimC baseline: 226,327">227,167</td><td class="dps-cell has-tip" data-tip="SimC baseline: 394,840">394,007</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 151,429">151,736</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln + Fel Dev + SC (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAAAAAgZmxGAAAAGYmZmZ2abmZGAYAAAAcBA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,236">51,408</td><td class="dps-cell has-tip" data-tip="SimC baseline: 84,921">86,278</td><td class="dps-cell has-tip" data-tip="SimC baseline: 224,216">223,274</td><td class="dps-cell has-tip" data-tip="SimC baseline: 396,734">395,829</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,236">51,408</td><td class="dps-cell has-tip" data-tip="SimC baseline: 224,216">223,274</td><td class="dps-cell has-tip" data-tip="SimC baseline: 396,734">395,829</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 151,358">151,268</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,767">51,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 84,287">85,630</td><td class="dps-cell has-tip" data-tip="SimC baseline: 224,357">224,230</td><td class="dps-cell has-tip" data-tip="SimC baseline: 391,282">391,114</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,767">51,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 224,357">224,230</td><td class="dps-cell has-tip" data-tip="SimC baseline: 391,282">391,114</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 150,270">150,544</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Full Build (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,046">51,164</td><td class="dps-cell has-tip" data-tip="SimC baseline: 83,317">84,734</td><td class="dps-cell has-tip" data-tip="SimC baseline: 223,896">222,912</td><td class="dps-cell has-tip" data-tip="SimC baseline: 391,463">391,468</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 51,046">51,164</td><td class="dps-cell has-tip" data-tip="SimC baseline: 223,896">222,912</td><td class="dps-cell has-tip" data-tip="SimC baseline: 391,463">391,468</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 150,162">150,182</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,585">50,679</td><td class="dps-cell has-tip" data-tip="SimC baseline: 83,925">85,352</td><td class="dps-cell has-tip" data-tip="SimC baseline: 218,303">218,708</td><td class="dps-cell has-tip" data-tip="SimC baseline: 385,789">385,085</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,585">50,679</td><td class="dps-cell has-tip" data-tip="SimC baseline: 218,303">218,708</td><td class="dps-cell has-tip" data-tip="SimC baseline: 385,789">385,085</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 147,796">148,048</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAAAAAMzM2AAAAwAzMzMzWbzMzAADAAAgPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,804">49,218</td><td class="dps-cell has-tip" data-tip="SimC baseline: 81,441">82,519</td><td class="dps-cell has-tip" data-tip="SimC baseline: 216,262">216,616</td><td class="dps-cell has-tip" data-tip="SimC baseline: 378,781">379,782</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,804">49,218</td><td class="dps-cell has-tip" data-tip="SimC baseline: 216,262">216,616</td><td class="dps-cell has-tip" data-tip="SimC baseline: 378,781">379,782</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 145,061">145,647</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAA4BA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,934">49,463</td><td class="dps-cell has-tip" data-tip="SimC baseline: 81,545">82,475</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,106">212,666</td><td class="dps-cell has-tip" data-tip="SimC baseline: 369,308">367,520</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,934">49,463</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,106">212,666</td><td class="dps-cell has-tip" data-tip="SimC baseline: 369,308">367,520</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 142,675">142,924</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Full Build <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAAAAAmZGbAAAAYgZmZmZrtZmZAgBAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,353">48,458</td><td class="dps-cell has-tip" data-tip="SimC baseline: 80,869">81,541</td><td class="dps-cell has-tip" data-tip="SimC baseline: 207,718">206,986</td><td class="dps-cell has-tip" data-tip="SimC baseline: 364,077">364,136</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,353">48,458</td><td class="dps-cell has-tip" data-tip="SimC baseline: 207,718">206,986</td><td class="dps-cell has-tip" data-tip="SimC baseline: 364,077">364,136</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 140,430">140,404</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,831">44,078</td><td class="dps-cell has-tip" data-tip="SimC baseline: 73,182">74,170</td><td class="dps-cell has-tip" data-tip="SimC baseline: 202,197">203,225</td><td class="dps-cell has-tip" data-tip="SimC baseline: 352,736">353,004</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,831">44,078</td><td class="dps-cell has-tip" data-tip="SimC baseline: 202,197">203,225</td><td class="dps-cell has-tip" data-tip="SimC baseline: 352,736">353,004</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 134,161">134,717</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Vuln <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,346">46,501</td><td class="dps-cell has-tip" data-tip="SimC baseline: 77,713">78,566</td><td class="dps-cell has-tip" data-tip="SimC baseline: 196,467">197,171</td><td class="dps-cell has-tip" data-tip="SimC baseline: 341,910">343,802</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,346">46,501</td><td class="dps-cell has-tip" data-tip="SimC baseline: 196,467">197,171</td><td class="dps-cell has-tip" data-tip="SimC baseline: 341,910">343,802</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 132,916">133,573</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Brand + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 41,392">41,390</td><td class="dps-cell has-tip" data-tip="SimC baseline: 69,682">70,466</td><td class="dps-cell has-tip" data-tip="SimC baseline: 186,881">188,094</td><td class="dps-cell has-tip" data-tip="SimC baseline: 328,719">329,532</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 41,392">41,390</td><td class="dps-cell has-tip" data-tip="SimC baseline: 186,881">188,094</td><td class="dps-cell has-tip" data-tip="SimC baseline: 328,719">329,532</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 125,107">125,649</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Vuln + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAAAAAYmZsBAAAgBmZmZmt2mZmBAGAAAAPA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,687">46,736</td><td class="dps-cell has-tip" data-tip="SimC baseline: 76,231">77,098</td><td class="dps-cell has-tip" data-tip="SimC baseline: 172,983">173,014</td><td class="dps-cell has-tip" data-tip="SimC baseline: 296,359">296,508</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,687">46,736</td><td class="dps-cell has-tip" data-tip="SimC baseline: 172,983">173,014</td><td class="dps-cell has-tip" data-tip="SimC baseline: 296,359">296,508</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 120,143">120,326</td>
 </tr><tr data-tree="annihilator">
   <td class="build-name">Vuln + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAAAAAzMjNAAAAMwMzMzs12MzMAwAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm anni">Anni</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 44,044">44,309</td><td class="dps-cell has-tip" data-tip="SimC baseline: 72,965">73,142</td><td class="dps-cell has-tip" data-tip="SimC baseline: 159,930">159,921</td><td class="dps-cell has-tip" data-tip="SimC baseline: 274,362">273,196</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 44,044">44,309</td><td class="dps-cell has-tip" data-tip="SimC baseline: 159,930">159,921</td><td class="dps-cell has-tip" data-tip="SimC baseline: 274,362">273,196</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 111,901">111,870</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln + SC (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZwMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,204">50,322</td><td class="dps-cell has-tip" data-tip="SimC baseline: 84,877">85,136</td><td class="dps-cell has-tip" data-tip="SimC baseline: 149,517">149,616</td><td class="dps-cell has-tip" data-tip="SimC baseline: 254,668">253,565</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 50,204">50,322</td><td class="dps-cell has-tip" data-tip="SimC baseline: 149,517">149,616</td><td class="dps-cell has-tip" data-tip="SimC baseline: 254,668">253,565</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 110,903">110,854</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln + Fel Dev + SC (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMzMzMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,356">48,368</td><td class="dps-cell has-tip" data-tip="SimC baseline: 82,777">83,194</td><td class="dps-cell has-tip" data-tip="SimC baseline: 149,021">148,378</td><td class="dps-cell has-tip" data-tip="SimC baseline: 255,188">255,173</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,356">48,368</td><td class="dps-cell has-tip" data-tip="SimC baseline: 149,021">148,378</td><td class="dps-cell has-tip" data-tip="SimC baseline: 255,188">255,173</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 109,710">109,615</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmhxMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 49,466">49,484</td><td class="dps-cell has-tip" data-tip="SimC baseline: 83,971">84,426</td><td class="dps-cell has-tip" data-tip="SimC baseline: 146,409">146,039</td><td class="dps-cell has-tip" data-tip="SimC baseline: 253,885">253,872</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 49,466">49,484</td><td class="dps-cell has-tip" data-tip="SimC baseline: 146,409">146,039</td><td class="dps-cell has-tip" data-tip="SimC baseline: 253,885">253,872</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 109,540">109,522</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Vuln + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAAG" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 49,344">49,631</td><td class="dps-cell has-tip" data-tip="SimC baseline: 83,173">83,416</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,491">145,854</td><td class="dps-cell has-tip" data-tip="SimC baseline: 248,615">248,098</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 49,344">49,631</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,491">145,854</td><td class="dps-cell has-tip" data-tip="SimC baseline: 248,615">248,098</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 108,346">108,525</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln + Fel Dev (Apex 2) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmxMzMmZsMmZZMmBAAAgZZGMMW2YCDzMjFAAAAMwAAgZGgBAAAwFA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,483">47,634</td><td class="dps-cell has-tip" data-tip="SimC baseline: 81,544">81,729</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,172">145,530</td><td class="dps-cell has-tip" data-tip="SimC baseline: 254,969">254,059</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,483">47,634</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,172">145,530</td><td class="dps-cell has-tip" data-tip="SimC baseline: 254,969">254,059</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 108,137">108,186</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZMmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,258">48,253</td><td class="dps-cell has-tip" data-tip="SimC baseline: 82,346">82,649</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,290">145,669</td><td class="dps-cell has-tip" data-tip="SimC baseline: 249,507">249,647</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 48,258">48,253</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,290">145,669</td><td class="dps-cell has-tip" data-tip="SimC baseline: 249,507">249,647</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 107,817">107,976</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzYwYmxMmxMmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,824">47,933</td><td class="dps-cell has-tip" data-tip="SimC baseline: 81,821">82,109</td><td class="dps-cell has-tip" data-tip="SimC baseline: 144,378">144,820</td><td class="dps-cell has-tip" data-tip="SimC baseline: 249,039">250,133</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 47,824">47,933</td><td class="dps-cell has-tip" data-tip="SimC baseline: 144,378">144,820</td><td class="dps-cell has-tip" data-tip="SimC baseline: 249,039">250,133</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 107,244">107,611</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Full Build (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMmZmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAAeA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,589">46,748</td><td class="dps-cell has-tip" data-tip="SimC baseline: 80,260">80,456</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,211">145,593</td><td class="dps-cell has-tip" data-tip="SimC baseline: 246,319">247,157</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,589">46,748</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,211">145,593</td><td class="dps-cell has-tip" data-tip="SimC baseline: 246,319">247,157</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 106,255">106,577</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Full Build <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmBjZGzYGzMzMzYmxyYmlxYGAAAAmlZwwYZjJMMzMWAAAAwADAAmZAGAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,690">47,034</td><td class="dps-cell has-tip" data-tip="SimC baseline: 80,835">81,103</td><td class="dps-cell has-tip" data-tip="SimC baseline: 144,941">145,633</td><td class="dps-cell has-tip" data-tip="SimC baseline: 244,599">243,188</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 46,690">47,034</td><td class="dps-cell has-tip" data-tip="SimC baseline: 144,941">145,633</td><td class="dps-cell has-tip" data-tip="SimC baseline: 244,599">243,188</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 106,061">106,217</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Fel Dev (Apex 4) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzAzgZmZGzMWGzsMGzAAAAwsMDGGLbMhhZmxCAAAAGYAAwMDwAAAAYA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 44,366">44,356</td><td class="dps-cell has-tip" data-tip="SimC baseline: 78,925">79,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,271">145,449</td><td class="dps-cell has-tip" data-tip="SimC baseline: 249,217">249,920</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 44,366">44,356</td><td class="dps-cell has-tip" data-tip="SimC baseline: 145,271">145,449</td><td class="dps-cell has-tip" data-tip="SimC baseline: 249,217">249,920</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 105,504">105,669</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Fel Dev (Apex 3) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGDzMzMDGzMmxMMmZmxMjlxMLjxMAAAAMLzghxyGTYYmZsAAAAgBGAAMzAMAAAA+A" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,824">46,022</td><td class="dps-cell has-tip" data-tip="SimC baseline: 79,532">79,934</td><td class="dps-cell has-tip" data-tip="SimC baseline: 141,572">141,099</td><td class="dps-cell has-tip" data-tip="SimC baseline: 247,550">246,640</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,824">46,022</td><td class="dps-cell has-tip" data-tip="SimC baseline: 141,572">141,099</td><td class="dps-cell has-tip" data-tip="SimC baseline: 247,550">246,640</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 105,076">104,971</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">baseline_AR <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMDDmZMzYmZmxYGzsNzYbMzyYMDAAAAzyMYYsswEGmZGLAAAAYgBAAzMADAAAgB" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,931">45,930</td><td class="dps-cell has-tip" data-tip="SimC baseline: 77,798">77,964</td><td class="dps-cell has-tip" data-tip="SimC baseline: 134,088">134,185</td><td class="dps-cell has-tip" data-tip="SimC baseline: 236,152">234,824</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,931">45,930</td><td class="dps-cell has-tip" data-tip="SimC baseline: 134,088">134,185</td><td class="dps-cell has-tip" data-tip="SimC baseline: 236,152">234,824</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 101,283">101,133</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGzmZmZmhZMzYGzYmBzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAgHA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,678">45,851</td><td class="dps-cell has-tip" data-tip="SimC baseline: 79,022">79,175</td><td class="dps-cell has-tip" data-tip="SimC baseline: 136,470">137,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 228,425">227,719</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,678">45,851</td><td class="dps-cell has-tip" data-tip="SimC baseline: 136,470">137,056</td><td class="dps-cell has-tip" data-tip="SimC baseline: 228,425">227,719</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 100,790">100,931</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Vuln <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGzYGzMYmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,572">45,693</td><td class="dps-cell has-tip" data-tip="SimC baseline: 78,805">79,083</td><td class="dps-cell has-tip" data-tip="SimC baseline: 136,810">136,909</td><td class="dps-cell has-tip" data-tip="SimC baseline: 226,911">227,887</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 45,572">45,693</td><td class="dps-cell has-tip" data-tip="SimC baseline: 136,810">136,909</td><td class="dps-cell has-tip" data-tip="SimC baseline: 226,911">227,887</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 100,567">100,835</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMjZGDzgZmZmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 39,736">39,885</td><td class="dps-cell has-tip" data-tip="SimC baseline: 71,480">71,801</td><td class="dps-cell has-tip" data-tip="SimC baseline: 132,681">132,505</td><td class="dps-cell has-tip" data-tip="SimC baseline: 225,885">225,055</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 39,736">39,885</td><td class="dps-cell has-tip" data-tip="SimC baseline: 132,681">132,505</td><td class="dps-cell has-tip" data-tip="SimC baseline: 225,885">225,055</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 95,656">95,603</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Brand + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MzMzMMzMzYYGMzMzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 39,647">39,732</td><td class="dps-cell has-tip" data-tip="SimC baseline: 70,980">71,402</td><td class="dps-cell has-tip" data-tip="SimC baseline: 131,852">131,895</td><td class="dps-cell has-tip" data-tip="SimC baseline: 224,947">223,986</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 39,647">39,732</td><td class="dps-cell has-tip" data-tip="SimC baseline: 131,852">131,895</td><td class="dps-cell has-tip" data-tip="SimC baseline: 224,947">223,986</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 95,193">95,161</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Vuln + Fel Dev (Apex 1) <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZMzYGzYmZmZmlZGLjZWGjZAAAAYWmBDjlNmwwMzYBAAAADMAAYmBYAAAA8AA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,696">43,703</td><td class="dps-cell has-tip" data-tip="SimC baseline: 75,020">75,264</td><td class="dps-cell has-tip" data-tip="SimC baseline: 127,112">126,987</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,214">211,512</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,696">43,703</td><td class="dps-cell has-tip" data-tip="SimC baseline: 127,112">126,987</td><td class="dps-cell has-tip" data-tip="SimC baseline: 212,214">211,512</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 94,526">94,430</td>
 </tr><tr data-tree="aldrachi_reaver">
   <td class="build-name">Vuln + Fel Dev <button class="copy-hash" data-hash="CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmZGz2MGmhZmZGzYGzMzMzsMzYZMzyYMDAAAAzyMYYssxEGmZGLAAAAYgBAAzMADAAAAA" title="Copy talent hash"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg></button></td>
   <td><span class="tree-badge sm ar">AR</span></td>
-  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,267">43,503</td><td class="dps-cell has-tip" data-tip="SimC baseline: 74,540">74,833</td><td class="dps-cell has-tip" data-tip="SimC baseline: 126,391">126,344</td><td class="dps-cell has-tip" data-tip="SimC baseline: 210,896">210,835</td>
+  <td class="dps-cell has-tip" data-tip="SimC baseline: 43,267">43,503</td><td class="dps-cell has-tip" data-tip="SimC baseline: 126,391">126,344</td><td class="dps-cell has-tip" data-tip="SimC baseline: 210,896">210,835</td>
   <td class="dps-cell has-tip" data-tip="SimC baseline: 93,883">94,013</td>
 </tr></tbody>
     </table>
+  </div>
+</section>
+<section>
+  <h2>Gear Profile</h2>
+  <div class="gear-display">
+    <div class="gear-columns">
+      <div class="gear-col"><div class="gear-row">
+      <span class="gear-slot">Head</span>
+      <span class="gear-name">Devouring Reavers Intake</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--gem">Enduring Heliotrope</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Shoulders</span>
+      <span class="gear-name">Devouring Reavers Exhaustplates</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--enchant">Flight of the Eagle</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Chest</span>
+      <span class="gear-name">Maledict Vest</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--enchant">Mark of the Worldsoul</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Wrists</span>
+      <span class="gear-name">Void Skinned Bracers</span>
+      <span class="gear-tags"></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Hands</span>
+      <span class="gear-name">Devouring Reavers Essence Grips</span>
+      <span class="gear-tags"></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Waist</span>
+      <span class="gear-name">Rootwalker Harness</span>
+      <span class="gear-tags"></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Legs</span>
+      <span class="gear-name">Devouring Reavers Pistons</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--enchant">Forest Hunter's Armor Kit</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Feet</span>
+      <span class="gear-name">World Tree Rootwraps</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--enchant">Farstrider's Hunt</span><span class="gear-anno gear-anno--emb">Embellishment</span></span>
+    </div></div>
+      <div class="gear-col"><div class="gear-row">
+      <span class="gear-slot">Neck</span>
+      <span class="gear-name">Ribbon Of Coiled Malice</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--gem">2x Enduring Heliotrope</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Back</span>
+      <span class="gear-name">Draconic Nullcape</span>
+      <span class="gear-tags"></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Ring 1</span>
+      <span class="gear-name">Signet Of The Starved Beast</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--gem">2x Enduring Heliotrope</span><span class="gear-anno gear-anno--enchant">Eyes of the Eagle</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Ring 2</span>
+      <span class="gear-name">Occlusion Of Void</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--gem">2x Enduring Heliotrope</span><span class="gear-anno gear-anno--enchant">Eyes of the Eagle</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Trinket 1</span>
+      <span class="gear-name">Void Execution Mandate</span>
+      <span class="gear-tags"></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Trinket 2</span>
+      <span class="gear-name">Umbral Plume</span>
+      <span class="gear-tags"></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Main Hand</span>
+      <span class="gear-name">Grim Harvest Gloves</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--enchant">Berserker's Rage</span></span>
+    </div><div class="gear-row">
+      <span class="gear-slot">Off Hand</span>
+      <span class="gear-name">Everforged Longsword</span>
+      <span class="gear-tags"><span class="gear-anno gear-anno--enchant">Berserker's Rage</span><span class="gear-anno gear-anno--emb">Darkmoon Sigil Hunt</span></span>
+    </div></div>
+    </div>
+    <div class="gear-cons-bar"><span class="gear-con"><b>Flask</b> Flask Of The Magisters 2</span><span class="gear-con-sep"></span><span class="gear-con"><b>Potion</b> Lights Potential 2</span><span class="gear-con-sep"></span><span class="gear-con"><b>Food</b> Silvermoon Parade</span><span class="gear-con-sep"></span><span class="gear-con"><b>Augment</b> Void Touched</span><span class="gear-con-sep"></span><span class="gear-con"><b>Oils</b> Thalassian Phoenix Oil 2 / Thalassian Phoenix Oil 2</span></div>
   </div>
 </section>
 <section>
@@ -1986,7 +2180,7 @@ document.querySelectorAll('.showcase-tree-wrap').forEach(wrap => {
   const TREE_W = 473, TREE_H = 595;
   const fit = () => {
     const s = Math.min(wrap.clientWidth / TREE_W, wrap.clientHeight / TREE_H);
-    iframe.style.transform = 'translate(-78.5%, -42.5%) scale(' + s + ')';
+    iframe.style.transform = 'translate(-81%, -42.5%) scale(' + s + ')';
   };
   fit();
   new ResizeObserver(fit).observe(wrap);
