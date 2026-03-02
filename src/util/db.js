@@ -1025,10 +1025,10 @@ const SIMC_SCENARIO_COLUMNS = {
 // Default weights mirror config.json scenarioWeights. Callers should pass
 // SCENARIO_WEIGHTS from startup.js when available.
 const DEFAULT_WEIGHTS = {
-  st: 0.35,
-  dungeon_route: 0.25,
-  small_aoe: 0.25,
-  big_aoe: 0.15,
+  st: 0.6,
+  dungeon_route: 0.1,
+  small_aoe: 0.2,
+  big_aoe: 0.1,
 };
 
 function computeWeightedDps(dps, weights) {

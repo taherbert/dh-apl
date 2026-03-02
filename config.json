@@ -29,6 +29,12 @@
         "desiredTargets": 1,
         "overrides": ["override.bloodlust=1"]
       },
+      "dungeon_route": {
+        "name": "Dungeon Route",
+        "maxTime": 600,
+        "desiredTargets": 1,
+        "fightStyle": "DungeonRoute"
+      },
       "small_aoe": {
         "name": "Patchwerk 5T",
         "maxTime": 75,
@@ -41,9 +47,10 @@
       }
     },
     "scenarioWeights": {
-      "st": 0.53,
-      "small_aoe": 0.29,
-      "big_aoe": 0.18
+      "st": 0.6,
+      "dungeon_route": 0.1,
+      "small_aoe": 0.2,
+      "big_aoe": 0.1
     },
     "fidelity": {
       "quick": {
