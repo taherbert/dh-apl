@@ -1,6 +1,6 @@
 {
   "simc": {
-    "dir": null,
+    "dir": "/Users/tom/Documents/GitHub/simc",
     "branch": "midnight"
   },
   "data": {
@@ -27,7 +27,9 @@
         "name": "Patchwerk 1T",
         "maxTime": 300,
         "desiredTargets": 1,
-        "overrides": ["override.bloodlust=1"]
+        "overrides": [
+          "override.bloodlust=1"
+        ]
       },
       "dungeon_route": {
         "name": "DRoute",
@@ -35,7 +37,9 @@
         "desiredTargets": 1,
         "fightStyle": "DungeonRoute",
         "routeFile": "apls/vengeance/routes/algethar-academy.simc",
-        "overrides": ["override.chaos_brand=1"]
+        "overrides": [
+          "override.chaos_brand=1"
+        ]
       },
       "small_aoe": {
         "name": "Patchwerk 5T",
@@ -55,9 +59,15 @@
       "big_aoe": 0.15
     },
     "fidelity": {
-      "quick": { "target_error": 0.5 },
-      "standard": { "target_error": 0.25 },
-      "confirm": { "target_error": 0.1 }
+      "quick": {
+        "target_error": 0.5
+      },
+      "standard": {
+        "target_error": 0.25
+      },
+      "confirm": {
+        "target_error": 0.1
+      }
     },
     "defaults": {
       "target_error": 0.5,
