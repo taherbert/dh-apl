@@ -33,7 +33,8 @@
         "name": "Dungeon Slice",
         "maxTime": 360,
         "desiredTargets": 1,
-        "fightStyle": "DungeonSlice"
+        "fightStyle": "DungeonSlice",
+        "overrides": ["enable_dungeon_slice=1"]
       },
       "small_aoe": {
         "name": "Patchwerk 5T",
