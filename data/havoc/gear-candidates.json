@@ -1969,35 +1969,30 @@
     {
       "id": "powerful_eversong_diamond",
       "label": "Powerful Eversong Diamond",
-      "name": "Powerful Eversong Diamond",
       "tags": [],
       "item_id": 240967
     },
     {
       "id": "flawless_masterful_lapis",
       "label": "Flawless Masterful Lapis",
-      "name": "Flawless Masterful Lapis",
       "tags": [],
       "item_id": 240918
     },
     {
       "id": "flawless_masterful_peridot",
       "label": "Flawless Masterful Peridot",
-      "name": "Flawless Masterful Peridot",
       "tags": [],
       "item_id": 240892
     },
     {
       "id": "flawless_masterful_garnet",
       "label": "Flawless Masterful Garnet",
-      "name": "Flawless Masterful Garnet",
       "tags": [],
       "item_id": 240908
     },
     {
       "id": "flawless_deadly_amethyst",
       "label": "Flawless Deadly Amethyst",
-      "name": "Flawless Deadly Amethyst",
       "tags": [],
       "item_id": 240898
     }

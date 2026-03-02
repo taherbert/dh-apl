@@ -919,8 +919,8 @@ function renderApexScaling(apexBuilds, heroTrees) {
   const cW = W - LEFT - RIGHT,
     cH = H - TOP - BOT;
   const step = 5;
-  const yMax = Math.max(step, Math.ceil((yMaxRaw + 2) / step) * step);
-  const yMin = Math.min(0, Math.floor((yMinRaw - 2) / step) * step);
+  const yMax = Math.max(0, Math.ceil((yMaxRaw + 2) / step) * step);
+  const yMin = yMinRaw < 0 ? Math.floor((yMinRaw - 2) / step) * step : 0;
   const yRange = yMax - yMin;
   if (yRange <= 0) return "";
 
@@ -929,10 +929,12 @@ function renderApexScaling(apexBuilds, heroTrees) {
 
   // Gridlines
   let grid = "";
-  for (let g = yMin; g <= yMax; g += step) {
+  const numSteps = Math.round((yMax - yMin) / step);
+  for (let i = 0; i <= numSteps; i++) {
+    const g = yMin + i * step;
     const y = yOf(g).toFixed(1);
     const isZero = g === 0;
-    grid += `<line x1="${LEFT}" y1="${y}" x2="${W - RIGHT}" y2="${y}" stroke="${isZero ? "var(--text-muted)" : "var(--border-subtle)"}" stroke-width="${isZero ? 1.5 : 1}" ${isZero ? 'stroke-dasharray="4,3"' : ""}/>`;
+    grid += `<line x1="${LEFT}" y1="${y}" x2="${W - RIGHT}" y2="${y}" stroke="${isZero ? "var(--fg-muted)" : "var(--border-subtle)"}" stroke-width="${isZero ? 1.5 : 1}" ${isZero ? 'stroke-dasharray="4,3"' : ""}/>`;
     grid += `<text x="${LEFT - 8}" y="${(+y + 3.5).toFixed(1)}" text-anchor="end" class="apex-axis-label">${g}%</text>`;
   }
 
