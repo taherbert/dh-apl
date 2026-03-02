@@ -360,18 +360,12 @@ export const SPEC_CONFIG = {
     {
       name: "EB+Burn",
       apexRank: 3,
-      include: { essence_break: "core", inertia: "core", burn: "core" },
+      include: { essence_break: "full", inertia: "core", burn: "core" },
     },
     {
-      name: "EB+Hunt",
+      name: "Hunt+Burn",
       apexRank: 3,
-      include: {
-        essence_break: "core",
-        inertia: "core",
-        burn: "core",
-        hunt: "core",
-        glaive: "core",
-      },
+      include: { hunt: "core", inertia: "core", burn: "full" },
     },
 
     // --- Throw Glaive archetype (Soulscar side of RO/Soulscar choice node) ---
@@ -532,8 +526,7 @@ export const SPEC_CONFIG = {
       // Same choice locks as Vengeance AR - identical hero tree node IDs
       // 94911: Unhindered Assault (DPS via Felblade reset)
       // 94896: Both defensive (Army Unto Oneself / Incorruptible Spirit)
-      // 94910: Lock to halve AR roster (Keen Engagement vs Preemptive Strike within noise)
-      choiceLocks: { 94911: 1, 94896: 0, 94910: 0 },
+      choiceLocks: { 94911: 1, 94896: 0 },
     },
     fel_scarred: {
       displayName: "Fel-Scarred",
