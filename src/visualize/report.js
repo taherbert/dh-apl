@@ -307,11 +307,18 @@ async function loadGearData(gearCandidates) {
     }
   }
 
-  // Build gem lookup: use name field (item name), fall back to label (effect text)
+  // Build gem lookup: prefer item name from enchantMap (via enchant_id), fall back to label
   const gemMap = new Map();
   if (gearCandidates) {
     for (const g of gearCandidates.gems || []) {
-      if (g.item_id) gemMap.set(g.item_id, g.name || g.label || null);
+      if (g.item_id) {
+        const name =
+          g.name ||
+          (g.enchant_id && enchantMap.get(g.enchant_id)) ||
+          g.label ||
+          null;
+        gemMap.set(g.item_id, name);
+      }
     }
   }
 
@@ -749,9 +756,15 @@ function renderHeroShowcase(builds, heroTrees) {
 
     const treeUrl = `https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117&width=1100&hideHeader=true`;
 
-    return `<div class="showcase-panel">
+    const {
+      color: panelColor,
+      fill: panelGlow,
+      cls: panelCls,
+    } = treeStyle(tree);
+
+    return `<div class="showcase-panel" style="box-shadow: 0 0 40px ${panelGlow}; --panel-color: ${panelColor}">
       <div class="showcase-header">
-        <span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span>
+        <span class="tree-badge ${panelCls}">${esc(heroTrees[tree].displayName)}</span>
       </div>
       <div class="showcase-build-name">${esc(best.displayName)}${copyBtn(best.hash)}</div>
       <div class="showcase-weighted">${fmtDps(best.dps.weighted || 0)} <span class="showcase-weighted-label">weighted</span></div>
@@ -933,10 +946,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
 
   for (const tree of treeNames) {
     if (!gains[tree]) continue;
-    const color = treeColor(tree);
-    const fill = isAnni(tree)
-      ? "rgba(167, 139, 250, 0.15)"
-      : "rgba(251, 146, 60, 0.15)";
+    const { color, fill } = treeStyle(tree);
 
     const pts = ranks
       .filter((r) => gains[tree][r] !== undefined)
@@ -1036,9 +1046,10 @@ function renderBuildRankings(builds, heroTrees) {
     const wTip = hasBaseline
       ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps.weighted)}"`
       : "";
+    const { cls: bCls, abbr: bAbbr } = treeStyle(b.heroTree);
     rows += `<tr data-tree="${esc(b.heroTree)}">
   <td class="build-name">${esc(b.displayName)}${copyBtn(b.hash)}</td>
-  <td><span class="tree-badge sm ${treeClass(b.heroTree)}">${treeAbbr(b.heroTree)}</span></td>
+  <td><span class="tree-badge sm ${bCls}">${bAbbr}</span></td>
   ${scenarioCells}
   <td class="dps-cell${isTopW ? " top-build" : ""} has-tip"${wTip}>${fmtDps(b.dps.weighted || 0)}${wBadge}</td>
 </tr>`;
@@ -1750,20 +1761,47 @@ const COPY_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" st
 
 const INFO_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg>`;
 
-function isAnni(heroTree) {
-  return heroTree?.toLowerCase().startsWith("anni");
+const TREE_STYLES = {
+  aldrachi_reaver: {
+    cls: "ar",
+    abbr: "AR",
+    color: "#fb923c",
+    fill: "rgba(251, 146, 60, 0.15)",
+  },
+  annihilator: {
+    cls: "anni",
+    abbr: "Anni",
+    color: "#a78bfa",
+    fill: "rgba(167, 139, 250, 0.15)",
+  },
+  fel_scarred: {
+    cls: "fs",
+    abbr: "FS",
+    color: "#a78bfa",
+    fill: "rgba(167, 139, 250, 0.15)",
+  },
+};
+
+function treeStyle(heroTree) {
+  const key = (heroTree || "").toLowerCase().replace(/[\s-]/g, "_");
+  return (
+    TREE_STYLES[key] || {
+      cls: "other",
+      abbr: key.slice(0, 2).toUpperCase(),
+      color: "#94a3b8",
+      fill: "rgba(148, 163, 184, 0.15)",
+    }
+  );
 }
 
 function treeClass(heroTree) {
-  return isAnni(heroTree) ? "anni" : "ar";
+  return treeStyle(heroTree).cls;
 }
-
 function treeAbbr(heroTree) {
-  return isAnni(heroTree) ? "Anni" : "AR";
+  return treeStyle(heroTree).abbr;
 }
-
 function treeColor(heroTree) {
-  return isAnni(heroTree) ? "#a78bfa" : "#fb923c";
+  return treeStyle(heroTree).color;
 }
 
 function scenarioLabel(s) {
@@ -1832,6 +1870,8 @@ const CSS = `
   --anni-glow: rgba(167, 139, 250, 0.10);
   --ar: #fb923c;
   --ar-glow: rgba(251, 146, 60, 0.10);
+  --fs: var(--anni);
+  --fs-glow: var(--anni-glow);
   --radius: 10px;
   --radius-sm: 6px;
 }
@@ -1957,12 +1997,12 @@ h4 {
   right: 0;
   height: 3px;
   border-radius: var(--radius) var(--radius) 0 0;
+  background: linear-gradient(90deg, var(--panel-color, var(--accent)), transparent);
 }
 
-.showcase-panel:nth-child(1)::before { background: linear-gradient(90deg, var(--ar), transparent); }
-.showcase-panel:nth-child(2)::before { background: linear-gradient(90deg, var(--anni), transparent); }
-.showcase-panel:nth-child(1) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--ar-glow); }
-.showcase-panel:nth-child(2) { background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%); box-shadow: 0 0 40px var(--anni-glow); }
+.showcase-panel {
+  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%);
+}
 
 .showcase-header {
   margin-bottom: 1rem;
@@ -2035,10 +2075,10 @@ h4 {
   border: none;
   background: var(--bg);
   pointer-events: none;
-  clip-path: inset(0% 0% 15% 57%);
+  clip-path: inset(0% 0% 15% 62%);
   left: 50%;
   top: 50%;
-  transform-origin: 78.5% 42.5%;
+  transform-origin: 81% 42.5%;
 }
 
 /* Dual panel layout */
@@ -2219,6 +2259,8 @@ h4 {
 
 .tree-badge.anni { background: rgba(167, 139, 250, 0.13); color: var(--anni); }
 .tree-badge.ar { background: rgba(251, 146, 60, 0.13); color: var(--ar); }
+.tree-badge.fs { background: rgba(167, 139, 250, 0.13); color: var(--fs); }
+.tree-badge.other { background: rgba(148, 163, 184, 0.13); color: #94a3b8; }
 .tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
 
 /* Filter bar */
@@ -2248,6 +2290,8 @@ h4 {
 /* Tables */
 .table-wrap {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 70vh;
   border-radius: var(--radius);
   border: 1px solid var(--border);
   background: var(--bg-elevated);
@@ -2570,26 +2614,21 @@ summary:hover { color: var(--accent); }
 
 .gear-anno {
   font-family: "DM Sans", sans-serif;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 600;
   white-space: nowrap;
+  padding: 0.1em 0.4em;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
 }
 
-.gear-anno--gem { color: var(--positive); }
-.gear-anno--enchant { color: var(--accent); opacity: 0.8; }
-.gear-anno--crafted {
-  color: var(--ar);
-  text-transform: uppercase;
-  font-size: 0.55rem;
-  letter-spacing: 0.03em;
-}
-
-.gear-anno--emb {
-  color: var(--anni);
-  font-size: 0.55rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
+.gear-anno--gem { color: var(--positive); border-color: rgba(52, 211, 153, 0.25); }
+.gear-anno--enchant { color: var(--accent); border-color: var(--accent-dim); }
+.gear-anno--crafted { color: var(--ar); border-color: rgba(251, 146, 60, 0.25); }
+.gear-anno--emb { color: var(--anni); border-color: rgba(167, 139, 250, 0.25); }
 
 /* Consumables bar */
 .gear-cons-bar {
@@ -3008,7 +3047,7 @@ document.querySelectorAll('.showcase-tree-wrap').forEach(wrap => {
   const TREE_W = 473, TREE_H = 595;
   const fit = () => {
     const s = Math.min(wrap.clientWidth / TREE_W, wrap.clientHeight / TREE_H);
-    iframe.style.transform = 'translate(-78.5%, -42.5%) scale(' + s + ')';
+    iframe.style.transform = 'translate(-81%, -42.5%) scale(' + s + ')';
   };
   fit();
   new ResizeObserver(fit).observe(wrap);
