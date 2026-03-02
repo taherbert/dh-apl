@@ -876,7 +876,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
   const maxRank = Math.max(...ranks);
   if (maxRank <= 0) return "";
 
-  // Best weighted DPS per tree per rank
+  // Average weighted DPS per tree per rank (more representative than best-only)
   const perTree = {};
   for (const tree of treeNames) {
     perTree[tree] = {};
@@ -885,7 +885,8 @@ function renderApexScaling(apexBuilds, heroTrees) {
         (e) => e.heroTree === tree,
       );
       if (entries.length > 0) {
-        perTree[tree][rank] = Math.max(...entries.map((e) => e.avg.weighted));
+        const sum = entries.reduce((s, e) => s + e.avg.weighted, 0);
+        perTree[tree][rank] = sum / entries.length;
       }
     }
   }
@@ -893,6 +894,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
   // % gain from each tree's rank 0 baseline
   const gains = {};
   let yMaxRaw = 0;
+  let yMinRaw = 0;
   for (const tree of treeNames) {
     const baseline = perTree[tree][0];
     if (!baseline) continue;
@@ -903,10 +905,11 @@ function renderApexScaling(apexBuilds, heroTrees) {
       const pct = ((dps - baseline) / baseline) * 100;
       gains[tree][rank] = { pct, dps };
       if (pct > yMaxRaw) yMaxRaw = pct;
+      if (pct < yMinRaw) yMinRaw = pct;
     }
   }
 
-  // SVG layout
+  // SVG layout — support negative values
   const W = 400,
     H = 250;
   const LEFT = 48,
@@ -915,18 +918,21 @@ function renderApexScaling(apexBuilds, heroTrees) {
     BOT = 40;
   const cW = W - LEFT - RIGHT,
     cH = H - TOP - BOT;
-  const yMax = Math.ceil((yMaxRaw + 5) / 10) * 10;
-  if (yMax <= 0) return "";
+  const step = 5;
+  const yMax = Math.max(step, Math.ceil((yMaxRaw + 2) / step) * step);
+  const yMin = Math.min(0, Math.floor((yMinRaw - 2) / step) * step);
+  const yRange = yMax - yMin;
+  if (yRange <= 0) return "";
 
   const xOf = (r) => LEFT + (r / maxRank) * cW;
-  const yOf = (g) => TOP + cH - (g / yMax) * cH;
+  const yOf = (g) => TOP + cH - ((g - yMin) / yRange) * cH;
 
   // Gridlines
   let grid = "";
-  const step = yMax <= 20 ? 5 : 10;
-  for (let g = 0; g <= yMax; g += step) {
+  for (let g = yMin; g <= yMax; g += step) {
     const y = yOf(g).toFixed(1);
-    grid += `<line x1="${LEFT}" y1="${y}" x2="${W - RIGHT}" y2="${y}" stroke="var(--border-subtle)" stroke-width="1"/>`;
+    const isZero = g === 0;
+    grid += `<line x1="${LEFT}" y1="${y}" x2="${W - RIGHT}" y2="${y}" stroke="${isZero ? "var(--text-muted)" : "var(--border-subtle)"}" stroke-width="${isZero ? 1.5 : 1}" ${isZero ? 'stroke-dasharray="4,3"' : ""}/>`;
     grid += `<text x="${LEFT - 8}" y="${(+y + 3.5).toFixed(1)}" text-anchor="end" class="apex-axis-label">${g}%</text>`;
   }
 
@@ -989,7 +995,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
 
   return `<div class="apex-panel">
     <h3>Apex Scaling</h3>
-    <p class="section-desc">Weighted DPS gain by apex rank (best build per hero tree), relative to each tree's rank 0 baseline.</p>
+    <p class="section-desc">Average weighted DPS change by apex rank per hero tree, relative to each tree's rank 0 baseline.</p>
     <svg class="apex-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
       ${grid}
       ${xAxis}
