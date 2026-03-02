@@ -18,7 +18,14 @@ import {
   toTitleCase,
 } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
-import { resultsDir, aplsDir, dataFile, getSpecName } from "../engine/paths.js";
+import {
+  resultsDir,
+  aplsDir,
+  dataFile,
+  getSpecName,
+  ROOT,
+} from "../engine/paths.js";
+import { spawn } from "node:child_process";
 import { loadRoster } from "../sim/build-roster.js";
 import {
   generateRosterProfilesetContent,
@@ -27,8 +34,7 @@ import {
 } from "../sim/profilesets.js";
 import {
   getDb,
-  getIterations,
-  getTheory,
+  getSessionState,
   getRosterBuilds,
   updateBuildDps,
   updateBuildSimcDps,
@@ -121,10 +127,9 @@ function loadReportData(roster) {
     };
   });
 
-  const iterations = loadChangelog();
   const apexBuilds = deriveApexBuilds(builds);
 
-  return { builds, iterations, apexBuilds };
+  return { builds, apexBuilds };
 }
 
 function loadTrinketData(gearCandidates) {
@@ -195,18 +200,6 @@ function loadEmbellishmentData() {
   const nullEmb = rows.find((r) => r.candidate_id === "__null_emb__");
   const pairs = rows.filter((r) => r.candidate_id !== "__null_emb__");
   return { pairs, nullEmb };
-}
-
-function loadRingData() {
-  const db = getDb();
-  const spec = getSpecName();
-  const rows = db
-    .prepare(
-      "SELECT * FROM gear_results WHERE spec = ? AND phase = 6 AND combination_type = 'rings' AND candidate_id != '__baseline__' ORDER BY weighted DESC",
-    )
-    .all(spec);
-  if (rows.length === 0) return null;
-  return { pairs: rows };
 }
 
 // Slot display order and human-readable labels
@@ -395,42 +388,6 @@ function parseGearLine(line) {
   }
 
   return item;
-}
-
-function loadChangelog() {
-  try {
-    const iterations = getIterations({ decision: "accepted", limit: 200 });
-    return iterations.map((it) => ({
-      id: it.id,
-      date: it.createdAt,
-      description: resolveIterationDescription(it),
-      meanWeighted: it.aggregate?.meanWeighted ?? null,
-      perScenario: it.aggregate || {},
-    }));
-  } catch {
-    return [];
-  }
-}
-
-function resolveIterationDescription(it) {
-  if (it.reason) return it.reason;
-
-  if (it.hypothesisId) {
-    try {
-      const hyp = getDb()
-        .prepare("SELECT summary, theory_id FROM hypotheses WHERE id = ?")
-        .get(it.hypothesisId);
-      if (hyp?.summary) return hyp.summary;
-      if (hyp?.theory_id) {
-        const theory = getTheory(hyp.theory_id);
-        if (theory) return theory.title;
-      }
-    } catch {
-      // Hypothesis lookup is optional
-    }
-  }
-
-  return it.aplDiff || "APL change";
 }
 
 // --- Apex rank build analysis ---
@@ -672,12 +629,10 @@ function generateHtml(data) {
   const {
     specName,
     builds,
-    iterations,
     apexBuilds,
     defensiveTalentCosts,
     heroTrees,
     trinketData,
-    ringData,
     embellishmentData,
     gearData,
   } = data;
@@ -1357,15 +1312,6 @@ function renderEmbellishmentRankings(embData) {
 </section>`;
 }
 
-function renderRingRankings(ringData) {
-  return renderPairRankingSection({
-    title: "Ring Rankings",
-    desc: "DPS contribution from ring combinations (2-slot). Combinations screened then pair-simmed for accuracy.",
-    pairs: ringData?.pairs,
-    deltaFn: pctDelta,
-  });
-}
-
 // ilvl tier colors: muted → bright across the progression range
 const ILVL_COLORS = [
   "#7c8098", // lowest — muted gray
@@ -1607,40 +1553,6 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
 
   html += `</div></div>`;
   return html;
-}
-
-function renderOptimizationJourney(iterations) {
-  if (!iterations || iterations.length === 0) return "";
-
-  let cumulative = 0;
-  let tableRows = "";
-  for (const it of iterations) {
-    const delta = it.meanWeighted || 0;
-    cumulative += delta;
-    const date = it.date ? it.date.split(/[T ]/)[0] : "\u2014";
-
-    tableRows += `<tr>
-      <td>${date}</td>
-      <td class="desc-cell">${esc(it.description || "")}</td>
-      <td class="num ${delta >= 0 ? "positive" : "negative"}">${fmtDelta(delta)}</td>
-      <td class="num ${cumulative >= 0 ? "positive" : "negative"}">${fmtDelta(cumulative)}</td>
-    </tr>`;
-  }
-
-  return `<section>
-  <h2>Changelog</h2>
-  <div class="table-wrap">
-    <table class="journey-table">
-      <thead><tr>
-        <th>Date</th>
-        <th>Description</th>
-        <th class="num">Impact</th>
-        <th class="num">Cumulative</th>
-      </tr></thead>
-      <tbody>${tableRows}</tbody>
-    </table>
-  </div>
-</section>`;
 }
 
 function renderGearDisplay(gearData) {
@@ -2548,12 +2460,6 @@ summary:hover { color: var(--accent); }
   color: var(--fg-muted);
 }
 
-/* Optimization journey */
-.journey-table .desc-cell {
-  max-width: 420px;
-  white-space: normal;
-  line-height: 1.45;
-}
 
 
 
@@ -3242,6 +3148,105 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
 
 `;
 
+// --- Auto-populate missing gear phases ---
+
+async function autoRunMissingGearPhases() {
+  const db = getDb();
+  const spec = getSpecName();
+
+  if (!getSessionState("gear_scale_factors")) {
+    console.warn(
+      "  Warning: No scale factors found — cannot auto-run gear phases. Run: npm run gear:run",
+    );
+    return;
+  }
+
+  const trinketScreens = db
+    .prepare(
+      "SELECT COUNT(*) as n FROM gear_results WHERE spec = ? AND phase = 5 AND slot = 'trinkets_screen'",
+    )
+    .get(spec).n;
+  const embPairs = db
+    .prepare(
+      "SELECT COUNT(*) as n FROM gear_results WHERE spec = ? AND phase = 7 AND combination_type = 'embellishments'",
+    )
+    .get(spec).n;
+  const ilvlRows = db
+    .prepare("SELECT COUNT(*) as n FROM gear_ilvl_results WHERE spec = ?")
+    .get(spec).n;
+
+  const missing = [];
+  if (!trinketScreens)
+    missing.push({
+      label: "trinket combinations",
+      args: ["combinations", "--type", "trinkets"],
+    });
+  if (!embPairs)
+    missing.push({
+      label: "embellishment combinations",
+      args: ["combinations", "--type", "embellishments"],
+    });
+  if (!ilvlRows)
+    missing.push({ label: "trinket ilvl chart", args: ["trinket-chart"] });
+
+  if (missing.length === 0) return;
+
+  console.log(
+    `\n  Auto-running ${missing.length} missing gear phase(s) at quick fidelity...`,
+  );
+
+  for (const { label, args } of missing) {
+    console.log(`    ${label}...`);
+    try {
+      await new Promise((resolve, reject) => {
+        const child = spawn(
+          process.execPath,
+          ["src/sim/gear.js", ...args, "--spec", spec, "--fidelity", "quick"],
+          { cwd: ROOT, stdio: "inherit" },
+        );
+        child.on("close", (code) =>
+          code === 0 ? resolve() : reject(new Error(`exit code ${code}`)),
+        );
+        child.on("error", reject);
+      });
+      console.log(`    ${label} done.`);
+    } catch (err) {
+      console.warn(`    Warning: ${label} failed: ${err.message}`);
+    }
+  }
+}
+
+// --- Validation ---
+
+function validateReportData({
+  builds,
+  trinketData,
+  embellishmentData,
+  gearData,
+  skipSims,
+}) {
+  const warnings = [];
+
+  if (!skipSims) {
+    const withDps = builds.filter((b) => b.dps?.weighted > 0).length;
+    if (withDps === 0)
+      warnings.push("No builds have DPS data. Run: npm run report:dashboard");
+  }
+
+  if (!gearData?.gear?.size)
+    warnings.push(
+      "No gear profile data. Check apls/{spec}/profile.simc has item names.",
+    );
+  if (!trinketData)
+    warnings.push(
+      "No trinket data. Run: npm run gear:run (phases 5 + trinket-chart)",
+    );
+  if (!embellishmentData)
+    warnings.push("No embellishment data. Run: npm run gear:run (phase 7)");
+
+  for (const w of warnings) console.warn(`  Warning: ${w}`);
+}
+
 // --- Main ---
 
 async function main() {
@@ -3351,6 +3356,11 @@ async function main() {
     }
   }
 
+  // Auto-populate missing gear phases before loading data
+  if (!opts.skipSims) {
+    await autoRunMissingGearPhases();
+  }
+
   // Load gear candidates once for trinket tags and gear label resolution
   const gearCandidates = loadGearCandidatesFile();
 
@@ -3370,11 +3380,6 @@ async function main() {
     console.log(`  Trinkets: ${parts.join(", ")} loaded from DB.`);
   }
 
-  const ringData = loadRingData();
-  if (ringData) {
-    console.log(`  Rings: ${ringData.pairs.length} pairs loaded from DB.`);
-  }
-
   const embellishmentData = loadEmbellishmentData();
   if (embellishmentData) {
     console.log(
@@ -3388,6 +3393,15 @@ async function main() {
     console.log(`  Gear: ${gearData.gear.size} slots loaded from profile.simc`);
   }
 
+  // Warn about missing data (non-fatal — partial reports are still useful)
+  validateReportData({
+    builds: reportData.builds,
+    trinketData,
+    embellishmentData,
+    gearData,
+    skipSims: opts.skipSims,
+  });
+
   // Generate HTML
   const reportDir = join(resultsDir(), "report");
   mkdirSync(reportDir, { recursive: true });
@@ -3395,12 +3409,10 @@ async function main() {
   const html = generateHtml({
     specName,
     builds: reportData.builds,
-    iterations: reportData.iterations,
     apexBuilds: reportData.apexBuilds,
     defensiveTalentCosts,
     heroTrees,
     trinketData,
-    ringData,
     embellishmentData,
     gearData,
   });
