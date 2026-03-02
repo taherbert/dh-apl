@@ -756,15 +756,12 @@ function renderHeroShowcase(builds, heroTrees) {
 
     const treeUrl = `https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117&width=1100&hideHeader=true`;
 
-    const {
-      color: panelColor,
-      fill: panelGlow,
-      cls: panelCls,
-    } = treeStyle(tree);
+    const panelColor = treeColor(tree);
+    const panelGlow = treeFill(tree);
 
     return `<div class="showcase-panel" style="box-shadow: 0 0 40px ${panelGlow}; --panel-color: ${panelColor}">
       <div class="showcase-header">
-        <span class="tree-badge ${panelCls}">${esc(heroTrees[tree].displayName)}</span>
+        <span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span>
       </div>
       <div class="showcase-build-name">${esc(best.displayName)}${copyBtn(best.hash)}</div>
       <div class="showcase-weighted">${fmtDps(best.dps.weighted || 0)} <span class="showcase-weighted-label">weighted</span></div>
@@ -946,7 +943,8 @@ function renderApexScaling(apexBuilds, heroTrees) {
 
   for (const tree of treeNames) {
     if (!gains[tree]) continue;
-    const { color, fill } = treeStyle(tree);
+    const color = treeColor(tree);
+    const fill = treeFill(tree);
 
     const pts = ranks
       .filter((r) => gains[tree][r] !== undefined)
@@ -1802,6 +1800,9 @@ function treeAbbr(heroTree) {
 }
 function treeColor(heroTree) {
   return treeStyle(heroTree).color;
+}
+function treeFill(heroTree) {
+  return treeStyle(heroTree).fill;
 }
 
 function scenarioLabel(s) {

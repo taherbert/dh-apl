@@ -13,7 +13,9 @@
       "Eye Beam",
       "First Blood",
       "Critical Chaos",
-      "Improved Chaos Strike"
+      "Improved Chaos Strike",
+      "Scars of Suffering",
+      "Demon Hide"
     ],
     "banned": [
       "Illidari Knowledge",
@@ -22,10 +24,9 @@
       "Charred Warblades",
       "Will of the Illidari",
       "Lost in Darkness",
-      "Demon Hide",
       "Desperate Instincts",
-      "Scars of Suffering",
-      "Wings of Wrath"
+      "Wings of Wrath",
+      "Dash of Chaos"
     ],
     "excluded": ["Deflecting Dance", "Demonic Resilience"]
   }

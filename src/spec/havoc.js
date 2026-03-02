@@ -109,6 +109,8 @@ export const SPEC_CONFIG = {
     },
     hunt: {
       core: ["The Hunt"],
+      // Isolated Prey also in burn.extended — intentional dual membership since it benefits both archetypes
+      extended: ["Isolated Prey"],
     },
     glaive: {
       core: ["Glaive Tempest"],
@@ -119,6 +121,9 @@ export const SPEC_CONFIG = {
     },
     chaotic_transform: {
       core: ["Chaotic Transformation"],
+    },
+    shattered_destiny: {
+      core: ["Shattered Destiny"],
     },
   },
 
@@ -269,6 +274,28 @@ export const SPEC_CONFIG = {
       apexRank: 1,
       include: { inertia: "full", burn: "full", glaive: "full" },
     },
+    {
+      name: "Hunt+Burn",
+      apexRank: 1,
+      include: {
+        hunt: "core",
+        burn: "full",
+        inertia: "core",
+        essence_break: "core",
+        glaive: "core",
+      },
+    },
+    {
+      name: "All Clusters",
+      apexRank: 1,
+      include: {
+        essence_break: "core",
+        inertia: "core",
+        burn: "core",
+        hunt: "core",
+        glaive: "core",
+      },
+    },
 
     // --- Apex 2 (Eternal Hunt rank 2) ---
     {
@@ -329,6 +356,36 @@ export const SPEC_CONFIG = {
       apexRank: 2,
       include: { essence_break: "full", inertia: "core", burn: "full" },
     },
+    {
+      name: "EB+Burn+Hunt",
+      apexRank: 2,
+      include: {
+        essence_break: "full",
+        inertia: "core",
+        burn: "core",
+        hunt: "core",
+      },
+    },
+    {
+      name: "Hunt+Glaive",
+      apexRank: 2,
+      include: {
+        essence_break: "core",
+        inertia: "core",
+        hunt: "full",
+        glaive: "full",
+      },
+    },
+    {
+      name: "EB+Glaive",
+      apexRank: 2,
+      include: { essence_break: "full", inertia: "core", glaive: "full" },
+    },
+    {
+      name: "Burn+Glaive",
+      apexRank: 2,
+      include: { inertia: "core", burn: "full", glaive: "full" },
+    },
 
     // --- Apex 3 (Eternal Hunt rank 3) ---
     {
@@ -365,7 +422,94 @@ export const SPEC_CONFIG = {
     {
       name: "Hunt+Burn",
       apexRank: 3,
+      include: {
+        hunt: "core",
+        inertia: "core",
+        burn: "full",
+        essence_break: "core",
+      },
+    },
+    {
+      name: "Hunt+Burn",
+      apexRank: 3,
       include: { hunt: "core", inertia: "core", burn: "full" },
+    },
+    {
+      name: "Hunt+Glaive",
+      apexRank: 3,
+      include: {
+        essence_break: "core",
+        inertia: "core",
+        hunt: "core",
+        glaive: "full",
+      },
+    },
+    {
+      name: "EB+Glaive",
+      apexRank: 3,
+      include: { essence_break: "full", inertia: "core", glaive: "core" },
+    },
+    {
+      name: "Burn+Hunt",
+      apexRank: 3,
+      include: {
+        essence_break: "core",
+        inertia: "core",
+        burn: "core",
+        hunt: "core",
+        glaive: "core",
+      },
+    },
+
+    // --- Apex 4 (Eternal Hunt rank 4, fully maxed) ---
+    {
+      name: "EB+Hunt",
+      apexRank: 4,
+      include: { essence_break: "full", inertia: "core", hunt: "core" },
+    },
+    {
+      name: "EB Focus",
+      apexRank: 4,
+      include: { essence_break: "full", inertia: "core" },
+    },
+    {
+      name: "Hunt Focus",
+      apexRank: 4,
+      include: {
+        hunt: "full",
+        inertia: "core",
+        essence_break: "core",
+      },
+    },
+    {
+      name: "Hunt+Burn",
+      apexRank: 4,
+      include: {
+        hunt: "core",
+        inertia: "core",
+        burn: "core",
+        essence_break: "core",
+      },
+    },
+    {
+      name: "Glaive Focus",
+      apexRank: 4,
+      include: { glaive: "full", inertia: "core" },
+    },
+    {
+      name: "EB+Burn",
+      apexRank: 4,
+      include: { essence_break: "full", burn: "core", inertia: "core" },
+    },
+    {
+      name: "Hunt+Glaive",
+      apexRank: 4,
+      include: {
+        hunt: "core",
+        glaive: "full",
+        inertia: "core",
+        essence_break: "core",
+      },
     },
 
     // --- Throw Glaive archetype (Soulscar side of RO/Soulscar choice node) ---
@@ -393,6 +537,27 @@ export const SPEC_CONFIG = {
     {
       name: "TG+EB",
       apexRank: 1,
+      include: {
+        essence_break: "full",
+        inertia: "core",
+        glaive: "full",
+      },
+      require: ["Serrated Glaive", "Soulscar"],
+      exclude: ["Relentless Onslaught"],
+    },
+    {
+      name: "TG+Burn",
+      apexRank: 1,
+      include: {
+        burn: "full",
+        glaive: "full",
+      },
+      require: ["Serrated Glaive", "Soulscar"],
+      exclude: ["Relentless Onslaught"],
+    },
+    {
+      name: "TG+EB",
+      apexRank: 2,
       include: {
         essence_break: "full",
         inertia: "core",
@@ -436,6 +601,28 @@ export const SPEC_CONFIG = {
       require: ["Relentless Onslaught", "Chaos Theory"],
       exclude: ["Soulscar"],
     },
+    {
+      name: "CS+Burn",
+      apexRank: 1,
+      include: {
+        burn: "full",
+        inertia: "core",
+        glaive: "core",
+      },
+      require: ["Relentless Onslaught", "Chaos Theory"],
+      exclude: ["Soulscar"],
+    },
+    {
+      name: "CS+EB",
+      apexRank: 2,
+      include: {
+        essence_break: "full",
+        inertia: "core",
+        glaive: "core",
+      },
+      require: ["Relentless Onslaught", "Chaos Theory"],
+      exclude: ["Soulscar"],
+    },
 
     // --- Full Burn+Immo archetype (BW + IP + GI via burn: "full") ---
     {
@@ -445,6 +632,15 @@ export const SPEC_CONFIG = {
         burn: "full",
         essence_break: "full",
         inertia: "full",
+      },
+    },
+    {
+      name: "Burn+EB",
+      apexRank: 1,
+      include: {
+        burn: "full",
+        essence_break: "full",
+        inertia: "core",
       },
     },
 
@@ -467,6 +663,38 @@ export const SPEC_CONFIG = {
         collective_anguish: "core",
         essence_break: "full",
         inertia: "core",
+        glaive: "core",
+      },
+      exclude: ["Shattered Destiny"],
+    },
+    {
+      name: "CA+EB",
+      apexRank: 2,
+      include: {
+        collective_anguish: "core",
+        essence_break: "full",
+        inertia: "core",
+      },
+      exclude: ["Shattered Destiny"],
+    },
+    {
+      name: "CA+Hunt",
+      apexRank: 0,
+      include: {
+        collective_anguish: "core",
+        hunt: "core",
+        essence_break: "full",
+        inertia: "full",
+      },
+      exclude: ["Shattered Destiny"],
+    },
+    {
+      name: "CA+Burn",
+      apexRank: 0,
+      include: {
+        collective_anguish: "core",
+        burn: "full",
+        inertia: "full",
         glaive: "core",
       },
       exclude: ["Shattered Destiny"],
@@ -505,6 +733,287 @@ export const SPEC_CONFIG = {
         glaive: "full",
       },
       exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+EB+Hunt",
+      apexRank: 4,
+      include: {
+        chaotic_transform: "core",
+        essence_break: "full",
+        inertia: "core",
+        hunt: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+Hunt",
+      apexRank: 0,
+      include: {
+        chaotic_transform: "core",
+        hunt: "full",
+        essence_break: "core",
+        inertia: "full",
+        burn: "core",
+        glaive: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+EB",
+      apexRank: 2,
+      include: {
+        chaotic_transform: "core",
+        essence_break: "full",
+        inertia: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+EB",
+      apexRank: 3,
+      include: {
+        chaotic_transform: "core",
+        essence_break: "full",
+        inertia: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+Burn",
+      apexRank: 1,
+      include: {
+        chaotic_transform: "core",
+        burn: "full",
+        inertia: "full",
+        glaive: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+Burn",
+      apexRank: 2,
+      include: {
+        chaotic_transform: "core",
+        burn: "full",
+        inertia: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+Glaive",
+      apexRank: 0,
+      include: {
+        chaotic_transform: "core",
+        glaive: "full",
+        essence_break: "core",
+        inertia: "full",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+Glaive",
+      apexRank: 1,
+      include: {
+        chaotic_transform: "core",
+        glaive: "full",
+        essence_break: "core",
+        inertia: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+    {
+      name: "CT+EB",
+      apexRank: 4,
+      include: {
+        chaotic_transform: "core",
+        essence_break: "full",
+        inertia: "core",
+      },
+      exclude: ["Inner Demon"],
+    },
+
+    // --- Shattered Destiny archetype (SD extends meta via fury spending) ---
+    // CT+SD: Chaotic Transformation resets + SD meta extension = long empowered windows
+    {
+      name: "CT+SD+EB+Hunt",
+      apexRank: 4,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "full",
+        essence_break: "full",
+        inertia: "core",
+        hunt: "full",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    {
+      name: "CT+SD+EB+Hunt",
+      apexRank: 3,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "core",
+        essence_break: "full",
+        inertia: "core",
+        hunt: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    {
+      name: "CT+SD+EB",
+      apexRank: 4,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "full",
+        essence_break: "full",
+        inertia: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    {
+      name: "CT+SD+EB",
+      apexRank: 3,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "core",
+        essence_break: "full",
+        inertia: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    {
+      name: "CT+SD+EB",
+      apexRank: 2,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "core",
+        essence_break: "full",
+        inertia: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    {
+      name: "CT+SD+EB",
+      apexRank: 0,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "core",
+        essence_break: "full",
+        inertia: "full",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    {
+      name: "CT+SD+Hunt",
+      apexRank: 4,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "core",
+        essence_break: "core",
+        inertia: "core",
+        hunt: "full",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    {
+      name: "CT+SD+Burn",
+      apexRank: 2,
+      include: {
+        chaotic_transform: "core",
+        shattered_destiny: "core",
+        burn: "full",
+        inertia: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Inner Demon", "Collective Anguish"],
+    },
+    // SD without CT: meta extension benefits any build
+    {
+      name: "SD+EB",
+      apexRank: 0,
+      include: {
+        shattered_destiny: "full",
+        essence_break: "full",
+        inertia: "full",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Collective Anguish"],
+    },
+    {
+      name: "SD+EB",
+      apexRank: 2,
+      include: {
+        shattered_destiny: "full",
+        essence_break: "full",
+        inertia: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Collective Anguish"],
+    },
+    {
+      name: "SD+EB",
+      apexRank: 4,
+      include: {
+        shattered_destiny: "full",
+        essence_break: "full",
+        inertia: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Collective Anguish"],
+    },
+    {
+      name: "SD+EB+Hunt",
+      apexRank: 2,
+      include: {
+        shattered_destiny: "core",
+        essence_break: "full",
+        inertia: "core",
+        hunt: "full",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Collective Anguish"],
+    },
+    {
+      name: "SD+EB+Hunt",
+      apexRank: 4,
+      include: {
+        shattered_destiny: "full",
+        essence_break: "full",
+        inertia: "core",
+        hunt: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Collective Anguish"],
+    },
+    {
+      name: "SD+Burn",
+      apexRank: 0,
+      include: {
+        shattered_destiny: "full",
+        burn: "full",
+        inertia: "full",
+        glaive: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Collective Anguish"],
+    },
+    {
+      name: "SD+Hunt",
+      apexRank: 2,
+      include: {
+        shattered_destiny: "full",
+        hunt: "full",
+        essence_break: "core",
+        inertia: "core",
+      },
+      require: ["Chaotic Disposition"],
+      exclude: ["Collective Anguish"],
     },
   ],
 
