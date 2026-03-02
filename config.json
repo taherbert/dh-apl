@@ -30,10 +30,10 @@
         "overrides": ["override.bloodlust=1"]
       },
       "dungeon_route": {
-        "name": "Dungeon Route",
-        "maxTime": 600,
+        "name": "Dungeon Slice",
+        "maxTime": 360,
         "desiredTargets": 1,
-        "fightStyle": "DungeonRoute"
+        "fightStyle": "DungeonSlice"
       },
       "small_aoe": {
         "name": "Patchwerk 5T",
