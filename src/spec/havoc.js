@@ -1015,6 +1015,97 @@ export const SPEC_CONFIG = {
       require: ["Chaotic Disposition"],
       exclude: ["Collective Anguish"],
     },
+
+    // --- No Mover archetype (no movement talents) ---
+    // Excludes Inertia + Unbound Chaos (via cluster omission) and Exergy (explicit).
+    // Skips the entire Inertia/Exergy choice node, freeing a talent point.
+    {
+      name: "NM EB+Burn+Glaive",
+      apexRank: 0,
+      include: { essence_break: "full", burn: "full", glaive: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM EB+Burn+Hunt",
+      apexRank: 0,
+      include: { essence_break: "full", burn: "full", hunt: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM EB+Burn+Hunt+Glaive",
+      apexRank: 0,
+      include: {
+        essence_break: "full",
+        burn: "full",
+        hunt: "core",
+        glaive: "full",
+      },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM Burn+Glaive",
+      apexRank: 0,
+      include: { burn: "full", glaive: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM EB+Glaive",
+      apexRank: 0,
+      include: { essence_break: "full", glaive: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM CT+EB",
+      apexRank: 0,
+      include: {
+        chaotic_transform: "core",
+        essence_break: "full",
+        burn: "full",
+      },
+      exclude: ["Inner Demon", "Exergy"],
+    },
+    {
+      name: "NM EB+Burn+Glaive",
+      apexRank: 1,
+      include: { essence_break: "full", burn: "full", glaive: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM EB+Burn+Hunt",
+      apexRank: 1,
+      include: { essence_break: "full", burn: "full", hunt: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM Burn+Glaive",
+      apexRank: 1,
+      include: { burn: "full", glaive: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM EB+Burn",
+      apexRank: 2,
+      include: { essence_break: "full", burn: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM EB+Glaive",
+      apexRank: 2,
+      include: { essence_break: "full", glaive: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM Burn+Glaive",
+      apexRank: 2,
+      include: { burn: "full", glaive: "full" },
+      exclude: ["Exergy"],
+    },
+    {
+      name: "NM EB+Burn",
+      apexRank: 3,
+      include: { essence_break: "full", burn: "core" },
+      exclude: ["Exergy"],
+    },
   ],
 
   heroTrees: {
