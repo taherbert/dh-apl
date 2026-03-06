@@ -4,7 +4,7 @@
     "branch": "midnight"
   },
   "data": {
-    "env": "beta",
+    "env": "live",
     "raidbots": "https://mimiron.raidbots.com/static/data"
   },
   "remote": {

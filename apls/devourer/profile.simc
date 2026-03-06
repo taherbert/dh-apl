@@ -1,7 +1,6 @@
 # Devourer DH Midnight Profile
 # Int-based caster DPS spec — generic gear, no expansion-specific enchants/gems
 
-ptr=1
 demonhunter="Devourer_DH"
 spec=devourer
 level=90

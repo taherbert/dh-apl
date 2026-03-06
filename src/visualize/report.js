@@ -40,6 +40,10 @@ import {
   updateBuildSimcDps,
 } from "../util/db.js";
 import { generateDefensiveCostBuilds } from "../model/talent-combos.js";
+import {
+  decode as decodeTalentHash,
+  loadFullNodeList,
+} from "../util/talent-string.js";
 
 // Severity tiers for defensive talent cost strips, ordered by threshold ascending.
 // Thresholds are fractions of maxCost — resolved at render time via getSeverity().
@@ -253,7 +257,7 @@ const GEAR_COL_RIGHT = [
   "off_hand",
 ];
 
-async function loadGearData(gearCandidates) {
+function loadGearData(gearCandidates) {
   const profilePath = join(aplsDir(), "profile.simc");
   if (!existsSync(profilePath)) return null;
 
@@ -274,26 +278,12 @@ async function loadGearData(gearCandidates) {
     }
   }
 
-  // Build enchant lookup: Raidbots enchantments.json for complete coverage,
-  // gear-candidates.json labels as fallback
+  // Build enchant lookup from local gear-candidates.json (no runtime fetch)
   const enchantMap = new Map();
-  try {
-    const url = `${config.data.raidbots}/${config.data.env}/enchantments.json`;
-    const res = await fetch(url);
-    if (res.ok) {
-      const data = await res.json();
-      for (const e of data) {
-        if (e.id && (e.itemName || e.displayName))
-          enchantMap.set(e.id, e.itemName || e.displayName);
-      }
-    }
-  } catch {
-    // Network unavailable — fall back to gear-candidates.json below
-  }
   if (gearCandidates) {
     for (const slotData of Object.values(gearCandidates.enchants || {})) {
       for (const c of slotData.candidates || []) {
-        if (c.enchant_id && c.label && !enchantMap.has(c.enchant_id)) {
+        if (c.enchant_id && c.label) {
           enchantMap.set(c.enchant_id, c.label);
         }
       }
@@ -623,6 +613,113 @@ async function simDefensiveCosts(
   return { costs: results, refName };
 }
 
+// --- Talent heatmap computation ---
+
+function decodeBuildSelections(builds, talentData) {
+  const nodes = talentData.allNodes;
+  const decoded = new Map();
+  for (const b of builds) {
+    if (!b.hash) continue;
+    try {
+      const { selections } = decodeTalentHash(b.hash, nodes);
+      decoded.set(b.id, selections);
+    } catch {
+      // Skip builds with invalid hashes
+    }
+  }
+  return decoded;
+}
+
+function computeNodeContributions(builds, talentData, decodedBuilds) {
+  const allNodeList = [
+    ...talentData.classNodes,
+    ...talentData.specNodes,
+    ...Object.values(talentData.heroSubtrees).flat(),
+  ];
+  const scenarioKeys = [...Object.keys(SCENARIOS), "weighted"];
+
+  const contributions = {};
+
+  for (const node of allNodeList) {
+    const hasNode = [];
+    const noNode = [];
+
+    for (const b of builds) {
+      if (b.dps.weighted <= 0) continue;
+      const sel = decodedBuilds.get(b.id);
+      if (!sel) continue;
+      if (sel.has(node.id)) {
+        hasNode.push(b);
+      } else {
+        noNode.push(b);
+      }
+    }
+
+    // Skip nodes taken by all or no builds (no signal)
+    if (hasNode.length === 0 || noNode.length === 0) {
+      contributions[node.id] = {
+        universal: hasNode.length > 0,
+        deltas: null,
+      };
+      continue;
+    }
+
+    const deltas = {};
+    for (const s of scenarioKeys) {
+      const avgWith =
+        hasNode.reduce((sum, b) => sum + (b.dps[s] || 0), 0) / hasNode.length;
+      const avgWithout =
+        noNode.reduce((sum, b) => sum + (b.dps[s] || 0), 0) / noNode.length;
+      deltas[s] = avgWith - avgWithout;
+    }
+
+    contributions[node.id] = { universal: false, deltas };
+  }
+
+  return contributions;
+}
+
+// --- Archetype analysis ---
+
+function loadArchetypeData(builds) {
+  const groups = {};
+  for (const b of builds) {
+    if (!b.archetype || b.dps.weighted <= 0) continue;
+    const key = b.archetype;
+    const group = (groups[key] ||= {
+      archetype: b.archetype,
+      heroTree: b.heroTree,
+      builds: [],
+    });
+    group.builds.push(b);
+  }
+
+  const scenarioKeys = [...Object.keys(SCENARIOS), "weighted"];
+  const archetypes = Object.values(groups).map((g) => {
+    const sorted = [...g.builds].sort(
+      (a, b) => (b.dps.weighted || 0) - (a.dps.weighted || 0),
+    );
+    const best = sorted[0];
+    const avgDps = {};
+    for (const s of scenarioKeys) {
+      avgDps[s] =
+        g.builds.reduce((sum, b) => sum + (b.dps[s] || 0), 0) / g.builds.length;
+    }
+    return {
+      archetype: g.archetype,
+      heroTree: g.heroTree,
+      bestBuild: best,
+      avgDps,
+      buildCount: g.builds.length,
+    };
+  });
+
+  archetypes.sort(
+    (a, b) => (b.avgDps.weighted || 0) - (a.avgDps.weighted || 0),
+  );
+  return archetypes;
+}
+
 // --- HTML generation ---
 
 function generateHtml(data) {
@@ -635,6 +732,9 @@ function generateHtml(data) {
     trinketData,
     embellishmentData,
     gearData,
+    talentData,
+    nodeContributions,
+    archetypeData,
   } = data;
   const displaySpec = toTitleCase(specName);
 
@@ -647,9 +747,10 @@ function generateHtml(data) {
 
   const sections = [
     renderHeader(displaySpec, freshness),
-    renderHeroShowcase(builds, heroTrees),
+    renderTalentHeatmap(builds, talentData, heroTrees, nodeContributions),
     renderComparisonSection(builds, heroTrees, apexBuilds),
     renderBuildRankings(builds, heroTrees),
+    renderArchetypeInsights(archetypeData, heroTrees),
     renderGearDisplay(gearData),
     renderTrinketRankings(trinketData),
     renderEmbellishmentRankings(embellishmentData),
@@ -694,43 +795,166 @@ function renderHeader(displaySpec, freshness) {
 </header>`;
 }
 
-function renderHeroShowcase(builds, heroTrees) {
+function renderTalentHeatmap(builds, talentData, heroTrees, contributions) {
+  if (!talentData || !contributions) return "";
+
+  const scenarios = [...activeScenarios(builds), "weighted"];
   const treeNames = Object.keys(heroTrees);
 
-  const panels = treeNames.map((tree) => {
-    const treeBuilds = builds.filter((b) => b.heroTree === tree);
-    const best = findBest(treeBuilds, "weighted");
-    if (!best) return "";
+  // Build SVG for spec tree (class + spec nodes combined)
+  const specSvg = renderTreeSvg(
+    [...talentData.classNodes, ...talentData.specNodes],
+    contributions,
+    scenarios,
+    "spec",
+  );
 
-    const scenarioDps = activeScenarios(builds)
-      .map(
-        (s) =>
-          `<span class="showcase-scenario"><span class="showcase-scenario-label" style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> ${fmtDps(best.dps[s] || 0)}</span>`,
-      )
-      .join("");
+  // Build hero tree SVGs (one per tree, toggled via JS)
+  const heroSvgs = treeNames
+    .map((tree) => {
+      const heroNodes = talentData.heroSubtrees[tree] || [];
+      if (heroNodes.length === 0) return "";
+      const svg = renderTreeSvg(heroNodes, contributions, scenarios, "hero");
+      return `<div class="heatmap-hero-panel" data-hero-tree="${esc(tree)}">${svg}</div>`;
+    })
+    .join("\n");
 
-    const treeUrl = `https://mimiron.raidbots.com/simbot/render/talents/${esc(best.hash)}?bgcolor=0f1117&width=1100&hideHeader=true`;
+  // Scenario toggle buttons
+  const scenarioBtns = scenarios
+    .map((s) => {
+      const label = s === "weighted" ? "Weighted" : SCENARIOS[s].name;
+      const active = s === "weighted" ? " active" : "";
+      return `<button class="heatmap-scenario-btn${active}" data-scenario="${esc(s)}" style="--btn-color:${s === "weighted" ? "var(--fg)" : scenarioColor(s)}">${esc(label)}</button>`;
+    })
+    .join("\n      ");
 
-    const panelColor = treeColor(tree);
-    const panelGlow = treeFill(tree);
+  // Hero tree toggle buttons
+  const heroToggles = treeNames
+    .map(
+      (t, i) =>
+        `<button class="heatmap-hero-btn${i === 0 ? " active" : ""}" data-hero-tree="${esc(t)}"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)}</button>`,
+    )
+    .join("\n      ");
 
-    return `<div class="showcase-panel" style="box-shadow: 0 0 40px ${panelGlow}; --panel-color: ${panelColor}">
-      <div class="showcase-header">
-        <span class="tree-badge ${treeClass(tree)}">${esc(heroTrees[tree].displayName)}</span>
-      </div>
-      <div class="showcase-build-name">${esc(best.displayName)}${copyBtn(best.hash)}</div>
-      <div class="showcase-weighted">${fmtDps(best.dps.weighted || 0)} <span class="showcase-weighted-label">weighted</span></div>
-      <div class="showcase-scenarios">${scenarioDps}</div>
-      <div class="showcase-tree-wrap">
-        <iframe src="${treeUrl}" title="${esc(heroTrees[tree].displayName)} spec tree" scrolling="no"></iframe>
-      </div>
-    </div>`;
-  });
+  // Top build info per hero tree
+  const topBuildInfo = treeNames
+    .map((tree) => {
+      const treeBuilds = builds.filter((b) => b.heroTree === tree);
+      const best = findBest(treeBuilds, "weighted");
+      if (!best) return "";
+      return `<div class="heatmap-top-build" data-hero-tree="${esc(tree)}">
+        <span class="tree-badge sm ${treeClass(tree)}">${treeAbbr(tree)}</span>
+        <span class="heatmap-top-name">${esc(best.displayName)}${copyBtn(best.hash)}</span>
+        <span class="heatmap-top-dps">${fmtDps(best.dps.weighted || 0)} weighted</span>
+      </div>`;
+    })
+    .join("\n    ");
 
-  return `<section class="hero-showcase">
-  <h2>Top Builds</h2>
-  <div class="showcase-grid">${panels.join("\n")}</div>
+  return `<section class="talent-heatmap" data-active-scenario="weighted">
+  <h2>Talent DPS Contribution</h2>
+  <p class="heatmap-subtitle">Average DPS difference between builds with and without each talent</p>
+  <div class="heatmap-controls">
+    <div class="heatmap-scenario-bar">${scenarioBtns}</div>
+    <div class="heatmap-hero-bar">${heroToggles}</div>
+  </div>
+  <div class="heatmap-top-builds">${topBuildInfo}</div>
+  <div class="heatmap-layout">
+    <div class="heatmap-spec-panel">
+      <h3>Class &amp; Spec Tree</h3>
+      ${specSvg}
+    </div>
+    <div class="heatmap-hero-panels">
+      <h3>Hero Tree</h3>
+      ${heroSvgs}
+    </div>
+  </div>
+  <div class="heatmap-legend">
+    <span class="heatmap-legend-label">DPS Impact:</span>
+    <span class="heatmap-legend-neg">Negative</span>
+    <div class="heatmap-legend-bar"></div>
+    <span class="heatmap-legend-pos">Positive</span>
+    <span class="heatmap-legend-uni">Universal (all builds)</span>
+  </div>
 </section>`;
+}
+
+function renderTreeSvg(nodes, contributions, scenarios, treeType) {
+  if (!nodes.length) return "";
+
+  // Normalize positions to SVG viewport
+  const xs = nodes.map((n) => n.posX);
+  const ys = nodes.map((n) => n.posY);
+  const minX = Math.min(...xs);
+  const maxX = Math.max(...xs);
+  const minY = Math.min(...ys);
+  const maxY = Math.max(...ys);
+  const rangeX = maxX - minX || 1;
+  const rangeY = maxY - minY || 1;
+
+  const padding = 40;
+  const nodeR = treeType === "hero" ? 18 : 14;
+  const svgW = treeType === "hero" ? 400 : 700;
+  const svgH = Math.round(
+    (rangeY / rangeX) * (svgW - 2 * padding) + 2 * padding,
+  );
+
+  function toSvgX(posX) {
+    return padding + ((posX - minX) / rangeX) * (svgW - 2 * padding);
+  }
+  function toSvgY(posY) {
+    return padding + ((posY - minY) / rangeY) * (svgH - 2 * padding);
+  }
+
+  // Build node ID lookup for connections
+  const nodeSet = new Set(nodes.map((n) => n.id));
+
+  // Draw connections first (under nodes)
+  let lines = "";
+  for (const node of nodes) {
+    const x1 = toSvgX(node.posX);
+    const y1 = toSvgY(node.posY);
+    for (const nextId of node.next || []) {
+      if (!nodeSet.has(nextId)) continue;
+      const next = nodes.find((n) => n.id === nextId);
+      if (!next) continue;
+      lines += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${toSvgX(next.posX).toFixed(1)}" y2="${toSvgY(next.posY).toFixed(1)}" class="heatmap-edge"/>`;
+    }
+  }
+
+  // Draw nodes
+  let circles = "";
+  for (const node of nodes) {
+    const x = toSvgX(node.posX);
+    const y = toSvgY(node.posY);
+    const c = contributions[node.id];
+    const isUniversal = c?.universal;
+    const name = node.entries?.[0]?.name || node.name || `Node ${node.id}`;
+    const isChoice = node.type === "choice";
+
+    // Embed per-scenario DPS deltas as data attributes
+    let dataAttrs = "";
+    if (c?.deltas) {
+      for (const s of scenarios) {
+        dataAttrs += ` data-${s.replace(/_/g, "-")}="${(c.deltas[s] || 0).toFixed(0)}"`;
+      }
+    }
+
+    const universalCls = isUniversal ? " heatmap-universal" : "";
+    const noDataCls = !c?.deltas ? " heatmap-nodata" : "";
+    const shape = isChoice
+      ? `<rect x="${(x - nodeR).toFixed(1)}" y="${(y - nodeR).toFixed(1)}" width="${nodeR * 2}" height="${nodeR * 2}" rx="4" class="heatmap-node${universalCls}${noDataCls}"${dataAttrs}/>`
+      : `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${nodeR}" class="heatmap-node${universalCls}${noDataCls}"${dataAttrs}/>`;
+
+    circles += `<g class="heatmap-node-group" data-name="${esc(name)}">
+      ${shape}
+      <text x="${x.toFixed(1)}" y="${(y + nodeR + 12).toFixed(1)}" class="heatmap-label">${esc(name)}</text>
+    </g>`;
+  }
+
+  return `<svg viewBox="0 0 ${svgW} ${svgH}" class="heatmap-svg" preserveAspectRatio="xMidYMid meet">
+    ${lines}
+    ${circles}
+  </svg>`;
 }
 
 function renderHeroComparison(builds, heroTrees) {
@@ -1023,8 +1247,16 @@ function renderBuildRankings(builds, heroTrees) {
     )
     .join("\n      ");
 
+  const weightLegend = Object.keys(SCENARIOS)
+    .map(
+      (s) =>
+        `<span style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> ${Math.round(SCENARIO_WEIGHTS[s] * 100)}%`,
+    )
+    .join(" · ");
+
   return `<section id="rankings">
   <h2>Build Rankings</h2>
+  <p class="weight-legend">Weighted = ${weightLegend}</p>
   <div class="filter-bar">
     <button class="filter-btn active" data-tree="all">All (${builds.length})</button>
     ${treeFilters}
@@ -1555,6 +1787,57 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
   return html;
 }
 
+function renderArchetypeInsights(archetypeData, heroTrees) {
+  if (!archetypeData || archetypeData.length === 0) return "";
+
+  const scenarios = Object.keys(SCENARIOS);
+
+  // Hero tree filter buttons
+  const treeFilters = Object.entries(heroTrees)
+    .map(
+      ([key, val]) =>
+        `<button class="filter-btn" data-tree="${esc(key)}">${esc(val.displayName)}</button>`,
+    )
+    .join("\n      ");
+
+  const cards = archetypeData
+    .map((a) => {
+      const { cls, abbr } = treeStyle(a.heroTree);
+      const scenarioDps = scenarios
+        .map(
+          (s) =>
+            `<span class="arch-scenario"><span class="arch-scenario-label" style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> ${fmtDps(a.avgDps[s] || 0)}</span>`,
+        )
+        .join("");
+
+      return `<div class="arch-card" data-tree="${esc(a.heroTree)}">
+      <div class="arch-header">
+        <span class="tree-badge sm ${cls}">${abbr}</span>
+        <span class="arch-name">${esc(a.archetype)}</span>
+      </div>
+      <div class="arch-best">
+        <span class="arch-best-label">Best build:</span>
+        <span class="arch-best-name">${esc(a.bestBuild.displayName)}${copyBtn(a.bestBuild.hash)}</span>
+      </div>
+      <div class="arch-dps">
+        <span class="arch-weighted">${fmtDps(a.avgDps.weighted || 0)} <span class="arch-weighted-label">avg weighted</span></span>
+        <div class="arch-scenarios">${scenarioDps}</div>
+      </div>
+      <div class="arch-count">${a.buildCount} build${a.buildCount !== 1 ? "s" : ""}</div>
+    </div>`;
+    })
+    .join("\n    ");
+
+  return `<section id="archetypes">
+  <h2>Archetype Insights</h2>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-tree="all">All (${archetypeData.length})</button>
+    ${treeFilters}
+  </div>
+  <div class="arch-grid">${cards}</div>
+</section>`;
+}
+
 function renderGearDisplay(gearData) {
   if (!gearData?.gear?.size) return "";
 
@@ -1892,114 +2175,293 @@ h4 {
 
 .subsection { margin-bottom: 2.5rem; }
 
-/* Hero Showcase */
-.hero-showcase { margin-bottom: 3rem; }
+/* Talent Heatmap */
+.talent-heatmap { margin-bottom: 3rem; }
 
-.showcase-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 1.5rem;
+.heatmap-subtitle {
+  color: var(--fg-muted);
+  font-size: 0.8rem;
+  margin-top: -0.75rem;
+  margin-bottom: 1.25rem;
 }
 
-.showcase-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.75rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.showcase-panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: var(--radius) var(--radius) 0 0;
-  background: linear-gradient(90deg, var(--panel-color, var(--accent)), transparent);
-}
-
-.showcase-panel {
-  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-elevated) 100%);
-}
-
-.showcase-header {
-  margin-bottom: 1rem;
-}
-
-.showcase-build-name {
-  font-family: "Outfit", sans-serif;
-  font-weight: 600;
-  font-size: 1.05rem;
-  margin-bottom: 0.35rem;
+.heatmap-controls {
   display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
   align-items: center;
+}
+
+.heatmap-scenario-bar, .heatmap-hero-bar {
+  display: flex;
   gap: 0.35rem;
 }
 
-.showcase-weighted {
-  font-family: "Outfit", sans-serif;
-  font-size: 1.75rem;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  margin-bottom: 0.6rem;
-  letter-spacing: -0.02em;
-}
-
-.showcase-weighted-label {
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
+.heatmap-scenario-btn, .heatmap-hero-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
   color: var(--fg-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 
-.showcase-scenarios {
+.heatmap-scenario-btn:hover, .heatmap-hero-btn:hover {
+  border-color: var(--fg-muted);
+  color: var(--fg);
+}
+
+.heatmap-scenario-btn.active {
+  background: var(--surface-alt);
+  border-color: var(--btn-color, var(--accent));
+  color: var(--btn-color, var(--accent));
+}
+
+.heatmap-hero-btn.active {
+  background: var(--surface-alt);
+  border-color: var(--accent);
+  color: var(--fg);
+}
+
+.heatmap-top-builds {
   display: flex;
-  gap: 1.25rem;
+  gap: 1.5rem;
   margin-bottom: 1.25rem;
   flex-wrap: wrap;
 }
 
-.showcase-scenario {
-  font-variant-numeric: tabular-nums;
+.heatmap-top-build {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 0.82rem;
+}
+
+.heatmap-top-build[data-hero-tree] { display: none; }
+.heatmap-top-build.visible { display: flex; }
+
+.heatmap-top-name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.heatmap-top-dps {
+  color: var(--fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.heatmap-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.heatmap-spec-panel, .heatmap-hero-panels {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.heatmap-spec-panel h3, .heatmap-hero-panels h3 {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.heatmap-hero-panel { display: none; }
+.heatmap-hero-panel.visible { display: block; }
+
+.heatmap-svg {
+  width: 100%;
+  height: auto;
+}
+
+.heatmap-edge {
+  stroke: var(--border);
+  stroke-width: 1.5;
+}
+
+.heatmap-node {
+  fill: var(--surface-alt);
+  stroke: var(--border);
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: fill 0.2s;
+}
+
+.heatmap-node.heatmap-universal {
+  fill: var(--accent-dim);
+  stroke: var(--accent);
+  opacity: 0.6;
+}
+
+.heatmap-node.heatmap-nodata {
+  fill: var(--surface);
+  stroke: var(--border-subtle);
+  opacity: 0.4;
+}
+
+.heatmap-label {
+  fill: var(--fg-muted);
+  font-size: 8px;
+  text-anchor: middle;
+  pointer-events: none;
+  font-family: "DM Sans", sans-serif;
+}
+
+.heatmap-legend {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+}
+
+.heatmap-legend-bar {
+  width: 120px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--negative), var(--surface-alt) 50%, var(--positive));
+}
+
+.heatmap-legend-neg { color: var(--negative); }
+.heatmap-legend-pos { color: var(--positive); }
+
+.heatmap-legend-uni {
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--border);
+  color: var(--accent);
+}
+
+/* Heatmap tooltip */
+.heatmap-tooltip {
+  position: fixed;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.78rem;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  display: none;
+}
+
+.heatmap-tooltip-name {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.heatmap-tooltip-delta {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Archetype Insights */
+.arch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1rem;
+}
+
+.arch-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+.arch-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.arch-name {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.arch-best {
+  font-size: 0.78rem;
+  color: var(--fg-dim);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.arch-best-label {
+  color: var(--fg-muted);
+}
+
+.arch-best-name {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.arch-dps {
+  margin-bottom: 0.5rem;
+}
+
+.arch-weighted {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.arch-weighted-label {
+  font-family: "DM Sans", sans-serif;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.arch-scenarios {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.arch-scenario {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
-.showcase-scenario-label {
+.arch-scenario-label {
   display: block;
-  color: var(--fg-muted);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   font-weight: 500;
-  margin-bottom: 0.1em;
+  margin-bottom: 0.05em;
 }
 
-.showcase-tree-wrap {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  margin-top: 1rem;
-  position: relative;
-  aspect-ratio: 4 / 5;
-}
-
-.showcase-tree-wrap iframe {
-  position: absolute;
-  width: 1100px;
-  height: 700px;
-  border: none;
-  background: var(--bg);
-  pointer-events: none;
-  clip-path: inset(0% 0% 15% 62%);
-  left: 50%;
-  top: 50%;
-  transform-origin: 81% 42.5%;
+.arch-count {
+  font-size: 0.72rem;
+  color: var(--fg-muted);
 }
 
 /* Dual panel layout */
@@ -2184,6 +2646,13 @@ h4 {
 .tree-badge.other { background: rgba(148, 163, 184, 0.13); color: #94a3b8; }
 .tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
 
+.weight-legend {
+  color: var(--fg-muted);
+  font-size: 0.72rem;
+  margin-top: -0.75rem;
+  margin-bottom: 1rem;
+}
+
 /* Filter bar */
 .filter-bar {
   display: flex;
@@ -2312,7 +2781,7 @@ tbody tr:hover { background: rgba(123, 147, 255, 0.05); }
   transition: opacity 0.15s, color 0.15s, border-color 0.15s;
 }
 tr:hover .copy-hash, .build-name:hover .copy-hash,
-.best-name:hover .copy-hash, .showcase-build-name:hover .copy-hash { opacity: 1; }
+.best-name:hover .copy-hash, .heatmap-top-name:hover .copy-hash, .arch-best-name:hover .copy-hash { opacity: 1; }
 .copy-hash:hover { color: var(--accent); border-color: var(--border); }
 .copy-hash.copied { color: var(--positive); opacity: 1; }
 .copy-hash svg { width: 13px; height: 13px; }
@@ -2934,7 +3403,8 @@ footer { animation-delay: 0.35s; }
 @media (max-width: 768px) {
   body { padding: 0 1rem; }
   header { flex-direction: column; align-items: flex-start; }
-  .showcase-grid { grid-template-columns: 1fr; }
+  .heatmap-layout { grid-template-columns: 1fr; }
+  .arch-grid { grid-template-columns: 1fr; }
   .hc-row { grid-template-columns: 70px 1fr 60px; gap: 0.5rem; }
   .comparison-grid { grid-template-columns: 1fr; }
   .def-strip__body, .def-strip-header__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
@@ -2942,7 +3412,7 @@ footer { animation-delay: 0.35s; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
   .build-name { font-size: 0.7rem; }
-  .showcase-weighted { font-size: 1.4rem; }
+  .arch-weighted { font-size: 1rem; }
   .trinket-strip { grid-template-columns: 28px 1fr 75px 50px; gap: 0 0.5rem; padding: 0.45rem 0.75rem; }
   .trinket-strip__name { font-size: 0.76rem; }
   .trinket-strip__dps { font-size: 0.76rem; }
@@ -2955,17 +3425,120 @@ footer { animation-delay: 0.35s; }
 // --- Interactive JS ---
 
 const JS = `
-// Responsive spec tree scaling
-document.querySelectorAll('.showcase-tree-wrap').forEach(wrap => {
-  const iframe = wrap.querySelector('iframe');
-  if (!iframe) return;
-  const TREE_W = 473, TREE_H = 595;
-  const fit = () => {
-    const s = Math.min(wrap.clientWidth / TREE_W, wrap.clientHeight / TREE_H);
-    iframe.style.transform = 'translate(-81%, -42.5%) scale(' + s + ')';
-  };
-  fit();
-  new ResizeObserver(fit).observe(wrap);
+// Talent heatmap interactivity
+(() => {
+  const section = document.querySelector('.talent-heatmap');
+  if (!section) return;
+
+  // Scenario toggle
+  section.querySelectorAll('.heatmap-scenario-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      section.querySelectorAll('.heatmap-scenario-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      section.dataset.activeScenario = btn.dataset.scenario;
+      updateHeatmapColors();
+    });
+  });
+
+  // Hero tree toggle
+  section.querySelectorAll('.heatmap-hero-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      section.querySelectorAll('.heatmap-hero-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tree = btn.dataset.heroTree;
+      section.querySelectorAll('.heatmap-hero-panel').forEach(p => {
+        p.classList.toggle('visible', p.dataset.heroTree === tree);
+      });
+      section.querySelectorAll('.heatmap-top-build').forEach(b => {
+        b.classList.toggle('visible', b.dataset.heroTree === tree);
+      });
+    });
+  });
+
+  // Show first hero tree by default
+  const firstHeroBtn = section.querySelector('.heatmap-hero-btn');
+  if (firstHeroBtn) firstHeroBtn.click();
+
+  // Tooltip
+  const tooltip = document.createElement('div');
+  tooltip.className = 'heatmap-tooltip';
+  tooltip.innerHTML = '<div class="heatmap-tooltip-name"></div><div class="heatmap-tooltip-delta"></div>';
+  document.body.appendChild(tooltip);
+
+  section.querySelectorAll('.heatmap-node-group').forEach(g => {
+    const node = g.querySelector('.heatmap-node');
+    g.addEventListener('mouseenter', e => {
+      const name = g.dataset.name;
+      const scenario = section.dataset.activeScenario || 'weighted';
+      const key = scenario.replace(/_/g, '-');
+      const delta = node.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())];
+      tooltip.querySelector('.heatmap-tooltip-name').textContent = name;
+      if (node.classList.contains('heatmap-universal')) {
+        tooltip.querySelector('.heatmap-tooltip-delta').textContent = 'Universal (all builds)';
+      } else if (delta !== undefined) {
+        const n = Number(delta);
+        const sign = n >= 0 ? '+' : '';
+        tooltip.querySelector('.heatmap-tooltip-delta').textContent = sign + Number(n).toLocaleString() + ' DPS';
+        tooltip.querySelector('.heatmap-tooltip-delta').style.color = n > 0 ? 'var(--positive)' : n < 0 ? 'var(--negative)' : 'var(--fg-muted)';
+      } else {
+        tooltip.querySelector('.heatmap-tooltip-delta').textContent = 'No data';
+      }
+      tooltip.style.display = 'block';
+    });
+    g.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY - tooltip.offsetHeight - 8) + 'px';
+    });
+    g.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+  });
+
+  function updateHeatmapColors() {
+    const scenario = section.dataset.activeScenario || 'weighted';
+    const key = scenario.replace(/_/g, '-');
+    const nodes = section.querySelectorAll('.heatmap-node:not(.heatmap-universal):not(.heatmap-nodata)');
+
+    // Find max absolute delta for color scaling
+    let maxAbs = 1;
+    nodes.forEach(n => {
+      const v = Number(n.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] || 0);
+      if (Math.abs(v) > maxAbs) maxAbs = Math.abs(v);
+    });
+
+    nodes.forEach(n => {
+      const v = Number(n.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] || 0);
+      const t = Math.min(Math.abs(v) / maxAbs, 1);
+      if (v > 0) {
+        const r = Math.round(52 + (52 - 52) * t);
+        const g = Math.round(211 + (211 - 211) * t);
+        const b = Math.round(153 + (153 - 153) * t);
+        n.style.fill = 'rgba(52, 211, 153, ' + (0.15 + t * 0.7) + ')';
+        n.style.stroke = 'rgba(52, 211, 153, ' + (0.3 + t * 0.5) + ')';
+      } else if (v < 0) {
+        n.style.fill = 'rgba(251, 113, 133, ' + (0.15 + t * 0.7) + ')';
+        n.style.stroke = 'rgba(251, 113, 133, ' + (0.3 + t * 0.5) + ')';
+      } else {
+        n.style.fill = '';
+        n.style.stroke = '';
+      }
+    });
+  }
+
+  updateHeatmapColors();
+})();
+
+// Archetype filtering (reuses filter-bar pattern)
+document.querySelectorAll('#archetypes .filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tree = btn.dataset.tree;
+    const section = btn.closest('section');
+    section.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    section.querySelectorAll('.arch-card').forEach(card => {
+      card.style.display = (tree === 'all' || card.dataset.tree === tree) ? '' : 'none';
+    });
+  });
 });
 
 // Table sorting
@@ -3008,14 +3581,14 @@ document.querySelectorAll('th.sortable').forEach(th => {
   });
 });
 
-// Hero tree filter
-document.querySelectorAll('.filter-btn').forEach(btn => {
+// Hero tree filter (rankings section)
+document.querySelectorAll('#rankings .filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     const tree = btn.dataset.tree;
     const table = document.getElementById('rankings-table');
     if (!table) return;
 
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
 
     table.querySelectorAll('tbody tr').forEach(row => {
@@ -3364,8 +3937,7 @@ async function main() {
   // Load gear candidates once for trinket tags and gear label resolution
   const gearCandidates = loadGearCandidatesFile();
 
-  // Start gear load early — its fetch() runs concurrently with sync DB reads below
-  const gearDataPromise = loadGearData(gearCandidates);
+  const gearData = loadGearData(gearCandidates);
 
   // Load trinket data from gear pipeline
   const trinketData = loadTrinketData(gearCandidates);
@@ -3387,11 +3959,39 @@ async function main() {
     );
   }
 
-  // Resolve gear data (fetch completes during the sync DB reads above)
-  const gearData = await gearDataPromise;
   if (gearData) {
     console.log(`  Gear: ${gearData.gear.size} slots loaded from profile.simc`);
   }
+
+  // Talent heatmap: decode builds and compute per-node DPS contributions
+  let talentData = null;
+  let nodeContributions = null;
+  try {
+    const raidbotsTalentsPath = dataFile("raidbots-talents.json");
+    if (existsSync(raidbotsTalentsPath)) {
+      talentData = JSON.parse(readFileSync(raidbotsTalentsPath, "utf-8"));
+      const allNodes = loadFullNodeList();
+      talentData.allNodes = allNodes;
+      const decodedBuilds = decodeBuildSelections(
+        reportData.builds,
+        talentData,
+      );
+      nodeContributions = computeNodeContributions(
+        reportData.builds,
+        talentData,
+        decodedBuilds,
+      );
+      console.log(
+        `  Talent heatmap: ${Object.keys(nodeContributions).length} nodes computed`,
+      );
+    }
+  } catch (e) {
+    console.warn(`  Talent heatmap skipped: ${e.message}`);
+  }
+
+  // Archetype analysis
+  const archetypeData = loadArchetypeData(reportData.builds);
+  console.log(`  Archetypes: ${archetypeData.length} groups`);
 
   // Warn about missing data (non-fatal — partial reports are still useful)
   validateReportData({
@@ -3415,6 +4015,9 @@ async function main() {
     trinketData,
     embellishmentData,
     gearData,
+    talentData,
+    nodeContributions,
+    archetypeData,
   });
 
   const indexPath = join(reportDir, "index.html");
