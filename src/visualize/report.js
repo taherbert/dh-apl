@@ -2453,7 +2453,7 @@ h4 {
 .tbc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .tbc-card {
@@ -2551,13 +2551,19 @@ h4 {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.analysis-left {
   min-height: 0;
+  overflow: hidden;
 }
 
 .analysis-left > .heatmap-spec-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
 }
 
 /* Gear section: gear + stat weights side by side */
@@ -2577,9 +2583,8 @@ h4 {
 
 .heatmap-svg {
   width: 100%;
-  flex: 1;
-  min-height: 0;
-  object-fit: contain;
+  height: 0;
+  flex-grow: 1;
 }
 
 .heatmap-edge {
