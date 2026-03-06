@@ -1962,36 +1962,116 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
 function renderStatWeights(scaleFactors) {
   if (!scaleFactors) return "";
 
-  const STAT_LABELS = {
-    Agi: "Agility",
-    Crit: "Critical Strike",
-    Haste: "Haste",
-    Mastery: "Mastery",
-    Vers: "Versatility",
+  // Secondary stat DR constants for Midnight (level 80).
+  // k = rating at which you get 50% of the theoretical max percent.
+  // These approximate the SimC CombatRating curves.
+  const STAT_CONFIG = {
+    Crit: { label: "Crit", color: "#ef4444", k: 6600 },
+    Haste: { label: "Haste", color: "#3b82f6", k: 6600 },
+    Mastery: { label: "Mastery", color: "#f59e0b", k: 6600 },
+    Vers: { label: "Vers", color: "#10b981", k: 6600 },
   };
 
-  const stats = Object.entries(STAT_LABELS)
-    .map(([key, label]) => ({ key, label, value: scaleFactors[key] || 0 }))
-    .filter((s) => s.value > 0)
-    .sort((a, b) => b.value - a.value);
+  const stats = Object.entries(STAT_CONFIG)
+    .map(([key, cfg]) => ({
+      key,
+      ...cfg,
+      ep: scaleFactors[key] || 0,
+    }))
+    .filter((s) => s.ep > 0)
+    .sort((a, b) => b.ep - a.ep);
 
   if (stats.length === 0) return "";
 
-  const maxVal = stats[0].value;
+  // DR curve: EP(r) = EP(r0) * (r0 + k)^2 / (r + k)^2
+  // We plot relative stat levels from -30% to +30% of a reference point.
+  // Since we only have EP at one point (the current gear), we use the DR
+  // formula to project how EP changes as rating changes.
+  const STEPS = 7;
+  const RANGE = 0.3; // +/- 30%
+  const REF_RATING = 5000; // approximate current secondary rating level
 
-  const bars = stats
-    .map((s) => {
-      const pct = ((s.value / maxVal) * 100).toFixed(1);
-      const isTop = s.value === maxVal;
-      return `<div class="sw-row">
-      <span class="sw-label">${esc(s.label)}</span>
-      <div class="sw-bar-track">
-        <div class="sw-bar-fill${isTop ? " sw-bar-top" : ""}" style="width:${pct}%"></div>
-      </div>
-      <span class="sw-value">${s.value.toFixed(2)}</span>
-    </div>`;
-    })
-    .join("\n    ");
+  // X positions: -30% to +30% relative
+  const xLabels = [];
+  for (let i = 0; i < STEPS; i++) {
+    const pct = -RANGE + (2 * RANGE * i) / (STEPS - 1);
+    xLabels.push(pct);
+  }
+
+  // Compute EP at each relative stat level for each stat
+  const curves = stats.map((s) => {
+    const r0 = REF_RATING;
+    const points = xLabels.map((pct) => {
+      const r = r0 * (1 + pct);
+      const ratio = ((r0 + s.k) * (r0 + s.k)) / ((r + s.k) * (r + s.k));
+      return s.ep * ratio;
+    });
+    return { ...s, points };
+  });
+
+  // SVG dimensions
+  const W = 380;
+  const H = 200;
+  const PAD = { top: 12, right: 16, bottom: 28, left: 42 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  // Y range across all curves
+  const allVals = curves.flatMap((c) => c.points);
+  const yMin = Math.min(...allVals) * 0.92;
+  const yMax = Math.max(...allVals) * 1.05;
+
+  function sx(i) {
+    return PAD.left + (i / (STEPS - 1)) * plotW;
+  }
+  function sy(v) {
+    return PAD.top + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+  }
+
+  // Grid lines
+  const yTicks = 4;
+  let gridLines = "";
+  for (let i = 0; i <= yTicks; i++) {
+    const v = yMin + ((yMax - yMin) * i) / yTicks;
+    const y = sy(v).toFixed(1);
+    gridLines += `<line x1="${PAD.left}" y1="${y}" x2="${W - PAD.right}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>`;
+    gridLines += `<text x="${PAD.left - 4}" y="${y}" text-anchor="end" class="sw-axis-label" dy="0.35em">${v.toFixed(1)}</text>`;
+  }
+
+  // X-axis labels
+  let xAxisLabels = "";
+  for (let i = 0; i < STEPS; i++) {
+    const pct = xLabels[i];
+    const label =
+      pct === 0 ? "Current" : `${pct > 0 ? "+" : ""}${Math.round(pct * 100)}%`;
+    xAxisLabels += `<text x="${sx(i).toFixed(1)}" y="${H - 4}" text-anchor="middle" class="sw-axis-label">${label}</text>`;
+  }
+
+  // Current position marker
+  const currIdx = Math.floor(STEPS / 2);
+  const currLine = `<line x1="${sx(currIdx).toFixed(1)}" y1="${PAD.top}" x2="${sx(currIdx).toFixed(1)}" y2="${PAD.top + plotH}" stroke="var(--fg-muted)" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>`;
+
+  // Curve lines + dots
+  let curvePaths = "";
+  for (const c of curves) {
+    const pathD = c.points
+      .map(
+        (v, i) =>
+          `${i === 0 ? "M" : "L"}${sx(i).toFixed(1)},${sy(v).toFixed(1)}`,
+      )
+      .join(" ");
+    curvePaths += `<path d="${pathD}" fill="none" stroke="${c.color}" stroke-width="2" opacity="0.85"/>`;
+    // Dot at current position
+    curvePaths += `<circle cx="${sx(currIdx).toFixed(1)}" cy="${sy(c.points[currIdx]).toFixed(1)}" r="3.5" fill="${c.color}" stroke="var(--surface)" stroke-width="1.5"/>`;
+  }
+
+  // Legend
+  const legend = curves
+    .map(
+      (c) =>
+        `<span class="sw-legend-item"><span class="sw-legend-swatch" style="background:${c.color}"></span>${c.label} <b>${c.ep.toFixed(2)}</b></span>`,
+    )
+    .join("");
 
   const ts = scaleFactors.timestamp
     ? new Date(scaleFactors.timestamp).toISOString().split("T")[0]
@@ -2000,10 +2080,14 @@ function renderStatWeights(scaleFactors) {
 
   return `<div class="stat-weights report-card">
   <h3>Stat Weights</h3>
-  <p class="section-desc">EP values per point of stat${tsNote}</p>
-  <div class="sw-chart">
-    ${bars}
-  </div>
+  <p class="section-desc">EP diminishing returns as stats increase${tsNote}</p>
+  <svg viewBox="0 0 ${W} ${H}" class="sw-chart-svg" preserveAspectRatio="xMidYMid meet">
+    ${gridLines}
+    ${currLine}
+    ${curvePaths}
+    ${xAxisLabels}
+  </svg>
+  <div class="sw-legend">${legend}</div>
 </div>`;
 }
 
@@ -2364,7 +2448,7 @@ h4 {
 .subsection { margin-bottom: 1.5rem; }
 
 /* Top Build Cards */
-.top-build-cards { margin-bottom: 0; }
+.top-build-cards { }
 
 .tbc-grid {
   display: grid;
@@ -2487,6 +2571,7 @@ h4 {
 .heatmap-svg {
   width: 100%;
   height: auto;
+  max-height: 520px;
 }
 
 .heatmap-edge {
@@ -2653,52 +2738,45 @@ h4 {
   opacity: 1;
 }
 
-/* Stat Weights */
-.sw-chart {
-  max-width: 600px;
+/* Stat Weights DR Chart */
+.sw-chart-svg {
+  width: 100%;
+  height: auto;
 }
 
-.sw-row {
-  display: grid;
-  grid-template-columns: 110px 1fr 50px;
+.sw-axis-label {
+  font-family: "DM Sans", sans-serif;
+  font-size: 9px;
+  fill: var(--fg-muted);
+}
+
+.sw-legend {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.sw-legend-item {
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.4rem 0;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  color: var(--fg-dim);
+  font-weight: 500;
 }
 
-.sw-label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--fg);
-}
-
-.sw-bar-track {
-  height: 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.sw-bar-fill {
-  height: 100%;
-  background: var(--accent);
-  border-radius: 3px;
-  opacity: 0.6;
-  transition: width 0.3s;
-}
-
-.sw-bar-fill.sw-bar-top {
-  opacity: 1;
-}
-
-.sw-value {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.82rem;
+.sw-legend-item b {
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  text-align: right;
   color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.sw-legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 
 .sw-timestamp {
@@ -3624,7 +3702,7 @@ footer { animation-delay: 0.35s; }
   th, td { padding: 0.35rem 0.5rem; }
   .filter-bar { gap: 0.35rem; }
   .build-name { font-size: 0.7rem; }
-  .sw-row { grid-template-columns: 80px 1fr 40px; gap: 0.5rem; }
+
   .trinket-strip { grid-template-columns: 28px 1fr 75px 50px; gap: 0 0.5rem; padding: 0.45rem 0.75rem; }
   .trinket-strip__name { font-size: 0.76rem; }
   .trinket-strip__dps { font-size: 0.76rem; }
@@ -4255,6 +4333,17 @@ async function main() {
   let scaleFactors = null;
   try {
     scaleFactors = getSessionState("gear_scale_factors");
+    if (!scaleFactors) {
+      // Fallback: read from JSON file (worktrees may not have session_state populated)
+      const sfPath = join(resultsDir(), "gear_scale_factors.json");
+      if (existsSync(sfPath)) {
+        const sfData = JSON.parse(readFileSync(sfPath, "utf-8"));
+        const sf = sfData?.sim?.players?.[0]?.scale_factors;
+        if (sf) {
+          scaleFactors = { ...sf, timestamp: sfData.timestamp || "" };
+        }
+      }
+    }
     if (scaleFactors) {
       console.log(
         `  Scale factors: loaded (${Object.keys(scaleFactors).filter((k) => k !== "timestamp").length} stats)`,
