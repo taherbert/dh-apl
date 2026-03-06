@@ -401,7 +401,7 @@ function deriveApexBuilds(builds) {
     group.builds.push(b);
   }
 
-  const dpsKeys = [...Object.keys(SCENARIOS), "weighted"];
+  const dpsKeys = allDpsKeys();
   const entries = Object.values(groups).map((g) => {
     const n = g.builds.length;
     const avg = Object.fromEntries(
@@ -636,7 +636,7 @@ function computeNodeContributions(builds, talentData, decodedBuilds) {
     ...talentData.specNodes,
     ...Object.values(talentData.heroSubtrees).flat(),
   ];
-  const scenarioKeys = [...Object.keys(SCENARIOS), "weighted"];
+  const scenarioKeys = allDpsKeys();
 
   // Map hero node IDs to their tree name so we can restrict comparisons
   const heroNodeTree = new Map();
@@ -704,12 +704,11 @@ function loadArchetypeData(builds) {
     group.builds.push(b);
   }
 
-  const scenarioKeys = [...Object.keys(SCENARIOS), "weighted"];
+  const scenarioKeys = allDpsKeys();
   const archetypes = Object.values(groups).map((g) => {
-    const sorted = [...g.builds].sort(
-      (a, b) => (b.dps.weighted || 0) - (a.dps.weighted || 0),
+    const best = g.builds.reduce((max, b) =>
+      (b.dps.weighted || 0) > (max.dps.weighted || 0) ? b : max,
     );
-    const best = sorted[0];
     const avgDps = {};
     for (const s of scenarioKeys) {
       avgDps[s] =
@@ -916,7 +915,7 @@ function renderTreeSvg(nodes, contributions, scenarios, treeType) {
   }
 
   // Build node ID lookup for connections
-  const nodeSet = new Set(nodes.map((n) => n.id));
+  const nodeById = new Map(nodes.map((n) => [n.id, n]));
 
   // Draw connections first (under nodes)
   let lines = "";
@@ -924,8 +923,7 @@ function renderTreeSvg(nodes, contributions, scenarios, treeType) {
     const x1 = toSvgX(node.posX);
     const y1 = toSvgY(node.posY);
     for (const nextId of node.next || []) {
-      if (!nodeSet.has(nextId)) continue;
-      const next = nodes.find((n) => n.id === nextId);
+      const next = nodeById.get(nextId);
       if (!next) continue;
       lines += `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${toSvgX(next.posX).toFixed(1)}" y2="${toSvgY(next.posY).toFixed(1)}" class="heatmap-edge"/>`;
     }
@@ -1211,12 +1209,7 @@ function renderBuildRankings(builds, heroTrees) {
   );
 
   // Hero tree filter buttons
-  const treeFilters = Object.entries(heroTrees)
-    .map(
-      ([key, val]) =>
-        `<button class="filter-btn" data-tree="${esc(key)}">${esc(val.displayName)}</button>`,
-    )
-    .join("\n      ");
+  const treeFilters = renderTreeFilterBtns(heroTrees);
 
   // Table rows
   let rows = "";
@@ -1803,12 +1796,7 @@ function renderArchetypeInsights(archetypeData, heroTrees) {
   const scenarios = Object.keys(SCENARIOS);
 
   // Hero tree filter buttons
-  const treeFilters = Object.entries(heroTrees)
-    .map(
-      ([key, val]) =>
-        `<button class="filter-btn" data-tree="${esc(key)}">${esc(val.displayName)}</button>`,
-    )
-    .join("\n      ");
+  const treeFilters = renderTreeFilterBtns(heroTrees);
 
   const cards = archetypeData
     .map((a) => {
@@ -2056,6 +2044,19 @@ function computeWeighted(dpsRow) {
     (sum, s) => sum + (dpsRow[s] || 0) * (SCENARIO_WEIGHTS[s] || 0),
     0,
   );
+}
+
+function allDpsKeys() {
+  return [...Object.keys(SCENARIOS), "weighted"];
+}
+
+function renderTreeFilterBtns(heroTrees) {
+  return Object.entries(heroTrees)
+    .map(
+      ([key, val]) =>
+        `<button class="filter-btn" data-tree="${esc(key)}">${esc(val.displayName)}</button>`,
+    )
+    .join("\n      ");
 }
 
 // --- CSS ---
@@ -3480,8 +3481,8 @@ const JS = `
     g.addEventListener('mouseenter', e => {
       const name = g.dataset.name;
       const scenario = section.dataset.activeScenario || 'weighted';
-      const key = scenario.replace(/_/g, '-');
-      const delta = node.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())];
+      const dataKey = scenario.replace(/_/g, '-').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      const delta = node.dataset[dataKey];
       tooltip.querySelector('.heatmap-tooltip-name').textContent = name;
       if (node.classList.contains('heatmap-universal')) {
         tooltip.querySelector('.heatmap-tooltip-delta').textContent = 'Universal (all builds)';
@@ -3506,18 +3507,18 @@ const JS = `
 
   function updateHeatmapColors() {
     const scenario = section.dataset.activeScenario || 'weighted';
-    const key = scenario.replace(/_/g, '-');
+    const dataKey = scenario.replace(/_/g, '-').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
     const nodes = section.querySelectorAll('.heatmap-node:not(.heatmap-universal):not(.heatmap-nodata)');
 
     // Find max absolute delta for color scaling
     let maxAbs = 1;
     nodes.forEach(n => {
-      const v = Number(n.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] || 0);
+      const v = Number(n.dataset[dataKey] || 0);
       if (Math.abs(v) > maxAbs) maxAbs = Math.abs(v);
     });
 
     nodes.forEach(n => {
-      const v = Number(n.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] || 0);
+      const v = Number(n.dataset[dataKey] || 0);
       const t = Math.min(Math.abs(v) / maxAbs, 1);
       if (v > 0) {
         n.style.fill = 'rgba(52, 211, 153, ' + (0.15 + t * 0.7) + ')';
