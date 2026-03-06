@@ -665,7 +665,7 @@ function computeNodeContributions(
   heroTreeKeys,
 ) {
   const specNodes = talentData.specNodes.filter((n) => n.id !== 90912);
-  const scenarioKeys = allDpsKeys();
+  const scenarioKeys = ["weighted"];
 
   // Build defensive talent lookup from cost sim data
   const defensiveMap = new Map();
@@ -914,13 +914,9 @@ function renderAnalysisRow(
 
   if (!heatmap && !heroComp && !apexChart) return "";
 
-  const heatmapControls = heatmap ? heatmap.controls : "";
   const heatmapSvg = heatmap ? heatmap.svgPanel : "";
 
-  return `<section class="analysis-row talent-heatmap" data-active-scenario="weighted" data-active-tree="all">
-  <h2>Talent Heatmap</h2>
-  <p class="heatmap-subtitle">DPS delta: builds with vs without each talent</p>
-  ${heatmapControls}
+  return `<section class="analysis-row talent-heatmap" data-active-tree="all">
   <div class="analysis-grid">
     <div class="analysis-left">${heatmapSvg}</div>
     <div class="analysis-right">
@@ -937,7 +933,6 @@ function renderGearSection(gearData, scaleFactors) {
   if (!gearHtml && !statsHtml) return "";
 
   return `<section>
-  <h2>Gear Profile</h2>
   <div class="gear-section-grid">
     ${gearHtml}
     ${statsHtml}
@@ -948,15 +943,18 @@ function renderGearSection(gearData, scaleFactors) {
 function renderDefensiveCostsSection(defensiveTalentCosts, builds) {
   if (!defensiveTalentCosts?.costs?.length) return "";
   return `<section>
-  <h2>Defensive Talent Costs</h2>
+  <div class="report-card">
+  <h3>Defensive Talent Costs</h3>
+  <p class="section-desc">DPS cost of each defensive talent vs the reference build</p>
   ${renderDefensiveTalentCosts(defensiveTalentCosts.costs, defensiveTalentCosts.refName, builds)}
+  </div>
 </section>`;
 }
 
 function renderTalentHeatmap(builds, talentData, heroTrees, contributions) {
   if (!talentData || !contributions) return "";
 
-  const scenarios = [...activeScenarios(builds), "weighted"];
+  const scenarios = ["weighted"];
   const treeNames = Object.keys(heroTrees);
 
   const specSvg = renderTreeSvg(
@@ -965,14 +963,6 @@ function renderTalentHeatmap(builds, talentData, heroTrees, contributions) {
     scenarios,
     treeNames,
   );
-
-  const scenarioBtns = scenarios
-    .map((s) => {
-      const label = s === "weighted" ? "Weighted" : SCENARIOS[s].name;
-      const active = s === "weighted" ? " active" : "";
-      return `<button class="heatmap-scenario-btn${active}" data-scenario="${esc(s)}" style="--btn-color:${s === "weighted" ? "var(--fg)" : scenarioColor(s)}">${esc(label)}</button>`;
-    })
-    .join("\n      ");
 
   // Hero tree toggle
   const heroToggles = [
@@ -983,12 +973,10 @@ function renderTalentHeatmap(builds, talentData, heroTrees, contributions) {
     ),
   ].join("\n      ");
 
-  const controls = `<div class="heatmap-controls">
-    <div class="heatmap-scenario-bar">${scenarioBtns}</div>
+  const svgPanel = `<div class="heatmap-spec-panel report-card">
+    <h3>Talent Heatmap</h3>
+    <p class="section-desc">Weighted DPS impact per talent</p>
     <div class="heatmap-hero-bar">${heroToggles}</div>
-  </div>`;
-
-  const svgPanel = `<div class="heatmap-spec-panel">
     ${specSvg}
     <div class="heatmap-legend">
       <span class="heatmap-legend-swatch heatmap-legend-pos"></span><span>Positive</span>
@@ -1002,7 +990,7 @@ function renderTalentHeatmap(builds, talentData, heroTrees, contributions) {
     </div>
   </div>`;
 
-  return { controls, svgPanel };
+  return { svgPanel };
 }
 
 function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
@@ -1096,18 +1084,14 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
 
     for (const treeKey of allTreeKeys) {
       const tc = contributions[treeKey]?.[node.id];
+      const prefix = treeKey.toLowerCase().replace(/\s+/g, "-");
       if (tc?.deltas) {
-        const prefix = treeKey.toLowerCase().replace(/\s+/g, "-");
-        for (const s of scenarios) {
-          dataAttrs += ` data-${prefix}-${s.replace(/_/g, "-")}="${(tc.deltas[s] || 0).toFixed(0)}"`;
-        }
+        dataAttrs += ` data-${prefix}-weighted="${(tc.deltas.weighted || 0).toFixed(0)}"`;
       }
       if (tc?.universal) {
-        const prefix = treeKey.toLowerCase().replace(/\s+/g, "-");
         dataAttrs += ` data-${prefix}-universal="1"`;
       }
       if (tc?.pathNode) {
-        const prefix = treeKey.toLowerCase().replace(/\s+/g, "-");
         dataAttrs += ` data-${prefix}-path="1"`;
       }
     }
@@ -1241,7 +1225,7 @@ function renderHeroComparison(builds, heroTrees) {
     })
     .join("\n");
 
-  return `<div class="hc-panel">
+  return `<div class="hc-panel report-card">
     <h3>Hero Tree Comparison</h3>
     <p class="section-desc">Best build DPS per hero tree by scenario.</p>
     <div class="hc-rows">
@@ -1380,7 +1364,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
     )
     .join("");
 
-  return `<div class="apex-panel">
+  return `<div class="apex-panel report-card">
     <h3>Apex Scaling</h3>
     <p class="section-desc">Average weighted DPS change by apex rank per hero tree, relative to each tree's rank 0 baseline.</p>
     <svg class="apex-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
@@ -1456,8 +1440,9 @@ function renderBuildRankings(builds, heroTrees) {
     .join(" · ");
 
   return `<section id="rankings">
-  <h2>Build Rankings</h2>
-  <p class="weight-legend">Weighted = ${weightLegend}</p>
+  <div class="report-card">
+  <h3>Build Rankings</h3>
+  <p class="section-desc">Weighted = ${weightLegend}</p>
   <div class="filter-bar">
     <button class="filter-btn active" data-tree="all">All (${builds.length})</button>
     ${treeFilters}
@@ -1468,17 +1453,11 @@ function renderBuildRankings(builds, heroTrees) {
         <th class="sortable" data-col="name">Build</th>
         <th>Tree</th>
         ${scenarioHeaders}
-        <th class="sortable num weighted-header" data-col="weighted" style="color:var(--fg)">Weighted <span class="info-icon">${INFO_ICON}<span class="info-popup">Weighted DPS combines all scenarios into a single score.<br><br>${Object.keys(
-          SCENARIOS,
-        )
-          .map(
-            (s) =>
-              `<span style="color:${scenarioColor(s)}">${esc(SCENARIOS[s].name)}</span> ${Math.round(SCENARIO_WEIGHTS[s] * 100)}%`,
-          )
-          .join(" · ")}</span></span></th>
+        <th class="sortable num" data-col="weighted" style="color:var(--fg)">Weighted</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
+  </div>
   </div>
 </section>`;
 }
@@ -1593,8 +1572,10 @@ function renderTrinketRankings(trinketData) {
   if (sections.length === 0) return "";
 
   return `<section>
-  <h2>Trinket Rankings</h2>
-  ${sections.join("")}
+  <div class="report-card">
+    <h3>Trinket Rankings</h3>
+    ${sections.join("")}
+  </div>
 </section>`;
 }
 
@@ -1648,8 +1629,8 @@ function renderPairRankingSection({
       : "";
 
   return `<section>
-  <h2>${title}</h2>
-  <div class="subsection">
+  <div class="report-card">
+    <h3>${title}</h3>
     <p class="section-desc">${desc}</p>
     <div class="trinket-list">${renderStrips(active, true)}${extraListHtml}</div>
     ${elimHtml}
@@ -1736,8 +1717,8 @@ function renderEmbellishmentRankings(embData) {
       : "";
 
   return `<section>
-  <h2>Embellishment Rankings</h2>
-  <div class="subsection">
+  <div class="report-card">
+    <h3>Embellishment Rankings</h3>
     <p class="section-desc">DPS gain from embellishment combinations (2-slot budget). Bars show gain vs no-embellishment baseline. Delta shown vs same crafted gear without embellishments.</p>
     <div class="trinket-list">${renderEmbStrips(topActive, true)}${nullRow}</div>
     ${moreHtml}
@@ -2017,7 +1998,7 @@ function renderStatWeights(scaleFactors) {
     : "";
   const tsNote = ts ? ` <span class="sw-timestamp">as of ${ts}</span>` : "";
 
-  return `<div class="stat-weights">
+  return `<div class="stat-weights report-card">
   <h3>Stat Weights</h3>
   <p class="section-desc">EP values per point of stat${tsNote}</p>
   <div class="sw-chart">
@@ -2078,11 +2059,15 @@ function renderGearDisplay(gearData) {
       ? `<img class="gear-icon" src="https://wow.zamimg.com/images/wow/icons/medium/${item.icon}.jpg" alt="" loading="lazy"/>`
       : `<span class="gear-icon gear-icon--empty"></span>`;
 
+    const badgeHtml = tags.length
+      ? `<div class="gear-badges">${tags.join("")}</div>`
+      : "";
+
     return `<div class="gear-row">
       <span class="gear-slot">${esc(slotDef.label)}</span>
       ${iconHtml}
       <span class="gear-name">${esc(displayName)}</span>
-      <span class="gear-tags">${tags.join("")}</span>
+      ${badgeHtml}
     </div>`;
   }
 
@@ -2114,7 +2099,9 @@ function renderGearDisplay(gearData) {
     ? `<div class="gear-cons-bar">${cons.join('<span class="gear-con-sep"></span>')}</div>`
     : "";
 
-  return `<div class="gear-display">
+  return `<div class="gear-display report-card">
+  <h3>Gear Profile</h3>
+  <p class="section-desc">Equipped gear from profile.simc</p>
   <div class="gear-columns">
     <div class="gear-col">${leftRows}</div>
     <div class="gear-col">${rightRows}</div>
@@ -2149,8 +2136,6 @@ function esc(s) {
 }
 
 const COPY_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/></svg>`;
-
-const INFO_ICON = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:13px;height:13px;vertical-align:middle"><circle cx="8" cy="8" r="6.5"/><line x1="8" y1="7" x2="8" y2="11.5"/><circle cx="8" cy="5" r="0.5" fill="currentColor" stroke="none"/></svg>`;
 
 const TREE_STYLES = {
   aldrachi_reaver: {
@@ -2450,6 +2435,26 @@ h4 {
   color: var(--fg-muted);
 }
 
+/* Shared card pattern */
+.report-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+.report-card h3 {
+  font-family: "Outfit", sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--fg);
+  margin: 0 0 0.25rem;
+}
+.report-card .section-desc {
+  color: var(--fg-muted);
+  font-size: 0.78rem;
+  margin: 0 0 1rem;
+}
+
 /* Analysis Row: heatmap left, comparison panels right */
 .analysis-row { margin-bottom: 0; }
 
@@ -2457,7 +2462,7 @@ h4 {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
-  align-items: start;
+  align-items: stretch;
 }
 
 .analysis-left, .analysis-right {
@@ -2466,80 +2471,19 @@ h4 {
   gap: 1.25rem;
 }
 
-.analysis-right .hc-panel,
-.analysis-right .apex-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-}
-
 /* Gear section: gear + stat weights side by side */
 .gear-section-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
-  align-items: start;
-}
-
-.stat-weights h3 {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
+  align-items: stretch;
 }
 
 /* Talent Heatmap */
 .talent-heatmap { }
 
-.heatmap-subtitle {
-  color: var(--fg-muted);
-  font-size: 0.8rem;
-  margin-top: -0.75rem;
-  margin-bottom: 1.25rem;
-}
-
-.heatmap-controls {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.heatmap-scenario-bar {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.heatmap-scenario-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--fg-muted);
-  font-size: 0.72rem;
-  font-weight: 600;
-  padding: 0.3rem 0.65rem;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.heatmap-scenario-btn:hover {
-  border-color: var(--fg-muted);
-  color: var(--fg);
-}
-
-.heatmap-scenario-btn.active {
-  background: var(--surface-alt);
-  border-color: var(--btn-color, var(--accent));
-  color: var(--btn-color, var(--accent));
-}
-
 .heatmap-spec-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
+  /* card styles inherited from .report-card */
 }
 
 .heatmap-svg {
@@ -2663,6 +2607,7 @@ h4 {
 .heatmap-hero-bar {
   display: flex;
   gap: 0.35rem;
+  margin-bottom: 1rem;
 }
 
 .heatmap-hero-btn {
@@ -2783,9 +2728,7 @@ h4 {
 
 
 .hc-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  /* card styles inherited from .report-card */
   padding: 0.75rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -2873,22 +2816,18 @@ h4 {
 }
 
 .apex-panel {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  /* card styles inherited from .report-card */
   padding: 0.75rem 1.5rem 1rem;
   display: flex;
   flex-direction: column;
 }
 
 .hc-panel h3, .apex-panel h3 {
-  font-family: "Outfit", sans-serif;
   font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--fg-dim);
-  margin: 0 0 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  color: var(--fg-dim);
+  margin-bottom: 0.75rem;
 }
 
 /* Apex SVG chart */
@@ -2944,13 +2883,6 @@ h4 {
 .tree-badge.fs { background: rgba(167, 139, 250, 0.13); color: var(--fs); }
 .tree-badge.other { background: rgba(148, 163, 184, 0.13); color: #94a3b8; }
 .tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
-
-.weight-legend {
-  color: var(--fg-muted);
-  font-size: 0.72rem;
-  margin-top: -0.75rem;
-  margin-bottom: 1rem;
-}
 
 /* Filter bar */
 .filter-bar {
@@ -3009,7 +2941,7 @@ th {
   white-space: nowrap;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 th.sortable { cursor: pointer; user-select: none; }
@@ -3233,9 +3165,7 @@ summary:hover { color: var(--accent); }
 
 /* Gear profile */
 .gear-display {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
+  /* card styles inherited from .report-card */
   overflow: hidden;
   min-width: 0;
 }
@@ -3254,14 +3184,18 @@ summary:hover { color: var(--accent); }
 
 .gear-row {
   display: grid;
-  grid-template-columns: 78px 24px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 0 0.5rem;
-  padding: 0.35rem 0.85rem;
+  grid-template-columns: 78px 24px 1fr;
+  grid-template-rows: auto auto;
+  gap: 0.15rem 0.5rem;
+  padding: 0.4rem 0.85rem;
   border-bottom: 1px solid var(--border-subtle);
   transition: background 0.15s;
   min-height: 0;
+  align-items: center;
 }
+.gear-slot { grid-column: 1; grid-row: 1; }
+.gear-icon { grid-column: 2; grid-row: 1; align-self: center; }
+.gear-name { grid-column: 3; grid-row: 1; }
 
 .gear-icon {
   width: 22px;
@@ -3301,12 +3235,12 @@ summary:hover { color: var(--accent); }
   min-width: 0;
 }
 
-.gear-tags {
+.gear-badges {
+  grid-column: 2 / -1;
+  grid-row: 2;
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  gap: 0.25rem;
 }
 
 .gear-anno {
@@ -3660,40 +3594,6 @@ footer p { margin-bottom: 0.25rem; }
 footer a { color: var(--accent); text-decoration: none; }
 footer a:hover { text-decoration: underline; }
 
-/* Weighted tooltip */
-.info-icon {
-  cursor: help;
-  font-size: 0.75rem;
-  color: var(--fg-muted);
-  position: relative;
-  vertical-align: middle;
-}
-
-.weighted-header {
-  position: relative;
-}
-
-.info-popup {
-  display: none;
-  position: fixed;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.65em 0.85em;
-  font-family: "DM Sans", sans-serif;
-  font-size: 0.72rem;
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
-  color: var(--fg-dim);
-  line-height: 1.5;
-  width: 260px;
-  white-space: normal;
-  z-index: 100;
-  pointer-events: none;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-}
-
 /* Load animation */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
@@ -3744,21 +3644,10 @@ const JS = `
   const section = document.querySelector('.talent-heatmap');
   if (!section) return;
 
-  function getDataKey(tree, scenario) {
+  function getDataKey(tree) {
     const prefix = tree.toLowerCase().replace(/\\s+/g, '-');
-    return (prefix + '-' + scenario.replace(/_/g, '-'))
-      .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    return (prefix + '-weighted').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
   }
-
-  // Scenario toggle
-  section.querySelectorAll('.heatmap-scenario-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      section.querySelectorAll('.heatmap-scenario-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      section.dataset.activeScenario = btn.dataset.scenario;
-      updateHeatmapColors();
-    });
-  });
 
   // Hero tree toggle
   section.querySelectorAll('.heatmap-hero-btn').forEach(btn => {
@@ -3781,8 +3670,7 @@ const JS = `
     g.addEventListener('mouseenter', e => {
       const name = g.dataset.name;
       const tree = section.dataset.activeTree || 'all';
-      const scenario = section.dataset.activeScenario || 'weighted';
-      const dataKey = getDataKey(tree, scenario);
+      const dataKey = getDataKey(tree);
       const delta = node.dataset[dataKey];
       const uniKey = (tree.toLowerCase().replace(/\\s+/g, '-') + '-universal')
         .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
@@ -3818,8 +3706,7 @@ const JS = `
 
   function updateHeatmapColors() {
     const tree = section.dataset.activeTree || 'all';
-    const scenario = section.dataset.activeScenario || 'weighted';
-    const dataKey = getDataKey(tree, scenario);
+    const dataKey = getDataKey(tree);
     const uniKey = (tree.toLowerCase().replace(/\\s+/g, '-') + '-universal')
       .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
 
@@ -3991,23 +3878,6 @@ document.querySelectorAll('#rankings .filter-btn').forEach(btn => {
 });
 
 // Copy talent hash to clipboard
-// Info popup positioning
-document.querySelectorAll('.info-icon').forEach(icon => {
-  const popup = icon.querySelector('.info-popup');
-  if (!popup) return;
-  document.body.appendChild(popup);
-  icon.addEventListener('mouseenter', () => {
-    const r = icon.getBoundingClientRect();
-    popup.style.display = 'block';
-    popup.style.right = (document.documentElement.clientWidth - r.right) + 'px';
-    popup.style.left = 'auto';
-    popup.style.top = (r.top - popup.offsetHeight - 8) + 'px';
-  });
-  icon.addEventListener('mouseleave', () => {
-    popup.style.display = 'none';
-  });
-});
-
 document.querySelectorAll('.copy-hash').forEach(btn => {
   btn.addEventListener('click', e => {
     e.stopPropagation();
