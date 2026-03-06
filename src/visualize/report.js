@@ -638,14 +638,24 @@ function computeNodeContributions(builds, talentData, decodedBuilds) {
   ];
   const scenarioKeys = [...Object.keys(SCENARIOS), "weighted"];
 
+  // Map hero node IDs to their tree name so we can restrict comparisons
+  const heroNodeTree = new Map();
+  for (const [treeName, nodes] of Object.entries(talentData.heroSubtrees)) {
+    for (const n of nodes) heroNodeTree.set(n.id, treeName);
+  }
+
   const contributions = {};
 
   for (const node of allNodeList) {
     const hasNode = [];
     const noNode = [];
 
+    // For hero nodes, only compare builds within the same hero tree
+    const treeFilter = heroNodeTree.get(node.id);
+
     for (const b of builds) {
       if (b.dps.weighted <= 0) continue;
+      if (treeFilter && b.heroTree !== treeFilter) continue;
       const sel = decodedBuilds.get(b.id);
       if (!sel) continue;
       if (sel.has(node.id)) {
@@ -655,7 +665,7 @@ function computeNodeContributions(builds, talentData, decodedBuilds) {
       }
     }
 
-    // Skip nodes taken by all or no builds (no signal)
+    // Skip nodes taken by all or no builds within the comparison set
     if (hasNode.length === 0 || noNode.length === 0) {
       contributions[node.id] = {
         universal: hasNode.length > 0,
@@ -3510,9 +3520,6 @@ const JS = `
       const v = Number(n.dataset[key.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] || 0);
       const t = Math.min(Math.abs(v) / maxAbs, 1);
       if (v > 0) {
-        const r = Math.round(52 + (52 - 52) * t);
-        const g = Math.round(211 + (211 - 211) * t);
-        const b = Math.round(153 + (153 - 153) * t);
         n.style.fill = 'rgba(52, 211, 153, ' + (0.15 + t * 0.7) + ')';
         n.style.stroke = 'rgba(52, 211, 153, ' + (0.3 + t * 0.5) + ')';
       } else if (v < 0) {
@@ -3578,6 +3585,15 @@ document.querySelectorAll('th.sortable').forEach(th => {
     });
 
     for (const row of rows) tbody.appendChild(row);
+
+    // Re-apply active hero tree filter after sort
+    const activeFilter = table.closest('section')?.querySelector('.filter-btn.active');
+    if (activeFilter && activeFilter.dataset.tree !== 'all') {
+      const tree = activeFilter.dataset.tree;
+      rows.forEach(row => {
+        row.style.display = row.dataset.tree === tree ? '' : 'none';
+      });
+    }
   });
 });
 
