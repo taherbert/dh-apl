@@ -2322,7 +2322,7 @@ header h1 {
 }
 
 /* Section basics */
-section { margin-bottom: 3rem; }
+section { margin-bottom: 1.5rem; }
 
 h2 {
   font-family: "Outfit", sans-serif;
@@ -2361,7 +2361,7 @@ h4 {
   line-height: 1.5;
 }
 
-.subsection { margin-bottom: 2.5rem; }
+.subsection { margin-bottom: 1.5rem; }
 
 /* Top Build Cards */
 .top-build-cards { margin-bottom: 0; }
@@ -2456,26 +2456,24 @@ h4 {
 }
 
 /* Analysis Row: heatmap left, comparison panels right */
-.analysis-row { margin-bottom: 0; }
-
 .analysis-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  gap: 1.5rem;
   align-items: stretch;
 }
 
 .analysis-left, .analysis-right {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
 }
 
 /* Gear section: gear + stat weights side by side */
 .gear-section-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.25rem;
+  gap: 1.5rem;
   align-items: stretch;
 }
 
