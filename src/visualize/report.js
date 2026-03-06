@@ -2551,6 +2551,13 @@ h4 {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  min-height: 0;
+}
+
+.analysis-left > .heatmap-spec-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Gear section: gear + stat weights side by side */
@@ -2570,8 +2577,9 @@ h4 {
 
 .heatmap-svg {
   width: 100%;
-  height: auto;
-  max-height: 520px;
+  flex: 1;
+  min-height: 0;
+  object-fit: contain;
 }
 
 .heatmap-edge {
