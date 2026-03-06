@@ -804,7 +804,14 @@ async function cmdEnchants(args) {
   const sf = getSessionState("gear_scale_factors");
 
   // Stat-only enchant slots that can be EP-ranked (no sims needed)
-  const EP_ENCHANT_SLOTS = new Set(["cloak", "wrist", "foot", "chest", "legs"]);
+  const EP_ENCHANT_SLOTS = new Set([
+    "cloak",
+    "wrist",
+    "foot",
+    "chest",
+    "legs",
+    "shoulder",
+  ]);
 
   // Override weapon enchant base_items with actual assembled gear lines.
   // Manual enchants produce placeholder base_items (id=0) when no Raidbots data exists.
@@ -1895,6 +1902,7 @@ function applySlotEnchant(line, slot, enchantMap) {
   const SLOT_ENCHANT = {
     main_hand: "weapon_mh",
     off_hand: "weapon_oh",
+    shoulder: "shoulder",
     back: "cloak",
     chest: "chest",
     wrists: "wrist",
