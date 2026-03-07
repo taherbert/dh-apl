@@ -201,6 +201,17 @@ export function decode(str, nodes) {
   return { specId, selections };
 }
 
+// Remove a set of nodes from a talent hash, returning a new hash string.
+// nodeIdsToRemove: Set<number> of node IDs to strip from the build.
+// allNodes: full node list (same array used for decode/encode).
+export function removeNodes(hash, nodeIdsToRemove, allNodes) {
+  const { specId, selections } = decode(hash, allNodes);
+  for (const id of nodeIdsToRemove) {
+    selections.delete(id);
+  }
+  return encode(specId, allNodes, selections);
+}
+
 // --- Helpers for integration with our data model ---
 
 import { readFileSync } from "node:fs";

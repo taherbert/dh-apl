@@ -42,6 +42,7 @@ import {
 import { generateDefensiveCostBuilds } from "../model/talent-combos.js";
 import {
   decode as decodeTalentHash,
+  removeNodes as removeNodesFromHash,
   loadFullNodeList,
 } from "../util/talent-string.js";
 
@@ -521,6 +522,8 @@ function persistSimResults(roster, buildData) {
   }
 }
 
+const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
+
 // --- Defensive talent cost sims ---
 
 async function simDefensiveCosts(
@@ -559,9 +562,6 @@ async function simDefensiveCosts(
   );
 
   const results = [];
-
-  // Profileset names sanitize dots and spaces to underscores
-  const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
 
   // Group by hero tree — one profileset per tree per scenario
   const heroTrees = [...new Set(references.map((r) => r.heroTree))];
@@ -653,6 +653,388 @@ async function simDefensiveCosts(
   return { costs: results, refName };
 }
 
+// --- Talent ablation sims ---
+
+// Find orphaned descendants when removing a node from a build.
+// A descendant is orphaned if ALL its prev (parent) nodes are unselected.
+function findOrphanedDescendants(removeId, selections, specNodeMap) {
+  const orphaned = new Set();
+  const removedNode = specNodeMap.get(removeId);
+  if (!removedNode?.next) return orphaned;
+
+  // BFS to collect all reachable selected descendants
+  const candidates = new Set();
+  const queue = [...removedNode.next.filter((id) => selections.has(id))];
+  while (queue.length > 0) {
+    const id = queue.shift();
+    if (candidates.has(id)) continue;
+    const node = specNodeMap.get(id);
+    if (!node) continue;
+    candidates.add(id);
+    for (const nextId of node.next || []) {
+      if (selections.has(nextId) && !candidates.has(nextId)) queue.push(nextId);
+    }
+  }
+
+  // Fixpoint: repeatedly mark orphans until stable.
+  // Avoids BFS ordering bugs when sibling parents are both being orphaned.
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const id of candidates) {
+      if (orphaned.has(id)) continue;
+      const node = specNodeMap.get(id);
+      const allParentsGone = (node.prev || []).every(
+        (pid) => pid === removeId || orphaned.has(pid) || !selections.has(pid),
+      );
+      if (allParentsGone) {
+        orphaned.add(id);
+        changed = true;
+      }
+    }
+  }
+
+  return orphaned;
+}
+
+// Pick reference builds for ablation: best build + widest Apex 0 build per hero tree
+function pickAblationReferences(builds, decodedBuilds, heroTreeKeys) {
+  const refs = [];
+
+  for (const tree of heroTreeKeys) {
+    const treeBuilds = builds.filter(
+      (b) => b.heroTree === tree && b.dps.weighted > 0,
+    );
+    if (treeBuilds.length === 0) continue;
+
+    // Best build by weighted DPS
+    const best = treeBuilds.reduce((a, b) =>
+      (b.dps.weighted || 0) > (a.dps.weighted || 0) ? b : a,
+    );
+    refs.push({ build: best, heroTree: tree, role: "best" });
+
+    // Widest Apex 0 build (most selected spec talents)
+    const apex0 = treeBuilds.filter((b) => b.archetype?.startsWith("Apex 0:"));
+    if (apex0.length > 0) {
+      const widest = apex0.reduce((a, b) => {
+        const aSize = decodedBuilds.get(a.id)?.size || 0;
+        const bSize = decodedBuilds.get(b.id)?.size || 0;
+        return bSize > aSize ? b : a;
+      });
+      // Only add if different from best
+      if (widest.id !== best.id) {
+        refs.push({ build: widest, heroTree: tree, role: "wide" });
+      }
+    }
+  }
+
+  return refs;
+}
+
+async function simTalentAblation(
+  aplPath,
+  fidelityOpts,
+  reportData,
+  talentData,
+  heroTreeKeys,
+) {
+  const allNodes = talentData.allNodes;
+  const specNodeMap = new Map(talentData.specNodes.map((n) => [n.id, n]));
+  const decodedBuilds = decodeBuildSelections(reportData.builds, talentData);
+
+  const refs = pickAblationReferences(
+    reportData.builds,
+    decodedBuilds,
+    heroTreeKeys,
+  );
+
+  if (refs.length === 0) {
+    console.log("  No reference builds for ablation.");
+    return null;
+  }
+
+  // Build ablation variants: for each ref, remove each non-locked spec talent
+  const ablationVariants = []; // { refId, heroTree, nodeId, nodeName, orphanedNodes, hash }
+
+  for (const ref of refs) {
+    const sel = decodedBuilds.get(ref.build.id);
+    if (!sel) continue;
+
+    // Spec talents selected in this build (excluding locked/free nodes like 90912)
+    const specSelected = [];
+    for (const [nodeId] of sel) {
+      const node = specNodeMap.get(nodeId);
+      if (!node) continue;
+      if (node.id === 90912) continue; // skip filtered node
+      if (node.freeNode || node.entryNode) continue;
+      specSelected.push(node);
+    }
+
+    for (const node of specSelected) {
+      const orphaned = findOrphanedDescendants(node.id, sel, specNodeMap);
+      const toRemove = new Set([node.id, ...orphaned]);
+      // Direct orphans: children of the removed node that are orphaned
+      const directOrphans = (node.next || []).filter((id) => orphaned.has(id));
+      try {
+        const newHash = removeNodesFromHash(ref.build.hash, toRemove, allNodes);
+        const nodeName =
+          node.entries?.[0]?.name || node.name || `Node ${node.id}`;
+        ablationVariants.push({
+          refId: ref.build.id,
+          heroTree: ref.heroTree,
+          nodeId: node.id,
+          nodeName,
+          orphanedNodes: [...orphaned],
+          directOrphans,
+          hash: newHash,
+          variantName: sanitize(`drop_${node.id}_from_${ref.build.id}`),
+        });
+      } catch {
+        // Skip nodes that produce invalid hashes
+      }
+    }
+  }
+
+  if (ablationVariants.length === 0) {
+    console.log("  No ablation variants generated.");
+    return null;
+  }
+
+  console.log(
+    `  Ablation: ${refs.length} refs, ${ablationVariants.length} variants`,
+  );
+
+  // Group variants by heroTree + refId for profileset sims
+  const groups = new Map();
+  for (const v of ablationVariants) {
+    const key = `${v.heroTree}|${v.refId}`;
+    if (!groups.has(key)) {
+      const ref = refs.find(
+        (r) => r.build.id === v.refId && r.heroTree === v.heroTree,
+      );
+      groups.set(key, { ref, variants: [] });
+    }
+    groups.get(key).variants.push(v);
+  }
+
+  // Run sims: one profileset per group per scenario
+  const results = []; // { nodeId, nodeName, heroTree, orphanedNodes, dps: {scenario}, refDps: {scenario} }
+
+  for (const [, { ref, variants }] of groups) {
+    const miniRoster = {
+      builds: [
+        { id: ref.build.id, hash: ref.build.hash },
+        ...variants.map((v) => ({ id: v.variantName, hash: v.hash })),
+      ],
+    };
+
+    const variantByName = new Map(variants.map((v) => [v.variantName, v]));
+
+    for (const scenario of Object.keys(SCENARIOS)) {
+      const label = `ablation_${ref.heroTree.replace(/\s+/g, "_")}_${ref.build.id}_${scenario}`;
+      console.log(
+        `  ${ref.heroTree} / ${ref.role} / ${SCENARIOS[scenario].name} (${variants.length} variants)...`,
+      );
+
+      let psResults;
+      try {
+        const content = generateRosterProfilesetContent(miniRoster, aplPath);
+        psResults = await runProfilesetAsync(content, scenario, label, {
+          simOverrides: { target_error: fidelityOpts.target_error },
+        });
+      } catch (e) {
+        console.warn(
+          `  Ablation sim failed (${ref.heroTree}/${ref.role}/${scenario}): ${e.message?.split("\n")[0]}`,
+        );
+        continue;
+      }
+
+      const refDps = psResults.baseline.dps;
+
+      for (const variant of psResults.variants) {
+        const match = variantByName.get(variant.name);
+        if (!match) continue;
+
+        let entry = results.find(
+          (r) =>
+            r.nodeId === match.nodeId &&
+            r.heroTree === match.heroTree &&
+            r.refId === match.refId,
+        );
+        if (!entry) {
+          entry = {
+            nodeId: match.nodeId,
+            nodeName: match.nodeName,
+            heroTree: match.heroTree,
+            refId: match.refId,
+            orphanedNodes: match.orphanedNodes,
+            directOrphans: match.directOrphans,
+            dps: {},
+            refDps: {},
+            removalCost: {},
+          };
+          results.push(entry);
+        }
+
+        entry.dps[scenario] = variant.dps;
+        entry.refDps[scenario] = refDps;
+        entry.removalCost[scenario] = refDps - variant.dps;
+      }
+    }
+  }
+
+  // Compute weighted removal costs
+  for (const entry of results) {
+    entry.dps.weighted = computeWeighted(entry.dps);
+    entry.refDps.weighted = computeWeighted(entry.refDps);
+    entry.removalCost.weighted = entry.refDps.weighted - entry.dps.weighted;
+  }
+
+  return { results, refs };
+}
+
+function computeIntrinsicValues(ablationData) {
+  if (!ablationData?.results?.length) return null;
+
+  const { results } = ablationData;
+  const scenarioKeys = allDpsKeys();
+
+  // Group results by nodeId + heroTree, averaging across refs
+  const grouped = new Map(); // `${nodeId}|${heroTree}` -> [entries]
+  for (const r of results) {
+    const key = `${r.nodeId}|${r.heroTree}`;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(r);
+  }
+
+  // Build lookup: nodeId -> averaged removalCost per scenario per heroTree
+  const avgRemovalCost = new Map(); // `${nodeId}|${heroTree}` -> { scenario: avgCost }
+  for (const [key, entries] of grouped) {
+    const avg = {};
+    for (const s of scenarioKeys) {
+      const costs = entries
+        .map((e) => e.removalCost[s])
+        .filter((c) => c !== undefined);
+      avg[s] =
+        costs.length > 0 ? costs.reduce((a, b) => a + b, 0) / costs.length : 0;
+    }
+    avgRemovalCost.set(key, avg);
+  }
+
+  // Compute intrinsic values per hero tree + aggregated "all".
+  // Returns { all: { nodeId: {...} }, "Aldrachi Reaver": { nodeId: {...} }, ... }
+  const perTree = { all: {} };
+  const heroTrees = [...new Set(results.map((r) => r.heroTree))];
+
+  for (const tree of heroTrees) {
+    perTree[tree] = {};
+    const treeGrouped = new Map();
+    for (const [key, entries] of grouped) {
+      if (entries[0].heroTree !== tree) continue;
+      const nodeId = entries[0].nodeId;
+      if (!treeGrouped.has(nodeId)) treeGrouped.set(nodeId, []);
+      treeGrouped.get(nodeId).push(...entries);
+    }
+
+    for (const [nodeId, entries] of treeGrouped) {
+      const intrinsic = {};
+      const removalCost = {};
+      const intrinsicPct = {};
+      const removalCostPct = {};
+      const orphanedNodes = new Set();
+      for (const e of entries) {
+        for (const oid of e.orphanedNodes) orphanedNodes.add(oid);
+      }
+
+      for (const s of scenarioKeys) {
+        const costs = entries
+          .map((e) => e.removalCost[s])
+          .filter((c) => c !== undefined);
+        const avgCost =
+          costs.length > 0
+            ? costs.reduce((a, b) => a + b, 0) / costs.length
+            : 0;
+        removalCost[s] = avgCost;
+
+        // Average refDps for percentage computation
+        const refs = entries
+          .map((e) => e.refDps[s])
+          .filter((r) => r !== undefined && r > 0);
+        const avgRef =
+          refs.length > 0 ? refs.reduce((a, b) => a + b, 0) / refs.length : 0;
+
+        // Only subtract DIRECT orphans' removal costs (not transitive).
+        let directOrphanCost = 0;
+        for (const entry of entries) {
+          for (const orphanId of entry.directOrphans || []) {
+            const orphanKey = `${orphanId}|${tree}`;
+            const oc = avgRemovalCost.get(orphanKey)?.[s] || 0;
+            directOrphanCost += oc / entries.length;
+          }
+        }
+        intrinsic[s] = avgCost - directOrphanCost;
+
+        // Express as % of reference DPS
+        intrinsicPct[s] = avgRef > 0 ? (intrinsic[s] / avgRef) * 100 : 0;
+        removalCostPct[s] = avgRef > 0 ? (avgCost / avgRef) * 100 : 0;
+      }
+
+      perTree[tree][nodeId] = {
+        intrinsic,
+        removalCost,
+        intrinsicPct,
+        removalCostPct,
+        orphanedNodes: [...orphanedNodes],
+        nodeName: entries[0].nodeName,
+      };
+    }
+  }
+
+  // "all" = average across hero trees
+  const allNodeIds = new Set(heroTrees.flatMap((t) => Object.keys(perTree[t])));
+  for (const nodeId of allNodeIds) {
+    const treeEntries = heroTrees
+      .map((t) => perTree[t][nodeId])
+      .filter(Boolean);
+    if (treeEntries.length === 0) continue;
+
+    const intrinsic = {};
+    const removalCost = {};
+    const intrinsicPct = {};
+    const removalCostPct = {};
+    const orphanedNodes = new Set();
+    for (const e of treeEntries) {
+      for (const oid of e.orphanedNodes) orphanedNodes.add(oid);
+    }
+
+    for (const s of scenarioKeys) {
+      intrinsic[s] =
+        treeEntries.reduce((sum, e) => sum + (e.intrinsic[s] || 0), 0) /
+        treeEntries.length;
+      removalCost[s] =
+        treeEntries.reduce((sum, e) => sum + (e.removalCost[s] || 0), 0) /
+        treeEntries.length;
+      intrinsicPct[s] =
+        treeEntries.reduce((sum, e) => sum + (e.intrinsicPct[s] || 0), 0) /
+        treeEntries.length;
+      removalCostPct[s] =
+        treeEntries.reduce((sum, e) => sum + (e.removalCostPct[s] || 0), 0) /
+        treeEntries.length;
+    }
+
+    perTree.all[nodeId] = {
+      intrinsic,
+      removalCost,
+      intrinsicPct,
+      removalCostPct,
+      orphanedNodes: [...orphanedNodes],
+      nodeName: treeEntries[0].nodeName,
+    };
+  }
+
+  return perTree;
+}
+
 // --- Talent heatmap computation ---
 
 function decodeBuildSelections(builds, talentData) {
@@ -676,9 +1058,10 @@ function computeNodeContributions(
   decodedBuilds,
   defensiveCosts,
   heroTreeKeys,
+  ablationIntrinsics,
 ) {
   const specNodes = talentData.specNodes.filter((n) => n.id !== 90912);
-  const scenarioKeys = ["weighted"];
+  const scenarioKeys = ablationIntrinsics ? allDpsKeys() : ["weighted"];
 
   // Build defensive talent lookup from cost sim data
   const defensiveMap = new Map();
@@ -720,9 +1103,12 @@ function computeNodeContributions(
 
       const nodeName = node.entries?.[0]?.name || node.name || "";
       const defCosts = defensiveMap.get(nodeName);
+      const treeKey = filterTree || "all";
+      const ablation = ablationIntrinsics?.[treeKey]?.[node.id];
 
       if (hasNode.length === 0 || noNode.length === 0) {
-        result[node.id] = {
+        // Universal or untaken — but ablation may still have data
+        const entry = {
           universal: hasNode.length > 0,
           defensive: !!defCosts,
           defensiveCost: defCosts
@@ -730,26 +1116,56 @@ function computeNodeContributions(
             : null,
           deltas: null,
         };
+
+        // Universal nodes with ablation data: show intrinsic value
+        if (ablation && entry.universal) {
+          entry.deltas = {};
+          entry.pct = {};
+          for (const s of scenarioKeys) {
+            entry.deltas[s] = ablation.intrinsic[s] || 0;
+            entry.pct[s] = ablation.intrinsicPct?.[s] || 0;
+          }
+          entry.universal = false;
+        }
+
+        result[node.id] = entry;
         continue;
       }
 
       const deltas = {};
-      for (const s of scenarioKeys) {
-        const avgWith =
-          hasNode.reduce((sum, b) => sum + (b.dps[s] || 0), 0) / hasNode.length;
-        const avgWithout =
-          noNode.reduce((sum, b) => sum + (b.dps[s] || 0), 0) / noNode.length;
-        deltas[s] = avgWith - avgWithout;
+      if (ablation) {
+        // Use ablation intrinsic values instead of cohort-based means
+        for (const s of scenarioKeys) {
+          deltas[s] = ablation.intrinsic[s] || 0;
+        }
+      } else {
+        // Fallback to cohort-based delta
+        for (const s of scenarioKeys) {
+          const avgWith =
+            hasNode.reduce((sum, b) => sum + (b.dps[s] || 0), 0) /
+            hasNode.length;
+          const avgWithout =
+            noNode.reduce((sum, b) => sum + (b.dps[s] || 0), 0) / noNode.length;
+          deltas[s] = avgWith - avgWithout;
+        }
       }
 
-      result[node.id] = {
+      const entry = {
         universal: false,
         defensive: !!defCosts,
         defensiveCost: defCosts
           ? defCosts.reduce((a, b) => a + b, 0) / defCosts.length
           : null,
         deltas,
+        pathNode: false,
       };
+      if (ablation) {
+        entry.pct = {};
+        for (const s of scenarioKeys) {
+          entry.pct[s] = ablation.intrinsicPct?.[s] || 0;
+        }
+      }
+      result[node.id] = entry;
     }
     return result;
   }
@@ -760,30 +1176,29 @@ function computeNodeContributions(
     perTree[tree] = computeForFilter(tree);
   }
 
-  // Annotate "path nodes" — nodes whose delta is primarily inherited from downstream
-  const nodeMap = new Map(specNodes.map((n) => [n.id, n]));
-  for (const treeKey of Object.keys(perTree)) {
-    const contribs = perTree[treeKey];
-    for (const node of specNodes) {
-      const c = contribs[node.id];
-      if (!c?.deltas || c.universal || c.defensive) continue;
+  // Annotate "path nodes" via heuristic only when no ablation data
+  if (!ablationIntrinsics) {
+    for (const treeKey of Object.keys(perTree)) {
+      const contribs = perTree[treeKey];
+      for (const node of specNodes) {
+        const c = contribs[node.id];
+        if (!c?.deltas || c.universal || c.defensive) continue;
 
-      const myDelta = c.deltas.weighted || 0;
-      if (myDelta <= 0) continue;
+        const myDelta = c.deltas.weighted || 0;
+        if (myDelta <= 0) continue;
 
-      // Find max weighted delta among direct downstream nodes
-      let maxDownstream = 0;
-      for (const nextId of node.next || []) {
-        const nc = contribs[nextId];
-        if (nc?.deltas) {
-          const nd = Math.abs(nc.deltas.weighted || 0);
-          if (nd > maxDownstream) maxDownstream = nd;
+        let maxDownstream = 0;
+        for (const nextId of node.next || []) {
+          const nc = contribs[nextId];
+          if (nc?.deltas) {
+            const nd = Math.abs(nc.deltas.weighted || 0);
+            if (nd > maxDownstream) maxDownstream = nd;
+          }
         }
-      }
 
-      // Path node: its positive delta is less than half the downstream max
-      if (maxDownstream > 0 && myDelta < maxDownstream * 0.6) {
-        c.pathNode = true;
+        if (maxDownstream > 0 && myDelta < maxDownstream * 0.6) {
+          c.pathNode = true;
+        }
       }
     }
   }
@@ -806,6 +1221,7 @@ function generateHtml(data) {
     talentData,
     nodeContributions,
     abilityBreakdown,
+    hasAblation,
   } = data;
   const displaySpec = toTitleCase(specName);
 
@@ -825,6 +1241,7 @@ function generateHtml(data) {
       heroTrees,
       nodeContributions,
       apexBuilds,
+      hasAblation,
     ),
     renderBuildRankings(builds, heroTrees),
     renderGearSection(gearData, abilityBreakdown),
@@ -913,12 +1330,14 @@ function renderAnalysisRow(
   heroTrees,
   nodeContributions,
   apexBuilds,
+  hasAblation,
 ) {
   const heatmap = renderTalentHeatmap(
     builds,
     talentData,
     heroTrees,
     nodeContributions,
+    hasAblation,
   );
   const heroComp = renderHeroComparison(builds, heroTrees);
   const apexChart = renderApexScaling(apexBuilds, heroTrees);
@@ -962,7 +1381,13 @@ function renderDefensiveCostsSection(defensiveTalentCosts, builds) {
 </section>`;
 }
 
-function renderTalentHeatmap(builds, talentData, heroTrees, contributions) {
+function renderTalentHeatmap(
+  builds,
+  talentData,
+  heroTrees,
+  contributions,
+  hasAblation,
+) {
   if (!talentData || !contributions) return "";
 
   const scenarios = ["weighted"];
@@ -984,10 +1409,24 @@ function renderTalentHeatmap(builds, talentData, heroTrees, contributions) {
     ),
   ].join("\n      ");
 
+  // Scenario toggle (only when ablation data provides per-scenario values)
+  const scenarioNames = Object.keys(SCENARIOS);
+  const scenarioToggles = hasAblation
+    ? `<div class="heatmap-scenario-bar">
+        <button class="heatmap-scenario-btn active" data-scenario="weighted">Weighted</button>
+        ${scenarioNames.map((s) => `<button class="heatmap-scenario-btn" data-scenario="${s}">${esc(SCENARIOS[s].name)}</button>`).join("\n        ")}
+      </div>`
+    : "";
+
+  const methodLabel = hasAblation
+    ? "Ablation-derived intrinsic DPS impact"
+    : "Weighted DPS impact per talent";
+
   const svgPanel = `<div class="heatmap-spec-panel report-card">
     <h3>Talent Heatmap</h3>
-    <p class="section-desc">Weighted DPS impact per talent</p>
+    <p class="section-desc">${methodLabel}</p>
     <div class="heatmap-hero-bar">${heroToggles}</div>
+    ${scenarioToggles}
     ${specSvg}
     <div class="heatmap-legend">
       <span class="heatmap-legend-swatch heatmap-legend-pos"></span><span>Positive</span>
@@ -1047,9 +1486,23 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
   }
 
   const half = NODE_SIZE / 2;
+  const cut = half * 0.3;
   const iconOffset = -half + ICON_INSET;
   const iconSize = NODE_SIZE - ICON_INSET * 2;
   const nodeById = new Map(nodes.map((n) => [n.id, n]));
+
+  function octagonPoints(x, y) {
+    return [
+      `${x - half + cut},${y - half}`,
+      `${x + half - cut},${y - half}`,
+      `${x + half},${y - half + cut}`,
+      `${x + half},${y + half - cut}`,
+      `${x + half - cut},${y + half}`,
+      `${x - half + cut},${y + half}`,
+      `${x - half},${y + half - cut}`,
+      `${x - half},${y - half + cut}`,
+    ].join(" ");
+  }
 
   // All tree keys: "all" + each hero tree name
   const allTreeKeys = ["all", ...treeNames];
@@ -1098,6 +1551,21 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
       const prefix = treeKey.toLowerCase().replace(/\s+/g, "-");
       if (tc?.deltas) {
         dataAttrs += ` data-${prefix}-weighted="${(tc.deltas.weighted || 0).toFixed(0)}"`;
+        // Per-scenario deltas for scenario toggle
+        for (const s of Object.keys(SCENARIOS)) {
+          if (tc.deltas[s] !== undefined) {
+            dataAttrs += ` data-${prefix}-${s}="${(tc.deltas[s] || 0).toFixed(0)}"`;
+          }
+        }
+        // Percentage values for display
+        if (tc.pct) {
+          dataAttrs += ` data-${prefix}-pct="${(tc.pct.weighted || 0).toFixed(2)}"`;
+          for (const s of Object.keys(SCENARIOS)) {
+            if (tc.pct[s] !== undefined) {
+              dataAttrs += ` data-${prefix}-pct-${s}="${(tc.pct[s] || 0).toFixed(2)}"`;
+            }
+          }
+        }
       }
       if (tc?.universal) {
         dataAttrs += ` data-${prefix}-universal="1"`;
@@ -1108,28 +1576,14 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
     }
 
     const universalCls = isUniversal ? " heatmap-universal" : "";
-    const noDataCls = !c?.deltas && !isUniversal ? " heatmap-nodata" : "";
+    const noDataCls =
+      !c?.deltas && !isUniversal && !isDefensive ? " heatmap-nodata" : "";
     const defensiveCls = isDefensive ? " heatmap-defensive" : "";
 
     // Background shape: octagon for choice, rounded rect for everything else
-    let bgShape;
-    if (isChoice) {
-      const s = half;
-      const cut = s * 0.3;
-      const pts = [
-        `${x - s + cut},${y - s}`,
-        `${x + s - cut},${y - s}`,
-        `${x + s},${y - s + cut}`,
-        `${x + s},${y + s - cut}`,
-        `${x + s - cut},${y + s}`,
-        `${x - s + cut},${y + s}`,
-        `${x - s},${y + s - cut}`,
-        `${x - s},${y - s + cut}`,
-      ].join(" ");
-      bgShape = `<polygon points="${pts}" class="heatmap-node${universalCls}${noDataCls}${defensiveCls}"${dataAttrs}/>`;
-    } else {
-      bgShape = `<rect x="${(x - half).toFixed(1)}" y="${(y - half).toFixed(1)}" width="${NODE_SIZE}" height="${NODE_SIZE}" rx="8" class="heatmap-node${universalCls}${noDataCls}${defensiveCls}"${dataAttrs}/>`;
-    }
+    const bgShape = isChoice
+      ? `<polygon points="${octagonPoints(x, y)}" class="heatmap-node${universalCls}${noDataCls}${defensiveCls}"${dataAttrs}/>`
+      : `<rect x="${(x - half).toFixed(1)}" y="${(y - half).toFixed(1)}" width="${NODE_SIZE}" height="${NODE_SIZE}" rx="8" class="heatmap-node${universalCls}${noDataCls}${defensiveCls}"${dataAttrs}/>`;
 
     // Icon image
     const iconImg = icon
@@ -1137,24 +1591,9 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
       : "";
 
     // Overlay (same shape as background)
-    let overlay;
-    if (isChoice) {
-      const s = half;
-      const cut = s * 0.3;
-      const pts = [
-        `${x - s + cut},${y - s}`,
-        `${x + s - cut},${y - s}`,
-        `${x + s},${y - s + cut}`,
-        `${x + s},${y + s - cut}`,
-        `${x + s - cut},${y + s}`,
-        `${x - s + cut},${y + s}`,
-        `${x - s},${y + s - cut}`,
-        `${x - s},${y - s + cut}`,
-      ].join(" ");
-      overlay = `<polygon points="${pts}" class="heatmap-overlay"/>`;
-    } else {
-      overlay = `<rect x="${(x - half).toFixed(1)}" y="${(y - half).toFixed(1)}" width="${NODE_SIZE}" height="${NODE_SIZE}" rx="8" class="heatmap-overlay"/>`;
-    }
+    const overlay = isChoice
+      ? `<polygon points="${octagonPoints(x, y)}" class="heatmap-overlay"/>`
+      : `<rect x="${(x - half).toFixed(1)}" y="${(y - half).toFixed(1)}" width="${NODE_SIZE}" height="${NODE_SIZE}" rx="8" class="heatmap-overlay"/>`;
 
     // DPS badge text (positioned inside node, bottom-right)
     const badge = `<text x="${(x + half - 3).toFixed(1)}" y="${(y + half - 3).toFixed(1)}" class="heatmap-badge"></text>`;
@@ -2529,32 +2968,35 @@ h4 {
 }
 
 .heatmap-node-group:hover .heatmap-node {
-  stroke: var(--fg-muted);
+  stroke: var(--fg) !important;
+  stroke-width: 3 !important;
+  filter: drop-shadow(0 0 4px rgba(255,255,255,0.15));
 }
 
 .heatmap-node {
   fill: var(--surface-alt);
-  stroke: var(--fg-muted);
-  stroke-width: 2;
-  transition: stroke 0.15s;
+  stroke: var(--border);
+  stroke-width: 1.5;
+  transition: stroke 0.15s, stroke-width 0.15s, filter 0.15s;
 }
 
 .heatmap-node.heatmap-universal {
   fill: var(--surface-alt);
   stroke: var(--positive);
-  stroke-width: 2;
+  stroke-width: 2.5;
 }
 
 .heatmap-node.heatmap-nodata {
   fill: var(--surface);
   stroke: var(--border-subtle);
-  opacity: 0.35;
+  opacity: 0.3;
+  stroke-width: 1;
 }
 
 .heatmap-node.heatmap-defensive {
   fill: var(--surface-alt);
-  stroke: var(--fg-muted);
-  stroke-width: 2;
+  stroke: var(--border);
+  stroke-width: 1.5;
 }
 
 .heatmap-overlay {
@@ -2664,9 +3106,38 @@ h4 {
   color: var(--accent);
 }
 
+.heatmap-scenario-bar {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.heatmap-scenario-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--fg-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 0.25rem 0.55rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.heatmap-scenario-btn:hover {
+  border-color: var(--fg-muted);
+  color: var(--fg);
+}
+
+.heatmap-scenario-btn.active {
+  background: var(--surface-alt);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .heatmap-badge {
   fill: var(--fg);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
   text-anchor: end;
   pointer-events: none;
@@ -2674,12 +3145,17 @@ h4 {
   font-variant-numeric: tabular-nums;
   paint-order: stroke;
   stroke: var(--bg);
-  stroke-width: 3px;
+  stroke-width: 4px;
   opacity: 0;
+  transition: opacity 0.1s;
 }
 
-.heatmap-node-group:hover .heatmap-badge,
 .heatmap-node-group .heatmap-badge.visible {
+  opacity: 0.85;
+}
+
+.heatmap-node-group:hover .heatmap-badge.visible,
+.heatmap-node-group:hover .heatmap-badge {
   opacity: 1;
 }
 
@@ -3661,9 +4137,17 @@ const JS = `
   const section = document.querySelector('.talent-heatmap');
   if (!section) return;
 
-  function getDataKey(tree) {
-    const prefix = tree.toLowerCase().replace(/\\s+/g, '-');
-    return (prefix + '-weighted').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  let activeScenario = 'weighted';
+
+  function buildKey(tree, ...parts) {
+    const segs = [tree.toLowerCase().replace(/\\s+/g, '-'), ...parts];
+    return segs.join('-').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  }
+
+  function getDpsKey(tree) { return buildKey(tree, activeScenario); }
+
+  function getPctKey(tree) {
+    return activeScenario === 'weighted' ? buildKey(tree, 'pct') : buildKey(tree, 'pct', activeScenario);
   }
 
   // Hero tree toggle
@@ -3672,6 +4156,16 @@ const JS = `
       section.querySelectorAll('.heatmap-hero-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       section.dataset.activeTree = btn.dataset.heroTree;
+      updateHeatmapColors();
+    });
+  });
+
+  // Scenario toggle
+  section.querySelectorAll('.heatmap-scenario-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      section.querySelectorAll('.heatmap-scenario-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeScenario = btn.dataset.scenario;
       updateHeatmapColors();
     });
   });
@@ -3687,10 +4181,11 @@ const JS = `
     g.addEventListener('mouseenter', e => {
       const name = g.dataset.name;
       const tree = section.dataset.activeTree || 'all';
-      const dataKey = getDataKey(tree);
-      const delta = node.dataset[dataKey];
-      const uniKey = (tree.toLowerCase().replace(/\\s+/g, '-') + '-universal')
-        .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      const pctKey = getPctKey(tree);
+      const dpsKey = getDpsKey(tree);
+      const pctVal = node.dataset[pctKey];
+      const dpsVal = node.dataset[dpsKey];
+      const uniKey = buildKey(tree, 'universal');
       const isUni = node.dataset[uniKey] === '1';
       tooltip.querySelector('.heatmap-tooltip-name').textContent = name;
       const deltaEl = tooltip.querySelector('.heatmap-tooltip-delta');
@@ -3699,12 +4194,17 @@ const JS = `
         deltaEl.style.color = 'var(--positive)';
       } else if (node.dataset.defensive === '1') {
         const cost = Number(node.dataset.cost || 0);
-        deltaEl.textContent = 'Defensive - costs ' + Math.abs(cost).toFixed(2) + '% DPS';
+        deltaEl.textContent = 'Defensive - costs ' + Math.abs(cost).toFixed(1) + '% DPS';
         deltaEl.style.color = 'var(--negative)';
-      } else if (delta !== undefined) {
-        const n = Number(delta);
+      } else if (pctVal !== undefined) {
+        const pct = Number(pctVal);
+        const sign = pct >= 0 ? '+' : '';
+        deltaEl.textContent = sign + pct.toFixed(1) + '% DPS';
+        deltaEl.style.color = pct >= 0 ? 'var(--positive)' : 'var(--negative)';
+      } else if (dpsVal !== undefined) {
+        const n = Number(dpsVal);
         const sign = n >= 0 ? '+' : '';
-        deltaEl.textContent = sign + Number(n).toLocaleString() + ' DPS';
+        deltaEl.textContent = sign + Math.round(n).toLocaleString() + ' DPS';
         deltaEl.style.color = n >= 0 ? 'var(--positive)' : 'var(--negative)';
       } else {
         deltaEl.textContent = 'Not taken by any build';
@@ -3723,45 +4223,40 @@ const JS = `
 
   function updateHeatmapColors() {
     const tree = section.dataset.activeTree || 'all';
-    const dataKey = getDataKey(tree);
-    const uniKey = (tree.toLowerCase().replace(/\\s+/g, '-') + '-universal')
-      .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    const dpsKey = getDpsKey(tree);
+    const pctKey = getPctKey(tree);
+    const uniKey = buildKey(tree, 'universal');
+    const pathNodeKey = buildKey(tree, 'path');
 
-    // Collect all non-special deltas for this tree+scenario
+    // Collect max pct for color scaling
     const nodeGroups = section.querySelectorAll('.heatmap-node-group');
-    let maxAbs = 1;
+    let maxPct = 0.5;
     nodeGroups.forEach(g => {
       const node = g.querySelector('.heatmap-node');
       if (node.dataset.defensive === '1') return;
       if (node.dataset[uniKey] === '1' || node.classList.contains('heatmap-universal')) return;
-      const v = Math.abs(Number(node.dataset[dataKey] || 0));
-      if (v > maxAbs) maxAbs = v;
+      if (node.dataset[pctKey] !== undefined) {
+        const pv = Math.abs(Number(node.dataset[pctKey]));
+        if (pv > maxPct) maxPct = pv;
+      }
     });
 
     nodeGroups.forEach(g => {
       const node = g.querySelector('.heatmap-node');
       const overlay = g.querySelector('.heatmap-overlay');
       const badge = g.querySelector('.heatmap-badge');
-      if (badge) badge.textContent = '';
-      if (badge) badge.classList.remove('visible');
+      if (badge) { badge.textContent = ''; badge.classList.remove('visible'); }
 
       const isTreeUni = node.dataset[uniKey] === '1';
       const isGlobalUni = node.classList.contains('heatmap-universal');
 
-      // Update universal class dynamically per-tree
       if (isTreeUni && tree !== 'all') {
         node.style.stroke = 'var(--positive)';
-      } else if (isGlobalUni) {
-        node.style.stroke = '';
       } else {
         node.style.stroke = '';
       }
 
       if (isTreeUni || isGlobalUni) {
-        if (overlay) overlay.style.fill = 'transparent';
-        return;
-      }
-      if (node.classList.contains('heatmap-nodata')) {
         if (overlay) overlay.style.fill = 'transparent';
         return;
       }
@@ -3776,25 +4271,29 @@ const JS = `
         }
         return;
       }
+      if (node.classList.contains('heatmap-nodata')) {
+        if (overlay) overlay.style.fill = 'transparent';
+        return;
+      }
 
-      const raw = Number(node.dataset[dataKey] || 0);
-      const absVal = Math.abs(raw);
-      const power = Math.min(absVal / maxAbs, 1);
+      // Use pct for display, fall back to DPS
+      const hasPct = node.dataset[pctKey] !== undefined;
+      const pct = hasPct ? Number(node.dataset[pctKey]) : null;
+      const raw = Number(node.dataset[dpsKey] || 0);
+      const displayVal = hasPct ? pct : raw;
+      const absDisplay = Math.abs(displayVal);
+      const power = hasPct ? Math.min(absDisplay / maxPct, 1) : Math.min(absDisplay / 5, 1);
 
-      // Check if this is a "path node" (delta inherited from downstream)
-      const pathPrefix = tree.toLowerCase().replace(/\\s+/g, '-');
-      const pathKey = (pathPrefix + '-path').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-      const isPath = node.dataset[pathKey] === '1';
+      const isPath = node.dataset[pathNodeKey] === '1';
 
-      // Path nodes: gray wash + dashed border to distinguish from intrinsically strong
       if (isPath) {
-        if (overlay) overlay.style.fill = 'rgba(148, 163, 184, 0.4)';
+        if (overlay) overlay.style.fill = 'rgba(148, 163, 184, 0.25)';
         node.style.strokeDasharray = '5,3';
         node.style.stroke = 'var(--fg-muted)';
         node.style.strokeWidth = '2';
         if (badge) {
-          const sign = raw >= 0 ? '+' : '';
-          badge.textContent = sign + Math.round(raw).toLocaleString() + ' path';
+          const sign = displayVal >= 0 ? '+' : '';
+          badge.textContent = hasPct ? sign + displayVal.toFixed(1) + '% path' : sign + Math.round(displayVal).toLocaleString() + ' path';
           badge.classList.add('visible');
           badge.style.fill = 'var(--fg-muted)';
           badge.style.opacity = '0.7';
@@ -3802,20 +4301,20 @@ const JS = `
       } else {
         node.style.strokeDasharray = '';
         node.style.strokeWidth = '';
-        if (raw >= 0) {
-          const a = power * 0.55;
-          if (overlay) overlay.style.fill = a > 0.05 ? 'rgba(52, 211, 153, ' + a.toFixed(2) + ')' : 'transparent';
-          node.style.stroke = power > 0.3 ? 'var(--positive)' : '';
+        if (displayVal >= 0) {
+          const a = 0.08 + power * 0.52;
+          if (overlay) overlay.style.fill = 'rgba(52, 211, 153, ' + a.toFixed(2) + ')';
+          node.style.stroke = power > 0.15 ? 'rgba(52, 211, 153, ' + (0.5 + power * 0.5).toFixed(2) + ')' : '';
         } else {
-          const a = power * 0.45;
-          if (overlay) overlay.style.fill = a > 0.05 ? 'rgba(251, 113, 133, ' + a.toFixed(2) + ')' : 'transparent';
-          node.style.stroke = power > 0.3 ? 'var(--negative)' : '';
+          const a = 0.08 + power * 0.47;
+          if (overlay) overlay.style.fill = 'rgba(251, 113, 133, ' + a.toFixed(2) + ')';
+          node.style.stroke = power > 0.15 ? 'rgba(251, 113, 133, ' + (0.5 + power * 0.5).toFixed(2) + ')' : '';
         }
-        if (badge && absVal > 0) {
-          const sign = raw >= 0 ? '+' : '';
-          badge.textContent = sign + Math.round(raw).toLocaleString();
+        if (badge && absDisplay > 0.05) {
+          const sign = displayVal >= 0 ? '+' : '';
+          badge.textContent = hasPct ? sign + displayVal.toFixed(1) + '%' : sign + Math.round(displayVal).toLocaleString();
           badge.classList.add('visible');
-          badge.style.fill = raw >= 0 ? 'var(--positive)' : 'var(--negative)';
+          badge.style.fill = displayVal >= 0 ? 'var(--positive)' : 'var(--negative)';
           badge.style.opacity = '';
         }
       }
@@ -4245,6 +4744,8 @@ async function main() {
   // Talent heatmap: decode builds and compute per-node DPS contributions
   let talentData = null;
   let nodeContributions = null;
+  let hasAblation = false;
+  const ablationCachePath = join(resultsDir(), "ablation_intrinsics.json");
   try {
     const raidbotsTalentsPath = dataFile("raidbots-talents.json");
     if (existsSync(raidbotsTalentsPath)) {
@@ -4255,15 +4756,49 @@ async function main() {
         reportData.builds,
         talentData,
       );
+
+      // Ablation sims for intrinsic talent values
+      let ablationIntrinsics = null;
+      if (!opts.skipSims) {
+        console.log(`\n  Running talent ablation sims...`);
+        const ablationData = await simTalentAblation(
+          oursPath,
+          { target_error: 1.0 }, // quick fidelity for ablation
+          reportData,
+          talentData,
+          Object.keys(heroTrees),
+        );
+        if (ablationData) {
+          ablationIntrinsics = computeIntrinsicValues(ablationData);
+          hasAblation = true;
+          writeFileSync(
+            ablationCachePath,
+            JSON.stringify(ablationIntrinsics, null, 2),
+          );
+          const tested = Object.keys(ablationIntrinsics.all || {}).length;
+          console.log(`  Ablation: ${tested} talents tested`);
+        }
+      } else if (existsSync(ablationCachePath)) {
+        ablationIntrinsics = JSON.parse(
+          readFileSync(ablationCachePath, "utf-8"),
+        );
+        hasAblation = true;
+        const allData = ablationIntrinsics.all || {};
+        console.log(
+          `  Ablation: ${Object.keys(allData).length} cached intrinsic values loaded`,
+        );
+      }
+
       nodeContributions = computeNodeContributions(
         reportData.builds,
         talentData,
         decodedBuilds,
         defensiveTalentCosts,
         Object.keys(heroTrees),
+        ablationIntrinsics,
       );
       console.log(
-        `  Talent heatmap: ${Object.keys(nodeContributions.all || {}).length} nodes computed`,
+        `  Talent heatmap: ${Object.keys(nodeContributions.all || {}).length} nodes computed${hasAblation ? " (ablation)" : ""}`,
       );
     }
   } catch (e) {
@@ -4321,6 +4856,7 @@ async function main() {
     talentData,
     nodeContributions,
     abilityBreakdown,
+    hasAblation,
   });
 
   const indexPath = join(reportDir, "index.html");
