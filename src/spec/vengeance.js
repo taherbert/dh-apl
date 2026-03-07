@@ -1112,6 +1112,8 @@ export const STRUCT_TO_ABILITY_MAP = {
   warblades_hunger: "Fracture",
   wounded_quarry: "Throw Glaive",
   reavers_glaive: "Throw Glaive",
+  otherworldly_focus_benefit: "Spirit Bomb",
+  inner_demon: "Soul Cleave",
 };
 
 // C++ scanner seed list: [talentName, expectedAbility] pairs for validation
@@ -1182,7 +1184,6 @@ export const BASE_SPELL_IDS = new Set([
   247456, // Frailty debuff
   203981, // Soul Fragments
   207744, // Fiery Brand debuff
-  343010, // Fiery Brand modifier
 ]);
 
 // ================================================================

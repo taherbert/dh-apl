@@ -296,17 +296,37 @@ function buildInteractions() {
     }
 
     // composite overrides: manual multiplier gated by talent check
+    const structToAbility = getSpecAdapter().getStructToAbilityMap();
+    const resolveStruct = (name) => {
+      const base = name
+        .replace(/_t$/, "")
+        .replace(/_damage$/, "")
+        .replace(/_initial$/, "");
+      return (
+        structToAbility[base] ||
+        structToAbility[base.replace(/_trigger$/, "")] ||
+        null
+      );
+    };
     for (const entry of effectsData.compositeOverrides || []) {
+      const fnType = entry.function?.includes("da_multiplier")
+        ? "direct_damage_modifier"
+        : entry.function?.includes("ta_multiplier")
+          ? "periodic_damage_modifier"
+          : "damage_modifier";
+
+      // Resolve C++ struct context to a spell ID via struct-to-ability map
+      const contextName = entry.context || "ability";
+      const resolvedAbility = resolveStruct(contextName);
+      const targetId = resolvedAbility
+        ? nameToSpellId.get(resolvedAbility) || null
+        : null;
+      const targetName = resolvedAbility || contextName;
+
       for (const check of entry.talentChecks || []) {
         const talentName = toTitleCase(check.talent);
         const talent = talentName && talentByName.get(talentName);
         if (!talent) continue;
-
-        const fnType = entry.function?.includes("da_multiplier")
-          ? "direct_damage_modifier"
-          : entry.function?.includes("ta_multiplier")
-            ? "periodic_damage_modifier"
-            : "damage_modifier";
 
         addInteraction({
           source: {
@@ -317,8 +337,8 @@ function buildInteractions() {
             heroSpec: talent.heroSpec || null,
           },
           target: {
-            id: null,
-            name: entry.context || "ability",
+            id: targetId,
+            name: targetName,
           },
           type: fnType,
           mechanism: "composite_override",

@@ -310,14 +310,21 @@ const interactionTargetIds = new Set(
 
 let coverageGaps = 0;
 const gapTalents = [];
+const EXEMPT_CATEGORIES = new Set([
+  "stat_passive",
+  "cpp_only",
+  "self_buff",
+  "active_ability",
+  "has_interactions",
+]);
 for (const t of allOurTalents) {
   const category = talentCategories[t.name];
-  if (category === "stat_passive") continue; // excluded from coverage requirement
+  if (EXEMPT_CATEGORIES.has(category)) continue;
 
   const hasInteraction =
     interactionSourceIds.has(t.spellId) || interactionTargetIds.has(t.spellId);
 
-  if (!hasInteraction && category !== "cpp_only") {
+  if (!hasInteraction) {
     coverageGaps++;
     gapTalents.push(`${t.name} (${category || "uncategorized"})`);
   }
@@ -373,12 +380,28 @@ for (const i of interactions.interactions) {
   if (i.target?.id) interactionRefIds.add(i.target.id);
 }
 
+// Spells referenced via affectingSpells or description templates
+const affectingRefIds = new Set();
+const descRefIds = new Set();
+for (const s of spells) {
+  for (const ref of s.affectingSpells || []) {
+    if (ref.id) affectingRefIds.add(ref.id);
+  }
+  if (s.description) {
+    for (const m of s.description.matchAll(/\$(?:@spelldesc)?(\d{4,})/g)) {
+      descRefIds.add(parseInt(m[1]));
+    }
+  }
+}
+
 const staleSpells = spells.filter(
   (s) =>
     !allTalentSpellIds.has(s.id) &&
     !BASE_SPELL_IDS.has(s.id) &&
     !SET_BONUS_SPELL_IDS.has(s.id) &&
-    !interactionRefIds.has(s.id),
+    !interactionRefIds.has(s.id) &&
+    !affectingRefIds.has(s.id) &&
+    !descRefIds.has(s.id),
 );
 
 if (staleSpells.length <= 1) {

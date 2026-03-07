@@ -13563,8 +13563,8 @@
         "heroSpec": "Annihilator"
       },
       "target": {
-        "id": null,
-        "name": "otherworldly_focus_benefit_t"
+        "id": 247454,
+        "name": "Spirit Bomb"
       },
       "type": "direct_damage_modifier",
       "mechanism": "composite_override",
@@ -13614,8 +13614,8 @@
         "heroSpec": null
       },
       "target": {
-        "id": null,
-        "name": "inner_demon_t"
+        "id": 228477,
+        "name": "Soul Cleave"
       },
       "type": "direct_damage_modifier",
       "mechanism": "composite_override",
@@ -19924,6 +19924,23 @@
           "schoolTarget": [
             "None"
           ]
+        },
+        {
+          "source": "Focused Cleave",
+          "sourceId": 343207,
+          "type": "direct_damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "cpp_effects",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ]
         }
       ]
     },
@@ -20248,6 +20265,23 @@
           "schoolTarget": [
             "None"
           ]
+        },
+        {
+          "source": "Focused Cleave",
+          "sourceId": 343207,
+          "type": "direct_damage_modifier",
+          "tree": "spec",
+          "heroSpec": null,
+          "discoveryMethod": "cpp_effects",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ]
         }
       ]
     },
@@ -20568,6 +20602,26 @@
           "schoolTarget": [
             "None"
           ]
+        },
+        {
+          "source": "Otherworldly Focus",
+          "sourceId": 1253817,
+          "type": "direct_damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "discoveryMethod": "cpp_effects",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
+          ]
         }
       ]
     },
@@ -20740,6 +20794,26 @@
           "discoveryMethod": "cpp_scanner",
           "magnitude": {
             "value": 12,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
+          ]
+        },
+        {
+          "source": "Otherworldly Focus",
+          "sourceId": 1253817,
+          "type": "direct_damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "discoveryMethod": "cpp_effects",
+          "magnitude": {
+            "value": 35,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -35084,8 +35158,8 @@
       "heroSpec": null,
       "targets": [
         {
-          "spell": "inner_demon_t",
-          "spellId": null,
+          "spell": "Soul Cleave",
+          "spellId": 228477,
           "type": "direct_damage_modifier",
           "discoveryMethod": "cpp_effects",
           "magnitude": {
@@ -37807,8 +37881,8 @@
       "heroSpec": "Annihilator",
       "targets": [
         {
-          "spell": "otherworldly_focus_benefit_t",
-          "spellId": null,
+          "spell": "Spirit Bomb",
+          "spellId": 247454,
           "type": "direct_damage_modifier",
           "discoveryMethod": "cpp_effects",
           "magnitude": {
