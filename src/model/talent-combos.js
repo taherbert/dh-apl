@@ -12,7 +12,12 @@ import {
   loadFullNodeList,
 } from "../util/talent-string.js";
 import { dataDir, aplsDir, ROOT } from "../engine/paths.js";
-import { getSpecAdapter, getSpecId, initSpec } from "../engine/startup.js";
+import {
+  getSpecAdapter,
+  getSpecId,
+  initSpec,
+  config,
+} from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
 import { getFactors } from "../util/db.js";
 
@@ -1208,10 +1213,10 @@ function loadProfiles() {
 // are inflated because they never vary across builds.
 function computeTalentValueScores(data) {
   const scores = new Map();
-  const config = getSpecAdapter().getSpecConfig();
+  const specConfig = getSpecAdapter().getSpecConfig();
   const invariantNames = new Set([
-    ...(config.lockedTalents || []),
-    ...(config.bannedTalents || []),
+    ...(specConfig.lockedTalents || []),
+    ...(specConfig.bannedTalents || []),
   ]);
 
   // Source 1: DB factors (if available)
@@ -1262,18 +1267,51 @@ function computeTalentValueScores(data) {
           score += 5;
         }
       }
-      if (score > 0) interactionScores.set(nodeId, score);
+      if (score > 0) {
+        const existing = interactionScores.get(nodeId) || 0;
+        interactionScores.set(nodeId, Math.max(existing, score));
+      }
+    }
+  }
+
+  // Source 3: community builds — talents selected in community builds get a
+  // bonus, proportional to how many builds include them. This provides scoring
+  // signal for talents that lack interaction data.
+  const communityScores = new Map();
+  const communityBuilds =
+    config?.communityBuilds || specConfig.communityBuilds || [];
+  if (communityBuilds.length > 0) {
+    const specNodeIds = new Set(data.specNodes.map((n) => n.id));
+    try {
+      const allNodes = loadFullNodeList();
+      for (const cb of communityBuilds) {
+        try {
+          const { selections } = decode(cb.hash, allNodes);
+          for (const [nodeId] of selections) {
+            if (specNodeIds.has(nodeId)) {
+              communityScores.set(
+                nodeId,
+                (communityScores.get(nodeId) || 0) + 1,
+              );
+            }
+          }
+        } catch {
+          // Skip invalid hashes
+        }
+      }
+    } catch {
+      // Node list unavailable
     }
   }
 
   // Defensive/utility talents: assign negative scores so fill only uses them
   // as pass-through prerequisites, never as fill destinations
   const defensiveNames = new Set([
-    ...(config.bannedTalents || []),
-    ...(config.excludedTalents || []),
+    ...(specConfig.bannedTalents || []),
+    ...(specConfig.excludedTalents || []),
   ]);
 
-  // Merge: factor scores take priority, interactions fill gaps
+  // Merge: factor scores > interactions > community presence > default 0
   for (const n of data.specNodes) {
     if (n.freeNode || n.entryNode) continue;
     const names = [n.name, ...(n.entries?.map((e) => e.name) || [])].filter(
@@ -1286,10 +1324,14 @@ function computeTalentValueScores(data) {
     }
     const fScore = factorScores?.get(n.id);
     const iScore = interactionScores.get(n.id);
+    const cScore = communityScores.get(n.id);
     if (fScore != null) {
       scores.set(n.id, fScore);
     } else if (iScore != null) {
       scores.set(n.id, iScore);
+    } else if (cScore != null) {
+      // Scale community presence: each build appearance = 1 point
+      scores.set(n.id, cScore);
     }
     // else: score 0 (default) — posY desc tiebreaker handles these
   }
@@ -1511,6 +1553,7 @@ function buildPinnedBuild(profile, data, specMap, classResult, valueScores) {
 
   const fillFilter = (n) => {
     if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+    if (bannedNodeIds.has(n.id)) return false;
     if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
       return false;
     if (!passesGate(n, selected, specMap, rankMap)) return false;
@@ -2002,12 +2045,23 @@ export function generateClusterRoster({ maxRosterSize = 500 } = {}) {
 
     for (let v = 0; v < VARIANTS_PER_TEMPLATE && fillNodes.length >= 2; v++) {
       const perturbedScores = new Map(valueScores);
-      // Randomly shuffle scores among fill nodes to create diversity
       const shuffled = [...fillNodes].sort(() => Math.random() - 0.5);
-      const halfLen = Math.ceil(shuffled.length / 2);
-      for (let i = 0; i < halfLen; i++) {
-        const cur = perturbedScores.get(shuffled[i]) || 0;
-        perturbedScores.set(shuffled[i], cur * 0.1);
+      // Variant strategies: alternate between score inversion and exclusion
+      if (v % 2 === 0) {
+        // Strategy 1: demote top half of fill nodes to near-zero, promoting
+        // previously-unchosen alternatives
+        const halfLen = Math.ceil(shuffled.length / 2);
+        for (let i = 0; i < halfLen; i++) {
+          perturbedScores.set(shuffled[i], -0.01);
+        }
+      } else {
+        // Strategy 2: swap scores between pairs of fill nodes
+        for (let i = 0; i + 1 < shuffled.length; i += 2) {
+          const a = perturbedScores.get(shuffled[i]) || 0;
+          const b = perturbedScores.get(shuffled[i + 1]) || 0;
+          perturbedScores.set(shuffled[i], b);
+          perturbedScores.set(shuffled[i + 1], a);
+        }
       }
       const variant = buildPinnedBuild(
         profile,
