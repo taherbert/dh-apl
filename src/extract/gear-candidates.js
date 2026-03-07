@@ -460,9 +460,15 @@ async function main() {
   const gems = newGems.length > 0 ? newGems : current.gems || [];
 
   const gemItemIdMap = gearConfig.gems?.item_ids || {};
+  const gemNameMap = gearConfig.gems?.names || {};
   for (const gem of gems) {
     const itemId = gemItemIdMap[String(gem.enchant_id)];
     if (itemId) gem.item_id = itemId;
+    const resolvedName = gemNameMap[String(gem.item_id)];
+    if (resolvedName) {
+      gem.label = resolvedName;
+      gem.id = toSimcName(resolvedName);
+    }
   }
 
   // Auto-detect _defaultGem: item_id of the gem with the highest agi stat value.
