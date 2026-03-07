@@ -115,7 +115,8 @@ let sshMasterCheckedAt = 0;
 const SSH_CHECK_TTL_MS = 30000; // 30s — masters persist for 10min
 
 function controlPath(ip) {
-  return join(tmpdir(), `ssh-remote-${ip.replace(/\./g, "-")}.sock`);
+  // Use /tmp directly — sandbox tmpdir doesn't allow Unix socket creation
+  return join("/tmp", `ssh-remote-${ip.replace(/\./g, "-")}.sock`);
 }
 
 function controlOpts(ip) {
@@ -434,7 +435,8 @@ async function launchWithAzFallback(launchArgs, regionName, { subnetId } = {}) {
 
 async function cancelOrphanSpotRequests() {
   try {
-    const sirs = await awsJson([
+    // Find orphan spot requests and their running instances
+    const sirData = await awsJson([
       "ec2",
       "describe-spot-instance-requests",
       "--filters",
@@ -443,18 +445,58 @@ async function cancelOrphanSpotRequests() {
       "--region",
       region(),
       "--query",
-      "SpotInstanceRequests[].SpotInstanceRequestId",
+      "SpotInstanceRequests[].{SirId:SpotInstanceRequestId,InstanceId:InstanceId}",
     ]);
-    if (sirs.length > 0) {
-      console.log(`  Cancelling ${sirs.length} orphan spot request(s)...`);
+    if (sirData.length > 0) {
+      const sirIds = sirData.map((s) => s.SirId);
+      const instanceIds = sirData.map((s) => s.InstanceId).filter(Boolean);
+      console.log(`  Cancelling ${sirIds.length} orphan spot request(s)...`);
       await awsCmd([
         "ec2",
         "cancel-spot-instance-requests",
         "--spot-instance-request-ids",
-        ...sirs,
+        ...sirIds,
         "--region",
         region(),
       ]);
+      // Terminate instances behind those spot requests to free vCPU quota
+      if (instanceIds.length > 0) {
+        console.log(
+          `  Terminating ${instanceIds.length} orphan instance(s)...`,
+        );
+        await awsCmd([
+          "ec2",
+          "terminate-instances",
+          "--instance-ids",
+          ...instanceIds,
+          "--region",
+          region(),
+        ]);
+      }
+    }
+  } catch {
+    // Best effort
+  }
+}
+
+async function terminateOrphanInstances() {
+  try {
+    const desc = await awsJson([
+      "ec2",
+      "describe-instances",
+      "--filters",
+      "Name=tag:project,Values=dh-apl",
+      "Name=instance-state-name,Values=running,pending,shutting-down",
+      "--region",
+      region(),
+      "--query",
+      "Reservations[].Instances[].InstanceId",
+    ]);
+    if (desc.length > 0) {
+      console.log(`  Terminating ${desc.length} orphan instance(s)...`);
+      for (const id of desc) {
+        await terminateById(id).catch(() => {});
+      }
     }
   } catch {
     // Best effort
@@ -978,14 +1020,27 @@ async function launchInstance({ instanceType } = {}) {
     });
   } catch (e) {
     if (isQuotaError(e)) {
-      // Quota exceeded — clean orphan spot requests and retry once
-      console.log("Spot quota exceeded. Cleaning orphan requests...");
+      // Quota exceeded — clean orphan spot requests AND running instances,
+      // then retry with increasing waits for AWS quota propagation.
+      console.log("Spot quota exceeded. Cleaning orphans...");
       await cancelOrphanSpotRequests();
-      console.log("  Waiting 10s for quota release...");
-      await new Promise((r) => setTimeout(r, 10000));
-      result = await launchWithAzFallback(launchArgs, region(), {
-        subnetId: c.subnetId,
-      });
+      await terminateOrphanInstances();
+      const retryDelays = [15000, 30000, 60000];
+      for (let i = 0; i < retryDelays.length; i++) {
+        console.log(
+          `  Waiting ${retryDelays[i] / 1000}s for quota release (attempt ${i + 2}/${retryDelays.length + 1})...`,
+        );
+        await new Promise((r) => setTimeout(r, retryDelays[i]));
+        try {
+          result = await launchWithAzFallback(launchArgs, region(), {
+            subnetId: c.subnetId,
+          });
+          break;
+        } catch (retryErr) {
+          if (!isQuotaError(retryErr) || i === retryDelays.length - 1)
+            throw retryErr;
+        }
+      }
     } else {
       throw e;
     }
@@ -1193,9 +1248,11 @@ async function buildAmi({ buildInstanceType } = {}) {
   }
   console.log(`Base AMI: ${baseAmi}`);
 
+  // Build instances only compile simc — 16 vCPUs is plenty and avoids
+  // consuming the full spot vCPU quota needed for the sim instance.
   const launchArgs = buildLaunchArgs({
     imageId: baseAmi,
-    instanceType: buildInstanceType || c.instanceType || "c7i.24xlarge",
+    instanceType: buildInstanceType || "c7i.4xlarge",
     userData: encodeUserData("#!/bin/bash\nshutdown -h +30"),
     tagName: "dh-apl-ami-build",
     extraArgs: [
