@@ -123,6 +123,7 @@ async function runBuildScenarioSims(
   baseProfile,
   fidelityTier,
   label,
+  { extraBaseOverrides } = {},
 ) {
   const tierConfig = FIDELITY_TIERS[fidelityTier] || FIDELITY_TIERS.quick;
   const scenarioKeys = Object.keys(SCENARIOS);
@@ -143,7 +144,15 @@ async function runBuildScenarioSims(
       overrides: [`talents=${build.hash}`, ...v.overrides],
     }));
 
-    const content = generateProfileset(baseProfile, buildVariants);
+    const baseOverrides = [
+      `talents=${build.hash}`,
+      ...(extraBaseOverrides || []),
+    ];
+    const content = generateProfileset(
+      baseProfile,
+      buildVariants,
+      baseOverrides,
+    );
     const simLabel = `${label}_${build.hash.slice(0, 8)}`;
 
     const result = await runProfilesetAsync(content, scenario, simLabel, {
@@ -632,6 +641,7 @@ async function cmdEvalSets(args) {
   const baseProfile = getBaseProfile(gearData);
 
   // Shared logic: sim a set pair (A-alone, B-alone, full), significance-gate, save results.
+  // extraBaseOverrides: optional overrides for the base profile (e.g., EP-best items for slots).
   async function evalSetPair({
     pairId,
     memberA,
@@ -642,6 +652,7 @@ async function cmdEvalSets(args) {
     member0Id,
     member1Id,
     logPrefix,
+    extraBaseOverrides,
   }) {
     evaluatedPairIds.push(pairId);
 
@@ -662,6 +673,7 @@ async function cmdEvalSets(args) {
       baseProfile,
       fidelity,
       `gear_set_${pairId}`,
+      { extraBaseOverrides },
     );
     const candidateMeta = [
       { id: `${pairId}_A_alone`, label: `${memberA.label} alone` },
@@ -677,6 +689,7 @@ async function cmdEvalSets(args) {
 
     const significant =
       bestConfig &&
+      bestConfig.weighted > baselineDps &&
       isSignificant(bestConfig.weighted, baselineDps, targetError);
 
     if (!significant && bestConfig) {
@@ -753,6 +766,20 @@ async function cmdEvalSets(args) {
   }
 
   // Explicit ring set-bonus pairs from gear-config (e.g., Voidlight Bindings)
+  // Inject EP-best rings into the base profile so the set eval compares against
+  // optimal individual rings, not whatever the old profile happens to have.
+  const epBestRingOverrides = [];
+  for (const ringSlot of ["finger1", "finger2"]) {
+    const epResults = getBestGear(3, ringSlot);
+    const best = epResults.find((r) => r.candidate_id !== "__baseline__");
+    if (best) {
+      const c = gearData.slots[ringSlot]?.candidates.find(
+        (x) => x.id === best.candidate_id,
+      );
+      if (c) epBestRingOverrides.push(c.simc);
+    }
+  }
+
   for (const pair of gearData.ring_pairs ?? []) {
     const memberA = gearData.slots.finger1?.candidates.find(
       (c) => c.id === pair.finger1,
@@ -775,6 +802,7 @@ async function cmdEvalSets(args) {
       member0Id: pair.finger1,
       member1Id: pair.finger2,
       logPrefix: "Ring pair",
+      extraBaseOverrides: epBestRingOverrides,
     });
   }
 
@@ -807,12 +835,19 @@ function cmdGems(gearData) {
     return;
   }
 
+  // Find the best unlimited gem (for filling remaining sockets after unique-limited ones)
+  const bestUnlimited = ranked.find(
+    (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
+  );
+
   setSessionState("gear_gems", {
     best_id: best.id,
     best_enchant_id: best.enchant_id,
     best_item_id: best.item_id || best.enchant_id,
     best_label: best.label,
     ep: best.ep ?? 0,
+    best_unlimited_id: bestUnlimited?.id,
+    best_unlimited_item_id: bestUnlimited?.item_id || bestUnlimited?.enchant_id,
     timestamp: new Date().toISOString(),
   });
 
@@ -827,9 +862,20 @@ function cmdGems(gearData) {
     `\nPhase 9: Gems — best: ${best.label} (EP: ${best.ep.toFixed(1)})`,
   );
   for (const [i, g] of ranked.entries()) {
+    const uniqueTag =
+      g.uniqueLimit != null && g.uniqueLimit > 0
+        ? ` [unique: ${g.uniqueLimit}]`
+        : "";
     const delta =
       i === 0 ? "" : ` (${(((g.ep - best.ep) / best.ep) * 100).toFixed(2)}%)`;
-    console.log(`  ${i + 1}. ${g.label}: ${g.ep.toFixed(1)}${delta}`);
+    console.log(
+      `  ${i + 1}. ${g.label}: ${g.ep.toFixed(1)}${delta}${uniqueTag}`,
+    );
+  }
+  if (bestUnlimited && bestUnlimited.id !== best.id) {
+    console.log(
+      `  Best unlimited gem for remaining sockets: ${bestUnlimited.label}`,
+    );
   }
 }
 
@@ -856,19 +902,24 @@ async function cmdEnchants(args) {
     "shoulder",
   ]);
 
-  // Override weapon enchant base_items with actual assembled gear lines.
+  // Override enchant base_items with actual assembled gear lines when placeholders exist.
   // Manual enchants produce placeholder base_items (id=0) when no Raidbots data exists.
-  const WEAPON_ENCHANT_SLOT = { weapon_mh: "main_hand", weapon_oh: "off_hand" };
+  const ENCHANT_SLOT_MAP = {
+    weapon_mh: "main_hand",
+    weapon_oh: "off_hand",
+    ring: "finger1",
+    chest: "chest",
+    foot: "feet",
+    legs: "legs",
+  };
   let cachedGearLines;
-  for (const [enchantKey, gearSlot] of Object.entries(WEAPON_ENCHANT_SLOT)) {
+  for (const [enchantKey, gearSlot] of Object.entries(ENCHANT_SLOT_MAP)) {
     const enchantData = gearData.enchants?.[enchantKey];
     if (!enchantData || !enchantData.base_item.includes("id=0")) continue;
     cachedGearLines ??= buildGearLines(gearData);
-    const weaponLine = cachedGearLines.find((l) =>
-      l.startsWith(`${gearSlot}=`),
-    );
-    if (weaponLine) {
-      enchantData.base_item = weaponLine.replace(/,enchant_id=\d+/, "");
+    const itemLine = cachedGearLines.find((l) => l.startsWith(`${gearSlot}=`));
+    if (itemLine) {
+      enchantData.base_item = itemLine.replace(/,enchant_id=\d+/, "");
     }
   }
 
@@ -1574,13 +1625,11 @@ async function cmdResolveConflicts(args) {
     `  Ring set "${conflictingRingSet.pairId}" also needs those slots`,
   );
 
-  // Find the best non-ring-conflicting embellishment pair
+  // Find the best non-ring-conflicting embellishment pair.
+  // Search ALL results, including pruned ones — the best non-ring pair may have been
+  // pruned relative to the ring-using winner but is still relevant for conflict comparison.
   const nonConflicting = getGearResults(7, "embellishments").find((r) => {
-    if (
-      r.candidate_id === "__baseline__" ||
-      r.candidate_id === "__null_emb__" ||
-      r.eliminated
-    )
+    if (r.candidate_id === "__baseline__" || r.candidate_id === "__null_emb__")
       return false;
     const slots = resolveComboOverrides(r.candidate_id, gearData).map(
       (line) => line.split("=")[0],
@@ -1725,8 +1774,11 @@ function generatePairedSlotCombinations(poolName, gearData, screenPhase) {
       const cB = candidateMap.get(b.candidate_id);
       if (!cA || !cB) continue;
 
-      // Skip pairs where both items are unique-equipped — they cannot be worn simultaneously.
-      if (cA.uniqueEquipped && cB.uniqueEquipped) continue;
+      // Skip pairs where both items share the same base item ID — unique-equipped items
+      // cannot be worn in two slots simultaneously. Extract item ID from simc_base string.
+      const idA = cA.simc_base?.match(/,id=(\d+)/)?.[1];
+      const idB = cB.simc_base?.match(/,id=(\d+)/)?.[1];
+      if (idA && idB && idA === idB && cA.uniqueEquipped) continue;
 
       pairs.push({
         id: `${a.candidate_id}--${b.candidate_id}`,
@@ -2034,12 +2086,32 @@ function buildGearLines(gearData) {
   const lines = [];
   const coveredSlots = new Set();
   const enchantMap = buildEnchantMap(gearData);
+  // Track equipped unique-equip item IDs to prevent conflicts across slots
+  // (e.g., Lightless Lament in both MH and OH)
+  const equippedUniqueItemIds = new Set();
 
-  function addLine(line, slot) {
+  // Extract item ID from a SimC line like "main_hand=lightless_lament,id=260408,..."
+  function extractItemId(simcLine) {
+    return simcLine?.match(/,id=(\d+)/)?.[1] ?? null;
+  }
+
+  // Check if a candidate can be equipped given unique-equip constraints
+  function canEquip(candidate) {
+    if (!candidate?.uniqueEquipped) return true;
+    const itemId = extractItemId(candidate.simc || candidate.simc_base);
+    return !itemId || !equippedUniqueItemIds.has(itemId);
+  }
+
+  function addLine(line, slot, candidate) {
     lines.push(line);
     coveredSlots.add(slot);
     if (slot === "wrist") coveredSlots.add("wrists");
     if (slot === "wrists") coveredSlots.add("wrist");
+    // Track unique-equipped items
+    if (candidate?.uniqueEquipped) {
+      const itemId = extractItemId(line);
+      if (itemId) equippedUniqueItemIds.add(itemId);
+    }
   }
 
   // Phase 0: tier config
@@ -2102,10 +2174,11 @@ function buildGearLines(gearData) {
       const c0 = gearData.slots[slot0]?.candidates.find(
         (c) => c.id === member0,
       );
-      if (c0 && !coveredSlots.has(slot0)) {
+      if (c0 && !coveredSlots.has(slot0) && canEquip(c0)) {
         addLine(
           applySlotEnchant(applyStatAlloc(c0.simc, slot0), slot0, enchantMap),
           slot0,
+          c0,
         );
       }
     }
@@ -2113,10 +2186,11 @@ function buildGearLines(gearData) {
       const c1 = gearData.slots[slot1]?.candidates.find(
         (c) => c.id === member1,
       );
-      if (c1 && !coveredSlots.has(slot1)) {
+      if (c1 && !coveredSlots.has(slot1) && canEquip(c1)) {
         addLine(
           applySlotEnchant(applyStatAlloc(c1.simc, slot1), slot1, enchantMap),
           slot1,
+          c1,
         );
       }
     }
@@ -2140,41 +2214,110 @@ function buildGearLines(gearData) {
   // Phase 4: proc eval winners for individual slots
   for (const slot of Object.keys(gearData.slots || {})) {
     if (coveredSlots.has(slot)) continue;
-    const procResult = getBestGear(4, slot)[0];
-    if (!procResult || procResult.candidate_id === "__baseline__") continue;
-    const candidate = gearData.slots[slot].candidates.find(
-      (c) => c.id === procResult.candidate_id,
-    );
-    if (!candidate) continue;
-    const line = applyStatAlloc(candidate.simc, slot);
-    addLine(applySlotEnchant(line, slot, enchantMap), slot);
+    const procResults = getBestGear(4, slot);
+    // Walk the ranking to find the best candidate that passes unique-equip constraints
+    let placed = false;
+    for (const procResult of procResults) {
+      if (procResult.candidate_id === "__baseline__") continue;
+      const candidate = gearData.slots[slot].candidates.find(
+        (c) => c.id === procResult.candidate_id,
+      );
+      if (!candidate || !canEquip(candidate)) continue;
+      const line = applyStatAlloc(candidate.simc, slot);
+      addLine(applySlotEnchant(line, slot, enchantMap), slot, candidate);
+      placed = true;
+      break;
+    }
+    if (!placed) continue;
   }
 
   // Phase 3: EP ranking winners for remaining individual slots
   for (const slot of Object.keys(gearData.slots || {})) {
     if (coveredSlots.has(slot)) continue;
-    const epResult = getBestGear(3, slot)[0];
-    if (!epResult || epResult.candidate_id === "__baseline__") continue;
-    const candidate = gearData.slots[slot].candidates.find(
-      (c) => c.id === epResult.candidate_id,
-    );
-    if (!candidate) continue;
-    const line = applyStatAlloc(candidate.simc, slot);
-    addLine(applySlotEnchant(line, slot, enchantMap), slot);
+    const epResults = getBestGear(3, slot);
+    for (const epResult of epResults) {
+      if (epResult.candidate_id === "__baseline__") continue;
+      const candidate = gearData.slots[slot].candidates.find(
+        (c) => c.id === epResult.candidate_id,
+      );
+      if (!candidate || !canEquip(candidate)) continue;
+      const line = applyStatAlloc(candidate.simc, slot);
+      addLine(applySlotEnchant(line, slot, enchantMap), slot, candidate);
+      break;
+    }
   }
 
-  // Phase 9: apply best gem to all socketed items.
+  // Phase 9: apply gems to all socketed items, respecting unique-equip limits.
   // Uses item_id (SimC gem_id= expects item IDs, not enchant IDs).
+  // Unique-limited gems (e.g., Thalassian Diamond, limit 1) are placed first,
+  // then remaining sockets get the best non-unique gem.
   const gemState = getSessionState("gear_gems");
-  const gemItemId = gemState?.best_item_id || gemState?.best_enchant_id;
-  if (gemItemId) {
+  if (gemState) {
+    const allGems = gearData.gems || [];
+    const sf = getSessionState("gear_scale_factors");
+    const rankedGems = sf
+      ? allGems
+          .filter((g) => g.stats && (g.item_id || g.enchant_id))
+          .map((g) => ({
+            ...g,
+            ep: scoreEp(g.stats, sf),
+            itemId: g.item_id || g.enchant_id,
+          }))
+          .sort((a, b) => b.ep - a.ep)
+      : [];
+
+    // Separate unique-limited and unlimited gems
+    const uniqueGems = rankedGems.filter(
+      (g) => g.uniqueLimit != null && g.uniqueLimit > 0,
+    );
+    const unlimitedGems = rankedGems.filter(
+      (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
+    );
+    const bestUnlimitedId = unlimitedGems[0]?.itemId;
+    // Fallback: use gemState if no ranked gems available
+    const fallbackGemId =
+      bestUnlimitedId || gemState.best_item_id || gemState.best_enchant_id;
+
+    // Count total sockets across all lines
+    let totalSockets = 0;
+    for (const line of lines) {
+      const match = line.match(/gem_id=([\d/]+)/);
+      if (match) totalSockets += match[1].split("/").length;
+    }
+
+    // Build a queue of gem item IDs to assign, respecting unique limits.
+    // Gems sharing a uniqueCategory (e.g., Thalassian Diamond = 698) are
+    // limited to uniqueLimit TOTAL across the category, not per gem type.
+    // Within each category, pick the highest-EP gem(s).
+    const gemQueue = [];
+    const categoryBudget = new Map();
+    for (const ug of uniqueGems) {
+      const cat = ug.uniqueCategory ?? ug.itemId;
+      if (!categoryBudget.has(cat)) categoryBudget.set(cat, ug.uniqueLimit);
+      const remaining = categoryBudget.get(cat);
+      if (remaining <= 0) continue;
+      const count = Math.min(remaining, totalSockets - gemQueue.length);
+      for (let n = 0; n < count; n++) gemQueue.push(ug.itemId);
+      categoryBudget.set(cat, remaining - count);
+    }
+    while (gemQueue.length < totalSockets && fallbackGemId) {
+      gemQueue.push(fallbackGemId);
+    }
+
+    // Apply gems to lines in order
+    let gemIdx = 0;
     for (let i = 0; i < lines.length; i++) {
       if (!lines[i].includes("gem_id=")) continue;
       const match = lines[i].match(/gem_id=([\d/]+)/);
-      if (match) {
-        const socketCount = match[1].split("/").length;
-        const newGems = Array(socketCount).fill(gemItemId).join("/");
-        lines[i] = lines[i].replace(/gem_id=[\d/]+/, `gem_id=${newGems}`);
+      if (!match) continue;
+      const socketCount = match[1].split("/").length;
+      const assignedGems = gemQueue.slice(gemIdx, gemIdx + socketCount);
+      gemIdx += socketCount;
+      if (assignedGems.length === socketCount) {
+        lines[i] = lines[i].replace(
+          /gem_id=[\d/]+/,
+          `gem_id=${assignedGems.join("/")}`,
+        );
       }
     }
   }
