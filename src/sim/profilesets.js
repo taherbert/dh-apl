@@ -54,10 +54,14 @@ export function resolveInputDirectives(content, sourceDir, seen = new Set()) {
     .join("\n");
 }
 
-export function generateProfileset(baseProfilePath, variants) {
+export function generateProfileset(baseProfilePath, variants, baseOverrides) {
   const raw = readFileSync(baseProfilePath, "utf-8");
   const base = resolveInputDirectives(raw, dirname(resolve(baseProfilePath)));
-  const lines = [base, ""];
+  const lines = [base];
+  if (baseOverrides?.length) {
+    lines.push(...baseOverrides);
+  }
+  lines.push("");
 
   for (const variant of variants) {
     const safeName = variant.name.replace(/\./g, "_").replace(/\s+/g, "_");

@@ -43,12 +43,13 @@ const INV_TYPE_SLOT = {
   22: "off_hand",
 };
 
-// DH weapon subclasses
+// DH weapon subclasses (Raidbots item subclass IDs)
 const DH_WEAPON_SUBTYPES = new Set([
   0, // One-handed axes
-  4, // Fist weapons
+  4, // One-handed maces
   7, // One-handed swords
-  13, // Warglaives
+  9, // Warglaives
+  13, // Fist weapons
 ]);
 
 // Inventory types that produce weapon candidates
@@ -249,6 +250,11 @@ function buildSimcString(slot, item, ilvl, defaultGemId) {
   const gems = buildGemString(item, defaultGemId);
   const gemSuffix = gems ? `,gem_id=${gems}` : "";
   const prefix = slot ? `${slot}=` : "";
+  if (item._crafted) {
+    // Crafted items use bonus_id for upgrade track + ilevel override
+    // crafted_stats=32/36 = agility/haste (default, overridable by stat optimization)
+    return `${prefix}${name},id=${item.id},bonus_id=8793/13454,ilevel=${item._craftedIlvl},crafted_stats=32/36${gemSuffix}`;
+  }
   return `${prefix}${name},id=${item.id},ilevel=${ilvl}${gemSuffix}`;
 }
 
@@ -314,6 +320,14 @@ const PVP_KEYWORDS = [
   "Veteran",
   "Galactic",
   "Novice",
+];
+
+// PvP gem keywords — gems with these in displayName are PvP-only
+const PVP_GEM_KEYWORDS = [
+  "Precognition",
+  "Crowd Control",
+  "snared",
+  "Damage Reduction when affected by",
 ];
 
 function isPvp(item) {
@@ -448,21 +462,34 @@ async function main() {
   const worldBossIlvl =
     sortedTiers.length >= 2 ? sortedTiers.at(-2).ilvl : maxIlvl;
   // Extract gems early so we can use the computed defaultGemId for simc string generation.
-  // Gems come from enchantments.json socket enchants; item_ids from gear-config.json.
+  // Gems come from enchantments.json socket enchants. deduplicateEnchants keeps only the
+  // highest craftingQuality per base name (Midnight gems max at quality 2, not 3).
+  const isPvpGem = (e) =>
+    PVP_GEM_KEYWORDS.some((kw) => e.displayName?.includes(kw));
   const newGems = deduplicateEnchants(
     enchants.filter(
-      (e) =>
-        e.expansion === expansion &&
-        e.slot === "socket" &&
-        (e.craftingQuality == null || e.craftingQuality === 3),
+      (e) => e.expansion === expansion && e.slot === "socket" && !isPvpGem(e),
     ),
-  ).map((e) => toEnchantCandidate(e, true));
+  ).map((e) => {
+    const candidate = toEnchantCandidate(e, true);
+    // Capture itemId from Raidbots (SimC gem_id= expects item IDs)
+    if (e.itemId) candidate.item_id = e.itemId;
+    // Capture unique-equip limit from itemLimitCategory (e.g., Thalassian Diamond: limit 1)
+    if (e.itemLimitCategory) {
+      candidate.uniqueCategory = e.itemLimitCategory.id;
+      candidate.uniqueLimit = e.itemLimitCategory.quantity;
+    }
+    return candidate;
+  });
   const gems = newGems.length > 0 ? newGems : current.gems || [];
 
+  // Supplement with item_ids from gear-config.json for gems missing Raidbots itemId
   const gemItemIdMap = gearConfig.gems?.item_ids || {};
   for (const gem of gems) {
-    const itemId = gemItemIdMap[String(gem.enchant_id)];
-    if (itemId) gem.item_id = itemId;
+    if (!gem.item_id) {
+      const itemId = gemItemIdMap[String(gem.enchant_id)];
+      if (itemId) gem.item_id = itemId;
+    }
   }
 
   // Auto-detect _defaultGem: item_id of the gem with the highest agi stat value.
@@ -500,6 +527,46 @@ async function main() {
     );
   }
 
+  // Build set of ALL current-season instance IDs (M+ dungeons, raids, normal dungeons).
+  // This includes legacy dungeons in the M+ rotation (e.g., Algeth'ar Academy, Pit of Saron).
+  // Items from these instances are eligible regardless of their original expansion.
+  const currentSeasonInstanceIds = new Set();
+  for (const inst of instances) {
+    // M+ pool: the pool entry itself (id=-1) and each dungeon encounter
+    if (inst.type === "mplus-chest") {
+      currentSeasonInstanceIds.add(inst.id);
+      for (const enc of inst.encounters || []) {
+        currentSeasonInstanceIds.add(enc.id);
+      }
+    }
+    // Normal dungeon pool
+    if (inst.type === "expansion-dungeon") {
+      currentSeasonInstanceIds.add(inst.id);
+      for (const enc of inst.encounters || []) {
+        currentSeasonInstanceIds.add(enc.id);
+      }
+    }
+    // Raids and world bosses
+    if (inst.type === "raid") {
+      currentSeasonInstanceIds.add(inst.id);
+    }
+    // Crafted profession items
+    if (inst.type?.startsWith("profession")) {
+      currentSeasonInstanceIds.add(inst.id);
+    }
+  }
+  console.log(
+    `Current season instances: ${currentSeasonInstanceIds.size} (M+, raids, dungeons, crafted)`,
+  );
+
+  // Check if an item drops from a current-season instance
+  function isFromCurrentSeason(item) {
+    return (
+      item.sources?.some((s) => currentSeasonInstanceIds.has(s.instanceId)) ??
+      false
+    );
+  }
+
   // Returns the max obtainable ilvl for an item based on its drop sources.
   // Items with sources exclusively from world boss instances are capped at worldBossIlvl.
   // All other items (raid, M+ dungeons, regular dungeons) can be fully upgraded → maxIlvl.
@@ -520,31 +587,43 @@ async function main() {
 
   console.log(`Detected expansion ${expansion}, target ilvl ${maxIlvl}`);
 
-  // Filter: current expansion, epic+ quality, DH-usable, non-PvP, non-crafted,
-  // and must have at least one known drop source so we can verify its max ilvl.
-  // Items with no sources array (e.g. delve rewards not yet mapped in beta data)
-  // are excluded — simming them at an unverified ilvl produces misleading rankings.
+  // Filter: DH-usable, non-PvP, non-test items, rare+ quality.
+  // Include items from: (a) current expansion, or (b) any expansion if they
+  // drop from a current-season instance (legacy M+ dungeons like Algeth'ar Academy).
+  // Crafted items are included separately with bonus_id-based ilevel.
   const baseEligible = items.filter(
     (item) =>
-      item.expansion === expansion &&
+      (item.expansion === expansion || isFromCurrentSeason(item)) &&
       item.quality >= 3 &&
       item.itemClass != null &&
       isDHUsable(item) &&
       !isPvp(item) &&
-      !isCrafted(item) &&
       !isDNT(item),
   );
 
-  const eligible = baseEligible.filter((item) => item.sources?.length > 0);
-  const noSource = baseEligible.filter((item) => !item.sources?.length);
+  // Split into drop items (have sources, not crafted) and crafted items
+  const dropItems = baseEligible.filter(
+    (item) => !isCrafted(item) && item.sources?.length > 0,
+  );
+  const craftedItems = baseEligible.filter((item) => isCrafted(item));
+  const noSource = baseEligible.filter(
+    (item) => !isCrafted(item) && !item.sources?.length,
+  );
   if (noSource.length > 0) {
     console.log(
       `Skipped ${noSource.length} items with no known drop source: ${noSource.map((i) => i.name).join(", ")}`,
     );
   }
-  console.log(`${eligible.length} eligible items from ${items.length} total`);
+  const eligible = dropItems;
+  const legacyCount = eligible.filter(
+    (item) => item.expansion !== expansion,
+  ).length;
+  console.log(
+    `${eligible.length} eligible drop items (${legacyCount} legacy from M+ pool)`,
+  );
+  console.log(`${craftedItems.length} crafted items`);
 
-  // Group by slot
+  // Group by slot (drop items + crafted items)
   const bySlot = new Map();
   for (const item of eligible) {
     const rawSlot = INV_TYPE_SLOT[item.inventoryType];
@@ -552,6 +631,25 @@ async function main() {
 
     const slotsToAdd =
       rawSlot === "weapon" ? ["main_hand", "off_hand"] : [rawSlot];
+
+    for (const slot of slotsToAdd) {
+      if (!bySlot.has(slot)) bySlot.set(slot, []);
+      bySlot.get(slot).push(item);
+    }
+  }
+
+  // Add crafted items to slot groups (marked so buildSimcString uses bonus_id)
+  const craftedIlvl = maxIlvl - 4; // Crafted items max at 285 (4 below Myth 289)
+  for (const item of craftedItems) {
+    const rawSlot = INV_TYPE_SLOT[item.inventoryType];
+    if (!rawSlot || TIER_SLOTS.has(rawSlot)) continue;
+
+    const slotsToAdd =
+      rawSlot === "weapon" ? ["main_hand", "off_hand"] : [rawSlot];
+
+    // Tag crafted items so we can use bonus_id syntax
+    item._crafted = true;
+    item._craftedIlvl = craftedIlvl;
 
     for (const slot of slotsToAdd) {
       if (!bySlot.has(slot)) bySlot.set(slot, []);
@@ -575,6 +673,7 @@ async function main() {
         ...(isAgi ? ["agi"] : []),
       ],
       ...(item.uniqueEquipped ? { uniqueEquipped: true } : {}),
+      ...(item.itemSetId ? { itemSetId: item.itemSetId } : {}),
     };
   });
   const trinkets = mergePreservingCrafted(
@@ -594,6 +693,8 @@ async function main() {
         simc: buildSimcString(slotName, item, ilvl, defaultGemId),
         ...(stats ? { stats } : {}),
         tags: [],
+        ...(item.uniqueEquipped ? { uniqueEquipped: true } : {}),
+        ...(item.itemSetId ? { itemSetId: item.itemSetId } : {}),
       };
     });
   }
@@ -621,6 +722,8 @@ async function main() {
         simc: buildSimcString(simcSlot, item, ilvl, defaultGemId),
         ...(stats ? { stats } : {}),
         tags: [],
+        ...(item.uniqueEquipped ? { uniqueEquipped: true } : {}),
+        ...(item.itemSetId ? { itemSetId: item.itemSetId } : {}),
       };
     });
 
@@ -806,6 +909,47 @@ async function main() {
     }
   }
 
+  // --- Auto-detect ring set pairs from itemSetId ---
+  // Rings sharing an itemSetId form a set bonus pair (e.g., Voidlight Bindings).
+  // Manual ring_pairs from gear-config.json take priority over auto-detected ones.
+  const autoRingPairs = [];
+  const ringSetGroups = new Map();
+  for (const ring of rings1) {
+    if (ring.itemSetId) {
+      if (!ringSetGroups.has(ring.itemSetId))
+        ringSetGroups.set(ring.itemSetId, []);
+      ringSetGroups.get(ring.itemSetId).push(ring);
+    }
+  }
+  for (const [setId, members] of ringSetGroups) {
+    if (members.length >= 2) {
+      const [a, b] = members;
+      autoRingPairs.push({
+        id: `set_${setId}`,
+        label: `${a.label} + ${b.label} (Set ${setId})`,
+        finger1: a.id,
+        finger2: b.id,
+        itemSetId: setId,
+      });
+    }
+  }
+  const manualRingPairs = gearConfig.ring_pairs || [];
+  // Dedup by finger pair (not just ID) to avoid manual + auto duplicates for the same rings
+  const manualFingerKeys = new Set(
+    manualRingPairs.map((p) => `${p.finger1}__${p.finger2}`),
+  );
+  const mergedRingPairs = [
+    ...manualRingPairs,
+    ...autoRingPairs.filter(
+      (p) => !manualFingerKeys.has(`${p.finger1}__${p.finger2}`),
+    ),
+  ];
+  if (autoRingPairs.length > 0) {
+    console.log(
+      `Auto-detected ${autoRingPairs.length} ring set pair(s): ${autoRingPairs.map((p) => p.label).join(", ")}`,
+    );
+  }
+
   // --- Write output ---
   // ilvl_tiers, tier, embellishments, flagged come from gear-config.json.
   // stat_allocations and sets are NOT stored here — generated at runtime in gear.js.
@@ -833,7 +977,7 @@ async function main() {
     ...(gearConfig.embellishments
       ? { embellishments: gearConfig.embellishments }
       : {}),
-    ...(gearConfig.ring_pairs ? { ring_pairs: gearConfig.ring_pairs } : {}),
+    ...(mergedRingPairs.length > 0 ? { ring_pairs: mergedRingPairs } : {}),
     ...(gearConfig.flagged ? { flagged: gearConfig.flagged } : {}),
   };
 
@@ -850,6 +994,10 @@ async function main() {
   if (gearConfig.tier)
     console.log(
       `  Tier: set_id=${gearConfig.tier.set_id} (from gear-config.json)`,
+    );
+  if (mergedRingPairs.length > 0)
+    console.log(
+      `  Ring pairs: ${mergedRingPairs.length} (${autoRingPairs.length} auto-detected, ${manualRingPairs.length} manual)`,
     );
   if (gearConfig.embellishments?.pairs?.length)
     console.log(

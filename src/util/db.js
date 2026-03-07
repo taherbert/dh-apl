@@ -805,6 +805,13 @@ function rowToIteration(r) {
 
 export function setSessionState(key, value, s) {
   const db = getDb();
+  if (value == null) {
+    db.prepare("DELETE FROM session_state WHERE key = ? AND spec = ?").run(
+      key,
+      s || spec(),
+    );
+    return;
+  }
   db.prepare(
     `
     INSERT OR REPLACE INTO session_state (key, spec, value, updated_at)

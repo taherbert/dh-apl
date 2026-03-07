@@ -192,6 +192,45 @@
       "topK": 5,
       "candidates": [
         {
+          "id": "void_stalkers_contract",
+          "label": "Void Stalker's Contract",
+          "simc_base": "void_stalkers_contract,id=151307,ilevel=289",
+          "stats": {
+            "agi": 6666
+          },
+          "tags": [
+            "on-use",
+            "agi"
+          ],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "ampoule_of_pure_void",
+          "label": "Ampoule of Pure Void",
+          "simc_base": "ampoule_of_pure_void,id=151312,ilevel=289",
+          "stats": {
+            "agi": 6666
+          },
+          "tags": [
+            "on-use",
+            "agi"
+          ],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "algethar_puzzle_box",
+          "label": "Algeth'ar Puzzle Box",
+          "simc_base": "algethar_puzzle_box,id=193701,ilevel=289",
+          "stats": {
+            "agi": 6666
+          },
+          "tags": [
+            "on-use",
+            "agi"
+          ],
+          "uniqueEquipped": true
+        },
+        {
           "id": "gloom_spattered_dreadscale",
           "label": "Gloom-Spattered Dreadscale",
           "simc_base": "gloom_spattered_dreadscale,id=249339,ilevel=289",
@@ -577,6 +616,83 @@
             "passive",
             "agi"
           ]
+        },
+        {
+          "id": "primal_philosophers_stone",
+          "label": "Primal Philosopher's Stone",
+          "simc_base": "primal_philosophers_stone,id=241291,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 6666,
+            "vers": 8750
+          },
+          "tags": [
+            "passive",
+            "agi"
+          ],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "magisters_alchemist_stone",
+          "label": "Magister's Alchemist Stone",
+          "simc_base": "magisters_alchemist_stone,id=241340,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "vers": 6666
+          },
+          "tags": [
+            "passive"
+          ]
+        },
+        {
+          "id": "darkmoon_dominion_hunt",
+          "label": "Darkmoon Dominion: Hunt",
+          "simc_base": "darkmoon_dominion_hunt,id=246304,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 6666
+          },
+          "tags": [
+            "passive",
+            "agi"
+          ],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "darkmoon_dominion_blood",
+          "label": "Darkmoon Dominion: Blood",
+          "simc_base": "darkmoon_dominion_blood,id=246305,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 6666
+          },
+          "tags": [
+            "passive",
+            "agi"
+          ],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "darkmoon_dominion_rot",
+          "label": "Darkmoon Dominion: Rot",
+          "simc_base": "darkmoon_dominion_rot,id=246306,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 6666
+          },
+          "tags": [
+            "passive",
+            "agi"
+          ],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "darkmoon_dominion_void",
+          "label": "Darkmoon Dominion: Void",
+          "simc_base": "darkmoon_dominion_void,id=246307,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 6666
+          },
+          "tags": [
+            "passive",
+            "agi"
+          ],
+          "uniqueEquipped": true
         }
       ]
     }
@@ -585,9 +701,42 @@
     "neck": {
       "candidates": [
         {
+          "id": "barbed_ymirheim_choker",
+          "label": "Barbed Ymirheim Choker",
+          "simc": "neck=barbed_ymirheim_choker,id=50228,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 11250,
+            "mastery": 6250
+          },
+          "tags": []
+        },
+        {
+          "id": "painfully_sharp_choker",
+          "label": "Painfully Sharp Choker",
+          "simc": "neck=painfully_sharp_choker,id=133500,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 4336,
+            "mastery": 2664
+          },
+          "tags": []
+        },
+        {
+          "id": "necklace_of_the_twisting_void",
+          "label": "Necklace of the Twisting Void",
+          "simc": "neck=necklace_of_the_twisting_void,id=151309,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 9800,
+            "vers": 7700
+          },
+          "tags": []
+        },
+        {
           "id": "ribbon_of_coiled_malice",
           "label": "Ribbon of Coiled Malice",
-          "simc": "neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=8684/8684",
+          "simc": "neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 13000,
@@ -598,7 +747,7 @@
         {
           "id": "eternal_voidsong_chain",
           "label": "Eternal Voidsong Chain",
-          "simc": "neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=8684/8684",
+          "simc": "neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 14700
@@ -608,7 +757,7 @@
         {
           "id": "amulet_of_the_abyssal_hymn",
           "label": "Amulet of the Abyssal Hymn",
-          "simc": "neck=amulet_of_the_abyssal_hymn,id=250247,ilevel=289,gem_id=8684/8684",
+          "simc": "neck=amulet_of_the_abyssal_hymn,id=250247,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 2500
@@ -618,7 +767,7 @@
         {
           "id": "chain_of_the_ancient_watcher",
           "label": "Chain of the Ancient Watcher",
-          "simc": "neck=chain_of_the_ancient_watcher,id=250461,ilevel=276,gem_id=8684/8684",
+          "simc": "neck=chain_of_the_ancient_watcher,id=250461,ilevel=276,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 11500
@@ -628,7 +777,7 @@
         {
           "id": "pendant_of_aching_grief",
           "label": "Pendant of Aching Grief",
-          "simc": "neck=pendant_of_aching_grief,id=251096,ilevel=289,gem_id=8684/8684",
+          "simc": "neck=pendant_of_aching_grief,id=251096,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "vers": 10500,
@@ -639,7 +788,7 @@
         {
           "id": "pendant_of_malefic_fury",
           "label": "Pendant of Malefic Fury",
-          "simc": "neck=pendant_of_malefic_fury,id=251142,ilevel=289,gem_id=8684/8684",
+          "simc": "neck=pendant_of_malefic_fury,id=251142,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 5500
@@ -649,7 +798,7 @@
         {
           "id": "yoke_of_the_charging_bear",
           "label": "Yoke of the Charging Bear",
-          "simc": "neck=yoke_of_the_charging_bear,id=251173,ilevel=289,gem_id=8684/8684",
+          "simc": "neck=yoke_of_the_charging_bear,id=251173,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 11500,
@@ -660,10 +809,49 @@
         {
           "id": "graft_of_the_domanaar",
           "label": "Graft of the Domanaar",
-          "simc": "neck=graft_of_the_domanaar,id=251234,ilevel=289,gem_id=8684/8684",
+          "simc": "neck=graft_of_the_domanaar,id=251234,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 11250
+          },
+          "tags": []
+        },
+        {
+          "id": "nocturnal_charm",
+          "label": "Nocturnal Charm",
+          "simc": "neck=nocturnal_charm,id=240948,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "masterwork_sindorei_amulet",
+          "label": "Masterwork Sin'dorei Amulet",
+          "simc": "neck=masterwork_sindorei_amulet,id=240950,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "thalassian_phoenix_torque",
+          "label": "Thalassian Phoenix Torque",
+          "simc": "neck=thalassian_phoenix_torque,id=241139,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 9500
+          },
+          "tags": []
+        },
+        {
+          "id": "voidstone_shielding_array",
+          "label": "Voidstone Shielding Array",
+          "simc": "neck=voidstone_shielding_array,id=251073,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "mastery": 7000,
+            "vers": 10500,
+            "stamina": 7889
           },
           "tags": []
         }
@@ -671,6 +859,29 @@
     },
     "wrists": {
       "candidates": [
+        {
+          "id": "chewed_leather_wristguards",
+          "label": "Chewed Leather Wristguards",
+          "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4100,
+            "mastery": 2900
+          },
+          "tags": []
+        },
+        {
+          "id": "frenzyroot_cuffs",
+          "label": "Frenzyroot Cuffs",
+          "simc": "wrist=frenzyroot_cuffs,id=193714,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4100
+          },
+          "tags": []
+        },
         {
           "id": "void_skinned_bracers",
           "label": "Void-Skinned Bracers",
@@ -730,22 +941,95 @@
           "tags": []
         },
         {
-          "id": "chewed_leather_wristguards",
-          "label": "Chewed Leather Wristguards",
-          "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289,gem_id=241144",
+          "id": "silvermoon_agents_deflectors",
+          "label": "Silvermoon Agent's Deflectors",
+          "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
           "stats": {
-            "agi": 3506,
-            "crit": 4100,
-            "haste": 2900
+            "agi": 5259,
+            "stamina": 7889
           },
-          "tags": [
-            "dungeon"
-          ]
+          "tags": []
+        },
+        {
+          "id": "smugglers_leather_wristbands",
+          "label": "Smuggler's Leather Wristbands",
+          "simc": "wrist=smugglers_leather_wristbands,id=244586,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "row_walkers_deflectors",
+          "label": "Row Walker's Deflectors",
+          "simc": "wrist=row_walkers_deflectors,id=244612,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4000
+          },
+          "tags": [],
+          "itemSetId": 1966
+        },
+        {
+          "id": "aetherlume_bands",
+          "label": "Aetherlume Bands",
+          "simc": "wrist=aetherlume_bands,id=244748,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "queldorei_bands",
+          "label": "Quel'dorei Bands",
+          "simc": "wrist=queldorei_bands,id=244756,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "evercore_binding",
+          "label": "Evercore Binding",
+          "simc": "wrist=evercore_binding,id=245342,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
         }
       ]
     },
     "waist": {
       "candidates": [
+        {
+          "id": "flayers_black_belt",
+          "label": "Flayer's Black Belt",
+          "simc": "waist=flayers_black_belt,id=49806,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 3650,
+            "crit": 3350
+          },
+          "tags": []
+        },
+        {
+          "id": "flayers_black_belt",
+          "label": "Flayer's Black Belt",
+          "simc": "waist=flayers_black_belt,id=133490,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 3711,
+            "crit": 3289
+          },
+          "tags": []
+        },
         {
           "id": "twisted_twilight_sash",
           "label": "Twisted Twilight Sash",
@@ -826,11 +1110,54 @@
             "vers": 4550
           },
           "tags": []
+        },
+        {
+          "id": "silvermoon_agents_utility_belt",
+          "label": "Silvermoon Agent's Utility Belt",
+          "simc": "waist=silvermoon_agents_utility_belt,id=244573,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "smugglers_reinforced_binding",
+          "label": "Smuggler's Reinforced Binding",
+          "simc": "waist=smugglers_reinforced_binding,id=244595,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "hexwoven_strand",
+          "label": "Hexwoven Strand",
+          "simc": "waist=hexwoven_strand,id=244606,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4000,
+            "vers": 3000
+          },
+          "tags": []
         }
       ]
     },
     "feet": {
       "candidates": [
+        {
+          "id": "footpads_of_seeping_dread",
+          "label": "Footpads of Seeping Dread",
+          "simc": "feet=footpads_of_seeping_dread,id=151317,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4100
+          },
+          "tags": []
+        },
         {
           "id": "void_claimed_shinkickers",
           "label": "Void-Claimed Shinkickers",
@@ -899,11 +1226,127 @@
             "mastery": 2750
           },
           "tags": []
+        },
+        {
+          "id": "boots_of_burning_focus",
+          "label": "Boots of Burning Focus",
+          "simc": "feet=boots_of_burning_focus,id=258577,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 3650
+          },
+          "tags": []
+        },
+        {
+          "id": "silvermoon_agents_sneakers",
+          "label": "Silvermoon Agent's Sneakers",
+          "simc": "feet=silvermoon_agents_sneakers,id=244569,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "smugglers_leather_footpads",
+          "label": "Smuggler's Leather Footpads",
+          "simc": "feet=smugglers_leather_footpads,id=244585,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "world_tree_rootwraps",
+          "label": "World Tree Rootwraps",
+          "simc": "feet=world_tree_rootwraps,id=244601,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4000
+          },
+          "tags": []
+        },
+        {
+          "id": "queldorei_runners",
+          "label": "Quel'dorei Runners",
+          "simc": "feet=queldorei_runners,id=244768,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "aetherlume_runners",
+          "label": "Aetherlume Runners",
+          "simc": "feet=aetherlume_runners,id=244772,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "evercore_stichwraps",
+          "label": "Evercore Stichwraps",
+          "simc": "feet=evercore_stichwraps,id=245338,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
         }
       ]
     },
     "main_hand": {
       "candidates": [
+        {
+          "id": "spellboon_saber",
+          "label": "Spellboon Saber",
+          "simc": "main_hand=spellboon_saber,id=193710,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 4250
+          },
+          "tags": []
+        },
+        {
+          "id": "spellbane_cutlass",
+          "label": "Spellbane Cutlass",
+          "simc": "main_hand=spellbane_cutlass,id=193711,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 4250,
+            "vers": 2750
+          },
+          "tags": []
+        },
+        {
+          "id": "mystakrias_harvester",
+          "label": "Mystakria's Harvester",
+          "simc": "main_hand=mystakrias_harvester,id=193717,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4100,
+            "crit": 2900
+          },
+          "tags": []
+        },
+        {
+          "id": "emblazoned_sunglaive",
+          "label": "Emblazoned Sunglaive",
+          "simc": "main_hand=emblazoned_sunglaive,id=249280,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4810
+          },
+          "tags": []
+        },
         {
           "id": "blade_of_the_final_twilight",
           "label": "Blade of the Final Twilight",
@@ -1033,6 +1476,17 @@
           "tags": []
         },
         {
+          "id": "resolute_runeglaive",
+          "label": "Resolute Runeglaive",
+          "simc": "main_hand=resolute_runeglaive,id=251106,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2450
+          },
+          "tags": []
+        },
+        {
           "id": "shadowslash_slicer",
           "label": "Shadowslash Slicer",
           "simc": "main_hand=shadowslash_slicer,id=251122,ilevel=289",
@@ -1133,6 +1587,40 @@
           "tags": []
         },
         {
+          "id": "singularity_slicer",
+          "label": "Singularity Slicer",
+          "simc": "main_hand=singularity_slicer,id=251231,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4100,
+            "mastery": 2900
+          },
+          "tags": []
+        },
+        {
+          "id": "beakbreaker_scimitar",
+          "label": "Beakbreaker Scimitar",
+          "simc": "main_hand=beakbreaker_scimitar,id=258048,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 3650,
+            "vers": 3350
+          },
+          "tags": []
+        },
+        {
+          "id": "arcanic_of_the_high_sage",
+          "label": "Arcanic of the High Sage",
+          "simc": "main_hand=arcanic_of_the_high_sage,id=258050,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 3650,
+            "mastery": 3350
+          },
+          "tags": []
+        },
+        {
           "id": "skybreakers_blade",
           "label": "Skybreaker's Blade",
           "simc": "main_hand=skybreakers_blade,id=258218,ilevel=289",
@@ -1176,6 +1664,18 @@
           "tags": []
         },
         {
+          "id": "lightless_lament",
+          "label": "Lightless Lament",
+          "simc": "main_hand=lightless_lament,id=260408,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 7000
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
           "id": "arators_swift_remembrance",
           "label": "Arator's Swift Remembrance",
           "simc": "main_hand=arators_swift_remembrance,id=260423,ilevel=289",
@@ -1188,12 +1688,89 @@
           "tags": []
         },
         {
-          "id": "lightless_lament",
-          "label": "Lightless Lament",
-          "simc": "main_hand=lightless_lament,id=260408,ilevel=289",
+          "id": "spellbreakers_blade",
+          "label": "Spellbreaker's Blade",
+          "simc": "main_hand=spellbreakers_blade,id=237839,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
           "stats": {
             "agi": 5259,
-            "crit": 7000,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "spellbreakers_warglaive",
+          "label": "Spellbreaker's Warglaive",
+          "simc": "main_hand=spellbreakers_warglaive,id=237840,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "spellbreakers_ultimatum",
+          "label": "Spellbreaker's Ultimatum",
+          "simc": "main_hand=spellbreakers_ultimatum,id=237841,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "magisters_mana_sword",
+          "label": "Magister's Mana Sword",
+          "simc": "main_hand=magisters_mana_sword,id=237843,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "magisters_cleaver",
+          "label": "Magister's Cleaver",
+          "simc": "main_hand=magisters_cleaver,id=237844,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "bloomforged_claw",
+          "label": "Bloomforged Claw",
+          "simc": "main_hand=bloomforged_claw,id=237845,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "dawnforged_long_blade",
+          "label": "Dawnforged Long Blade",
+          "simc": "main_hand=dawnforged_long_blade,id=237928,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "primalforged_knuckles",
+          "label": "Primalforged Knuckles",
+          "simc": "main_hand=primalforged_knuckles,id=237929,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "dawnforged_splitter",
+          "label": "Dawnforged Splitter",
+          "simc": "main_hand=dawnforged_splitter,id=237931,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
             "stamina": 7889
           },
           "tags": []
@@ -1202,6 +1779,50 @@
     },
     "off_hand": {
       "candidates": [
+        {
+          "id": "spellboon_saber_oh",
+          "label": "Spellboon Saber (OH)",
+          "simc": "off_hand=spellboon_saber,id=193710,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 4250
+          },
+          "tags": []
+        },
+        {
+          "id": "spellbane_cutlass_oh",
+          "label": "Spellbane Cutlass (OH)",
+          "simc": "off_hand=spellbane_cutlass,id=193711,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 4250,
+            "vers": 2750
+          },
+          "tags": []
+        },
+        {
+          "id": "mystakrias_harvester_oh",
+          "label": "Mystakria's Harvester (OH)",
+          "simc": "off_hand=mystakrias_harvester,id=193717,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4100,
+            "crit": 2900
+          },
+          "tags": []
+        },
+        {
+          "id": "emblazoned_sunglaive_oh",
+          "label": "Emblazoned Sunglaive (OH)",
+          "simc": "off_hand=emblazoned_sunglaive,id=249280,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4810
+          },
+          "tags": []
+        },
         {
           "id": "blade_of_the_final_twilight_oh",
           "label": "Blade of the Final Twilight (OH)",
@@ -1331,6 +1952,17 @@
           "tags": []
         },
         {
+          "id": "resolute_runeglaive_oh",
+          "label": "Resolute Runeglaive (OH)",
+          "simc": "off_hand=resolute_runeglaive,id=251106,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2450
+          },
+          "tags": []
+        },
+        {
           "id": "shadowslash_slicer_oh",
           "label": "Shadowslash Slicer (OH)",
           "simc": "off_hand=shadowslash_slicer,id=251122,ilevel=289",
@@ -1431,6 +2063,40 @@
           "tags": []
         },
         {
+          "id": "singularity_slicer_oh",
+          "label": "Singularity Slicer (OH)",
+          "simc": "off_hand=singularity_slicer,id=251231,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4100,
+            "mastery": 2900
+          },
+          "tags": []
+        },
+        {
+          "id": "beakbreaker_scimitar_oh",
+          "label": "Beakbreaker Scimitar (OH)",
+          "simc": "off_hand=beakbreaker_scimitar,id=258048,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 3650,
+            "vers": 3350
+          },
+          "tags": []
+        },
+        {
+          "id": "arcanic_of_the_high_sage_oh",
+          "label": "Arcanic of the High Sage (OH)",
+          "simc": "off_hand=arcanic_of_the_high_sage,id=258050,ilevel=289",
+          "stats": {
+            "stamina": 7889,
+            "crit": 3650,
+            "mastery": 3350
+          },
+          "tags": []
+        },
+        {
           "id": "skybreakers_blade_oh",
           "label": "Skybreaker's Blade (OH)",
           "simc": "off_hand=skybreakers_blade,id=258218,ilevel=289",
@@ -1474,6 +2140,18 @@
           "tags": []
         },
         {
+          "id": "lightless_lament_oh",
+          "label": "Lightless Lament (OH)",
+          "simc": "off_hand=lightless_lament,id=260408,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 7000
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
           "id": "arators_swift_remembrance_oh",
           "label": "Arator's Swift Remembrance (OH)",
           "simc": "off_hand=arators_swift_remembrance,id=260423,ilevel=289",
@@ -1486,12 +2164,89 @@
           "tags": []
         },
         {
-          "id": "lightless_lament_oh",
-          "label": "Lightless Lament (OH)",
-          "simc": "off_hand=lightless_lament,id=260408,ilevel=289",
+          "id": "spellbreakers_blade_oh",
+          "label": "Spellbreaker's Blade (OH)",
+          "simc": "off_hand=spellbreakers_blade,id=237839,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
           "stats": {
             "agi": 5259,
-            "crit": 7000,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "spellbreakers_warglaive_oh",
+          "label": "Spellbreaker's Warglaive (OH)",
+          "simc": "off_hand=spellbreakers_warglaive,id=237840,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "spellbreakers_ultimatum_oh",
+          "label": "Spellbreaker's Ultimatum (OH)",
+          "simc": "off_hand=spellbreakers_ultimatum,id=237841,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "magisters_mana_sword_oh",
+          "label": "Magister's Mana Sword (OH)",
+          "simc": "off_hand=magisters_mana_sword,id=237843,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "magisters_cleaver_oh",
+          "label": "Magister's Cleaver (OH)",
+          "simc": "off_hand=magisters_cleaver,id=237844,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "bloomforged_claw_oh",
+          "label": "Bloomforged Claw (OH)",
+          "simc": "off_hand=bloomforged_claw,id=237845,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "dawnforged_long_blade_oh",
+          "label": "Dawnforged Long Blade (OH)",
+          "simc": "off_hand=dawnforged_long_blade,id=237928,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "primalforged_knuckles_oh",
+          "label": "Primalforged Knuckles (OH)",
+          "simc": "off_hand=primalforged_knuckles,id=237929,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "dawnforged_splitter_oh",
+          "label": "Dawnforged Splitter (OH)",
+          "simc": "off_hand=dawnforged_splitter,id=237931,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
             "stamina": 7889
           },
           "tags": []
@@ -1583,256 +2338,516 @@
     "finger1": {
       "candidates": [
         {
+          "id": "purloined_wedding_ring",
+          "label": "Purloined Wedding Ring",
+          "simc": "finger1=purloined_wedding_ring,id=49812,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 10000,
+            "mastery": 7500
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "ring_of_carnelian_and_bone",
+          "label": "Ring of Carnelian and Bone",
+          "simc": "finger1=ring_of_carnelian_and_bone,id=133487,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 3390,
+            "mastery": 3610
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "purloined_wedding_ring",
+          "label": "Purloined Wedding Ring",
+          "simc": "finger1=purloined_wedding_ring,id=133496,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 3924,
+            "mastery": 3076
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "eredath_seal_of_nobility",
+          "label": "Eredath Seal of Nobility",
+          "simc": "finger1=eredath_seal_of_nobility,id=151308,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 6800,
+            "vers": 10700
+          },
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1331
+        },
+        {
+          "id": "band_of_the_triumvirate",
+          "label": "Band of the Triumvirate",
+          "simc": "finger1=band_of_the_triumvirate,id=151311,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 10000,
+            "vers": 7500
+          },
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1331
+        },
+        {
+          "id": "platinum_star_band",
+          "label": "Platinum Star Band",
+          "simc": "finger1=platinum_star_band,id=193708,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 11500
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
           "id": "signet_of_the_starved_beast",
           "label": "Signet of the Starved Beast",
-          "simc": "finger1=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 13750,
             "vers": 3750
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "bond_of_light",
           "label": "Bond of Light",
-          "simc": "finger1=bond_of_light,id=249369,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=bond_of_light,id=249369,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 3250
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "sindorei_band_of_hope",
           "label": "Sin'dorei Band of Hope",
-          "simc": "finger1=sindorei_band_of_hope,id=249919,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=sindorei_band_of_hope,id=249919,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 14350
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "eye_of_midnight",
           "label": "Eye of Midnight",
-          "simc": "finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=eye_of_midnight,id=249920,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 17500
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "encroaching_shadow_signet",
           "label": "Encroaching Shadow Signet",
-          "simc": "finger1=encroaching_shadow_signet,id=250460,ilevel=276,gem_id=8684/8684",
+          "simc": "finger1=encroaching_shadow_signet,id=250460,ilevel=276,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "vers": 12000,
             "mastery": 5500
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "omission_of_light",
           "label": "Omission of Light",
-          "simc": "finger1=omission_of_light,id=251093,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=omission_of_light,id=251093,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 10250
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1971
         },
         {
           "id": "bifurcation_band",
           "label": "Bifurcation Band",
-          "simc": "finger1=bifurcation_band,id=251115,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=bifurcation_band,id=251115,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 6500
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "signet_of_snarling_servitude",
           "label": "Signet of Snarling Servitude",
-          "simc": "finger1=signet_of_snarling_servitude,id=251136,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=signet_of_snarling_servitude,id=251136,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 10750
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "pilfered_precious_band",
           "label": "Pilfered Precious Band",
-          "simc": "finger1=pilfered_precious_band,id=251148,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=pilfered_precious_band,id=251148,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "vers": 10500,
             "crit": 7000
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "lightwardens_bind",
           "label": "Lightwarden's Bind",
-          "simc": "finger1=lightwardens_bind,id=251194,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=lightwardens_bind,id=251194,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "vers": 5750
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "occlusion_of_void",
           "label": "Occlusion of Void",
-          "simc": "finger1=occlusion_of_void,id=251217,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=occlusion_of_void,id=251217,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 12250,
             "mastery": 5250
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1971
         },
         {
           "id": "sickening_signet_of_atroxus",
           "label": "Sickening Signet of Atroxus",
-          "simc": "finger1=sickening_signet_of_atroxus,id=252258,ilevel=289,gem_id=8684/8684",
+          "simc": "finger1=sickening_signet_of_atroxus,id=252258,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 12000
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "gleaming_copper_band",
+          "label": "Gleaming Copper Band",
+          "simc": "finger1=gleaming_copper_band,id=240947,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "masterwork_sindorei_band",
+          "label": "Masterwork Sin'dorei Band",
+          "simc": "finger1=masterwork_sindorei_band,id=240949,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "signet_of_azerothian_blessings",
+          "label": "Signet of Azerothian Blessings",
+          "simc": "finger1=signet_of_azerothian_blessings,id=241140,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "vers": 5500
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "loa_worshipers_band",
+          "label": "Loa Worshiper's Band",
+          "simc": "finger1=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 10000
+          },
+          "tags": [],
+          "uniqueEquipped": true
         }
       ]
     },
     "finger2": {
       "candidates": [
         {
+          "id": "purloined_wedding_ring",
+          "label": "Purloined Wedding Ring",
+          "simc": "finger2=purloined_wedding_ring,id=49812,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 10000,
+            "mastery": 7500
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "ring_of_carnelian_and_bone",
+          "label": "Ring of Carnelian and Bone",
+          "simc": "finger2=ring_of_carnelian_and_bone,id=133487,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 3390,
+            "mastery": 3610
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "purloined_wedding_ring",
+          "label": "Purloined Wedding Ring",
+          "simc": "finger2=purloined_wedding_ring,id=133496,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 3924,
+            "mastery": 3076
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "eredath_seal_of_nobility",
+          "label": "Eredath Seal of Nobility",
+          "simc": "finger2=eredath_seal_of_nobility,id=151308,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 6800,
+            "vers": 10700
+          },
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1331
+        },
+        {
+          "id": "band_of_the_triumvirate",
+          "label": "Band of the Triumvirate",
+          "simc": "finger2=band_of_the_triumvirate,id=151311,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "mastery": 10000,
+            "vers": 7500
+          },
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1331
+        },
+        {
+          "id": "platinum_star_band",
+          "label": "Platinum Star Band",
+          "simc": "finger2=platinum_star_band,id=193708,ilevel=289,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 11500
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
           "id": "signet_of_the_starved_beast",
           "label": "Signet of the Starved Beast",
-          "simc": "finger2=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 13750,
             "vers": 3750
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "bond_of_light",
           "label": "Bond of Light",
-          "simc": "finger2=bond_of_light,id=249369,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=bond_of_light,id=249369,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 3250
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "sindorei_band_of_hope",
           "label": "Sin'dorei Band of Hope",
-          "simc": "finger2=sindorei_band_of_hope,id=249919,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=sindorei_band_of_hope,id=249919,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 14350
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "eye_of_midnight",
           "label": "Eye of Midnight",
-          "simc": "finger2=eye_of_midnight,id=249920,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=eye_of_midnight,id=249920,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 17500
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "encroaching_shadow_signet",
           "label": "Encroaching Shadow Signet",
-          "simc": "finger2=encroaching_shadow_signet,id=250460,ilevel=276,gem_id=8684/8684",
+          "simc": "finger2=encroaching_shadow_signet,id=250460,ilevel=276,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "vers": 12000,
             "mastery": 5500
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "omission_of_light",
           "label": "Omission of Light",
-          "simc": "finger2=omission_of_light,id=251093,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=omission_of_light,id=251093,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 10250
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1971
         },
         {
           "id": "bifurcation_band",
           "label": "Bifurcation Band",
-          "simc": "finger2=bifurcation_band,id=251115,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=bifurcation_band,id=251115,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 6500
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "signet_of_snarling_servitude",
           "label": "Signet of Snarling Servitude",
-          "simc": "finger2=signet_of_snarling_servitude,id=251136,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=signet_of_snarling_servitude,id=251136,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 10750
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "pilfered_precious_band",
           "label": "Pilfered Precious Band",
-          "simc": "finger2=pilfered_precious_band,id=251148,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=pilfered_precious_band,id=251148,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "vers": 10500,
             "crit": 7000
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "lightwardens_bind",
           "label": "Lightwarden's Bind",
-          "simc": "finger2=lightwardens_bind,id=251194,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=lightwardens_bind,id=251194,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "vers": 5750
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
         },
         {
           "id": "occlusion_of_void",
           "label": "Occlusion of Void",
-          "simc": "finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "crit": 12250,
             "mastery": 5250
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true,
+          "itemSetId": 1971
         },
         {
           "id": "sickening_signet_of_atroxus",
           "label": "Sickening Signet of Atroxus",
-          "simc": "finger2=sickening_signet_of_atroxus,id=252258,ilevel=289,gem_id=8684/8684",
+          "simc": "finger2=sickening_signet_of_atroxus,id=252258,ilevel=289,gem_id=240983/240983",
           "stats": {
             "stamina": 7889,
             "mastery": 12000
           },
-          "tags": []
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "gleaming_copper_band",
+          "label": "Gleaming Copper Band",
+          "simc": "finger2=gleaming_copper_band,id=240947,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "masterwork_sindorei_band",
+          "label": "Masterwork Sin'dorei Band",
+          "simc": "finger2=masterwork_sindorei_band,id=240949,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "signet_of_azerothian_blessings",
+          "label": "Signet of Azerothian Blessings",
+          "simc": "finger2=signet_of_azerothian_blessings,id=241140,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "vers": 5500
+          },
+          "tags": [],
+          "uniqueEquipped": true
+        },
+        {
+          "id": "loa_worshipers_band",
+          "label": "Loa Worshiper's Band",
+          "simc": "finger2=loa_worshipers_band,id=251513,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983/240983",
+          "stats": {
+            "stamina": 7889,
+            "crit": 10000
+          },
+          "tags": [],
+          "uniqueEquipped": true
         }
       ]
     }
@@ -2039,34 +3054,791 @@
   },
   "gems": [
     {
-      "id": "23_primary_opponents_failed_interrupt_attempts_grant_precognition",
-      "label": "23 Primary / opponent's failed interrupt attempts grant Precognition",
-      "enchant_id": 8684,
+      "id": "7_vers",
+      "label": "7 Vers",
+      "enchant_id": 8094,
       "stats": {
-        "agi": 23
+        "vers": 7
       },
-      "tags": []
+      "tags": [],
+      "item_id": 240879
     },
     {
-      "id": "23_primary_5_damage_reduction_when_affected_by_crowd_control",
-      "label": "23 Primary / +5% Damage Reduction when affected by Crowd Control",
-      "enchant_id": 8685,
+      "id": "9_vers",
+      "label": "9 Vers",
+      "enchant_id": 8095,
       "stats": {
-        "agi": 23
+        "vers": 9
       },
-      "tags": []
+      "tags": [],
+      "item_id": 240880
     },
     {
-      "id": "23_primary_getting_snared_increases_damage_of_your_next_attack_by_per_stack",
-      "label": "23 Primary / getting snared increases damage of your next attack by  per stack",
-      "enchant_id": 8686,
+      "id": "12_vers",
+      "label": "12 Vers",
+      "enchant_id": 8096,
+      "stats": {
+        "vers": 12
+      },
+      "tags": [],
+      "item_id": 240911
+    },
+    {
+      "id": "14_vers",
+      "label": "14 Vers",
+      "enchant_id": 8097,
+      "stats": {
+        "vers": 14
+      },
+      "tags": [],
+      "item_id": 240912
+    },
+    {
+      "id": "6_vers_2_crit",
+      "label": "6 Vers & 2 Crit",
+      "enchant_id": 8098,
+      "stats": {
+        "vers": 6,
+        "crit": 2
+      },
+      "tags": [],
+      "item_id": 240881
+    },
+    {
+      "id": "7_vers_3_crit",
+      "label": "7 Vers & 3 Crit",
+      "enchant_id": 8099,
+      "stats": {
+        "vers": 7,
+        "crit": 3
+      },
+      "tags": [],
+      "item_id": 240882
+    },
+    {
+      "id": "10_vers_4_crit",
+      "label": "10 Vers & 4 Crit",
+      "enchant_id": 8100,
+      "stats": {
+        "vers": 10,
+        "crit": 4
+      },
+      "tags": [],
+      "item_id": 240913
+    },
+    {
+      "id": "12_vers_5_crit",
+      "label": "12 Vers & 5 Crit",
+      "enchant_id": 8101,
+      "stats": {
+        "vers": 12,
+        "crit": 5
+      },
+      "tags": [],
+      "item_id": 240914
+    },
+    {
+      "id": "6_vers_2_haste",
+      "label": "6 Vers & 2 Haste",
+      "enchant_id": 8102,
+      "stats": {
+        "vers": 6,
+        "haste": 2
+      },
+      "tags": [],
+      "item_id": 240883
+    },
+    {
+      "id": "7_vers_3_haste",
+      "label": "7 Vers & 3 Haste",
+      "enchant_id": 8103,
+      "stats": {
+        "vers": 7,
+        "haste": 3
+      },
+      "tags": [],
+      "item_id": 240884
+    },
+    {
+      "id": "10_vers_4_haste",
+      "label": "10 Vers & 4 Haste",
+      "enchant_id": 8104,
+      "stats": {
+        "vers": 10,
+        "haste": 4
+      },
+      "tags": [],
+      "item_id": 240915
+    },
+    {
+      "id": "12_vers_5_haste",
+      "label": "12 Vers & 5 Haste",
+      "enchant_id": 8105,
+      "stats": {
+        "vers": 12,
+        "haste": 5
+      },
+      "tags": [],
+      "item_id": 240916
+    },
+    {
+      "id": "6_vers_2_mast",
+      "label": "6 Vers & 2 Mast",
+      "enchant_id": 8106,
+      "stats": {
+        "vers": 6,
+        "mastery": 2
+      },
+      "tags": [],
+      "item_id": 240885
+    },
+    {
+      "id": "7_vers_3_mast",
+      "label": "7 Vers & 3 Mast",
+      "enchant_id": 8107,
+      "stats": {
+        "vers": 7,
+        "mastery": 3
+      },
+      "tags": [],
+      "item_id": 240886
+    },
+    {
+      "id": "10_vers_4_mast",
+      "label": "10 Vers & 4 Mast",
+      "enchant_id": 8108,
+      "stats": {
+        "vers": 10,
+        "mastery": 4
+      },
+      "tags": [],
+      "item_id": 240917
+    },
+    {
+      "id": "12_vers_5_mast",
+      "label": "12 Vers & 5 Mast",
+      "enchant_id": 8109,
+      "stats": {
+        "vers": 12,
+        "mastery": 5
+      },
+      "tags": [],
+      "item_id": 240918
+    },
+    {
+      "id": "7_haste",
+      "label": "7 Haste",
+      "enchant_id": 8110,
+      "stats": {
+        "haste": 7
+      },
+      "tags": [],
+      "item_id": 240855
+    },
+    {
+      "id": "9_haste",
+      "label": "9 Haste",
+      "enchant_id": 8111,
+      "stats": {
+        "haste": 9
+      },
+      "tags": [],
+      "item_id": 240856
+    },
+    {
+      "id": "12_haste",
+      "label": "12 Haste",
+      "enchant_id": 8112,
+      "stats": {
+        "haste": 12
+      },
+      "tags": [],
+      "item_id": 240887
+    },
+    {
+      "id": "14_haste",
+      "label": "14 Haste",
+      "enchant_id": 8113,
+      "stats": {
+        "haste": 14
+      },
+      "tags": [],
+      "item_id": 240888
+    },
+    {
+      "id": "6_haste_2_crit",
+      "label": "6 Haste & 2 Crit",
+      "enchant_id": 8114,
+      "stats": {
+        "haste": 6,
+        "crit": 2
+      },
+      "tags": [],
+      "item_id": 240857
+    },
+    {
+      "id": "7_haste_3_crit",
+      "label": "7 Haste & 3 Crit",
+      "enchant_id": 8115,
+      "stats": {
+        "haste": 7,
+        "crit": 3
+      },
+      "tags": [],
+      "item_id": 240858
+    },
+    {
+      "id": "10_haste_4_crit",
+      "label": "10 Haste & 4 Crit",
+      "enchant_id": 8116,
+      "stats": {
+        "haste": 10,
+        "crit": 4
+      },
+      "tags": [],
+      "item_id": 240889
+    },
+    {
+      "id": "12_haste_5_crit",
+      "label": "12 Haste & 5 Crit",
+      "enchant_id": 8117,
+      "stats": {
+        "haste": 12,
+        "crit": 5
+      },
+      "tags": [],
+      "item_id": 240890
+    },
+    {
+      "id": "6_haste_2_mast",
+      "label": "6 Haste & 2 Mast",
+      "enchant_id": 8118,
+      "stats": {
+        "haste": 6,
+        "mastery": 2
+      },
+      "tags": [],
+      "item_id": 240859
+    },
+    {
+      "id": "7_haste_3_mast",
+      "label": "7 Haste & 3 Mast",
+      "enchant_id": 8119,
+      "stats": {
+        "haste": 7,
+        "mastery": 3
+      },
+      "tags": [],
+      "item_id": 240860
+    },
+    {
+      "id": "10_haste_4_mast",
+      "label": "10 Haste & 4 Mast",
+      "enchant_id": 8120,
+      "stats": {
+        "haste": 10,
+        "mastery": 4
+      },
+      "tags": [],
+      "item_id": 240891
+    },
+    {
+      "id": "12_haste_5_mast",
+      "label": "12 Haste & 5 Mast",
+      "enchant_id": 8121,
+      "stats": {
+        "haste": 12,
+        "mastery": 5
+      },
+      "tags": [],
+      "item_id": 240892
+    },
+    {
+      "id": "6_haste_2_vers",
+      "label": "6 Haste & 2 Vers",
+      "enchant_id": 8122,
+      "stats": {
+        "haste": 6,
+        "vers": 2
+      },
+      "tags": [],
+      "item_id": 240861
+    },
+    {
+      "id": "7_haste_3_vers",
+      "label": "7 Haste & 3 Vers",
+      "enchant_id": 8123,
+      "stats": {
+        "haste": 7,
+        "vers": 3
+      },
+      "tags": [],
+      "item_id": 240862
+    },
+    {
+      "id": "10_haste_4_vers",
+      "label": "10 Haste & 4 Vers",
+      "enchant_id": 8124,
+      "stats": {
+        "haste": 10,
+        "vers": 4
+      },
+      "tags": [],
+      "item_id": 240893
+    },
+    {
+      "id": "12_haste_5_vers",
+      "label": "12 Haste & 5 Vers",
+      "enchant_id": 8125,
+      "stats": {
+        "haste": 12,
+        "vers": 5
+      },
+      "tags": [],
+      "item_id": 240894
+    },
+    {
+      "id": "7_mast",
+      "label": "7 Mast",
+      "enchant_id": 8126,
+      "stats": {
+        "mastery": 7
+      },
+      "tags": [],
+      "item_id": 240863
+    },
+    {
+      "id": "9_mast",
+      "label": "9 Mast",
+      "enchant_id": 8127,
+      "stats": {
+        "mastery": 9
+      },
+      "tags": [],
+      "item_id": 240864
+    },
+    {
+      "id": "12_mast",
+      "label": "12 Mast",
+      "enchant_id": 8128,
+      "stats": {
+        "mastery": 12
+      },
+      "tags": [],
+      "item_id": 240895
+    },
+    {
+      "id": "14_mast",
+      "label": "14 Mast",
+      "enchant_id": 8129,
+      "stats": {
+        "mastery": 14
+      },
+      "tags": [],
+      "item_id": 240896
+    },
+    {
+      "id": "6_mast_2_crit",
+      "label": "6 Mast & 2 Crit",
+      "enchant_id": 8130,
+      "stats": {
+        "mastery": 6,
+        "crit": 2
+      },
+      "tags": [],
+      "item_id": 240865
+    },
+    {
+      "id": "7_mast_3_crit",
+      "label": "7 Mast & 3 Crit",
+      "enchant_id": 8131,
+      "stats": {
+        "mastery": 7,
+        "crit": 3
+      },
+      "tags": [],
+      "item_id": 240866
+    },
+    {
+      "id": "10_mast_4_crit",
+      "label": "10 Mast & 4 Crit",
+      "enchant_id": 8132,
+      "stats": {
+        "mastery": 10,
+        "crit": 4
+      },
+      "tags": [],
+      "item_id": 240897
+    },
+    {
+      "id": "12_mast_5_crit",
+      "label": "12 Mast & 5 Crit",
+      "enchant_id": 8133,
+      "stats": {
+        "mastery": 12,
+        "crit": 5
+      },
+      "tags": [],
+      "item_id": 240898
+    },
+    {
+      "id": "6_mast_2_haste",
+      "label": "6 Mast & 2 Haste",
+      "enchant_id": 8134,
+      "stats": {
+        "mastery": 6,
+        "haste": 2
+      },
+      "tags": [],
+      "item_id": 240867
+    },
+    {
+      "id": "7_mast_3_haste",
+      "label": "7 Mast & 3 Haste",
+      "enchant_id": 8135,
+      "stats": {
+        "mastery": 7,
+        "haste": 3
+      },
+      "tags": [],
+      "item_id": 240868
+    },
+    {
+      "id": "10_mast_4_haste",
+      "label": "10 Mast & 4 Haste",
+      "enchant_id": 8136,
+      "stats": {
+        "mastery": 10,
+        "haste": 4
+      },
+      "tags": [],
+      "item_id": 240899
+    },
+    {
+      "id": "12_mast_5_haste",
+      "label": "12 Mast & 5 Haste",
+      "enchant_id": 8137,
+      "stats": {
+        "mastery": 12,
+        "haste": 5
+      },
+      "tags": [],
+      "item_id": 240900
+    },
+    {
+      "id": "6_mast_2_vers",
+      "label": "6 Mast & 2 Vers",
+      "enchant_id": 8138,
+      "stats": {
+        "mastery": 6,
+        "vers": 2
+      },
+      "tags": [],
+      "item_id": 240869
+    },
+    {
+      "id": "7_mast_3_vers",
+      "label": "7 Mast & 3 Vers",
+      "enchant_id": 8139,
+      "stats": {
+        "mastery": 7,
+        "vers": 3
+      },
+      "tags": [],
+      "item_id": 240870
+    },
+    {
+      "id": "10_mast_4_vers",
+      "label": "10 Mast & 4 Vers",
+      "enchant_id": 8140,
+      "stats": {
+        "mastery": 10,
+        "vers": 4
+      },
+      "tags": [],
+      "item_id": 240901
+    },
+    {
+      "id": "12_mast_5_vers",
+      "label": "12 Mast & 5 Vers",
+      "enchant_id": 8141,
+      "stats": {
+        "mastery": 12,
+        "vers": 5
+      },
+      "tags": [],
+      "item_id": 240902
+    },
+    {
+      "id": "7_crit",
+      "label": "7 Crit",
+      "enchant_id": 8142,
+      "stats": {
+        "crit": 7
+      },
+      "tags": [],
+      "item_id": 240871
+    },
+    {
+      "id": "9_crit",
+      "label": "9 Crit",
+      "enchant_id": 8143,
+      "stats": {
+        "crit": 9
+      },
+      "tags": [],
+      "item_id": 240872
+    },
+    {
+      "id": "12_crit",
+      "label": "12 Crit",
+      "enchant_id": 8144,
+      "stats": {
+        "crit": 12
+      },
+      "tags": [],
+      "item_id": 240903
+    },
+    {
+      "id": "14_crit",
+      "label": "14 Crit",
+      "enchant_id": 8145,
+      "stats": {
+        "crit": 14
+      },
+      "tags": [],
+      "item_id": 240904
+    },
+    {
+      "id": "6_crit_2_haste",
+      "label": "6 Crit & 2 Haste",
+      "enchant_id": 8146,
+      "stats": {
+        "crit": 6,
+        "haste": 2
+      },
+      "tags": [],
+      "item_id": 240873
+    },
+    {
+      "id": "7_crit_3_haste",
+      "label": "7 Crit & 3 Haste",
+      "enchant_id": 8147,
+      "stats": {
+        "crit": 7,
+        "haste": 3
+      },
+      "tags": [],
+      "item_id": 240874
+    },
+    {
+      "id": "10_crit_4_haste",
+      "label": "10 Crit & 4 Haste",
+      "enchant_id": 8148,
+      "stats": {
+        "crit": 10,
+        "haste": 4
+      },
+      "tags": [],
+      "item_id": 240905
+    },
+    {
+      "id": "12_crit_5_haste",
+      "label": "12 Crit & 5 Haste",
+      "enchant_id": 8149,
+      "stats": {
+        "crit": 12,
+        "haste": 5
+      },
+      "tags": [],
+      "item_id": 240906
+    },
+    {
+      "id": "6_crit_2_mast",
+      "label": "6 Crit & 2 Mast",
+      "enchant_id": 8150,
+      "stats": {
+        "crit": 6,
+        "mastery": 2
+      },
+      "tags": [],
+      "item_id": 240875
+    },
+    {
+      "id": "7_crit_3_mast",
+      "label": "7 Crit & 3 Mast",
+      "enchant_id": 8151,
+      "stats": {
+        "crit": 7,
+        "mastery": 3
+      },
+      "tags": [],
+      "item_id": 240876
+    },
+    {
+      "id": "10_crit_4_mast",
+      "label": "10 Crit & 4 Mast",
+      "enchant_id": 8152,
+      "stats": {
+        "crit": 10,
+        "mastery": 4
+      },
+      "tags": [],
+      "item_id": 240907
+    },
+    {
+      "id": "12_crit_5_mast",
+      "label": "12 Crit & 5 Mast",
+      "enchant_id": 8153,
+      "stats": {
+        "crit": 12,
+        "mastery": 5
+      },
+      "tags": [],
+      "item_id": 240908
+    },
+    {
+      "id": "6_crit_2_vers",
+      "label": "6 Crit & 2 Vers",
+      "enchant_id": 8154,
+      "stats": {
+        "crit": 6,
+        "vers": 2
+      },
+      "tags": [],
+      "item_id": 240877
+    },
+    {
+      "id": "7_crit_3_vers",
+      "label": "7 Crit & 3 Vers",
+      "enchant_id": 8155,
+      "stats": {
+        "crit": 7,
+        "vers": 3
+      },
+      "tags": [],
+      "item_id": 240878
+    },
+    {
+      "id": "10_crit_4_vers",
+      "label": "10 Crit & 4 Vers",
+      "enchant_id": 8156,
+      "stats": {
+        "crit": 10,
+        "vers": 4
+      },
+      "tags": [],
+      "item_id": 240909
+    },
+    {
+      "id": "12_crit_5_vers",
+      "label": "12 Crit & 5 Vers",
+      "enchant_id": 8157,
+      "stats": {
+        "crit": 12,
+        "vers": 5
+      },
+      "tags": [],
+      "item_id": 240910
+    },
+    {
+      "id": "26_primary",
+      "label": "26 Primary",
+      "enchant_id": 8551,
+      "stats": {
+        "agi": 26
+      },
+      "tags": [],
+      "item_id": 240982,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
+    },
+    {
+      "id": "32_primary",
+      "label": "32 Primary",
+      "enchant_id": 8552,
+      "stats": {
+        "agi": 32
+      },
+      "tags": [],
+      "item_id": 240983,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
+    },
+    {
+      "id": "18_primary_10_armor",
+      "label": "18 Primary / 10 Armor",
+      "enchant_id": 8554,
+      "stats": {
+        "agi": 18
+      },
+      "tags": [],
+      "item_id": 240970,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
+    },
+    {
+      "id": "23_primary_13_armor",
+      "label": "23 Primary / 13 Armor",
+      "enchant_id": 8555,
       "stats": {
         "agi": 23
       },
-      "tags": []
+      "tags": [],
+      "item_id": 240971,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
+    },
+    {
+      "id": "23_primary_015_critical_strike_effectiveness_per_unique_midnight_gem_color",
+      "label": "23 Primary / +0.15% critical strike effectiveness per unique Midnight gem color",
+      "enchant_id": 8556,
+      "stats": {
+        "agi": 23
+      },
+      "tags": [],
+      "item_id": 240967,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
+    },
+    {
+      "id": "18_primary_015_critical_strike_effectiveness_per_unique_midnight_gem_color",
+      "label": "18 Primary / +0.15% critical strike effectiveness per unique Midnight gem color",
+      "enchant_id": 8557,
+      "stats": {
+        "agi": 18
+      },
+      "tags": [],
+      "item_id": 240966,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
+    },
+    {
+      "id": "23_primary_1_maximum_mana_per_unique_midnight_gem_color",
+      "label": "23 Primary / +1% Maximum Mana per unique Midnight gem color",
+      "enchant_id": 8558,
+      "stats": {
+        "agi": 23
+      },
+      "tags": [],
+      "item_id": 240969,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
+    },
+    {
+      "id": "18_primary_1_maximum_mana_per_unique_midnight_gem_color",
+      "label": "18 Primary / +1% Maximum Mana per unique Midnight gem color",
+      "enchant_id": 8559,
+      "stats": {
+        "agi": 18
+      },
+      "tags": [],
+      "item_id": 240968,
+      "uniqueCategory": 698,
+      "uniqueLimit": 1
     }
   ],
-  "_defaultGem": 8684,
+  "_defaultGem": 240983,
   "embellishments": {
     "null_overrides": [
       "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983",
@@ -2217,6 +3989,13 @@
       "label": "Voidlight Bindings 2-piece",
       "finger1": "omission_of_light",
       "finger2": "occlusion_of_void"
+    },
+    {
+      "id": "set_1331",
+      "label": "Eredath Seal of Nobility + Band of the Triumvirate (Set 1331)",
+      "finger1": "eredath_seal_of_nobility",
+      "finger2": "band_of_the_triumvirate",
+      "itemSetId": 1331
     }
   ],
   "flagged": {
