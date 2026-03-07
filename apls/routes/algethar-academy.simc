@@ -1,0 +1,34 @@
+# Algeth'ar Academy — 9-pull route (keystone.guru KL15, 20% tank contribution)
+# HP values are authoritative from keystone.guru, already scaled to solo-tank share
+
+# Invulnerable main target — standard DungeonRoute idiom
+enemy=DungeonRoute_AA
+enemy_health=999999
+raid_events=/invulnerable,cooldown=5160,duration=5160,retarget=1
+
+# Pull 1: Opening trash + Overgrown Ancient (BL)
+raid_events+=/pull,pull=01,bloodlust=1,delay=046,enemies="aggravated-skitterfly_1":1007409|"aggravated-skitterfly_2":1007409|"aggravated-skitterfly_3":1007409|"aggravated-skitterfly_4":1007409|"aggravated-skitterfly_5":1007409|"aggravated-skitterfly_6":1007409|"hungry-lasher_1":629631|"hungry-lasher_2":629631|"hungry-lasher_3":629631|"hungry-lasher_4":629631|"hungry-lasher_5":629631|"hungry-lasher_6":629631|"hungry-lasher_7":629631|"hungry-lasher_8":629631|"hungry-lasher_9":629631|"hungry-lasher_10":629631|"hungry-lasher_11":629631|"hungry-lasher_12":629631|"hungry-lasher_13":629631|"hungry-lasher_14":629631|"hungry-lasher_15":629631|"hungry-lasher_16":629631|"hungry-lasher_17":629631|"hungry-lasher_18":629631|"hungry-lasher_19":629631|"hungry-lasher_20":629631|"hungry-lasher_21":629631|"hungry-lasher_22":629631|"hungry-lasher_23":629631|"hungry-lasher_24":629631|"vile-lasher_1":2266672|"vile-lasher_2":2266672|"vile-lasher_3":2266672|"BOSS_overgrown-ancient_1":8526254
+
+# Pull 2: Guardian Sentry (mini-boss)
+raid_events+=/pull,pull=02,bloodlust=0,delay=032,enemies="BOSS_guardian-sentry_1":4092602
+
+# Pull 3: Eagle pack + Crawth
+raid_events+=/pull,pull=03,bloodlust=0,delay=039,enemies="territorial-eagle_1":629631|"territorial-eagle_2":629631|"territorial-eagle_3":629631|"territorial-eagle_4":629631|"territorial-eagle_5":629631|"territorial-eagle_6":629631|"territorial-eagle_7":629631|"territorial-eagle_8":629631|"territorial-eagle_9":629631|"territorial-eagle_10":629631|"territorial-eagle_11":629631|"territorial-eagle_12":629631|"territorial-eagle_13":629631|"territorial-eagle_14":629631|"territorial-eagle_15":629631|"territorial-eagle_16":629631|"alpha-eagle_1":1888893|"alpha-eagle_2":1888893|"alpha-eagle_3":1888893|"BOSS_crawth_1":14210423
+
+# Pull 4: Arcane corridor trash
+raid_events+=/pull,pull=04,bloodlust=0,delay=081,enemies="arcane-forager_1":1007409|"arcane-forager_2":1007409|"arcane-forager_3":1007409|"arcane-forager_4":1007409|"arcane-forager_5":1007409|"arcane-forager_6":1007409|"spellbound-battleaxe_1":1385188|"spellbound-battleaxe_2":1385188|"spellbound-battleaxe_3":1385188|"spellbound-battleaxe_4":1385188|"vicious-ravager_1":3022229|"corrupted-manafiend_1":1259262|"corrupted-manafiend_2":1259262
+
+# Pull 5: Vexamus + trash (BL)
+raid_events+=/pull,pull=05,bloodlust=1,delay=021,enemies="arcane-forager_1":1007409|"arcane-forager_2":1007409|"corrupted-manafiend_1":1259262|"corrupted-manafiend_2":1259262|"corrupted-manafiend_3":1259262|"corrupted-manafiend_4":1259262|"spellbound-battleaxe_1":1385188|"spellbound-battleaxe_2":1385188|"spellbound-battleaxe_3":1385188|"spellbound-battleaxe_4":1385188|"spellbound-battleaxe_5":1385188|"unruly-textbook_1":1007409|"unruly-textbook_2":1007409|"unruly-textbook_3":1007409|"unruly-textbook_4":1007409|"BOSS_vexamus_1":9947296
+
+# Pull 6: Post-Vexamus trash
+raid_events+=/pull,pull=06,bloodlust=0,delay=021,enemies="arcane-forager_1":1007409|"arcane-forager_2":1007409|"vicious-ravager_1":3022229|"corrupted-manafiend_1":1259262|"corrupted-manafiend_2":1259262|"corrupted-manafiend_3":1259262|"spellbound-battleaxe_1":1385188|"spellbound-battleaxe_2":1385188|"spellbound-battleaxe_3":1385188
+
+# Pull 7: Pre-final trash (small)
+raid_events+=/pull,pull=07,bloodlust=0,delay=033,enemies="spectral-invoker_1":1385188|"spectral-invoker_2":1385188|"algethar-echoknight_1":2266672
+
+# Pull 8: Pre-final trash (large)
+raid_events+=/pull,pull=08,bloodlust=0,delay=010,enemies="spectral-invoker_1":1385188|"algethar-echoknight_1":2266672|"algethar-echoknight_2":2266672|"algethar-echoknight_3":2266672
+
+# Pull 9: Echo of Doragosa (BL)
+raid_events+=/pull,pull=09,bloodlust=1,delay=012,enemies="BOSS_echo-of-doragosa_1":12789381
