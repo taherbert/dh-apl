@@ -1845,7 +1845,8 @@ function selectWithQuotas(allBuilds, maxSize, data) {
     (a, b) => a - b,
   );
   const bucketCount = heroTreeNames.length * apexLevels.length;
-  const perBucket = Math.floor(maxSize / bucketCount);
+  const basePerBucket = Math.floor(maxSize / bucketCount);
+  let remainder = maxSize - basePerBucket * bucketCount;
 
   // Group into buckets
   const buckets = new Map();
@@ -1856,9 +1857,15 @@ function selectWithQuotas(allBuilds, maxSize, data) {
   }
 
   const selected = [];
-  const overflow = [];
+  // Sort buckets so largest get remainder slots first (more diversity headroom)
+  const sortedBuckets = [...buckets.entries()].sort(
+    (a, b) => b[1].length - a[1].length,
+  );
 
-  for (const [key, builds] of buckets) {
+  for (const [, builds] of sortedBuckets) {
+    const perBucket = basePerBucket + (remainder > 0 ? 1 : 0);
+    if (remainder > 0) remainder--;
+
     // Ensure archetype diversity within bucket
     const byTemplate = new Map();
     for (const b of builds) {
@@ -1883,11 +1890,6 @@ function selectWithQuotas(allBuilds, maxSize, data) {
       if (remaining.length > 0 && fillCount > 0) {
         selected.push(...selectDiverseSubset(remaining, fillCount));
       }
-    }
-
-    // Track overflow for redistribution
-    if (builds.length < perBucket) {
-      overflow.push({ key, deficit: perBucket - builds.length });
     }
   }
 
@@ -2143,6 +2145,9 @@ export function generateClusterRoster({ maxRosterSize = 500 } = {}) {
   }
 
   // Step 4: Quota-balanced selection
+  console.log(
+    `  Pre-quota: ${results.length} builds from ${new Set(results.map((r) => r.template)).size} templates`,
+  );
   const selected = selectWithQuotas(results, maxRosterSize, data);
 
   console.log(`  Talent value scores: ${valueScores.size} nodes scored`);
