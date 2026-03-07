@@ -2027,9 +2027,12 @@ function renderStatScalingCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
   const { curves, baselineStats, step = 300 } = statCurves;
 
   // Parse raw curve data: array of {stat: [{rating, dps}]}
+  // SimC outputs short/capitalized keys (Crit, Vers) - normalize to our keys
+  const STAT_ALIASES = { vers: "versatility" };
   const parsed = [];
   for (const entry of curves) {
-    for (const [stat, points] of Object.entries(entry)) {
+    for (const [rawStat, points] of Object.entries(entry)) {
+      const stat = STAT_ALIASES[rawStat.toLowerCase()] || rawStat.toLowerCase();
       const color = STAT_COLORS[stat];
       const label = STAT_LABELS[stat];
       if (!color || !label || !points?.length) continue;
@@ -2189,9 +2192,11 @@ function interpolateMarginal(mPoints, targetRating) {
 }
 
 function renderDeltaStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
+  const STAT_ALIASES = { vers: "versatility" };
   const parsed = [];
   for (const entry of statCurves.curves) {
-    for (const [stat, points] of Object.entries(entry)) {
+    for (const [rawStat, points] of Object.entries(entry)) {
+      const stat = STAT_ALIASES[rawStat.toLowerCase()] || rawStat.toLowerCase();
       const color = STAT_COLORS[stat];
       const label = STAT_LABELS[stat];
       if (!color || !label || !points?.length) continue;
