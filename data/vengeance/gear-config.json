@@ -313,6 +313,11 @@
       "7220": 241144,
       "7221": 241143,
       "7222": 241142
+    },
+    "names": {
+      "241144": "Enduring Heliotrope",
+      "241143": "Cognitive Heliotrope",
+      "241142": "Determined Heliotrope"
     }
   },
   "manual_enchants": {

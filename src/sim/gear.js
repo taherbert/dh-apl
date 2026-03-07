@@ -83,6 +83,7 @@ function parseFidelity(args, defaultTier = "standard") {
 // --- Concurrency helpers ---
 
 const MIN_THREADS_PER_SIM = 4;
+const DPS_PLOT_STEP = 300;
 
 function simConcurrency(simCount) {
   const totalCores = getSimCores();
@@ -390,8 +391,8 @@ async function cmdScaleFactors(args) {
     "scale_only=Agi/Haste/Crit/Mastery/Vers",
     // DPS plot: sim each secondary stat across a rating range to show DR curves
     "dps_plot_stat=crit,haste,mastery,versatility",
-    "dps_plot_points=9",
-    "dps_plot_step=150",
+    "dps_plot_points=21",
+    `dps_plot_step=${DPS_PLOT_STEP}`,
     `json2=${outputPath}`,
     `threads=${threadsPerSim}`,
     `max_time=${stConfig.maxTime}`,
@@ -425,6 +426,25 @@ async function cmdScaleFactors(args) {
     timestamp: new Date().toISOString(),
   });
 
+  // Extract baseline gear stats for absolute-rating axis
+  const baselineStats = { crit: 0, haste: 0, mastery: 0, versatility: 0 };
+  const gear = data.sim.players[0].gear;
+  if (gear) {
+    for (const item of Object.values(gear)) {
+      for (const [key, val] of Object.entries(item)) {
+        if (key.endsWith("_rating")) {
+          const stat = key.replace("_rating", "");
+          if (stat in baselineStats) baselineStats[stat] += val;
+        }
+      }
+    }
+    console.log(
+      `  Baseline stats: ${Object.entries(baselineStats)
+        .map(([k, v]) => `${k}=${v}`)
+        .join(", ")}`,
+    );
+  }
+
   // Store DPS plot data (stat DR curves)
   const dpsPlot = data.sim.dps_plot;
   if (dpsPlot?.length) {
@@ -432,6 +452,8 @@ async function cmdScaleFactors(args) {
     if (playerPlot) {
       setSessionState("gear_stat_curves", {
         curves: playerPlot,
+        baselineStats,
+        step: DPS_PLOT_STEP,
         timestamp: new Date().toISOString(),
       });
       const statCount = playerPlot.reduce(
