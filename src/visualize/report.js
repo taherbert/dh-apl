@@ -1976,17 +1976,26 @@ function renderStatWeights(scaleFactors, statCurves) {
     versatility: "Vers",
   };
 
-  const ts = scaleFactors?.timestamp
-    ? new Date(scaleFactors.timestamp).toISOString().split("T")[0]
-    : "";
+  const rawTs = statCurves?.timestamp || scaleFactors?.timestamp;
+  const ts = rawTs ? new Date(rawTs).toISOString().split("T")[0] : "";
   const tsNote = ts ? ` <span class="sw-timestamp">as of ${ts}</span>` : "";
 
-  // If we have real dps_plot sim data, render the simmed curves
-  if (statCurves?.curves?.length) {
-    return renderSimmedStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote);
+  // If we have dps_plot data with baseline stats, render marginal value curves
+  if (statCurves?.curves?.length && statCurves.baselineStats) {
+    return renderStatScalingCurves(
+      statCurves,
+      STAT_COLORS,
+      STAT_LABELS,
+      tsNote,
+    );
   }
 
-  // Fallback: simple EP ranking from scale factors
+  // Fallback for old data without baselineStats: delta-based chart
+  if (statCurves?.curves?.length) {
+    return renderDeltaStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote);
+  }
+
+  // Final fallback: simple EP bars from scale factors
   if (!scaleFactors) return "";
   const epStats = ["Crit", "Haste", "Mastery", "Vers"]
     .map((key) => ({ key, label: key, ep: scaleFactors[key] || 0 }))
@@ -2014,9 +2023,172 @@ function renderStatWeights(scaleFactors, statCurves) {
 </div>`;
 }
 
-function renderSimmedStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
-  // statCurves.curves is an array of objects, each with one stat key
-  // mapping to an array of {rating, dps, dps-error}
+function renderStatScalingCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
+  const { curves, baselineStats, step = 300 } = statCurves;
+
+  // Parse raw curve data: array of {stat: [{rating, dps}]}
+  const parsed = [];
+  for (const entry of curves) {
+    for (const [stat, points] of Object.entries(entry)) {
+      const color = STAT_COLORS[stat];
+      const label = STAT_LABELS[stat];
+      if (!color || !label || !points?.length) continue;
+      parsed.push({ stat, label, color, points });
+    }
+  }
+  if (parsed.length === 0) return "";
+
+  // Compute marginal values via finite differences
+  // Each stat gets absolute X (total rating) and marginal Y (DPS per rating point)
+  const marginals = parsed.map((s) => {
+    const baseline = baselineStats[s.stat] || 0;
+    const mPoints = [];
+    for (let i = 0; i < s.points.length - 1; i++) {
+      const r0 = baseline + s.points[i].rating;
+      const r1 = baseline + s.points[i + 1].rating;
+      const midRating = (r0 + r1) / 2;
+      const marginal = (s.points[i + 1].dps - s.points[i].dps) / step;
+      mPoints.push({ rating: midRating, marginal });
+    }
+    // Current gear position: interpolate marginal at baseline
+    const baselineMarginal = interpolateMarginal(mPoints, baseline);
+    return {
+      ...s,
+      baseline,
+      baselineMarginal,
+      mPoints,
+    };
+  });
+
+  // SVG dimensions
+  const W = 420;
+  const H = 240;
+  const PAD = { top: 14, right: 16, bottom: 34, left: 46 };
+  const plotW = W - PAD.left - PAD.right;
+  const plotH = H - PAD.top - PAD.bottom;
+
+  // Shared X-axis: union of all stat rating ranges
+  const allRatings = marginals.flatMap((s) => s.mPoints.map((p) => p.rating));
+  if (allRatings.length === 0) return "";
+  const xMin = Math.min(...allRatings);
+  const xMax = Math.max(...allRatings);
+  if (xMin === xMax) return "";
+
+  // Y-axis: marginal DPS values
+  const allMarginals = marginals.flatMap((s) =>
+    s.mPoints.map((p) => p.marginal),
+  );
+  const mMin = Math.min(...allMarginals);
+  const mMax = Math.max(...allMarginals);
+  const yPad = (mMax - mMin) * 0.1 || 0.5;
+  const yMin = Math.max(0, mMin - yPad);
+  const yMax = mMax + yPad;
+
+  function sx(rating) {
+    return PAD.left + ((rating - xMin) / (xMax - xMin)) * plotW;
+  }
+  function sy(marginal) {
+    return PAD.top + plotH - ((marginal - yMin) / (yMax - yMin)) * plotH;
+  }
+
+  // Y-axis grid lines + labels
+  const yTicks = 4;
+  let gridLines = "";
+  for (let i = 0; i <= yTicks; i++) {
+    const v = yMin + ((yMax - yMin) * i) / yTicks;
+    const y = sy(v).toFixed(1);
+    gridLines += `<line x1="${PAD.left}" y1="${y}" x2="${W - PAD.right}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>`;
+    gridLines += `<text x="${PAD.left - 4}" y="${y}" text-anchor="end" class="sw-axis-label" dy="0.35em">${v.toFixed(1)}</text>`;
+  }
+
+  // X-axis labels (absolute total rating)
+  let xAxisLabels = "";
+  const xRange = xMax - xMin;
+  const xStep =
+    xRange > 4000 ? 1000 : xRange > 2000 ? 500 : xRange > 1000 ? 250 : 100;
+  const xStart = Math.ceil(xMin / xStep) * xStep;
+  for (let r = xStart; r <= xMax; r += xStep) {
+    xAxisLabels += `<text x="${sx(r).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="sw-axis-label">${r}</text>`;
+  }
+
+  // Baseline markers: per-stat dashed vertical line + dot on curve
+  let baselineMarkers = "";
+  for (const s of marginals) {
+    if (s.baseline <= 0) continue;
+    const bx = sx(s.baseline).toFixed(1);
+    baselineMarkers += `<line x1="${bx}" y1="${PAD.top}" x2="${bx}" y2="${PAD.top + plotH}" stroke="${s.color}" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.35"/>`;
+    if (s.baselineMarginal !== null) {
+      baselineMarkers += `<circle class="sw-baseline-marker" cx="${bx}" cy="${sy(s.baselineMarginal).toFixed(1)}" r="3.5" fill="${s.color}" stroke="var(--surface)" stroke-width="1.5"/>`;
+    }
+  }
+
+  // Curve lines
+  let curvePaths = "";
+  for (const s of marginals) {
+    if (s.mPoints.length < 2) continue;
+    const pathD = s.mPoints
+      .map(
+        (p, i) =>
+          `${i === 0 ? "M" : "L"}${sx(p.rating).toFixed(1)},${sy(p.marginal).toFixed(1)}`,
+      )
+      .join(" ");
+    curvePaths += `<path d="${pathD}" fill="none" stroke="${s.color}" stroke-width="2" opacity="0.85"/>`;
+  }
+
+  // Legend: stat name + current marginal value (bold) + DR% in parens
+  const legend = marginals
+    .map((s) => {
+      const mv =
+        s.baselineMarginal !== null ? s.baselineMarginal.toFixed(2) : "?";
+      // Empirical DR%: compare current marginal to the highest marginal on this curve
+      const peakMarginal = Math.max(...s.mPoints.map((p) => p.marginal));
+      let drStr = "";
+      if (s.baselineMarginal !== null && peakMarginal > 0) {
+        const drPct = Math.round((1 - s.baselineMarginal / peakMarginal) * 100);
+        if (drPct > 0) drStr = ` (${drPct}% DR)`;
+      }
+      return `<span class="sw-legend-item"><span class="sw-legend-swatch" style="background:${s.color}"></span>${s.label} <b>${mv}</b>${drStr}</span>`;
+    })
+    .join("");
+
+  return `<div class="stat-weights report-card">
+  <h3>Stat Scaling</h3>
+  <p class="section-desc">Marginal DPS per rating point vs total rating${tsNote}</p>
+  <svg viewBox="0 0 ${W} ${H}" class="sw-chart-svg" preserveAspectRatio="xMidYMid meet">
+    ${gridLines}
+    ${baselineMarkers}
+    ${curvePaths}
+    ${xAxisLabels}
+  </svg>
+  <div class="sw-legend">${legend}</div>
+</div>`;
+}
+
+function interpolateMarginal(mPoints, targetRating) {
+  if (mPoints.length === 0) return null;
+  // Clamp to range
+  if (targetRating <= mPoints[0].rating) return mPoints[0].marginal;
+  if (targetRating >= mPoints[mPoints.length - 1].rating)
+    return mPoints[mPoints.length - 1].marginal;
+  // Linear interpolation
+  for (let i = 0; i < mPoints.length - 1; i++) {
+    if (
+      targetRating >= mPoints[i].rating &&
+      targetRating <= mPoints[i + 1].rating
+    ) {
+      const t =
+        (targetRating - mPoints[i].rating) /
+        (mPoints[i + 1].rating - mPoints[i].rating);
+      return (
+        mPoints[i].marginal +
+        t * (mPoints[i + 1].marginal - mPoints[i].marginal)
+      );
+    }
+  }
+  return mPoints[0].marginal;
+}
+
+function renderDeltaStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
   const parsed = [];
   for (const entry of statCurves.curves) {
     for (const [stat, points] of Object.entries(entry)) {
@@ -2028,19 +2200,15 @@ function renderSimmedStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
   }
   if (parsed.length === 0) return "";
 
-  // SVG dimensions
   const W = 380;
   const H = 220;
   const PAD = { top: 12, right: 16, bottom: 32, left: 50 };
   const plotW = W - PAD.left - PAD.right;
   const plotH = H - PAD.top - PAD.bottom;
 
-  // X range: rating deltas (all stats share the same set from dps_plot_step)
   const allRatings = parsed[0].points.map((p) => p.rating);
   const xMin = Math.min(...allRatings);
   const xMax = Math.max(...allRatings);
-
-  // Y range: DPS values across all stats
   const allDps = parsed.flatMap((s) => s.points.map((p) => p.dps));
   const dpsMin = Math.min(...allDps);
   const dpsMax = Math.max(...allDps);
@@ -2055,7 +2223,6 @@ function renderSimmedStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
     return PAD.top + plotH - ((dps - yMin) / (yMax - yMin)) * plotH;
   }
 
-  // Grid lines
   const yTicks = 4;
   let gridLines = "";
   for (let i = 0; i <= yTicks; i++) {
@@ -2066,9 +2233,7 @@ function renderSimmedStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
     gridLines += `<text x="${PAD.left - 4}" y="${y}" text-anchor="end" class="sw-axis-label" dy="0.35em">${dpsLabel}</text>`;
   }
 
-  // X-axis labels (rating deltas)
   let xAxisLabels = "";
-  const step = allRatings.length > 1 ? allRatings[1] - allRatings[0] : 150;
   const labelEvery = allRatings.length > 7 ? 2 : 1;
   for (let i = 0; i < allRatings.length; i++) {
     if (i % labelEvery !== 0 && i !== allRatings.length - 1) continue;
@@ -2077,11 +2242,9 @@ function renderSimmedStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
     xAxisLabels += `<text x="${sx(r).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="sw-axis-label">${label}</text>`;
   }
 
-  // Zero line (current gear = 0 delta)
   const zeroX = sx(0).toFixed(1);
   const zeroLine = `<line x1="${zeroX}" y1="${PAD.top}" x2="${zeroX}" y2="${PAD.top + plotH}" stroke="var(--fg-muted)" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>`;
 
-  // Curve lines + dots at zero
   let curvePaths = "";
   for (const s of parsed) {
     const pathD = s.points
@@ -2097,7 +2260,6 @@ function renderSimmedStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
     }
   }
 
-  // Legend with DPS at zero (current)
   const legend = parsed
     .map((s) => {
       const zeroDps = s.points.find((p) => p.rating === 0)?.dps;
@@ -2822,6 +2984,9 @@ h4 {
   flex-shrink: 0;
 }
 
+.sw-baseline-marker {
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
+}
 .sw-timestamp {
   color: var(--fg-muted);
   font-size: 0.72rem;
