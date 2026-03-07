@@ -1284,8 +1284,9 @@ async function buildAmi({ buildInstanceType } = {}) {
         { timeout: 30000 },
       );
       // Pass 2: run representative workload (quick sim, enough to train branches)
+      const pgoPtr = config.data.env !== "live" ? " ptr=1" : "";
       buildCmds.push(
-        "/tmp/simc-build/engine/simc /tmp/pgo-training.simc target_error=0.5 threads=$(nproc) report_progress=0 json2=/dev/null ptr=1",
+        `/tmp/simc-build/engine/simc /tmp/pgo-training.simc target_error=0.5 threads=$(nproc) report_progress=0 json2=/dev/null${pgoPtr}`,
       );
       // Pass 3: clean objects (preserves .gcda profile data), rebuild with PGO
       buildCmds.push(

@@ -79,6 +79,8 @@ const ENCHANT_CATEGORY_MAP = {
   "Foot Enchantments": "foot",
   "Boot Enchantments": "foot",
   "Chest Enchantments": "chest",
+  "Shoulder Enchantments": "shoulder",
+  "Inscription Crests": "shoulder",
 };
 
 // Stat IDs → normalized stat key (for item stat extraction)
@@ -733,6 +735,12 @@ async function main() {
       category: "legs",
       keys: ["legs"],
       baseSlots: ["legs"],
+      includeStats: true,
+    },
+    {
+      category: "shoulder",
+      keys: ["shoulder"],
+      baseSlots: ["shoulder"],
       includeStats: true,
     },
   ];

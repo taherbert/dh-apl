@@ -115,10 +115,10 @@
 - `run_action_list -> aldrachi_reaver`: `(unconditional)`
 
 ## Roster Overview
-- Templates: 89
+- Templates: 102
 - Hero trees: Aldrachi Reaver, Fel-Scarred
 - Apex range: 0-4
-- Per rank: Apex 0: 23, Apex 1: 18, Apex 2: 21, Apex 3: 13, Apex 4: 14
+- Per rank: Apex 0: 29, Apex 1: 21, Apex 2: 24, Apex 3: 14, Apex 4: 14
 - Variation axes: hero tree, apex rank, talent variant (require/exclude)
 
 ## Design Constraints

@@ -1,9 +1,9 @@
 {
-  "refreshed_at": "2026-03-02T16:27:59Z",
-  "data_env": "beta",
+  "refreshed_at": "2026-03-06T17:44:59Z",
+  "data_env": "live",
   "simc": {
-    "commit": "f05f7b217f784f5af9bba7dfe12e992939508e3d",
-    "branch": "midnight",
-    "commit_date": "2026-03-02 09:22:10 +0000"
+    "commit": "d2f1686beff72603a0907bcf02768a9a33bbfd4d",
+    "branch": "fix/dh-glaive-tempest-first-blood",
+    "commit_date": "2026-03-05 11:27:24 -0800"
   }
 }

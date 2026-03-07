@@ -1,7 +1,6 @@
 # Havoc DH Midnight Profile
 # Melee DPS spec - Fel-Scarred / Aldrachi Reaver hero trees
 
-ptr=1
 demonhunter="Havoc_DH"
 spec=havoc
 level=90
