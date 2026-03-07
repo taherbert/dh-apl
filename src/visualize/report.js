@@ -522,6 +522,8 @@ function persistSimResults(roster, buildData) {
   }
 }
 
+const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
+
 // --- Defensive talent cost sims ---
 
 async function simDefensiveCosts(
@@ -560,9 +562,6 @@ async function simDefensiveCosts(
   );
 
   const results = [];
-
-  // Profileset names sanitize dots and spaces to underscores
-  const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
 
   // Group by hero tree — one profileset per tree per scenario
   const heroTrees = [...new Set(references.map((r) => r.heroTree))];
@@ -756,8 +755,6 @@ async function simTalentAblation(
 
   // Build ablation variants: for each ref, remove each non-locked spec talent
   const ablationVariants = []; // { refId, heroTree, nodeId, nodeName, orphanedNodes, hash }
-
-  const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
 
   for (const ref of refs) {
     const sel = decodedBuilds.get(ref.build.id);
@@ -4142,15 +4139,15 @@ const JS = `
 
   let activeScenario = 'weighted';
 
-  function getDpsKey(tree) {
-    const prefix = tree.toLowerCase().replace(/\\s+/g, '-');
-    return (prefix + '-' + activeScenario).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+  function buildKey(tree, ...parts) {
+    const segs = [tree.toLowerCase().replace(/\\s+/g, '-'), ...parts];
+    return segs.join('-').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
   }
 
+  function getDpsKey(tree) { return buildKey(tree, activeScenario); }
+
   function getPctKey(tree) {
-    const prefix = tree.toLowerCase().replace(/\\s+/g, '-');
-    const scenarioSuffix = activeScenario === 'weighted' ? '' : '-' + activeScenario;
-    return (prefix + '-pct' + scenarioSuffix).replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    return activeScenario === 'weighted' ? buildKey(tree, 'pct') : buildKey(tree, 'pct', activeScenario);
   }
 
   // Hero tree toggle
@@ -4188,8 +4185,7 @@ const JS = `
       const dpsKey = getDpsKey(tree);
       const pctVal = node.dataset[pctKey];
       const dpsVal = node.dataset[dpsKey];
-      const uniKey = (tree.toLowerCase().replace(/\\s+/g, '-') + '-universal')
-        .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+      const uniKey = buildKey(tree, 'universal');
       const isUni = node.dataset[uniKey] === '1';
       tooltip.querySelector('.heatmap-tooltip-name').textContent = name;
       const deltaEl = tooltip.querySelector('.heatmap-tooltip-delta');
@@ -4229,8 +4225,8 @@ const JS = `
     const tree = section.dataset.activeTree || 'all';
     const dpsKey = getDpsKey(tree);
     const pctKey = getPctKey(tree);
-    const uniKey = (tree.toLowerCase().replace(/\\s+/g, '-') + '-universal')
-      .replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+    const uniKey = buildKey(tree, 'universal');
+    const pathNodeKey = buildKey(tree, 'path');
 
     // Collect max pct for color scaling
     const nodeGroups = section.querySelectorAll('.heatmap-node-group');
@@ -4239,10 +4235,10 @@ const JS = `
       const node = g.querySelector('.heatmap-node');
       if (node.dataset.defensive === '1') return;
       if (node.dataset[uniKey] === '1' || node.classList.contains('heatmap-universal')) return;
-      const v = Math.abs(Number(node.dataset[pctKey] || node.dataset[dpsKey] || 0));
-      // Use pct if available, otherwise DPS — we just need relative ranking
-      const pv = node.dataset[pctKey] !== undefined ? Math.abs(Number(node.dataset[pctKey])) : 0;
-      if (pv > maxPct) maxPct = pv;
+      if (node.dataset[pctKey] !== undefined) {
+        const pv = Math.abs(Number(node.dataset[pctKey]));
+        if (pv > maxPct) maxPct = pv;
+      }
     });
 
     nodeGroups.forEach(g => {
@@ -4288,10 +4284,7 @@ const JS = `
       const absDisplay = Math.abs(displayVal);
       const power = hasPct ? Math.min(absDisplay / maxPct, 1) : Math.min(absDisplay / 5, 1);
 
-      // Check if path node
-      const pathPrefix = tree.toLowerCase().replace(/\\s+/g, '-');
-      const pathKey = (pathPrefix + '-path').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-      const isPath = node.dataset[pathKey] === '1';
+      const isPath = node.dataset[pathNodeKey] === '1';
 
       if (isPath) {
         if (overlay) overlay.style.fill = 'rgba(148, 163, 184, 0.25)';
@@ -4768,8 +4761,6 @@ async function main() {
       let ablationIntrinsics = null;
       if (!opts.skipSims) {
         console.log(`\n  Running talent ablation sims...`);
-        const fidelityOpts =
-          FIDELITY_TIERS[opts.fidelity] || FIDELITY_TIERS.standard;
         const ablationData = await simTalentAblation(
           oursPath,
           { target_error: 1.0 }, // quick fidelity for ablation
