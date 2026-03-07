@@ -3,7 +3,7 @@
 // resolution IV design matrix, then maps each row to a valid build with budget
 // reconciliation and connectivity repair.
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import {
   encode,
@@ -14,6 +14,7 @@ import {
 import { dataDir, aplsDir, ROOT } from "../engine/paths.js";
 import { getSpecAdapter, getSpecId, initSpec } from "../engine/startup.js";
 import { parseSpecArg } from "../util/parse-spec-arg.js";
+import { getFactors } from "../util/db.js";
 
 const CLASS_POINTS = 34;
 const SPEC_POINTS = 34;
@@ -371,7 +372,7 @@ export function generateFractionalFactorial(K) {
 // --- Build mapping ---
 
 // Find path from any selected/entry node to target via prev links (BFS backwards)
-function findPath(nodeMap, selected, targetId, bannedIds = null) {
+function findPath(nodeMap, selected, targetId, avoidIds = null) {
   const target = nodeMap.get(targetId);
   if (!target) return null;
   if (selected.has(targetId)) return [targetId];
@@ -387,7 +388,8 @@ function findPath(nodeMap, selected, targetId, bannedIds = null) {
 
     for (const prevId of node.prev || []) {
       if (visited.has(prevId)) continue;
-      if (bannedIds?.has(prevId)) continue;
+      // Skip avoided nodes unless they're already selected (no extra cost)
+      if (avoidIds?.has(prevId) && !selected.has(prevId)) continue;
       visited.add(prevId);
       parentOf.set(prevId, currentId);
 
@@ -1200,7 +1202,102 @@ function loadProfiles() {
   }
 }
 
-function buildPinnedBuild(profile, data, specMap, classResult) {
+// Score each spec-tree talent node by estimated DPS contribution.
+// Sources: 1) DB factors (sim-validated), 2) interactions-summary (damage modifiers + procs).
+// Talents in lockedTalents/bannedTalents are excluded from scoring — their factor values
+// are inflated because they never vary across builds.
+function computeTalentValueScores(data) {
+  const scores = new Map();
+  const config = getSpecAdapter().getSpecConfig();
+  const invariantNames = new Set([
+    ...(config.lockedTalents || []),
+    ...(config.bannedTalents || []),
+  ]);
+
+  // Source 1: DB factors (if available)
+  let factorScores = null;
+  try {
+    const factors = getFactors({ limit: 500 });
+    if (factors.length > 0) {
+      factorScores = new Map();
+      for (const f of factors) {
+        if (
+          f.nodeId &&
+          f.main_effect != null &&
+          !invariantNames.has(f.talent)
+        ) {
+          factorScores.set(f.nodeId, Math.abs(f.main_effect));
+        }
+      }
+    }
+  } catch {
+    // DB not available — fall through to interactions
+  }
+
+  // Source 2: interactions-summary (fallback/supplement)
+  const interactionScores = new Map();
+  const summaryPath = join(dataDir(), "interactions-summary.json");
+  if (existsSync(summaryPath)) {
+    const summary = JSON.parse(readFileSync(summaryPath, "utf8"));
+    const byTalent = summary.byTalent || {};
+    const nameToNodeId = new Map();
+    for (const n of data.specNodes) {
+      if (n.name) nameToNodeId.set(n.name, n.id);
+      if (n.entries)
+        for (const e of n.entries) {
+          if (e.name) nameToNodeId.set(e.name, n.id);
+        }
+    }
+
+    for (const [, talent] of Object.entries(byTalent)) {
+      if (!talent.name || invariantNames.has(talent.name)) continue;
+      const nodeId = nameToNodeId.get(talent.name);
+      if (!nodeId) continue;
+
+      let score = 0;
+      for (const t of talent.targets || []) {
+        if (t.type === "damage_modifier" && t.magnitude?.value) {
+          score += Math.abs(t.magnitude.value);
+        } else if (t.type === "proc_trigger") {
+          score += 5;
+        }
+      }
+      if (score > 0) interactionScores.set(nodeId, score);
+    }
+  }
+
+  // Defensive/utility talents: assign negative scores so fill only uses them
+  // as pass-through prerequisites, never as fill destinations
+  const defensiveNames = new Set([
+    ...(config.bannedTalents || []),
+    ...(config.excludedTalents || []),
+  ]);
+
+  // Merge: factor scores take priority, interactions fill gaps
+  for (const n of data.specNodes) {
+    if (n.freeNode || n.entryNode) continue;
+    const names = [n.name, ...(n.entries?.map((e) => e.name) || [])].filter(
+      Boolean,
+    );
+    const isDefensive = names.some((nm) => defensiveNames.has(nm));
+    if (isDefensive) {
+      scores.set(n.id, -100);
+      continue;
+    }
+    const fScore = factorScores?.get(n.id);
+    const iScore = interactionScores.get(n.id);
+    if (fScore != null) {
+      scores.set(n.id, fScore);
+    } else if (iScore != null) {
+      scores.set(n.id, iScore);
+    }
+    // else: score 0 (default) — posY desc tiebreaker handles these
+  }
+
+  return scores;
+}
+
+function buildPinnedBuild(profile, data, specMap, classResult, valueScores) {
   const nameToNode = new Map();
   for (const n of data.specNodes) {
     nameToNode.set(n.name, n);
@@ -1280,14 +1377,14 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     exclude: profile.exclude || [],
   });
 
-  // Hard-banned node IDs: BFS will never select these
+  // Hard-banned node IDs: BFS will never select these in the primary fill.
+  // Ban fallback only fires when under budget, and even then banned nodes sort
+  // after template-excluded DPS nodes.
   const banned = getBannedSet();
   const bannedNodeIds = new Set();
-  // Template-excluded node IDs: BFS will never select these either, but they
-  // don't participate in the ban fallback (which only fires for global bans).
-  // This prevents BFS from filling freed cluster points back with the excluded
-  // cluster talents while also preventing the ban fallback from picking up
-  // unrelated globally banned talents to fill the gap.
+  // Template-excluded node IDs: tracked for sort priority (sort after preferred
+  // fill nodes) but NOT filtered out. This lets the fill pick non-cluster DPS
+  // talents over banned defensive nodes when budget is tight.
   const templateExcludeNames = new Set(profile.exclude || []);
   const templateExcludeNodeIds = new Set();
   for (const n of data.specNodes) {
@@ -1300,141 +1397,133 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
   }
 
   // Connectivity repair: ensure all locked nodes have a path from entry.
-  // First pass avoids banned nodes; fallback allows them if no other path exists.
+  // Avoidance tiers: first avoid all negative-score nodes (banned + excluded +
+  // defensive), then allow them if no clean path exists. This prevents locking
+  // unnecessary defensive pass-throughs when a mandatory one suffices.
+  const avoidNodeIds = new Set();
+  for (const n of data.specNodes) {
+    if ((valueScores?.get(n.id) || 0) < 0) avoidNodeIds.add(n.id);
+  }
+
+  // Two-pass connectivity repair:
+  // Pass 1 (avoidance): iteratively resolve paths avoiding negative-score nodes.
+  //   This locks mandatory gateways (e.g. DI for Initiative) which may then
+  //   satisfy paths for other nodes (e.g. The Hunt can route through DI).
+  // Pass 2 (fallback): for any still-disconnected nodes, allow negative-score nodes.
+  const lockPath = (path) => {
+    let changed = false;
+    for (const pathId of path) {
+      if (!locked.has(pathId)) {
+        locked.add(pathId);
+        const pn = specMap.get(pathId);
+        lockedRanks.set(pathId, pn?.maxRanks || 1);
+        changed = true;
+      }
+    }
+    return changed;
+  };
+
+  const needsRepair = (id) => {
+    const node = specMap.get(id);
+    if (!node || node.entryNode || node.freeNode) return false;
+    if (!node.prev || node.prev.length === 0) return false;
+    return !node.prev.some((p) => locked.has(p));
+  };
+
+  // Pass 1: avoidance-only, iterate until stable
   let repairChanged = true;
   while (repairChanged) {
     repairChanged = false;
     for (const id of [...locked]) {
+      if (!needsRepair(id)) continue;
       const node = specMap.get(id);
-      if (!node || node.entryNode || node.freeNode) continue;
-      if (!node.prev || node.prev.length === 0) continue;
-      if (node.prev.some((p) => locked.has(p))) continue;
-      // Try ban-respecting path first
-      let found = false;
       for (const prevId of node.prev) {
-        if (bannedNodeIds.has(prevId)) continue;
-        const path = findPath(specMap, locked, prevId, bannedNodeIds);
+        if (avoidNodeIds.has(prevId) && !locked.has(prevId)) continue;
+        const path = findPath(specMap, locked, prevId, avoidNodeIds);
         if (path) {
-          for (const pathId of path) {
-            if (!locked.has(pathId)) {
-              locked.add(pathId);
-              const pn = specMap.get(pathId);
-              lockedRanks.set(pathId, pn?.maxRanks || 1);
-              repairChanged = true;
-            }
-          }
-          found = true;
+          repairChanged = lockPath(path) || repairChanged;
           break;
-        }
-      }
-      // Fallback: allow banned nodes if no clean path exists
-      if (!found) {
-        for (const prevId of node.prev) {
-          const path = findPath(specMap, locked, prevId);
-          if (path) {
-            for (const pathId of path) {
-              if (!locked.has(pathId)) {
-                locked.add(pathId);
-                const pn = specMap.get(pathId);
-                lockedRanks.set(pathId, pn?.maxRanks || 1);
-                repairChanged = true;
-              }
-            }
-            break;
-          }
         }
       }
     }
   }
 
-  // BFS fill remaining budget, preferring non-excluded nodes
+  // Pass 2: fallback tier — only allow banned nodes (those already forced by
+  // other constraints like Initiative → DI) to minimize extra defensives.
+  const bannedOnlyAvoid = new Set(
+    [...avoidNodeIds].filter((id) => !bannedNodeIds.has(id)),
+  );
+  repairChanged = true;
+  while (repairChanged) {
+    repairChanged = false;
+    for (const id of [...locked]) {
+      if (!needsRepair(id)) continue;
+      const node = specMap.get(id);
+      for (const prevId of node.prev) {
+        if (bannedOnlyAvoid.has(prevId) && !locked.has(prevId)) continue;
+        const path = findPath(specMap, locked, prevId, bannedOnlyAvoid);
+        if (path) {
+          repairChanged = lockPath(path) || repairChanged;
+          break;
+        }
+      }
+    }
+  }
+
+  // Pass 3: last resort — allow all nodes
+  repairChanged = true;
+  while (repairChanged) {
+    repairChanged = false;
+    for (const id of [...locked]) {
+      if (!needsRepair(id)) continue;
+      const node = specMap.get(id);
+      for (const prevId of node.prev) {
+        const path = findPath(specMap, locked, prevId);
+        if (path) {
+          repairChanged = lockPath(path) || repairChanged;
+          break;
+        }
+      }
+    }
+  }
+
+  // BFS fill remaining budget in two phases:
+  // Phase 1: only pick nodes with non-negative value scores (DPS nodes)
+  // Phase 2: if budget remains, allow negative-score nodes (defensives/utility)
+  // This prevents shallow defensives from consuming budget before deep DPS nodes
+  // become reachable through their prerequisites.
   const selected = new Set(locked);
   const rankMap = new Map(lockedRanks);
   let pts = 0;
   for (const [, rank] of lockedRanks) pts += rank;
 
-  let fillChanged = true;
-  while (fillChanged && pts < SPEC_POINTS) {
-    fillChanged = false;
-    const available = data.specNodes
-      .filter((n) => {
-        if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
-        if (bannedNodeIds.has(n.id) || templateExcludeNodeIds.has(n.id))
-          return false;
-        if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
-          return false;
-        if (!passesGate(n, selected, specMap, rankMap)) return false;
-        return true;
-      })
-      .sort((a, b) => {
-        const exA = effectiveExclusions.has(a.name) ? 1 : 0;
-        const exB = effectiveExclusions.has(b.name) ? 1 : 0;
-        if (exA !== exB) return exA - exB;
-        const dy = (a.posY || 0) - (b.posY || 0);
-        if (dy !== 0) return dy;
-        return (a.posX || 0) - (b.posX || 0);
-      });
+  const fillSort = (a, b) => {
+    const vsA = valueScores?.get(a.id) || 0;
+    const vsB = valueScores?.get(b.id) || 0;
+    if (vsA !== vsB) return vsB - vsA;
+    const exA = templateExcludeNodeIds.has(a.id) ? 1 : 0;
+    const exB = templateExcludeNodeIds.has(b.id) ? 1 : 0;
+    if (exA !== exB) return exA - exB;
+    const dy = (b.posY || 0) - (a.posY || 0);
+    if (dy !== 0) return dy;
+    return (a.posX || 0) - (b.posX || 0);
+  };
 
-    for (const node of available) {
-      if (pts >= SPEC_POINTS) break;
-      const cost = node.maxRanks || 1;
-      if (pts + cost > SPEC_POINTS) {
-        if (cost > 1 && pts + 1 <= SPEC_POINTS) {
-          selected.add(node.id);
-          rankMap.set(node.id, 1);
-          pts += 1;
-          fillChanged = true;
-        }
-        continue;
-      }
-      selected.add(node.id);
-      rankMap.set(node.id, cost);
-      pts += cost;
-      fillChanged = true;
-    }
+  const fillFilter = (n) => {
+    if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
+    if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
+      return false;
+    if (!passesGate(n, selected, specMap, rankMap)) return false;
+    return true;
+  };
 
-    // Bump multi-rank nodes (respecting maxRank overrides)
-    if (pts < SPEC_POINTS) {
-      for (const node of data.specNodes) {
-        if (pts >= SPEC_POINTS) break;
-        if (!selected.has(node.id)) continue;
-        const cap = maxRankOverrides.has(node.id)
-          ? maxRankOverrides.get(node.id)
-          : node.maxRanks || 1;
-        const curR = rankMap.get(node.id) || 1;
-        if (curR < cap && pts + (cap - curR) <= SPEC_POINTS) {
-          pts += cap - curR;
-          rankMap.set(node.id, cap);
-          fillChanged = true;
-        }
-      }
-    }
-  }
-
-  // Ban fallback: if still under budget after ban-respecting fill, re-run without
-  // global bans (but still respect template exclusions — those are intentional).
-  if (pts < SPEC_POINTS && bannedNodeIds.size > 0) {
-    let fallbackChanged = true;
-    while (fallbackChanged && pts < SPEC_POINTS) {
-      fallbackChanged = false;
+  const runFillPass = (nodeFilter) => {
+    let changed = true;
+    while (changed && pts < SPEC_POINTS) {
+      changed = false;
       const available = data.specNodes
-        .filter((n) => {
-          if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
-          if (templateExcludeNodeIds.has(n.id)) return false;
-          if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
-            return false;
-          if (!passesGate(n, selected, specMap, rankMap)) return false;
-          return true;
-        })
-        .sort((a, b) => {
-          const exA = effectiveExclusions.has(a.name) ? 1 : 0;
-          const exB = effectiveExclusions.has(b.name) ? 1 : 0;
-          if (exA !== exB) return exA - exB;
-          const banA = bannedNodeIds.has(a.id) ? 1 : 0;
-          const banB = bannedNodeIds.has(b.id) ? 1 : 0;
-          if (banA !== banB) return banA - banB;
-          return (a.posY || 0) - (b.posY || 0);
-        });
+        .filter((n) => fillFilter(n) && nodeFilter(n))
+        .sort(fillSort);
 
       for (const node of available) {
         if (pts >= SPEC_POINTS) break;
@@ -1444,16 +1533,17 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
             selected.add(node.id);
             rankMap.set(node.id, 1);
             pts += 1;
-            fallbackChanged = true;
+            changed = true;
           }
           continue;
         }
         selected.add(node.id);
         rankMap.set(node.id, cost);
         pts += cost;
-        fallbackChanged = true;
+        changed = true;
       }
 
+      // Bump multi-rank nodes (respecting maxRank overrides)
       if (pts < SPEC_POINTS) {
         for (const node of data.specNodes) {
           if (pts >= SPEC_POINTS) break;
@@ -1465,11 +1555,22 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
           if (curR < cap && pts + (cap - curR) <= SPEC_POINTS) {
             pts += cap - curR;
             rankMap.set(node.id, cap);
-            fallbackChanged = true;
+            changed = true;
           }
         }
       }
     }
+  };
+
+  // Phase 1: skip negative-score nodes (defensives, banned, excluded).
+  // Mandatory pass-throughs are already in `locked`/`selected` via connectivity
+  // repair, so the fill can use them as stepping stones to deeper DPS nodes
+  // without selecting additional defensives.
+  runFillPass((n) => (valueScores?.get(n.id) || 0) >= 0);
+
+  // Phase 2: if budget remains, allow negative-score nodes as filler.
+  if (pts < SPEC_POINTS) {
+    runFillPass(() => true);
   }
 
   // Gate repair: if locked S3 nodes pushed past the gate, swap removable post-gate
@@ -1503,40 +1604,40 @@ function buildPinnedBuild(profile, data, specMap, classResult) {
     let addable = data.specNodes
       .filter((n) => {
         if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
-        if (bannedNodeIds.has(n.id) || templateExcludeNodeIds.has(n.id))
-          return false;
+        if (bannedNodeIds.has(n.id)) return false;
         if (n.reqPoints >= gateThreshold) return false;
         if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
           return false;
         return true;
       })
       .sort((a, b) => {
-        const exA = excludedNodeIds.has(a.id) ? 1 : 0;
-        const exB = excludedNodeIds.has(b.id) ? 1 : 0;
+        const vsA = valueScores?.get(a.id) || 0;
+        const vsB = valueScores?.get(b.id) || 0;
+        if (vsA !== vsB) return vsB - vsA;
+        const exA = templateExcludeNodeIds.has(a.id) ? 1 : 0;
+        const exB = templateExcludeNodeIds.has(b.id) ? 1 : 0;
         if (exA !== exB) return exA - exB;
-        return (a.posY || 0) - (b.posY || 0);
+        return (b.posY || 0) - (a.posY || 0);
       });
 
     // Ban fallback: if no addable without bans, allow banned nodes
-    // (but still respect template exclusions)
     if (addable.length === 0 && bannedNodeIds.size > 0) {
       addable = data.specNodes
         .filter((n) => {
           if (selected.has(n.id) || n.freeNode || n.entryNode) return false;
-          if (templateExcludeNodeIds.has(n.id)) return false;
           if (n.reqPoints >= gateThreshold) return false;
           if (n.prev?.length > 0 && !n.prev.some((p) => selected.has(p)))
             return false;
           return true;
         })
         .sort((a, b) => {
+          const vsA = valueScores?.get(a.id) || 0;
+          const vsB = valueScores?.get(b.id) || 0;
+          if (vsA !== vsB) return vsB - vsA;
           const banA = bannedNodeIds.has(a.id) ? 1 : 0;
           const banB = bannedNodeIds.has(b.id) ? 1 : 0;
           if (banA !== banB) return banA - banB;
-          const exA = excludedNodeIds.has(a.id) ? 1 : 0;
-          const exB = excludedNodeIds.has(b.id) ? 1 : 0;
-          if (exA !== exB) return exA - exB;
-          return (a.posY || 0) - (b.posY || 0);
+          return (b.posY || 0) - (a.posY || 0);
         });
     }
 
@@ -1651,10 +1752,138 @@ function generatePinnedBuilds(data, specMap, classResult) {
 
 // --- Cluster-based roster generation ---
 
+// Hamming distance between two builds' spec node sets
+function buildHammingDistance(a, b) {
+  const setA = new Set(a.specBuild?.specNodes || []);
+  const setB = new Set(b.specBuild?.specNodes || []);
+  let dist = 0;
+  for (const id of setA) if (!setB.has(id)) dist++;
+  for (const id of setB) if (!setA.has(id)) dist++;
+  return dist;
+}
+
+// Greedy farthest-first selection for diversity within a bucket
+function selectDiverseSubset(builds, quota) {
+  if (builds.length <= quota) return builds;
+  const selected = [builds[0]];
+  const remaining = new Set(builds.slice(1));
+
+  while (selected.length < quota && remaining.size > 0) {
+    let bestBuild = null;
+    let bestMinDist = -1;
+    for (const candidate of remaining) {
+      let minDist = Infinity;
+      for (const s of selected) {
+        const d = buildHammingDistance(candidate, s);
+        if (d < minDist) minDist = d;
+      }
+      if (minDist > bestMinDist) {
+        bestMinDist = minDist;
+        bestBuild = candidate;
+      }
+    }
+    if (!bestBuild) break;
+    selected.push(bestBuild);
+    remaining.delete(bestBuild);
+  }
+  return selected;
+}
+
+// Quota-balanced selection across hero trees and apex levels
+function selectWithQuotas(allBuilds, maxSize, data) {
+  const valid = allBuilds.filter((b) => b.hash && b.valid !== false);
+  if (valid.length <= maxSize) {
+    logQuotaStats(valid, data);
+    return valid;
+  }
+
+  const heroTreeNames = Object.keys(data.heroSubtrees);
+  const apexLevels = [...new Set(valid.map((b) => b.apexRank))].sort(
+    (a, b) => a - b,
+  );
+  const bucketCount = heroTreeNames.length * apexLevels.length;
+  const perBucket = Math.floor(maxSize / bucketCount);
+
+  // Group into buckets
+  const buckets = new Map();
+  for (const b of valid) {
+    const key = `${b.heroTree}|${b.apexRank}`;
+    if (!buckets.has(key)) buckets.set(key, []);
+    buckets.get(key).push(b);
+  }
+
+  const selected = [];
+  const overflow = [];
+
+  for (const [key, builds] of buckets) {
+    // Ensure archetype diversity within bucket
+    const byTemplate = new Map();
+    for (const b of builds) {
+      if (!byTemplate.has(b.template)) byTemplate.set(b.template, []);
+      byTemplate.get(b.template).push(b);
+    }
+
+    // Guarantee at least 1 build per template
+    const guaranteed = [];
+    for (const [, tBuilds] of byTemplate) {
+      guaranteed.push(tBuilds[0]);
+    }
+
+    if (guaranteed.length >= perBucket) {
+      // More templates than quota — select diverse subset of guaranteed
+      selected.push(...selectDiverseSubset(guaranteed, perBucket));
+    } else {
+      // Fill remaining with diverse selection from all builds
+      selected.push(...guaranteed);
+      const remaining = builds.filter((b) => !guaranteed.includes(b));
+      const fillCount = perBucket - guaranteed.length;
+      if (remaining.length > 0 && fillCount > 0) {
+        selected.push(...selectDiverseSubset(remaining, fillCount));
+      }
+    }
+
+    // Track overflow for redistribution
+    if (builds.length < perBucket) {
+      overflow.push({ key, deficit: perBucket - builds.length });
+    }
+  }
+
+  logQuotaStats(selected, data);
+  return selected;
+}
+
+function logQuotaStats(builds, data) {
+  const heroTreeNames = Object.keys(data.heroSubtrees);
+  const apexLevels = [...new Set(builds.map((b) => b.apexRank))].sort(
+    (a, b) => a - b,
+  );
+
+  const counts = new Map();
+  for (const b of builds) {
+    const key = `${b.heroTree}|${b.apexRank}`;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+
+  const parts = [];
+  for (const ht of heroTreeNames) {
+    const abbr = ht
+      .split(/\s+/)
+      .map((w) => w[0])
+      .join("");
+    for (const apex of apexLevels) {
+      const key = `${ht}|${apex}`;
+      const count = counts.get(key) || 0;
+      parts.push(`${abbr}/a${apex}:${count}`);
+    }
+  }
+  console.log(`  Quota distribution: ${parts.join(", ")}`);
+  console.log(`  Total cluster builds: ${builds.length}`);
+}
+
 // Generate builds from SPEC_CONFIG.rosterTemplates × hero tree × variant.
 // Each template specifies an apex rank and which talent clusters to include/exclude.
 // Returns [{ hash, template, heroTree, variant, specBuild, valid, errors }]
-export function generateClusterRoster() {
+export function generateClusterRoster({ maxRosterSize = 500 } = {}) {
   const data = loadData();
   const specMap = buildNodeMap(data.specNodes);
   const classResult = classTreeFromBaseline(data.classNodes);
@@ -1667,6 +1896,8 @@ export function generateClusterRoster() {
   if (!talentClusters) {
     throw new Error("No talentClusters defined in SPEC_CONFIG");
   }
+
+  const valueScores = computeTalentValueScores(data);
 
   // Find the apex talent node (tiered entry node with maxRanks > 1)
   const apexNode = data.specNodes.find(
@@ -1731,74 +1962,138 @@ export function generateClusterRoster() {
       include: [],
     };
 
-    const specBuild = buildPinnedBuild(profile, data, specMap, classResult);
+    const specBuild = buildPinnedBuild(
+      profile,
+      data,
+      specMap,
+      classResult,
+      valueScores,
+    );
 
-    // Cross with hero trees and variants
-    for (const [heroTreeName, heroNodes] of Object.entries(data.heroSubtrees)) {
-      const heroCombos = heroChoiceCombos(heroNodes, {});
-      for (const heroCombo of heroCombos) {
-        const build = {
-          ...specBuild,
-          heroTree: heroTreeName,
-          heroNodes: heroNodes.map((n) => n.id),
-          heroChoices: heroCombo,
-        };
+    // Generate fill variants by perturbing scores of non-pinned fill nodes
+    const VARIANTS_PER_TEMPLATE = 2;
+    const specBuilds = [specBuild];
+    const pinnedNodeIds = new Set();
+    for (const req of profile.require) {
+      const name = typeof req === "string" ? req : req.name;
+      for (const n of data.specNodes) {
+        const names = [n.name, ...(n.entries?.map((e) => e.name) || [])].filter(
+          Boolean,
+        );
+        if (names.includes(name)) pinnedNodeIds.add(n.id);
+      }
+    }
+    const excludeNodeIds = new Set();
+    for (const name of profile.exclude) {
+      for (const n of data.specNodes) {
+        const names = [n.name, ...(n.entries?.map((e) => e.name) || [])].filter(
+          Boolean,
+        );
+        if (names.includes(name)) excludeNodeIds.add(n.id);
+      }
+    }
 
-        const variantDesc = Object.values(heroCombo)
-          .map((e) => e.name)
-          .join("_")
-          .replace(/\s+/g, "");
+    // Identify swappable fill nodes (selected but not pinned/locked/entry/free)
+    const fillNodes = specBuild.specNodes.filter((id) => {
+      if (pinnedNodeIds.has(id)) return false;
+      const n = specMap.get(id);
+      return n && !n.entryNode && !n.freeNode;
+    });
 
-        build.name = [
-          heroTreeName.replace(/\s+/g, ""),
-          template.name.replace(/\s+/g, "_"),
-          variantDesc || "default",
-        ].join("_");
+    for (let v = 0; v < VARIANTS_PER_TEMPLATE && fillNodes.length >= 2; v++) {
+      const perturbedScores = new Map(valueScores);
+      // Randomly shuffle scores among fill nodes to create diversity
+      const shuffled = [...fillNodes].sort(() => Math.random() - 0.5);
+      const halfLen = Math.ceil(shuffled.length / 2);
+      for (let i = 0; i < halfLen; i++) {
+        const cur = perturbedScores.get(shuffled[i]) || 0;
+        perturbedScores.set(shuffled[i], cur * 0.1);
+      }
+      const variant = buildPinnedBuild(
+        profile,
+        data,
+        specMap,
+        classResult,
+        perturbedScores,
+      );
+      if (variant.valid) specBuilds.push(variant);
+    }
 
-        let hash;
-        try {
-          hash = buildToHash(build, data);
-        } catch (e) {
+    // Cross each spec build (base + variants) with hero trees
+    for (const sb of specBuilds) {
+      for (const [heroTreeName, heroNodes] of Object.entries(
+        data.heroSubtrees,
+      )) {
+        const heroCombos = heroChoiceCombos(heroNodes, {});
+        for (const heroCombo of heroCombos) {
+          const build = {
+            ...sb,
+            heroTree: heroTreeName,
+            heroNodes: heroNodes.map((n) => n.id),
+            heroChoices: heroCombo,
+          };
+
+          const variantDesc = Object.values(heroCombo)
+            .map((e) => e.name)
+            .join("_")
+            .replace(/\s+/g, "");
+
+          build.name = [
+            heroTreeName.replace(/\s+/g, ""),
+            template.name.replace(/\s+/g, "_"),
+            variantDesc || "default",
+          ].join("_");
+
+          let hash;
+          try {
+            hash = buildToHash(build, data);
+          } catch (e) {
+            results.push({
+              hash: null,
+              template: template.name,
+              apexRank: template.apexRank,
+              heroTree: heroTreeName,
+              variant: variantDesc || null,
+              valid: false,
+              errors: [
+                ...(sb.errors || []),
+                `Hash encoding failed: ${e.message}`,
+              ],
+            });
+            continue;
+          }
+
+          const fp = buildFingerprint(
+            sb.specNodes,
+            build.specChoices,
+            heroTreeName,
+            heroCombo,
+          );
+
+          if (fingerprints.has(fp)) continue;
+          fingerprints.add(fp);
+
           results.push({
-            hash: null,
+            hash,
             template: template.name,
             apexRank: template.apexRank,
             heroTree: heroTreeName,
             variant: variantDesc || null,
-            valid: false,
-            errors: [
-              ...(specBuild.errors || []),
-              `Hash encoding failed: ${e.message}`,
-            ],
+            specBuild: build,
+            valid: sb.valid,
+            errors: sb.errors,
           });
-          continue;
         }
-
-        const fp = buildFingerprint(
-          specBuild.specNodes,
-          build.specChoices,
-          heroTreeName,
-          heroCombo,
-        );
-
-        if (fingerprints.has(fp)) continue;
-        fingerprints.add(fp);
-
-        results.push({
-          hash,
-          template: template.name,
-          apexRank: template.apexRank,
-          heroTree: heroTreeName,
-          variant: variantDesc || null,
-          specBuild: build,
-          valid: specBuild.valid,
-          errors: specBuild.errors,
-        });
       }
     }
   }
 
-  return results;
+  // Step 4: Quota-balanced selection
+  const selected = selectWithQuotas(results, maxRosterSize, data);
+
+  console.log(`  Talent value scores: ${valueScores.size} nodes scored`);
+
+  return selected;
 }
 
 // --- Defensive cost builds ---
