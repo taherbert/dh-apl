@@ -597,7 +597,11 @@ export function generate() {
     // Phase 3: Generate cluster roster
     // Systematic exploration of cluster permutations × hero tree × variant
     console.log("\nPhase 3: Cluster roster");
-    const clusterBuilds = generateClusterRoster();
+    const reservedSlots = fingerprints.size;
+    const maxClusterSlots = Math.max(50, 500 - reservedSlots);
+    const clusterBuilds = generateClusterRoster({
+      maxRosterSize: maxClusterSlots,
+    });
     let clusterAdded = 0;
     let clusterSkipped = 0;
     let clusterInvalid = 0;

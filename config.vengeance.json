@@ -4,7 +4,38 @@
     "specName": "vengeance",
     "specId": 581
   },
-  "communityBuilds": [],
+  "communityBuilds": [
+    {
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMjZwMjZGz8AzMzYYmtZGbjZMGzAAAAwsNDGGLbMhhZmxCAAAAGYAEgZGwMAAAAG",
+      "source": "wowhead",
+      "label": "AR Mythic+"
+    },
+    {
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjxMjMzMwiZMDmZMzYmHYGzYMzsNzYbMDGzAAAAwsNDGGLbMhhZmxCAAAAGMDgAMzAMAAAAG",
+      "source": "wowhead",
+      "label": "AR Delves"
+    },
+    {
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMzwMmZsNmxYAAAAAAAgAmZGbAAAAYwYmZmZptZmZAwMAAAAG",
+      "source": "wowhead",
+      "label": "Anni Raid"
+    },
+    {
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmBWMjZwMjZGz8AzMzYYmtZGbjZMGzAAAAAAAIgZmxGAAAAGYmZmZWabmZGAMDAAAgB",
+      "source": "wowhead",
+      "label": "Anni Mythic+"
+    },
+    {
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjZmZkZmZYYmZGDzYmxMmxMmxMmZsNmxYAAAAAAAgAmZGbAAAAYwYmZmZptZmZAwMAAAAG",
+      "source": "wowhead",
+      "label": "Anni Raid Cleave"
+    },
+    {
+      "hash": "CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjxMjMzMwiZMDmZMzYmHYGzYMzsNzYbMDGzAAAAAAAIgZmxGAAAAGMzMzMzSbzMzAADAAAgB",
+      "source": "wowhead",
+      "label": "Anni Delves"
+    }
+  ],
   "talents": {
     "locked": [
       "Spirit Bomb",

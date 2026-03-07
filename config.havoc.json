@@ -7,7 +7,38 @@
   "data": {
     "env": "live"
   },
-  "communityBuilds": [],
+  "communityBuilds": [
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYAzMjZMzMzMMZMzAAAAAAAmNjZbmxMDzMzsNbzDMzsMzMDLDsNLmxwspphZGDbAAAAAAAAMzgBAAAgB",
+      "source": "raidbots",
+      "label": "FS EB+CT+SD apex4"
+    },
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYGYmZ2MmZmxMzkxMDAAAAAAYWegxsNDzMWmZGbz2MzMLzMwyAbziZMMbaaYmxwGAAAAAAAAzMYAAAAYA",
+      "source": "wowhead",
+      "label": "FS Raid"
+    },
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYmZmZmZ2mxMzMGzkxMDAAAAAAYWMmtZYmBmx2sNzMjZGYZgtZzMGmFNNmZGzYDAAAAAAAgZGMAAAAM",
+      "source": "wowhead",
+      "label": "FS Mythic+"
+    },
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYmZmZmZ2mxMzMGzkxMDAAAAAAYWMmtZYmZMmBbzMDzMMWGYb2MjhZRTjZmxM2AAAAAAAAYmBDAAAAD",
+      "source": "wowhead",
+      "label": "FS Delves"
+    },
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYGMzMzmxMzMmZmMmZAAAAAAAzyDMmtZYmZ2mZGLz28AzYZMMWmZbGMMW2YSGzMGWAAAAAAAAzMADAAAAD",
+      "source": "wowhead",
+      "label": "AR Raid"
+    },
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYmZmZmZ2mxMzMGzkxMDAAAAAAYWMmtZYmZ2GzgtZmhxwYZmtZwwYbjJZmZGzYBAAAAAAAMzAMAAAAM",
+      "source": "wowhead",
+      "label": "AR Mythic+"
+    }
+  ],
   "talents": {
     "locked": [
       "Eye Beam",
