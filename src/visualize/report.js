@@ -290,19 +290,32 @@ function loadGearData(gearCandidates) {
     }
   }
 
-  // Build gem lookup: prefer item name from enchantMap (via enchant_id), fall back to label
+  // Build gem lookup keyed by item_id (SimC gem_id= values are item IDs).
+  // Sources: gear-config.json names (item_id→name), gear-candidates gems
+  // (bridged via gear-config item_ids enchant_id→item_id mapping).
   const gemMap = new Map();
-  if (gearCandidates) {
-    for (const g of gearCandidates.gems || []) {
-      if (g.item_id) {
-        const name =
-          g.name ||
-          (g.enchant_id && enchantMap.get(g.enchant_id)) ||
-          g.label ||
-          null;
-        gemMap.set(g.item_id, name);
+  try {
+    const gc = JSON.parse(readFileSync(dataFile("gear-config.json"), "utf-8"));
+    const gemNames = gc.gems?.names || {};
+    for (const [itemId, name] of Object.entries(gemNames)) {
+      gemMap.set(Number(itemId), name);
+    }
+    const enchantToItem = gc.gems?.item_ids || {};
+    if (gearCandidates) {
+      for (const g of gearCandidates.gems || []) {
+        const itemId = g.item_id || enchantToItem[String(g.enchant_id)];
+        if (itemId && !gemMap.has(itemId)) {
+          const name =
+            g.name ||
+            (g.enchant_id && enchantMap.get(g.enchant_id)) ||
+            g.label ||
+            null;
+          if (name) gemMap.set(itemId, name);
+        }
       }
     }
+  } catch {
+    // gear-config.json missing or malformed — gem names won't resolve
   }
 
   // Detect built-in embellishment items from embellishment pairs.
@@ -778,8 +791,6 @@ function computeNodeContributions(
   return perTree;
 }
 
-// --- Stat weights ---
-
 // --- HTML generation ---
 
 function generateHtml(data) {
@@ -794,8 +805,7 @@ function generateHtml(data) {
     gearData,
     talentData,
     nodeContributions,
-    scaleFactors,
-    statCurves,
+    abilityBreakdown,
   } = data;
   const displaySpec = toTitleCase(specName);
 
@@ -817,7 +827,7 @@ function generateHtml(data) {
       apexBuilds,
     ),
     renderBuildRankings(builds, heroTrees),
-    renderGearSection(gearData, scaleFactors, statCurves),
+    renderGearSection(gearData, abilityBreakdown),
     renderTrinketRankings(trinketData),
     renderEmbellishmentRankings(embellishmentData),
     renderDefensiveCostsSection(defensiveTalentCosts, builds),
@@ -928,15 +938,15 @@ function renderAnalysisRow(
 </section>`;
 }
 
-function renderGearSection(gearData, scaleFactors, statCurves) {
+function renderGearSection(gearData, abilityBreakdown) {
   const gearHtml = renderGearDisplay(gearData);
-  const statsHtml = renderStatWeights(scaleFactors, statCurves);
-  if (!gearHtml && !statsHtml) return "";
+  const abilityHtml = renderAbilityBreakdown(abilityBreakdown);
+  if (!gearHtml && !abilityHtml) return "";
 
   return `<section>
   <div class="gear-section-grid">
     ${gearHtml}
-    ${statsHtml}
+    ${abilityHtml}
   </div>
 </section>`;
 }
@@ -1960,331 +1970,42 @@ function renderDefensiveTalentCosts(costs, refName, builds) {
   return html;
 }
 
-function renderStatWeights(scaleFactors, statCurves) {
-  if (!scaleFactors && !statCurves) return "";
+function renderAbilityBreakdown(abilityBreakdown) {
+  if (!abilityBreakdown?.abilities?.length) return "";
 
-  const STAT_COLORS = {
-    crit: "#ef4444",
-    haste: "#3b82f6",
-    mastery: "#f59e0b",
-    versatility: "#10b981",
+  const { abilities, total } = abilityBreakdown;
+
+  const SCHOOL_COLORS = {
+    physical: "#b0895f",
+    fire: "#ef4444",
+    shadow: "#9333ea",
+    chaos: "#a855f7",
+    shadowflame: "#c026d3",
+    nature: "#22c55e",
+    arcane: "#6366f1",
+    frost: "#38bdf8",
+    holy: "#fbbf24",
   };
-  const STAT_LABELS = {
-    crit: "Crit",
-    haste: "Haste",
-    mastery: "Mastery",
-    versatility: "Vers",
-  };
 
-  const rawTs = statCurves?.timestamp || scaleFactors?.timestamp;
-  const ts = rawTs ? new Date(rawTs).toISOString().split("T")[0] : "";
-  const tsNote = ts ? ` <span class="sw-timestamp">as of ${ts}</span>` : "";
-
-  // If we have dps_plot data with baseline stats, render marginal value curves
-  if (statCurves?.curves?.length && statCurves.baselineStats) {
-    return renderStatScalingCurves(
-      statCurves,
-      STAT_COLORS,
-      STAT_LABELS,
-      tsNote,
-    );
-  }
-
-  // Fallback for old data without baselineStats: delta-based chart
-  if (statCurves?.curves?.length) {
-    return renderDeltaStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote);
-  }
-
-  // Final fallback: simple EP bars from scale factors
-  if (!scaleFactors) return "";
-  const epStats = ["Crit", "Haste", "Mastery", "Vers"]
-    .map((key) => ({ key, label: key, ep: scaleFactors[key] || 0 }))
-    .filter((s) => s.ep > 0)
-    .sort((a, b) => b.ep - a.ep);
-  if (epStats.length === 0) return "";
-
-  const maxEp = epStats[0].ep;
-  const bars = epStats
-    .map((s) => {
-      const pct = ((s.ep / maxEp) * 100).toFixed(1);
-      const color = STAT_COLORS[s.label.toLowerCase()] || "var(--fg-muted)";
-      return `<div class="sw-bar-row">
-        <span class="sw-bar-label">${s.label}</span>
-        <div class="sw-bar-track"><div class="sw-bar-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span class="sw-bar-value">${s.ep.toFixed(2)}</span>
+  // Horizontal bars — all abilities, no grouping
+  const bars = abilities
+    .map((a) => {
+      const pct = ((a.amount / total) * 100).toFixed(1);
+      const barW = ((a.amount / abilities[0].amount) * 100).toFixed(1);
+      const color = SCHOOL_COLORS[a.school] || "var(--fg-muted)";
+      const label = toTitleCase(a.name);
+      return `<div class="ab-row">
+        <span class="ab-label">${esc(label)}</span>
+        <div class="ab-track"><div class="ab-fill" style="width:${barW}%;background:${color}"></div></div>
+        <span class="ab-value">${pct}%</span>
       </div>`;
     })
     .join("");
 
-  return `<div class="stat-weights report-card">
-  <h3>Stat Weights</h3>
-  <p class="section-desc">Marginal EP value at current gear levels${tsNote}</p>
-  ${bars}
-</div>`;
-}
-
-function renderStatScalingCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
-  const { curves, baselineStats, step = 300 } = statCurves;
-
-  // Parse raw curve data: array of {stat: [{rating, dps}]}
-  // SimC outputs short/capitalized keys (Crit, Vers) - normalize to our keys
-  const STAT_ALIASES = { vers: "versatility" };
-  const parsed = [];
-  for (const entry of curves) {
-    for (const [rawStat, points] of Object.entries(entry)) {
-      const stat = STAT_ALIASES[rawStat.toLowerCase()] || rawStat.toLowerCase();
-      const color = STAT_COLORS[stat];
-      const label = STAT_LABELS[stat];
-      if (!color || !label || !points?.length) continue;
-      parsed.push({ stat, label, color, points });
-    }
-  }
-  if (parsed.length === 0) return "";
-
-  // Compute marginal values via finite differences
-  // Each stat gets absolute X (total rating) and marginal Y (DPS per rating point)
-  const marginals = parsed.map((s) => {
-    const baseline = baselineStats[s.stat] || 0;
-    const mPoints = [];
-    for (let i = 0; i < s.points.length - 1; i++) {
-      const r0 = baseline + s.points[i].rating;
-      const r1 = baseline + s.points[i + 1].rating;
-      const midRating = (r0 + r1) / 2;
-      const marginal = (s.points[i + 1].dps - s.points[i].dps) / step;
-      mPoints.push({ rating: midRating, marginal });
-    }
-    // Current gear position: interpolate marginal at baseline
-    const baselineMarginal = interpolateMarginal(mPoints, baseline);
-    return {
-      ...s,
-      baseline,
-      baselineMarginal,
-      mPoints,
-    };
-  });
-
-  // SVG dimensions
-  const W = 420;
-  const H = 240;
-  const PAD = { top: 14, right: 16, bottom: 34, left: 46 };
-  const plotW = W - PAD.left - PAD.right;
-  const plotH = H - PAD.top - PAD.bottom;
-
-  // Shared X-axis: union of all stat rating ranges
-  const allRatings = marginals.flatMap((s) => s.mPoints.map((p) => p.rating));
-  if (allRatings.length === 0) return "";
-  const xMin = Math.min(...allRatings);
-  const xMax = Math.max(...allRatings);
-  if (xMin === xMax) return "";
-
-  // Y-axis: marginal DPS values
-  const allMarginals = marginals.flatMap((s) =>
-    s.mPoints.map((p) => p.marginal),
-  );
-  const mMin = Math.min(...allMarginals);
-  const mMax = Math.max(...allMarginals);
-  const yPad = (mMax - mMin) * 0.1 || 0.5;
-  const yMin = Math.max(0, mMin - yPad);
-  const yMax = mMax + yPad;
-
-  function sx(rating) {
-    return PAD.left + ((rating - xMin) / (xMax - xMin)) * plotW;
-  }
-  function sy(marginal) {
-    return PAD.top + plotH - ((marginal - yMin) / (yMax - yMin)) * plotH;
-  }
-
-  // Y-axis grid lines + labels
-  const yTicks = 4;
-  let gridLines = "";
-  for (let i = 0; i <= yTicks; i++) {
-    const v = yMin + ((yMax - yMin) * i) / yTicks;
-    const y = sy(v).toFixed(1);
-    gridLines += `<line x1="${PAD.left}" y1="${y}" x2="${W - PAD.right}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>`;
-    gridLines += `<text x="${PAD.left - 4}" y="${y}" text-anchor="end" class="sw-axis-label" dy="0.35em">${v.toFixed(1)}</text>`;
-  }
-
-  // X-axis labels (absolute total rating)
-  let xAxisLabels = "";
-  const xRange = xMax - xMin;
-  const xStep =
-    xRange > 4000 ? 1000 : xRange > 2000 ? 500 : xRange > 1000 ? 250 : 100;
-  const xStart = Math.ceil(xMin / xStep) * xStep;
-  for (let r = xStart; r <= xMax; r += xStep) {
-    xAxisLabels += `<text x="${sx(r).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="sw-axis-label">${r}</text>`;
-  }
-
-  // Baseline markers: per-stat dashed vertical line + dot on curve
-  let baselineMarkers = "";
-  for (const s of marginals) {
-    if (s.baseline <= 0) continue;
-    const bx = sx(s.baseline).toFixed(1);
-    baselineMarkers += `<line x1="${bx}" y1="${PAD.top}" x2="${bx}" y2="${PAD.top + plotH}" stroke="${s.color}" stroke-width="0.75" stroke-dasharray="3,3" opacity="0.35"/>`;
-    if (s.baselineMarginal !== null) {
-      baselineMarkers += `<circle class="sw-baseline-marker" cx="${bx}" cy="${sy(s.baselineMarginal).toFixed(1)}" r="3.5" fill="${s.color}" stroke="var(--surface)" stroke-width="1.5"/>`;
-    }
-  }
-
-  // Curve lines
-  let curvePaths = "";
-  for (const s of marginals) {
-    if (s.mPoints.length < 2) continue;
-    const pathD = s.mPoints
-      .map(
-        (p, i) =>
-          `${i === 0 ? "M" : "L"}${sx(p.rating).toFixed(1)},${sy(p.marginal).toFixed(1)}`,
-      )
-      .join(" ");
-    curvePaths += `<path d="${pathD}" fill="none" stroke="${s.color}" stroke-width="2" opacity="0.85"/>`;
-  }
-
-  // Legend: stat name + current marginal value (bold) + DR% in parens
-  const legend = marginals
-    .map((s) => {
-      const mv =
-        s.baselineMarginal !== null ? s.baselineMarginal.toFixed(2) : "?";
-      // Empirical DR%: compare current marginal to the highest marginal on this curve
-      const peakMarginal = Math.max(...s.mPoints.map((p) => p.marginal));
-      let drStr = "";
-      if (s.baselineMarginal !== null && peakMarginal > 0) {
-        const drPct = Math.round((1 - s.baselineMarginal / peakMarginal) * 100);
-        if (drPct > 0) drStr = ` (${drPct}% DR)`;
-      }
-      return `<span class="sw-legend-item"><span class="sw-legend-swatch" style="background:${s.color}"></span>${s.label} <b>${mv}</b>${drStr}</span>`;
-    })
-    .join("");
-
-  return `<div class="stat-weights report-card">
-  <h3>Stat Scaling</h3>
-  <p class="section-desc">Marginal DPS per rating point vs total rating${tsNote}</p>
-  <svg viewBox="0 0 ${W} ${H}" class="sw-chart-svg" preserveAspectRatio="xMidYMid meet">
-    ${gridLines}
-    ${baselineMarkers}
-    ${curvePaths}
-    ${xAxisLabels}
-  </svg>
-  <div class="sw-legend">${legend}</div>
-</div>`;
-}
-
-function interpolateMarginal(mPoints, targetRating) {
-  if (mPoints.length === 0) return null;
-  // Clamp to range
-  if (targetRating <= mPoints[0].rating) return mPoints[0].marginal;
-  if (targetRating >= mPoints[mPoints.length - 1].rating)
-    return mPoints[mPoints.length - 1].marginal;
-  // Linear interpolation
-  for (let i = 0; i < mPoints.length - 1; i++) {
-    if (
-      targetRating >= mPoints[i].rating &&
-      targetRating <= mPoints[i + 1].rating
-    ) {
-      const t =
-        (targetRating - mPoints[i].rating) /
-        (mPoints[i + 1].rating - mPoints[i].rating);
-      return (
-        mPoints[i].marginal +
-        t * (mPoints[i + 1].marginal - mPoints[i].marginal)
-      );
-    }
-  }
-  return mPoints[0].marginal;
-}
-
-function renderDeltaStatCurves(statCurves, STAT_COLORS, STAT_LABELS, tsNote) {
-  const STAT_ALIASES = { vers: "versatility" };
-  const parsed = [];
-  for (const entry of statCurves.curves) {
-    for (const [rawStat, points] of Object.entries(entry)) {
-      const stat = STAT_ALIASES[rawStat.toLowerCase()] || rawStat.toLowerCase();
-      const color = STAT_COLORS[stat];
-      const label = STAT_LABELS[stat];
-      if (!color || !label || !points?.length) continue;
-      parsed.push({ stat, label, color, points });
-    }
-  }
-  if (parsed.length === 0) return "";
-
-  const W = 380;
-  const H = 220;
-  const PAD = { top: 12, right: 16, bottom: 32, left: 50 };
-  const plotW = W - PAD.left - PAD.right;
-  const plotH = H - PAD.top - PAD.bottom;
-
-  const allRatings = parsed[0].points.map((p) => p.rating);
-  const xMin = Math.min(...allRatings);
-  const xMax = Math.max(...allRatings);
-  const allDps = parsed.flatMap((s) => s.points.map((p) => p.dps));
-  const dpsMin = Math.min(...allDps);
-  const dpsMax = Math.max(...allDps);
-  const yPad = (dpsMax - dpsMin) * 0.08 || 100;
-  const yMin = dpsMin - yPad;
-  const yMax = dpsMax + yPad;
-
-  function sx(rating) {
-    return PAD.left + ((rating - xMin) / (xMax - xMin)) * plotW;
-  }
-  function sy(dps) {
-    return PAD.top + plotH - ((dps - yMin) / (yMax - yMin)) * plotH;
-  }
-
-  const yTicks = 4;
-  let gridLines = "";
-  for (let i = 0; i <= yTicks; i++) {
-    const v = yMin + ((yMax - yMin) * i) / yTicks;
-    const y = sy(v).toFixed(1);
-    gridLines += `<line x1="${PAD.left}" y1="${y}" x2="${W - PAD.right}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>`;
-    const dpsLabel = v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toFixed(0);
-    gridLines += `<text x="${PAD.left - 4}" y="${y}" text-anchor="end" class="sw-axis-label" dy="0.35em">${dpsLabel}</text>`;
-  }
-
-  let xAxisLabels = "";
-  const labelEvery = allRatings.length > 7 ? 2 : 1;
-  for (let i = 0; i < allRatings.length; i++) {
-    if (i % labelEvery !== 0 && i !== allRatings.length - 1) continue;
-    const r = allRatings[i];
-    const label = r === 0 ? "0" : `${r > 0 ? "+" : ""}${r}`;
-    xAxisLabels += `<text x="${sx(r).toFixed(1)}" y="${H - 6}" text-anchor="middle" class="sw-axis-label">${label}</text>`;
-  }
-
-  const zeroX = sx(0).toFixed(1);
-  const zeroLine = `<line x1="${zeroX}" y1="${PAD.top}" x2="${zeroX}" y2="${PAD.top + plotH}" stroke="var(--fg-muted)" stroke-width="1" stroke-dasharray="4,3" opacity="0.5"/>`;
-
-  let curvePaths = "";
-  for (const s of parsed) {
-    const pathD = s.points
-      .map(
-        (p, i) =>
-          `${i === 0 ? "M" : "L"}${sx(p.rating).toFixed(1)},${sy(p.dps).toFixed(1)}`,
-      )
-      .join(" ");
-    curvePaths += `<path d="${pathD}" fill="none" stroke="${s.color}" stroke-width="2" opacity="0.85"/>`;
-    const zeroPoint = s.points.find((p) => p.rating === 0);
-    if (zeroPoint) {
-      curvePaths += `<circle cx="${sx(0).toFixed(1)}" cy="${sy(zeroPoint.dps).toFixed(1)}" r="3.5" fill="${s.color}" stroke="var(--surface)" stroke-width="1.5"/>`;
-    }
-  }
-
-  const legend = parsed
-    .map((s) => {
-      const zeroDps = s.points.find((p) => p.rating === 0)?.dps;
-      const dpsStr = zeroDps
-        ? ` <b>${Math.round(zeroDps).toLocaleString()}</b>`
-        : "";
-      return `<span class="sw-legend-item"><span class="sw-legend-swatch" style="background:${s.color}"></span>${s.label}${dpsStr}</span>`;
-    })
-    .join("");
-
-  return `<div class="stat-weights report-card">
-  <h3>Stat Scaling</h3>
-  <p class="section-desc">Simmed DPS across stat rating deltas${tsNote}</p>
-  <svg viewBox="0 0 ${W} ${H}" class="sw-chart-svg" preserveAspectRatio="xMidYMid meet">
-    ${gridLines}
-    ${zeroLine}
-    ${curvePaths}
-    ${xAxisLabels}
-  </svg>
-  <div class="sw-legend">${legend}</div>
+  return `<div class="ability-breakdown report-card">
+  <h3>Damage Breakdown</h3>
+  <p class="section-desc">Share of total damage by ability (reference build, single target)</p>
+  <div class="ab-rows">${bars}</div>
 </div>`;
 }
 
@@ -2368,12 +2089,17 @@ function renderGearDisplay(gearData) {
       );
   }
   if (consumables.temporary_enchant) {
-    // temporary_enchant may be "main_hand:oil_name/off_hand:oil_name" — strip slot prefixes
-    const label = consumables.temporary_enchant
-      .split("/")
-      .map((p) => toTitleCase(p.replace(/^(main_hand|off_hand):/, "")))
-      .join(" / ");
-    cons.push(`<span class="gear-con"><b>Oils</b> ${esc(label)}</span>`);
+    // temporary_enchant may be "main_hand:oil_name/off_hand:oil_name" — strip slot prefixes, dedupe
+    const oils = [
+      ...new Set(
+        consumables.temporary_enchant
+          .split("/")
+          .map((p) => toTitleCase(p.replace(/^(main_hand|off_hand):/, ""))),
+      ),
+    ];
+    cons.push(
+      `<span class="gear-con"><b>Oils</b> ${esc(oils.join(" / "))}</span>`,
+    );
   }
 
   const consHtml = cons.length
@@ -2550,6 +2276,15 @@ const CSS = `
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
 
 body {
   font-family: "DM Sans", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -2763,10 +2498,10 @@ h4 {
   overflow: hidden;
 }
 
-/* Gear section: gear + stat weights side by side */
+/* Gear section layout */
 .gear-section-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
   align-items: stretch;
 }
@@ -2948,78 +2683,42 @@ h4 {
   opacity: 1;
 }
 
-/* Stat Weights DR Chart */
-.sw-chart-svg {
-  width: 100%;
-  height: auto;
-}
-
-.sw-axis-label {
-  font-family: "DM Sans", sans-serif;
-  font-size: 9px;
-  fill: var(--fg-muted);
-}
-
-.sw-legend {
+/* Ability breakdown bars */
+.ability-breakdown {
   display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 0.5rem;
+  flex-direction: column;
 }
-
-.sw-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  color: var(--fg-dim);
-  font-weight: 500;
+.ability-breakdown .ab-rows {
+  flex: 1;
+  overflow-y: auto;
 }
-
-.sw-legend-item b {
-  font-weight: 700;
-  color: var(--fg);
-  font-variant-numeric: tabular-nums;
-}
-
-.sw-legend-swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-
-.sw-baseline-marker {
-  filter: drop-shadow(0 0 2px rgba(0,0,0,0.3));
-}
-.sw-timestamp {
-  color: var(--fg-muted);
-  font-size: 0.72rem;
-}
-.sw-bar-row {
+.ab-row {
   display: grid;
-  grid-template-columns: 52px 1fr 48px;
+  grid-template-columns: 120px 1fr 40px;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.3rem 0;
+  padding: 0.2rem 0;
 }
-.sw-bar-label {
-  font-size: 0.78rem;
-  font-weight: 600;
+.ab-label {
+  font-size: 0.75rem;
+  font-weight: 500;
   color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.sw-bar-track {
-  height: 10px;
+.ab-track {
+  height: 12px;
   background: var(--bg);
-  border-radius: 5px;
+  border-radius: 6px;
   overflow: hidden;
 }
-.sw-bar-fill {
+.ab-fill {
   height: 100%;
-  border-radius: 5px;
-  transition: width 0.3s;
+  border-radius: 6px;
+  opacity: 0.85;
 }
-.sw-bar-value {
+.ab-value {
   font-size: 0.72rem;
   color: var(--fg-muted);
   text-align: right;
@@ -3583,8 +3282,8 @@ summary:hover { color: var(--accent); }
 .gear-cons-bar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.45rem 0.85rem;
+  gap: 0.5rem;
+  padding: 0.3rem 0.65rem;
   border-top: 1px solid var(--border);
   background: var(--bg-elevated);
   flex-wrap: wrap;
@@ -4571,54 +4270,27 @@ async function main() {
     console.warn(`  Talent heatmap skipped: ${e.message}`);
   }
 
-  // Scale factors for stat weight visualization
-  let scaleFactors = null;
+  // Ability damage breakdown from reference build (ST scenario)
+  let abilityBreakdown = null;
   try {
-    scaleFactors = getSessionState("gear_scale_factors");
-    if (!scaleFactors) {
-      // Fallback: read from JSON file (worktrees may not have session_state populated)
-      const sfPath = join(resultsDir(), "gear_scale_factors.json");
-      if (existsSync(sfPath)) {
-        const sfData = JSON.parse(readFileSync(sfPath, "utf-8"));
-        const sf = sfData?.sim?.players?.[0]?.scale_factors;
-        if (sf) {
-          scaleFactors = { ...sf, timestamp: sfData.timestamp || "" };
-        }
-      }
-    }
-    if (scaleFactors) {
+    const stData = JSON.parse(
+      readFileSync(join(resultsDir(), "report_ours_st.json"), "utf-8"),
+    );
+    const playerStats = stData?.sim?.players?.[0]?.stats;
+    if (playerStats) {
+      const abilities = playerStats
+        .filter((s) => s.type === "damage" && (s.compound_amount || 0) > 0)
+        .map((s) => ({
+          name: s.name.replace(/_/g, " "),
+          amount: s.compound_amount,
+          school: s.school || "physical",
+        }))
+        .sort((a, b) => b.amount - a.amount);
+      const total = abilities.reduce((sum, a) => sum + a.amount, 0);
+      abilityBreakdown = { abilities, total };
       console.log(
-        `  Scale factors: loaded (${Object.keys(scaleFactors).filter((k) => k !== "timestamp").length} stats)`,
+        `  Ability breakdown: ${abilities.length} abilities from ST sim`,
       );
-    }
-  } catch {
-    // Not available
-  }
-
-  // Stat DR curves from dps_plot sim
-  let statCurves = null;
-  try {
-    statCurves = getSessionState("gear_stat_curves");
-    if (!statCurves) {
-      // Fallback: parse from scale factors JSON (has dps_plot data)
-      const sfPath = join(resultsDir(), "gear_scale_factors.json");
-      if (existsSync(sfPath)) {
-        const sfData = JSON.parse(readFileSync(sfPath, "utf-8"));
-        const dpsPlot = sfData?.sim?.dps_plot;
-        if (dpsPlot?.length) {
-          statCurves = {
-            curves: dpsPlot[0]?.data,
-            timestamp: sfData.timestamp || "",
-          };
-        }
-      }
-    }
-    if (statCurves?.curves) {
-      const statCount = statCurves.curves.reduce(
-        (n, d) => n + Object.keys(d).length,
-        0,
-      );
-      console.log(`  Stat curves: ${statCount} stats plotted`);
     }
   } catch {
     // Not available
@@ -4648,8 +4320,7 @@ async function main() {
     gearData,
     talentData,
     nodeContributions,
-    scaleFactors,
-    statCurves,
+    abilityBreakdown,
   });
 
   const indexPath = join(reportDir, "index.html");
