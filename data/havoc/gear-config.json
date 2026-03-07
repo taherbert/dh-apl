@@ -328,7 +328,15 @@
     "item_ids": {
       "7220": 241144,
       "7221": 241143,
-      "7222": 241142
+      "7222": 241142,
+      "8684": 241144,
+      "8685": 241143,
+      "8686": 241142
+    },
+    "names": {
+      "241144": "Enduring Heliotrope",
+      "241143": "Cognitive Heliotrope",
+      "241142": "Determined Heliotrope"
     }
   },
   "manual_enchants": {
