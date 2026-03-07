@@ -388,6 +388,10 @@ async function cmdScaleFactors(args) {
     profilePath,
     "calculate_scale_factors=1",
     "scale_only=Agi/Haste/Crit/Mastery/Vers",
+    // DPS plot: sim each secondary stat across a rating range to show DR curves
+    "dps_plot_stat=crit,haste,mastery,versatility",
+    "dps_plot_points=9",
+    "dps_plot_step=150",
     `json2=${outputPath}`,
     `threads=${threadsPerSim}`,
     `max_time=${stConfig.maxTime}`,
@@ -420,6 +424,23 @@ async function cmdScaleFactors(args) {
     ...sf,
     timestamp: new Date().toISOString(),
   });
+
+  // Store DPS plot data (stat DR curves)
+  const dpsPlot = data.sim.dps_plot;
+  if (dpsPlot?.length) {
+    const playerPlot = dpsPlot[0]?.data;
+    if (playerPlot) {
+      setSessionState("gear_stat_curves", {
+        curves: playerPlot,
+        timestamp: new Date().toISOString(),
+      });
+      const statCount = playerPlot.reduce(
+        (n, d) => n + Object.keys(d).length,
+        0,
+      );
+      console.log(`  Stat curves: ${statCount} stats plotted`);
+    }
+  }
 
   console.log("Scale factors:");
   for (const [stat, value] of Object.entries(sf)) {
