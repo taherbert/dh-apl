@@ -36,6 +36,7 @@
 //   SPEC=vengeance node src/sim/gear.js screen [--slot X]  (diagnostic only)
 
 import { getSimCores } from "./remote.js";
+import { readRouteFile, execSimcWithFallback } from "./runner.js";
 import { parseArgs } from "node:util";
 import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
@@ -386,98 +387,127 @@ async function cmdScaleFactors(args) {
   const fidelity = parseFidelity(args, "standard");
   const gearData = loadGearCandidates();
   const profilePath = getBaseProfile(gearData);
-  const stConfig = SCENARIOS["st"];
-  if (!stConfig) throw new Error("No 'st' scenario configured");
 
   const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.standard;
   mkdirSync(resultsDir(), { recursive: true });
-  const outputPath = resultsFile("gear_scale_factors.json");
 
   const { threadsPerSim } = simConcurrency(1);
-
-  const simArgs = [
-    profilePath,
-    "calculate_scale_factors=1",
-    "scale_only=Agi/Haste/Crit/Mastery/Vers",
-    // DPS plot: sim each secondary stat across a rating range to show DR curves
-    "dps_plot_stat=crit,haste,mastery,versatility",
-    "dps_plot_points=21",
-    `dps_plot_step=${DPS_PLOT_STEP}`,
-    `json2=${outputPath}`,
-    `threads=${threadsPerSim}`,
-    `max_time=${stConfig.maxTime}`,
-    `desired_targets=${stConfig.desiredTargets}`,
-    ...(stConfig.fightStyle ? [`fight_style=${stConfig.fightStyle}`] : []),
-    `target_error=${fidelityConfig.target_error}`,
-    `iterations=${fidelityConfig.iterations || SIM_DEFAULTS.iterations}`,
-  ];
-  if (DATA_ENV === "ptr" || DATA_ENV === "beta") simArgs.unshift("ptr=1");
+  const statKeys = ["Agi", "Haste", "Crit", "Mastery", "Vers"];
 
   console.log(
     `\nPhase 1: Scale Factors (${fidelity} fidelity, ${threadsPerSim} threads)`,
   );
-  console.log("Running scale factors sim...");
 
-  try {
-    await execFileAsync(SIMC_BIN, simArgs, {
-      maxBuffer: 100 * 1024 * 1024,
-      timeout: 1800000,
-    });
-  } catch (e) {
-    if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
-    throw new Error(`SimC scale factors failed: ${e.message}`);
-  }
+  const perScenario = {};
+  let baselineStats = null;
 
-  const data = JSON.parse(readFileSync(outputPath, "utf-8"));
-  const sf = data.sim.players[0].scale_factors;
+  for (const scenario of Object.keys(SCENARIOS)) {
+    const scConfig = SCENARIOS[scenario];
+    const outputPath = resultsFile(`gear_scale_factors_${scenario}.json`);
 
-  setSessionState("gear_scale_factors", {
-    ...sf,
-    timestamp: new Date().toISOString(),
-  });
+    const simArgs = [
+      profilePath,
+      "calculate_scale_factors=1",
+      "scale_only=Agi/Haste/Crit/Mastery/Vers",
+      `json2=${outputPath}`,
+      `threads=${threadsPerSim}`,
+      `max_time=${scConfig.maxTime}`,
+      `desired_targets=${scConfig.desiredTargets}`,
+      ...(scConfig.fightStyle ? [`fight_style=${scConfig.fightStyle}`] : []),
+      ...(scConfig.routeFile ? readRouteFile(scConfig.routeFile) : []),
+      ...(scConfig.overrides || []),
+      `target_error=${fidelityConfig.target_error}`,
+      `iterations=${fidelityConfig.iterations || SIM_DEFAULTS.iterations}`,
+    ];
+    if (DATA_ENV === "ptr" || DATA_ENV === "beta") simArgs.unshift("ptr=1");
 
-  // Extract baseline gear stats for absolute-rating axis
-  const baselineStats = { crit: 0, haste: 0, mastery: 0, versatility: 0 };
-  const gear = data.sim.players[0].gear;
-  if (gear) {
-    for (const item of Object.values(gear)) {
-      for (const [key, val] of Object.entries(item)) {
-        if (key.endsWith("_rating")) {
-          const stat = key.replace("_rating", "");
-          if (stat in baselineStats) baselineStats[stat] += val;
+    // DPS plot only on ST (used by Phase 1b reweighting)
+    if (scenario === "st") {
+      simArgs.push(
+        "dps_plot_stat=crit,haste,mastery,versatility",
+        "dps_plot_points=21",
+        `dps_plot_step=${DPS_PLOT_STEP}`,
+      );
+    }
+
+    console.log(`  ${scConfig.name}...`);
+    try {
+      await execSimcWithFallback(simArgs, (a) =>
+        execFileAsync(SIMC_BIN, a, {
+          maxBuffer: 100 * 1024 * 1024,
+          timeout: 1800000,
+        }),
+      );
+    } catch (e) {
+      if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
+      throw new Error(`SimC scale factors failed (${scenario}): ${e.message}`);
+    }
+
+    const data = JSON.parse(readFileSync(outputPath, "utf-8"));
+    perScenario[scenario] = data.sim.players[0].scale_factors;
+
+    console.log(
+      `    ${statKeys.map((s) => `${s}=${(perScenario[scenario][s] || 0).toFixed(3)}`).join(" ")}`,
+    );
+
+    // Extract baseline stats and DPS plot from ST scenario
+    if (scenario === "st") {
+      baselineStats = { crit: 0, haste: 0, mastery: 0, versatility: 0 };
+      const gear = data.sim.players[0].gear;
+      if (gear) {
+        for (const item of Object.values(gear)) {
+          for (const [key, val] of Object.entries(item)) {
+            if (key.endsWith("_rating")) {
+              const stat = key.replace("_rating", "");
+              if (stat in baselineStats) baselineStats[stat] += val;
+            }
+          }
+        }
+        console.log(
+          `    Baseline stats: ${Object.entries(baselineStats)
+            .map(([k, v]) => `${k}=${v}`)
+            .join(", ")}`,
+        );
+      }
+
+      const dpsPlot = data.sim.dps_plot;
+      if (dpsPlot?.length) {
+        const playerPlot = dpsPlot[0]?.data;
+        if (playerPlot) {
+          setSessionState("gear_stat_curves", {
+            curves: playerPlot,
+            baselineStats,
+            step: DPS_PLOT_STEP,
+            timestamp: new Date().toISOString(),
+          });
+          const statCount = playerPlot.reduce(
+            (n, d) => n + Object.keys(d).length,
+            0,
+          );
+          console.log(`    Stat curves: ${statCount} stats plotted`);
         }
       }
     }
-    console.log(
-      `  Baseline stats: ${Object.entries(baselineStats)
-        .map(([k, v]) => `${k}=${v}`)
-        .join(", ")}`,
-    );
   }
 
-  // Store DPS plot data (stat DR curves)
-  const dpsPlot = data.sim.dps_plot;
-  if (dpsPlot?.length) {
-    const playerPlot = dpsPlot[0]?.data;
-    if (playerPlot) {
-      setSessionState("gear_stat_curves", {
-        curves: playerPlot,
-        baselineStats,
-        step: DPS_PLOT_STEP,
-        timestamp: new Date().toISOString(),
-      });
-      const statCount = playerPlot.reduce(
-        (n, d) => n + Object.keys(d).length,
-        0,
-      );
-      console.log(`  Stat curves: ${statCount} stats plotted`);
+  // Combine per-scenario scale factors using SCENARIO_WEIGHTS
+  const combined = {};
+  for (const stat of statKeys) {
+    combined[stat] = 0;
+    for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+      combined[stat] += (perScenario[scenario]?.[stat] || 0) * weight;
     }
   }
 
-  console.log("Scale factors:");
-  for (const [stat, value] of Object.entries(sf)) {
-    if (typeof value === "number")
-      console.log(`  ${stat}: ${value.toFixed(4)}`);
+  setSessionState("gear_scale_factors", {
+    ...combined,
+    perScenario,
+    timestamp: new Date().toISOString(),
+  });
+
+  console.log("Weighted scale factors:");
+  for (const stat of statKeys) {
+    console.log(`  ${stat}: ${combined[stat].toFixed(4)}`);
   }
 }
 
