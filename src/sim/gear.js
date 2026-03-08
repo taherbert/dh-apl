@@ -518,6 +518,171 @@ async function cmdScaleFactors(args) {
   }
 }
 
+// --- Phase 1b: Iterative EP Reweighting ---
+// Uses DPS plot curves from Phase 1 to recompute scale factors at the
+// stat point implied by EP-ranked gear, iterating until stable.
+// Breaks the self-reinforcing bias where scale factors computed at the
+// current gear point lock the pipeline into a local stat optimum.
+
+function buildCurveMap(curves) {
+  if (!curves.curves || curves.curves.length === 0) return null;
+  const map = {};
+  for (const entry of curves.curves) {
+    for (const [stat, points] of Object.entries(entry)) {
+      map[stat] = points
+        .map((p) => ({ rating: p.rating, dps: p.dps }))
+        .sort((a, b) => a.rating - b.rating);
+    }
+  }
+  return Object.keys(map).length > 0 ? map : null;
+}
+
+function interpolateDerivative(
+  curveMap,
+  stat,
+  targetRating,
+  baselineRating,
+  step,
+) {
+  const points = curveMap[stat];
+  if (!points || points.length < 2) return null;
+
+  // Stat curve ratings are offsets from baseline. Convert target to offset.
+  const offset = targetRating - baselineRating;
+
+  // Find the two bracketing points
+  let lo = points[0],
+    hi = points[points.length - 1];
+  for (let i = 0; i < points.length - 1; i++) {
+    if (points[i].rating <= offset && points[i + 1].rating >= offset) {
+      lo = points[i];
+      hi = points[i + 1];
+      break;
+    }
+  }
+
+  if (hi.rating === lo.rating) return null;
+  return (hi.dps - lo.dps) / (hi.rating - lo.rating);
+}
+
+function epRankAll(gearData, sf) {
+  const winners = {};
+  const bestGemEp = (gearData.gems || [])
+    .filter((g) => g.stats)
+    .reduce((max, g) => Math.max(max, scoreEp(g.stats, sf)), 0);
+
+  for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
+    if (ALWAYS_SIM_SLOTS.has(slot)) continue;
+    const candidates = slotData.candidates || [];
+    if (candidates.length === 0) continue;
+    const best = candidates
+      .map((c) => ({
+        id: c.id,
+        ep: scoreEp(c.stats, sf) + countSockets(c.simc) * bestGemEp,
+      }))
+      .sort((a, b) => b.ep - a.ep)[0];
+    winners[slot] = best?.id;
+  }
+  return winners;
+}
+
+function computeGearStats(winners, gearData) {
+  const totals = { crit: 0, haste: 0, mastery: 0, vers: 0 };
+  for (const [slot, winnerId] of Object.entries(winners)) {
+    const slotData = gearData.slots?.[slot];
+    if (!slotData) continue;
+    const candidate = slotData.candidates?.find((c) => c.id === winnerId);
+    if (!candidate?.stats) continue;
+    for (const [stat, val] of Object.entries(candidate.stats)) {
+      if (stat in totals) totals[stat] += val;
+    }
+  }
+  return totals;
+}
+
+// Map scale factor key names to SimC dps_plot stat names (used as curve map keys)
+// and to the lowercase keys used in baselineStats.
+const SF_TO_CURVE_STAT = {
+  Crit: "crit",
+  Haste: "haste",
+  Mastery: "mastery",
+  Vers: "versatility",
+};
+
+function cmdEpReweight(gearData) {
+  const curves = getSessionState("gear_stat_curves");
+  const sf = getSessionState("gear_scale_factors");
+  if (!curves || !sf) {
+    console.log(
+      "Phase 1b: No stat curves or scale factors. Skipping reweight.",
+    );
+    return;
+  }
+
+  const statKeys = ["Crit", "Haste", "Mastery", "Vers"];
+  const curveMap = buildCurveMap(curves);
+  if (!curveMap) {
+    console.log("Phase 1b: Could not parse stat curves. Skipping.");
+    return;
+  }
+
+  let currentSf = { ...sf };
+  let prevWinners = null;
+  const MAX_ITERS = 5;
+
+  console.log(
+    `\nPhase 1b: Iterative EP Reweighting (max ${MAX_ITERS} iterations)`,
+  );
+
+  for (let iter = 1; iter <= MAX_ITERS; iter++) {
+    const winners = epRankAll(gearData, currentSf);
+    const winnerKey = JSON.stringify(winners);
+    if (winnerKey === prevWinners) {
+      console.log(`  Iteration ${iter}: converged (no item changes).`);
+      break;
+    }
+    prevWinners = winnerKey;
+
+    const totalStats = computeGearStats(winners, gearData);
+    console.log(
+      `  Iteration ${iter}: ${statKeys.map((s) => `${s}=${totalStats[s.toLowerCase()] || 0}`).join(" ")}`,
+    );
+
+    const newSf = { ...currentSf };
+    for (const stat of statKeys) {
+      const curveStat = SF_TO_CURVE_STAT[stat];
+      const baselineStat =
+        curveStat === "versatility" ? "versatility" : curveStat;
+      const rating = totalStats[stat.toLowerCase()] || 0;
+      const derivative = interpolateDerivative(
+        curveMap,
+        curveStat,
+        rating,
+        curves.baselineStats[baselineStat] || 0,
+        curves.step,
+      );
+      if (derivative != null) {
+        newSf[stat] = derivative;
+      }
+    }
+
+    currentSf = newSf;
+  }
+
+  setSessionState("gear_scale_factors", {
+    ...currentSf,
+    reweighted: true,
+    timestamp: new Date().toISOString(),
+  });
+
+  console.log("Reweighted scale factors:");
+  for (const stat of ["Agi", ...statKeys]) {
+    if (currentSf[stat] != null) {
+      console.log(`  ${stat}: ${currentSf[stat].toFixed(4)}`);
+    }
+  }
+}
+
 // --- CLI: ep-rank (Phase 3) ---
 
 function cmdEpRank(gearData) {
@@ -2533,6 +2698,10 @@ async function cmdRun(args) {
 
   if (maxPhase >= 3) {
     console.log("\n========== PHASE 3: EP Ranking ==========\n");
+    cmdEpRank(gearData);
+    console.log("\n========== PHASE 1b: EP Reweighting ==========\n");
+    cmdEpReweight(gearData);
+    console.log("\n========== PHASE 3 (reweighted): EP Ranking ==========\n");
     cmdEpRank(gearData);
   }
   if (maxPhase >= 4) {
