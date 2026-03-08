@@ -3661,14 +3661,16 @@ async function cmdTrinketChart(args) {
 
   const builds = getRepresentativeBuilds();
   const baseProfile = getBaseProfile(gearData);
+  const [slot0, slot1] = gearData.paired_slots.trinkets.slots;
 
   // Generate all (candidate, ilvl) variants
+  // Blank the other slot so each trinket is measured in isolation
   const variants = [];
   for (const c of trinketCandidates) {
     for (const ilvl of ilvlTiers) {
       variants.push({
         name: `${c.id}_ilvl${ilvl}`,
-        overrides: [`trinket1=${swapIlevel(c.simc_base, ilvl)}`],
+        overrides: [`${slot0}=${swapIlevel(c.simc_base, ilvl)}`, `${slot1}=`],
       });
     }
   }
