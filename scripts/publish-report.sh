@@ -15,9 +15,9 @@ STAGING="${TMPDIR:-/tmp}/gh-pages-staging"
 REMOTE_URL="$(git remote get-url origin)"
 CNAME_DOMAIN="${CNAME_DOMAIN:-jomdarbert.com}"
 
-# Parse args - pass everything through to report.js, default to --skip-sims
+# Parse args - pass everything through to report.js
 PUBLISH_ONLY=false
-REPORT_ARGS="--skip-sims"
+REPORT_ARGS=""
 CUSTOM_ARGS=()
 for arg in "$@"; do
   if [[ "$arg" == "--publish-only" ]]; then
