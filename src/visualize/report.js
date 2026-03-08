@@ -115,9 +115,9 @@ function loadReportData(roster) {
   const builds = roster.builds.map((build) => {
     const db = dbByHash.get(build.hash);
     const dps = Object.fromEntries(
-      scenarioKeys.map((s) => [s, build.lastDps?.[s] || db?.[`dps_${s}`] || 0]),
+      scenarioKeys.map((s) => [s, build.lastDps?.[s] || 0]),
     );
-    dps.weighted = build.lastDps?.weighted || db?.weighted || 0;
+    dps.weighted = build.lastDps?.weighted || 0;
 
     return {
       id: build.id,
@@ -4693,6 +4693,13 @@ async function main() {
     console.log(
       `  ${reportData.builds.length} builds loaded (${withDps} with DPS data)`,
     );
+
+    if (withDps < reportData.builds.length * 0.5) {
+      console.error(
+        `\n  WARNING: Only ${withDps}/${reportData.builds.length} builds have DPS data.` +
+          `\n  Report will be incomplete. Run without --skip-sims to get full data.\n`,
+      );
+    }
 
     if (specConfig.role === "tank" && existsSync(defCostPath)) {
       defensiveTalentCosts = JSON.parse(readFileSync(defCostPath, "utf-8"));
