@@ -1834,22 +1834,12 @@ function renderApexScaling(apexBuilds, heroTrees) {
     paths += `<path d="${avgLine}" fill="none" stroke="${color}" stroke-width="1.2" stroke-linejoin="round" stroke-dasharray="4,3" opacity="0.7"/>`;
 
     // Data point nodes - best (solid circle) and avg (open circle)
-    const tipW = 160;
     for (const p of pts) {
       const bx = p.x.toFixed(1);
       const by = p.yBest.toFixed(1);
       const ay = p.yAvg.toFixed(1);
-      const tipX = Math.max(tipW / 2, Math.min(W - tipW / 2, p.x));
-      const bestLabel = `Best: ${p.bestPct >= 0 ? "+" : ""}${p.bestPct.toFixed(1)}% (${p.n})`;
-      const avgLabel = `Avg: ${p.avgPct >= 0 ? "+" : ""}${p.avgPct.toFixed(1)}% (${p.n})`;
-      const tipY = Math.min(p.yBest, p.yAvg);
-      points += `<g class="apex-point">`;
-      points += `<circle cx="${bx}" cy="${by}" r="3.5" fill="var(--bg)" stroke="${color}" stroke-width="1.5" class="apex-node"/>`;
-      points += `<circle cx="${bx}" cy="${ay}" r="2.5" fill="none" stroke="${color}" stroke-width="1.2" stroke-dasharray="2,2" class="apex-node"/>`;
-      points += `<g class="apex-tooltip"><rect x="${(tipX - tipW / 2).toFixed(1)}" y="${(tipY - 56).toFixed(1)}" width="${tipW}" height="34" rx="4" fill="var(--surface)" stroke="var(--border)"/>`;
-      points += `<text x="${tipX.toFixed(1)}" y="${(tipY - 40).toFixed(1)}" text-anchor="middle" class="apex-tip-text">${bestLabel}</text>`;
-      points += `<text x="${tipX.toFixed(1)}" y="${(tipY - 27).toFixed(1)}" text-anchor="middle" class="apex-tip-text" opacity="0.7">${avgLabel}</text>`;
-      points += `</g></g>`;
+      points += `<circle cx="${bx}" cy="${by}" r="3.5" fill="var(--bg)" stroke="${color}" stroke-width="1.5"/>`;
+      points += `<circle cx="${bx}" cy="${ay}" r="2.5" fill="none" stroke="${color}" stroke-width="1.2" stroke-dasharray="2,2"/>`;
     }
   }
 
@@ -3461,27 +3451,6 @@ h4 {
   fill: var(--fg-muted);
 }
 
-.apex-node {
-  cursor: default;
-  transition: r 0.15s;
-}
-
-.apex-point .apex-tooltip {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s;
-}
-
-.apex-point:hover .apex-tooltip {
-  opacity: 1;
-}
-
-.apex-tip-text {
-  font-family: "DM Sans", sans-serif;
-  font-size: 10px;
-  fill: var(--fg);
-  font-variant-numeric: tabular-nums;
-}
 
 
 /* Tree badges */
