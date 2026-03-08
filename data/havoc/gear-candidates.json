@@ -652,8 +652,7 @@
           "tags": [
             "passive",
             "agi"
-          ],
-          "uniqueEquipped": true
+          ]
         },
         {
           "id": "darkmoon_dominion_blood",
@@ -665,8 +664,7 @@
           "tags": [
             "passive",
             "agi"
-          ],
-          "uniqueEquipped": true
+          ]
         },
         {
           "id": "darkmoon_dominion_rot",
@@ -678,8 +676,7 @@
           "tags": [
             "passive",
             "agi"
-          ],
-          "uniqueEquipped": true
+          ]
         },
         {
           "id": "darkmoon_dominion_void",
@@ -691,8 +688,7 @@
           "tags": [
             "passive",
             "agi"
-          ],
-          "uniqueEquipped": true
+          ]
         }
       ]
     }
@@ -2659,8 +2655,7 @@
           "stats": {
             "stamina": 7889
           },
-          "tags": [],
-          "uniqueEquipped": true
+          "tags": []
         },
         {
           "id": "masterwork_sindorei_band",
@@ -2669,8 +2664,7 @@
           "stats": {
             "stamina": 7889
           },
-          "tags": [],
-          "uniqueEquipped": true
+          "tags": []
         },
         {
           "id": "signet_of_azerothian_blessings",
@@ -2917,8 +2911,7 @@
           "stats": {
             "stamina": 7889
           },
-          "tags": [],
-          "uniqueEquipped": true
+          "tags": []
         },
         {
           "id": "masterwork_sindorei_band",
@@ -2927,8 +2920,7 @@
           "stats": {
             "stamina": 7889
           },
-          "tags": [],
-          "uniqueEquipped": true
+          "tags": []
         },
         {
           "id": "signet_of_azerothian_blessings",
