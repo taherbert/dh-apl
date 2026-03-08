@@ -543,10 +543,8 @@ function importCommunityUnified(existingFingerprints, archetypes) {
     const srcPrefix = sourceAbbrev(sourceName);
     const name = `${srcPrefix}_${ha}_${n}`;
 
-    // Label with source name (wowhead, icy-veins, raidbots, etc.)
-    const sourceLabel =
-      sourceName.charAt(0).toUpperCase() + sourceName.slice(1);
-    const archetype = `Community: ${sourceLabel}`;
+    // Use the user-facing label from config (e.g. "FS EB+CT+SD apex4")
+    const archetype = `Community: ${cb.label || name}`;
 
     const validation = validateBuild({ hash: normalizedHash });
     upsertBuild({

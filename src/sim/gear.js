@@ -4,9 +4,11 @@
 //
 // Phases:
 //   0  tier-config    Tier set selection (sim-based)
-//   1  scale-factors  Single sim -> EP weights saved to session_state
+//   1  scale-factors  Per-scenario scale factors weighted by SCENARIO_WEIGHTS
+//  1b  ep-reweight    Iterative EP reweighting using DPS plot curves
 //   2  stat-optimize  Optimize crafted item stat budgets
 //   3  ep-rank        Pure EP scoring for stat-stick items only (proc/on-use/set items excluded)
+//  3b  combo-validate Combinatorial validation of top-2 per EP-ranked slot
 //   4  proc-eval      Sim proc/on-use items vs stat-stick baseline; significance gated
 //   4b set-eval       Set bonus evaluation: A-alone, B-alone, full-set; significance gated
 //   5  trinkets       Screen + pair sims; significance gated
@@ -36,6 +38,7 @@
 //   SPEC=vengeance node src/sim/gear.js screen [--slot X]  (diagnostic only)
 
 import { getSimCores } from "./remote.js";
+import { readRouteFile, execSimcWithFallback } from "./runner.js";
 import { parseArgs } from "node:util";
 import { execFileAsync } from "../util/exec.js";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
@@ -238,8 +241,27 @@ function getRepresentativeBuilds() {
     process.exit(1);
   }
 
-  // Use the single best build (roster is sorted by weighted DESC)
-  return [roster[0]];
+  // Pick top 3 builds, prioritizing hero tree diversity.
+  // Roster is sorted by weighted DESC.
+  const seen = new Set();
+  const picks = [];
+  for (const build of roster) {
+    if (picks.length >= 3) break;
+    const tree = build.hero_tree || build.heroTree;
+    if (picks.length === 0) {
+      picks.push(build);
+      seen.add(tree);
+      continue;
+    }
+    // Prioritize unseen hero trees
+    if (!seen.has(tree)) {
+      picks.push(build);
+      seen.add(tree);
+    } else if (picks.length < 3) {
+      picks.push(build);
+    }
+  }
+  return picks;
 }
 
 // --- Profile path resolution ---
@@ -338,8 +360,15 @@ function countSockets(simcStr) {
 }
 
 function isCraftedSimc(simcStr) {
-  return (simcStr || "").includes("crafted_stats=");
+  const s = simcStr || "";
+  return (
+    s.includes("crafted_stats=") ||
+    s.includes("embellishment=") ||
+    /bonus_id=[^,]*\b8793\b/.test(s)
+  );
 }
+
+const MAX_CRAFTED = 2;
 
 // Slots where ALL candidates are sim-evaluated in Phase 4, not just EP-ranked.
 // Weapons have procs, cross-slot synergies, and other non-stat effects that EP can't model.
@@ -355,6 +384,7 @@ const CRAFTED_STAT_PAIRS = [
   { id: "crit_mastery", label: "Crit/Mastery", crafted_stats: "32/49" },
   { id: "haste_vers", label: "Haste/Vers", crafted_stats: "36/40" },
   { id: "haste_mastery", label: "Haste/Mastery", crafted_stats: "36/49" },
+  { id: "vers_mastery", label: "Vers/Mastery", crafted_stats: "40/49" },
 ];
 
 // Detect crafted item slots from profile.simc (lines containing crafted_stats=).
@@ -385,98 +415,439 @@ async function cmdScaleFactors(args) {
   const fidelity = parseFidelity(args, "standard");
   const gearData = loadGearCandidates();
   const profilePath = getBaseProfile(gearData);
-  const stConfig = SCENARIOS["st"];
-  if (!stConfig) throw new Error("No 'st' scenario configured");
+
+  // Use the top roster build's talents so scale factors reflect real gameplay.
+  // Without talents, stat scaling is completely different (no procs, no multipliers).
+  const builds = getRepresentativeBuilds();
+  const topBuild = builds[0];
 
   const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.standard;
   mkdirSync(resultsDir(), { recursive: true });
-  const outputPath = resultsFile("gear_scale_factors.json");
 
   const { threadsPerSim } = simConcurrency(1);
-
-  const simArgs = [
-    profilePath,
-    "calculate_scale_factors=1",
-    "scale_only=Agi/Haste/Crit/Mastery/Vers",
-    // DPS plot: sim each secondary stat across a rating range to show DR curves
-    "dps_plot_stat=crit,haste,mastery,versatility",
-    "dps_plot_points=21",
-    `dps_plot_step=${DPS_PLOT_STEP}`,
-    `json2=${outputPath}`,
-    `threads=${threadsPerSim}`,
-    `max_time=${stConfig.maxTime}`,
-    `desired_targets=${stConfig.desiredTargets}`,
-    ...(stConfig.fightStyle ? [`fight_style=${stConfig.fightStyle}`] : []),
-    `target_error=${fidelityConfig.target_error}`,
-    `iterations=${fidelityConfig.iterations || SIM_DEFAULTS.iterations}`,
-  ];
-  if (DATA_ENV === "ptr" || DATA_ENV === "beta") simArgs.unshift("ptr=1");
+  const statKeys = ["Agi", "Haste", "Crit", "Mastery", "Vers"];
 
   console.log(
     `\nPhase 1: Scale Factors (${fidelity} fidelity, ${threadsPerSim} threads)`,
   );
-  console.log("Running scale factors sim...");
+  console.log(`  Build: ${topBuild.label || topBuild.hash.slice(0, 16)}`);
 
-  try {
-    await execFileAsync(SIMC_BIN, simArgs, {
-      maxBuffer: 100 * 1024 * 1024,
-      timeout: 1800000,
-    });
-  } catch (e) {
-    if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
-    throw new Error(`SimC scale factors failed: ${e.message}`);
-  }
+  const perScenario = {};
+  let baselineStats = null;
 
-  const data = JSON.parse(readFileSync(outputPath, "utf-8"));
-  const sf = data.sim.players[0].scale_factors;
+  for (const scenario of Object.keys(SCENARIOS)) {
+    const scConfig = SCENARIOS[scenario];
+    const outputPath = resultsFile(`gear_scale_factors_${scenario}.json`);
 
-  setSessionState("gear_scale_factors", {
-    ...sf,
-    timestamp: new Date().toISOString(),
-  });
+    const simArgs = [
+      profilePath,
+      `talents=${topBuild.hash}`,
+      "calculate_scale_factors=1",
+      "scale_only=Agi/Haste/Crit/Mastery/Vers",
+      `json2=${outputPath}`,
+      `threads=${threadsPerSim}`,
+      `max_time=${scConfig.maxTime}`,
+      `desired_targets=${scConfig.desiredTargets}`,
+      ...(scConfig.fightStyle ? [`fight_style=${scConfig.fightStyle}`] : []),
+      ...(scConfig.routeFile ? readRouteFile(scConfig.routeFile) : []),
+      ...(scConfig.overrides || []),
+      `target_error=${fidelityConfig.target_error}`,
+      `iterations=${fidelityConfig.iterations || SIM_DEFAULTS.iterations}`,
+    ];
+    if (DATA_ENV === "ptr" || DATA_ENV === "beta") simArgs.unshift("ptr=1");
 
-  // Extract baseline gear stats for absolute-rating axis
-  const baselineStats = { crit: 0, haste: 0, mastery: 0, versatility: 0 };
-  const gear = data.sim.players[0].gear;
-  if (gear) {
-    for (const item of Object.values(gear)) {
-      for (const [key, val] of Object.entries(item)) {
-        if (key.endsWith("_rating")) {
-          const stat = key.replace("_rating", "");
-          if (stat in baselineStats) baselineStats[stat] += val;
+    // DPS plot only on ST (used by Phase 1b reweighting)
+    if (scenario === "st") {
+      simArgs.push(
+        "dps_plot_stat=crit,haste,mastery,versatility",
+        "dps_plot_points=21",
+        `dps_plot_step=${DPS_PLOT_STEP}`,
+      );
+    }
+
+    console.log(`  ${scConfig.name}...`);
+    try {
+      await execSimcWithFallback(simArgs, (a) =>
+        execFileAsync(SIMC_BIN, a, {
+          maxBuffer: 100 * 1024 * 1024,
+          timeout: 1800000,
+        }),
+      );
+    } catch (e) {
+      if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
+      throw new Error(`SimC scale factors failed (${scenario}): ${e.message}`);
+    }
+
+    const data = JSON.parse(readFileSync(outputPath, "utf-8"));
+    perScenario[scenario] = data.sim.players[0].scale_factors;
+
+    console.log(
+      `    ${statKeys.map((s) => `${s}=${(perScenario[scenario][s] || 0).toFixed(3)}`).join(" ")}`,
+    );
+
+    // Extract baseline stats and DPS plot from ST scenario
+    if (scenario === "st") {
+      baselineStats = { crit: 0, haste: 0, mastery: 0, versatility: 0 };
+      const gear = data.sim.players[0].gear;
+      if (gear) {
+        for (const item of Object.values(gear)) {
+          for (const [key, val] of Object.entries(item)) {
+            if (key.endsWith("_rating")) {
+              const stat = key.replace("_rating", "");
+              if (stat in baselineStats) baselineStats[stat] += val;
+            }
+          }
+        }
+        console.log(
+          `    Baseline stats: ${Object.entries(baselineStats)
+            .map(([k, v]) => `${k}=${v}`)
+            .join(", ")}`,
+        );
+      }
+
+      const dpsPlot = data.sim.dps_plot;
+      if (dpsPlot?.length) {
+        const playerPlot = dpsPlot[0]?.data;
+        if (playerPlot) {
+          setSessionState("gear_stat_curves", {
+            curves: playerPlot,
+            baselineStats,
+            step: DPS_PLOT_STEP,
+            timestamp: new Date().toISOString(),
+          });
+          const statCount = playerPlot.reduce(
+            (n, d) => n + Object.keys(d).length,
+            0,
+          );
+          console.log(`    Stat curves: ${statCount} stats plotted`);
         }
       }
     }
-    console.log(
-      `  Baseline stats: ${Object.entries(baselineStats)
-        .map(([k, v]) => `${k}=${v}`)
-        .join(", ")}`,
-    );
   }
 
-  // Store DPS plot data (stat DR curves)
-  const dpsPlot = data.sim.dps_plot;
-  if (dpsPlot?.length) {
-    const playerPlot = dpsPlot[0]?.data;
-    if (playerPlot) {
-      setSessionState("gear_stat_curves", {
-        curves: playerPlot,
-        baselineStats,
-        step: DPS_PLOT_STEP,
-        timestamp: new Date().toISOString(),
-      });
-      const statCount = playerPlot.reduce(
-        (n, d) => n + Object.keys(d).length,
-        0,
-      );
-      console.log(`  Stat curves: ${statCount} stats plotted`);
+  // Combine per-scenario scale factors using SCENARIO_WEIGHTS
+  const combined = {};
+  for (const stat of statKeys) {
+    combined[stat] = 0;
+    for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+      combined[stat] += (perScenario[scenario]?.[stat] || 0) * weight;
     }
   }
 
-  console.log("Scale factors:");
-  for (const [stat, value] of Object.entries(sf)) {
-    if (typeof value === "number")
-      console.log(`  ${stat}: ${value.toFixed(4)}`);
+  setSessionState("gear_scale_factors", {
+    ...combined,
+    perScenario,
+    timestamp: new Date().toISOString(),
+  });
+
+  console.log("Weighted scale factors:");
+  for (const stat of statKeys) {
+    console.log(`  ${stat}: ${combined[stat].toFixed(4)}`);
+  }
+}
+
+// --- Phase 1b: Iterative EP Reweighting ---
+// Uses DPS plot curves from Phase 1 to recompute scale factors at the
+// stat point implied by EP-ranked gear, iterating until stable.
+// Breaks the self-reinforcing bias where scale factors computed at the
+// current gear point lock the pipeline into a local stat optimum.
+
+function buildCurveMap(curves) {
+  if (!curves.curves || curves.curves.length === 0) return null;
+  const map = {};
+  for (const entry of curves.curves) {
+    for (const [stat, points] of Object.entries(entry)) {
+      map[stat] = points
+        .map((p) => ({ rating: p.rating, dps: p.dps }))
+        .sort((a, b) => a.rating - b.rating);
+    }
+  }
+  return Object.keys(map).length > 0 ? map : null;
+}
+
+function interpolateDerivative(
+  curveMap,
+  stat,
+  targetRating,
+  baselineRating,
+  step,
+) {
+  const points = curveMap[stat];
+  if (!points || points.length < 2) return null;
+
+  // Stat curve ratings are offsets from baseline. Convert target to offset.
+  const offset = targetRating - baselineRating;
+
+  // Find the two bracketing points
+  let lo = points[0],
+    hi = points[points.length - 1];
+  for (let i = 0; i < points.length - 1; i++) {
+    if (points[i].rating <= offset && points[i + 1].rating >= offset) {
+      lo = points[i];
+      hi = points[i + 1];
+      break;
+    }
+  }
+
+  if (hi.rating === lo.rating) return null;
+  return (hi.dps - lo.dps) / (hi.rating - lo.rating);
+}
+
+function epRankAll(gearData, sf) {
+  const winners = {};
+  const bestGemEp = (gearData.gems || [])
+    .filter((g) => g.stats)
+    .reduce((max, g) => Math.max(max, scoreEp(g.stats, sf)), 0);
+
+  for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
+    if (ALWAYS_SIM_SLOTS.has(slot)) continue;
+    const candidates = slotData.candidates || [];
+    if (candidates.length === 0) continue;
+    const best = candidates
+      .map((c) => ({
+        id: c.id,
+        ep: scoreEp(c.stats, sf) + countSockets(c.simc) * bestGemEp,
+      }))
+      .sort((a, b) => b.ep - a.ep)[0];
+    winners[slot] = best?.id;
+  }
+  return winners;
+}
+
+function computeGearStats(winners, gearData) {
+  const totals = { crit: 0, haste: 0, mastery: 0, vers: 0 };
+  for (const [slot, winnerId] of Object.entries(winners)) {
+    const slotData = gearData.slots?.[slot];
+    if (!slotData) continue;
+    const candidate = slotData.candidates?.find((c) => c.id === winnerId);
+    if (!candidate?.stats) continue;
+    for (const [stat, val] of Object.entries(candidate.stats)) {
+      if (stat in totals) totals[stat] += val;
+    }
+  }
+  return totals;
+}
+
+// Map scale factor key names to SimC dps_plot stat names (used as curve map keys)
+// and to the lowercase keys used in baselineStats.
+const SF_TO_CURVE_STAT = {
+  Crit: "crit",
+  Haste: "haste",
+  Mastery: "mastery",
+  Vers: "versatility",
+};
+
+function cmdEpReweight(gearData) {
+  const curves = getSessionState("gear_stat_curves");
+  const sf = getSessionState("gear_scale_factors");
+  if (!curves || !sf) {
+    console.log(
+      "Phase 1b: No stat curves or scale factors. Skipping reweight.",
+    );
+    return;
+  }
+
+  const statKeys = ["Crit", "Haste", "Mastery", "Vers"];
+  const curveMap = buildCurveMap(curves);
+  if (!curveMap) {
+    console.log("Phase 1b: Could not parse stat curves. Skipping.");
+    return;
+  }
+
+  let currentSf = { ...sf };
+  let prevWinners = null;
+  const MAX_ITERS = 5;
+
+  // Compute scale factor to convert Raidbots candidate stats to SimC rating scale.
+  // Raidbots stats are from live data (~70x larger than SimC Midnight branch).
+  // We estimate the ratio using baseline SimC stats and the number of EP-ranked slots.
+  const baselineTotalSimC = Object.values(curves.baselineStats).reduce(
+    (s, v) => s + v,
+    0,
+  );
+  const epSlotCount = Object.keys(gearData.slots || {}).filter(
+    (s) => !ALWAYS_SIM_SLOTS.has(s),
+  ).length;
+  const totalSlots = 16;
+
+  console.log(
+    `\nPhase 1b: Iterative EP Reweighting (max ${MAX_ITERS} iterations)`,
+  );
+
+  for (let iter = 1; iter <= MAX_ITERS; iter++) {
+    const winners = epRankAll(gearData, currentSf);
+    const winnerKey = JSON.stringify(winners);
+    if (winnerKey === prevWinners) {
+      console.log(`  Iteration ${iter}: converged (no item changes).`);
+      break;
+    }
+    prevWinners = winnerKey;
+
+    const rawStats = computeGearStats(winners, gearData);
+    const rawTotal = Object.values(rawStats).reduce((s, v) => s + v, 0);
+
+    // Scale Raidbots stats to SimC rating: allocate baseline's EP-slot share proportionally
+    const simcEpBudget = baselineTotalSimC * (epSlotCount / totalSlots);
+    const scaleFactor = rawTotal > 0 ? simcEpBudget / rawTotal : 1;
+    const scaledStats = {};
+    for (const k of Object.keys(rawStats)) {
+      scaledStats[k] = Math.round(rawStats[k] * scaleFactor);
+    }
+
+    console.log(
+      `  Iteration ${iter}: ${statKeys.map((s) => `${s}=${scaledStats[s.toLowerCase()] || 0}`).join(" ")} (scale=${scaleFactor.toFixed(4)})`,
+    );
+
+    const newSf = { ...currentSf };
+    for (const stat of statKeys) {
+      const curveStat = SF_TO_CURVE_STAT[stat];
+      const baselineStat =
+        curveStat === "versatility" ? "versatility" : curveStat;
+      const rating = scaledStats[stat.toLowerCase()] || 0;
+      const derivative = interpolateDerivative(
+        curveMap,
+        curveStat,
+        rating,
+        curves.baselineStats[baselineStat] || 0,
+        curves.step,
+      );
+      if (derivative != null) {
+        newSf[stat] = derivative;
+      }
+    }
+
+    currentSf = newSf;
+  }
+
+  setSessionState("gear_scale_factors", {
+    ...currentSf,
+    reweighted: true,
+    timestamp: new Date().toISOString(),
+  });
+
+  console.log("Reweighted scale factors:");
+  for (const stat of ["Agi", ...statKeys]) {
+    if (currentSf[stat] != null) {
+      console.log(`  ${stat}: ${currentSf[stat].toFixed(4)}`);
+    }
+  }
+}
+
+// --- Phase 3b: Combinatorial Validation ---
+// Sims the cross-product of top-N candidates per EP-ranked slot.
+// Catches stat synergies that per-slot EP ranking misses.
+
+const COMBO_MAX = 512;
+
+async function cmdCombinatorialValidation(args) {
+  const fidelity = parseFidelity(args, "quick");
+  const gearData = loadGearCandidates();
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+
+  // Collect top-2 per EP-ranked slot (excluding sim-handled slots)
+  const SIM_HANDLED_SLOTS = new Set([
+    "main_hand",
+    "off_hand",
+    "trinket1",
+    "trinket2",
+  ]);
+  const slotOptions = {};
+  for (const slot of Object.keys(gearData.slots || {})) {
+    if (SIM_HANDLED_SLOTS.has(slot)) continue;
+    if (ALWAYS_SIM_SLOTS.has(slot)) continue;
+    const results = getBestGear(3, slot);
+    if (results.length < 2) continue;
+    const top = results
+      .filter((r) => r.candidate_id !== "__baseline__")
+      .slice(0, 2)
+      .map((r) => r.candidate_id);
+    if (top.length === 2) slotOptions[slot] = top;
+  }
+
+  const slots = Object.keys(slotOptions);
+  if (slots.length === 0) {
+    console.log("Phase 3b: No slots with 2+ EP candidates. Skipping.");
+    return;
+  }
+
+  // Generate cross-product combinations (with safety cap)
+  let combos = [{}];
+  for (const slot of slots) {
+    const newCombos = [];
+    for (const combo of combos) {
+      for (const candidateId of slotOptions[slot]) {
+        newCombos.push({ ...combo, [slot]: candidateId });
+      }
+    }
+    combos = newCombos;
+    if (combos.length > COMBO_MAX) {
+      console.log(
+        `  Warning: ${combos.length} combos exceeds cap (${COMBO_MAX}), truncating slots`,
+      );
+      break;
+    }
+  }
+
+  console.log(
+    `\nPhase 3b: Combinatorial Validation (${combos.length} combos across ${slots.length} slots, ${fidelity} fidelity)`,
+  );
+
+  // Build profileset variants — each combo overrides multiple slots
+  const variants = combos.map((combo, i) => {
+    const overrides = [];
+    for (const [slot, candidateId] of Object.entries(combo)) {
+      const candidate = gearData.slots[slot]?.candidates?.find(
+        (c) => c.id === candidateId,
+      );
+      if (candidate) {
+        overrides.push(applyStatAlloc(candidate.simc, slot));
+      }
+    }
+    return { name: `combo_${i}`, overrides };
+  });
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_combo_validation",
+  );
+
+  const aggregated = aggregateGearResults(
+    results,
+    variants.map((v) => ({ id: v.name })),
+    builds,
+  );
+
+  const best = aggregated[0];
+  const baseline = aggregated.find((r) => r.id === "__baseline__");
+  console.log(
+    `  Best combination: ${best.id} (weighted: ${best.weighted?.toFixed(0)})`,
+  );
+  if (baseline) {
+    const delta =
+      ((best.weighted - baseline.weighted) / baseline.weighted) * 100;
+    console.log(`  vs baseline: ${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%`);
+  }
+
+  clearGearResults(3.5, "combinations");
+  saveGearResults(3.5, "combinations", aggregated, fidelity);
+
+  // Store winning slot selections for assembly (or clear stale state if baseline wins)
+  if (best.id !== "__baseline__") {
+    const comboIdx = parseInt(best.id.replace("combo_", ""));
+    const winningCombo = combos[comboIdx];
+    setSessionState("gear_phase3b_winners", {
+      combo: winningCombo,
+      weighted: best.weighted,
+      timestamp: new Date().toISOString(),
+    });
+    console.log("  Winning slots:", JSON.stringify(winningCombo));
+  } else {
+    setSessionState("gear_phase3b_winners", null);
+    console.log("  Baseline wins — no combo overrides needed.");
   }
 }
 
@@ -610,12 +981,7 @@ async function cmdProcEval(args) {
     printSlotResults(`weapon-eval: ${slot}`, ranked, gearData);
 
     clearGearResults(4, slot);
-    saveGearResults(
-      4,
-      slot,
-      ranked.filter((r) => r.id !== "__baseline__"),
-      fidelity,
-    );
+    saveGearResults(4, slot, ranked, fidelity);
   }
 }
 
@@ -811,7 +1177,102 @@ async function cmdEvalSets(args) {
 
 // --- CLI: gems (Phase 9) ---
 
-function cmdGems(gearData) {
+// Classify gem color from its stat composition.
+// Midnight gems: Lapis (vers), Garnet (haste), Amethyst (mastery), Peridot (crit).
+function gemColor(gem) {
+  const s = gem.stats;
+  if (!s) return "unknown";
+  const keys = Object.keys(s);
+  if (keys.length === 1) {
+    if (s.vers) return "lapis";
+    if (s.haste) return "garnet";
+    if (s.mastery) return "amethyst";
+    if (s.crit) return "peridot";
+    if (s.agi) return "diamond";
+  }
+  // Hybrid gems: classify by primary stat (higher value)
+  if (s.vers) return "lapis";
+  if (s.haste) return "garnet";
+  if (s.mastery) return "amethyst";
+  if (s.crit) return "peridot";
+  return "unknown";
+}
+
+// Build a gem queue (array of item_ids) for a given configuration.
+// If diverse=true, picks one gem of each color (best EP per color) plus
+// the Eversong Diamond in the first slot.
+function buildGemQueue(config, allGems, sf, totalSockets) {
+  const queue = [];
+
+  if (config.diverse && config.eversong) {
+    // Eversong Diamond first
+    const eversongId = config.eversong.item_id || config.eversong.enchant_id;
+    queue.push(eversongId);
+
+    // One of each non-diamond color (best EP within that color)
+    const colorBest = new Map();
+    for (const g of allGems) {
+      if (g.uniqueLimit > 0) continue;
+      const c = gemColor(g);
+      if (c === "diamond" || c === "unknown") continue;
+      const ep = scoreEp(g.stats, sf);
+      const itemId = g.item_id || g.enchant_id;
+      if (!colorBest.has(c) || ep > colorBest.get(c).ep) {
+        colorBest.set(c, { itemId, ep });
+      }
+    }
+    const usedColors = new Set();
+    for (const [color, { itemId }] of colorBest) {
+      if (queue.length >= totalSockets) break;
+      queue.push(itemId);
+      usedColors.add(color);
+    }
+
+    // Fill remaining with the best unlimited gem
+    const bestUnlimited = allGems
+      .filter((g) => g.stats && (!g.uniqueLimit || g.uniqueLimit === 0))
+      .map((g) => ({
+        ...g,
+        ep: scoreEp(g.stats, sf),
+        itemId: g.item_id || g.enchant_id,
+      }))
+      .sort((a, b) => b.ep - a.ep)[0];
+    while (queue.length < totalSockets && bestUnlimited) {
+      queue.push(bestUnlimited.itemId);
+    }
+  } else if (config.gem) {
+    // All-same: fill every socket with the specified gem
+    const itemId = config.gem.item_id || config.gem.enchant_id;
+    while (queue.length < totalSockets) queue.push(itemId);
+  }
+
+  return queue;
+}
+
+// Apply a gem queue to gear lines, producing overrides for socketed slots only.
+function applyGemQueueToLines(gearLines, gemQueue) {
+  const overrides = [];
+  let gemIdx = 0;
+  for (const line of gearLines) {
+    if (!line.includes("gem_id=")) continue;
+    const match = line.match(/gem_id=([\d/]+)/);
+    if (!match) continue;
+    const socketCount = match[1].split("/").length;
+    const assigned = gemQueue.slice(gemIdx, gemIdx + socketCount);
+    gemIdx += socketCount;
+    if (assigned.length === socketCount) {
+      const newLine = line.replace(
+        /gem_id=[\d/]+/,
+        `gem_id=${assigned.join("/")}`,
+      );
+      if (newLine !== line) overrides.push(newLine);
+    }
+  }
+  return overrides;
+}
+
+async function cmdGems(args, gearData) {
+  const fidelity = parseFidelity(args, "quick");
   const sf = getSessionState("gear_scale_factors");
   const gems = gearData.gems || [];
 
@@ -824,59 +1285,134 @@ function cmdGems(gearData) {
     return;
   }
 
+  // EP-rank all unlimited gems by color for configuration building
   const ranked = gems
-    .filter((g) => g.stats)
+    .filter((g) => g.stats && (!g.uniqueLimit || g.uniqueLimit === 0))
     .map((g) => ({ ...g, ep: scoreEp(g.stats, sf) }))
     .sort((a, b) => b.ep - a.ep);
 
-  const best = ranked.length > 0 ? ranked[0] : gems[0];
-  if (!best) {
-    console.log("No gems configured.");
+  // Build pre-gem gear lines to determine socket count and create overrides
+  const preGemLines = buildGearLines(gearData);
+  let totalSockets = 0;
+  for (const line of preGemLines) {
+    const match = line.match(/gem_id=([\d/]+)/);
+    if (match) totalSockets += match[1].split("/").length;
+  }
+
+  if (totalSockets === 0) {
+    console.log("Phase 9: No socketed items in assembled gear. Skipping.");
     return;
   }
 
-  // Find the best unlimited gem (for filling remaining sockets after unique-limited ones)
-  const bestUnlimited = ranked.find(
-    (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
+  // Build gem configurations to test
+  const configs = [];
+
+  // Best EP gem (all sockets same)
+  if (ranked.length > 0) {
+    configs.push({
+      id: "ep_best",
+      label: `All: ${ranked[0].label}`,
+      gem: ranked[0],
+      diverse: false,
+    });
+  }
+
+  // Second-best EP gem (for comparison)
+  if (ranked.length > 1 && gemColor(ranked[1]) !== gemColor(ranked[0])) {
+    configs.push({
+      id: "ep_second",
+      label: `All: ${ranked[1].label}`,
+      gem: ranked[1],
+      diverse: false,
+    });
+  }
+
+  // Diverse colors + Eversong Diamond
+  const eversong = gems.find((g) =>
+    g.label?.toLowerCase().includes("critical strike effectiveness"),
   );
+  if (eversong) {
+    configs.push({
+      id: "diverse_eversong",
+      label: `Diverse + Eversong Diamond`,
+      eversong,
+      diverse: true,
+    });
+  }
 
-  setSessionState("gear_gems", {
-    best_id: best.id,
-    best_enchant_id: best.enchant_id,
-    best_item_id: best.item_id || best.enchant_id,
-    best_label: best.label,
-    ep: best.ep ?? 0,
-    best_unlimited_id: bestUnlimited?.id,
-    best_unlimited_item_id: bestUnlimited?.item_id || bestUnlimited?.enchant_id,
-    timestamp: new Date().toISOString(),
-  });
-
-  if (ranked.length === 0) {
-    console.log(
-      `Phase 9: Gems — no stat data, defaulting to first gem: ${best.label}`,
-    );
+  if (configs.length <= 1) {
+    // Only one config — fall back to EP-only
+    const best = ranked[0] || gems[0];
+    setSessionState("gear_gems", {
+      best_id: best.id,
+      best_enchant_id: best.enchant_id,
+      best_item_id: best.item_id || best.enchant_id,
+      best_label: best.label,
+      ep: best.ep ?? 0,
+      timestamp: new Date().toISOString(),
+    });
+    console.log(`Phase 9: Gems (EP-only) — best: ${best.label}`);
     return;
   }
 
   console.log(
-    `\nPhase 9: Gems — best: ${best.label} (EP: ${best.ep.toFixed(1)})`,
+    `\nPhase 9: Gems — simming ${configs.length} configs (${totalSockets} sockets, ${fidelity} fidelity)`,
   );
-  for (const [i, g] of ranked.entries()) {
-    const uniqueTag =
-      g.uniqueLimit != null && g.uniqueLimit > 0
-        ? ` [unique: ${g.uniqueLimit}]`
-        : "";
+
+  // Generate profileset variants
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+  const variants = configs.map((cfg) => {
+    const queue = buildGemQueue(cfg, gems, sf, totalSockets);
+    const overrides = applyGemQueueToLines(preGemLines, queue);
+    return { name: cfg.id, overrides };
+  });
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_gems",
+  );
+
+  const aggregated = aggregateGearResults(
+    results,
+    configs.map((c) => ({ id: c.id, label: c.label })),
+    builds,
+  );
+
+  const best = aggregated[0];
+  const baseline = aggregated.find((r) => r.id === "__baseline__");
+  console.log(`  Best gem config: ${best.id} — ${best.label || best.id}`);
+  if (baseline) {
     const delta =
-      i === 0 ? "" : ` (${(((g.ep - best.ep) / best.ep) * 100).toFixed(2)}%)`;
+      ((best.weighted - baseline.weighted) / baseline.weighted) * 100;
+    console.log(`  vs baseline: ${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%`);
+  }
+
+  for (const r of aggregated) {
+    if (r.id === "__baseline__") continue;
+    const cfg = configs.find((c) => c.id === r.id);
+    const delta = baseline
+      ? ((r.weighted - baseline.weighted) / baseline.weighted) * 100
+      : 0;
     console.log(
-      `  ${i + 1}. ${g.label}: ${g.ep.toFixed(1)}${delta}${uniqueTag}`,
+      `  ${cfg?.label || r.id}: ${r.weighted?.toFixed(0)} (${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%)`,
     );
   }
-  if (bestUnlimited && bestUnlimited.id !== best.id) {
-    console.log(
-      `  Best unlimited gem for remaining sockets: ${bestUnlimited.label}`,
-    );
-  }
+
+  // Store winner in session state for assembly
+  const winningConfig = configs.find((c) => c.id === best.id);
+  setSessionState("gear_gems", {
+    config: best.id,
+    label: winningConfig?.label,
+    diverse: winningConfig?.diverse || false,
+    best_id: winningConfig?.gem?.id || winningConfig?.eversong?.id,
+    best_item_id:
+      winningConfig?.gem?.item_id || winningConfig?.eversong?.item_id,
+    timestamp: new Date().toISOString(),
+  });
 }
 
 // --- CLI: enchants (Phase 10) ---
@@ -913,11 +1449,20 @@ async function cmdEnchants(args) {
     legs: "legs",
   };
   let cachedGearLines;
+  let cachedProfileLines;
   for (const [enchantKey, gearSlot] of Object.entries(ENCHANT_SLOT_MAP)) {
     const enchantData = gearData.enchants?.[enchantKey];
     if (!enchantData || !enchantData.base_item.includes("id=0")) continue;
     cachedGearLines ??= buildGearLines(gearData);
-    const itemLine = cachedGearLines.find((l) => l.startsWith(`${gearSlot}=`));
+    let itemLine = cachedGearLines.find((l) => l.startsWith(`${gearSlot}=`));
+    // When baseline wins (e.g., Phase 4 weapons), assembly doesn't emit the slot.
+    // Fall back to reading the line from the gear target (profile.simc).
+    if (!itemLine) {
+      cachedProfileLines ??= readFileSync(getGearTarget(gearData), "utf-8")
+        .split("\n")
+        .map((l) => l.trim());
+      itemLine = cachedProfileLines.find((l) => l.startsWith(`${gearSlot}=`));
+    }
     if (itemLine) {
       enchantData.base_item = itemLine.replace(/,enchant_id=\d+/, "");
     }
@@ -1082,10 +1627,41 @@ function aggregateGearResults(results, candidates, builds) {
   }
 
   const candidateMap = new Map(candidates.map((c) => [c.id, c]));
-  const ranked = [];
 
+  // First pass: compute raw per-scenario averages for all candidates
+  const entries = [];
   for (const [candidateId, data] of byCandidate) {
-    const { avg, weighted } = computeWeightedDps(data.scenarioDps);
+    const { avg } = computeWeightedDps(data.scenarioDps);
+    entries.push({ candidateId, avg, data });
+  }
+
+  // Compute per-scenario means across all candidates for normalization.
+  // Without this, high-DPS scenarios (e.g., 10T at 580k) dominate the weighted
+  // score despite low scenario weight, because raw DPS scale bleeds through.
+  const scenarioMeans = {};
+  for (const scenario of Object.keys(SCENARIO_WEIGHTS)) {
+    const vals = entries.map((e) => e.avg[scenario] || 0).filter((v) => v > 0);
+    scenarioMeans[scenario] =
+      vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 1;
+  }
+
+  // Display scale: raw weighted mean DPS, so output stays in DPS-like units
+  let displayScale = 0;
+  for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+    displayScale += scenarioMeans[scenario] * weight;
+  }
+
+  // Second pass: compute normalized weighted scores
+  const ranked = [];
+  for (const { candidateId, avg, data } of entries) {
+    let normalizedSum = 0;
+    for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+      const dps = avg[scenario] || 0;
+      const mean = scenarioMeans[scenario];
+      normalizedSum += (dps / mean) * weight;
+    }
+    const weighted = normalizedSum * displayScale;
+
     const candidate = candidateMap.get(candidateId);
     ranked.push({
       id: candidateId,
@@ -1310,9 +1886,10 @@ async function cmdTierConfig(args) {
   clearGearResults(0);
   saveGearResults(0, "tier_config", ranked, fidelity);
 
-  // Determine the best config
-  const bestNonBaseline = ranked.find((r) => r.id !== "__baseline__");
-  const bestConfig = bestNonBaseline?.id || "all_tier_5pc";
+  // Determine the best config — baseline means keep original profile gear
+  const best = ranked[0];
+  const bestConfig =
+    best?.id === "__baseline__" ? "__baseline__" : best?.id || "all_tier_5pc";
 
   setSessionState("gear_phase0", {
     best: bestConfig,
@@ -1321,7 +1898,11 @@ async function cmdTierConfig(args) {
   });
 
   console.log(`\nBest tier config: ${bestConfig}`);
-  if (bestConfig === "all_tier_5pc") {
+  if (bestConfig === "__baseline__") {
+    console.log(
+      "Recommendation: Keep original profile (no tier overrides needed).",
+    );
+  } else if (bestConfig === "all_tier_5pc") {
     console.log("Recommendation: Use all 5 tier pieces (no skip needed).");
   } else {
     console.log(
@@ -2078,6 +2659,9 @@ function getTierLines(gearData) {
   const phase0 = getSessionState("gear_phase0");
   if (!phase0 || !gearData.tier) return [];
 
+  // Baseline won — keep original profile gear, no tier overrides
+  if (phase0.best === "__baseline__") return [];
+
   if (phase0.best === "all_tier_5pc") {
     return Object.entries(gearData.tier.items).map(([slot, simc]) => ({
       slot,
@@ -2116,17 +2700,22 @@ function buildGearLines(gearData) {
   // Track equipped unique-equip item IDs to prevent conflicts across slots
   // (e.g., Lightless Lament in both MH and OH)
   const equippedUniqueItemIds = new Set();
+  let craftedCount = 0;
 
   // Extract item ID from a SimC line like "main_hand=lightless_lament,id=260408,..."
   function extractItemId(simcLine) {
     return simcLine?.match(/,id=(\d+)/)?.[1] ?? null;
   }
 
-  // Check if a candidate can be equipped given unique-equip constraints
   function canEquip(candidate) {
-    if (!candidate?.uniqueEquipped) return true;
-    const itemId = extractItemId(candidate.simc || candidate.simc_base);
-    return !itemId || !equippedUniqueItemIds.has(itemId);
+    if (candidate?.uniqueEquipped) {
+      const itemId = extractItemId(candidate.simc || candidate.simc_base);
+      if (itemId && equippedUniqueItemIds.has(itemId)) return false;
+    }
+    if (isCraftedSimc(candidate?.simc) && craftedCount >= MAX_CRAFTED) {
+      return false;
+    }
+    return true;
   }
 
   function addLine(line, slot, candidate) {
@@ -2139,6 +2728,7 @@ function buildGearLines(gearData) {
       const itemId = extractItemId(line);
       if (itemId) equippedUniqueItemIds.add(itemId);
     }
+    if (isCraftedSimc(line)) craftedCount++;
   }
 
   // Phase 0: tier config
@@ -2243,6 +2833,8 @@ function buildGearLines(gearData) {
     if (coveredSlots.has(slot)) continue;
     const procResults = getBestGear(4, slot);
     // Walk the ranking to find the best candidate that passes unique-equip constraints
+    // If baseline is the top result, skip this slot (keep original gear)
+    if (procResults[0]?.candidate_id === "__baseline__") continue;
     let placed = false;
     for (const procResult of procResults) {
       if (procResult.candidate_id === "__baseline__") continue;
@@ -2258,77 +2850,103 @@ function buildGearLines(gearData) {
     if (!placed) continue;
   }
 
-  // Phase 3: EP ranking winners for remaining individual slots
-  for (const slot of Object.keys(gearData.slots || {})) {
-    if (coveredSlots.has(slot)) continue;
-    const epResults = getBestGear(3, slot);
-    for (const epResult of epResults) {
-      if (epResult.candidate_id === "__baseline__") continue;
-      const candidate = gearData.slots[slot].candidates.find(
-        (c) => c.id === epResult.candidate_id,
+  // Phase 3b: combinatorial validation winners override EP per-slot picks
+  const comboWinners = getSessionState("gear_phase3b_winners");
+  if (comboWinners?.combo) {
+    for (const [slot, candidateId] of Object.entries(comboWinners.combo)) {
+      if (coveredSlots.has(slot)) continue;
+      const candidate = gearData.slots[slot]?.candidates?.find(
+        (c) => c.id === candidateId,
       );
       if (!candidate || !canEquip(candidate)) continue;
       const line = applyStatAlloc(candidate.simc, slot);
       addLine(applySlotEnchant(line, slot, enchantMap), slot, candidate);
-      break;
     }
   }
 
-  // Phase 9: apply gems to all socketed items, respecting unique-equip limits.
-  // Uses item_id (SimC gem_id= expects item IDs, not enchant IDs).
-  // Unique-limited gems (e.g., Thalassian Diamond, limit 1) are placed first,
-  // then remaining sockets get the best non-unique gem.
+  // Phase 3: EP ranking winners for remaining individual slots.
+  // When Phase 3b showed baseline winning, EP picks collectively are worse — skip them.
+  if (comboWinners?.combo) {
+    for (const slot of Object.keys(gearData.slots || {})) {
+      if (coveredSlots.has(slot)) continue;
+      const epResults = getBestGear(3, slot);
+      for (const epResult of epResults) {
+        if (epResult.candidate_id === "__baseline__") continue;
+        const candidate = gearData.slots[slot].candidates.find(
+          (c) => c.id === epResult.candidate_id,
+        );
+        if (!candidate || !canEquip(candidate)) continue;
+        const line = applyStatAlloc(candidate.simc, slot);
+        addLine(applySlotEnchant(line, slot, enchantMap), slot, candidate);
+        break;
+      }
+    }
+  }
+
+  // Phase 9: apply gems to all socketed items.
+  // Uses the sim-winning gem configuration from cmdGems (diverse or all-same).
+  // Falls back to EP-ranked queue when no sim data exists.
   const gemState = getSessionState("gear_gems");
   if (gemState) {
     const allGems = gearData.gems || [];
     const sf = getSessionState("gear_scale_factors");
-    const rankedGems = sf
-      ? allGems
-          .filter((g) => g.stats && (g.item_id || g.enchant_id))
-          .map((g) => ({
-            ...g,
-            ep: scoreEp(g.stats, sf),
-            itemId: g.item_id || g.enchant_id,
-          }))
-          .sort((a, b) => b.ep - a.ep)
-      : [];
 
-    // Separate unique-limited and unlimited gems
-    const uniqueGems = rankedGems.filter(
-      (g) => g.uniqueLimit != null && g.uniqueLimit > 0,
-    );
-    const unlimitedGems = rankedGems.filter(
-      (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
-    );
-    const bestUnlimitedId = unlimitedGems[0]?.itemId;
-    // Fallback: use gemState if no ranked gems available
-    const fallbackGemId =
-      bestUnlimitedId || gemState.best_item_id || gemState.best_enchant_id;
-
-    // Count total sockets across all lines
     let totalSockets = 0;
     for (const line of lines) {
       const match = line.match(/gem_id=([\d/]+)/);
       if (match) totalSockets += match[1].split("/").length;
     }
 
-    // Build a queue of gem item IDs to assign, respecting unique limits.
-    // Gems sharing a uniqueCategory (e.g., Thalassian Diamond = 698) are
-    // limited to uniqueLimit TOTAL across the category, not per gem type.
-    // Within each category, pick the highest-EP gem(s).
-    const gemQueue = [];
-    const categoryBudget = new Map();
-    for (const ug of uniqueGems) {
-      const cat = ug.uniqueCategory ?? ug.itemId;
-      if (!categoryBudget.has(cat)) categoryBudget.set(cat, ug.uniqueLimit);
-      const remaining = categoryBudget.get(cat);
-      if (remaining <= 0) continue;
-      const count = Math.min(remaining, totalSockets - gemQueue.length);
-      for (let n = 0; n < count; n++) gemQueue.push(ug.itemId);
-      categoryBudget.set(cat, remaining - count);
-    }
-    while (gemQueue.length < totalSockets && fallbackGemId) {
-      gemQueue.push(fallbackGemId);
+    let gemQueue;
+    if (gemState.diverse) {
+      // Sim-based diverse winner: rebuild the same queue that won
+      const eversong = allGems.find((g) =>
+        g.label?.toLowerCase().includes("critical strike effectiveness"),
+      );
+      gemQueue = buildGemQueue(
+        { diverse: true, eversong },
+        allGems,
+        sf,
+        totalSockets,
+      );
+    } else {
+      // EP-based queue with unique-limit handling
+      const rankedGems = sf
+        ? allGems
+            .filter((g) => g.stats && (g.item_id || g.enchant_id))
+            .map((g) => ({
+              ...g,
+              ep: scoreEp(g.stats, sf),
+              itemId: g.item_id || g.enchant_id,
+            }))
+            .sort((a, b) => b.ep - a.ep)
+        : [];
+
+      const uniqueGems = rankedGems.filter(
+        (g) => g.uniqueLimit != null && g.uniqueLimit > 0,
+      );
+      const unlimitedGems = rankedGems.filter(
+        (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
+      );
+      const fallbackGemId =
+        unlimitedGems[0]?.itemId ||
+        gemState.best_item_id ||
+        gemState.best_enchant_id;
+
+      gemQueue = [];
+      const categoryBudget = new Map();
+      for (const ug of uniqueGems) {
+        const cat = ug.uniqueCategory ?? ug.itemId;
+        if (!categoryBudget.has(cat)) categoryBudget.set(cat, ug.uniqueLimit);
+        const remaining = categoryBudget.get(cat);
+        if (remaining <= 0) continue;
+        const count = Math.min(remaining, totalSockets - gemQueue.length);
+        for (let n = 0; n < count; n++) gemQueue.push(ug.itemId);
+        categoryBudget.set(cat, remaining - count);
+      }
+      while (gemQueue.length < totalSockets && fallbackGemId) {
+        gemQueue.push(fallbackGemId);
+      }
     }
 
     // Apply gems to lines in order
@@ -2415,9 +3033,49 @@ function cmdWriteProfile() {
   // Any slot in the current profile not covered by the pipeline is preserved as-is.
   // This prevents tier slots (managed by phase 0) from being dropped when session
   // state is missing (e.g., write-profile called standalone).
-  const coveredSlots = new Set(finalLines.map((l) => l.split("=")[0]));
+  // Apply Phase 10 enchant winners to preserved lines.
+  // Also enforce MAX_CRAFTED constraint on preserved lines.
+  const preservedEnchantMap = buildEnchantMap(gearData);
+  const finalSlotsCovered = new Set(finalLines.map((l) => l.split("=")[0]));
+
+  // Build set of known crafted item IDs from gear-candidates to detect crafted
+  // items even when SimC markers (crafted_stats, bonus_id=8793) have been stripped
+  const craftedItemIds = new Set();
+  for (const slotData of Object.values(gearData?.slots || {})) {
+    for (const c of slotData.candidates || []) {
+      if (isCraftedSimc(c.simc)) {
+        const m = c.simc?.match(/,id=(\d+)/);
+        if (m) craftedItemIds.add(m[1]);
+      }
+    }
+  }
+
+  function isCraftedLine(line) {
+    if (isCraftedSimc(line)) return true;
+    const m = line.match(/,id=(\d+)/);
+    return m ? craftedItemIds.has(m[1]) : false;
+  }
+
+  let preservedCraftedCount = finalLines.filter((l) => isCraftedLine(l)).length;
   for (const [slot, line] of currentGear) {
-    if (!coveredSlots.has(slot)) finalLines.push(line);
+    if (!finalSlotsCovered.has(slot)) {
+      if (isCraftedLine(line) && preservedCraftedCount >= MAX_CRAFTED) {
+        // Over crafted limit — substitute best non-crafted candidate for this slot
+        const slotKey = slot === "wrist" ? "wrists" : slot;
+        const slotCandidates = gearData?.slots?.[slotKey]?.candidates || [];
+        const nonCrafted = slotCandidates.find((c) => !isCraftedSimc(c.simc));
+        if (nonCrafted) {
+          finalLines.push(
+            applySlotEnchant(nonCrafted.simc, slot, preservedEnchantMap),
+          );
+        } else {
+          finalLines.push(applySlotEnchant(line, slot, preservedEnchantMap));
+        }
+      } else {
+        if (isCraftedLine(line)) preservedCraftedCount++;
+        finalLines.push(applySlotEnchant(line, slot, preservedEnchantMap));
+      }
+    }
   }
 
   // Sort into canonical SimC slot order for readability
@@ -2496,6 +3154,12 @@ async function cmdRun(args) {
   if (maxPhase >= 3) {
     console.log("\n========== PHASE 3: EP Ranking ==========\n");
     cmdEpRank(gearData);
+    console.log("\n========== PHASE 1b: EP Reweighting ==========\n");
+    cmdEpReweight(gearData);
+    console.log("\n========== PHASE 3 (reweighted): EP Ranking ==========\n");
+    cmdEpRank(gearData);
+    console.log("\n========== PHASE 3b: Combinatorial Validation ==========\n");
+    await cmdCombinatorialValidation(fidelityArgs);
   }
   if (maxPhase >= 4) {
     console.log("\n========== PHASE 4: Weapon Evaluation ==========\n");
@@ -2525,7 +3189,7 @@ async function cmdRun(args) {
   }
   if (maxPhase >= 9) {
     console.log("\n========== PHASE 9: Gems ==========\n");
-    cmdGems(gearData);
+    await cmdGems(fidelityArgs, gearData);
   }
   if (maxPhase >= 10) {
     console.log("\n========== PHASE 10: Enchants ==========\n");
@@ -2537,7 +3201,10 @@ async function cmdRun(args) {
   }
 
   const phase11State = getSessionState("gear_phase11");
-  if (phase11State?.validationPassed === false) {
+  if (phase11State?.validationPassed === true) {
+    console.log("\n========== Writing profile.simc ==========\n");
+    cmdWriteProfile();
+  } else if (phase11State?.validationPassed === false) {
     console.log(
       "\n========== PIPELINE BLOCKED: Gear regression detected ==========\n",
     );
@@ -2546,8 +3213,7 @@ async function cmdRun(args) {
     );
     console.log("  Fix gear candidates and re-run the pipeline to proceed.");
   } else {
-    console.log("\n========== Writing profile.simc ==========\n");
-    cmdWriteProfile();
+    console.log("\n  Profile not written — run through Phase 11 to validate.");
   }
 
   console.log("\n========== Pipeline Complete ==========\n");
@@ -2611,6 +3277,18 @@ function cmdStatus() {
       (s) => !ALWAYS_SIM_SLOTS.has(s),
     ).length;
     console.log(`  ${epSlotCount} slots ranked (${phase3.timestamp})`);
+  } else {
+    console.log("  not started");
+  }
+
+  // Phase 3b: combinatorial validation
+  const phase3b = getSessionState("gear_phase3b_winners");
+  console.log("\nPhase 3b (Combinatorial Validation):");
+  if (phase3b?.timestamp) {
+    const comboSlots = Object.keys(phase3b.combo || {});
+    console.log(
+      `  ${comboSlots.length} slots overridden (${phase3b.timestamp})`,
+    );
   } else {
     console.log("  not started");
   }
@@ -3099,9 +3777,12 @@ switch (cmd) {
   case "stat-optimize":
     await cmdStatOptimize(cleanArgs);
     break;
+  case "combo-validate":
+    await cmdCombinatorialValidation(cleanArgs);
+    break;
   case "gems": {
     const gd = loadGearCandidates();
-    cmdGems(gd);
+    await cmdGems(cleanArgs, gd);
     break;
   }
   case "enchants":
