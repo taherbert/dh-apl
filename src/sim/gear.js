@@ -355,6 +355,7 @@ const CRAFTED_STAT_PAIRS = [
   { id: "crit_mastery", label: "Crit/Mastery", crafted_stats: "32/49" },
   { id: "haste_vers", label: "Haste/Vers", crafted_stats: "36/40" },
   { id: "haste_mastery", label: "Haste/Mastery", crafted_stats: "36/49" },
+  { id: "vers_mastery", label: "Vers/Mastery", crafted_stats: "40/49" },
 ];
 
 // Detect crafted item slots from profile.simc (lines containing crafted_stats=).
