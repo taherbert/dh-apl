@@ -388,6 +388,11 @@ async function cmdScaleFactors(args) {
   const gearData = loadGearCandidates();
   const profilePath = getBaseProfile(gearData);
 
+  // Use the top roster build's talents so scale factors reflect real gameplay.
+  // Without talents, stat scaling is completely different (no procs, no multipliers).
+  const builds = getRepresentativeBuilds();
+  const topBuild = builds[0];
+
   const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.standard;
   mkdirSync(resultsDir(), { recursive: true });
 
@@ -397,6 +402,7 @@ async function cmdScaleFactors(args) {
   console.log(
     `\nPhase 1: Scale Factors (${fidelity} fidelity, ${threadsPerSim} threads)`,
   );
+  console.log(`  Build: ${topBuild.label || topBuild.hash.slice(0, 16)}`);
 
   const perScenario = {};
   let baselineStats = null;
@@ -407,6 +413,7 @@ async function cmdScaleFactors(args) {
 
     const simArgs = [
       profilePath,
+      `talents=${topBuild.hash}`,
       "calculate_scale_factors=1",
       "scale_only=Agi/Haste/Crit/Mastery/Vers",
       `json2=${outputPath}`,
