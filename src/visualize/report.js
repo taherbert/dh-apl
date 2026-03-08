@@ -1680,36 +1680,49 @@ function renderApexScaling(apexBuilds, heroTrees) {
   const maxRank = Math.max(...ranks);
   if (maxRank <= 0) return "";
 
-  // Average weighted DPS per tree per rank (more representative than best-only)
-  const perTree = {};
-  for (const tree of treeNames) {
-    perTree[tree] = {};
-    for (const rank of ranks) {
-      const entries = (apexBuilds[rank] || []).filter(
-        (e) => e.heroTree === tree,
-      );
-      if (entries.length > 0) {
-        const sum = entries.reduce((s, e) => s + e.avg.weighted, 0);
-        perTree[tree][rank] = sum / entries.length;
-      }
+  // Per-template scaling: track each template across its apex ranks,
+  // then compute deltas vs that template's own rank 0 baseline.
+  // This compares apples to apples (same talent cluster at different apex levels).
+
+  // Collect all entries keyed by (tree, templateName)
+  const templateMap = {}; // key: "tree|template" -> { [rank]: avgWeighted }
+  for (const rank of ranks) {
+    for (const entry of apexBuilds[rank] || []) {
+      const key = `${entry.heroTree}|${entry.templateName}`;
+      (templateMap[key] ||= { tree: entry.heroTree, ranks: {} }).ranks[rank] =
+        entry.avg.weighted;
     }
   }
 
-  // % gain from each tree's rank 0 baseline
+  // For each template with a rank 0 baseline, compute % delta at each rank
+  // Collect deltas per (tree, rank) for aggregation
+  const deltasByTreeRank = {}; // key: "tree|rank" -> [pctDelta, ...]
+  for (const { tree, ranks: rDps } of Object.values(templateMap)) {
+    if (!rDps[0]) continue; // no rank 0 baseline for this template
+    for (const rank of ranks) {
+      if (rDps[rank] === undefined) continue;
+      const pct = ((rDps[rank] - rDps[0]) / rDps[0]) * 100;
+      const key = `${tree}|${rank}`;
+      (deltasByTreeRank[key] ||= []).push(pct);
+    }
+  }
+
+  // Aggregate: best (max) and average delta per tree per rank
   const gains = {};
   let yMaxRaw = 0;
   let yMinRaw = 0;
   for (const tree of treeNames) {
-    const baseline = perTree[tree][0];
-    if (!baseline) continue;
     gains[tree] = {};
     for (const rank of ranks) {
-      const dps = perTree[tree][rank];
-      if (dps === undefined) continue;
-      const pct = ((dps - baseline) / baseline) * 100;
-      gains[tree][rank] = { pct, dps };
-      if (pct > yMaxRaw) yMaxRaw = pct;
-      if (pct < yMinRaw) yMinRaw = pct;
+      const deltas = deltasByTreeRank[`${tree}|${rank}`];
+      if (!deltas || deltas.length === 0) continue;
+      const bestPct = Math.max(...deltas);
+      const avgPct = deltas.reduce((s, d) => s + d, 0) / deltas.length;
+      gains[tree][rank] = { bestPct, avgPct, n: deltas.length };
+      const hi = Math.max(avgPct, bestPct);
+      const lo = Math.min(avgPct, bestPct);
+      if (hi > yMaxRaw) yMaxRaw = hi;
+      if (lo < yMinRaw) yMinRaw = lo;
     }
   }
 
@@ -1749,7 +1762,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
     xAxis += `<text x="${x}" y="${(TOP + cH + 18).toFixed(1)}" text-anchor="middle" class="apex-axis-label">Rank ${r}</text>`;
   }
 
-  // Curves + nodes
+  // Curves + nodes — best (solid + area fill) and avg (dashed, no fill)
   let paths = "";
   let points = "";
 
@@ -1763,52 +1776,68 @@ function renderApexScaling(apexBuilds, heroTrees) {
       .map((r) => ({
         r,
         x: xOf(r),
-        y: yOf(gains[tree][r].pct),
+        yBest: yOf(gains[tree][r].bestPct),
+        yAvg: yOf(gains[tree][r].avgPct),
         ...gains[tree][r],
       }));
     if (pts.length < 2) continue;
 
-    // Area fill + stroke
     const base = yOf(0);
-    const line = pts
-      .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+
+    // Best line — solid stroke + area fill
+    const bestLine = pts
+      .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.yBest.toFixed(1)}`)
       .join(" ");
-    paths += `<path d="${line} L${pts.at(-1).x.toFixed(1)},${base.toFixed(1)} L${pts[0].x.toFixed(1)},${base.toFixed(1)}Z" fill="${fill}"/>`;
-    paths += `<path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
+    paths += `<path d="${bestLine} L${pts.at(-1).x.toFixed(1)},${base.toFixed(1)} L${pts[0].x.toFixed(1)},${base.toFixed(1)}Z" fill="${fill}"/>`;
+    paths += `<path d="${bestLine}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
 
-    // Data point nodes
-    const tipW = 130;
+    // Avg line — dashed stroke, no fill
+    const avgLine = pts
+      .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.yAvg.toFixed(1)}`)
+      .join(" ");
+    paths += `<path d="${avgLine}" fill="none" stroke="${color}" stroke-width="1.2" stroke-linejoin="round" stroke-dasharray="4,3" opacity="0.7"/>`;
+
+    // Data point nodes — best (solid circle) and avg (open circle)
+    const tipW = 160;
     for (const p of pts) {
-      const cx = p.x.toFixed(1);
-      const cy = p.y.toFixed(1);
+      const bx = p.x.toFixed(1);
+      const by = p.yBest.toFixed(1);
+      const ay = p.yAvg.toFixed(1);
       const tipX = Math.max(tipW / 2, Math.min(W - tipW / 2, p.x));
-      const tipLabel = `${fmtDps(p.dps)} (${p.pct >= 0 ? "+" : ""}${p.pct.toFixed(1)}%)`;
 
+      // Tooltip labels — percentages only (no absolute DPS since these are cross-template aggregates)
+      const bestLabel = `Best: ${p.bestPct >= 0 ? "+" : ""}${p.bestPct.toFixed(1)}% (${p.n})`;
+      const avgLabel = `Avg: ${p.avgPct >= 0 ? "+" : ""}${p.avgPct.toFixed(1)}% (${p.n})`;
+      const tipY = Math.min(p.yBest, p.yAvg);
       points += `<g class="apex-point">`;
-      points += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="var(--bg)" stroke="${color}" stroke-width="1.5" class="apex-node"/>`;
-      points += `<g class="apex-tooltip"><rect x="${(tipX - tipW / 2).toFixed(1)}" y="${(p.y - 44).toFixed(1)}" width="${tipW}" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="${tipX.toFixed(1)}" y="${(p.y - 30).toFixed(1)}" text-anchor="middle" class="apex-tip-text">${tipLabel}</text></g>`;
-      points += `</g>`;
+      points += `<circle cx="${bx}" cy="${by}" r="3.5" fill="var(--bg)" stroke="${color}" stroke-width="1.5" class="apex-node"/>`;
+      points += `<circle cx="${bx}" cy="${ay}" r="2.5" fill="none" stroke="${color}" stroke-width="1.2" stroke-dasharray="2,2" class="apex-node"/>`;
+      points += `<g class="apex-tooltip"><rect x="${(tipX - tipW / 2).toFixed(1)}" y="${(tipY - 56).toFixed(1)}" width="${tipW}" height="34" rx="4" fill="var(--surface)" stroke="var(--border)"/>`;
+      points += `<text x="${tipX.toFixed(1)}" y="${(tipY - 40).toFixed(1)}" text-anchor="middle" class="apex-tip-text">${bestLabel}</text>`;
+      points += `<text x="${tipX.toFixed(1)}" y="${(tipY - 27).toFixed(1)}" text-anchor="middle" class="apex-tip-text" opacity="0.7">${avgLabel}</text>`;
+      points += `</g></g>`;
     }
   }
 
-  // HTML legend (matches hero comparison panel)
-  const legend = treeNames
+  // HTML legend — tree badges + line style key
+  const treeLegend = treeNames
     .map(
       (t) =>
         `<span class="hc-legend-item"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)}</span>`,
     )
     .join("");
+  const styleLegend = `<span class="hc-legend-item" style="margin-left:0.75em;opacity:0.7"><svg width="20" height="10" style="vertical-align:middle"><line x1="0" y1="5" x2="20" y2="5" stroke="var(--fg)" stroke-width="1.5"/></svg> Best</span><span class="hc-legend-item"><svg width="20" height="10" style="vertical-align:middle"><line x1="0" y1="5" x2="20" y2="5" stroke="var(--fg)" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.7"/></svg> Avg</span>`;
 
   return `<div class="apex-panel report-card">
     <h3>Apex Scaling</h3>
-    <p class="section-desc">Average weighted DPS change by apex rank per hero tree, relative to each tree's rank 0 baseline.</p>
+    <p class="section-desc">How much DPS does each build gain or lose by investing in apex talents? Each build is compared to itself at rank 0. Solid line shows the best-scaling build; dashed line shows the average across all builds.</p>
     <svg class="apex-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
       ${grid}
       ${xAxis}
       ${paths}
       ${points}
     </svg>
-    <div class="hc-legend">${legend}</div>
+    <div class="hc-legend">${treeLegend}${styleLegend}</div>
   </div>`;
 }
 
