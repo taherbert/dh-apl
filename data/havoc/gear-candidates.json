@@ -2253,88 +2253,6 @@
         }
       ]
     },
-    "back": {
-      "candidates": [
-        {
-          "id": "imperators_banner",
-          "label": "Imperator's Banner",
-          "simc": "back=imperators_banner,id=249335,ilevel=289",
-          "stats": {
-            "agi": 3506,
-            "mastery": 4000,
-            "haste": 3500
-          },
-          "tags": [
-            "raid"
-          ]
-        },
-        {
-          "id": "draconic_nullcape",
-          "label": "Draconic Nullcape",
-          "simc": "back=draconic_nullcape,id=249370,ilevel=289",
-          "stats": {
-            "agi": 3506,
-            "crit": 4000,
-            "vers": 3500
-          },
-          "tags": [
-            "raid"
-          ]
-        },
-        {
-          "id": "speakeasy_shroud",
-          "label": "Speakeasy Shroud",
-          "simc": "back=speakeasy_shroud,id=251132,ilevel=289",
-          "stats": {
-            "agi": 3506,
-            "mastery": 4000,
-            "crit": 3500
-          },
-          "tags": [
-            "dungeon"
-          ]
-        },
-        {
-          "id": "bloodthorn_burnous",
-          "label": "Bloodthorn Burnous",
-          "simc": "back=bloodthorn_burnous,id=251190,ilevel=289",
-          "stats": {
-            "agi": 3506,
-            "haste": 4000,
-            "mastery": 3500
-          },
-          "tags": [
-            "dungeon"
-          ]
-        },
-        {
-          "id": "soulhunters_mask",
-          "label": "Soulhunter's Mask",
-          "simc": "back=soulhunters_mask,id=251161,ilevel=289",
-          "stats": {
-            "agi": 3506,
-            "vers": 4000,
-            "crit": 3500
-          },
-          "tags": [
-            "dungeon"
-          ]
-        },
-        {
-          "id": "rigid_scale_greatcloak",
-          "label": "Rigid Scale Greatcloak",
-          "simc": "back=rigid_scale_greatcloak,id=258575,ilevel=289",
-          "stats": {
-            "agi": 3506,
-            "crit": 3800,
-            "mastery": 3200
-          },
-          "tags": [
-            "dungeon"
-          ]
-        }
-      ]
-    },
     "finger1": {
       "candidates": [
         {
@@ -2857,38 +2775,56 @@
       "base_item": "main_hand=,id=0,ilevel=289",
       "candidates": [
         {
-          "id": "berserkers_rage",
-          "label": "Berserker's Rage R2",
-          "enchant_id": 7983,
-          "tags": []
-        },
-        {
-          "id": "janalais_precision",
-          "label": "Jan'alai's Precision R2",
-          "enchant_id": 7981,
-          "tags": []
-        },
-        {
-          "id": "strength_of_halazzi",
-          "label": "Strength of Halazzi R2",
+          "id": "enchant_weapon___str_of_halazzi",
+          "label": "Enchant Weapon - Str of Halazzi 2",
           "enchant_id": 7979,
           "tags": []
         },
         {
-          "id": "flames_of_the_sindorei",
-          "label": "Flames of the Sindorei R2",
+          "id": "enchant_weapon___janalais_precision",
+          "label": "Enchant Weapon - Jan'alai's Precision 2",
+          "enchant_id": 7981,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___berserkers_rage",
+          "label": "Enchant Weapon - Berserker's Rage 2",
+          "enchant_id": 7983,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___worldsoul_cradle",
+          "label": "Enchant Weapon - Worldsoul Cradle 2",
+          "enchant_id": 8007,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___worldsoul_aegis",
+          "label": "Enchant Weapon - Worldsoul Aegis 2",
+          "enchant_id": 8009,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___worldsoul_tenacity",
+          "label": "Enchant Weapon - Worldsoul Tenacity 2",
+          "enchant_id": 8011,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___flames_of_the_sindorei",
+          "label": "Enchant Weapon - Flames of the Sin'dorei 2",
           "enchant_id": 8037,
           "tags": []
         },
         {
-          "id": "acuity_of_the_rendorei",
-          "label": "Acuity of the Ren'dorei R2",
+          "id": "enchant_weapon___acuity_of_the_rendorei",
+          "label": "Enchant Weapon - Acuity of the Ren'dorei 2",
           "enchant_id": 8039,
           "tags": []
         },
         {
-          "id": "arcane_mastery",
-          "label": "Arcane Mastery R2",
+          "id": "enchant_weapon___arcane_mast",
+          "label": "Enchant Weapon - Arcane Mast 2",
           "enchant_id": 8041,
           "tags": []
         }
@@ -2898,38 +2834,56 @@
       "base_item": "off_hand=,id=0,ilevel=289",
       "candidates": [
         {
-          "id": "berserkers_rage",
-          "label": "Berserker's Rage R2",
-          "enchant_id": 7983,
-          "tags": []
-        },
-        {
-          "id": "janalais_precision",
-          "label": "Jan'alai's Precision R2",
-          "enchant_id": 7981,
-          "tags": []
-        },
-        {
-          "id": "strength_of_halazzi",
-          "label": "Strength of Halazzi R2",
+          "id": "enchant_weapon___str_of_halazzi",
+          "label": "Enchant Weapon - Str of Halazzi 2",
           "enchant_id": 7979,
           "tags": []
         },
         {
-          "id": "flames_of_the_sindorei",
-          "label": "Flames of the Sindorei R2",
+          "id": "enchant_weapon___janalais_precision",
+          "label": "Enchant Weapon - Jan'alai's Precision 2",
+          "enchant_id": 7981,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___berserkers_rage",
+          "label": "Enchant Weapon - Berserker's Rage 2",
+          "enchant_id": 7983,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___worldsoul_cradle",
+          "label": "Enchant Weapon - Worldsoul Cradle 2",
+          "enchant_id": 8007,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___worldsoul_aegis",
+          "label": "Enchant Weapon - Worldsoul Aegis 2",
+          "enchant_id": 8009,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___worldsoul_tenacity",
+          "label": "Enchant Weapon - Worldsoul Tenacity 2",
+          "enchant_id": 8011,
+          "tags": []
+        },
+        {
+          "id": "enchant_weapon___flames_of_the_sindorei",
+          "label": "Enchant Weapon - Flames of the Sin'dorei 2",
           "enchant_id": 8037,
           "tags": []
         },
         {
-          "id": "acuity_of_the_rendorei",
-          "label": "Acuity of the Ren'dorei R2",
+          "id": "enchant_weapon___acuity_of_the_rendorei",
+          "label": "Enchant Weapon - Acuity of the Ren'dorei 2",
           "enchant_id": 8039,
           "tags": []
         },
         {
-          "id": "arcane_mastery",
-          "label": "Arcane Mastery R2",
+          "id": "enchant_weapon___arcane_mast",
+          "label": "Enchant Weapon - Arcane Mast 2",
           "enchant_id": 8041,
           "tags": []
         }
@@ -2939,45 +2893,51 @@
       "base_item": "finger1=,id=0,ilevel=289",
       "candidates": [
         {
-          "id": "zuljins_mastery",
-          "label": "Zul'jin's Mastery R2",
+          "id": "enchant_ring___amani_mast",
+          "label": "Enchant Ring - Amani Mast 2",
+          "enchant_id": 7965,
+          "tags": []
+        },
+        {
+          "id": "enchant_ring___zuljins_mast",
+          "label": "Enchant Ring - Zul'jin's Mast 2",
           "enchant_id": 7969,
-          "stats": {
-            "mastery": 1
-          },
           "tags": []
         },
         {
-          "id": "natures_fury",
-          "label": "Nature's Fury R2",
+          "id": "enchant_ring___natures_wrath",
+          "label": "Enchant Ring - Nature's Wrath 2",
+          "enchant_id": 7995,
+          "tags": []
+        },
+        {
+          "id": "enchant_ring___natures_fury",
+          "label": "Enchant Ring - Nature's Fury 2",
           "enchant_id": 7997,
-          "stats": {
-            "crit": 1
-          },
           "tags": []
         },
         {
-          "id": "silvermoons_alacrity",
-          "label": "Silvermoon's Alacrity R2",
+          "id": "enchant_ring___thalassian_haste",
+          "label": "Enchant Ring - Thalassian Haste 2",
+          "enchant_id": 8021,
+          "tags": []
+        },
+        {
+          "id": "enchant_ring___thalassian_vers",
+          "label": "Enchant Ring - Thalassian Vers 2",
+          "enchant_id": 8023,
+          "tags": []
+        },
+        {
+          "id": "enchant_ring___silvermoons_alacrity",
+          "label": "Enchant Ring - Silvermoon's Alacrity 2",
           "enchant_id": 8025,
-          "stats": {
-            "haste": 1
-          },
           "tags": []
         },
         {
-          "id": "silvermoons_tenacity",
-          "label": "Silvermoon's Tenacity R2",
+          "id": "enchant_ring___silvermoons_tenacity",
+          "label": "Enchant Ring - Silvermoon's Tenacity 2",
           "enchant_id": 8027,
-          "stats": {
-            "vers": 1
-          },
-          "tags": []
-        },
-        {
-          "id": "eyes_of_the_eagle",
-          "label": "Eyes of the Eagle R2",
-          "enchant_id": 7967,
           "tags": []
         }
       ]
@@ -2986,35 +2946,12 @@
       "base_item": "chest=,id=0,ilevel=289",
       "candidates": [
         {
-          "id": "mark_of_the_worldsoul",
-          "label": "Mark of the Worldsoul R2",
-          "enchant_id": 7987,
+          "id": "enchant_chest___mark_of_the_rootwarden",
+          "label": "Enchant Chest - Mark of the Rootwarden 2",
+          "enchant_id": 7985,
           "stats": {
-            "agi": 1
+            "agi": 40
           },
-          "tags": []
-        }
-      ]
-    },
-    "foot": {
-      "base_item": "feet=,id=0,ilevel=289",
-      "candidates": [
-        {
-          "id": "lynxs_dexterity",
-          "label": "Lynx's Dexterity R2",
-          "enchant_id": 7963,
-          "tags": []
-        },
-        {
-          "id": "shaladrassils_roots",
-          "label": "Shaladrassil's Roots R2",
-          "enchant_id": 7993,
-          "tags": []
-        },
-        {
-          "id": "farstriders_hunt",
-          "label": "Farstrider's Hunt R2",
-          "enchant_id": 8019,
           "tags": []
         }
       ]
@@ -3023,29 +2960,29 @@
       "base_item": "legs=,id=0,ilevel=289",
       "candidates": [
         {
-          "id": "forest_hunters_armor_kit",
-          "label": "Forest Hunter's Armor Kit R2",
+          "id": "41_agistr_115_sta",
+          "label": "41 Agi/Str & 115 Sta",
           "enchant_id": 8159,
           "stats": {
-            "agi": 1
+            "agi": 41
           },
           "tags": []
         },
         {
-          "id": "thalassian_scout_armor_kit",
-          "label": "Thalassian Scout Armor Kit R2",
+          "id": "24_agistr",
+          "label": "24 Agi/Str",
           "enchant_id": 8161,
           "stats": {
-            "agi": 1
+            "agi": 24
           },
           "tags": []
         },
         {
-          "id": "blood_knights_armor_kit",
-          "label": "Blood Knight's Armor Kit R2",
+          "id": "41_agistr_27_armor",
+          "label": "41 Agi/Str & 27 Armor",
           "enchant_id": 8163,
           "stats": {
-            "agi": 1
+            "agi": 41
           },
           "tags": []
         }
@@ -3053,17 +2990,6 @@
     }
   },
   "gems": [
-    {
-      "id": "7_vers",
-      "label": "7 Vers",
-      "enchant_id": 8094,
-      "stats": {
-        "vers": 7
-      },
-      "tags": [],
-      "item_id": 240879,
-      "name": "Versatile Lapis"
-    },
     {
       "id": "9_vers",
       "label": "9 Vers",
@@ -3076,17 +3002,6 @@
       "name": "Versatile Lapis"
     },
     {
-      "id": "12_vers",
-      "label": "12 Vers",
-      "enchant_id": 8096,
-      "stats": {
-        "vers": 12
-      },
-      "tags": [],
-      "item_id": 240911,
-      "name": "Flawless Versatile Lapis"
-    },
-    {
       "id": "14_vers",
       "label": "14 Vers",
       "enchant_id": 8097,
@@ -3096,18 +3011,6 @@
       "tags": [],
       "item_id": 240912,
       "name": "Flawless Versatile Lapis"
-    },
-    {
-      "id": "6_vers_2_crit",
-      "label": "6 Vers & 2 Crit",
-      "enchant_id": 8098,
-      "stats": {
-        "vers": 6,
-        "crit": 2
-      },
-      "tags": [],
-      "item_id": 240881,
-      "name": "Deadly Lapis"
     },
     {
       "id": "7_vers_3_crit",
@@ -3122,18 +3025,6 @@
       "name": "Deadly Lapis"
     },
     {
-      "id": "10_vers_4_crit",
-      "label": "10 Vers & 4 Crit",
-      "enchant_id": 8100,
-      "stats": {
-        "vers": 10,
-        "crit": 4
-      },
-      "tags": [],
-      "item_id": 240913,
-      "name": "Flawless Deadly Lapis"
-    },
-    {
       "id": "12_vers_5_crit",
       "label": "12 Vers & 5 Crit",
       "enchant_id": 8101,
@@ -3144,18 +3035,6 @@
       "tags": [],
       "item_id": 240914,
       "name": "Flawless Deadly Lapis"
-    },
-    {
-      "id": "6_vers_2_haste",
-      "label": "6 Vers & 2 Haste",
-      "enchant_id": 8102,
-      "stats": {
-        "vers": 6,
-        "haste": 2
-      },
-      "tags": [],
-      "item_id": 240883,
-      "name": "Quick Lapis"
     },
     {
       "id": "7_vers_3_haste",
@@ -3170,18 +3049,6 @@
       "name": "Quick Lapis"
     },
     {
-      "id": "10_vers_4_haste",
-      "label": "10 Vers & 4 Haste",
-      "enchant_id": 8104,
-      "stats": {
-        "vers": 10,
-        "haste": 4
-      },
-      "tags": [],
-      "item_id": 240915,
-      "name": "Flawless Quick Lapis"
-    },
-    {
       "id": "12_vers_5_haste",
       "label": "12 Vers & 5 Haste",
       "enchant_id": 8105,
@@ -3192,18 +3059,6 @@
       "tags": [],
       "item_id": 240916,
       "name": "Flawless Quick Lapis"
-    },
-    {
-      "id": "6_vers_2_mast",
-      "label": "6 Vers & 2 Mast",
-      "enchant_id": 8106,
-      "stats": {
-        "vers": 6,
-        "mastery": 2
-      },
-      "tags": [],
-      "item_id": 240885,
-      "name": "Masterful Lapis"
     },
     {
       "id": "7_vers_3_mast",
@@ -3218,18 +3073,6 @@
       "name": "Masterful Lapis"
     },
     {
-      "id": "10_vers_4_mast",
-      "label": "10 Vers & 4 Mast",
-      "enchant_id": 8108,
-      "stats": {
-        "vers": 10,
-        "mastery": 4
-      },
-      "tags": [],
-      "item_id": 240917,
-      "name": "Flawless Masterful Lapis"
-    },
-    {
       "id": "12_vers_5_mast",
       "label": "12 Vers & 5 Mast",
       "enchant_id": 8109,
@@ -3240,17 +3083,6 @@
       "tags": [],
       "item_id": 240918,
       "name": "Flawless Masterful Lapis"
-    },
-    {
-      "id": "7_haste",
-      "label": "7 Haste",
-      "enchant_id": 8110,
-      "stats": {
-        "haste": 7
-      },
-      "tags": [],
-      "item_id": 240855,
-      "name": "Quick Peridot"
     },
     {
       "id": "9_haste",
@@ -3264,17 +3096,6 @@
       "name": "Quick Peridot"
     },
     {
-      "id": "12_haste",
-      "label": "12 Haste",
-      "enchant_id": 8112,
-      "stats": {
-        "haste": 12
-      },
-      "tags": [],
-      "item_id": 240887,
-      "name": "Flawless Quick Peridot"
-    },
-    {
       "id": "14_haste",
       "label": "14 Haste",
       "enchant_id": 8113,
@@ -3284,18 +3105,6 @@
       "tags": [],
       "item_id": 240888,
       "name": "Flawless Quick Peridot"
-    },
-    {
-      "id": "6_haste_2_crit",
-      "label": "6 Haste & 2 Crit",
-      "enchant_id": 8114,
-      "stats": {
-        "haste": 6,
-        "crit": 2
-      },
-      "tags": [],
-      "item_id": 240857,
-      "name": "Deadly Peridot"
     },
     {
       "id": "7_haste_3_crit",
@@ -3310,18 +3119,6 @@
       "name": "Deadly Peridot"
     },
     {
-      "id": "10_haste_4_crit",
-      "label": "10 Haste & 4 Crit",
-      "enchant_id": 8116,
-      "stats": {
-        "haste": 10,
-        "crit": 4
-      },
-      "tags": [],
-      "item_id": 240889,
-      "name": "Flawless Deadly Peridot"
-    },
-    {
       "id": "12_haste_5_crit",
       "label": "12 Haste & 5 Crit",
       "enchant_id": 8117,
@@ -3332,18 +3129,6 @@
       "tags": [],
       "item_id": 240890,
       "name": "Flawless Deadly Peridot"
-    },
-    {
-      "id": "6_haste_2_mast",
-      "label": "6 Haste & 2 Mast",
-      "enchant_id": 8118,
-      "stats": {
-        "haste": 6,
-        "mastery": 2
-      },
-      "tags": [],
-      "item_id": 240859,
-      "name": "Masterful Peridot"
     },
     {
       "id": "7_haste_3_mast",
@@ -3358,18 +3143,6 @@
       "name": "Masterful Peridot"
     },
     {
-      "id": "10_haste_4_mast",
-      "label": "10 Haste & 4 Mast",
-      "enchant_id": 8120,
-      "stats": {
-        "haste": 10,
-        "mastery": 4
-      },
-      "tags": [],
-      "item_id": 240891,
-      "name": "Flawless Masterful Peridot"
-    },
-    {
       "id": "12_haste_5_mast",
       "label": "12 Haste & 5 Mast",
       "enchant_id": 8121,
@@ -3380,18 +3153,6 @@
       "tags": [],
       "item_id": 240892,
       "name": "Flawless Masterful Peridot"
-    },
-    {
-      "id": "6_haste_2_vers",
-      "label": "6 Haste & 2 Vers",
-      "enchant_id": 8122,
-      "stats": {
-        "haste": 6,
-        "vers": 2
-      },
-      "tags": [],
-      "item_id": 240861,
-      "name": "Versatile Peridot"
     },
     {
       "id": "7_haste_3_vers",
@@ -3406,18 +3167,6 @@
       "name": "Versatile Peridot"
     },
     {
-      "id": "10_haste_4_vers",
-      "label": "10 Haste & 4 Vers",
-      "enchant_id": 8124,
-      "stats": {
-        "haste": 10,
-        "vers": 4
-      },
-      "tags": [],
-      "item_id": 240893,
-      "name": "Flawless Versatile Peridot"
-    },
-    {
       "id": "12_haste_5_vers",
       "label": "12 Haste & 5 Vers",
       "enchant_id": 8125,
@@ -3428,17 +3177,6 @@
       "tags": [],
       "item_id": 240894,
       "name": "Flawless Versatile Peridot"
-    },
-    {
-      "id": "7_mast",
-      "label": "7 Mast",
-      "enchant_id": 8126,
-      "stats": {
-        "mastery": 7
-      },
-      "tags": [],
-      "item_id": 240863,
-      "name": "Masterful Amethyst"
     },
     {
       "id": "9_mast",
@@ -3452,17 +3190,6 @@
       "name": "Masterful Amethyst"
     },
     {
-      "id": "12_mast",
-      "label": "12 Mast",
-      "enchant_id": 8128,
-      "stats": {
-        "mastery": 12
-      },
-      "tags": [],
-      "item_id": 240895,
-      "name": "Flawless Masterful Amethyst"
-    },
-    {
       "id": "14_mast",
       "label": "14 Mast",
       "enchant_id": 8129,
@@ -3472,18 +3199,6 @@
       "tags": [],
       "item_id": 240896,
       "name": "Flawless Masterful Amethyst"
-    },
-    {
-      "id": "6_mast_2_crit",
-      "label": "6 Mast & 2 Crit",
-      "enchant_id": 8130,
-      "stats": {
-        "mastery": 6,
-        "crit": 2
-      },
-      "tags": [],
-      "item_id": 240865,
-      "name": "Deadly Amethyst"
     },
     {
       "id": "7_mast_3_crit",
@@ -3498,18 +3213,6 @@
       "name": "Deadly Amethyst"
     },
     {
-      "id": "10_mast_4_crit",
-      "label": "10 Mast & 4 Crit",
-      "enchant_id": 8132,
-      "stats": {
-        "mastery": 10,
-        "crit": 4
-      },
-      "tags": [],
-      "item_id": 240897,
-      "name": "Flawless Deadly Amethyst"
-    },
-    {
       "id": "12_mast_5_crit",
       "label": "12 Mast & 5 Crit",
       "enchant_id": 8133,
@@ -3520,18 +3223,6 @@
       "tags": [],
       "item_id": 240898,
       "name": "Flawless Deadly Amethyst"
-    },
-    {
-      "id": "6_mast_2_haste",
-      "label": "6 Mast & 2 Haste",
-      "enchant_id": 8134,
-      "stats": {
-        "mastery": 6,
-        "haste": 2
-      },
-      "tags": [],
-      "item_id": 240867,
-      "name": "Quick Amethyst"
     },
     {
       "id": "7_mast_3_haste",
@@ -3546,18 +3237,6 @@
       "name": "Quick Amethyst"
     },
     {
-      "id": "10_mast_4_haste",
-      "label": "10 Mast & 4 Haste",
-      "enchant_id": 8136,
-      "stats": {
-        "mastery": 10,
-        "haste": 4
-      },
-      "tags": [],
-      "item_id": 240899,
-      "name": "Flawless Quick Amethyst"
-    },
-    {
       "id": "12_mast_5_haste",
       "label": "12 Mast & 5 Haste",
       "enchant_id": 8137,
@@ -3568,18 +3247,6 @@
       "tags": [],
       "item_id": 240900,
       "name": "Flawless Quick Amethyst"
-    },
-    {
-      "id": "6_mast_2_vers",
-      "label": "6 Mast & 2 Vers",
-      "enchant_id": 8138,
-      "stats": {
-        "mastery": 6,
-        "vers": 2
-      },
-      "tags": [],
-      "item_id": 240869,
-      "name": "Versatile Amethyst"
     },
     {
       "id": "7_mast_3_vers",
@@ -3594,18 +3261,6 @@
       "name": "Versatile Amethyst"
     },
     {
-      "id": "10_mast_4_vers",
-      "label": "10 Mast & 4 Vers",
-      "enchant_id": 8140,
-      "stats": {
-        "mastery": 10,
-        "vers": 4
-      },
-      "tags": [],
-      "item_id": 240901,
-      "name": "Flawless Versatile Amethyst"
-    },
-    {
       "id": "12_mast_5_vers",
       "label": "12 Mast & 5 Vers",
       "enchant_id": 8141,
@@ -3616,17 +3271,6 @@
       "tags": [],
       "item_id": 240902,
       "name": "Flawless Versatile Amethyst"
-    },
-    {
-      "id": "7_crit",
-      "label": "7 Crit",
-      "enchant_id": 8142,
-      "stats": {
-        "crit": 7
-      },
-      "tags": [],
-      "item_id": 240871,
-      "name": "Deadly Garnet"
     },
     {
       "id": "9_crit",
@@ -3640,17 +3284,6 @@
       "name": "Deadly Garnet"
     },
     {
-      "id": "12_crit",
-      "label": "12 Crit",
-      "enchant_id": 8144,
-      "stats": {
-        "crit": 12
-      },
-      "tags": [],
-      "item_id": 240903,
-      "name": "Flawless Deadly Garnet"
-    },
-    {
       "id": "14_crit",
       "label": "14 Crit",
       "enchant_id": 8145,
@@ -3660,18 +3293,6 @@
       "tags": [],
       "item_id": 240904,
       "name": "Flawless Deadly Garnet"
-    },
-    {
-      "id": "6_crit_2_haste",
-      "label": "6 Crit & 2 Haste",
-      "enchant_id": 8146,
-      "stats": {
-        "crit": 6,
-        "haste": 2
-      },
-      "tags": [],
-      "item_id": 240873,
-      "name": "Quick Garnet"
     },
     {
       "id": "7_crit_3_haste",
@@ -3686,18 +3307,6 @@
       "name": "Quick Garnet"
     },
     {
-      "id": "10_crit_4_haste",
-      "label": "10 Crit & 4 Haste",
-      "enchant_id": 8148,
-      "stats": {
-        "crit": 10,
-        "haste": 4
-      },
-      "tags": [],
-      "item_id": 240905,
-      "name": "Flawless Quick Garnet"
-    },
-    {
       "id": "12_crit_5_haste",
       "label": "12 Crit & 5 Haste",
       "enchant_id": 8149,
@@ -3708,18 +3317,6 @@
       "tags": [],
       "item_id": 240906,
       "name": "Flawless Quick Garnet"
-    },
-    {
-      "id": "6_crit_2_mast",
-      "label": "6 Crit & 2 Mast",
-      "enchant_id": 8150,
-      "stats": {
-        "crit": 6,
-        "mastery": 2
-      },
-      "tags": [],
-      "item_id": 240875,
-      "name": "Masterful Garnet"
     },
     {
       "id": "7_crit_3_mast",
@@ -3734,18 +3331,6 @@
       "name": "Masterful Garnet"
     },
     {
-      "id": "10_crit_4_mast",
-      "label": "10 Crit & 4 Mast",
-      "enchant_id": 8152,
-      "stats": {
-        "crit": 10,
-        "mastery": 4
-      },
-      "tags": [],
-      "item_id": 240907,
-      "name": "Flawless Masterful Garnet"
-    },
-    {
       "id": "12_crit_5_mast",
       "label": "12 Crit & 5 Mast",
       "enchant_id": 8153,
@@ -3756,18 +3341,6 @@
       "tags": [],
       "item_id": 240908,
       "name": "Flawless Masterful Garnet"
-    },
-    {
-      "id": "6_crit_2_vers",
-      "label": "6 Crit & 2 Vers",
-      "enchant_id": 8154,
-      "stats": {
-        "crit": 6,
-        "vers": 2
-      },
-      "tags": [],
-      "item_id": 240877,
-      "name": "Versatile Garnet"
     },
     {
       "id": "7_crit_3_vers",
@@ -3782,18 +3355,6 @@
       "name": "Versatile Garnet"
     },
     {
-      "id": "10_crit_4_vers",
-      "label": "10 Crit & 4 Vers",
-      "enchant_id": 8156,
-      "stats": {
-        "crit": 10,
-        "vers": 4
-      },
-      "tags": [],
-      "item_id": 240909,
-      "name": "Flawless Versatile Garnet"
-    },
-    {
       "id": "12_crit_5_vers",
       "label": "12 Crit & 5 Vers",
       "enchant_id": 8157,
@@ -3806,19 +3367,6 @@
       "name": "Flawless Versatile Garnet"
     },
     {
-      "id": "26_primary",
-      "label": "26 Primary",
-      "enchant_id": 8551,
-      "stats": {
-        "agi": 26
-      },
-      "tags": [],
-      "item_id": 240982,
-      "name": "Indecipherable Eversong Diamond",
-      "uniqueCategory": 698,
-      "uniqueLimit": 1
-    },
-    {
       "id": "32_primary",
       "label": "32 Primary",
       "enchant_id": 8552,
@@ -3828,19 +3376,6 @@
       "tags": [],
       "item_id": 240983,
       "name": "Indecipherable Eversong Diamond",
-      "uniqueCategory": 698,
-      "uniqueLimit": 1
-    },
-    {
-      "id": "18_primary_10_armor",
-      "label": "18 Primary / 10 Armor",
-      "enchant_id": 8554,
-      "stats": {
-        "agi": 18
-      },
-      "tags": [],
-      "item_id": 240970,
-      "name": "Stoic Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3871,19 +3406,6 @@
       "uniqueLimit": 1
     },
     {
-      "id": "18_primary_015_critical_strike_effectiveness_per_unique_midnight_gem_color",
-      "label": "18 Primary / +0.15% critical strike effectiveness per unique Midnight gem color",
-      "enchant_id": 8557,
-      "stats": {
-        "agi": 18
-      },
-      "tags": [],
-      "item_id": 240966,
-      "name": "Powerful Eversong Diamond",
-      "uniqueCategory": 698,
-      "uniqueLimit": 1
-    },
-    {
       "id": "23_primary_1_maximum_mana_per_unique_midnight_gem_color",
       "label": "23 Primary / +1% Maximum Mana per unique Midnight gem color",
       "enchant_id": 8558,
@@ -3892,19 +3414,6 @@
       },
       "tags": [],
       "item_id": 240969,
-      "name": "Telluric Eversong Diamond",
-      "uniqueCategory": 698,
-      "uniqueLimit": 1
-    },
-    {
-      "id": "18_primary_1_maximum_mana_per_unique_midnight_gem_color",
-      "label": "18 Primary / +1% Maximum Mana per unique Midnight gem color",
-      "enchant_id": 8559,
-      "stats": {
-        "agi": 18
-      },
-      "tags": [],
-      "item_id": 240968,
       "name": "Telluric Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1

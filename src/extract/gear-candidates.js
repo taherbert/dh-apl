@@ -73,15 +73,23 @@ const TIER_SLOTS = new Set(["head", "shoulder", "chest", "hands", "legs"]);
 // Enchant category name → our enchant section key
 const ENCHANT_CATEGORY_MAP = {
   "Weapon Enchantments": "weapon",
+  "Weapon Enchants": "weapon",
   "Ring Enchantments": "ring",
+  "Rings Enchants": "ring",
   "Cloak Enchantments": "cloak",
+  "Cloak Enchants": "cloak",
   "Wrist Enchantments": "wrist",
   "Bracer Enchantments": "wrist",
+  "Wrist Enchants": "wrist",
   "Foot Enchantments": "foot",
   "Boot Enchantments": "foot",
+  "Boot Enchants": "foot",
   "Chest Enchantments": "chest",
+  "Chest Enchants": "chest",
   "Shoulder Enchantments": "shoulder",
+  "Shoulder Enchants": "shoulder",
   "Inscription Crests": "shoulder",
+  "Helm Enchants": "helm",
 };
 
 // Stat IDs → normalized stat key (for item stat extraction)
@@ -101,6 +109,7 @@ const STAT_ID_MAP = {
 const ENCHANT_STAT_NAME_MAP = {
   agi: "agi",
   agility: "agi",
+  stragi: "agi",
   stragiint: "agi",
   haste: "haste",
   "haste rating": "haste",
@@ -120,6 +129,7 @@ const PRIMARY_STAT_IDS = new Set([3, 4, 5, 71, 72, 73, 74]);
 const DPS_STAT_TYPES = new Set([
   "agi",
   "agility",
+  "stragi",
   "mastery",
   "haste",
   "crit",
@@ -323,12 +333,8 @@ const PVP_KEYWORDS = [
 ];
 
 // PvP gem keywords — gems with these in displayName are PvP-only
-const PVP_GEM_KEYWORDS = [
-  "Precognition",
-  "Crowd Control",
-  "snared",
-  "Damage Reduction when affected by",
-];
+// PvP gems are Heliotrope gems — detect by itemName rather than fragile displayName keywords
+const PVP_GEM_ITEM_NAME = "Heliotrope";
 
 function isPvp(item) {
   return (
@@ -370,7 +376,13 @@ function isDHUsableEnchant(enchant) {
     }
   }
 
-  // Must affect DPS via stats or display name
+  // Weapon enchants are proc-based — bypass stat check, filter by DH weapon subtype
+  if (enchant.equipRequirements?.itemClass === 2) {
+    const dhMask = 8192 | 64 | 1 | 256;
+    return !!(enchant.equipRequirements.itemSubClassMask & dhMask);
+  }
+
+  // Non-weapon: must affect DPS via stats or display name
   const hasDpsStat = enchant.stats?.some((s) =>
     DPS_STAT_TYPES.has(s.type.toLowerCase()),
   );
@@ -383,23 +395,20 @@ function isDHUsableEnchant(enchant) {
     "damage",
   ].some((k) => enchant.displayName.toLowerCase().includes(k));
 
-  if (!hasDpsStat && !hasDpsKeyword) return false;
+  return hasDpsStat || hasDpsKeyword;
+}
 
-  // Weapon enchants: must support a DH weapon subtype
-  if (enchant.equipRequirements?.itemClass === 2) {
-    // Bitmask check for warglaives(8192), swords(64), axes(1), fist(256)
-    const dhMask = 8192 | 64 | 1 | 256;
-    return !!(enchant.equipRequirements.itemSubClassMask & dhMask);
-  }
-
-  return true;
+// Resolve category for enchants missing categoryName (e.g., leg armor kits)
+function resolveEnchantCategory(enchant) {
+  if (enchant.equipRequirements?.invTypeMask === 128) return "legs";
+  return null;
 }
 
 // Keep only highest craftingQuality per base enchant name
 function deduplicateEnchants(enchants) {
   const best = new Map();
   for (const e of enchants) {
-    const key = e.baseDisplayName || e.displayName;
+    const key = e.baseDisplayName || e.itemName || e.displayName;
     const existing = best.get(key);
     if (
       !existing ||
@@ -464,8 +473,7 @@ async function main() {
   // Extract gems early so we can use the computed defaultGemId for simc string generation.
   // Gems come from enchantments.json socket enchants. deduplicateEnchants keeps only the
   // highest craftingQuality per base name (Midnight gems max at quality 2, not 3).
-  const isPvpGem = (e) =>
-    PVP_GEM_KEYWORDS.some((kw) => e.displayName?.includes(kw));
+  const isPvpGem = (e) => e.itemName?.includes(PVP_GEM_ITEM_NAME);
   const newGems = deduplicateEnchants(
     enchants.filter(
       (e) => e.expansion === expansion && e.slot === "socket" && !isPvpGem(e),
@@ -784,14 +792,13 @@ async function main() {
   }
 
   // --- enchants ---
-  // Filter for DH-usable, current expansion, best quality
+  // Filter for DH-usable, current expansion. deduplicateEnchants keeps best quality.
   const dhEnchants = deduplicateEnchants(
     enchants.filter(
       (e) =>
         e.expansion === expansion &&
         isDHUsableEnchant(e) &&
-        (e.craftingQuality == null || e.craftingQuality === 3) &&
-        ENCHANT_CATEGORY_MAP[e.categoryName],
+        (ENCHANT_CATEGORY_MAP[e.categoryName] || resolveEnchantCategory(e)),
     ),
   );
 
@@ -851,7 +858,9 @@ async function main() {
   const enchantSection = {};
   for (const { category, keys, baseSlots, includeStats } of ENCHANT_SECTIONS) {
     const filtered = dhEnchants.filter(
-      (e) => ENCHANT_CATEGORY_MAP[e.categoryName] === category,
+      (e) =>
+        (ENCHANT_CATEGORY_MAP[e.categoryName] || resolveEnchantCategory(e)) ===
+        category,
     );
     if (filtered.length === 0) continue;
 
@@ -866,47 +875,12 @@ async function main() {
     }
   }
 
-  // --- Merge manual_enchants from gear-config.json ---
-  // Manual enchants supplement extracted ones (useful when Raidbots beta data
-  // lacks current-expansion enchants or certain categories like weapon enchants).
-  for (const [key, manualCandidates] of Object.entries(
-    gearConfig.manual_enchants ?? {},
-  )) {
-    if (!enchantSection[key]) {
-      // Determine base slot from ENCHANT_SECTIONS config or key name
-      const sectionDef = ENCHANT_SECTIONS.find((s) => s.keys.includes(key));
-      const baseSlot =
-        sectionDef?.baseSlots[sectionDef.keys.indexOf(key)] ??
-        sectionDef?.baseSlots[0] ??
-        key;
-      const defaultBase = `${baseSlot}=,id=0,ilevel=${maxIlvl}`;
-      enchantSection[key] = {
-        base_item: current.enchants?.[key]?.base_item || defaultBase,
-        candidates: [],
-      };
-    }
-    for (const mc of manualCandidates) {
-      if (!enchantSection[key].candidates.find((c) => c.id === mc.id)) {
-        enchantSection[key].candidates.push(mc);
-      }
-    }
-  }
-
   if (Object.keys(enchantSection).length > 0) {
     console.log(
       `Enchant sections: ${Object.entries(enchantSection)
         .map(([k, v]) => `${k}(${v.candidates.length})`)
         .join(", ")}`,
     );
-  }
-
-  // --- Merge manual_candidates from gear-config.json ---
-  for (const item of gearConfig.manual_candidates ?? []) {
-    const { slot, ...candidate } = item;
-    if (!slots[slot]) slots[slot] = { candidates: [] };
-    if (!slots[slot].candidates.find((c) => c.id === candidate.id)) {
-      slots[slot].candidates.push(candidate);
-    }
   }
 
   // --- Auto-detect ring set pairs from itemSetId ---
