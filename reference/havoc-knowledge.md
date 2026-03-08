@@ -80,39 +80,38 @@
 
 ## APL Structure
 - File: `apls/havoc/havoc.simc`
-- Action lists: 8
+- Action lists: 4
 
 ### Action Lists
-- **precombat:** 5 actions
-- **default:** 20 actions; delegates: call_action_list -> cooldown, run_action_list -> fel_scarred, run_action_list -> aldrachi_reaver
-- **cooldown:** 5 actions
-- **fel_scarred:** 24 actions; delegates: run_action_list -> fs_meta
-- **fs_meta:** 21 actions
-- **aldrachi_reaver:** 27 actions; delegates: call_action_list -> ar_glaive_cycle, run_action_list -> ar_meta
-- **ar_glaive_cycle:** 6 actions
-- **ar_meta:** 18 actions; delegates: call_action_list -> ar_glaive_cycle
+- **precombat:** 8 actions
+- **default:** 55 actions; delegates: call_action_list -> cooldown, run_action_list -> meta
+- **cooldown:** 8 actions
+- **meta:** 17 actions
 
 ### APL Variables
 - **tab_target_burning_wound** (precombat): `1`
-- **trinket1_steroids** (precombat): `trinket.1.has_cooldown&trinket.1.has_use_damage`
-- **trinket2_steroids** (precombat): `trinket.2.has_cooldown&trinket.2.has_use_damage`
+- **rg_ds** (precombat): `0`
+- **trinket1_crit** (precombat): `trinket.1.has_cooldown&trinket.1.has_use_damage`
+- **trinket2_crit** (precombat): `trinket.2.has_cooldown&trinket.2.has_use_damage`
+- **trinket1_steroids** (precombat): `trinket.1.has_cooldown&trinket.1.has_use_buff`
+- **trinket2_steroids** (precombat): `trinket.2.has_cooldown&trinket.2.has_use_buff`
+- **rg_inc** (default): `buff.rending_strike.down&buff.glaive_flurry.up&cooldown.blade_dance.up&gcd.re...`
+- **fury_gen_per_sec** (default): `2%(attack_haste*2.6)*0.81*((talent.demonsurge&buff.metamorphosis.up)*3+9.5)+b...`
+- **double_on_use** (default): `variable.trinket1_steroids&trinket.1.cooldown.remains>20|variable.trinket1_st...`
 - **use_blade_dance** (default): `active_enemies>=3-talent.trail_of_ruin|talent.first_blood|talent.screaming_br...`
 - **pool_glaive_tempest** (default): `talent.glaive_tempest&active_enemies>=3`
-- **fury_gen_per_sec** (default): `2%(attack_haste*2.6)*0.81*((talent.demonsurge&buff.metamorphosis.up)*3+9.5)+b...`
-- **inertia_ready** (default): `talent.inertia&buff.inertia_trigger.up&(!buff.inertia.up|buff.inertia_trigger...`
-- **inertia_consumer_soon** (default): `buff.inertia_trigger.remains<=0.5|cooldown.the_hunt.remains<=0.5|cooldown.eye...`
-- **inertia_consumer_soon_rush** (default): `buff.inertia_trigger.remains<=gcd.max|cooldown.the_hunt.remains<=gcd.max+0.5|...`
+- **inertia_ready** (default): `talent.inertia&buff.inertia_trigger.up&!debuff.essence_break.up&(!buff.inerti...`
+- **inertia_consumer_soon** (default): `talent.inertia&(cooldown.the_hunt.remains<=3.5|cooldown.eye_beam.remains<=0.5...`
+- **inertia_consumer_soon_rush** (default): `talent.inertia&(cooldown.the_hunt.remains<=gcd.max+0.5|cooldown.eye_beam.rema...`
 - **eb_aligned** (default): `!talent.inertia&(!talent.initiative|cooldown.vengeful_retreat.remains>=3|buff...`
 - **bd_not_blocking** (default): `cooldown.blade_dance.remains>=gcd.max|!variable.use_blade_dance`
 - **tg_spender** (default): `talent.furious_throws&talent.soulscar`
 - **cs_machine** (default): `talent.relentless_onslaught&talent.chaos_theory`
 - **use_filler** (default): `cooldown.felblade.remains>=gcd.max&cooldown.immolation_aura.remains>=gcd.max&...`
-- **rg_inc** (aldrachi_reaver): `buff.rending_strike.down&buff.glaive_flurry.up&cooldown.blade_dance.up&gcd.re...`
 
 ### Delegation Pattern
 - `call_action_list -> cooldown`: `(unconditional)`
-- `run_action_list -> fel_scarred`: `hero_tree.felscarred`
-- `run_action_list -> aldrachi_reaver`: `(unconditional)`
+- `run_action_list -> meta`: `buff.metamorphosis.up`
 
 ## Roster Overview
 - Templates: 102
