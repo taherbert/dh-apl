@@ -164,16 +164,26 @@ export async function runProfilesetAsync(
     simOverrides,
   );
 
-  try {
-    await execSimcWithFallback(args, (a) =>
-      execFileAsync(SIMC, a, {
-        maxBuffer: 100 * 1024 * 1024,
-        timeout: 1800000,
-      }),
-    );
-  } catch (e) {
-    if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
-    throw new Error(`SimC profileset failed: ${e.message}`);
+  const maxRetries = 2;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await execSimcWithFallback(args, (a) =>
+        execFileAsync(SIMC, a, {
+          maxBuffer: 100 * 1024 * 1024,
+          timeout: 1800000,
+        }),
+      );
+      break;
+    } catch (e) {
+      if (attempt < maxRetries) {
+        console.log(
+          `  SimC crashed (attempt ${attempt}/${maxRetries}), retrying...`,
+        );
+        continue;
+      }
+      if (e.stdout) console.log(e.stdout.split("\n").slice(-10).join("\n"));
+      throw new Error(`SimC profileset failed: ${e.message}`);
+    }
   }
 
   const data = JSON.parse(readFileSync(jsonPath, "utf-8"));

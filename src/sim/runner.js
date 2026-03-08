@@ -157,17 +157,27 @@ export async function runSimAsync(profilePath, scenario = "st", opts = {}) {
   );
 
   console.log(`Running ${config.name}...`);
-  try {
-    await execSimcWithFallback(args, (a) =>
-      execFileAsync(SIMC, a, {
-        encoding: "utf-8",
-        maxBuffer: 50 * 1024 * 1024,
-        timeout: 300000,
-      }),
-    );
-  } catch (e) {
-    if (e.stdout) console.log(e.stdout.split("\n").slice(-5).join("\n"));
-    throw new Error(`SimC failed: ${e.message}`);
+  const maxRetries = 2;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await execSimcWithFallback(args, (a) =>
+        execFileAsync(SIMC, a, {
+          encoding: "utf-8",
+          maxBuffer: 50 * 1024 * 1024,
+          timeout: 300000,
+        }),
+      );
+      break;
+    } catch (e) {
+      if (attempt < maxRetries) {
+        console.log(
+          `  SimC crashed (attempt ${attempt}/${maxRetries}), retrying...`,
+        );
+        continue;
+      }
+      if (e.stdout) console.log(e.stdout.split("\n").slice(-5).join("\n"));
+      throw new Error(`SimC failed: ${e.message}`);
+    }
   }
 
   const data = JSON.parse(readFileSync(jsonPath, "utf-8"));

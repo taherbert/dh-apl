@@ -189,7 +189,7 @@
         "trinket1",
         "trinket2"
       ],
-      "topK": 5,
+      "topK": 8,
       "candidates": [
         {
           "id": "void_stalkers_contract",

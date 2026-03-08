@@ -2031,15 +2031,42 @@ function applyStatAlloc(line, slot) {
 // Build enchant map from Phase 10 results: enchant_slot_key → enchant_id
 function buildEnchantMap(gearData) {
   const enchantMap = {};
+  // Extract baseline enchants from the profile for fallback when "Baseline" wins
+  const profilePath = resolve(ROOT, gearData.gearTarget ?? gearData.baseline);
+  let profileEnchants = {};
+  if (existsSync(profilePath)) {
+    const profileContent = readFileSync(profilePath, "utf-8");
+    const ENCHANT_SLOT_REVERSE = {
+      main_hand: "weapon_mh",
+      off_hand: "weapon_oh",
+      chest: "chest",
+      legs: "legs",
+      finger1: "ring",
+      finger2: "ring",
+    };
+    for (const line of profileContent.split("\n")) {
+      const slotMatch = line.match(/^(\w+)=/);
+      const enchantMatch = line.match(/enchant_id=(\d+)/);
+      if (slotMatch && enchantMatch) {
+        const key = ENCHANT_SLOT_REVERSE[slotMatch[1]];
+        if (key && !profileEnchants[key])
+          profileEnchants[key] = parseInt(enchantMatch[1]);
+      }
+    }
+  }
   for (const [enchantSlot, enchantData] of Object.entries(
     gearData.enchants || {},
   )) {
     const results = getBestGear(10, enchantSlot);
     if (results.length > 0) {
-      const candidate = enchantData.candidates.find(
-        (c) => c.id === results[0].candidate_id,
-      );
-      if (candidate) enchantMap[enchantSlot] = candidate.enchant_id;
+      const winnerId = results[0].candidate_id;
+      if (winnerId === "__baseline__") {
+        if (profileEnchants[enchantSlot])
+          enchantMap[enchantSlot] = profileEnchants[enchantSlot];
+      } else {
+        const candidate = enchantData.candidates.find((c) => c.id === winnerId);
+        if (candidate) enchantMap[enchantSlot] = candidate.enchant_id;
+      }
     }
   }
   return enchantMap;
