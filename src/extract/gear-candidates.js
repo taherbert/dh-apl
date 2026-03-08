@@ -384,6 +384,9 @@ function isDHUsableEnchant(enchant) {
     return !!(enchant.equipRequirements.itemSubClassMask & dhMask);
   }
 
+  // Effect-based enchants (have spell effects but no stats) need sim evaluation
+  if (!enchant.stats?.length && enchant.spellEffects?.length) return true;
+
   // Non-weapon: must affect DPS via stats or display name
   const hasDpsStat = enchant.stats?.some((s) =>
     DPS_STAT_TYPES.has(s.type.toLowerCase()),
@@ -885,6 +888,20 @@ async function main() {
     );
   }
 
+  // Build a broad enchant_id → displayName map for ALL enchants in relevant slots.
+  // The report uses this to label any enchant_id on the profile, even if it wasn't
+  // a DH candidate (e.g., different crafting rank, or a non-DPS enchant).
+  const enchantNames = {};
+  for (const e of enchants) {
+    if (
+      e.expansion === expansion &&
+      (ENCHANT_CATEGORY_MAP[e.categoryName] || resolveEnchantCategory(e))
+    ) {
+      enchantNames[e.id] = e.displayName;
+    }
+  }
+  console.log(`  Enchant names: ${Object.keys(enchantNames).length} entries`);
+
   // --- Auto-detect ring set pairs from itemSetId ---
   // Rings sharing an itemSetId form a set bonus pair (e.g., Voidlight Bindings).
   // Manual ring_pairs from gear-config.json take priority over auto-detected ones.
@@ -948,6 +965,7 @@ async function main() {
       finger2: { candidates: rings2 },
     },
     enchants: enchantSection,
+    enchantNames,
     ...(gems.length ? { gems } : {}),
     ...(defaultGemId ? { _defaultGem: defaultGemId } : {}),
     ...(gearConfig.embellishments
