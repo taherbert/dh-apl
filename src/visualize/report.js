@@ -282,7 +282,9 @@ function loadGearData(gearCandidates) {
     }
   }
 
-  // Build enchant lookup from local gear-candidates.json (no runtime fetch)
+  // Build enchant lookup from local gear-candidates.json (no runtime fetch).
+  // Primary: candidate labels. Fallback: broad enchantNames map covering all
+  // expansion enchants in relevant slots (handles non-candidate enchant_ids).
   const enchantMap = new Map();
   if (gearCandidates) {
     for (const slotData of Object.values(gearCandidates.enchants || {})) {
@@ -291,6 +293,12 @@ function loadGearData(gearCandidates) {
           enchantMap.set(c.enchant_id, c.label);
         }
       }
+    }
+    for (const [id, name] of Object.entries(
+      gearCandidates.enchantNames || {},
+    )) {
+      const numId = Number(id);
+      if (!enchantMap.has(numId)) enchantMap.set(numId, name);
     }
   }
 
@@ -384,56 +392,26 @@ function parseGearLine(line) {
 async function fetchGearIcons(gearData) {
   if (!gearData?.gear?.size) return;
   const ids = new Set();
-  const missingEnchantIds = new Set();
   for (const item of gearData.gear.values()) {
     if (item.id) ids.add(item.id);
-    if (item.enchantId && !item.enchantLabel)
-      missingEnchantIds.add(item.enchantId);
   }
-  const [itemResults, enchantResults] = await Promise.all([
-    Promise.allSettled(
-      [...ids].map(async (id) => {
-        const res = await fetch(
-          `https://nether.wowhead.com/tooltip/item/${id}`,
-        );
-        if (!res.ok) return { id, icon: null };
-        const data = await res.json();
-        return { id, icon: data.icon || null };
-      }),
-    ),
-    Promise.allSettled(
-      [...missingEnchantIds].map(async (id) => {
-        const res = await fetch(
-          `https://nether.wowhead.com/tooltip/spell/${id}`,
-        );
-        if (!res.ok) return { id, name: null };
-        const data = await res.json();
-        return { id, name: data.name || null };
-      }),
-    ),
-  ]);
+  const itemResults = await Promise.allSettled(
+    [...ids].map(async (id) => {
+      const res = await fetch(`https://nether.wowhead.com/tooltip/item/${id}`);
+      if (!res.ok) return { id, icon: null };
+      const data = await res.json();
+      return { id, icon: data.icon || null };
+    }),
+  );
   const iconMap = new Map();
   for (const r of itemResults) {
     if (r.status === "fulfilled" && r.value.icon) {
       iconMap.set(r.value.id, r.value.icon);
     }
   }
-  const enchantNameMap = new Map();
-  for (const r of enchantResults) {
-    if (r.status === "fulfilled" && r.value.name) {
-      enchantNameMap.set(r.value.id, r.value.name);
-    }
-  }
   for (const item of gearData.gear.values()) {
     if (item.id && iconMap.has(item.id)) {
       item.icon = iconMap.get(item.id);
-    }
-    if (
-      item.enchantId &&
-      !item.enchantLabel &&
-      enchantNameMap.has(item.enchantId)
-    ) {
-      item.enchantLabel = enchantNameMap.get(item.enchantId);
     }
   }
 }
