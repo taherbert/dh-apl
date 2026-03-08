@@ -132,37 +132,40 @@ async function runBuildScenarioSims(
   const scenarioKeys = Object.keys(SCENARIOS);
 
   const tasks = [];
-  for (const build of builds) {
+  for (let i = 0; i < builds.length; i++) {
     for (const scenario of scenarioKeys) {
-      tasks.push({ build, scenario });
+      tasks.push({ build: builds[i], buildIdx: i, scenario });
     }
   }
 
   const { concurrency, threadsPerSim } = simConcurrency(tasks.length);
   const simOverrides = { ...tierConfig, threads: threadsPerSim };
 
-  const taskFactories = tasks.map(({ build, scenario }) => async () => {
-    const buildVariants = variants.map((v) => ({
-      name: `${build.hash.slice(0, 8)}_${v.name}`,
-      overrides: [`talents=${build.hash}`, ...v.overrides],
-    }));
+  const taskFactories = tasks.map(
+    ({ build, buildIdx, scenario }) =>
+      async () => {
+        const buildVariants = variants.map((v) => ({
+          name: `${build.hash.slice(0, 8)}_${v.name}`,
+          overrides: [`talents=${build.hash}`, ...v.overrides],
+        }));
 
-    const baseOverrides = [
-      `talents=${build.hash}`,
-      ...(extraBaseOverrides || []),
-    ];
-    const content = generateProfileset(
-      baseProfile,
-      buildVariants,
-      baseOverrides,
-    );
-    const simLabel = `${label}_${build.hash.slice(0, 8)}`;
+        const baseOverrides = [
+          `talents=${build.hash}`,
+          ...(extraBaseOverrides || []),
+        ];
+        const content = generateProfileset(
+          baseProfile,
+          buildVariants,
+          baseOverrides,
+        );
+        const simLabel = `${label}_b${buildIdx}`;
 
-    const result = await runProfilesetAsync(content, scenario, simLabel, {
-      simOverrides,
-    });
-    return { build, scenario, result };
-  });
+        const result = await runProfilesetAsync(content, scenario, simLabel, {
+          simOverrides,
+        });
+        return { build, scenario, result };
+      },
+  );
 
   return runWithConcurrency(taskFactories, concurrency);
 }
@@ -206,6 +209,24 @@ function pairedSlotScreenCandidates(pairedData) {
       tags: c.tags,
     };
   });
+}
+
+// Resolve screenProtected entries to a Set of candidate IDs.
+// Each entry is either a literal candidate ID or a tag name — tags expand to all
+// candidates carrying that tag.
+function resolveScreenProtected(entries, candidates) {
+  const ids = new Set();
+  const allTags = new Set(candidates.flatMap((c) => c.tags || []));
+  for (const entry of entries) {
+    if (allTags.has(entry)) {
+      for (const c of candidates) {
+        if (c.tags?.includes(entry)) ids.add(c.id);
+      }
+    } else {
+      ids.add(entry);
+    }
+  }
+  return ids;
 }
 
 // For enchant slots, build full simc lines from base_item + enchant_id
@@ -2036,6 +2057,28 @@ async function cmdCombinations(args) {
         minAdvancing,
       );
 
+      // Restore protected candidates that were pruned — these advance to pairs
+      // regardless of screen rank (e.g. on-use buff trinkets that need pair context).
+      // screenProtected entries can be candidate IDs or tag names (resolved to all
+      // candidates carrying that tag).
+      const protectedIds = resolveScreenProtected(
+        pairedData.screenProtected || [],
+        pairedData.candidates,
+      );
+      const rescued = [];
+      if (protectedIds.size > 0) {
+        const advancingIds = new Set(advancing.map((r) => r.id));
+        for (const r of pruned) {
+          if (protectedIds.has(r.id) && !advancingIds.has(r.id)) {
+            advancing.push(r);
+            rescued.push(r.id);
+          }
+        }
+        const stillPruned = pruned.filter((r) => !protectedIds.has(r.id));
+        pruned.length = 0;
+        pruned.push(...stillPruned);
+      }
+
       printSlotResults(type, screenRanked, gearData);
 
       clearGearResults(phase, screenSlotKey);
@@ -2044,6 +2087,11 @@ async function cmdCombinations(args) {
       console.log(
         `\nAdvancing ${advancing.filter((r) => r.id !== "__baseline__").length} candidates to pair sim (within 0.5%, min ${minAdvancing})`,
       );
+      if (rescued.length > 0) {
+        console.log(
+          `  Protected: ${rescued.join(", ")} (advanced despite screen rank)`,
+        );
+      }
       if (pruned.length > 0) {
         console.log(`Eliminated ${pruned.length} candidates.`);
       }
@@ -2051,6 +2099,7 @@ async function cmdCombinations(args) {
       setSessionState(`gear_phase${phase}_${type}`, {
         advancing: advancing.map((r) => r.id),
         pruned: pruned.map((r) => r.id),
+        rescued,
         fidelity,
         timestamp: new Date().toISOString(),
       });
@@ -2332,20 +2381,24 @@ async function cmdResolveConflicts(args) {
   );
 }
 
-// Generate C(K,2) pairs from a single paired slot pool using screen phase results
+// Generate C(K,2) pairs from a single paired slot pool using session_state advancing list.
+// Uses the advancing list (which includes screenProtected rescues) rather than the DB
+// eliminated flag, so protected candidates participate in pair generation.
 function generatePairedSlotCombinations(poolName, gearData, screenPhase) {
   const pairedData = gearData.paired_slots[poolName];
   if (!pairedData) return [];
 
-  const topK = pairedData.topK || 5;
+  const phase = COMBO_PHASES[poolName];
+  const advancingState = getSessionState(`gear_phase${phase}_${poolName}`);
+  const advancingIds = new Set(advancingState?.advancing || []);
 
-  // Screen results are stored under "<poolName>_screen" slot key in the screen phase
   const screenSlotKey = `${poolName}_screen`;
   const screenResults = getGearResults(screenPhase, screenSlotKey).filter(
-    (r) => !r.eliminated && r.candidate_id !== "__baseline__",
+    (r) =>
+      r.candidate_id !== "__baseline__" && advancingIds.has(r.candidate_id),
   );
 
-  const topCandidates = screenResults.slice(0, topK);
+  const topCandidates = screenResults;
   if (topCandidates.length < 2) {
     console.log(
       `Only ${topCandidates.length} advancing candidates for ${poolName} — need at least 2 for pairs.`,

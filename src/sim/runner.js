@@ -1,6 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { execFileAsync } from "../util/exec.js";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, unlinkSync } from "node:fs";
 import { cpus } from "node:os";
 import {
   shouldUseRemote,
@@ -73,6 +73,9 @@ export function prepareSim(
 
   const profileName = basename(profilePath, ".simc");
   const jsonPath = resultsFile(`${profileName}_${scenario}.json`);
+  try {
+    unlinkSync(jsonPath);
+  } catch {}
   const htmlPath = html ? resultsFile(`${profileName}_${scenario}.html`) : null;
 
   const overrides = buildOverrides(scenario, simOverrides);
@@ -311,6 +314,9 @@ export async function runMultiActorAsync(
 
   const simcPath = resultsFile(`${label}_${scenario}.simc`);
   const jsonPath = resultsFile(`${label}_${scenario}.json`);
+  try {
+    unlinkSync(jsonPath);
+  } catch {}
   writeFileSync(simcPath, simcContent);
 
   const merged = { ...SIM_DEFAULTS, ...simOverrides };

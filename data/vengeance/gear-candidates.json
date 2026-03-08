@@ -188,6 +188,7 @@
       "slots": ["trinket1", "trinket2"],
       "topK": 5,
       "screenAnchor": "the_eternal_egg,id=249807,ilevel=289",
+      "screenProtected": ["on-use"],
       "candidates": [
         {
           "id": "void_stalkers_contract",

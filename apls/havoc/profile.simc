@@ -32,7 +32,7 @@ neck=ribbon_of_coiled_malice,id=249337,bonus_id=13668/4800/4786/12806,gem_id=240
 shoulder=devouring_reavers_exhaustplates,id=250031,bonus_id=13574/13574/13574/13574/13574/13574/4800/4786/12806
 back=rigid_scale_greatcloak,id=258575,bonus_id=4786/12806
 chest=devouring_reavers_engine,id=250036,bonus_id=13575/13575/13575/13575/13575/13575/4800/4786/12806,enchant_id=7985
-wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=arcanoweave_lining
+wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=36/40,embellishment=arcanoweave_lining
 hands=devouring_reavers_essence_grips,id=250034,bonus_id=13574/13574/13574/13574/13574/13574/4786/12806
 waist=snapvine_cinch,id=251082,bonus_id=4786/12806/1808,gem_id=240908
 legs=devouring_reavers_pistons,id=250032,bonus_id=13575/13575/13575/13575/13575/13575/4786/12806,enchant_id=8159
@@ -40,6 +40,6 @@ feet=footpads_of_seeping_dread,id=151317,ilevel=289
 finger1=omission_of_light,id=251093,ilevel=289,gem_id=240983/240898,enchant_id=7967
 finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240898/240898,enchant_id=7967
 trinket1=gaze_of_the_alnseer,id=249343,bonus_id=4800/4786/12806
-trinket2=algethar_puzzle_box,id=193701,bonus_id=4786/12806
+trinket2=radiant_plume,id=249806,ilevel=289
 main_hand=lightless_lament,id=260408,bonus_id=4800/4786/12806,enchant_id=8041
-off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=8039,embellishment=arcanoweave_lining
+off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7981,embellishment=darkmoon_sigil_hunt

@@ -4,7 +4,13 @@
 
 import { execFileSync } from "node:child_process";
 import { execFileAsync } from "../util/exec.js";
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  existsSync,
+  unlinkSync,
+} from "node:fs";
 import { join, dirname, resolve } from "node:path";
 import {
   SCENARIOS,
@@ -90,6 +96,10 @@ function prepareProfileset(simcContent, scenario, label, simOverrides) {
 
   const simcPath = resultsFile(`${label}_${scenario}.simc`);
   const jsonPath = resultsFile(`${label}_${scenario}.json`);
+  // Remove stale JSON before running — SimC json2 doesn't truncate on overwrite
+  try {
+    unlinkSync(jsonPath);
+  } catch {}
   writeFileSync(simcPath, simcContent);
 
   const merged = { ...SIM_DEFAULTS, ...simOverrides };
