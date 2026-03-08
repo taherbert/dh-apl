@@ -543,12 +543,10 @@ function importCommunityUnified(existingFingerprints, archetypes) {
     const srcPrefix = sourceAbbrev(sourceName);
     const name = `${srcPrefix}_${ha}_${n}`;
 
-    // Classify into DoE archetype
-    const archetype = classifyBuildArchetype(
-      normalizedHash,
-      archetypes,
-      heroTree,
-    );
+    // Label with source name (wowhead, icy-veins, raidbots, etc.)
+    const sourceLabel =
+      sourceName.charAt(0).toUpperCase() + sourceName.slice(1);
+    const archetype = `Community: ${sourceLabel}`;
 
     const validation = validateBuild({ hash: normalizedHash });
     upsertBuild({
