@@ -382,26 +382,56 @@ function parseGearLine(line) {
 async function fetchGearIcons(gearData) {
   if (!gearData?.gear?.size) return;
   const ids = new Set();
+  const missingEnchantIds = new Set();
   for (const item of gearData.gear.values()) {
     if (item.id) ids.add(item.id);
+    if (item.enchantId && !item.enchantLabel)
+      missingEnchantIds.add(item.enchantId);
   }
-  const results = await Promise.allSettled(
-    [...ids].map(async (id) => {
-      const res = await fetch(`https://nether.wowhead.com/tooltip/item/${id}`);
-      if (!res.ok) return { id, icon: null };
-      const data = await res.json();
-      return { id, icon: data.icon || null };
-    }),
-  );
+  const [itemResults, enchantResults] = await Promise.all([
+    Promise.allSettled(
+      [...ids].map(async (id) => {
+        const res = await fetch(
+          `https://nether.wowhead.com/tooltip/item/${id}`,
+        );
+        if (!res.ok) return { id, icon: null };
+        const data = await res.json();
+        return { id, icon: data.icon || null };
+      }),
+    ),
+    Promise.allSettled(
+      [...missingEnchantIds].map(async (id) => {
+        const res = await fetch(
+          `https://nether.wowhead.com/tooltip/spell/${id}`,
+        );
+        if (!res.ok) return { id, name: null };
+        const data = await res.json();
+        return { id, name: data.name || null };
+      }),
+    ),
+  ]);
   const iconMap = new Map();
-  for (const r of results) {
+  for (const r of itemResults) {
     if (r.status === "fulfilled" && r.value.icon) {
       iconMap.set(r.value.id, r.value.icon);
+    }
+  }
+  const enchantNameMap = new Map();
+  for (const r of enchantResults) {
+    if (r.status === "fulfilled" && r.value.name) {
+      enchantNameMap.set(r.value.id, r.value.name);
     }
   }
   for (const item of gearData.gear.values()) {
     if (item.id && iconMap.has(item.id)) {
       item.icon = iconMap.get(item.id);
+    }
+    if (
+      item.enchantId &&
+      !item.enchantLabel &&
+      enchantNameMap.has(item.enchantId)
+    ) {
+      item.enchantLabel = enchantNameMap.get(item.enchantId);
     }
   }
 }
@@ -2004,6 +2034,17 @@ function renderTrinketRankings(trinketData) {
     );
   }
 
+  if (phase2.length > 0) {
+    sections.push(
+      renderPhase(
+        phase2,
+        "Trinket Pairs",
+        "Best trinket combinations (exhaustive pairing of top candidates). Pairs are ranked by weighted DPS across all builds and scenarios.",
+        false,
+      ),
+    );
+  }
+
   if (sections.length === 0) return "";
 
   return `<section>
@@ -2492,7 +2533,7 @@ function renderGearDisplay(gearData) {
     return `<div class="gear-row">
       <span class="gear-slot">${esc(slotDef.label)}</span>
       ${iconHtml}
-      <span class="gear-name">${esc(displayName)}</span>
+      ${item.id ? `<a class="gear-name" href="https://www.wowhead.com/item=${item.id}" target="_blank" rel="noopener">${esc(displayName)}</a>` : `<span class="gear-name">${esc(displayName)}</span>`}
       ${badgeHtml}
     </div>`;
   }
@@ -3714,6 +3755,8 @@ summary:hover { color: var(--accent); }
   text-overflow: ellipsis;
   min-width: 0;
 }
+a.gear-name { color: var(--accent); text-decoration: none; }
+a.gear-name:hover { text-decoration: underline; }
 
 .gear-badges {
   grid-column: 2 / -1;

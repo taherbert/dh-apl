@@ -1620,10 +1620,41 @@ function aggregateGearResults(results, candidates, builds) {
   }
 
   const candidateMap = new Map(candidates.map((c) => [c.id, c]));
-  const ranked = [];
 
+  // First pass: compute raw per-scenario averages for all candidates
+  const entries = [];
   for (const [candidateId, data] of byCandidate) {
-    const { avg, weighted } = computeWeightedDps(data.scenarioDps);
+    const { avg } = computeWeightedDps(data.scenarioDps);
+    entries.push({ candidateId, avg, data });
+  }
+
+  // Compute per-scenario means across all candidates for normalization.
+  // Without this, high-DPS scenarios (e.g., 10T at 580k) dominate the weighted
+  // score despite low scenario weight, because raw DPS scale bleeds through.
+  const scenarioMeans = {};
+  for (const scenario of Object.keys(SCENARIO_WEIGHTS)) {
+    const vals = entries.map((e) => e.avg[scenario] || 0).filter((v) => v > 0);
+    scenarioMeans[scenario] =
+      vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 1;
+  }
+
+  // Display scale: raw weighted mean DPS, so output stays in DPS-like units
+  let displayScale = 0;
+  for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+    displayScale += scenarioMeans[scenario] * weight;
+  }
+
+  // Second pass: compute normalized weighted scores
+  const ranked = [];
+  for (const { candidateId, avg, data } of entries) {
+    let normalizedSum = 0;
+    for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+      const dps = avg[scenario] || 0;
+      const mean = scenarioMeans[scenario];
+      normalizedSum += (dps / mean) * weight;
+    }
+    const weighted = normalizedSum * displayScale;
+
     const candidate = candidateMap.get(candidateId);
     ranked.push({
       id: candidateId,
