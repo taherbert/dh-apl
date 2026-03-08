@@ -360,8 +360,15 @@ function countSockets(simcStr) {
 }
 
 function isCraftedSimc(simcStr) {
-  return (simcStr || "").includes("crafted_stats=");
+  const s = simcStr || "";
+  return (
+    s.includes("crafted_stats=") ||
+    s.includes("embellishment=") ||
+    /bonus_id=[^,]*\b8793\b/.test(s)
+  );
 }
+
+const MAX_CRAFTED = 2;
 
 // Slots where ALL candidates are sim-evaluated in Phase 4, not just EP-ranked.
 // Weapons have procs, cross-slot synergies, and other non-stat effects that EP can't model.
@@ -2693,17 +2700,22 @@ function buildGearLines(gearData) {
   // Track equipped unique-equip item IDs to prevent conflicts across slots
   // (e.g., Lightless Lament in both MH and OH)
   const equippedUniqueItemIds = new Set();
+  let craftedCount = 0;
 
   // Extract item ID from a SimC line like "main_hand=lightless_lament,id=260408,..."
   function extractItemId(simcLine) {
     return simcLine?.match(/,id=(\d+)/)?.[1] ?? null;
   }
 
-  // Check if a candidate can be equipped given unique-equip constraints
   function canEquip(candidate) {
-    if (!candidate?.uniqueEquipped) return true;
-    const itemId = extractItemId(candidate.simc || candidate.simc_base);
-    return !itemId || !equippedUniqueItemIds.has(itemId);
+    if (candidate?.uniqueEquipped) {
+      const itemId = extractItemId(candidate.simc || candidate.simc_base);
+      if (itemId && equippedUniqueItemIds.has(itemId)) return false;
+    }
+    if (isCraftedSimc(candidate?.simc) && craftedCount >= MAX_CRAFTED) {
+      return false;
+    }
+    return true;
   }
 
   function addLine(line, slot, candidate) {
@@ -2716,6 +2728,7 @@ function buildGearLines(gearData) {
       const itemId = extractItemId(line);
       if (itemId) equippedUniqueItemIds.add(itemId);
     }
+    if (isCraftedSimc(line)) craftedCount++;
   }
 
   // Phase 0: tier config
@@ -3021,11 +3034,47 @@ function cmdWriteProfile() {
   // This prevents tier slots (managed by phase 0) from being dropped when session
   // state is missing (e.g., write-profile called standalone).
   // Apply Phase 10 enchant winners to preserved lines.
-  const enchantMap = buildEnchantMap(gearData);
-  const coveredSlots = new Set(finalLines.map((l) => l.split("=")[0]));
+  // Also enforce MAX_CRAFTED constraint on preserved lines.
+  const preservedEnchantMap = buildEnchantMap(gearData);
+  const finalSlotsCovered = new Set(finalLines.map((l) => l.split("=")[0]));
+
+  // Build set of known crafted item IDs from gear-candidates to detect crafted
+  // items even when SimC markers (crafted_stats, bonus_id=8793) have been stripped
+  const craftedItemIds = new Set();
+  for (const slotData of Object.values(gearData?.slots || {})) {
+    for (const c of slotData.candidates || []) {
+      if (isCraftedSimc(c.simc)) {
+        const m = c.simc?.match(/,id=(\d+)/);
+        if (m) craftedItemIds.add(m[1]);
+      }
+    }
+  }
+
+  function isCraftedLine(line) {
+    if (isCraftedSimc(line)) return true;
+    const m = line.match(/,id=(\d+)/);
+    return m ? craftedItemIds.has(m[1]) : false;
+  }
+
+  let preservedCraftedCount = finalLines.filter((l) => isCraftedLine(l)).length;
   for (const [slot, line] of currentGear) {
-    if (!coveredSlots.has(slot)) {
-      finalLines.push(applySlotEnchant(line, slot, enchantMap));
+    if (!finalSlotsCovered.has(slot)) {
+      if (isCraftedLine(line) && preservedCraftedCount >= MAX_CRAFTED) {
+        // Over crafted limit — substitute best non-crafted candidate for this slot
+        const slotKey = slot === "wrist" ? "wrists" : slot;
+        const slotCandidates = gearData?.slots?.[slotKey]?.candidates || [];
+        const nonCrafted = slotCandidates.find((c) => !isCraftedSimc(c.simc));
+        if (nonCrafted) {
+          finalLines.push(
+            applySlotEnchant(nonCrafted.simc, slot, preservedEnchantMap),
+          );
+        } else {
+          finalLines.push(applySlotEnchant(line, slot, preservedEnchantMap));
+        }
+      } else {
+        if (isCraftedLine(line)) preservedCraftedCount++;
+        finalLines.push(applySlotEnchant(line, slot, preservedEnchantMap));
+      }
     }
   }
 

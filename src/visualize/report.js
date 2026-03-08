@@ -87,24 +87,20 @@ async function runRosterSim(roster, aplPath, scenario, label, fidelityOpts) {
 // --- Load all report data ---
 
 function formatBuildName(build) {
-  const archetype = build.archetype || "";
-  const match = archetype.match(/^Apex (\d+):\s*(.+)$/);
-  if (!match) return build.displayName || build.id;
+  // displayName from the roster already has talent-descriptive names
+  // (e.g. "Growing Inferno + Screaming Brutality (KE) #2")
+  // Strip any source prefix like "WH: " or "community:raidbots: "
+  let name = build.displayName || "";
+  name = name.replace(/^(?:WH|IV|RB|community:\w+):\s*/i, "");
+  return name || build.id;
+}
 
-  const apex = Number(match[1]);
-  const template = match[2].trim();
-
-  // Extract hero variant from the original displayName parenthesized suffix
-  const variantMatch = (build.displayName || "").match(/\(([^)]+)\)\s*#?\d*$/);
-  const variant = variantMatch ? variantMatch[1] : "";
-
-  let name = template;
-  if (apex > 0) name += ` (Apex ${apex})`;
-
-  // Append hero variant if present for disambiguation
-  if (variant) name += ` [${variant}]`;
-
-  return name;
+function communitySourceBadge(build) {
+  const raw = build.source || "";
+  if (!raw.startsWith("community:")) return "";
+  const src = raw.replace(/^community:/, "");
+  if (!src) return "";
+  return `<span class="badge badge--community">${esc(src)}</span>`;
 }
 
 function loadReportData(roster) {
@@ -118,7 +114,8 @@ function loadReportData(roster) {
     const dps = Object.fromEntries(
       scenarioKeys.map((s) => [s, db?.[`dps_${s}`] || build.lastDps?.[s] || 0]),
     );
-    dps.weighted = db?.weighted || build.lastDps?.weighted || 0;
+    // weighted is recomputed below via applyNormalizedWeights
+    dps.weighted = 0;
 
     return {
       id: build.id,
@@ -132,6 +129,11 @@ function loadReportData(roster) {
       lastTestedAt: build.lastTestedAt || db?.lastTestedAt || null,
     };
   });
+
+  // Normalized weighting: prevents high-DPS scenarios from dominating
+  applyNormalizedWeights(builds.map((b) => b.dps));
+  const simcRows = builds.filter((b) => b.simcDps).map((b) => b.simcDps);
+  if (simcRows.length > 0) applyNormalizedWeights(simcRows);
 
   const apexBuilds = deriveApexBuilds(builds);
 
@@ -494,8 +496,9 @@ function mergeSimResults(roster, baselineMaps, oursMaps) {
       simcDps[s] = baselineMaps[s]?.get(build.id)?.dps || 0;
       dps[s] = oursMaps[s]?.get(build.id)?.dps || 0;
     }
-    simcDps.weighted = computeWeighted(simcDps);
-    dps.weighted = computeWeighted(dps);
+    // weighted is recomputed below via applyNormalizedWeights
+    simcDps.weighted = 0;
+    dps.weighted = 0;
 
     return {
       id: build.id,
@@ -508,6 +511,12 @@ function mergeSimResults(roster, baselineMaps, oursMaps) {
       simcDps,
     };
   });
+
+  // Apply normalized weighting matching gear pipeline
+  applyNormalizedWeights(result.map((b) => b.dps));
+  applyNormalizedWeights(result.map((b) => b.simcDps));
+
+  return result;
 }
 
 function persistSimResults(roster, buildData) {
@@ -1326,8 +1335,8 @@ function renderTopBuildCards(builds, heroTrees) {
 
       return `<div class="tbc-card">
       <div class="tbc-tree"><span class="tree-badge ${cls}">${abbr}</span> ${esc(heroTrees[t].displayName)}</div>
-      <div class="tbc-dps">${fmtDps(best.dps.weighted || 0)}</div>
-      <div class="tbc-name">${esc(best.displayName)}${copyBtn(best.hash)}</div>
+      <div class="tbc-dps">${fmtDps(best.dps.weighted || 0)}<span class="tbc-dps-label">weighted</span></div>
+      <div class="tbc-name">${esc(best.displayName)}${communitySourceBadge(best)}${copyBtn(best.hash)}</div>
       <div class="tbc-scenarios">${scenarioHtml}</div>
       <div class="tbc-count">${treeBuilds.length} builds</div>
     </div>`;
@@ -1710,40 +1719,50 @@ function renderApexScaling(apexBuilds, heroTrees) {
   const maxRank = Math.max(...ranks);
   if (maxRank <= 0) return "";
 
-  // Average weighted DPS per tree per rank (more representative than best-only)
-  const perTree = {};
-  for (const tree of treeNames) {
-    perTree[tree] = {};
-    for (const rank of ranks) {
-      const entries = (apexBuilds[rank] || []).filter(
-        (e) => e.heroTree === tree,
-      );
-      if (entries.length > 0) {
-        const sum = entries.reduce((s, e) => s + e.avg.weighted, 0);
-        perTree[tree][rank] = sum / entries.length;
-      }
+  // Per-template scaling: track each template across its apex ranks,
+  // then compute deltas vs that template's own rank 0 baseline.
+  // This compares apples to apples (same talent cluster at different apex levels).
+  const templateMap = {}; // key: "tree|template" -> { [rank]: avgWeighted }
+  for (const rank of ranks) {
+    for (const entry of apexBuilds[rank] || []) {
+      const key = `${entry.heroTree}|${entry.templateName}`;
+      (templateMap[key] ||= { tree: entry.heroTree, ranks: {} }).ranks[rank] =
+        entry.avg.weighted;
     }
   }
 
-  // % gain from each tree's rank 0 baseline
+  // For each template with a rank 0 baseline, compute % delta at each rank
+  const deltasByTreeRank = {}; // key: "tree|rank" -> [pctDelta, ...]
+  for (const { tree, ranks: rDps } of Object.values(templateMap)) {
+    if (!rDps[0]) continue;
+    for (const rank of ranks) {
+      if (rDps[rank] === undefined) continue;
+      const pct = ((rDps[rank] - rDps[0]) / rDps[0]) * 100;
+      const key = `${tree}|${rank}`;
+      (deltasByTreeRank[key] ||= []).push(pct);
+    }
+  }
+
+  // Aggregate: best (max) and average delta per tree per rank
   const gains = {};
   let yMaxRaw = 0;
   let yMinRaw = 0;
   for (const tree of treeNames) {
-    const baseline = perTree[tree][0];
-    if (!baseline) continue;
     gains[tree] = {};
     for (const rank of ranks) {
-      const dps = perTree[tree][rank];
-      if (dps === undefined) continue;
-      const pct = ((dps - baseline) / baseline) * 100;
-      gains[tree][rank] = { pct, dps };
-      if (pct > yMaxRaw) yMaxRaw = pct;
-      if (pct < yMinRaw) yMinRaw = pct;
+      const deltas = deltasByTreeRank[`${tree}|${rank}`];
+      if (!deltas || deltas.length === 0) continue;
+      const bestPct = Math.max(...deltas);
+      const avgPct = deltas.reduce((s, d) => s + d, 0) / deltas.length;
+      gains[tree][rank] = { bestPct, avgPct, n: deltas.length };
+      const hi = Math.max(avgPct, bestPct);
+      const lo = Math.min(avgPct, bestPct);
+      if (hi > yMaxRaw) yMaxRaw = hi;
+      if (lo < yMinRaw) yMinRaw = lo;
     }
   }
 
-  // SVG layout — support negative values
+  // SVG layout
   const W = 400,
     H = 250;
   const LEFT = 48,
@@ -1779,7 +1798,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
     xAxis += `<text x="${x}" y="${(TOP + cH + 18).toFixed(1)}" text-anchor="middle" class="apex-axis-label">Rank ${r}</text>`;
   }
 
-  // Curves + nodes
+  // Curves + nodes - best (solid + area fill) and avg (dashed, no fill)
   let paths = "";
   let points = "";
 
@@ -1793,52 +1812,66 @@ function renderApexScaling(apexBuilds, heroTrees) {
       .map((r) => ({
         r,
         x: xOf(r),
-        y: yOf(gains[tree][r].pct),
+        yBest: yOf(gains[tree][r].bestPct),
+        yAvg: yOf(gains[tree][r].avgPct),
         ...gains[tree][r],
       }));
     if (pts.length < 2) continue;
 
-    // Area fill + stroke
     const base = yOf(0);
-    const line = pts
-      .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+
+    // Best line - solid stroke + area fill
+    const bestLine = pts
+      .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.yBest.toFixed(1)}`)
       .join(" ");
-    paths += `<path d="${line} L${pts.at(-1).x.toFixed(1)},${base.toFixed(1)} L${pts[0].x.toFixed(1)},${base.toFixed(1)}Z" fill="${fill}"/>`;
-    paths += `<path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
+    paths += `<path d="${bestLine} L${pts.at(-1).x.toFixed(1)},${base.toFixed(1)} L${pts[0].x.toFixed(1)},${base.toFixed(1)}Z" fill="${fill}"/>`;
+    paths += `<path d="${bestLine}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/>`;
 
-    // Data point nodes
-    const tipW = 130;
+    // Avg line - dashed stroke, no fill
+    const avgLine = pts
+      .map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.yAvg.toFixed(1)}`)
+      .join(" ");
+    paths += `<path d="${avgLine}" fill="none" stroke="${color}" stroke-width="1.2" stroke-linejoin="round" stroke-dasharray="4,3" opacity="0.7"/>`;
+
+    // Data point nodes - best (solid circle) and avg (open circle)
+    const tipW = 160;
     for (const p of pts) {
-      const cx = p.x.toFixed(1);
-      const cy = p.y.toFixed(1);
+      const bx = p.x.toFixed(1);
+      const by = p.yBest.toFixed(1);
+      const ay = p.yAvg.toFixed(1);
       const tipX = Math.max(tipW / 2, Math.min(W - tipW / 2, p.x));
-      const tipLabel = `${fmtDps(p.dps)} (${p.pct >= 0 ? "+" : ""}${p.pct.toFixed(1)}%)`;
-
+      const bestLabel = `Best: ${p.bestPct >= 0 ? "+" : ""}${p.bestPct.toFixed(1)}% (${p.n})`;
+      const avgLabel = `Avg: ${p.avgPct >= 0 ? "+" : ""}${p.avgPct.toFixed(1)}% (${p.n})`;
+      const tipY = Math.min(p.yBest, p.yAvg);
       points += `<g class="apex-point">`;
-      points += `<circle cx="${cx}" cy="${cy}" r="3.5" fill="var(--bg)" stroke="${color}" stroke-width="1.5" class="apex-node"/>`;
-      points += `<g class="apex-tooltip"><rect x="${(tipX - tipW / 2).toFixed(1)}" y="${(p.y - 44).toFixed(1)}" width="${tipW}" height="22" rx="4" fill="var(--surface)" stroke="var(--border)"/><text x="${tipX.toFixed(1)}" y="${(p.y - 30).toFixed(1)}" text-anchor="middle" class="apex-tip-text">${tipLabel}</text></g>`;
-      points += `</g>`;
+      points += `<circle cx="${bx}" cy="${by}" r="3.5" fill="var(--bg)" stroke="${color}" stroke-width="1.5" class="apex-node"/>`;
+      points += `<circle cx="${bx}" cy="${ay}" r="2.5" fill="none" stroke="${color}" stroke-width="1.2" stroke-dasharray="2,2" class="apex-node"/>`;
+      points += `<g class="apex-tooltip"><rect x="${(tipX - tipW / 2).toFixed(1)}" y="${(tipY - 56).toFixed(1)}" width="${tipW}" height="34" rx="4" fill="var(--surface)" stroke="var(--border)"/>`;
+      points += `<text x="${tipX.toFixed(1)}" y="${(tipY - 40).toFixed(1)}" text-anchor="middle" class="apex-tip-text">${bestLabel}</text>`;
+      points += `<text x="${tipX.toFixed(1)}" y="${(tipY - 27).toFixed(1)}" text-anchor="middle" class="apex-tip-text" opacity="0.7">${avgLabel}</text>`;
+      points += `</g></g>`;
     }
   }
 
-  // HTML legend (matches hero comparison panel)
-  const legend = treeNames
+  // HTML legend - tree badges + line style key
+  const treeLegend = treeNames
     .map(
       (t) =>
         `<span class="hc-legend-item"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)}</span>`,
     )
     .join("");
+  const styleLegend = `<span class="hc-legend-item" style="margin-left:0.75em;opacity:0.7"><svg width="20" height="10" style="vertical-align:middle"><line x1="0" y1="5" x2="20" y2="5" stroke="var(--fg)" stroke-width="1.5"/></svg> Best</span><span class="hc-legend-item"><svg width="20" height="10" style="vertical-align:middle"><line x1="0" y1="5" x2="20" y2="5" stroke="var(--fg)" stroke-width="1.2" stroke-dasharray="4,3" opacity="0.7"/></svg> Avg</span>`;
 
   return `<div class="apex-panel report-card">
     <h3>Apex Scaling</h3>
-    <p class="section-desc">Average weighted DPS change by apex rank per hero tree, relative to each tree's rank 0 baseline.</p>
+    <p class="section-desc">How much DPS does each build gain or lose by investing in apex talents? Each build is compared to itself at rank 0. Solid line shows the best-scaling build; dashed line shows the average across all builds.</p>
     <svg class="apex-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
       ${grid}
       ${xAxis}
       ${paths}
       ${points}
     </svg>
-    <div class="hc-legend">${legend}</div>
+    <div class="hc-legend">${treeLegend}${styleLegend}</div>
   </div>`;
 }
 
@@ -1882,8 +1915,9 @@ function renderBuildRankings(builds, heroTrees) {
       ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps.weighted)}"`
       : "";
     const { cls: bCls, abbr: bAbbr } = treeStyle(b.heroTree);
+    const srcBadge = communitySourceBadge(b);
     rows += `<tr data-tree="${esc(b.heroTree)}">
-  <td class="build-name">${esc(b.displayName)}${copyBtn(b.hash)}</td>
+  <td class="build-name">${esc(b.displayName)}${srcBadge}${copyBtn(b.hash)}</td>
   <td><span class="tree-badge sm ${bCls}">${bAbbr}</span></td>
   ${scenarioCells}
   <td class="dps-cell${isTopW ? " top-build" : ""} has-tip"${wTip}>${fmtDps(b.dps.weighted || 0)}${wBadge}</td>
@@ -2018,39 +2052,73 @@ function renderTrinketRankings(trinketData) {
     </div>`;
   }
 
-  const sections = [];
-
-  // ilvl chart replaces individual trinkets when available
+  // Build individual trinket content (ilvl chart or phase1 strips)
+  let individualHtml = "";
   if (ilvlRows?.length > 0) {
-    sections.push(renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig));
+    individualHtml = renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig);
   } else if (phase1.length > 0) {
-    sections.push(
-      renderPhase(
-        phase1,
-        "Individual Trinkets",
-        "Weighted DPS per trinket slot (single-slot screen, best build). Eliminated trinkets fell below the advancement threshold.",
-        true,
-      ),
-    );
+    const active = phase1.filter((r) => !r.eliminated);
+    const elim = phase1.filter((r) => r.eliminated);
+    const maxDps = phase1[0].weighted;
+    const top5 = active.slice(0, 5);
+    const rest = [...active.slice(5), ...elim];
+    const moreHtml =
+      rest.length > 0
+        ? `<details class="trinket-details">
+        <summary>More trinkets <span class="detail-count">(${rest.length})</span></summary>
+        <div class="trinket-list trinket-list--elim">${renderStrips(rest, true, maxDps)}</div>
+      </details>`
+        : "";
+    individualHtml = `<p class="section-desc">Weighted DPS per trinket slot (single-slot screen, best build).</p>
+      <div class="trinket-list">${renderStrips(top5, true, maxDps)}</div>
+      ${moreHtml}`;
   }
 
+  // Build pairs content — clear eliminated flag since all pairs are ranked results
+  let pairsHtml = "";
   if (phase2.length > 0) {
-    sections.push(
-      renderPhase(
-        phase2,
-        "Trinket Pairs",
-        "Best trinket combinations (exhaustive pairing of top candidates). Pairs are ranked by weighted DPS across all builds and scenarios.",
-        false,
-      ),
-    );
+    const pairs = phase2.map((r) => ({ ...r, eliminated: 0 }));
+    const maxDps = pairs[0].weighted || 1;
+    const topPairs = pairs.slice(0, 5);
+    const morePairs = pairs.slice(5);
+    const moreHtml =
+      morePairs.length > 0
+        ? `<details class="trinket-details">
+        <summary>More pairs <span class="detail-count">(${morePairs.length})</span></summary>
+        <div class="trinket-list">${renderStrips(morePairs, false, maxDps)}</div>
+      </details>`
+        : "";
+    pairsHtml = `<p class="section-desc">Exhaustive pairing of top trinket candidates, ranked by weighted DPS.</p>
+      <div class="trinket-list">${renderStrips(topPairs, false, maxDps)}</div>
+      ${moreHtml}`;
   }
 
-  if (sections.length === 0) return "";
+  if (!individualHtml && !pairsHtml) return "";
+
+  // Single card with toggle between Individual and Pairs
+  const hasIndividual = !!individualHtml;
+  const hasPairs = !!pairsHtml;
+  const hasBoth = hasIndividual && hasPairs;
+
+  const toggleBtns = hasBoth
+    ? `<div class="trinket-tabs">
+        <button class="trinket-tab trinket-tab--active" data-trinket-view="individual">Individual</button>
+        <button class="trinket-tab" data-trinket-view="pairs">Pairs</button>
+      </div>`
+    : "";
+
+  const individualPane = hasIndividual
+    ? `<div class="trinket-pane trinket-pane--active" data-trinket-pane="individual">${individualHtml}</div>`
+    : "";
+  const pairsPane = hasPairs
+    ? `<div class="trinket-pane${hasBoth ? "" : " trinket-pane--active"}" data-trinket-pane="pairs">${pairsHtml}</div>`
+    : "";
 
   return `<section>
   <div class="report-card">
-    <h3>Trinket Rankings</h3>
-    ${sections.join("")}
+    <div class="card-header-row"><h3>Trinket Rankings</h3>${toggleBtns}</div>
+    ${individualPane}
+    ${pairsPane}
   </div>
 </section>`;
 }
@@ -2489,20 +2557,12 @@ function renderGearDisplay(gearData) {
     const tags = [];
 
     if (item.gemIds.length) {
-      // Group identical gems by ID, preserving label from first occurrence
-      const seen = new Map();
-      item.gemIds.forEach((id, i) => {
-        if (!seen.has(id)) {
-          seen.set(id, { count: 0, name: item.gemLabels?.[i] || `Gem #${id}` });
-        }
-        seen.get(id).count++;
-      });
-      const gemLabels = [...seen.values()].map(({ count, name }) =>
-        count > 1 ? `${count}x ${name}` : name,
-      );
-      tags.push(
-        `<span class="gear-anno gear-anno--gem">${esc(gemLabels.join(", "))}</span>`,
-      );
+      for (let i = 0; i < item.gemIds.length; i++) {
+        const label = item.gemLabels?.[i] || `Gem #${item.gemIds[i]}`;
+        tags.push(
+          `<span class="gear-anno gear-anno--gem">${esc(label)}</span>`,
+        );
+      }
     }
 
     if (item.enchantId) {
@@ -2695,6 +2755,31 @@ function computeWeighted(dpsRow) {
   );
 }
 
+// Normalized weighting matching gear pipeline: divide each scenario by its
+// mean across all entries, then weight. Prevents high-DPS scenarios from
+// dominating. Returns a DPS-scale number via displayScale.
+function applyNormalizedWeights(dpsRows) {
+  const scenarios = Object.keys(SCENARIOS);
+  const scenarioMeans = {};
+  for (const s of scenarios) {
+    const vals = dpsRows.map((r) => r[s] || 0).filter((v) => v > 0);
+    scenarioMeans[s] =
+      vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 1;
+  }
+  let displayScale = 0;
+  for (const [s, w] of Object.entries(SCENARIO_WEIGHTS)) {
+    displayScale += scenarioMeans[s] * w;
+  }
+  for (const row of dpsRows) {
+    let norm = 0;
+    for (const [s, w] of Object.entries(SCENARIO_WEIGHTS)) {
+      const mean = scenarioMeans[s];
+      norm += ((row[s] || 0) / mean) * w;
+    }
+    row.weighted = norm * displayScale;
+  }
+}
+
 function allDpsKeys() {
   return [...Object.keys(SCENARIOS), "weighted"];
 }
@@ -2876,6 +2961,17 @@ h4 {
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   margin-bottom: 0.25rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.tbc-dps-label {
+  font-size: 0.6rem;
+  font-weight: 500;
+  color: var(--fg-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .tbc-name {
@@ -3275,11 +3371,10 @@ h4 {
 
 .hc-row--weighted {
   border-top: 1px solid var(--border);
-  padding-top: 0.65rem;
   margin-top: 0.15rem;
   background: rgba(228, 230, 240, 0.04);
   border-radius: var(--radius-sm);
-  padding: 0.65rem 0.5rem 0.45rem;
+  padding: 0.65rem 0 0.45rem;
 }
 
 .hc-label {
@@ -3342,6 +3437,7 @@ h4 {
   display: flex;
   flex-direction: column;
 }
+
 
 .hc-panel h3, .apex-panel h3 {
   font-size: 0.82rem;
@@ -3551,6 +3647,14 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
   vertical-align: middle;
   margin-left: 0.4em;
   letter-spacing: 0.06em;
+}
+
+.badge--community {
+  background: var(--surface-alt, #2a2d3a);
+  color: var(--fg-muted);
+  border: 1px solid var(--border);
+  font-size: 0.52rem;
+  text-transform: lowercase;
 }
 
 /* Positive / negative */
@@ -3822,6 +3926,44 @@ a.gear-name:hover { text-decoration: underline; }
   .gear-col:first-child { border-right: none; }
 }
 
+/* Trinket card header + toggle */
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.card-header-row h3 { margin: 0; }
+
+.trinket-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+}
+.trinket-tab {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  border: none;
+  border-radius: calc(var(--radius-sm) - 1px);
+  background: transparent;
+  color: var(--fg-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.trinket-tab:hover { color: var(--fg); }
+.trinket-tab--active {
+  background: var(--surface);
+  color: var(--fg);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.trinket-pane { display: none; }
+.trinket-pane--active { display: block; }
+
 /* Trinket rankings */
 .trinket-list {
   display: flex;
@@ -3833,6 +3975,7 @@ a.gear-name:hover { text-decoration: underline; }
 }
 
 .trinket-list--elim { margin-top: 0.5rem; }
+
 
 .trinket-strip {
   display: grid;
@@ -4534,6 +4677,21 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
   const sync = () => breakdown.style.maxHeight = gear.offsetHeight + 'px';
   sync();
   window.addEventListener('resize', sync);
+})();
+
+// Trinket tab toggle
+(() => {
+  for (const tab of document.querySelectorAll('.trinket-tab')) {
+    tab.addEventListener('click', () => {
+      const card = tab.closest('.report-card');
+      const view = tab.dataset.trinketView;
+      for (const t of card.querySelectorAll('.trinket-tab')) t.classList.remove('trinket-tab--active');
+      tab.classList.add('trinket-tab--active');
+      for (const p of card.querySelectorAll('.trinket-pane')) {
+        p.classList.toggle('trinket-pane--active', p.dataset.trinketPane === view);
+      }
+    });
+  }
 })();
 
 `;
