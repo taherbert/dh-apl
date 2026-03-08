@@ -1131,7 +1131,102 @@ async function cmdEvalSets(args) {
 
 // --- CLI: gems (Phase 9) ---
 
-function cmdGems(gearData) {
+// Classify gem color from its stat composition.
+// Midnight gems: Lapis (vers), Garnet (haste), Amethyst (mastery), Peridot (crit).
+function gemColor(gem) {
+  const s = gem.stats;
+  if (!s) return "unknown";
+  const keys = Object.keys(s);
+  if (keys.length === 1) {
+    if (s.vers) return "lapis";
+    if (s.haste) return "garnet";
+    if (s.mastery) return "amethyst";
+    if (s.crit) return "peridot";
+    if (s.agi) return "diamond";
+  }
+  // Hybrid gems: classify by primary stat (higher value)
+  if (s.vers) return "lapis";
+  if (s.haste) return "garnet";
+  if (s.mastery) return "amethyst";
+  if (s.crit) return "peridot";
+  return "unknown";
+}
+
+// Build a gem queue (array of item_ids) for a given configuration.
+// If diverse=true, picks one gem of each color (best EP per color) plus
+// the Eversong Diamond in the first slot.
+function buildGemQueue(config, allGems, sf, totalSockets) {
+  const queue = [];
+
+  if (config.diverse && config.eversong) {
+    // Eversong Diamond first
+    const eversongId = config.eversong.item_id || config.eversong.enchant_id;
+    queue.push(eversongId);
+
+    // One of each non-diamond color (best EP within that color)
+    const colorBest = new Map();
+    for (const g of allGems) {
+      if (g.uniqueLimit > 0) continue;
+      const c = gemColor(g);
+      if (c === "diamond" || c === "unknown") continue;
+      const ep = scoreEp(g.stats, sf);
+      const itemId = g.item_id || g.enchant_id;
+      if (!colorBest.has(c) || ep > colorBest.get(c).ep) {
+        colorBest.set(c, { itemId, ep });
+      }
+    }
+    const usedColors = new Set();
+    for (const [color, { itemId }] of colorBest) {
+      if (queue.length >= totalSockets) break;
+      queue.push(itemId);
+      usedColors.add(color);
+    }
+
+    // Fill remaining with the best unlimited gem
+    const bestUnlimited = allGems
+      .filter((g) => g.stats && (!g.uniqueLimit || g.uniqueLimit === 0))
+      .map((g) => ({
+        ...g,
+        ep: scoreEp(g.stats, sf),
+        itemId: g.item_id || g.enchant_id,
+      }))
+      .sort((a, b) => b.ep - a.ep)[0];
+    while (queue.length < totalSockets && bestUnlimited) {
+      queue.push(bestUnlimited.itemId);
+    }
+  } else if (config.gem) {
+    // All-same: fill every socket with the specified gem
+    const itemId = config.gem.item_id || config.gem.enchant_id;
+    while (queue.length < totalSockets) queue.push(itemId);
+  }
+
+  return queue;
+}
+
+// Apply a gem queue to gear lines, producing overrides for socketed slots only.
+function applyGemQueueToLines(gearLines, gemQueue) {
+  const overrides = [];
+  let gemIdx = 0;
+  for (const line of gearLines) {
+    if (!line.includes("gem_id=")) continue;
+    const match = line.match(/gem_id=([\d/]+)/);
+    if (!match) continue;
+    const socketCount = match[1].split("/").length;
+    const assigned = gemQueue.slice(gemIdx, gemIdx + socketCount);
+    gemIdx += socketCount;
+    if (assigned.length === socketCount) {
+      const newLine = line.replace(
+        /gem_id=[\d/]+/,
+        `gem_id=${assigned.join("/")}`,
+      );
+      if (newLine !== line) overrides.push(newLine);
+    }
+  }
+  return overrides;
+}
+
+async function cmdGems(args, gearData) {
+  const fidelity = parseFidelity(args, "quick");
   const sf = getSessionState("gear_scale_factors");
   const gems = gearData.gems || [];
 
@@ -1144,59 +1239,134 @@ function cmdGems(gearData) {
     return;
   }
 
+  // EP-rank all unlimited gems by color for configuration building
   const ranked = gems
-    .filter((g) => g.stats)
+    .filter((g) => g.stats && (!g.uniqueLimit || g.uniqueLimit === 0))
     .map((g) => ({ ...g, ep: scoreEp(g.stats, sf) }))
     .sort((a, b) => b.ep - a.ep);
 
-  const best = ranked.length > 0 ? ranked[0] : gems[0];
-  if (!best) {
-    console.log("No gems configured.");
+  // Build pre-gem gear lines to determine socket count and create overrides
+  const preGemLines = buildGearLines(gearData);
+  let totalSockets = 0;
+  for (const line of preGemLines) {
+    const match = line.match(/gem_id=([\d/]+)/);
+    if (match) totalSockets += match[1].split("/").length;
+  }
+
+  if (totalSockets === 0) {
+    console.log("Phase 9: No socketed items in assembled gear. Skipping.");
     return;
   }
 
-  // Find the best unlimited gem (for filling remaining sockets after unique-limited ones)
-  const bestUnlimited = ranked.find(
-    (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
+  // Build gem configurations to test
+  const configs = [];
+
+  // Best EP gem (all sockets same)
+  if (ranked.length > 0) {
+    configs.push({
+      id: "ep_best",
+      label: `All: ${ranked[0].label}`,
+      gem: ranked[0],
+      diverse: false,
+    });
+  }
+
+  // Second-best EP gem (for comparison)
+  if (ranked.length > 1 && gemColor(ranked[1]) !== gemColor(ranked[0])) {
+    configs.push({
+      id: "ep_second",
+      label: `All: ${ranked[1].label}`,
+      gem: ranked[1],
+      diverse: false,
+    });
+  }
+
+  // Diverse colors + Eversong Diamond
+  const eversong = gems.find((g) =>
+    g.label?.toLowerCase().includes("critical strike effectiveness"),
   );
+  if (eversong) {
+    configs.push({
+      id: "diverse_eversong",
+      label: `Diverse + Eversong Diamond`,
+      eversong,
+      diverse: true,
+    });
+  }
 
-  setSessionState("gear_gems", {
-    best_id: best.id,
-    best_enchant_id: best.enchant_id,
-    best_item_id: best.item_id || best.enchant_id,
-    best_label: best.label,
-    ep: best.ep ?? 0,
-    best_unlimited_id: bestUnlimited?.id,
-    best_unlimited_item_id: bestUnlimited?.item_id || bestUnlimited?.enchant_id,
-    timestamp: new Date().toISOString(),
-  });
-
-  if (ranked.length === 0) {
-    console.log(
-      `Phase 9: Gems — no stat data, defaulting to first gem: ${best.label}`,
-    );
+  if (configs.length <= 1) {
+    // Only one config — fall back to EP-only
+    const best = ranked[0] || gems[0];
+    setSessionState("gear_gems", {
+      best_id: best.id,
+      best_enchant_id: best.enchant_id,
+      best_item_id: best.item_id || best.enchant_id,
+      best_label: best.label,
+      ep: best.ep ?? 0,
+      timestamp: new Date().toISOString(),
+    });
+    console.log(`Phase 9: Gems (EP-only) — best: ${best.label}`);
     return;
   }
 
   console.log(
-    `\nPhase 9: Gems — best: ${best.label} (EP: ${best.ep.toFixed(1)})`,
+    `\nPhase 9: Gems — simming ${configs.length} configs (${totalSockets} sockets, ${fidelity} fidelity)`,
   );
-  for (const [i, g] of ranked.entries()) {
-    const uniqueTag =
-      g.uniqueLimit != null && g.uniqueLimit > 0
-        ? ` [unique: ${g.uniqueLimit}]`
-        : "";
+
+  // Generate profileset variants
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+  const variants = configs.map((cfg) => {
+    const queue = buildGemQueue(cfg, gems, sf, totalSockets);
+    const overrides = applyGemQueueToLines(preGemLines, queue);
+    return { name: cfg.id, overrides };
+  });
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_gems",
+  );
+
+  const aggregated = aggregateGearResults(
+    results,
+    configs.map((c) => ({ id: c.id, label: c.label })),
+    builds,
+  );
+
+  const best = aggregated[0];
+  const baseline = aggregated.find((r) => r.id === "__baseline__");
+  console.log(`  Best gem config: ${best.id} — ${best.label || best.id}`);
+  if (baseline) {
     const delta =
-      i === 0 ? "" : ` (${(((g.ep - best.ep) / best.ep) * 100).toFixed(2)}%)`;
+      ((best.weighted - baseline.weighted) / baseline.weighted) * 100;
+    console.log(`  vs baseline: ${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%`);
+  }
+
+  for (const r of aggregated) {
+    if (r.id === "__baseline__") continue;
+    const cfg = configs.find((c) => c.id === r.id);
+    const delta = baseline
+      ? ((r.weighted - baseline.weighted) / baseline.weighted) * 100
+      : 0;
     console.log(
-      `  ${i + 1}. ${g.label}: ${g.ep.toFixed(1)}${delta}${uniqueTag}`,
+      `  ${cfg?.label || r.id}: ${r.weighted?.toFixed(0)} (${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%)`,
     );
   }
-  if (bestUnlimited && bestUnlimited.id !== best.id) {
-    console.log(
-      `  Best unlimited gem for remaining sockets: ${bestUnlimited.label}`,
-    );
-  }
+
+  // Store winner in session state for assembly
+  const winningConfig = configs.find((c) => c.id === best.id);
+  setSessionState("gear_gems", {
+    config: best.id,
+    label: winningConfig?.label,
+    diverse: winningConfig?.diverse || false,
+    best_id: winningConfig?.gem?.id || winningConfig?.eversong?.id,
+    best_item_id:
+      winningConfig?.gem?.item_id || winningConfig?.eversong?.item_id,
+    timestamp: new Date().toISOString(),
+  });
 }
 
 // --- CLI: enchants (Phase 10) ---
@@ -2608,61 +2778,70 @@ function buildGearLines(gearData) {
     }
   }
 
-  // Phase 9: apply gems to all socketed items, respecting unique-equip limits.
-  // Uses item_id (SimC gem_id= expects item IDs, not enchant IDs).
-  // Unique-limited gems (e.g., Thalassian Diamond, limit 1) are placed first,
-  // then remaining sockets get the best non-unique gem.
+  // Phase 9: apply gems to all socketed items.
+  // Uses the sim-winning gem configuration from cmdGems (diverse or all-same).
+  // Falls back to EP-ranked queue when no sim data exists.
   const gemState = getSessionState("gear_gems");
   if (gemState) {
     const allGems = gearData.gems || [];
     const sf = getSessionState("gear_scale_factors");
-    const rankedGems = sf
-      ? allGems
-          .filter((g) => g.stats && (g.item_id || g.enchant_id))
-          .map((g) => ({
-            ...g,
-            ep: scoreEp(g.stats, sf),
-            itemId: g.item_id || g.enchant_id,
-          }))
-          .sort((a, b) => b.ep - a.ep)
-      : [];
 
-    // Separate unique-limited and unlimited gems
-    const uniqueGems = rankedGems.filter(
-      (g) => g.uniqueLimit != null && g.uniqueLimit > 0,
-    );
-    const unlimitedGems = rankedGems.filter(
-      (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
-    );
-    const bestUnlimitedId = unlimitedGems[0]?.itemId;
-    // Fallback: use gemState if no ranked gems available
-    const fallbackGemId =
-      bestUnlimitedId || gemState.best_item_id || gemState.best_enchant_id;
-
-    // Count total sockets across all lines
     let totalSockets = 0;
     for (const line of lines) {
       const match = line.match(/gem_id=([\d/]+)/);
       if (match) totalSockets += match[1].split("/").length;
     }
 
-    // Build a queue of gem item IDs to assign, respecting unique limits.
-    // Gems sharing a uniqueCategory (e.g., Thalassian Diamond = 698) are
-    // limited to uniqueLimit TOTAL across the category, not per gem type.
-    // Within each category, pick the highest-EP gem(s).
-    const gemQueue = [];
-    const categoryBudget = new Map();
-    for (const ug of uniqueGems) {
-      const cat = ug.uniqueCategory ?? ug.itemId;
-      if (!categoryBudget.has(cat)) categoryBudget.set(cat, ug.uniqueLimit);
-      const remaining = categoryBudget.get(cat);
-      if (remaining <= 0) continue;
-      const count = Math.min(remaining, totalSockets - gemQueue.length);
-      for (let n = 0; n < count; n++) gemQueue.push(ug.itemId);
-      categoryBudget.set(cat, remaining - count);
-    }
-    while (gemQueue.length < totalSockets && fallbackGemId) {
-      gemQueue.push(fallbackGemId);
+    let gemQueue;
+    if (gemState.diverse) {
+      // Sim-based diverse winner: rebuild the same queue that won
+      const eversong = allGems.find((g) =>
+        g.label?.toLowerCase().includes("critical strike effectiveness"),
+      );
+      gemQueue = buildGemQueue(
+        { diverse: true, eversong },
+        allGems,
+        sf,
+        totalSockets,
+      );
+    } else {
+      // EP-based queue with unique-limit handling
+      const rankedGems = sf
+        ? allGems
+            .filter((g) => g.stats && (g.item_id || g.enchant_id))
+            .map((g) => ({
+              ...g,
+              ep: scoreEp(g.stats, sf),
+              itemId: g.item_id || g.enchant_id,
+            }))
+            .sort((a, b) => b.ep - a.ep)
+        : [];
+
+      const uniqueGems = rankedGems.filter(
+        (g) => g.uniqueLimit != null && g.uniqueLimit > 0,
+      );
+      const unlimitedGems = rankedGems.filter(
+        (g) => g.uniqueLimit == null || g.uniqueLimit === 0,
+      );
+      const fallbackGemId =
+        unlimitedGems[0]?.itemId ||
+        gemState.best_item_id ||
+        gemState.best_enchant_id;
+
+      gemQueue = [];
+      const categoryBudget = new Map();
+      for (const ug of uniqueGems) {
+        const cat = ug.uniqueCategory ?? ug.itemId;
+        if (!categoryBudget.has(cat)) categoryBudget.set(cat, ug.uniqueLimit);
+        const remaining = categoryBudget.get(cat);
+        if (remaining <= 0) continue;
+        const count = Math.min(remaining, totalSockets - gemQueue.length);
+        for (let n = 0; n < count; n++) gemQueue.push(ug.itemId);
+        categoryBudget.set(cat, remaining - count);
+      }
+      while (gemQueue.length < totalSockets && fallbackGemId) {
+        gemQueue.push(fallbackGemId);
+      }
     }
 
     // Apply gems to lines in order
@@ -2865,7 +3044,7 @@ async function cmdRun(args) {
   }
   if (maxPhase >= 9) {
     console.log("\n========== PHASE 9: Gems ==========\n");
-    cmdGems(gearData);
+    await cmdGems(fidelityArgs, gearData);
   }
   if (maxPhase >= 10) {
     console.log("\n========== PHASE 10: Enchants ==========\n");
@@ -3456,7 +3635,7 @@ switch (cmd) {
     break;
   case "gems": {
     const gd = loadGearCandidates();
-    cmdGems(gd);
+    await cmdGems(cleanArgs, gd);
     break;
   }
   case "enchants":
