@@ -241,8 +241,27 @@ function getRepresentativeBuilds() {
     process.exit(1);
   }
 
-  // Use the single best build (roster is sorted by weighted DESC)
-  return [roster[0]];
+  // Pick top 3 builds, prioritizing hero tree diversity.
+  // Roster is sorted by weighted DESC.
+  const seen = new Set();
+  const picks = [];
+  for (const build of roster) {
+    if (picks.length >= 3) break;
+    const tree = build.hero_tree || build.heroTree;
+    if (picks.length === 0) {
+      picks.push(build);
+      seen.add(tree);
+      continue;
+    }
+    // Prioritize unseen hero trees
+    if (!seen.has(tree)) {
+      picks.push(build);
+      seen.add(tree);
+    } else if (picks.length < 3) {
+      picks.push(build);
+    }
+  }
+  return picks;
 }
 
 // --- Profile path resolution ---
