@@ -292,31 +292,15 @@ function loadGearData(gearCandidates) {
   }
 
   // Build gem lookup keyed by item_id (SimC gem_id= values are item IDs).
-  // Sources: gear-config.json names (item_id→name), gear-candidates gems
-  // (bridged via gear-config item_ids enchant_id→item_id mapping).
+  // Source: gear-candidates gems (name = Raidbots itemName, label = stat description).
   const gemMap = new Map();
-  try {
-    const gc = JSON.parse(readFileSync(dataFile("gear-config.json"), "utf-8"));
-    const gemNames = gc.gems?.names || {};
-    for (const [itemId, name] of Object.entries(gemNames)) {
-      gemMap.set(Number(itemId), name);
-    }
-    const enchantToItem = gc.gems?.item_ids || {};
-    if (gearCandidates) {
-      for (const g of gearCandidates.gems || []) {
-        const itemId = g.item_id || enchantToItem[String(g.enchant_id)];
-        if (itemId && !gemMap.has(itemId)) {
-          const name =
-            g.name ||
-            (g.enchant_id && enchantMap.get(g.enchant_id)) ||
-            g.label ||
-            null;
-          if (name) gemMap.set(itemId, name);
-        }
+  if (gearCandidates) {
+    for (const g of gearCandidates.gems || []) {
+      if (g.item_id && !gemMap.has(g.item_id)) {
+        const name = g.name || g.label || null;
+        if (name) gemMap.set(g.item_id, name);
       }
     }
-  } catch {
-    // gear-config.json missing or malformed — gem names won't resolve
   }
 
   // Detect built-in embellishment items from embellishment pairs.
@@ -2942,7 +2926,7 @@ h4 {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 1.5rem;
-  align-items: stretch;
+  align-items: start;
 }
 
 /* Talent Heatmap */
@@ -3163,10 +3147,12 @@ h4 {
 .ability-breakdown {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 .ability-breakdown .ab-rows {
   flex: 1;
   overflow-y: auto;
+  min-height: 0;
 }
 .ab-row {
   display: grid;
@@ -4492,6 +4478,18 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
       tooltip.classList.remove('visible');
     }
   });
+})();
+
+// Constrain damage breakdown height to gear card height
+(() => {
+  const grid = document.querySelector('.gear-section-grid');
+  if (!grid) return;
+  const gear = grid.querySelector('.gear-display');
+  const breakdown = grid.querySelector('.ability-breakdown');
+  if (!gear || !breakdown) return;
+  const sync = () => breakdown.style.maxHeight = gear.offsetHeight + 'px';
+  sync();
+  window.addEventListener('resize', sync);
 })();
 
 `;
