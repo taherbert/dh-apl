@@ -1015,6 +1015,32 @@ export function clearAllRosterMembership(s) {
   db.prepare("UPDATE builds SET in_roster = 0 WHERE spec = ?").run(s || spec());
 }
 
+export function purgeNonCommunityBuilds(s) {
+  const db = getDb();
+  const result = db
+    .prepare(
+      "DELETE FROM builds WHERE spec = ? AND source NOT LIKE 'community:%' AND pinned = 0",
+    )
+    .run(s || spec());
+  return result.changes;
+}
+
+export function clearAllBuildDps(s) {
+  const db = getDb();
+  const result = db
+    .prepare(
+      `
+    UPDATE builds SET
+      dps_st = NULL, dps_dungeon_route = NULL, dps_small_aoe = NULL, dps_big_aoe = NULL, weighted = NULL,
+      simc_dps_st = NULL, simc_dps_dungeon_route = NULL, simc_dps_small_aoe = NULL, simc_dps_big_aoe = NULL, simc_weighted = NULL,
+      last_tested_at = NULL
+    WHERE spec = ?
+  `,
+    )
+    .run(s || spec());
+  return result.changes;
+}
+
 const SCENARIO_COLUMNS = {
   st: "dps_st",
   dungeon_route: "dps_dungeon_route",
