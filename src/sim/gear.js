@@ -651,6 +651,18 @@ function cmdEpReweight(gearData) {
   let prevWinners = null;
   const MAX_ITERS = 5;
 
+  // Compute scale factor to convert Raidbots candidate stats to SimC rating scale.
+  // Raidbots stats are from live data (~70x larger than SimC Midnight branch).
+  // We estimate the ratio using baseline SimC stats and the number of EP-ranked slots.
+  const baselineTotalSimC = Object.values(curves.baselineStats).reduce(
+    (s, v) => s + v,
+    0,
+  );
+  const epSlotCount = Object.keys(gearData.slots || {}).filter(
+    (s) => !ALWAYS_SIM_SLOTS.has(s),
+  ).length;
+  const totalSlots = 16;
+
   console.log(
     `\nPhase 1b: Iterative EP Reweighting (max ${MAX_ITERS} iterations)`,
   );
@@ -664,9 +676,19 @@ function cmdEpReweight(gearData) {
     }
     prevWinners = winnerKey;
 
-    const totalStats = computeGearStats(winners, gearData);
+    const rawStats = computeGearStats(winners, gearData);
+    const rawTotal = Object.values(rawStats).reduce((s, v) => s + v, 0);
+
+    // Scale Raidbots stats to SimC rating: allocate baseline's EP-slot share proportionally
+    const simcEpBudget = baselineTotalSimC * (epSlotCount / totalSlots);
+    const scaleFactor = rawTotal > 0 ? simcEpBudget / rawTotal : 1;
+    const scaledStats = {};
+    for (const k of Object.keys(rawStats)) {
+      scaledStats[k] = Math.round(rawStats[k] * scaleFactor);
+    }
+
     console.log(
-      `  Iteration ${iter}: ${statKeys.map((s) => `${s}=${totalStats[s.toLowerCase()] || 0}`).join(" ")}`,
+      `  Iteration ${iter}: ${statKeys.map((s) => `${s}=${scaledStats[s.toLowerCase()] || 0}`).join(" ")} (scale=${scaleFactor.toFixed(4)})`,
     );
 
     const newSf = { ...currentSf };
@@ -674,7 +696,7 @@ function cmdEpReweight(gearData) {
       const curveStat = SF_TO_CURVE_STAT[stat];
       const baselineStat =
         curveStat === "versatility" ? "versatility" : curveStat;
-      const rating = totalStats[stat.toLowerCase()] || 0;
+      const rating = scaledStats[stat.toLowerCase()] || 0;
       const derivative = interpolateDerivative(
         curveMap,
         curveStat,
@@ -806,7 +828,7 @@ async function cmdCombinatorialValidation(args) {
   clearGearResults(3.5, "combinations");
   saveGearResults(3.5, "combinations", aggregated, fidelity);
 
-  // If best is not baseline, store winning slot selections for assembly
+  // Store winning slot selections for assembly (or clear stale state if baseline wins)
   if (best.id !== "__baseline__") {
     const comboIdx = parseInt(best.id.replace("combo_", ""));
     const winningCombo = combos[comboIdx];
@@ -816,6 +838,9 @@ async function cmdCombinatorialValidation(args) {
       timestamp: new Date().toISOString(),
     });
     console.log("  Winning slots:", JSON.stringify(winningCombo));
+  } else {
+    setSessionState("gear_phase3b_winners", null);
+    console.log("  Baseline wins — no combo overrides needed.");
   }
 }
 
@@ -949,12 +974,7 @@ async function cmdProcEval(args) {
     printSlotResults(`weapon-eval: ${slot}`, ranked, gearData);
 
     clearGearResults(4, slot);
-    saveGearResults(
-      4,
-      slot,
-      ranked.filter((r) => r.id !== "__baseline__"),
-      fidelity,
-    );
+    saveGearResults(4, slot, ranked, fidelity);
   }
 }
 
@@ -1422,11 +1442,20 @@ async function cmdEnchants(args) {
     legs: "legs",
   };
   let cachedGearLines;
+  let cachedProfileLines;
   for (const [enchantKey, gearSlot] of Object.entries(ENCHANT_SLOT_MAP)) {
     const enchantData = gearData.enchants?.[enchantKey];
     if (!enchantData || !enchantData.base_item.includes("id=0")) continue;
     cachedGearLines ??= buildGearLines(gearData);
-    const itemLine = cachedGearLines.find((l) => l.startsWith(`${gearSlot}=`));
+    let itemLine = cachedGearLines.find((l) => l.startsWith(`${gearSlot}=`));
+    // When baseline wins (e.g., Phase 4 weapons), assembly doesn't emit the slot.
+    // Fall back to reading the line from the gear target (profile.simc).
+    if (!itemLine) {
+      cachedProfileLines ??= readFileSync(getGearTarget(gearData), "utf-8")
+        .split("\n")
+        .map((l) => l.trim());
+      itemLine = cachedProfileLines.find((l) => l.startsWith(`${gearSlot}=`));
+    }
     if (itemLine) {
       enchantData.base_item = itemLine.replace(/,enchant_id=\d+/, "");
     }
@@ -1819,9 +1848,10 @@ async function cmdTierConfig(args) {
   clearGearResults(0);
   saveGearResults(0, "tier_config", ranked, fidelity);
 
-  // Determine the best config
-  const bestNonBaseline = ranked.find((r) => r.id !== "__baseline__");
-  const bestConfig = bestNonBaseline?.id || "all_tier_5pc";
+  // Determine the best config — baseline means keep original profile gear
+  const best = ranked[0];
+  const bestConfig =
+    best?.id === "__baseline__" ? "__baseline__" : best?.id || "all_tier_5pc";
 
   setSessionState("gear_phase0", {
     best: bestConfig,
@@ -1830,7 +1860,11 @@ async function cmdTierConfig(args) {
   });
 
   console.log(`\nBest tier config: ${bestConfig}`);
-  if (bestConfig === "all_tier_5pc") {
+  if (bestConfig === "__baseline__") {
+    console.log(
+      "Recommendation: Keep original profile (no tier overrides needed).",
+    );
+  } else if (bestConfig === "all_tier_5pc") {
     console.log("Recommendation: Use all 5 tier pieces (no skip needed).");
   } else {
     console.log(
@@ -2587,6 +2621,9 @@ function getTierLines(gearData) {
   const phase0 = getSessionState("gear_phase0");
   if (!phase0 || !gearData.tier) return [];
 
+  // Baseline won — keep original profile gear, no tier overrides
+  if (phase0.best === "__baseline__") return [];
+
   if (phase0.best === "all_tier_5pc") {
     return Object.entries(gearData.tier.items).map(([slot, simc]) => ({
       slot,
@@ -2752,6 +2789,8 @@ function buildGearLines(gearData) {
     if (coveredSlots.has(slot)) continue;
     const procResults = getBestGear(4, slot);
     // Walk the ranking to find the best candidate that passes unique-equip constraints
+    // If baseline is the top result, skip this slot (keep original gear)
+    if (procResults[0]?.candidate_id === "__baseline__") continue;
     let placed = false;
     for (const procResult of procResults) {
       if (procResult.candidate_id === "__baseline__") continue;
@@ -2781,19 +2820,22 @@ function buildGearLines(gearData) {
     }
   }
 
-  // Phase 3: EP ranking winners for remaining individual slots
-  for (const slot of Object.keys(gearData.slots || {})) {
-    if (coveredSlots.has(slot)) continue;
-    const epResults = getBestGear(3, slot);
-    for (const epResult of epResults) {
-      if (epResult.candidate_id === "__baseline__") continue;
-      const candidate = gearData.slots[slot].candidates.find(
-        (c) => c.id === epResult.candidate_id,
-      );
-      if (!candidate || !canEquip(candidate)) continue;
-      const line = applyStatAlloc(candidate.simc, slot);
-      addLine(applySlotEnchant(line, slot, enchantMap), slot, candidate);
-      break;
+  // Phase 3: EP ranking winners for remaining individual slots.
+  // When Phase 3b showed baseline winning, EP picks collectively are worse — skip them.
+  if (comboWinners?.combo) {
+    for (const slot of Object.keys(gearData.slots || {})) {
+      if (coveredSlots.has(slot)) continue;
+      const epResults = getBestGear(3, slot);
+      for (const epResult of epResults) {
+        if (epResult.candidate_id === "__baseline__") continue;
+        const candidate = gearData.slots[slot].candidates.find(
+          (c) => c.id === epResult.candidate_id,
+        );
+        if (!candidate || !canEquip(candidate)) continue;
+        const line = applyStatAlloc(candidate.simc, slot);
+        addLine(applySlotEnchant(line, slot, enchantMap), slot, candidate);
+        break;
+      }
     }
   }
 
@@ -2947,9 +2989,13 @@ function cmdWriteProfile() {
   // Any slot in the current profile not covered by the pipeline is preserved as-is.
   // This prevents tier slots (managed by phase 0) from being dropped when session
   // state is missing (e.g., write-profile called standalone).
+  // Apply Phase 10 enchant winners to preserved lines.
+  const enchantMap = buildEnchantMap(gearData);
   const coveredSlots = new Set(finalLines.map((l) => l.split("=")[0]));
   for (const [slot, line] of currentGear) {
-    if (!coveredSlots.has(slot)) finalLines.push(line);
+    if (!coveredSlots.has(slot)) {
+      finalLines.push(applySlotEnchant(line, slot, enchantMap));
+    }
   }
 
   // Sort into canonical SimC slot order for readability
@@ -3075,7 +3121,10 @@ async function cmdRun(args) {
   }
 
   const phase11State = getSessionState("gear_phase11");
-  if (phase11State?.validationPassed === false) {
+  if (phase11State?.validationPassed === true) {
+    console.log("\n========== Writing profile.simc ==========\n");
+    cmdWriteProfile();
+  } else if (phase11State?.validationPassed === false) {
     console.log(
       "\n========== PIPELINE BLOCKED: Gear regression detected ==========\n",
     );
@@ -3084,8 +3133,7 @@ async function cmdRun(args) {
     );
     console.log("  Fix gear candidates and re-run the pipeline to proceed.");
   } else {
-    console.log("\n========== Writing profile.simc ==========\n");
-    cmdWriteProfile();
+    console.log("\n  Profile not written — run through Phase 11 to validate.");
   }
 
   console.log("\n========== Pipeline Complete ==========\n");
