@@ -857,6 +857,191 @@
         }
       ]
     },
+    "back": {
+      "candidates": [
+        {
+          "id": "cloak_of_the_fallen_cardinal",
+          "label": "Cloak of the Fallen Cardinal",
+          "simc": "back=cloak_of_the_fallen_cardinal,id=49823,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 3800,
+            "crit": 3200
+          },
+          "tags": []
+        },
+        {
+          "id": "cloak_of_the_fallen_cardinal",
+          "label": "Cloak of the Fallen Cardinal",
+          "simc": "back=cloak_of_the_fallen_cardinal,id=133505,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 5264,
+            "crit": 1736
+          },
+          "tags": []
+        },
+        {
+          "id": "potion_stained_cloak",
+          "label": "Potion-Stained Cloak",
+          "simc": "back=potion_stained_cloak,id=193712,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4250,
+            "mastery": 2750
+          },
+          "tags": []
+        },
+        {
+          "id": "imperators_banner",
+          "label": "Imperator's Banner",
+          "simc": "back=imperators_banner,id=249335,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4559,
+            "vers": 2441
+          },
+          "tags": []
+        },
+        {
+          "id": "draconic_nullcape",
+          "label": "Draconic Nullcape",
+          "simc": "back=draconic_nullcape,id=249370,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4707
+          },
+          "tags": []
+        },
+        {
+          "id": "devouring_reavers_drape",
+          "label": "Devouring Reaver's Drape",
+          "simc": "back=devouring_reavers_drape,id=250028,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4686,
+            "crit": 2314
+          },
+          "tags": []
+        },
+        {
+          "id": "speakeasy_shroud",
+          "label": "Speakeasy Shroud",
+          "simc": "back=speakeasy_shroud,id=251132,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4100
+          },
+          "tags": []
+        },
+        {
+          "id": "soulhunters_mask",
+          "label": "Soulhunter's Mask",
+          "simc": "back=soulhunters_mask,id=251161,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4400,
+            "crit": 2600
+          },
+          "tags": []
+        },
+        {
+          "id": "bloodthorn_burnous",
+          "label": "Bloodthorn Burnous",
+          "simc": "back=bloodthorn_burnous,id=251190,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4550
+          },
+          "tags": []
+        },
+        {
+          "id": "fluxweave_cloak",
+          "label": "Fluxweave Cloak",
+          "simc": "back=fluxweave_cloak,id=251206,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2750
+          },
+          "tags": []
+        },
+        {
+          "id": "rigid_scale_greatcloak",
+          "label": "Rigid Scale Greatcloak",
+          "simc": "back=rigid_scale_greatcloak,id=258575,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 3800
+          },
+          "tags": []
+        },
+        {
+          "id": "defiant_defenders_drape",
+          "label": "Defiant Defender's Drape",
+          "simc": "back=defiant_defenders_drape,id=260312,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 3800,
+            "crit": 3200
+          },
+          "tags": []
+        },
+        {
+          "id": "adherents_silken_shroud",
+          "label": "Adherent's Silken Shroud",
+          "simc": "back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "sunfire_cloak",
+          "label": "Sunfire Cloak",
+          "simc": "back=sunfire_cloak,id=239658,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889,
+            "vers": 3500
+          },
+          "tags": [],
+          "itemSetId": 1957
+        },
+        {
+          "id": "arcanoweave_cloak",
+          "label": "Arcanoweave Cloak",
+          "simc": "back=arcanoweave_cloak,id=239661,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889,
+            "vers": 3500
+          },
+          "tags": [],
+          "itemSetId": 1958
+        },
+        {
+          "id": "courtly_cloak",
+          "label": "Courtly Cloak",
+          "simc": "back=courtly_cloak,id=239674,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        }
+      ]
+    },
     "wrists": {
       "candidates": [
         {

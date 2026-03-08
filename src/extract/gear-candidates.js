@@ -293,10 +293,12 @@ function isDHUsable(item) {
   if (itemClass === 4) {
     // Armor
     if (itemSubClass === 2) return true; // Leather
+    // Cloaks are inventoryType 16 but vary in subclass (1=Cloth, 5=Cosmetic).
+    // All classes can wear cloaks regardless of armor proficiency.
+    if (inventoryType === 16) return true;
     if (itemSubClass === 0) {
-      // Accessories (neck, finger, trinket, back)
-      if (inventoryType === 2 || inventoryType === 11 || inventoryType === 16)
-        return true;
+      // Accessories (neck, finger, trinket)
+      if (inventoryType === 2 || inventoryType === 11) return true;
       if (inventoryType === 12) return isTrinketForDH(item);
     }
   } else if (itemClass === 2) {
