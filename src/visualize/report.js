@@ -114,10 +114,11 @@ function loadReportData(roster) {
 
   const builds = roster.builds.map((build) => {
     const db = dbByHash.get(build.hash);
+    // Read DPS from DB (fresh after persistSimResults) with roster fallback
     const dps = Object.fromEntries(
-      scenarioKeys.map((s) => [s, build.lastDps?.[s] || 0]),
+      scenarioKeys.map((s) => [s, db?.[`dps_${s}`] || build.lastDps?.[s] || 0]),
     );
-    dps.weighted = build.lastDps?.weighted || 0;
+    dps.weighted = db?.weighted || build.lastDps?.weighted || 0;
 
     return {
       id: build.id,
