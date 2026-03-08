@@ -472,8 +472,9 @@ async function main() {
     ),
   ).map((e) => {
     const candidate = toEnchantCandidate(e, true);
-    // Capture itemId from Raidbots (SimC gem_id= expects item IDs)
+    // Capture itemId and itemName from Raidbots (SimC gem_id= expects item IDs)
     if (e.itemId) candidate.item_id = e.itemId;
+    if (e.itemName) candidate.name = e.itemName;
     // Capture unique-equip limit from itemLimitCategory (e.g., Thalassian Diamond: limit 1)
     if (e.itemLimitCategory) {
       candidate.uniqueCategory = e.itemLimitCategory.id;
@@ -483,13 +484,12 @@ async function main() {
   });
   const gems = newGems.length > 0 ? newGems : current.gems || [];
 
-  // Supplement with item_ids from gear-config.json for gems missing Raidbots itemId
-  const gemItemIdMap = gearConfig.gems?.item_ids || {};
-  for (const gem of gems) {
-    if (!gem.item_id) {
-      const itemId = gemItemIdMap[String(gem.enchant_id)];
-      if (itemId) gem.item_id = itemId;
-    }
+  // Warn about gems missing Raidbots itemId (gem_id= in SimC expects item IDs)
+  const missingItemId = gems.filter((g) => !g.item_id);
+  if (missingItemId.length > 0) {
+    console.warn(
+      `Warning: ${missingItemId.length} gems missing item_id from Raidbots: ${missingItemId.map((g) => g.label).join(", ")}`,
+    );
   }
 
   // Auto-detect _defaultGem: item_id of the gem with the highest agi stat value.

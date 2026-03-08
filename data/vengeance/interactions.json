@@ -10982,6 +10982,57 @@
     },
     {
       "source": {
+        "id": 1253817,
+        "name": "Otherworldly Focus",
+        "isTalent": true,
+        "tree": "hero",
+        "heroSpec": "Annihilator"
+      },
+      "target": {
+        "id": 247454,
+        "name": "Spirit Bomb"
+      },
+      "type": "damage_modifier",
+      "mechanism": "conditional",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium",
+      "magnitude": {
+        "value": 35,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "None"
+      ],
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 35,
+          "scaledValue": 35,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 5,
+          "scaledValue": 5,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
         "id": 389718,
         "name": "Cycle of Binding",
         "isTalent": true,
@@ -20584,6 +20635,26 @@
           ]
         },
         {
+          "source": "Otherworldly Focus",
+          "sourceId": 1253817,
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
+          ]
+        },
+        {
           "source": "Dark Matter",
           "sourceId": 1256307,
           "type": "proc_trigger",
@@ -20783,6 +20854,26 @@
           "categories": [
             "offensive",
             "defensive"
+          ]
+        },
+        {
+          "source": "Otherworldly Focus",
+          "sourceId": 1253817,
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
           ]
         },
         {
@@ -37880,6 +37971,25 @@
       "tree": "hero",
       "heroSpec": "Annihilator",
       "targets": [
+        {
+          "spell": "Spirit Bomb",
+          "spellId": 247454,
+          "type": "damage_modifier",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
+          ],
+          "mechanism": "conditional"
+        },
         {
           "spell": "Spirit Bomb",
           "spellId": 247454,

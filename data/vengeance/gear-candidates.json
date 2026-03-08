@@ -28,7 +28,7 @@
     "set_id": 1979,
     "required_count": 4,
     "items": {
-      "head": "head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=241144",
+      "head": "head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983",
       "shoulders": "shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289",
       "chest": "chest=devouring_reavers_engine,id=250036,ilevel=289",
       "hands": "hands=devouring_reavers_essence_grips,id=250034,ilevel=289",
@@ -38,27 +38,27 @@
       "head": [
         {
           "id": "devouring_nights_visage",
-          "simc": "head=devouring_nights_visage,id=249306,ilevel=289,gem_id=241144"
+          "simc": "head=devouring_nights_visage,id=249306,ilevel=289,gem_id=240983"
         },
         {
           "id": "mask_of_darkest_intent",
-          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289,gem_id=241144"
+          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289,gem_id=240983"
         },
         {
           "id": "spellsnap_shadowmask",
-          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289,gem_id=241144"
+          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289,gem_id=240983"
         },
         {
           "id": "vilefiends_guise",
-          "simc": "head=vilefiends_guise,id=251140,ilevel=289,gem_id=241144"
+          "simc": "head=vilefiends_guise,id=251140,ilevel=289,gem_id=240983"
         },
         {
           "id": "fetid_vilecrown",
-          "simc": "head=fetid_vilecrown,id=251177,ilevel=289,gem_id=241144"
+          "simc": "head=fetid_vilecrown,id=251177,ilevel=289,gem_id=240983"
         },
         {
           "id": "voidlashed_hood",
-          "simc": "head=voidlashed_hood,id=151336,ilevel=289,gem_id=241144"
+          "simc": "head=voidlashed_hood,id=151336,ilevel=289,gem_id=240983"
         }
       ],
       "shoulders": [
@@ -3073,7 +3073,8 @@
         "vers": 7
       },
       "tags": [],
-      "item_id": 240879
+      "item_id": 240879,
+      "name": "Versatile Lapis"
     },
     {
       "id": "9_vers",
@@ -3083,7 +3084,8 @@
         "vers": 9
       },
       "tags": [],
-      "item_id": 240880
+      "item_id": 240880,
+      "name": "Versatile Lapis"
     },
     {
       "id": "12_vers",
@@ -3093,7 +3095,8 @@
         "vers": 12
       },
       "tags": [],
-      "item_id": 240911
+      "item_id": 240911,
+      "name": "Flawless Versatile Lapis"
     },
     {
       "id": "14_vers",
@@ -3103,7 +3106,8 @@
         "vers": 14
       },
       "tags": [],
-      "item_id": 240912
+      "item_id": 240912,
+      "name": "Flawless Versatile Lapis"
     },
     {
       "id": "6_vers_2_crit",
@@ -3114,7 +3118,8 @@
         "crit": 2
       },
       "tags": [],
-      "item_id": 240881
+      "item_id": 240881,
+      "name": "Deadly Lapis"
     },
     {
       "id": "7_vers_3_crit",
@@ -3125,7 +3130,8 @@
         "crit": 3
       },
       "tags": [],
-      "item_id": 240882
+      "item_id": 240882,
+      "name": "Deadly Lapis"
     },
     {
       "id": "10_vers_4_crit",
@@ -3136,7 +3142,8 @@
         "crit": 4
       },
       "tags": [],
-      "item_id": 240913
+      "item_id": 240913,
+      "name": "Flawless Deadly Lapis"
     },
     {
       "id": "12_vers_5_crit",
@@ -3147,7 +3154,8 @@
         "crit": 5
       },
       "tags": [],
-      "item_id": 240914
+      "item_id": 240914,
+      "name": "Flawless Deadly Lapis"
     },
     {
       "id": "6_vers_2_haste",
@@ -3158,7 +3166,8 @@
         "haste": 2
       },
       "tags": [],
-      "item_id": 240883
+      "item_id": 240883,
+      "name": "Quick Lapis"
     },
     {
       "id": "7_vers_3_haste",
@@ -3169,7 +3178,8 @@
         "haste": 3
       },
       "tags": [],
-      "item_id": 240884
+      "item_id": 240884,
+      "name": "Quick Lapis"
     },
     {
       "id": "10_vers_4_haste",
@@ -3180,7 +3190,8 @@
         "haste": 4
       },
       "tags": [],
-      "item_id": 240915
+      "item_id": 240915,
+      "name": "Flawless Quick Lapis"
     },
     {
       "id": "12_vers_5_haste",
@@ -3191,7 +3202,8 @@
         "haste": 5
       },
       "tags": [],
-      "item_id": 240916
+      "item_id": 240916,
+      "name": "Flawless Quick Lapis"
     },
     {
       "id": "6_vers_2_mast",
@@ -3202,7 +3214,8 @@
         "mastery": 2
       },
       "tags": [],
-      "item_id": 240885
+      "item_id": 240885,
+      "name": "Masterful Lapis"
     },
     {
       "id": "7_vers_3_mast",
@@ -3213,7 +3226,8 @@
         "mastery": 3
       },
       "tags": [],
-      "item_id": 240886
+      "item_id": 240886,
+      "name": "Masterful Lapis"
     },
     {
       "id": "10_vers_4_mast",
@@ -3224,7 +3238,8 @@
         "mastery": 4
       },
       "tags": [],
-      "item_id": 240917
+      "item_id": 240917,
+      "name": "Flawless Masterful Lapis"
     },
     {
       "id": "12_vers_5_mast",
@@ -3235,7 +3250,8 @@
         "mastery": 5
       },
       "tags": [],
-      "item_id": 240918
+      "item_id": 240918,
+      "name": "Flawless Masterful Lapis"
     },
     {
       "id": "7_haste",
@@ -3245,7 +3261,8 @@
         "haste": 7
       },
       "tags": [],
-      "item_id": 240855
+      "item_id": 240855,
+      "name": "Quick Peridot"
     },
     {
       "id": "9_haste",
@@ -3255,7 +3272,8 @@
         "haste": 9
       },
       "tags": [],
-      "item_id": 240856
+      "item_id": 240856,
+      "name": "Quick Peridot"
     },
     {
       "id": "12_haste",
@@ -3265,7 +3283,8 @@
         "haste": 12
       },
       "tags": [],
-      "item_id": 240887
+      "item_id": 240887,
+      "name": "Flawless Quick Peridot"
     },
     {
       "id": "14_haste",
@@ -3275,7 +3294,8 @@
         "haste": 14
       },
       "tags": [],
-      "item_id": 240888
+      "item_id": 240888,
+      "name": "Flawless Quick Peridot"
     },
     {
       "id": "6_haste_2_crit",
@@ -3286,7 +3306,8 @@
         "crit": 2
       },
       "tags": [],
-      "item_id": 240857
+      "item_id": 240857,
+      "name": "Deadly Peridot"
     },
     {
       "id": "7_haste_3_crit",
@@ -3297,7 +3318,8 @@
         "crit": 3
       },
       "tags": [],
-      "item_id": 240858
+      "item_id": 240858,
+      "name": "Deadly Peridot"
     },
     {
       "id": "10_haste_4_crit",
@@ -3308,7 +3330,8 @@
         "crit": 4
       },
       "tags": [],
-      "item_id": 240889
+      "item_id": 240889,
+      "name": "Flawless Deadly Peridot"
     },
     {
       "id": "12_haste_5_crit",
@@ -3319,7 +3342,8 @@
         "crit": 5
       },
       "tags": [],
-      "item_id": 240890
+      "item_id": 240890,
+      "name": "Flawless Deadly Peridot"
     },
     {
       "id": "6_haste_2_mast",
@@ -3330,7 +3354,8 @@
         "mastery": 2
       },
       "tags": [],
-      "item_id": 240859
+      "item_id": 240859,
+      "name": "Masterful Peridot"
     },
     {
       "id": "7_haste_3_mast",
@@ -3341,7 +3366,8 @@
         "mastery": 3
       },
       "tags": [],
-      "item_id": 240860
+      "item_id": 240860,
+      "name": "Masterful Peridot"
     },
     {
       "id": "10_haste_4_mast",
@@ -3352,7 +3378,8 @@
         "mastery": 4
       },
       "tags": [],
-      "item_id": 240891
+      "item_id": 240891,
+      "name": "Flawless Masterful Peridot"
     },
     {
       "id": "12_haste_5_mast",
@@ -3363,7 +3390,8 @@
         "mastery": 5
       },
       "tags": [],
-      "item_id": 240892
+      "item_id": 240892,
+      "name": "Flawless Masterful Peridot"
     },
     {
       "id": "6_haste_2_vers",
@@ -3374,7 +3402,8 @@
         "vers": 2
       },
       "tags": [],
-      "item_id": 240861
+      "item_id": 240861,
+      "name": "Versatile Peridot"
     },
     {
       "id": "7_haste_3_vers",
@@ -3385,7 +3414,8 @@
         "vers": 3
       },
       "tags": [],
-      "item_id": 240862
+      "item_id": 240862,
+      "name": "Versatile Peridot"
     },
     {
       "id": "10_haste_4_vers",
@@ -3396,7 +3426,8 @@
         "vers": 4
       },
       "tags": [],
-      "item_id": 240893
+      "item_id": 240893,
+      "name": "Flawless Versatile Peridot"
     },
     {
       "id": "12_haste_5_vers",
@@ -3407,7 +3438,8 @@
         "vers": 5
       },
       "tags": [],
-      "item_id": 240894
+      "item_id": 240894,
+      "name": "Flawless Versatile Peridot"
     },
     {
       "id": "7_mast",
@@ -3417,7 +3449,8 @@
         "mastery": 7
       },
       "tags": [],
-      "item_id": 240863
+      "item_id": 240863,
+      "name": "Masterful Amethyst"
     },
     {
       "id": "9_mast",
@@ -3427,7 +3460,8 @@
         "mastery": 9
       },
       "tags": [],
-      "item_id": 240864
+      "item_id": 240864,
+      "name": "Masterful Amethyst"
     },
     {
       "id": "12_mast",
@@ -3437,7 +3471,8 @@
         "mastery": 12
       },
       "tags": [],
-      "item_id": 240895
+      "item_id": 240895,
+      "name": "Flawless Masterful Amethyst"
     },
     {
       "id": "14_mast",
@@ -3447,7 +3482,8 @@
         "mastery": 14
       },
       "tags": [],
-      "item_id": 240896
+      "item_id": 240896,
+      "name": "Flawless Masterful Amethyst"
     },
     {
       "id": "6_mast_2_crit",
@@ -3458,7 +3494,8 @@
         "crit": 2
       },
       "tags": [],
-      "item_id": 240865
+      "item_id": 240865,
+      "name": "Deadly Amethyst"
     },
     {
       "id": "7_mast_3_crit",
@@ -3469,7 +3506,8 @@
         "crit": 3
       },
       "tags": [],
-      "item_id": 240866
+      "item_id": 240866,
+      "name": "Deadly Amethyst"
     },
     {
       "id": "10_mast_4_crit",
@@ -3480,7 +3518,8 @@
         "crit": 4
       },
       "tags": [],
-      "item_id": 240897
+      "item_id": 240897,
+      "name": "Flawless Deadly Amethyst"
     },
     {
       "id": "12_mast_5_crit",
@@ -3491,7 +3530,8 @@
         "crit": 5
       },
       "tags": [],
-      "item_id": 240898
+      "item_id": 240898,
+      "name": "Flawless Deadly Amethyst"
     },
     {
       "id": "6_mast_2_haste",
@@ -3502,7 +3542,8 @@
         "haste": 2
       },
       "tags": [],
-      "item_id": 240867
+      "item_id": 240867,
+      "name": "Quick Amethyst"
     },
     {
       "id": "7_mast_3_haste",
@@ -3513,7 +3554,8 @@
         "haste": 3
       },
       "tags": [],
-      "item_id": 240868
+      "item_id": 240868,
+      "name": "Quick Amethyst"
     },
     {
       "id": "10_mast_4_haste",
@@ -3524,7 +3566,8 @@
         "haste": 4
       },
       "tags": [],
-      "item_id": 240899
+      "item_id": 240899,
+      "name": "Flawless Quick Amethyst"
     },
     {
       "id": "12_mast_5_haste",
@@ -3535,7 +3578,8 @@
         "haste": 5
       },
       "tags": [],
-      "item_id": 240900
+      "item_id": 240900,
+      "name": "Flawless Quick Amethyst"
     },
     {
       "id": "6_mast_2_vers",
@@ -3546,7 +3590,8 @@
         "vers": 2
       },
       "tags": [],
-      "item_id": 240869
+      "item_id": 240869,
+      "name": "Versatile Amethyst"
     },
     {
       "id": "7_mast_3_vers",
@@ -3557,7 +3602,8 @@
         "vers": 3
       },
       "tags": [],
-      "item_id": 240870
+      "item_id": 240870,
+      "name": "Versatile Amethyst"
     },
     {
       "id": "10_mast_4_vers",
@@ -3568,7 +3614,8 @@
         "vers": 4
       },
       "tags": [],
-      "item_id": 240901
+      "item_id": 240901,
+      "name": "Flawless Versatile Amethyst"
     },
     {
       "id": "12_mast_5_vers",
@@ -3579,7 +3626,8 @@
         "vers": 5
       },
       "tags": [],
-      "item_id": 240902
+      "item_id": 240902,
+      "name": "Flawless Versatile Amethyst"
     },
     {
       "id": "7_crit",
@@ -3589,7 +3637,8 @@
         "crit": 7
       },
       "tags": [],
-      "item_id": 240871
+      "item_id": 240871,
+      "name": "Deadly Garnet"
     },
     {
       "id": "9_crit",
@@ -3599,7 +3648,8 @@
         "crit": 9
       },
       "tags": [],
-      "item_id": 240872
+      "item_id": 240872,
+      "name": "Deadly Garnet"
     },
     {
       "id": "12_crit",
@@ -3609,7 +3659,8 @@
         "crit": 12
       },
       "tags": [],
-      "item_id": 240903
+      "item_id": 240903,
+      "name": "Flawless Deadly Garnet"
     },
     {
       "id": "14_crit",
@@ -3619,7 +3670,8 @@
         "crit": 14
       },
       "tags": [],
-      "item_id": 240904
+      "item_id": 240904,
+      "name": "Flawless Deadly Garnet"
     },
     {
       "id": "6_crit_2_haste",
@@ -3630,7 +3682,8 @@
         "haste": 2
       },
       "tags": [],
-      "item_id": 240873
+      "item_id": 240873,
+      "name": "Quick Garnet"
     },
     {
       "id": "7_crit_3_haste",
@@ -3641,7 +3694,8 @@
         "haste": 3
       },
       "tags": [],
-      "item_id": 240874
+      "item_id": 240874,
+      "name": "Quick Garnet"
     },
     {
       "id": "10_crit_4_haste",
@@ -3652,7 +3706,8 @@
         "haste": 4
       },
       "tags": [],
-      "item_id": 240905
+      "item_id": 240905,
+      "name": "Flawless Quick Garnet"
     },
     {
       "id": "12_crit_5_haste",
@@ -3663,7 +3718,8 @@
         "haste": 5
       },
       "tags": [],
-      "item_id": 240906
+      "item_id": 240906,
+      "name": "Flawless Quick Garnet"
     },
     {
       "id": "6_crit_2_mast",
@@ -3674,7 +3730,8 @@
         "mastery": 2
       },
       "tags": [],
-      "item_id": 240875
+      "item_id": 240875,
+      "name": "Masterful Garnet"
     },
     {
       "id": "7_crit_3_mast",
@@ -3685,7 +3742,8 @@
         "mastery": 3
       },
       "tags": [],
-      "item_id": 240876
+      "item_id": 240876,
+      "name": "Masterful Garnet"
     },
     {
       "id": "10_crit_4_mast",
@@ -3696,7 +3754,8 @@
         "mastery": 4
       },
       "tags": [],
-      "item_id": 240907
+      "item_id": 240907,
+      "name": "Flawless Masterful Garnet"
     },
     {
       "id": "12_crit_5_mast",
@@ -3707,7 +3766,8 @@
         "mastery": 5
       },
       "tags": [],
-      "item_id": 240908
+      "item_id": 240908,
+      "name": "Flawless Masterful Garnet"
     },
     {
       "id": "6_crit_2_vers",
@@ -3718,7 +3778,8 @@
         "vers": 2
       },
       "tags": [],
-      "item_id": 240877
+      "item_id": 240877,
+      "name": "Versatile Garnet"
     },
     {
       "id": "7_crit_3_vers",
@@ -3729,7 +3790,8 @@
         "vers": 3
       },
       "tags": [],
-      "item_id": 240878
+      "item_id": 240878,
+      "name": "Versatile Garnet"
     },
     {
       "id": "10_crit_4_vers",
@@ -3740,7 +3802,8 @@
         "vers": 4
       },
       "tags": [],
-      "item_id": 240909
+      "item_id": 240909,
+      "name": "Flawless Versatile Garnet"
     },
     {
       "id": "12_crit_5_vers",
@@ -3751,7 +3814,8 @@
         "vers": 5
       },
       "tags": [],
-      "item_id": 240910
+      "item_id": 240910,
+      "name": "Flawless Versatile Garnet"
     },
     {
       "id": "26_primary",
@@ -3762,6 +3826,7 @@
       },
       "tags": [],
       "item_id": 240982,
+      "name": "Indecipherable Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3774,6 +3839,7 @@
       },
       "tags": [],
       "item_id": 240983,
+      "name": "Indecipherable Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3786,6 +3852,7 @@
       },
       "tags": [],
       "item_id": 240970,
+      "name": "Stoic Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3798,6 +3865,7 @@
       },
       "tags": [],
       "item_id": 240971,
+      "name": "Stoic Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3810,6 +3878,7 @@
       },
       "tags": [],
       "item_id": 240967,
+      "name": "Powerful Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3822,6 +3891,7 @@
       },
       "tags": [],
       "item_id": 240966,
+      "name": "Powerful Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3834,6 +3904,7 @@
       },
       "tags": [],
       "item_id": 240969,
+      "name": "Telluric Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     },
@@ -3846,6 +3917,7 @@
       },
       "tags": [],
       "item_id": 240968,
+      "name": "Telluric Eversong Diamond",
       "uniqueCategory": 698,
       "uniqueLimit": 1
     }

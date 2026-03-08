@@ -2831,6 +2831,17 @@
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
+        },
+        {
+          "source": "Focused Cleave",
+          "type": "direct_damage_modifier",
+          "tree": "spec",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
         }
       ]
     },
@@ -2986,6 +2997,17 @@
             "stacking": "multiplicative"
           },
           "application": "buff_on_player"
+        },
+        {
+          "source": "Focused Cleave",
+          "type": "direct_damage_modifier",
+          "tree": "spec",
+          "magnitude": {
+            "value": 50,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
         }
       ]
     },
@@ -3137,12 +3159,36 @@
           "application": "debuff_on_target"
         },
         {
+          "source": "Otherworldly Focus",
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
           "source": "Dark Matter",
           "type": "proc_trigger",
           "tree": "hero",
           "heroSpec": "Annihilator",
           "magnitude": {
             "value": 12,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Otherworldly Focus",
+          "type": "direct_damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "magnitude": {
+            "value": 35,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -3228,12 +3274,36 @@
           "application": "debuff_on_target"
         },
         {
+          "source": "Otherworldly Focus",
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
           "source": "Dark Matter",
           "type": "proc_trigger",
           "tree": "hero",
           "heroSpec": "Annihilator",
           "magnitude": {
             "value": 12,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        },
+        {
+          "source": "Otherworldly Focus",
+          "type": "direct_damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "magnitude": {
+            "value": 35,
             "unit": "percent",
             "stacking": "multiplicative"
           },
@@ -10450,7 +10520,7 @@
       "tree": "spec",
       "targets": [
         {
-          "spell": "inner_demon_t",
+          "spell": "Soul Cleave",
           "type": "direct_damage_modifier",
           "magnitude": {
             "value": 50,
@@ -11953,7 +12023,16 @@
       "heroSpec": "Annihilator",
       "targets": [
         {
-          "spell": "otherworldly_focus_benefit_t",
+          "spell": "Spirit Bomb",
+          "type": "damage_modifier",
+          "magnitude": {
+            "value": 35,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          }
+        },
+        {
+          "spell": "Spirit Bomb",
           "type": "direct_damage_modifier",
           "magnitude": {
             "value": 35,

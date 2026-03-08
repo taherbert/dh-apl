@@ -25,7 +25,7 @@
     "set_id": 1979,
     "required_count": 4,
     "items": {
-      "head": "head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=241144",
+      "head": "head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983",
       "shoulders": "shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289",
       "chest": "chest=devouring_reavers_engine,id=250036,ilevel=289",
       "hands": "hands=devouring_reavers_essence_grips,id=250034,ilevel=289",
@@ -35,27 +35,27 @@
       "head": [
         {
           "id": "devouring_nights_visage",
-          "simc": "head=devouring_nights_visage,id=249306,ilevel=289,gem_id=241144"
+          "simc": "head=devouring_nights_visage,id=249306,ilevel=289,gem_id=240983"
         },
         {
           "id": "mask_of_darkest_intent",
-          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289,gem_id=241144"
+          "simc": "head=mask_of_darkest_intent,id=249913,ilevel=289,gem_id=240983"
         },
         {
           "id": "spellsnap_shadowmask",
-          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289,gem_id=241144"
+          "simc": "head=spellsnap_shadowmask,id=251109,ilevel=289,gem_id=240983"
         },
         {
           "id": "vilefiends_guise",
-          "simc": "head=vilefiends_guise,id=251140,ilevel=289,gem_id=241144"
+          "simc": "head=vilefiends_guise,id=251140,ilevel=289,gem_id=240983"
         },
         {
           "id": "fetid_vilecrown",
-          "simc": "head=fetid_vilecrown,id=251177,ilevel=289,gem_id=241144"
+          "simc": "head=fetid_vilecrown,id=251177,ilevel=289,gem_id=240983"
         },
         {
           "id": "voidlashed_hood",
-          "simc": "head=voidlashed_hood,id=151336,ilevel=289,gem_id=241144"
+          "simc": "head=voidlashed_hood,id=151336,ilevel=289,gem_id=240983"
         }
       ],
       "shoulders": [
@@ -324,13 +324,6 @@
       }
     ]
   },
-  "gems": {
-    "item_ids": {
-      "7220": 241144,
-      "7221": 241143,
-      "7222": 241142
-    }
-  },
   "manual_enchants": {
     "weapon_mh": [
       {
@@ -566,7 +559,7 @@
       "slot": "wrists",
       "id": "chewed_leather_wristguards",
       "label": "Chewed Leather Wristguards",
-      "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289,gem_id=241144",
+      "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289,gem_id=240983",
       "stats": { "agi": 3506, "crit": 4100, "haste": 2900 },
       "tags": ["dungeon"]
     }

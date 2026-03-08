@@ -350,7 +350,9 @@ Haste scales: gcd
 - Frailty (damage_modifier)
 - Burning Blood (damage_modifier) [spec]
 - Reaver's Mark (damage_modifier)
+- Otherworldly Focus (damage_modifier) [hero:Annihilator]
 - Dark Matter (proc_trigger) [hero:Annihilator]
+- Otherworldly Focus (direct_damage_modifier) [hero:Annihilator]
 
 ### Throw Glaive (185123)
 
@@ -665,7 +667,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 
 **Row 7:**
 - (1) **Focused Cleave** (343207) [passive_buff]
-  → inner_demon_t (direct_damage_modifier)
+  → Soul Cleave (direct_damage_modifier)
   _Soul Cleave deals $s1% increased damage to your primary target._
 - (2) **Soulmonger** (389711) [passive_buff]
   _When consuming a Soul Fragment would heal you above full health it shields you instead, up to a maximum of ${$MHP*$s1/100}._
@@ -854,7 +856,8 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
   → Soul Cleave (cooldown_modifier)
   _Your first $?a212613[Spirit Bomb][Collapsing Star] after $?a212613[entering demon form][casting Void Metamorphosis] causes a $?a212613[Shadowflame][Cosmic] meteor shower to assault the area, dealing $..._
 - (4) **Otherworldly Focus** (1253817) [passive_buff]
-  → otherworldly_focus_benefit_t (direct_damage_modifier)
+  → Spirit Bomb (damage_modifier)
+  → Spirit Bomb (direct_damage_modifier)
   _$?a212613[Spirit Bomb][Collapsing Star] and Voidfall meteors deal $s1% increased damage when striking a single target. Each additional target reduces this bonus by $s2%._
 
 **Row 4:**

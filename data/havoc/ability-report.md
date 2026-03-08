@@ -543,7 +543,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - (2) **First Blood** (206416) [passive_buff]
   → Blade Dance (cooldown_modifier)
   → Screaming Brutality (cooldown_modifier)
-  → auto_attack_t (direct_damage_modifier)
+  → Auto Attack (direct_damage_modifier)
   _Blade Dance deals $<firstbloodDmg> Chaos damage to the first target struck._
 - (3) **Accelerated Blade** (391275) [spell_modifier]
   _Throw Glaive deals $s2% increased damage, reduced by ${$s2/2}% for each previous enemy hit._

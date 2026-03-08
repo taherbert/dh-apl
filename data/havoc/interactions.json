@@ -17457,7 +17457,7 @@
       },
       "target": {
         "id": null,
-        "name": "auto_attack_t"
+        "name": "Auto Attack"
       },
       "type": "direct_damage_modifier",
       "mechanism": "composite_override",
@@ -40746,7 +40746,7 @@
           "mechanism": "conditional"
         },
         {
-          "spell": "auto_attack_t",
+          "spell": "Auto Attack",
           "spellId": null,
           "type": "direct_damage_modifier",
           "discoveryMethod": "cpp_effects",

@@ -894,7 +894,7 @@
     }
   ],
   "scanStats": {
-    "contextsScanned": 123,
+    "contextsScanned": 124,
     "talentCrossRefs": 48,
     "talentAbilityRefs": 24,
     "effectScans": 8

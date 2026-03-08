@@ -11718,7 +11718,7 @@
           }
         },
         {
-          "spell": "auto_attack_t",
+          "spell": "Auto Attack",
           "type": "direct_damage_modifier",
           "magnitude": {
             "value": 95,

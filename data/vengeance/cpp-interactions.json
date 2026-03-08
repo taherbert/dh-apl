@@ -377,6 +377,16 @@
       "confidence": "medium"
     },
     {
+      "source": "Otherworldly Focus",
+      "sourceVar": "annihilator.otherworldly_focus",
+      "target": "Spirit Bomb",
+      "context": "otherworldly_focus_benefit_t",
+      "type": "damage_modifier",
+      "mechanism": "conditional",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium"
+    },
+    {
       "source": "Cycle of Binding",
       "sourceVar": "vengeance.cycle_of_binding",
       "target": "Sigil of Flame",
@@ -692,9 +702,9 @@
     }
   ],
   "scanStats": {
-    "contextsScanned": 123,
+    "contextsScanned": 124,
     "talentCrossRefs": 27,
-    "talentAbilityRefs": 29,
+    "talentAbilityRefs": 30,
     "effectScans": 8
   }
 }
