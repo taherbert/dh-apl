@@ -4,9 +4,11 @@
 //
 // Phases:
 //   0  tier-config    Tier set selection (sim-based)
-//   1  scale-factors  Single sim -> EP weights saved to session_state
+//   1  scale-factors  Per-scenario scale factors weighted by SCENARIO_WEIGHTS
+//  1b  ep-reweight    Iterative EP reweighting using DPS plot curves
 //   2  stat-optimize  Optimize crafted item stat budgets
 //   3  ep-rank        Pure EP scoring for stat-stick items only (proc/on-use/set items excluded)
+//  3b  combo-validate Combinatorial validation of top-2 per EP-ranked slot
 //   4  proc-eval      Sim proc/on-use items vs stat-stick baseline; significance gated
 //   4b set-eval       Set bonus evaluation: A-alone, B-alone, full-set; significance gated
 //   5  trinkets       Screen + pair sims; significance gated
@@ -680,6 +682,121 @@ function cmdEpReweight(gearData) {
     if (currentSf[stat] != null) {
       console.log(`  ${stat}: ${currentSf[stat].toFixed(4)}`);
     }
+  }
+}
+
+// --- Phase 3b: Combinatorial Validation ---
+// Sims the cross-product of top-N candidates per EP-ranked slot.
+// Catches stat synergies that per-slot EP ranking misses.
+
+const COMBO_MAX = 512;
+
+async function cmdCombinatorialValidation(args) {
+  const fidelity = parseFidelity(args, "quick");
+  const gearData = loadGearCandidates();
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+
+  // Collect top-2 per EP-ranked slot (excluding sim-handled slots)
+  const SIM_HANDLED_SLOTS = new Set([
+    "main_hand",
+    "off_hand",
+    "trinket1",
+    "trinket2",
+  ]);
+  const slotOptions = {};
+  for (const slot of Object.keys(gearData.slots || {})) {
+    if (SIM_HANDLED_SLOTS.has(slot)) continue;
+    if (ALWAYS_SIM_SLOTS.has(slot)) continue;
+    const results = getBestGear(3, slot);
+    if (results.length < 2) continue;
+    const top = results
+      .filter((r) => r.candidate_id !== "__baseline__")
+      .slice(0, 2)
+      .map((r) => r.candidate_id);
+    if (top.length === 2) slotOptions[slot] = top;
+  }
+
+  const slots = Object.keys(slotOptions);
+  if (slots.length === 0) {
+    console.log("Phase 3b: No slots with 2+ EP candidates. Skipping.");
+    return;
+  }
+
+  // Generate cross-product combinations (with safety cap)
+  let combos = [{}];
+  for (const slot of slots) {
+    const newCombos = [];
+    for (const combo of combos) {
+      for (const candidateId of slotOptions[slot]) {
+        newCombos.push({ ...combo, [slot]: candidateId });
+      }
+    }
+    combos = newCombos;
+    if (combos.length > COMBO_MAX) {
+      console.log(
+        `  Warning: ${combos.length} combos exceeds cap (${COMBO_MAX}), truncating slots`,
+      );
+      break;
+    }
+  }
+
+  console.log(
+    `\nPhase 3b: Combinatorial Validation (${combos.length} combos across ${slots.length} slots, ${fidelity} fidelity)`,
+  );
+
+  // Build profileset variants — each combo overrides multiple slots
+  const variants = combos.map((combo, i) => {
+    const overrides = [];
+    for (const [slot, candidateId] of Object.entries(combo)) {
+      const candidate = gearData.slots[slot]?.candidates?.find(
+        (c) => c.id === candidateId,
+      );
+      if (candidate) {
+        overrides.push(applyStatAlloc(candidate.simc, slot));
+      }
+    }
+    return { name: `combo_${i}`, overrides };
+  });
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_combo_validation",
+  );
+
+  const aggregated = aggregateGearResults(
+    results,
+    variants.map((v) => ({ id: v.name })),
+    builds,
+  );
+
+  const best = aggregated[0];
+  const baseline = aggregated.find((r) => r.id === "__baseline__");
+  console.log(
+    `  Best combination: ${best.id} (weighted: ${best.weighted?.toFixed(0)})`,
+  );
+  if (baseline) {
+    const delta =
+      ((best.weighted - baseline.weighted) / baseline.weighted) * 100;
+    console.log(`  vs baseline: ${delta >= 0 ? "+" : ""}${delta.toFixed(2)}%`);
+  }
+
+  clearGearResults(3.5, "combinations");
+  saveGearResults(3.5, "combinations", aggregated, fidelity);
+
+  // If best is not baseline, store winning slot selections for assembly
+  if (best.id !== "__baseline__") {
+    const comboIdx = parseInt(best.id.replace("combo_", ""));
+    const winningCombo = combos[comboIdx];
+    setSessionState("gear_phase3b_winners", {
+      combo: winningCombo,
+      weighted: best.weighted,
+      timestamp: new Date().toISOString(),
+    });
+    console.log("  Winning slots:", JSON.stringify(winningCombo));
   }
 }
 
@@ -2461,6 +2578,20 @@ function buildGearLines(gearData) {
     if (!placed) continue;
   }
 
+  // Phase 3b: combinatorial validation winners override EP per-slot picks
+  const comboWinners = getSessionState("gear_phase3b_winners");
+  if (comboWinners?.combo) {
+    for (const [slot, candidateId] of Object.entries(comboWinners.combo)) {
+      if (coveredSlots.has(slot)) continue;
+      const candidate = gearData.slots[slot]?.candidates?.find(
+        (c) => c.id === candidateId,
+      );
+      if (!candidate || !canEquip(candidate)) continue;
+      const line = applyStatAlloc(candidate.simc, slot);
+      addLine(applySlotEnchant(line, slot, enchantMap), slot, candidate);
+    }
+  }
+
   // Phase 3: EP ranking winners for remaining individual slots
   for (const slot of Object.keys(gearData.slots || {})) {
     if (coveredSlots.has(slot)) continue;
@@ -2703,6 +2834,8 @@ async function cmdRun(args) {
     cmdEpReweight(gearData);
     console.log("\n========== PHASE 3 (reweighted): EP Ranking ==========\n");
     cmdEpRank(gearData);
+    console.log("\n========== PHASE 3b: Combinatorial Validation ==========\n");
+    await cmdCombinatorialValidation(fidelityArgs);
   }
   if (maxPhase >= 4) {
     console.log("\n========== PHASE 4: Weapon Evaluation ==========\n");
@@ -2818,6 +2951,18 @@ function cmdStatus() {
       (s) => !ALWAYS_SIM_SLOTS.has(s),
     ).length;
     console.log(`  ${epSlotCount} slots ranked (${phase3.timestamp})`);
+  } else {
+    console.log("  not started");
+  }
+
+  // Phase 3b: combinatorial validation
+  const phase3b = getSessionState("gear_phase3b_winners");
+  console.log("\nPhase 3b (Combinatorial Validation):");
+  if (phase3b?.timestamp) {
+    const comboSlots = Object.keys(phase3b.combo || {});
+    console.log(
+      `  ${comboSlots.length} slots overridden (${phase3b.timestamp})`,
+    );
   } else {
     console.log("  not started");
   }
@@ -3305,6 +3450,9 @@ switch (cmd) {
     break;
   case "stat-optimize":
     await cmdStatOptimize(cleanArgs);
+    break;
+  case "combo-validate":
+    await cmdCombinatorialValidation(cleanArgs);
     break;
   case "gems": {
     const gd = loadGearCandidates();
