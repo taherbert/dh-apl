@@ -185,11 +185,9 @@
   },
   "paired_slots": {
     "trinkets": {
-      "slots": [
-        "trinket1",
-        "trinket2"
-      ],
+      "slots": ["trinket1", "trinket2"],
       "topK": 5,
+      "screenAnchor": "the_eternal_egg,id=249807,ilevel=289",
       "candidates": [
         {
           "id": "void_stalkers_contract",
@@ -198,10 +196,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -211,10 +206,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -224,10 +216,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -237,9 +226,7 @@
           "stats": {
             "crit": 6666
           },
-          "tags": [
-            "on-use"
-          ],
+          "tags": ["on-use"],
           "uniqueEquipped": true
         },
         {
@@ -249,18 +236,14 @@
           "stats": {
             "mastery": 6666
           },
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
           "id": "gaze_of_the_alnseer",
           "label": "Gaze of the Alnseer",
           "simc_base": "gaze_of_the_alnseer,id=249343,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -273,10 +256,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -286,10 +266,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -299,10 +276,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -312,10 +286,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ]
+          "tags": ["passive", "agi"]
         },
         {
           "id": "the_eternal_egg",
@@ -324,19 +295,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "locus_walkers_ribbon",
           "label": "Locus-Walker's Ribbon",
           "simc_base": "locus_walkers_ribbon,id=249809,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -349,10 +315,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -362,10 +325,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -375,19 +335,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "mindpiercers_sigil",
           "label": "Mindpiercer's Sigil",
           "simc_base": "mindpiercers_sigil,id=250224,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -397,10 +352,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -410,10 +362,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -423,10 +372,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -436,10 +382,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -449,9 +392,7 @@
           "stats": {
             "crit": 6666
           },
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -461,10 +402,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -474,19 +412,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "permafrost_essence",
           "label": "Permafrost Essence",
           "simc_base": "permafrost_essence,id=250244,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true
         },
         {
@@ -496,10 +429,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -509,10 +439,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -522,19 +449,14 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
           "id": "vessel_of_tortured_souls",
           "label": "Vessel of Tortured Souls",
           "simc_base": "vessel_of_tortured_souls,id=250258,ilevel=289",
-          "tags": [
-            "passive"
-          ],
+          "tags": ["passive"],
           "uniqueEquipped": true,
           "stats": {
             "mastery": 117
@@ -547,10 +469,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -560,10 +479,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -573,10 +489,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -586,10 +499,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -599,10 +509,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "on-use",
-            "agi"
-          ],
+          "tags": ["on-use", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -612,10 +519,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ]
+          "tags": ["passive", "agi"]
         },
         {
           "id": "primal_philosophers_stone",
@@ -625,10 +529,7 @@
             "agi": 6666,
             "vers": 8750
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -638,9 +539,7 @@
           "stats": {
             "vers": 6666
           },
-          "tags": [
-            "passive"
-          ]
+          "tags": ["passive"]
         },
         {
           "id": "darkmoon_dominion_hunt",
@@ -649,10 +548,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -662,10 +558,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -675,10 +568,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         },
         {
@@ -688,10 +578,7 @@
           "stats": {
             "agi": 6666
           },
-          "tags": [
-            "passive",
-            "agi"
-          ],
+          "tags": ["passive", "agi"],
           "uniqueEquipped": true
         }
       ]
@@ -851,6 +738,191 @@
           "stats": {
             "mastery": 7000,
             "vers": 10500,
+            "stamina": 7889
+          },
+          "tags": []
+        }
+      ]
+    },
+    "back": {
+      "candidates": [
+        {
+          "id": "cloak_of_the_fallen_cardinal",
+          "label": "Cloak of the Fallen Cardinal",
+          "simc": "back=cloak_of_the_fallen_cardinal,id=49823,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 3800,
+            "crit": 3200
+          },
+          "tags": []
+        },
+        {
+          "id": "cloak_of_the_fallen_cardinal",
+          "label": "Cloak of the Fallen Cardinal",
+          "simc": "back=cloak_of_the_fallen_cardinal,id=133505,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 5264,
+            "crit": 1736
+          },
+          "tags": []
+        },
+        {
+          "id": "potion_stained_cloak",
+          "label": "Potion-Stained Cloak",
+          "simc": "back=potion_stained_cloak,id=193712,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4250,
+            "mastery": 2750
+          },
+          "tags": []
+        },
+        {
+          "id": "imperators_banner",
+          "label": "Imperator's Banner",
+          "simc": "back=imperators_banner,id=249335,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4559,
+            "vers": 2441
+          },
+          "tags": []
+        },
+        {
+          "id": "draconic_nullcape",
+          "label": "Draconic Nullcape",
+          "simc": "back=draconic_nullcape,id=249370,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4707
+          },
+          "tags": []
+        },
+        {
+          "id": "devouring_reavers_drape",
+          "label": "Devouring Reaver's Drape",
+          "simc": "back=devouring_reavers_drape,id=250028,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4686,
+            "crit": 2314
+          },
+          "tags": []
+        },
+        {
+          "id": "speakeasy_shroud",
+          "label": "Speakeasy Shroud",
+          "simc": "back=speakeasy_shroud,id=251132,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 4100
+          },
+          "tags": []
+        },
+        {
+          "id": "soulhunters_mask",
+          "label": "Soulhunter's Mask",
+          "simc": "back=soulhunters_mask,id=251161,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 4400,
+            "crit": 2600
+          },
+          "tags": []
+        },
+        {
+          "id": "bloodthorn_burnous",
+          "label": "Bloodthorn Burnous",
+          "simc": "back=bloodthorn_burnous,id=251190,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 4550
+          },
+          "tags": []
+        },
+        {
+          "id": "fluxweave_cloak",
+          "label": "Fluxweave Cloak",
+          "simc": "back=fluxweave_cloak,id=251206,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "vers": 2750
+          },
+          "tags": []
+        },
+        {
+          "id": "rigid_scale_greatcloak",
+          "label": "Rigid Scale Greatcloak",
+          "simc": "back=rigid_scale_greatcloak,id=258575,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "crit": 3800
+          },
+          "tags": []
+        },
+        {
+          "id": "defiant_defenders_drape",
+          "label": "Defiant Defender's Drape",
+          "simc": "back=defiant_defenders_drape,id=260312,ilevel=289",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889,
+            "mastery": 3800,
+            "crit": 3200
+          },
+          "tags": []
+        },
+        {
+          "id": "adherents_silken_shroud",
+          "label": "Adherent's Silken Shroud",
+          "simc": "back=adherents_silken_shroud,id=239656,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
+            "stamina": 7889
+          },
+          "tags": []
+        },
+        {
+          "id": "sunfire_cloak",
+          "label": "Sunfire Cloak",
+          "simc": "back=sunfire_cloak,id=239658,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889,
+            "vers": 3500
+          },
+          "tags": [],
+          "itemSetId": 1957
+        },
+        {
+          "id": "arcanoweave_cloak",
+          "label": "Arcanoweave Cloak",
+          "simc": "back=arcanoweave_cloak,id=239661,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "stamina": 7889,
+            "vers": 3500
+          },
+          "tags": [],
+          "itemSetId": 1958
+        },
+        {
+          "id": "courtly_cloak",
+          "label": "Courtly Cloak",
+          "simc": "back=courtly_cloak,id=239674,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "stats": {
+            "agi": 5259,
             "stamina": 7889
           },
           "tags": []
@@ -2255,10 +2327,7 @@
           "id": "everforged_longsword",
           "label": "Everforged Longsword (Crafted)",
           "simc": "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
-          "tags": [
-            "crafted",
-            "sword"
-          ],
+          "tags": ["crafted", "sword"],
           "stats": {
             "agi": 62
           }
@@ -2911,6 +2980,12 @@
           "tags": []
         },
         {
+          "id": "enchant_ring___eyes_of_the_eagle",
+          "label": "Enchant Ring - Eyes of the Eagle 2",
+          "enchant_id": 7967,
+          "tags": []
+        },
+        {
           "id": "enchant_ring___zuljins_mast",
           "label": "Enchant Ring - Zul'jin's Mast 2",
           "enchant_id": 7969,
@@ -3000,6 +3075,94 @@
         }
       ]
     }
+  },
+  "enchantNames": {
+    "7934": "32 Int & 70 Sta",
+    "7935": "41 Int & 115 Sta",
+    "7936": "32 Int & +% Mana",
+    "7937": "41 Int & +% Mana",
+    "7938": "16 Int",
+    "7939": "24 Int",
+    "7956": "Enchant Chest - Mark of Nalorakk 1",
+    "7957": "Enchant Chest - Mark of Nalorakk 2",
+    "7958": "Enchant Helm - Hex of Leeching 1",
+    "7959": "Enchant Helm - Hex of Leeching 2",
+    "7960": "Enchant Helm - Empowered Hex of Leeching 1",
+    "7961": "Enchant Helm - Empowered Hex of Leeching 2",
+    "7962": "Enchant Boots - Lynx's Dexterity 1",
+    "7963": "Enchant Boots - Lynx's Dexterity 2",
+    "7964": "Enchant Ring - Amani Mast 1",
+    "7965": "Enchant Ring - Amani Mast 2",
+    "7966": "Enchant Ring - Eyes of the Eagle 1",
+    "7967": "Enchant Ring - Eyes of the Eagle 2",
+    "7968": "Enchant Ring - Zul'jin's Mast 1",
+    "7969": "Enchant Ring - Zul'jin's Mast 2",
+    "7970": "Enchant Shoulders - Flight of the Eagle 1",
+    "7971": "Enchant Shoulders - Flight of the Eagle 2",
+    "7972": "Enchant Shoulders - Akil'zon's Swiftness 1",
+    "7973": "Enchant Shoulders - Akil'zon's Swiftness 2",
+    "7978": "Enchant Weapon - Str of Halazzi 1",
+    "7979": "Enchant Weapon - Str of Halazzi 2",
+    "7980": "Enchant Weapon - Jan'alai's Precision 1",
+    "7981": "Enchant Weapon - Jan'alai's Precision 2",
+    "7982": "Enchant Weapon - Berserker's Rage 1",
+    "7983": "Enchant Weapon - Berserker's Rage 2",
+    "7984": "Enchant Chest - Mark of the Rootwarden 1",
+    "7985": "Enchant Chest - Mark of the Rootwarden 2",
+    "7986": "Enchant Chest - Mark of the Worldsoul 1",
+    "7987": "Enchant Chest - Mark of the Worldsoul 2",
+    "7988": "Enchant Helm - Blessing of Speed 1",
+    "7989": "Enchant Helm - Blessing of Speed 2",
+    "7990": "Enchant Helm - Empowered Blessing of Speed 1",
+    "7991": "Enchant Helm - Empowered Blessing of Speed 2",
+    "7992": "Enchant Boots - Shaladrassil's Roots 1",
+    "7993": "Enchant Boots - Shaladrassil's Roots 2",
+    "7994": "Enchant Ring - Nature's Wrath 1",
+    "7995": "Enchant Ring - Nature's Wrath 2",
+    "7996": "Enchant Ring - Nature's Fury 1",
+    "7997": "Enchant Ring - Nature's Fury 2",
+    "7998": "Enchant Shoulders - Nature's Grace 1",
+    "7999": "Enchant Shoulders - Nature's Grace 2",
+    "8000": "Enchant Shoulders - Amirdrassil's Grace 1",
+    "8001": "Enchant Shoulders - Amirdrassil's Grace 2",
+    "8006": "Enchant Weapon - Worldsoul Cradle 1",
+    "8007": "Enchant Weapon - Worldsoul Cradle 2",
+    "8008": "Enchant Weapon - Worldsoul Aegis 1",
+    "8009": "Enchant Weapon - Worldsoul Aegis 2",
+    "8010": "Enchant Weapon - Worldsoul Tenacity 1",
+    "8011": "Enchant Weapon - Worldsoul Tenacity 2",
+    "8012": "Enchant Chest - Mark of the Magister 1",
+    "8013": "Enchant Chest - Mark of the Magister 2",
+    "8014": "Enchant Helm - Rune of Avoidance 1",
+    "8015": "Enchant Helm - Rune of Avoidance 2",
+    "8016": "Enchant Helm - Empowered Rune of Avoidance 1",
+    "8017": "Enchant Helm - Empowered Rune of Avoidance 2",
+    "8018": "Enchant Boots - Farstrider's Hunt 1",
+    "8019": "Enchant Boots - Farstrider's Hunt 2",
+    "8020": "Enchant Ring - Thalassian Haste 1",
+    "8021": "Enchant Ring - Thalassian Haste 2",
+    "8022": "Enchant Ring - Thalassian Vers 1",
+    "8023": "Enchant Ring - Thalassian Vers 2",
+    "8024": "Enchant Ring - Silvermoon's Alacrity 1",
+    "8025": "Enchant Ring - Silvermoon's Alacrity 2",
+    "8026": "Enchant Ring - Silvermoon's Tenacity 1",
+    "8027": "Enchant Ring - Silvermoon's Tenacity 2",
+    "8028": "Enchant Shoulders - Thalassian Recovery 1",
+    "8029": "Enchant Shoulders - Thalassian Recovery 2",
+    "8030": "Enchant Shoulders - Silvermoon's Mending 1",
+    "8031": "Enchant Shoulders - Silvermoon's Mending 2",
+    "8036": "Enchant Weapon - Flames of the Sin'dorei 1",
+    "8037": "Enchant Weapon - Flames of the Sin'dorei 2",
+    "8038": "Enchant Weapon - Acuity of the Ren'dorei 1",
+    "8039": "Enchant Weapon - Acuity of the Ren'dorei 2",
+    "8040": "Enchant Weapon - Arcane Mast 1",
+    "8041": "Enchant Weapon - Arcane Mast 2",
+    "8158": "32 Agi/Str & 70 Sta",
+    "8159": "41 Agi/Str & 115 Sta",
+    "8160": "16 Agi/Str",
+    "8161": "24 Agi/Str",
+    "8162": "32 Agi/Str & 16 Armor",
+    "8163": "41 Agi/Str & 27 Armor"
   },
   "gems": [
     {

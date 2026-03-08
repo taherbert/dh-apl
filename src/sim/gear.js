@@ -188,16 +188,24 @@ function loadGearCandidates() {
 
 // --- v2 helpers: build screenable slot lists ---
 
-// For paired slots, screen slot 0 only with slot 1 cleared so scores
-// are comparable to pair scores (which also have both slots defined).
+// For paired slots, screen each candidate in slot 0 with a neutral anchor
+// in slot 1. The anchor provides a consistent stat baseline so that
+// stat-buff on-use trinkets (which multiply existing damage) are not
+// disadvantaged by an empty slot. If no anchor is configured, slot 1
+// is cleared (legacy behavior). When the candidate IS the anchor, slot 1
+// is cleared to avoid unique-equipped conflicts.
 function pairedSlotScreenCandidates(pairedData) {
   const [slot0, slot1] = pairedData.slots;
-  return pairedData.candidates.map((c) => ({
-    id: c.id,
-    label: c.label,
-    overrides: [`${slot0}=${c.simc_base}`, `${slot1}=`],
-    tags: c.tags,
-  }));
+  const anchor = pairedData.screenAnchor || "";
+  return pairedData.candidates.map((c) => {
+    const anchorSimc = anchor && c.simc_base !== anchor ? anchor : "";
+    return {
+      id: c.id,
+      label: c.label,
+      overrides: [`${slot0}=${c.simc_base}`, `${slot1}=${anchorSimc}`],
+      tags: c.tags,
+    };
+  });
 }
 
 // For enchant slots, build full simc lines from base_item + enchant_id
@@ -2005,8 +2013,10 @@ async function cmdCombinations(args) {
       const screenCandidates = pairedSlotScreenCandidates(pairedData);
       const screenSlotKey = `${type}_screen`;
 
+      const anchor = pairedData.screenAnchor || null;
       console.log(
-        `\nPhase ${phase}: Screening ${type} (${screenCandidates.length} candidates, ${fidelity} fidelity)`,
+        `\nPhase ${phase}: Screening ${type} (${screenCandidates.length} candidates, ${fidelity} fidelity)` +
+          (anchor ? `\n  Anchor: ${anchor.split(",")[0]}` : ""),
       );
 
       checkAplWarnings(screenCandidates, type);
