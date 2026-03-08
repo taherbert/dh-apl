@@ -1058,25 +1058,11 @@ function computeNodeContributions(
   builds,
   talentData,
   decodedBuilds,
-  defensiveCosts,
   heroTreeKeys,
   ablationIntrinsics,
 ) {
   const specNodes = talentData.specNodes.filter((n) => n.id !== 90912);
   const scenarioKeys = ablationIntrinsics ? allDpsKeys() : ["weighted"];
-
-  // Build defensive talent lookup from cost sim data
-  const defensiveMap = new Map();
-  if (defensiveCosts?.costs) {
-    for (const cost of defensiveCosts.costs) {
-      const existing = defensiveMap.get(cost.defensiveName);
-      if (existing) {
-        existing.push(cost.deltas.weighted);
-      } else {
-        defensiveMap.set(cost.defensiveName, [cost.deltas.weighted]);
-      }
-    }
-  }
 
   // Use SPEC_CONFIG hero tree keys (match build.heroTree values)
   const heroTreeNames = heroTreeKeys || Object.keys(talentData.heroSubtrees);
@@ -1103,31 +1089,20 @@ function computeNodeContributions(
         }
       }
 
-      const nodeName = node.entries?.[0]?.name || node.name || "";
-      const defCosts = defensiveMap.get(nodeName);
       const treeKey = filterTree || "all";
       const ablation = ablationIntrinsics?.[treeKey]?.[node.id];
 
       if (hasNode.length === 0 || noNode.length === 0) {
-        // Universal or untaken — but ablation may still have data
-        const entry = {
-          universal: hasNode.length > 0,
-          defensive: !!defCosts,
-          defensiveCost: defCosts
-            ? defCosts.reduce((a, b) => a + b, 0) / defCosts.length
-            : null,
-          deltas: null,
-        };
+        // Universal or untaken — ablation may still have intrinsic data
+        const entry = { deltas: null };
 
-        // Universal nodes with ablation data: show intrinsic value
-        if (ablation && entry.universal) {
+        if (ablation && hasNode.length > 0) {
           entry.deltas = {};
           entry.pct = {};
           for (const s of scenarioKeys) {
             entry.deltas[s] = ablation.intrinsic[s] || 0;
             entry.pct[s] = ablation.intrinsicPct?.[s] || 0;
           }
-          entry.universal = false;
         }
 
         result[node.id] = entry;
@@ -1152,19 +1127,21 @@ function computeNodeContributions(
         }
       }
 
-      const entry = {
-        universal: false,
-        defensive: !!defCosts,
-        defensiveCost: defCosts
-          ? defCosts.reduce((a, b) => a + b, 0) / defCosts.length
-          : null,
-        deltas,
-        pathNode: false,
-      };
+      const entry = { deltas };
       if (ablation) {
         entry.pct = {};
         for (const s of scenarioKeys) {
           entry.pct[s] = ablation.intrinsicPct?.[s] || 0;
+        }
+      } else {
+        // Compute pct from cohort-based deltas using average DPS as baseline
+        const allBuilds = [...hasNode, ...noNode];
+        entry.pct = {};
+        for (const s of scenarioKeys) {
+          const avgDps =
+            allBuilds.reduce((sum, b) => sum + (b.dps[s] || 0), 0) /
+            allBuilds.length;
+          entry.pct[s] = avgDps > 0 ? (deltas[s] / avgDps) * 100 : 0;
         }
       }
       result[node.id] = entry;
@@ -1176,33 +1153,6 @@ function computeNodeContributions(
   const perTree = { all: computeForFilter(null) };
   for (const tree of heroTreeNames) {
     perTree[tree] = computeForFilter(tree);
-  }
-
-  // Annotate "path nodes" via heuristic only when no ablation data
-  if (!ablationIntrinsics) {
-    for (const treeKey of Object.keys(perTree)) {
-      const contribs = perTree[treeKey];
-      for (const node of specNodes) {
-        const c = contribs[node.id];
-        if (!c?.deltas || c.universal || c.defensive) continue;
-
-        const myDelta = c.deltas.weighted || 0;
-        if (myDelta <= 0) continue;
-
-        let maxDownstream = 0;
-        for (const nextId of node.next || []) {
-          const nc = contribs[nextId];
-          if (nc?.deltas) {
-            const nd = Math.abs(nc.deltas.weighted || 0);
-            if (nd > maxDownstream) maxDownstream = nd;
-          }
-        }
-
-        if (maxDownstream > 0 && myDelta < maxDownstream * 0.6) {
-          c.pathNode = true;
-        }
-      }
-    }
   }
 
   return perTree;
@@ -1433,12 +1383,6 @@ function renderTalentHeatmap(
     <div class="heatmap-legend">
       <span class="heatmap-legend-swatch heatmap-legend-pos"></span><span>Positive</span>
       <span class="heatmap-legend-swatch heatmap-legend-neg"></span><span>Negative</span>
-      <span class="heatmap-legend-sep"></span>
-      <span class="heatmap-legend-swatch heatmap-legend-def"></span><span>Defensive</span>
-      <span class="heatmap-legend-sep"></span>
-      <span class="heatmap-legend-swatch heatmap-legend-uni-swatch"></span><span>Universal</span>
-      <span class="heatmap-legend-sep"></span>
-      <span class="heatmap-legend-swatch heatmap-legend-path"></span><span>Path</span>
     </div>
   </div>`;
 
@@ -1532,8 +1476,6 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
 
     // Use "all" tree contributions for initial rendering attributes
     const c = contributions.all?.[node.id];
-    const isUniversal = c?.universal;
-    const isDefensive = c?.defensive;
     const name = node.entries?.[0]?.name || node.name || `Node ${node.id}`;
     const icon = node.entries?.[0]?.icon;
     const isChoice = node.type === "choice" && !node.isApex;
@@ -1545,9 +1487,6 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
 
     // Per-tree delta data attributes (e.g. data-all-weighted="1234", data-aldrachi-reaver-weighted="567")
     let dataAttrs = "";
-    if (isDefensive)
-      dataAttrs += ` data-defensive="1" data-cost="${(c.defensiveCost || 0).toFixed(2)}"`;
-
     for (const treeKey of allTreeKeys) {
       const tc = contributions[treeKey]?.[node.id];
       const prefix = treeKey.toLowerCase().replace(/\s+/g, "-");
@@ -1569,23 +1508,14 @@ function renderTreeSvg(nodes, contributions, scenarios, treeNames) {
           }
         }
       }
-      if (tc?.universal) {
-        dataAttrs += ` data-${prefix}-universal="1"`;
-      }
-      if (tc?.pathNode) {
-        dataAttrs += ` data-${prefix}-path="1"`;
-      }
     }
 
-    const universalCls = isUniversal ? " heatmap-universal" : "";
-    const noDataCls =
-      !c?.deltas && !isUniversal && !isDefensive ? " heatmap-nodata" : "";
-    const defensiveCls = isDefensive ? " heatmap-defensive" : "";
+    const noDataCls = !c?.deltas ? " heatmap-nodata" : "";
 
     // Background shape: octagon for choice, rounded rect for everything else
     const bgShape = isChoice
-      ? `<polygon points="${octagonPoints(x, y)}" class="heatmap-node${universalCls}${noDataCls}${defensiveCls}"${dataAttrs}/>`
-      : `<rect x="${(x - half).toFixed(1)}" y="${(y - half).toFixed(1)}" width="${NODE_SIZE}" height="${NODE_SIZE}" rx="8" class="heatmap-node${universalCls}${noDataCls}${defensiveCls}"${dataAttrs}/>`;
+      ? `<polygon points="${octagonPoints(x, y)}" class="heatmap-node${noDataCls}"${dataAttrs}/>`
+      : `<rect x="${(x - half).toFixed(1)}" y="${(y - half).toFixed(1)}" width="${NODE_SIZE}" height="${NODE_SIZE}" rx="8" class="heatmap-node${noDataCls}"${dataAttrs}/>`;
 
     // Icon image
     const iconImg = icon
@@ -1988,7 +1918,6 @@ function renderTrinketRankings(trinketData) {
             <div class="trinket-strip__bar" style="width:${barPct.toFixed(1)}%"></div>
           </div>
         </div>
-        <div class="trinket-strip__dps">${fmtDps(r.weighted)}</div>
         <div class="trinket-strip__delta ${isBest ? "trinket-strip__delta--best" : ""}">${delta}</div>
       </div>`;
     }
@@ -2125,7 +2054,6 @@ function renderPairRankingSection({
             <div class="trinket-strip__bar" style="width:${barPct.toFixed(1)}%"></div>
           </div>
         </div>
-        <div class="trinket-strip__dps">${fmtDps(r.weighted)}</div>
         <div class="trinket-strip__delta ${isBest ? "trinket-strip__delta--best" : ""}">${delta}</div>
       </div>`;
       })
@@ -2197,7 +2125,6 @@ function renderEmbellishmentRankings(embData) {
             <div class="trinket-strip__bar" style="width:${barPct.toFixed(1)}%"></div>
           </div>
         </div>
-        <div class="trinket-strip__dps">${fmtDps(r.weighted)}</div>
         <div class="trinket-strip__delta ${isBest ? "trinket-strip__delta--best" : ""}">${delta}</div>
       </div>`;
       })
@@ -2215,7 +2142,6 @@ function renderEmbellishmentRankings(embData) {
         <div class="trinket-strip__bar" style="width:0%"></div>
       </div>
     </div>
-    <div class="trinket-strip__dps">${fmtDps(nullEmb.weighted)}</div>
     <div class="trinket-strip__delta">baseline</div>
   </div>`
     : "";
@@ -2340,7 +2266,6 @@ function renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig) {
         </div>
         <div class="tc-bar-track">${barsHtml}</div>
       </div>
-      <div class="tc-best-dps">${fmtDps(topDps)}</div>
       <div class="tc-delta${i === 0 ? " tc-delta--best" : ""}">${delta}</div>
     </div>`;
   }
@@ -3070,23 +2995,11 @@ h4 {
   transition: stroke 0.15s, stroke-width 0.15s, filter 0.15s;
 }
 
-.heatmap-node.heatmap-universal {
-  fill: var(--surface-alt);
-  stroke: var(--positive);
-  stroke-width: 2.5;
-}
-
 .heatmap-node.heatmap-nodata {
   fill: var(--surface);
   stroke: var(--border-subtle);
   opacity: 0.3;
   stroke-width: 1;
-}
-
-.heatmap-node.heatmap-defensive {
-  fill: var(--surface-alt);
-  stroke: var(--border);
-  stroke-width: 1.5;
 }
 
 .heatmap-overlay {
@@ -3122,23 +3035,6 @@ h4 {
 
 .heatmap-legend-pos { background: rgba(52, 211, 153, 0.5); }
 .heatmap-legend-neg { background: rgba(251, 113, 133, 0.5); }
-.heatmap-legend-def { background: rgba(251, 113, 133, 0.5); border: 1.5px solid var(--negative); }
-.heatmap-legend-uni-swatch {
-  background: var(--surface-alt);
-  border: 2px solid var(--positive);
-}
-
-.heatmap-legend-path {
-  background: rgba(52, 211, 153, 0.15);
-  border: 1.5px dashed var(--fg-muted);
-}
-
-.heatmap-legend-sep {
-  width: 1px;
-  height: 14px;
-  background: var(--border);
-  margin: 0 0.3rem;
-}
 
 /* Heatmap tooltip */
 .heatmap-tooltip {
@@ -3926,7 +3822,7 @@ a.gear-name:hover { text-decoration: underline; }
 
 .trinket-strip {
   display: grid;
-  grid-template-columns: 32px 1fr 90px 60px;
+  grid-template-columns: 32px 1fr 65px;
   align-items: center;
   gap: 0 0.75rem;
   padding: 0.55rem 1rem;
@@ -4010,18 +3906,9 @@ a.gear-name:hover { text-decoration: underline; }
 
 .trinket-strip:hover .trinket-strip__bar { opacity: 0.8; }
 
-.trinket-strip__dps {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.84rem;
-  font-weight: 700;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  color: var(--fg);
-}
-
 .trinket-strip__delta {
-  font-size: 0.72rem;
-  font-weight: 600;
+  font-size: 0.82rem;
+  font-weight: 700;
   text-align: right;
   font-variant-numeric: tabular-nums;
   color: var(--fg-muted);
@@ -4078,7 +3965,7 @@ a.gear-name:hover { text-decoration: underline; }
 
 .tc-row {
   display: grid;
-  grid-template-columns: 28px 1fr 90px 60px;
+  grid-template-columns: 28px 1fr 65px;
   align-items: start;
   gap: 0 0.75rem;
   padding: 0.65rem 1rem;
@@ -4162,25 +4049,10 @@ a.gear-name:hover { text-decoration: underline; }
   font-weight: 700;
   margin-bottom: 0.15rem;
 }
-.tc-tooltip__dps {
-  font-variant-numeric: tabular-nums;
-  color: var(--fg);
-}
 .tc-tooltip__delta {
   font-variant-numeric: tabular-nums;
   color: var(--fg-muted);
   font-size: 0.72rem;
-}
-
-.tc-best-dps {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.84rem;
-  font-weight: 700;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  color: var(--fg);
-  padding-top: 0.2rem;
-  white-space: nowrap;
 }
 
 .tc-delta {
@@ -4240,12 +4112,10 @@ footer { animation-delay: 0.35s; }
   .filter-bar { gap: 0.35rem; }
   .build-name { font-size: 0.7rem; }
 
-  .trinket-strip { grid-template-columns: 28px 1fr 75px 50px; gap: 0 0.5rem; padding: 0.45rem 0.75rem; }
+  .trinket-strip { grid-template-columns: 28px 1fr 55px; gap: 0 0.5rem; padding: 0.45rem 0.75rem; }
   .trinket-strip__name { font-size: 0.76rem; }
-  .trinket-strip__dps { font-size: 0.76rem; }
-  .tc-row { grid-template-columns: 24px 1fr 75px 50px; padding: 0.5rem 0.6rem; }
+  .tc-row { grid-template-columns: 24px 1fr 55px; padding: 0.5rem 0.6rem; }
   .tc-name { font-size: 0.76rem; }
-  .tc-best-dps { font-size: 0.76rem; }
 }
 `;
 
@@ -4305,18 +4175,9 @@ const JS = `
       const dpsKey = getDpsKey(tree);
       const pctVal = node.dataset[pctKey];
       const dpsVal = node.dataset[dpsKey];
-      const uniKey = buildKey(tree, 'universal');
-      const isUni = node.dataset[uniKey] === '1';
       tooltip.querySelector('.heatmap-tooltip-name').textContent = name;
       const deltaEl = tooltip.querySelector('.heatmap-tooltip-delta');
-      if (isUni || node.classList.contains('heatmap-universal')) {
-        deltaEl.textContent = 'Universal - taken by all builds';
-        deltaEl.style.color = 'var(--positive)';
-      } else if (node.dataset.defensive === '1') {
-        const cost = Number(node.dataset.cost || 0);
-        deltaEl.textContent = 'Defensive - costs ' + Math.abs(cost).toFixed(1) + '% DPS';
-        deltaEl.style.color = 'var(--negative)';
-      } else if (pctVal !== undefined) {
+      if (pctVal !== undefined) {
         const pct = Number(pctVal);
         const sign = pct >= 0 ? '+' : '';
         deltaEl.textContent = sign + pct.toFixed(1) + '% DPS';
@@ -4345,16 +4206,12 @@ const JS = `
     const tree = section.dataset.activeTree || 'all';
     const dpsKey = getDpsKey(tree);
     const pctKey = getPctKey(tree);
-    const uniKey = buildKey(tree, 'universal');
-    const pathNodeKey = buildKey(tree, 'path');
 
     // Collect max pct for color scaling
     const nodeGroups = section.querySelectorAll('.heatmap-node-group');
     let maxPct = 0.5;
     nodeGroups.forEach(g => {
       const node = g.querySelector('.heatmap-node');
-      if (node.dataset.defensive === '1') return;
-      if (node.dataset[uniKey] === '1' || node.classList.contains('heatmap-universal')) return;
       if (node.dataset[pctKey] !== undefined) {
         const pv = Math.abs(Number(node.dataset[pctKey]));
         if (pv > maxPct) maxPct = pv;
@@ -4366,31 +4223,10 @@ const JS = `
       const overlay = g.querySelector('.heatmap-overlay');
       const badge = g.querySelector('.heatmap-badge');
       if (badge) { badge.textContent = ''; badge.classList.remove('visible'); }
+      node.style.stroke = '';
+      node.style.strokeDasharray = '';
+      node.style.strokeWidth = '';
 
-      const isTreeUni = node.dataset[uniKey] === '1';
-      const isGlobalUni = node.classList.contains('heatmap-universal');
-
-      if (isTreeUni && tree !== 'all') {
-        node.style.stroke = 'var(--positive)';
-      } else {
-        node.style.stroke = '';
-      }
-
-      if (isTreeUni || isGlobalUni) {
-        if (overlay) overlay.style.fill = 'transparent';
-        return;
-      }
-      if (node.dataset.defensive === '1') {
-        const cost = Math.abs(Number(node.dataset.cost || 0));
-        const t = Math.min(cost / 3, 1);
-        if (overlay) overlay.style.fill = 'rgba(251, 113, 133, ' + (0.15 + t * 0.35).toFixed(2) + ')';
-        if (badge) {
-          badge.textContent = '-' + cost.toFixed(1) + '%';
-          badge.classList.add('visible');
-          badge.style.fill = 'var(--negative)';
-        }
-        return;
-      }
       if (node.classList.contains('heatmap-nodata')) {
         if (overlay) overlay.style.fill = 'transparent';
         return;
@@ -4404,39 +4240,20 @@ const JS = `
       const absDisplay = Math.abs(displayVal);
       const power = hasPct ? Math.min(absDisplay / maxPct, 1) : Math.min(absDisplay / 5, 1);
 
-      const isPath = node.dataset[pathNodeKey] === '1';
-
-      if (isPath) {
-        if (overlay) overlay.style.fill = 'rgba(148, 163, 184, 0.25)';
-        node.style.strokeDasharray = '5,3';
-        node.style.stroke = 'var(--fg-muted)';
-        node.style.strokeWidth = '2';
-        if (badge) {
-          const sign = displayVal >= 0 ? '+' : '';
-          badge.textContent = hasPct ? sign + displayVal.toFixed(1) + '% path' : sign + Math.round(displayVal).toLocaleString() + ' path';
-          badge.classList.add('visible');
-          badge.style.fill = 'var(--fg-muted)';
-          badge.style.opacity = '0.7';
-        }
+      if (displayVal >= 0) {
+        const a = 0.08 + power * 0.52;
+        if (overlay) overlay.style.fill = 'rgba(52, 211, 153, ' + a.toFixed(2) + ')';
+        node.style.stroke = power > 0.15 ? 'rgba(52, 211, 153, ' + (0.5 + power * 0.5).toFixed(2) + ')' : '';
       } else {
-        node.style.strokeDasharray = '';
-        node.style.strokeWidth = '';
-        if (displayVal >= 0) {
-          const a = 0.08 + power * 0.52;
-          if (overlay) overlay.style.fill = 'rgba(52, 211, 153, ' + a.toFixed(2) + ')';
-          node.style.stroke = power > 0.15 ? 'rgba(52, 211, 153, ' + (0.5 + power * 0.5).toFixed(2) + ')' : '';
-        } else {
-          const a = 0.08 + power * 0.47;
-          if (overlay) overlay.style.fill = 'rgba(251, 113, 133, ' + a.toFixed(2) + ')';
-          node.style.stroke = power > 0.15 ? 'rgba(251, 113, 133, ' + (0.5 + power * 0.5).toFixed(2) + ')' : '';
-        }
-        if (badge && absDisplay > 0.05) {
-          const sign = displayVal >= 0 ? '+' : '';
-          badge.textContent = hasPct ? sign + displayVal.toFixed(1) + '%' : sign + Math.round(displayVal).toLocaleString();
-          badge.classList.add('visible');
-          badge.style.fill = displayVal >= 0 ? 'var(--positive)' : 'var(--negative)';
-          badge.style.opacity = '';
-        }
+        const a = 0.08 + power * 0.47;
+        if (overlay) overlay.style.fill = 'rgba(251, 113, 133, ' + a.toFixed(2) + ')';
+        node.style.stroke = power > 0.15 ? 'rgba(251, 113, 133, ' + (0.5 + power * 0.5).toFixed(2) + ')' : '';
+      }
+      if (badge && absDisplay > 0.05) {
+        const sign = displayVal >= 0 ? '+' : '';
+        badge.textContent = hasPct ? sign + displayVal.toFixed(1) + '%' : sign + Math.round(displayVal).toLocaleString();
+        badge.classList.add('visible');
+        badge.style.fill = displayVal >= 0 ? 'var(--positive)' : 'var(--negative)';
       }
     });
   }
@@ -4565,7 +4382,6 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
   document.body.appendChild(tooltip);
 
   const bestPerIlvl = JSON.parse(chart.dataset.bestPerIlvl || '{}');
-  const fmtNum = n => Number(n).toLocaleString();
 
   function positionTooltip(e) {
     const pad = 12;
@@ -4594,7 +4410,6 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
       '<div class="tc-tooltip__track" style="color:' + bar.style.background + '">' +
         (track || 'ilvl') + ' ' + ilvl +
       '</div>' +
-      '<div class="tc-tooltip__dps">' + fmtNum(dps) + ' DPS</div>' +
       '<div class="tc-tooltip__delta" ' + deltaClass + '>' + deltaStr + ' at this tier</div>';
     tooltip.classList.add('visible');
     positionTooltip(e);
@@ -4947,7 +4762,6 @@ async function main() {
         reportData.builds,
         talentData,
         decodedBuilds,
-        defensiveTalentCosts,
         Object.keys(heroTrees),
         ablationIntrinsics,
       );
