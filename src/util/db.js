@@ -998,7 +998,7 @@ export function getTopBuilds(n = 10) {
 }
 
 export function getRosterBuilds(s) {
-  return queryBuilds({ inRoster: true, limit: 500, spec: s });
+  return queryBuilds({ inRoster: true, limit: 600, spec: s });
 }
 
 export function setRosterMembership(hash, inRoster, s) {

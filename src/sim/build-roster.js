@@ -56,6 +56,8 @@ import {
   upsertBuild,
   setRosterMembership,
   clearAllRosterMembership,
+  purgeNonCommunityBuilds,
+  clearAllBuildDps,
   updateBuildDps as dbUpdateBuildDps,
   updateBuildDisplayName,
   getRosterBuilds,
@@ -579,29 +581,25 @@ export function generate() {
   const archetypes = getArchetypes();
 
   withTransaction(() => {
-    // Phase 0: Clear roster membership (preserves build records + DPS data)
+    // Phase 0: Purge old builds (keep community + pinned)
+    const purged = purgeNonCommunityBuilds();
     clearAllRosterMembership();
-    console.log("Phase 0: Cleared roster membership\n");
+    console.log(
+      `Phase 0: Purged ${purged} old builds, cleared roster membership\n`,
+    );
+
+    // Phase 1: Clear all DPS (force fresh sims)
+    const cleared = clearAllBuildDps();
+    console.log(
+      `Phase 1: Cleared DPS on ${cleared} builds (fresh sims required)\n`,
+    );
 
     // Build fingerprint cache for cross-source dedup
     const fingerprints = new Set();
 
-    // Phase 1: Import baseline
-    console.log("Phase 1: Baseline");
-    importBaselineUnified(fingerprints);
-
-    // Phase 2: Import community (dedup against baseline)
-    console.log("\nPhase 2: Community builds");
-    importCommunityUnified(fingerprints, archetypes);
-
-    // Phase 3: Generate cluster roster
-    // Systematic exploration of cluster permutations × hero tree × variant
-    console.log("\nPhase 3: Cluster roster");
-    const reservedSlots = fingerprints.size;
-    const maxClusterSlots = Math.max(50, 500 - reservedSlots);
-    const clusterBuilds = generateClusterRoster({
-      maxRosterSize: maxClusterSlots,
-    });
+    // Phase 2: Generate 500 cluster builds (50 per tree x apex bucket)
+    console.log("Phase 2: Cluster roster");
+    const clusterBuilds = generateClusterRoster({ maxRosterSize: 500 });
     let clusterAdded = 0;
     let clusterSkipped = 0;
     let clusterInvalid = 0;
@@ -644,6 +642,10 @@ export function generate() {
     console.log(
       `  Cluster: ${clusterAdded} added, ${clusterSkipped} duplicates${clusterInvalid ? `, ${clusterInvalid} invalid` : ""}`,
     );
+
+    // Phase 3: Import community builds ON TOP of cluster (dedup against cluster)
+    console.log("\nPhase 3: Community builds");
+    importCommunityUnified(fingerprints, archetypes);
 
     // Phase 4: Generate display names
     console.log("\nPhase 4: Display names");
