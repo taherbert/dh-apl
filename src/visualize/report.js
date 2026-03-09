@@ -466,7 +466,7 @@ function deriveApexBuilds(builds) {
 // --- Merge sim results into per-build data ---
 
 function mergeSimResults(roster, baselineMaps, oursMaps) {
-  return roster.builds.map((build) => {
+  const result = roster.builds.map((build) => {
     const dps = {};
     const simcDps = {};
 
@@ -490,7 +490,6 @@ function mergeSimResults(roster, baselineMaps, oursMaps) {
     };
   });
 
-  // Apply normalized weighting matching gear pipeline
   applyNormalizedWeights(result.map((b) => b.dps));
   applyNormalizedWeights(result.map((b) => b.simcDps));
 
