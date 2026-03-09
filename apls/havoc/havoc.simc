@@ -20,7 +20,7 @@ actions+=/retarget_auto_attack,line_cd=1,target_if=min:!target.is_boss,if=talent
 # Fury generated per second for resource planning
 actions+=/variable,name=fury_gen_per_sec,op=set,value=2%(attack_haste*2.6)*0.81*((talent.demonsurge&buff.metamorphosis.up)*3+9.5)+buff.immolation_aura.stack*4+buff.tactical_retreat.up*8+buff.student_of_suffering.up*2.5
 # Prioritize on use trinkets for cooldown synching
-actions+=/variable,name=double_on_use,value=variable.trinket1_steroids&trinket.1.cooldown.remains>20|variable.trinket1_steroids&trinket.1.cooldown.remains>20|!variable.trinket1_steroids&!variable.trinket2_steroids
+actions+=/variable,name=double_on_use,value=variable.trinket1_steroids&trinket.1.cooldown.remains>20|variable.trinket2_steroids&trinket.2.cooldown.remains>20|!variable.trinket1_steroids&!variable.trinket2_steroids
 # Blade Dance threshold: use on 3+ targets (2+ with Trail of Ruin), always with First Blood or SB
 actions+=/variable,name=use_blade_dance,op=set,value=active_enemies>=3-talent.trail_of_ruin|talent.first_blood|talent.screaming_brutality&(talent.burning_blades|talent.soulscar)
 # Pool extra fury when Glaive Tempest passive will trigger from Blade Dance at 3+ targets
@@ -56,12 +56,13 @@ actions+=/vengeful_retreat,use_off_gcd=1,if=talent.initiative&!buff.inner_demon.
 actions+=/call_action_list,name=cooldown
 actions+=/immolation_aura,if=active_enemies>2&talent.ragefire&debuff.essence_break.down&(buff.metamorphosis.down|buff.metamorphosis.remains>5)
 actions+=/immolation_aura,if=active_enemies>2&talent.ragefire&raid_event.adds.up&raid_event.adds.remains<15&raid_event.adds.remains>5&debuff.essence_break.down
+actions+=/immolation_aura,if=talent.a_fire_inside&hero_tree.felscarred&!buff.metamorphosis.up&cooldown.metamorphosis.remains<=10
 # Prevent IA charge capping for A Fire Inside builds (2 charges available)
 actions+=/immolation_aura,if=talent.a_fire_inside&(charges=2|full_recharge_time<gcd.max*2)&variable.bd_not_blocking&!debuff.essence_break.up&(raid_event.adds.in>full_recharge_time|active_enemies>desired_targets)
 actions+=/immolation_aura,if=(active_enemies>(1-talent.burning_wound+buff.metamorphosis.up))&variable.bd_not_blocking&(raid_event.adds.in>full_recharge_time|active_enemies>desired_targets)
 # Felblade/Fel Rush to consume inertia trigger
 actions+=/felblade,if=variable.inertia_ready&(variable.inertia_consumer_soon|buff.metamorphosis.remains>=5)&active_enemies<=2
-actions+=/fel_rush,if=variable.inertia_ready&(variable.inertia_consumer_soon_rush|buff.metamorphosis.remains>=5)&(active_enemies>2|cooldown.felblade.remains>5)
+actions+=/fel_rush,if=variable.inertia_ready&(variable.inertia_consumer_soon_rush|buff.metamorphosis.remains>=5)&(active_enemies>2|cooldown.felblade.remains>5|(action.death_sweep.demonsurge_available|action.annihilation.demonsurge_available)&cooldown.felblade.remains)
 # Vengeful Retreat for inertia builds
 actions+=/vengeful_retreat,if=talent.inertia&!buff.inertia_trigger.up&cooldown.metamorphosis.remains>=5&((cooldown.eye_beam.remains<=gcd.max*2|cooldown.blade_dance.remains<=7&(!talent.cycle_of_hatred|buff.cycle_of_hatred.stack<3)&((cooldown.eye_beam.remains>=15-buff.cycle_of_hatred.stack*2.5)|buff.metamorphosis.remains>=5))&gcd.remains<=0.3&time>5|fight_remains<10)
 # Vengeful Retreat for non-inertia Initiative builds
@@ -70,7 +71,9 @@ actions+=/run_action_list,name=meta,if=buff.metamorphosis.up
 actions+=/fel_rush,if=talent.inertia&buff.inertia_trigger.up&variable.inertia_consumer_soon&(active_enemies>2|cooldown.felblade.remains)
 actions+=/immolation_aura,if=fight_remains<15&(variable.use_blade_dance&cooldown.blade_dance.remains|!variable.use_blade_dance)&talent.ragefire
 # Eye Beam: at 5+ targets raw AoE damage outweighs alignment benefits, skip eb_aligned check
-actions+=/eye_beam,if=(variable.use_blade_dance&cooldown.blade_dance.remains<7|raid_event.adds.up|!variable.use_blade_dance)&(active_enemies>desired_targets*2|raid_event.adds.in>30-buff.cycle_of_hatred.stack*2.5|fight_style.dungeonroute&!raid_event.adds.in<=30-buff.cycle_of_hatred.stack*2.5)&(variable.eb_aligned|active_enemies>=5)&!buff.inner_demon.up|fight_remains<10
+actions+=/eye_beam,if=(variable.use_blade_dance&cooldown.blade_dance.remains<7|raid_event.adds.up|!variable.use_blade_dance)&(active_enemies>desired_targets*2|raid_event.adds.in>30-buff.cycle_of_hatred.stack*2.5|fight_style.dungeonroute&!raid_event.adds.in<=30-buff.cycle_of_hatred.stack*2.5)&(variable.eb_aligned|active_enemies>=5)&!buff.inner_demon.up&(cooldown.metamorphosis.remains<=5|!hero_tree.felscarred|cooldown.metamorphosis.remains>=15)|fight_remains<10
+# Essence Break outside meta: softer inertia gate allows EB when trigger is down
+actions+=/essence_break,if=talent.essence_break&fury>=35&(buff.inertia_trigger.down|buff.inertia.up&buff.inertia.remains>=gcd.max*3|!talent.inertia)&cooldown.eye_beam.remains>5&buff.out_of_range.remains<gcd.max
 actions+=/blade_dance,if=variable.use_blade_dance&(!talent.demonic|cooldown.eye_beam.remains>=gcd.max*2|active_enemies>=5|debuff.essence_break.up)&(!variable.pool_glaive_tempest|fury>=60)
 actions+=/chaos_strike,if=debuff.essence_break.up
 actions+=/felblade,if=!buff.inertia_trigger.up&(fury.deficit>=15+variable.fury_gen_per_sec*0.5)&(!buff.out_of_range.up|!buff.inertia.up)&(cooldown.blade_dance.remains>=0.5|!variable.use_blade_dance|fury<40|cooldown.eye_beam.remains<gcd.max*2)
@@ -86,15 +89,17 @@ actions+=/throw_glaive,if=debuff.essence_break.down&variable.use_filler&!talent.
 actions+=/arcane_torrent,if=variable.use_filler&buff.out_of_range.down&debuff.essence_break.down&fury<35
 
 # Cooldowns: metamorphosis and the_hunt
-actions.cooldown=metamorphosis,if=((buff.metamorphosis.up|cooldown.eye_beam.remains>=10-2*talent.collective_anguish|talent.cycle_of_hatred&cooldown.eye_beam.remains>=8|raid_event.adds.remains>8&raid_event.adds.remains<cooldown.eye_beam.remains|!talent.chaotic_transformation)&(raid_event.adds.in>40|active_enemies>desired_targets|fight_style.dungeonroute&!raid_event.adds.in<=120)|fight_remains<30)&!buff.inner_demon.up&(cooldown.blade_dance.remains>gcd.max*3|prev_gcd.1.death_sweep|prev_gcd.2.death_sweep|prev_gcd.3.death_sweep|!talent.chaotic_transformation|cooldown.eye_beam.remains>=8)&(!action.annihilation.demonsurge_available&!action.death_sweep.demonsurge_available)&cooldown.blade_dance.remains
+# CT builds can fire Meta slightly before inner_demon expires to get resets for inertia window 2
+actions.cooldown=metamorphosis,if=((buff.metamorphosis.up|cooldown.eye_beam.remains>=10-2*talent.collective_anguish|talent.cycle_of_hatred&cooldown.eye_beam.remains>=8|raid_event.adds.remains>8&raid_event.adds.remains<cooldown.eye_beam.remains|!talent.chaotic_transformation)&(raid_event.adds.in>40|active_enemies>desired_targets|fight_style.dungeonroute&!raid_event.adds.in<=120)|fight_remains<30)&(!buff.inner_demon.up|talent.chaotic_transformation&buff.inner_demon.remains<3)&(cooldown.blade_dance.remains>gcd.max*3|prev_gcd.1.death_sweep|prev_gcd.2.death_sweep|prev_gcd.3.death_sweep|!talent.chaotic_transformation|cooldown.eye_beam.remains>=8)&(!action.annihilation.demonsurge_available&!action.death_sweep.demonsurge_available)&cooldown.blade_dance.remains
 actions.cooldown+=/invoke_external_buff,name=power_infusion,if=buff.metamorphosis.up|fight_remains<=20
 actions.cooldown+=/potion,if=fight_remains<35|cooldown.eye_beam.remains<20
 actions.cooldown+=/use_item,slot=trinket1,use_off_gcd=1,if=variable.trinket1_steroids&cooldown.eye_beam.up|fight_remains<15
-actions.cooldown+=/use_item,slot=trinket1,use_off_gcd=1,if=variable.trinket1_crit&(buff.initiative.up|!talent.initiative)&variable.double_on_use|fight_remains<15
+actions.cooldown+=/use_item,slot=trinket1,use_off_gcd=1,if=variable.trinket1_crit&(buff.initiative.up|cooldown.vengeful_retreat.remains>10|!talent.initiative)&variable.double_on_use|fight_remains<15
 actions.cooldown+=/use_item,slot=trinket2,use_off_gcd=1,if=variable.trinket2_steroids&cooldown.eye_beam.up|fight_remains<15
-actions.cooldown+=/use_item,slot=trinket2,use_off_gcd=1,if=variable.trinket2_crit&(buff.initiative.up|!talent.initiative)&variable.double_on_use|fight_remains<15
+actions.cooldown+=/use_item,slot=trinket2,use_off_gcd=1,if=variable.trinket2_crit&(buff.initiative.up|cooldown.vengeful_retreat.remains>10|!talent.initiative)&variable.double_on_use|fight_remains<15
 # The Hunt: avoid during EB window or glaive cycle, align with Eternal Hunt EB synergy
-actions.cooldown+=/the_hunt,if=debuff.essence_break.down&!buff.reavers_glaive.up&(!talent.initiative|!buff.inertia_trigger.up&(buff.initiative.up|time>5))&(active_enemies>=desired_targets+raid_event.adds.count|raid_event.adds.in>45-talent.eternal_hunt*15)&(!talent.eternal_hunt|cooldown.eye_beam.remains<10)&(cooldown.metamorphosis.remains>30|hero_tree.aldrachi_reaver|buff.demonsurge_demonic_intensity.up&cooldown.eye_beam.remains<5)|fight_remains<=30
+# CT+Inertia builds open with Hunt at pull for inertia window 1, then VR+Meta for window 2
+actions.cooldown+=/the_hunt,if=debuff.essence_break.down&!buff.reavers_glaive.up&(!talent.initiative|!buff.inertia_trigger.up&(buff.initiative.up|time>5|talent.inertia&talent.chaotic_transformation))&(active_enemies>=desired_targets+raid_event.adds.count|raid_event.adds.in>45-talent.eternal_hunt*15)&(!talent.eternal_hunt|cooldown.eye_beam.remains<10)&(cooldown.metamorphosis.remains>30|hero_tree.aldrachi_reaver|buff.demonsurge_demonic_intensity.up&cooldown.eye_beam.remains<5|talent.inertia&talent.chaotic_transformation&time<2)|fight_remains<=30
 
 actions.meta=death_sweep,if=buff.metamorphosis.remains<gcd.max|variable.pool_glaive_tempest&fury>=60&cooldown.eye_beam.up&cooldown.metamorphosis.remains>=5|cooldown.eye_beam.remains<gcd.max&talent.blind_fury&fury>90-variable.fury_gen_per_sec*3|debuff.essence_break.up
 actions.meta+=/annihilation,if=buff.metamorphosis.remains<gcd.max|debuff.essence_break.up
