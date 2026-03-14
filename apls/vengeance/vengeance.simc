@@ -58,15 +58,17 @@ actions+=/retarget_auto_attack,target_if=min:debuff.reavers_mark.remains,if=hero
 actions+=/run_action_list,name=ar,if=hero_tree.aldrachi_reaver
 actions+=/run_action_list,name=anni,if=hero_tree.annihilator
 
-# AR two-pass look-ahead: proportional SC credit, averaged passive window, GCD-aligned delivery floor
+# Time-to-next-glaive (ttng) model: two-pass estimate with SC, SoS, and passive fragment credit
+# Pass 1 computes T1 without passives. Pass 2 folds passives into T1's window -> T2. Average tames oscillation.
+# genTime inline: fracture GCDs at (1+apex.3) per frac while charges avail, then recharge-gated
 actions.ar+=/variable,name=frac_souls,value=2+buff.metamorphosis.up
 actions.ar+=/variable,name=base_deficit,value=(20-buff.art_of_the_glaive.stack-soul_fragments.total)<?0
 actions.ar+=/variable,name=eff_recharge,value=cooldown.fracture.remains+(cooldown.fracture.charges>=2)*cooldown.fracture.duration
 actions.ar+=/variable,name=passive_per_sec,value=0.30+(talent.fallout&buff.immolation_aura.up)*0.30*spell_targets.spirit_bomb
 actions.ar+=/variable,name=fracs_base,value=variable.base_deficit%variable.frac_souls
 actions.ar+=/variable,name=fracs_base,op=ceil
-# genTime: burst at (1+apex.3) GCDs per frac while charges avail, then recharge-gated
 actions.ar+=/variable,name=base_gen_time,value=(variable.fracs_base>0)*((variable.fracs_base<=cooldown.fracture.charges)*variable.fracs_base*(1+apex.3)*gcd.max+(variable.fracs_base>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_base-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
+# Pass 1: subtract SC (6 frags) and SoS (3 frags) if they arrive within the gen window
 actions.ar+=/variable,name=sc1,value=talent.soul_carver&cooldown.soul_carver.remains<variable.base_gen_time
 actions.ar+=/variable,name=net1,value=(variable.base_deficit-variable.sc1*6)<?0
 actions.ar+=/variable,name=fracs1,value=variable.net1%variable.frac_souls
@@ -77,8 +79,9 @@ actions.ar+=/variable,name=N1,value=(variable.net1-variable.sos1*3)<?0
 actions.ar+=/variable,name=fracs_np,value=variable.N1%variable.frac_souls
 actions.ar+=/variable,name=fracs_np,op=ceil
 actions.ar+=/variable,name=gt_np,value=(variable.fracs_np>0)*((variable.fracs_np<=cooldown.fracture.charges)*variable.fracs_np*(1+apex.3)*gcd.max+(variable.fracs_np>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_np-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
-# T1: no-passive reference time (1 OH GCD + fracture gen + SC/SoS cast GCDs)
+# T1: no-passive reference time (overhead GCD + fracture gen + SC/SoS cast GCDs)
 actions.ar+=/variable,name=T1,value=gcd.max+variable.gt_np+variable.sc1*gcd.max+variable.sos1*gcd.max
+# Pass 2: proportional SC credit (scales by how early SC arrives relative to T1)
 actions.ar+=/variable,name=sc_prop,value=(talent.soul_carver&cooldown.soul_carver.remains<variable.T1)*((1-cooldown.soul_carver.remains%variable.T1)<?0)
 actions.ar+=/variable,name=net_p,value=(variable.base_deficit-6*variable.sc_prop)<?0
 actions.ar+=/variable,name=fracs_p,value=variable.net_p%variable.frac_souls
@@ -90,57 +93,64 @@ actions.ar+=/variable,name=adj2,value=(variable.N_p-variable.passive_per_sec*var
 actions.ar+=/variable,name=fracs_p2,value=variable.adj2%variable.frac_souls
 actions.ar+=/variable,name=fracs_p2,op=ceil
 actions.ar+=/variable,name=gt_p2,value=(variable.fracs_p2>0)*((variable.fracs_p2<=cooldown.fracture.charges)*variable.fracs_p2*(1+apex.3)*gcd.max+(variable.fracs_p2>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_p2-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
-# T2: passive-adjusted estimate, averaged with T1 to tame circular oscillation
+# T2: passive-adjusted estimate, averaged with T1 to tame oscillation
 actions.ar+=/variable,name=T2,value=gcd.max+variable.gt_p2+(variable.sc_prop>0)*gcd.max+variable.sos_p*gcd.max
 actions.ar+=/variable,name=T_avg,value=(variable.T1+variable.T2)%2
+# Final pass: use T_avg as the passive window for the definitive fracture count
 actions.ar+=/variable,name=adj_f,value=(variable.N_p-variable.passive_per_sec*variable.T_avg)<?0
 actions.ar+=/variable,name=fracs_f,value=variable.adj_f%variable.frac_souls
 actions.ar+=/variable,name=fracs_f,op=ceil
 actions.ar+=/variable,name=gt_f,value=(variable.fracs_f>0)*((variable.fracs_f<=cooldown.fracture.charges)*variable.fracs_f*(1+apex.3)*gcd.max+(variable.fracs_f>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_f-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
 actions.ar+=/variable,name=time_to_next_glaive,value=gcd.max+variable.gt_f+(variable.sc_prop>0)*gcd.max+variable.sos_p*gcd.max
-# When passive alone covers deficit (fracs_f=0), enforce GCD-aligned passive delivery floor
+# When passive alone covers deficit, enforce GCD-aligned delivery floor
 actions.ar+=/variable,name=passive_floor,value=variable.N_p%(variable.passive_per_sec*gcd.max)
 actions.ar+=/variable,name=passive_floor,op=ceil
 actions.ar+=/variable,name=passive_floor,value=variable.passive_floor*gcd.max
 actions.ar+=/variable,name=time_to_next_glaive,value=variable.time_to_next_glaive<?(variable.fracs_f=0&variable.N_p>0)*variable.passive_floor
-# Mark applies on fracture, 2 GCDs after RG in refresh order (RG->SC->Frac)
+# RM application happens 2 GCDs into the cycle (RG -> SC -> Frac applies mark)
 actions.ar+=/variable,name=time_to_next_rm_application,value=variable.time_to_next_glaive+2*gcd.max
-# Own RM tracking: debuff.reavers_mark.remains is unreliable with async stacks
-# last_rm_applied is set inside ar_glaive_cycle when fracture consumes rending_strike
+# RM tracking via variable (debuff.remains unreliable with async stacks)
 actions.ar+=/variable,name=rm_remains,value=(variable.last_rm_applied>0)*(20-(time-variable.last_rm_applied))<?0
-# Slash/refresh alternation: slash when last refresh is more recent than last slash
+# Slash/refresh alternation: slash after a refresh cycle, refresh after a slash
 actions.ar+=/variable,name=prio_slashes,value=variable.aoe|(variable.rm_remains>0&variable.last_refresh_at>variable.last_slash_at)
-# Record cycle type ONCE when RG first stored (cycle_recorded resets when RG buff drops)
+# Record cycle type once when RG first stored (resets when RG buff drops)
 actions.ar+=/variable,name=last_slash_at,op=setif,value=time,value_else=variable.last_slash_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&variable.prio_slashes
 actions.ar+=/variable,name=last_refresh_at,op=setif,value=time,value_else=variable.last_refresh_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&!variable.prio_slashes
 actions.ar+=/variable,name=cycle_recorded,value=buff.reavers_glaive.up
-# Fracture constrained: no charge and won't recover within 1 GCD
+# Resource constraints for protect_glaive gating
 actions.ar+=/variable,name=frac_constrained,value=cooldown.fracture.charges<1&cooldown.fracture.remains>gcd.max
-# Fury constrained: a filler SC would drop fury below what the cycle needs
 actions.ar+=/variable,name=fury_constrained,value=(fury-action.soul_cleave.cost)<(action.soul_cleave.cost-(talent.keen_engagement*20))
-# RG imminent: will fire within 1-2 GCDs via spending, overflow at cap, or forced release
+# RG imminent: stored and ready to fire, at AotG cap, or one consume from overflow
 actions.ar+=/variable,name=rg_imminent,value=(buff.reavers_glaive.up&(variable.execute|variable.rm_remains<=variable.time_to_next_rm_application|buff.art_of_the_glaive.stack+soul_fragments>=(20-variable.frac_souls)))|(buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)
 
+# Gap closer after VR
 actions.ar+=/felblade,if=prev_gcd.1.vengeful_retreat|prev_off_gcd.vengeful_retreat
+# UR proc meta fires unconditionally; hardcast meta after RG
 actions.ar+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up
 actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&prev_gcd.1.reavers_glaive
-# Stat buff trinkets BEFORE RG so the buff covers the entire glaive cycle
+# Stat buff trinkets before RG so the buff covers the glaive cycle
 actions.ar+=/use_item,slot=trinket1,if=variable.trinket_1_buffs&buff.reavers_glaive.up&(!trinket.2.has_cooldown|trinket.2.cooldown.remains|variable.trinket_priority=1)
 actions.ar+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&buff.reavers_glaive.up&(!trinket.1.has_cooldown|trinket.1.cooldown.remains|variable.trinket_priority=2)
-# Fire stored RG: execute, mark expired, mark aging (<10s), or AotG overflow imminent
+# Fire stored RG: execute, mark expired or aging, or consume would overflow AotG
 actions.ar+=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.execute|variable.rm_remains<=0|variable.rm_remains<10|buff.art_of_the_glaive.stack+soul_fragments>=(20-variable.frac_souls))
 actions.ar+=/call_action_list,name=ar_glaive_cycle,if=buff.rending_strike.up|buff.glaive_flurry.up|prev_gcd.1.reavers_glaive
+# Fiery brand: overcapped charges, or setup for fiery demise window
 actions.ar+=/fiery_brand,if=charges>=2|(!variable.fiery_demise_active&(!talent.fiery_demise|variable.fire_cd_soon|variable.execute))
+# IA on CD: generates Fallout fragments passively
 actions.ar+=/immolation_aura
+# FD: only channel when fury is high, frags are in-flight (nothing to consume), and not near RG
 actions.ar+=/fel_devastation,if=fury>85&soul_fragments.inactive>2&!variable.rg_imminent
+# Guard fracture charges and fury when RG sequence is imminent
 actions.ar+=/call_action_list,name=ar_protect_glaive,if=(variable.rg_imminent|(variable.time_to_next_glaive<2*gcd.max&!buff.reavers_glaive.up))&(variable.frac_constrained|variable.fury_constrained)
-# Emergency soul dump: not in a glaive cycle, no RG stored, close to 20 via consume or overflow
+# Emergency consume: not in cycle, close to AotG=20 via spending or overflow
 actions.ar+=/call_action_list,name=ar_prio_souls,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&((buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)|(variable.rm_remains<3*gcd.max&buff.art_of_the_glaive.stack>=16))
+# SoS on CD: 3 fragments + damage, too powerful to hold
 actions.ar+=/sigil_of_spite
+# SC: 6 fragments; prefer fiery demise window, allow when mark aging or execute
 actions.ar+=/soul_carver,if=variable.fiery_demise_active|variable.rm_remains<15|variable.execute
 actions.ar+=/call_action_list,name=ar_fillers
 
-# Only guard the resources the RG sequence needs (fury + fracture charges); fall through to fillers otherwise
+# Protect glaive: guard fury + fracture for upcoming RG sequence; falls through to fillers if nothing to guard
 actions.ar_protect_glaive=/fiery_brand,if=charges>=2|!variable.fiery_demise_active
 actions.ar_protect_glaive+=/spirit_bomb,if=soul_fragments>=3&((fury-action.spirit_bomb.cost)>(action.soul_cleave.cost-(talent.keen_engagement*20)))&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
 actions.ar_protect_glaive+=/fracture,if=full_recharge_time<gcd.max|soul_fragments.total<(20-buff.art_of_the_glaive.stack)
@@ -148,6 +158,7 @@ actions.ar_protect_glaive+=/soul_cleave,if=(fury-action.soul_cleave.cost)>(actio
 actions.ar_protect_glaive+=/soul_carver
 actions.ar_protect_glaive+=/fel_devastation
 
+# Prio souls: rush to AotG=20 when close. Urgent consume, generate, or fury-gen to push over the edge.
 actions.ar_prio_souls=/soul_cleave,if=variable.rm_remains<gcd.max*3&soul_fragments>=2&soul_fragments<3&buff.art_of_the_glaive.stack>=18
 actions.ar_prio_souls+=/spirit_bomb,if=variable.rm_remains<gcd.max*3&soul_fragments>=3&buff.art_of_the_glaive.stack>=(20-soul_fragments)
 actions.ar_prio_souls+=/soul_carver
@@ -157,44 +168,48 @@ actions.ar_prio_souls+=/spirit_bomb,if=soul_fragments>=3
 actions.ar_prio_souls+=/felblade
 actions.ar_prio_souls+=/soul_cleave
 
+# Fillers: standard rotation when not in a glaive cycle or emergency
 actions.ar_fillers=/spirit_bomb,if=soul_fragments>=variable.fragment_target
-# IA only when not close to RG — free GCD but doesn't build AotG
 actions.ar_fillers+=/immolation_aura,if=variable.time_to_next_glaive>3*gcd.max
 actions.ar_fillers+=/felblade,if=cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
 actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=!cooldown.felblade.up&talent.unhindered_assault&cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
-# Slash guard: don't SC when RS+GF both up during slash cycle (would consume GF before fracture can slash)
-# Deadlock guard: don't SC if it would bottom out fury when fracture is also empty
+# SC with slash guard (don't consume GF during slash cycle) + deadlock guard (don't bottom out fury + frac)
 actions.ar_fillers+=/soul_cleave,if=(soul_fragments>=5|soul_fragments<=1|fury.deficit<30)&(fury>=2*action.soul_cleave.cost|cooldown.fracture.charges>=1|cooldown.fracture.remains<=gcd.max)&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
 actions.ar_fillers+=/sigil_of_flame,if=variable.aoe
 actions.ar_fillers+=/fracture,if=buff.metamorphosis.up|full_recharge_time<gcd.max|buff.warblades_hunger.stack>=4
 actions.ar_fillers+=/immolation_aura,if=!variable.is_dungeon|in_combat
 actions.ar_fillers+=/sigil_of_flame
+# Unconditional SC fallback with same guards
 actions.ar_fillers+=/soul_cleave,if=(fury>=2*action.soul_cleave.cost|cooldown.fracture.charges>=1|cooldown.fracture.remains<=gcd.max)&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
 actions.ar_fillers+=/fracture
 actions.ar_fillers+=/felblade
 actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault&!cooldown.felblade.up
 actions.ar_fillers+=/throw_glaive
 
-# Non-buff damage trinkets off-GCD during cycle (stat buffs already fired before RG)
+# Glaive cycle: RS+GF buff alternation after RG fires. Slash (frac first) or refresh (SC first).
+# Non-buff damage trinkets off-GCD during cycle
 actions.ar_glaive_cycle+=/use_item,use_off_gcd=1,slot=trinket1,if=!variable.trinket_1_buffs&(variable.damage_trinket_priority=1|trinket.2.cooldown.remains|trinket.2.cooldown.duration=0)&gcd.remains>0.1
 actions.ar_glaive_cycle+=/use_item,use_off_gcd=1,slot=trinket2,if=!variable.trinket_2_buffs&(variable.damage_trinket_priority=2|trinket.1.cooldown.remains|trinket.1.cooldown.duration=0)&gcd.remains>0.1
+# Fill GCD when waiting for fracture charge (slash) or fury (refresh)
 actions.ar_glaive_cycle+=/call_action_list,name=ar_glaive_cycle_filler,if=(variable.prio_slashes&((cooldown.fracture.charges<1&buff.rending_strike.up&buff.glaive_flurry.up)|fury<10))|(!variable.prio_slashes&((buff.rending_strike.up&buff.glaive_flurry.up&fury<35)|(buff.rending_strike.up&!buff.glaive_flurry.up&cooldown.fracture.charges<1)))
 actions.ar_glaive_cycle+=/potion,use_off_gcd=1
 actions.ar_glaive_cycle+=/invoke_external_buff,name=power_infusion
-# Record RM application time when fracture is about to consume RS and apply mark
+# Record RM application time when fracture is about to consume RS
 actions.ar_glaive_cycle+=/variable,name=last_rm_applied,value=time,if=buff.rending_strike.up
-# Slash cycle: micro-wait for fracture recharge rather than letting SC leak through
+# Slash: wait briefly for fracture if almost ready, then fracture first (1-stack RM + slash damage)
 actions.ar_glaive_cycle+=/wait,sec=0.2,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1&cooldown.fracture.remains<1
 actions.ar_glaive_cycle+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up&variable.prio_slashes
-# SC when both buffs up only on refresh cycles
+# Refresh: SC first when both buffs up (subsequent fracture gets 3-stack RM)
 actions.ar_glaive_cycle+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up&!variable.prio_slashes
+# Single-buff continuation
 actions.ar_glaive_cycle+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
 actions.ar_glaive_cycle+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
-# Slash cycle: fill without consuming GF while waiting for fracture; wait as last resort
+# Slash catch-all: fill without consuming GF while waiting for fracture
 actions.ar_glaive_cycle+=/throw_glaive,if=variable.prio_slashes&buff.glaive_flurry.up&cooldown.fracture.charges<1
 actions.ar_glaive_cycle+=/sigil_of_flame,if=variable.prio_slashes&buff.glaive_flurry.up&cooldown.fracture.charges<1
-# Last resort micro-wait when all fillers exhausted
 actions.ar_glaive_cycle+=/wait,sec=0.2,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1
+
+# Glaive cycle filler: non-consuming actions while waiting for resources
 actions.ar_glaive_cycle_filler=/spirit_bomb,if=fury>75&soul_fragments>=variable.fragment_target
 actions.ar_glaive_cycle_filler+=/immolation_aura
 actions.ar_glaive_cycle_filler+=/fel_devastation,if=fury>=85
@@ -203,7 +218,7 @@ actions.ar_glaive_cycle_filler+=/sigil_of_flame
 actions.ar_glaive_cycle_filler+=/soul_carver
 actions.ar_glaive_cycle_filler+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault&!cooldown.felblade.up
 actions.ar_glaive_cycle_filler+=/throw_glaive
-# Safe SC during slash cycle: only when GF already consumed (won't ruin the slash)
+# SC only when GF already consumed (safe during slash cycles)
 actions.ar_glaive_cycle_filler+=/soul_cleave,if=!buff.glaive_flurry.up
 
 
