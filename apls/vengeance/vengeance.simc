@@ -157,6 +157,7 @@ actions.ar_prio_souls+=/soul_carver
 actions.ar_prio_souls+=/immolation_aura,if=variable.aoe&in_combat
 actions.ar_prio_souls+=/fracture
 actions.ar_prio_souls+=/spirit_bomb,if=soul_fragments>=3
+actions.ar_prio_souls+=/felblade
 actions.ar_prio_souls+=/soul_cleave
 
 actions.ar_fillers=/immolation_aura,if=variable.aoe&soul_fragments<=variable.fragment_target&in_combat
