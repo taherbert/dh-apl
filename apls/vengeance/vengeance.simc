@@ -266,9 +266,9 @@ actions.anni_voidfall_spending+=/soul_cleave,if=cooldown.spirit_bomb.remains>gcd
 actions.anni_voidfall_spending+=/spirit_bomb,if=soul_fragments>=variable.fragment_target
 actions.anni_voidfall_spending+=/felblade,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
 actions.anni_voidfall_spending+=/immolation_aura,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
-actions.anni_voidfall_spending+=/soul_carver,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(!talent.sigil_of_spite|!action.sigil_of_spite.placed))
-actions.anni_voidfall_spending+=/fel_devastation,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(!talent.sigil_of_spite|!action.sigil_of_spite.placed))
-actions.anni_voidfall_spending+=/immolation_aura,if=variable.aoe&(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
+actions.anni_voidfall_spending+=/soul_carver,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(talent.sigil_of_spite|!action.sigil_of_spite.placed))
+actions.anni_voidfall_spending+=/fel_devastation,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(talent.sigil_of_spite|!action.sigil_of_spite.placed))
+actions.anni_voidfall_spending+=/immolation_aura,if=variable.aoe&(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(talent.sigil_of_spite|!action.sigil_of_spite.placed)
 actions.anni_voidfall_spending+=/sigil_of_spite,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target
 actions.anni_voidfall_spending+=/call_action_list,name=anni_filler_no_spend
 
@@ -283,7 +283,7 @@ actions.anni_meta_entry+=/sigil_of_spite,if=soul_fragments>=variable.fragment_ta
 actions.anni_meta_entry+=/spirit_bomb,if=soul_fragments>=variable.fragment_target&fury>=60
 actions.anni_meta_entry+=/sigil_of_spite,if=soul_fragments.total<variable.fragment_target
 actions.anni_meta_entry+=/call_action_list,name=anni_generate_fury,if=fury<40&cooldown.metamorphosis.up&cooldown.spirit_bomb.remains>gcd.max*3
-actions.anni_meta_entry+=/metamorphosis,use_off_gcd=1,if=gcd.remains=0&cooldown.spirit_bomb.remains>gcd.max*3&(soul_fragments.total>=variable.fragment_target|action.sigil_of_spite.placed)
+actions.anni_meta_entry+=/metamorphosis,use_off_gcd=1,if=gcd.remains=0&cooldown.spirit_bomb.remains>gcd.max*3&(soul_fragments.total>=variable.fragment_target|(talent.sigil_of_spite&action.sigil_of_spite.placed))
 actions.anni_meta_entry+=/call_action_list,name=anni_filler_no_spend
 
 # Build fragments for a pre-meta spirit bomb
@@ -303,13 +303,13 @@ actions.anni_generate_fury+=/sigil_of_flame
 actions.anni_generate_fury+=/felblade
 actions.anni_generate_fury+=/fracture
 
-actions.anni_filler_no_spend=/soul_cleave,if=soul_fragments=0&!action.sigil_of_flame.placed&(!talent.sigil_of_spite|!action.sigil_of_spite.placed)&!prev_gcd.2.soul_carver
+actions.anni_filler_no_spend=/soul_cleave,if=soul_fragments=0&!action.sigil_of_flame.placed&(!talent.sigil_of_spite|(talent.sigil_of_spite&!action.sigil_of_spite.placed))&!prev_gcd.2.soul_carver
 actions.anni_filler_no_spend+=/immolation_aura
 actions.anni_filler_no_spend+=/sigil_of_flame
 actions.anni_filler_no_spend+=/felblade
 actions.anni_filler_no_spend+=/fracture,if=!buff.voidfall_spending.up
-actions.anni_filler_no_spend+=/soul_carver,if=(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
-actions.anni_filler_no_spend+=/fel_devastation,if=(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
+actions.anni_filler_no_spend+=/soul_carver,if=(!talent.sigil_of_spite|(talent.sigil_of_spite&!action.sigil_of_spite.placed))
+actions.anni_filler_no_spend+=/fel_devastation,if=(!talent.sigil_of_spite|(talent.sigil_of_spite&!action.sigil_of_spite.placed))
 actions.anni_filler_no_spend+=/sigil_of_spite
 actions.anni_filler_no_spend+=/fracture
 actions.anni_filler_no_spend+=/throw_glaive
