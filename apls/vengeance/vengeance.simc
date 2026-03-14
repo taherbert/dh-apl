@@ -159,8 +159,9 @@ actions.ar_prio_souls+=/spirit_bomb,if=soul_fragments>=3
 actions.ar_prio_souls+=/felblade
 actions.ar_prio_souls+=/soul_cleave
 
-actions.ar_fillers=/immolation_aura
-actions.ar_fillers+=/spirit_bomb,if=soul_fragments>=variable.fragment_target
+# Consume first when building toward RG, IA only when not close
+actions.ar_fillers=/spirit_bomb,if=soul_fragments>=variable.fragment_target
+actions.ar_fillers+=/immolation_aura,if=variable.time_to_next_glaive>3*gcd.max
 actions.ar_fillers+=/felblade,if=cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
 actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=!cooldown.felblade.up&talent.unhindered_assault&cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
 # Slash guard: don't SC when RS+GF both up during slash cycle (would consume GF before fracture can slash)
@@ -213,8 +214,8 @@ actions.ar_cooldowns=/spirit_bomb,if=soul_fragments>=variable.fragment_target
 actions.ar_cooldowns+=/sigil_of_spite,if=variable.time_to_next_glaive>3*gcd.max
 # SC: prefer FB window for amp, but allow when mark is aging (urgent soul need)
 actions.ar_cooldowns+=/soul_carver,if=variable.time_to_next_glaive>3*gcd.max&(variable.fiery_demise_active|variable.rm_remains<15|variable.execute)
-# FD: hold for fiery_demise window (50 fury spender benefits from damage amp)
-actions.ar_cooldowns+=/fel_devastation,if=variable.fiery_demise_active|variable.execute
+# FD: hold for fiery_demise window, don't channel when close to RG (2s channel delays cycle)
+actions.ar_cooldowns+=/fel_devastation,if=variable.time_to_next_glaive>3*gcd.max&(variable.fiery_demise_active|variable.execute)
 
 # --- START OLD APL ---
 # # Meta entry conditions: not in Meta, not in Voidfall spending, building stacks low, TTD safe
