@@ -131,9 +131,6 @@ actions.ar+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&buff.reavers_gla
 # Fire stored RG: execute, no mark, mark aging (< ttng_rm or < 10s), or AotG overflow imminent
 actions.ar+=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.execute|variable.rm_remains<=0|variable.rm_remains<10|buff.art_of_the_glaive.stack+soul_fragments>=18)
 actions.ar+=/call_action_list,name=ar_glaive_cycle,if=buff.rending_strike.up|buff.glaive_flurry.up|prev_gcd.1.reavers_glaive
-# Micro-wait for in-flight fragments that would push AotG to 20 (avoids wasting a filler GCD)
-actions.ar+=/wait,sec=0.05,if=soul_fragments.inactive>0&buff.art_of_the_glaive.stack+soul_fragments.total>=20&!buff.reavers_glaive.up,line_cd=1
-
 # Fracture constrained: no charge and won't recover within 1 GCD
 actions.ar+=/variable,name=frac_constrained,value=cooldown.fracture.charges<1&cooldown.fracture.remains>gcd.max
 # Fury constrained: a filler SC would drop fury below what the cycle needs
@@ -188,7 +185,7 @@ actions.ar_glaive_cycle+=/invoke_external_buff,name=power_infusion
 # Record RM application time when fracture is about to consume RS and apply mark
 actions.ar_glaive_cycle+=/variable,name=last_rm_applied,value=time,if=buff.rending_strike.up
 # Slash cycle: micro-wait for fracture recharge rather than letting SC leak through
-actions.ar_glaive_cycle+=/wait,sec=0.05,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1&cooldown.fracture.remains<1,line_cd=1
+actions.ar_glaive_cycle+=/wait,sec=0.2,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1&cooldown.fracture.remains<1
 actions.ar_glaive_cycle+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up&variable.prio_slashes
 # SC when both buffs up only on refresh cycles
 actions.ar_glaive_cycle+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up&!variable.prio_slashes
@@ -198,8 +195,7 @@ actions.ar_glaive_cycle+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_str
 actions.ar_glaive_cycle+=/throw_glaive,if=variable.prio_slashes&buff.glaive_flurry.up&cooldown.fracture.charges<1
 actions.ar_glaive_cycle+=/sigil_of_flame,if=variable.prio_slashes&buff.glaive_flurry.up&cooldown.fracture.charges<1
 # Last resort micro-wait when all fillers exhausted
-actions.ar_glaive_cycle+=/wait,sec=0.05,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1,line_cd=1
-
+actions.ar_glaive_cycle+=/wait,sec=0.2,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1
 actions.ar_glaive_cycle_filler=/spirit_bomb,if=fury>75&soul_fragments>=variable.fragment_target
 actions.ar_glaive_cycle_filler+=/immolation_aura
 actions.ar_glaive_cycle_filler+=/felblade
