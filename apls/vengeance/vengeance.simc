@@ -1,11 +1,5 @@
 input=apls/vengeance/profile.simc
 
-# Precombat
-actions.precombat=/snapshot_stats
-actions.precombat+=/variable,name=trinket_1_buffs,value=trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery|trinket.1.has_buff.versatility|trinket.1.has_buff.haste|trinket.1.has_buff.crit)
-actions.precombat+=/variable,name=trinket_2_buffs,value=trinket.2.has_use_buff|(trinket.2.has_buff.agility|trinket.2.has_buff.mastery|trinket.2.has_buff.versatility|trinket.2.has_buff.haste|trinket.2.has_buff.crit)
-actions.precombat+=/sigil_of_flame
-actions.precombat+=/immolation_aura
 
 # Target counts
 actions=/variable,name=single_target,value=spell_targets.spirit_bomb=1
@@ -13,93 +7,193 @@ actions+=/variable,name=aoe,value=spell_targets.spirit_bomb>=3
 actions+=/variable,name=execute,value=fight_remains<20
 
 # Dungeon Route
-actions+=/variable,name=is_dungeon,value=fight_style.dungeonroute|fight_style.dungeonslice
 # Per-pull max TTD (cycling across all targets in current pull)
 actions+=/cycling_variable,name=pull_ttd,op=reset
 actions+=/cycling_variable,name=pull_ttd,op=max,value=target.time_to_die
-# Hold major CDs for upcoming pull; uses pull.remains not adds.in to avoid SimC timespan overflow bug
+actions+=/variable,name=is_dungeon,value=fight_style.dungeonroute|fight_style.dungeonslice
 actions+=/variable,name=hold_for_next_pull,value=variable.is_dungeon&raid_event.adds.exists&raid_event.pull.remains<12&(raid_event.adds.has_boss|raid_event.adds.count>=3)
 # Block major CDs when TTD is low or holding for the next pull
 actions+=/variable,name=cd_ready,value=variable.execute|!variable.is_dungeon|(variable.pull_ttd>12&!variable.hold_for_next_pull)
 # TTD guard for Meta - Anni gets lower bar for UR proc windows and Voidfall resets
 actions+=/variable,name=dung_ttd_safe,value=variable.execute|!variable.is_dungeon|(variable.pull_ttd>(15-5*hero_tree.annihilator)&!variable.hold_for_next_pull)
 
+# Trinkets
+actions+=/variable,name=trinket_1_buffs,value=trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery|trinket.1.has_buff.versatility|trinket.1.has_buff.haste|trinket.1.has_buff.crit|trinket.1.has_buff.attack_power)
+actions+=/variable,name=trinket_2_buffs,value=trinket.2.has_use_buff|(trinket.2.has_buff.agility|trinket.2.has_buff.mastery|trinket.2.has_buff.versatility|trinket.2.has_buff.haste|trinket.2.has_buff.crit|trinket.2.has_buff.attack_power)
+# Determine which buff trinket is stronger (by total stat value = duration * proc value)
+actions+=/variable,name=trinket_priority,op=setif,value=2,value_else=1,condition=!variable.trinket_1_buffs&variable.trinket_2_buffs|variable.trinket_2_buffs&((trinket.2.proc.any_dps.duration)*trinket.2.proc.any_dps.default_value)>((trinket.1.proc.any_dps.duration)*trinket.1.proc.any_dps.default_value)
+# Non-buff damage trinkets: which slot has higher ilvl
+actions+=/variable,name=damage_trinket_priority,op=setif,value=2,value_else=1,condition=!variable.trinket_1_buffs&!variable.trinket_2_buffs&trinket.2.ilvl>=trinket.1.ilvl
+
 # Fiery Demise amplification window active
 actions+=/variable,name=fiery_demise_active,value=talent.fiery_demise&dot.fiery_brand.ticking
-# Fire cooldown available
-actions+=/variable,name=fire_cd_soon,value=cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<8
+# Fire cooldown available soon
+actions+=/variable,name=fire_cd_soon,value=cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<(8+talent.charred_flesh.rank)
 # Fragment target: 3 during Brand, 4 in Meta, 5 baseline
 actions+=/variable,name=fragment_target,value=variable.fiery_demise_active*3+!variable.fiery_demise_active*(5-buff.metamorphosis.up)
-# Fracture about to cap charges with room for more fragments
-actions+=/variable,name=fracture_cap_soon,value=cooldown.fracture.full_recharge_time<gcd.max&soul_fragments.total<6
 
-# Start Actions
+actions.precombat=/snapshot_stats
+actions.precombat+=/sigil_of_flame
+actions.precombat+=/sigil_of_spite,if=hero_tree.aldrachi_reaver
+actions.precombat+=/immolation_aura
+
 actions+=/auto_attack
-actions+=/disrupt,if=target.debuff.casting.react
-actions+=/infernal_strike,use_off_gcd=1
-actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&in_combat
+actions+=/retarget_auto_attack,target_if=min:debuff.reavers_mark.remains,if=hero_tree.aldrachi_reaver
+
+# actions+=/disrupt,if=target.debuff.casting.react
+# actions+=/infernal_strike,use_off_gcd=1
+# actions+=/demon_spikes,use_off_gcd=1,if=!buff.demon_spikes.up&in_combat
 actions+=/run_action_list,name=ar,if=hero_tree.aldrachi_reaver
 actions+=/run_action_list,name=anni,if=hero_tree.annihilator
 
-# Externals
-actions.externals=/invoke_external_buff,name=power_infusion
-
-# Non-buff trinkets fire on cooldown; buff trinkets sync with Metamorphosis
-actions.trinkets=/use_item,slot=trinket1,if=!trinket.1.is.tome_of_lights_devotion&(!variable.trinket_1_buffs|(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.1.cooldown.duration|(variable.trinket_2_buffs&trinket.2.cooldown.remains<cooldown.metamorphosis.remains)))
-actions.trinkets+=/use_item,slot=trinket2,if=!trinket.2.is.tome_of_lights_devotion&(!variable.trinket_2_buffs|(buff.metamorphosis.up|cooldown.metamorphosis.remains<10|cooldown.metamorphosis.remains>trinket.2.cooldown.duration|(variable.trinket_1_buffs&trinket.1.cooldown.remains<cooldown.metamorphosis.remains)))
-
-# Aldrachi Reaver
-actions.ar=/call_action_list,name=trinkets
-actions.ar+=/potion,use_off_gcd=1,if=((buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive)&(!variable.is_dungeon|in_boss_encounter)
-actions.ar+=/call_action_list,name=externals,if=(buff.rending_strike.up&buff.glaive_flurry.up)|prev_gcd.1.reavers_glaive
+# AR two-pass look-ahead: proportional SC credit, averaged passive window, GCD-aligned delivery floor
+actions.ar+=/variable,name=frac_souls,value=2+buff.metamorphosis.up
+actions.ar+=/variable,name=base_deficit,value=(20-buff.art_of_the_glaive.stack-soul_fragments.total)<?0
+actions.ar+=/variable,name=eff_recharge,value=cooldown.fracture.remains+(cooldown.fracture.charges>=2)*cooldown.fracture.duration
+actions.ar+=/variable,name=passive_per_sec,value=0.30+(talent.fallout&buff.immolation_aura.up)*0.30*spell_targets.spirit_bomb
+actions.ar+=/variable,name=fracs_base,value=variable.base_deficit%variable.frac_souls
+actions.ar+=/variable,name=fracs_base,op=ceil
+# genTime: burst at (1+apex.3) GCDs per frac while charges avail, then recharge-gated
+actions.ar+=/variable,name=base_gen_time,value=(variable.fracs_base>0)*((variable.fracs_base<=cooldown.fracture.charges)*variable.fracs_base*(1+apex.3)*gcd.max+(variable.fracs_base>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_base-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
+actions.ar+=/variable,name=sc1,value=talent.soul_carver&cooldown.soul_carver.remains<variable.base_gen_time
+actions.ar+=/variable,name=net1,value=(variable.base_deficit-variable.sc1*6)<?0
+actions.ar+=/variable,name=fracs1,value=variable.net1%variable.frac_souls
+actions.ar+=/variable,name=fracs1,op=ceil
+actions.ar+=/variable,name=gt1,value=(variable.fracs1>0)*((variable.fracs1<=cooldown.fracture.charges)*variable.fracs1*(1+apex.3)*gcd.max+(variable.fracs1>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs1-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
+actions.ar+=/variable,name=sos1,value=talent.sigil_of_spite&cooldown.sigil_of_spite.remains<variable.gt1
+actions.ar+=/variable,name=N1,value=(variable.net1-variable.sos1*3)<?0
+actions.ar+=/variable,name=fracs_np,value=variable.N1%variable.frac_souls
+actions.ar+=/variable,name=fracs_np,op=ceil
+actions.ar+=/variable,name=gt_np,value=(variable.fracs_np>0)*((variable.fracs_np<=cooldown.fracture.charges)*variable.fracs_np*(1+apex.3)*gcd.max+(variable.fracs_np>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_np-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
+# T1: no-passive reference time (1 OH GCD + fracture gen + SC/SoS cast GCDs)
+actions.ar+=/variable,name=T1,value=gcd.max+variable.gt_np+variable.sc1*gcd.max+variable.sos1*gcd.max
+actions.ar+=/variable,name=sc_prop,value=(talent.soul_carver&cooldown.soul_carver.remains<variable.T1)*((1-cooldown.soul_carver.remains%variable.T1)<?0)
+actions.ar+=/variable,name=net_p,value=(variable.base_deficit-6*variable.sc_prop)<?0
+actions.ar+=/variable,name=fracs_p,value=variable.net_p%variable.frac_souls
+actions.ar+=/variable,name=fracs_p,op=ceil
+actions.ar+=/variable,name=gt_p,value=(variable.fracs_p>0)*((variable.fracs_p<=cooldown.fracture.charges)*variable.fracs_p*(1+apex.3)*gcd.max+(variable.fracs_p>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_p-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
+actions.ar+=/variable,name=sos_p,value=talent.sigil_of_spite&cooldown.sigil_of_spite.remains<variable.gt_p
+actions.ar+=/variable,name=N_p,value=(variable.net_p-variable.sos_p*3)<?0
+actions.ar+=/variable,name=adj2,value=(variable.N_p-variable.passive_per_sec*variable.T1)<?0
+actions.ar+=/variable,name=fracs_p2,value=variable.adj2%variable.frac_souls
+actions.ar+=/variable,name=fracs_p2,op=ceil
+actions.ar+=/variable,name=gt_p2,value=(variable.fracs_p2>0)*((variable.fracs_p2<=cooldown.fracture.charges)*variable.fracs_p2*(1+apex.3)*gcd.max+(variable.fracs_p2>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_p2-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
+# T2: passive-adjusted estimate, averaged with T1 to tame circular oscillation
+actions.ar+=/variable,name=T2,value=gcd.max+variable.gt_p2+(variable.sc_prop>0)*gcd.max+variable.sos_p*gcd.max
+actions.ar+=/variable,name=T_avg,value=(variable.T1+variable.T2)%2
+actions.ar+=/variable,name=adj_f,value=(variable.N_p-variable.passive_per_sec*variable.T_avg)<?0
+actions.ar+=/variable,name=fracs_f,value=variable.adj_f%variable.frac_souls
+actions.ar+=/variable,name=fracs_f,op=ceil
+actions.ar+=/variable,name=gt_f,value=(variable.fracs_f>0)*((variable.fracs_f<=cooldown.fracture.charges)*variable.fracs_f*(1+apex.3)*gcd.max+(variable.fracs_f>cooldown.fracture.charges)*((cooldown.fracture.charges*(1+apex.3)*gcd.max<?variable.eff_recharge)+((variable.fracs_f-cooldown.fracture.charges-1)<?0)*cooldown.fracture.duration+gcd.max))
+actions.ar+=/variable,name=time_to_next_glaive,value=gcd.max+variable.gt_f+(variable.sc_prop>0)*gcd.max+variable.sos_p*gcd.max
+# When passive alone covers deficit (fracs_f=0), enforce GCD-aligned passive delivery floor
+actions.ar+=/variable,name=passive_floor,value=variable.N_p%(variable.passive_per_sec*gcd.max)
+actions.ar+=/variable,name=passive_floor,op=ceil
+actions.ar+=/variable,name=passive_floor,value=variable.passive_floor*gcd.max
+actions.ar+=/variable,name=time_to_next_glaive,value=variable.time_to_next_glaive<?(variable.fracs_f=0&variable.N_p>0)*variable.passive_floor
+# Mark applies on fracture, 2 GCDs after RG in refresh order (RG->SC->Frac)
+actions.ar+=/variable,name=time_to_next_rm_application,value=variable.time_to_next_glaive+2*gcd.max
+# Slash/refresh alternation: slash when last refresh is more recent than last slash
+# Times recorded inside ar_glaive_cycle when RS+GF are both up (once per cycle)
+actions.ar+=/variable,name=prio_slashes,value=variable.aoe|(debuff.reavers_mark.up&variable.last_refresh_at>variable.last_slash_at)
+# RG imminent: will fire within 1-2 GCDs via spending, overflow at cap, or forced release
+actions.ar+=/variable,name=rg_imminent,value=(buff.reavers_glaive.up&(variable.execute|debuff.reavers_mark.remains<=variable.time_to_next_rm_application|buff.art_of_the_glaive.stack+soul_fragments>=18))|(buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)
 # Fiery brand if overcapped or not using fiery demise
-actions.ar+=/fiery_brand,if=!dot.fiery_brand.ticking&(cooldown.fiery_brand.charges>=2|!talent.fiery_demise)&variable.cd_ready
-# Fiery brand if we have demise and are about to meta or use a fire CD
-actions.ar+=/fiery_brand,if=talent.fiery_demise&!dot.fiery_brand.ticking&variable.dung_ttd_safe&!buff.metamorphosis.up&cooldown.metamorphosis.ready&variable.fire_cd_soon
-# UR proc Meta fires unconditionally
+actions.ar+=/fiery_brand,if=charges>=2|(!variable.fiery_demise_active&(!talent.fiery_demise|variable.fire_cd_soon|variable.execute))
+# UR proc Meta fires unconditionally to always extend
 actions.ar+=/metamorphosis,use_off_gcd=1,if=buff.untethered_rage.up
-# Hardcast Meta: enter immediately when ready
-actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&variable.dung_ttd_safe
-actions.ar+=/call_action_list,name=ar_glaive_cycle
-actions.ar+=/call_action_list,name=ar_cooldowns
+# Hardcast Meta: enter immediately when not active
+actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&prev_gcd.1.reavers_glaive
+# Stat buff trinkets BEFORE RG so the buff covers the entire glaive cycle
+actions.ar+=/use_item,slot=trinket1,if=variable.trinket_1_buffs&buff.reavers_glaive.up&(!trinket.2.has_cooldown|trinket.2.cooldown.remains|variable.trinket_priority=1)
+actions.ar+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&buff.reavers_glaive.up&(!trinket.1.has_cooldown|trinket.1.cooldown.remains|variable.trinket_priority=2)
+# Hold RG to pre-build AotG stacks, release when mark expires, execute, or consumable frags would overflow
+actions.ar+=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.execute|!debuff.reavers_mark.up|debuff.reavers_mark.remains<=variable.time_to_next_rm_application|buff.art_of_the_glaive.stack+soul_fragments>=18)
+actions.ar+=/call_action_list,name=ar_glaive_cycle,if=buff.rending_strike.up|buff.glaive_flurry.up|prev_gcd.1.reavers_glaive
+# Slash cycle waiting for fracture: wait rather than falling through to SC-consuming lists
+actions.ar+=/wait,sec=cooldown.fracture.remains,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1
+
+# Fracture constrained: no charge and won't recover within 1 GCD
+actions.ar+=/variable,name=frac_constrained,value=cooldown.fracture.charges<1&cooldown.fracture.remains>gcd.max
+# Fury constrained: a filler SC would drop fury below what the cycle needs
+actions.ar+=/variable,name=fury_constrained,value=(fury-action.soul_cleave.cost)<(action.soul_cleave.cost-(talent.keen_engagement*20))
+# Resource guard when RG sequence is imminent and a filler would jeopardize it
+# rg_imminent covers: stored+ready-to-fire, at AotG=20, or one fracture from overflow
+# ttng fallback covers: close to 20 while still building (no RG stored)
+actions.ar+=/call_action_list,name=ar_protect_glaive,if=(variable.rg_imminent|(variable.time_to_next_glaive<2*gcd.max&!buff.reavers_glaive.up))&(variable.frac_constrained|variable.fury_constrained)
+# Emergency soul dump: not in a glaive cycle, no RG stored, close to 20 via consume or overflow
+actions.ar+=/call_action_list,name=ar_prio_souls,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&((buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)|(debuff.reavers_mark.remains<3*gcd.max&buff.art_of_the_glaive.stack>=16))
+# Hold fire CDs when RG is imminent - save them for next glaive cycle burst window
+actions.ar+=/call_action_list,name=ar_cooldowns,if=!variable.rg_imminent&((debuff.reavers_mark.up&(!talent.fiery_demise|variable.fiery_demise_active))|variable.execute)
 actions.ar+=/call_action_list,name=ar_fillers
 
-# IA higher prio in AOE
-actions.ar_fillers=/immolation_aura,if=variable.aoe&in_combat
-actions.ar_fillers+=/fracture,if=soul_fragments.total<variable.fragment_target
+# Only guard the resources the RG sequence needs (fury + fracture charges); fall through to fillers otherwise
+actions.ar_protect_glaive=/spirit_bomb,if=soul_fragments>=3&((fury-action.spirit_bomb.cost)>(action.soul_cleave.cost-(talent.keen_engagement*20)))&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
+actions.ar_protect_glaive+=/fracture,if=full_recharge_time<gcd.max|soul_fragments.total<(20-buff.art_of_the_glaive.stack)
+actions.ar_protect_glaive+=/soul_cleave,if=(fury-action.soul_cleave.cost)>(action.soul_cleave.cost-(talent.keen_engagement*20))&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
+
+actions.ar_prio_souls=/soul_cleave,if=debuff.reavers_mark.remains<gcd.max*3&soul_fragments>=2&soul_fragments<3&buff.art_of_the_glaive.stack>=18
+actions.ar_prio_souls+=/spirit_bomb,if=debuff.reavers_mark.remains<gcd.max*3&soul_fragments>=3&buff.art_of_the_glaive.stack>=(20-soul_fragments)
+actions.ar_prio_souls+=/soul_carver
+actions.ar_prio_souls+=/immolation_aura,if=variable.aoe&in_combat
+actions.ar_prio_souls+=/fracture
+actions.ar_prio_souls+=/spirit_bomb,if=soul_fragments>=3
+actions.ar_prio_souls+=/soul_cleave
+
+actions.ar_fillers=/immolation_aura,if=variable.aoe&soul_fragments<=variable.fragment_target&in_combat
 actions.ar_fillers+=/spirit_bomb,if=soul_fragments>=variable.fragment_target
-# Prioritize cycling
-actions.ar_fillers+=/fracture,if=buff.metamorphosis.up
-# AoE: SoF higher priority (free GCD with AoE damage)
+actions.ar_fillers+=/felblade,if=cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
+actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=!cooldown.felblade.up&talent.unhindered_assault&cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
+# Slash guard: don't SC when RS+GF both up during slash cycle (would consume GF before fracture can slash)
+# Deadlock guard: don't SC if it would bottom out fury when fracture is also empty
+actions.ar_fillers+=/soul_cleave,if=(soul_fragments>=5|soul_fragments<=1|fury.deficit<30)&(fury>=2*action.soul_cleave.cost|cooldown.fracture.charges>=1|cooldown.fracture.remains<=gcd.max)&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
 actions.ar_fillers+=/sigil_of_flame,if=variable.aoe
+actions.ar_fillers+=/fracture,if=buff.metamorphosis.up|full_recharge_time<gcd.max|buff.warblades_hunger.stack>=4
 actions.ar_fillers+=/immolation_aura,if=!variable.is_dungeon|in_combat
+actions.ar_fillers+=/sigil_of_flame
+actions.ar_fillers+=/soul_cleave,if=(fury>=2*action.soul_cleave.cost|cooldown.fracture.charges>=1|cooldown.fracture.remains<=gcd.max)&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
 actions.ar_fillers+=/fracture
 actions.ar_fillers+=/felblade
-actions.ar_fillers+=/sigil_of_flame
-actions.ar_fillers+=/soul_cleave
-actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault
+actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault&!cooldown.felblade.up
 actions.ar_fillers+=/throw_glaive
 
-# AR Glaive Cycle: AoE Fracture-first (12 Bladecraft slashes), ST Soul Cleave-first (2 Reaver Mark stacks)
-actions.ar_glaive_cycle=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up
-actions.ar_glaive_cycle+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up&variable.aoe
-actions.ar_glaive_cycle+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up
+# Non-buff damage trinkets off-GCD during cycle (stat buffs already fired before RG)
+actions.ar_glaive_cycle+=/use_item,use_off_gcd=1,slot=trinket1,if=!variable.trinket_1_buffs&(variable.damage_trinket_priority=1|trinket.2.cooldown.remains|trinket.2.cooldown.duration=0)&gcd.remains>0.1
+actions.ar_glaive_cycle+=/use_item,use_off_gcd=1,slot=trinket2,if=!variable.trinket_2_buffs&(variable.damage_trinket_priority=2|trinket.1.cooldown.remains|trinket.1.cooldown.duration=0)&gcd.remains>0.1
+# Record cycle type once per cycle (time guard prevents re-recording from intra-cycle RS+GF regeneration)
+actions.ar_glaive_cycle+=/variable,name=last_slash_at,op=setif,value=time,value_else=variable.last_slash_at,condition=buff.rending_strike.up&buff.glaive_flurry.up&variable.prio_slashes&(time-variable.last_slash_at)>2
+actions.ar_glaive_cycle+=/variable,name=last_refresh_at,op=setif,value=time,value_else=variable.last_refresh_at,condition=buff.rending_strike.up&buff.glaive_flurry.up&!variable.prio_slashes&(time-variable.last_refresh_at)>2
+actions.ar_glaive_cycle+=/call_action_list,name=ar_glaive_cycle_filler,if=(variable.prio_slashes&((cooldown.fracture.charges<1&buff.rending_strike.up&buff.glaive_flurry.up)|fury<10))|(!variable.prio_slashes&((buff.rending_strike.up&buff.glaive_flurry.up&fury<35)|(buff.rending_strike.up&!buff.glaive_flurry.up&cooldown.fracture.charges<1)))
+actions.ar_glaive_cycle+=/potion,use_off_gcd=1
+actions.ar_glaive_cycle+=/invoke_external_buff,name=power_infusion
+# Slash cycle: pool until fracture is ready rather than letting SC leak through
+actions.ar_glaive_cycle+=/pool_resource,for_next=1,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1
+actions.ar_glaive_cycle+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up&variable.prio_slashes
+# SC when both buffs up only on refresh cycles
+actions.ar_glaive_cycle+=/soul_cleave,if=buff.rending_strike.up&buff.glaive_flurry.up&!variable.prio_slashes
 actions.ar_glaive_cycle+=/fracture,if=buff.rending_strike.up&!buff.glaive_flurry.up
-# At 5+ frags, SpB outvalues SC even during empowered Glaive Flurry
-actions.ar_glaive_cycle+=/spirit_bomb,if=buff.glaive_flurry.up&!buff.rending_strike.up&soul_fragments>=5
 actions.ar_glaive_cycle+=/soul_cleave,if=buff.glaive_flurry.up&!buff.rending_strike.up
+# Slash cycle: fill without consuming GF while waiting for fracture; wait as last resort
+actions.ar_glaive_cycle+=/throw_glaive,if=variable.prio_slashes&buff.glaive_flurry.up&cooldown.fracture.charges<1
+actions.ar_glaive_cycle+=/sigil_of_flame,if=variable.prio_slashes&buff.glaive_flurry.up&cooldown.fracture.charges<1
+actions.ar_glaive_cycle+=/wait,sec=cooldown.fracture.remains,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1
 
-# AR Cooldowns - Brand + fire CDs
-actions.ar_cooldowns=/spirit_bomb,if=variable.fiery_demise_active&soul_fragments>=3
-actions.ar_cooldowns+=/immolation_aura,if=variable.fiery_demise_active&talent.charred_flesh
-# Fire CDs: into active Brand (skip cd_ready) or on normal timing
-actions.ar_cooldowns+=/sigil_of_spite,if=soul_fragments.total<=2+talent.soul_sigils&(variable.fiery_demise_active|variable.cd_ready)
-actions.ar_cooldowns+=/soul_carver,if=variable.fiery_demise_active|variable.cd_ready
-# Fel Devastation channel would interrupt the empowered cycle
-actions.ar_cooldowns+=/fel_devastation,if=!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.fiery_demise_active|variable.cd_ready)
-# IA in Brand window (non-Charred Flesh)
-actions.ar_cooldowns+=/immolation_aura,if=variable.fiery_demise_active&!talent.charred_flesh
+actions.ar_glaive_cycle_filler=/spirit_bomb,if=fury>75&soul_fragments>=variable.fragment_target
+actions.ar_glaive_cycle_filler+=/immolation_aura
+actions.ar_glaive_cycle_filler+=/felblade
+actions.ar_glaive_cycle_filler+=/sigil_of_flame
+actions.ar_glaive_cycle_filler+=/fel_devastation,if=fury>85
+actions.ar_glaive_cycle_filler+=/soul_carver
+actions.ar_glaive_cycle_filler+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault&!cooldown.felblade.up
+actions.ar_glaive_cycle_filler+=/throw_glaive
+# Safe SC during slash cycle: only when GF already consumed (won't ruin the slash)
+actions.ar_glaive_cycle_filler+=/soul_cleave,if=!buff.glaive_flurry.up
 
+# AR Cooldowns - Brand + fire CDs; hold SC/SoS when next glaive is close
+actions.ar_cooldowns=/spirit_bomb,if=soul_fragments>=variable.fragment_target
+actions.ar_cooldowns+=/sigil_of_spite,if=variable.time_to_next_glaive>3*gcd.max
+actions.ar_cooldowns+=/soul_carver,if=variable.time_to_next_glaive>3*gcd.max
+actions.ar_cooldowns+=/fel_devastation
 
 # --- START OLD APL ---
 # # Meta entry conditions: not in Meta, not in Voidfall spending, building stacks low, TTD safe
@@ -206,21 +300,20 @@ actions.ar_cooldowns+=/immolation_aura,if=variable.fiery_demise_active&!talent.c
 # This will typically be ~3 GCDs worth of pre-meta actions
 actions.anni+=/variable,name=anni_meta_entry_time,value=3*gcd.max
 
-actions.anni+=/call_action_list,name=trinkets
 actions.anni+=/potion,use_off_gcd=1,if=variable.execute&(!variable.is_dungeon|in_boss_encounter)
-actions.anni+=/call_action_list,name=externals,if=buff.voidfall_spending.stack=3|variable.execute
+actions.anni+=/invoke_external_buff,name=power_infusion,if=buff.voidfall_spending.stack=3|variable.execute
 
 actions.anni+=/call_action_list,name=anni_voidfall_spending,if=buff.voidfall_spending.up
 # Fish for voidfall if we're >=2 stacks and meta is coming up soon
-actions.anni+=/call_action_list,name=anni_voidfall_fishing,if=buff.voidfall_building.stack>=2
+actions.anni+=/call_action_list,name=anni_voidfall_fishing,if=buff.voidfall_building.stack>=2&!buff.voidfall_spending.up
 
 # Prepare to enter hardcast meta
-actions.anni+=/call_action_list,name=anni_meta_entry,if=cooldown.metamorphosis.remains<variable.anni_meta_entry_time
+actions.anni+=/call_action_list,name=anni_meta_entry,if=cooldown.metamorphosis.remains<variable.anni_meta_entry_time|buff.untethered_rage.up
 
 # Use cooldowns, reserving at least one for the next meta
 actions.anni+=/call_action_list,name=anni_cooldowns,if=!talent.fiery_demise|variable.fiery_demise_active|cooldown.fiery_brand.remains>20|variable.execute
 
-actions.anni+=/fiery_brand,if=!talent.fiery_demise|charges>=2|cooldown.soul_carver.up|cooldown.fel_devastation.up|cooldown.sigil_of_spite.up|cooldown.spirit_bomb.up|variable.execute
+actions.anni+=/fiery_brand,if=charges>=2|(!variable.fiery_demise_active&(!talent.fiery_demise|variable.fire_cd_soon|variable.execute))
 # Never overcap fracture
 actions.anni+=/fracture,if=full_recharge_time<gcd.max
 
@@ -243,22 +336,24 @@ actions.anni_cooldowns+=/fel_devastation
 actions.anni_cooldowns+=/call_action_list,name=anni_generate_fury,if=cooldown.fel_devastation.up&fury<50
 
 # VOIDFALL SPENDING
-actions.anni_voidfall_spending=/fiery_brand,if=!variable.fiery_demise_active
+actions.anni_voidfall_spending=/fiery_brand,if=charges>=2|!variable.fiery_demise_active
 actions.anni_voidfall_spending+=/soul_cleave,if=cooldown.spirit_bomb.remains>gcd.max*2
 actions.anni_voidfall_spending+=/spirit_bomb,if=soul_fragments>=variable.fragment_target
 actions.anni_voidfall_spending+=/felblade,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
 actions.anni_voidfall_spending+=/immolation_aura,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
-actions.anni_voidfall_spending+=/soul_carver,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&!action.sigil_of_spite.placed
-actions.anni_voidfall_spending+=/fel_devastation,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&!action.sigil_of_spite.placed
-actions.anni_voidfall_spending+=/immolation_aura,if=variable.aoe&(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&!action.sigil_of_spite.placed
+actions.anni_voidfall_spending+=/soul_carver,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(!talent.sigil_of_spite|!action.sigil_of_spite.placed))
+actions.anni_voidfall_spending+=/fel_devastation,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(!talent.sigil_of_spite|!action.sigil_of_spite.placed))
+actions.anni_voidfall_spending+=/immolation_aura,if=variable.aoe&(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
 actions.anni_voidfall_spending+=/sigil_of_spite,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target
 actions.anni_voidfall_spending+=/call_action_list,name=anni_filler_no_spend
 
 # PREPARING TO ENTER META
 actions.anni_meta_entry=/potion,use_off_gcd=1,if=(variable.fiery_demise_active|variable.execute)&(!variable.is_dungeon|in_boss_encounter)
-actions.anni_meta_entry+=/metamorphosis,use_off_gcd=1,if=gcd.remains=0&buff.untethered_rage.up
+actions.anni_meta_entry+=/call_action_list,name=trinkets
+actions.anni_meta_entry+=/invoke_external_buff,name=power_infusion
+actions.anni_meta_entry+=/metamorphosis,use_off_gcd=1,if=gcd.remains=0&buff.untethered_rage.up&!buff.voidfall_spending.up
 actions.anni_meta_entry+=/call_action_list,name=anni_pre_meta_spb,if=cooldown.spirit_bomb.remains<variable.anni_meta_entry_time&soul_fragments.total<variable.fragment_target
-actions.anni_meta_entry+=/fiery_brand,if=!variable.fiery_demise_active
+actions.anni_meta_entry+=/fiery_brand,if=charges>=2|!variable.fiery_demise_active
 actions.anni_meta_entry+=/sigil_of_spite,if=soul_fragments>=variable.fragment_target&cooldown.spirit_bomb.up&cooldown.metamorphosis.up
 actions.anni_meta_entry+=/spirit_bomb,if=soul_fragments>=variable.fragment_target&fury>=60
 actions.anni_meta_entry+=/sigil_of_spite,if=soul_fragments.total<variable.fragment_target
@@ -269,7 +364,7 @@ actions.anni_meta_entry+=/call_action_list,name=anni_filler_no_spend
 # Build fragments for a pre-meta spirit bomb
 actions.anni_pre_meta_spb=/fracture
 actions.anni_pre_meta_spb+=/immolation_aura,if=variable.aoe
-actions.anni_pre_meta_spb+=/fiery_brand,if=!variable.fiery_demise_active
+actions.anni_pre_meta_spb+=/fiery_brand,if=charges>=2|!variable.fiery_demise_active
 actions.anni_pre_meta_spb+=/soul_carver,if=(cooldown.soul_carver.up+cooldown.sigil_of_spite.up+cooldown.fel_devastation.up)>=2
 actions.anni_pre_meta_spb+=/fel_devastation,if=(cooldown.soul_carver.up+cooldown.sigil_of_spite.up+cooldown.fel_devastation.up)>=2
 actions.anni_pre_meta_spb+=/felblade
@@ -283,13 +378,23 @@ actions.anni_generate_fury+=/sigil_of_flame
 actions.anni_generate_fury+=/felblade
 actions.anni_generate_fury+=/fracture
 
-actions.anni_filler_no_spend=/soul_cleave,if=soul_fragments=0&!action.sigil_of_flame.placed&!action.sigil_of_spite.placed&!prev_gcd.2.soul_carver
+actions.anni_filler_no_spend=/soul_cleave,if=soul_fragments=0&!action.sigil_of_flame.placed&(!talent.sigil_of_spite|!action.sigil_of_spite.placed)&!prev_gcd.2.soul_carver
 actions.anni_filler_no_spend+=/immolation_aura
 actions.anni_filler_no_spend+=/sigil_of_flame
 actions.anni_filler_no_spend+=/felblade
 actions.anni_filler_no_spend+=/fracture,if=!buff.voidfall_spending.up
-actions.anni_filler_no_spend+=/soul_carver,if=!action.sigil_of_spite.placed
-actions.anni_filler_no_spend+=/fel_devastation,if=!action.sigil_of_spite.placed
+actions.anni_filler_no_spend+=/soul_carver,if=(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
+actions.anni_filler_no_spend+=/fel_devastation,if=(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
 actions.anni_filler_no_spend+=/sigil_of_spite
 actions.anni_filler_no_spend+=/fracture
 actions.anni_filler_no_spend+=/throw_glaive
+
+# Trinket action list
+actions.trinkets=/use_item,slot=trinket1,if=variable.trinket_1_buffs&(!trinket.2.has_cooldown|trinket.2.cooldown.remains|variable.trinket_priority=1)
+actions.trinkets+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&(!trinket.1.has_cooldown|trinket.1.cooldown.remains|variable.trinket_priority=2)
+# Non-buff on-use trinkets (direct damage): fire on cooldown, off-GCD
+actions.trinkets+=/use_item,use_off_gcd=1,slot=trinket1,if=!variable.trinket_1_buffs&(variable.damage_trinket_priority=1|trinket.2.cooldown.remains|trinket.2.cooldown.duration=0)&gcd.remains>0.1
+actions.trinkets+=/use_item,use_off_gcd=1,slot=trinket2,if=!variable.trinket_2_buffs&(variable.damage_trinket_priority=2|trinket.1.cooldown.remains|trinket.1.cooldown.duration=0)&gcd.remains>0.1
+# End of fight: dump everything
+actions.trinkets+=/use_item,slot=trinket1,if=variable.execute
+actions.trinkets+=/use_item,slot=trinket2,if=variable.execute
