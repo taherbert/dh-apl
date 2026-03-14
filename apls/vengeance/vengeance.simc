@@ -105,14 +105,17 @@ actions.ar+=/variable,name=passive_floor,value=variable.passive_floor*gcd.max
 actions.ar+=/variable,name=time_to_next_glaive,value=variable.time_to_next_glaive<?(variable.fracs_f=0&variable.N_p>0)*variable.passive_floor
 # Mark applies on fracture, 2 GCDs after RG in refresh order (RG->SC->Frac)
 actions.ar+=/variable,name=time_to_next_rm_application,value=variable.time_to_next_glaive+2*gcd.max
+# Own RM tracking: debuff.reavers_mark.remains is unreliable (copy player pollution, async stacks)
+# last_rm_applied is set inside ar_glaive_cycle when fracture consumes rending_strike
+actions.ar+=/variable,name=own_rm_remains,value=(variable.last_rm_applied>0)*(20-(time-variable.last_rm_applied))<?0
 # Slash/refresh alternation: slash when last refresh is more recent than last slash
-actions.ar+=/variable,name=prio_slashes,value=variable.aoe|(debuff.reavers_mark.up&variable.last_refresh_at>variable.last_slash_at)
+actions.ar+=/variable,name=prio_slashes,value=variable.aoe|(variable.own_rm_remains>0&variable.last_refresh_at>variable.last_slash_at)
 # Record cycle type ONCE when RG first stored (cycle_recorded resets when RG buff drops)
 actions.ar+=/variable,name=last_slash_at,op=setif,value=time,value_else=variable.last_slash_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&variable.prio_slashes
 actions.ar+=/variable,name=last_refresh_at,op=setif,value=time,value_else=variable.last_refresh_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&!variable.prio_slashes
 actions.ar+=/variable,name=cycle_recorded,value=buff.reavers_glaive.up
 # RG imminent: will fire within 1-2 GCDs via spending, overflow at cap, or forced release
-actions.ar+=/variable,name=rg_imminent,value=(buff.reavers_glaive.up&(variable.execute|debuff.reavers_mark.remains<=variable.time_to_next_rm_application|buff.art_of_the_glaive.stack+soul_fragments>=18))|(buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)
+actions.ar+=/variable,name=rg_imminent,value=(buff.reavers_glaive.up&(variable.execute|variable.own_rm_remains<=variable.time_to_next_rm_application|buff.art_of_the_glaive.stack+soul_fragments>=18))|(buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)
 # Fiery brand if overcapped or not using fiery demise
 actions.ar+=/fiery_brand,if=charges>=2|(!variable.fiery_demise_active&(!talent.fiery_demise|variable.fire_cd_soon|variable.execute))
 # UR proc Meta fires unconditionally to always extend
@@ -123,7 +126,8 @@ actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&prev_gcd.1.re
 actions.ar+=/use_item,slot=trinket1,if=variable.trinket_1_buffs&buff.reavers_glaive.up&(!trinket.2.has_cooldown|trinket.2.cooldown.remains|variable.trinket_priority=1)
 actions.ar+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&buff.reavers_glaive.up&(!trinket.1.has_cooldown|trinket.1.cooldown.remains|variable.trinket_priority=2)
 # Hold RG to pre-build AotG stacks, release when mark expires, execute, or consumable frags would overflow
-actions.ar+=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.execute|!debuff.reavers_mark.up|debuff.reavers_mark.remains<=variable.time_to_next_rm_application|buff.art_of_the_glaive.stack+soul_fragments>=18)
+# Fire stored RG: execute, no mark, mark aging (< ttng_rm or < 10s), or AotG overflow imminent
+actions.ar+=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.execute|variable.own_rm_remains<=0|variable.own_rm_remains<10|buff.art_of_the_glaive.stack+soul_fragments>=18)
 actions.ar+=/call_action_list,name=ar_glaive_cycle,if=buff.rending_strike.up|buff.glaive_flurry.up|prev_gcd.1.reavers_glaive
 # Slash cycle waiting for fracture: wait rather than falling through to SC-consuming lists
 actions.ar+=/wait,sec=cooldown.fracture.remains,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1
@@ -137,9 +141,9 @@ actions.ar+=/variable,name=fury_constrained,value=(fury-action.soul_cleave.cost)
 # ttng fallback covers: close to 20 while still building (no RG stored)
 actions.ar+=/call_action_list,name=ar_protect_glaive,if=(variable.rg_imminent|(variable.time_to_next_glaive<2*gcd.max&!buff.reavers_glaive.up))&(variable.frac_constrained|variable.fury_constrained)
 # Emergency soul dump: not in a glaive cycle, no RG stored, close to 20 via consume or overflow
-actions.ar+=/call_action_list,name=ar_prio_souls,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&((buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)|(debuff.reavers_mark.remains<3*gcd.max&buff.art_of_the_glaive.stack>=16))
+actions.ar+=/call_action_list,name=ar_prio_souls,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&((buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)|(variable.own_rm_remains<3*gcd.max&buff.art_of_the_glaive.stack>=16))
 # Hold fire CDs when RG is imminent - save them for next glaive cycle burst window
-actions.ar+=/call_action_list,name=ar_cooldowns,if=!variable.rg_imminent&((debuff.reavers_mark.up&(!talent.fiery_demise|variable.fiery_demise_active))|variable.execute)
+actions.ar+=/call_action_list,name=ar_cooldowns,if=!variable.rg_imminent&((variable.own_rm_remains>0&(!talent.fiery_demise|variable.fiery_demise_active))|variable.execute)
 actions.ar+=/call_action_list,name=ar_fillers
 
 # Only guard the resources the RG sequence needs (fury + fracture charges); fall through to fillers otherwise
@@ -147,8 +151,8 @@ actions.ar_protect_glaive=/spirit_bomb,if=soul_fragments>=3&((fury-action.spirit
 actions.ar_protect_glaive+=/fracture,if=full_recharge_time<gcd.max|soul_fragments.total<(20-buff.art_of_the_glaive.stack)
 actions.ar_protect_glaive+=/soul_cleave,if=(fury-action.soul_cleave.cost)>(action.soul_cleave.cost-(talent.keen_engagement*20))&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
 
-actions.ar_prio_souls=/soul_cleave,if=debuff.reavers_mark.remains<gcd.max*3&soul_fragments>=2&soul_fragments<3&buff.art_of_the_glaive.stack>=18
-actions.ar_prio_souls+=/spirit_bomb,if=debuff.reavers_mark.remains<gcd.max*3&soul_fragments>=3&buff.art_of_the_glaive.stack>=(20-soul_fragments)
+actions.ar_prio_souls=/soul_cleave,if=variable.own_rm_remains<gcd.max*3&soul_fragments>=2&soul_fragments<3&buff.art_of_the_glaive.stack>=18
+actions.ar_prio_souls+=/spirit_bomb,if=variable.own_rm_remains<gcd.max*3&soul_fragments>=3&buff.art_of_the_glaive.stack>=(20-soul_fragments)
 actions.ar_prio_souls+=/soul_carver
 actions.ar_prio_souls+=/immolation_aura,if=variable.aoe&in_combat
 actions.ar_prio_souls+=/fracture
@@ -178,6 +182,8 @@ actions.ar_glaive_cycle+=/use_item,use_off_gcd=1,slot=trinket2,if=!variable.trin
 actions.ar_glaive_cycle+=/call_action_list,name=ar_glaive_cycle_filler,if=(variable.prio_slashes&((cooldown.fracture.charges<1&buff.rending_strike.up&buff.glaive_flurry.up)|fury<10))|(!variable.prio_slashes&((buff.rending_strike.up&buff.glaive_flurry.up&fury<35)|(buff.rending_strike.up&!buff.glaive_flurry.up&cooldown.fracture.charges<1)))
 actions.ar_glaive_cycle+=/potion,use_off_gcd=1
 actions.ar_glaive_cycle+=/invoke_external_buff,name=power_infusion
+# Record RM application time when fracture is about to consume RS and apply mark
+actions.ar_glaive_cycle+=/variable,name=last_rm_applied,value=time,if=buff.rending_strike.up
 # Slash cycle: pool until fracture is ready rather than letting SC leak through
 actions.ar_glaive_cycle+=/pool_resource,for_next=1,if=variable.prio_slashes&buff.rending_strike.up&buff.glaive_flurry.up&cooldown.fracture.charges<1
 actions.ar_glaive_cycle+=/fracture,if=buff.rending_strike.up&buff.glaive_flurry.up&variable.prio_slashes
