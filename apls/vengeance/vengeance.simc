@@ -132,18 +132,18 @@ actions.ar+=/metamorphosis,use_off_gcd=1,if=!buff.metamorphosis.up&prev_gcd.1.re
 actions.ar+=/use_item,slot=trinket1,if=variable.trinket_1_buffs&buff.reavers_glaive.up&(!trinket.2.has_cooldown|trinket.2.cooldown.remains|variable.trinket_priority=1)
 actions.ar+=/use_item,slot=trinket2,if=variable.trinket_2_buffs&buff.reavers_glaive.up&(!trinket.1.has_cooldown|trinket.1.cooldown.remains|variable.trinket_priority=2)
 # Fire stored RG: execute, mark expired or aging, or consume would overflow AotG
-actions.ar+=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.execute|variable.rm_remains<=0|variable.rm_remains<10|buff.art_of_the_glaive.stack+soul_fragments>=(20-variable.frac_souls))
+actions.ar+=/reavers_glaive,if=buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(variable.execute|variable.prio_slashes|variable.rm_remains<=0|variable.rm_remains<10|buff.art_of_the_glaive.stack+soul_fragments>=(20-variable.frac_souls))
 actions.ar+=/call_action_list,name=ar_glaive_cycle,if=buff.rending_strike.up|buff.glaive_flurry.up|prev_gcd.1.reavers_glaive
 # Fiery brand: overcapped charges, or setup for fiery demise window
-actions.ar+=/fiery_brand,if=charges>=2|(!variable.fiery_demise_active&(!talent.fiery_demise|variable.fire_cd_soon|variable.execute))
+actions.ar+=/fiery_brand,if=charges>=2|!variable.fiery_demise_active|variable.execute
 # IA on CD: generates Fallout fragments passively
 actions.ar+=/immolation_aura
 # FD: only channel when fury is high, frags are in-flight (nothing to consume), and not near RG
 actions.ar+=/fel_devastation,if=fury>85&soul_fragments.inactive>2&!variable.rg_imminent
 # Guard fracture charges and fury when RG sequence is imminent
-actions.ar+=/call_action_list,name=ar_protect_glaive,if=(variable.rg_imminent|(variable.time_to_next_glaive<2*gcd.max&!buff.reavers_glaive.up))&(variable.frac_constrained|variable.fury_constrained)
+# actions.ar+=/call_action_list,name=ar_protect_glaive,if=(variable.rg_imminent|(variable.time_to_next_glaive<2*gcd.max&!buff.reavers_glaive.up))&(variable.frac_constrained|variable.fury_constrained)
 # Emergency consume: not in cycle, close to AotG=20 via spending or overflow
-actions.ar+=/call_action_list,name=ar_prio_souls,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&((buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)|(variable.rm_remains<3*gcd.max&buff.art_of_the_glaive.stack>=16))
+# actions.ar+=/call_action_list,name=ar_prio_souls,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&((buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)|(variable.rm_remains<3*gcd.max&buff.art_of_the_glaive.stack>=16))
 # SoS on CD: 3 fragments + damage, too powerful to hold
 actions.ar+=/sigil_of_spite
 # SC: 6 fragments; prefer fiery demise window, allow when mark aging or execute
