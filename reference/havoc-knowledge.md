@@ -83,18 +83,20 @@
 - Action lists: 4
 
 ### Action Lists
-- **precombat:** 8 actions
-- **default:** 55 actions; delegates: call_action_list -> cooldown, run_action_list -> meta
-- **cooldown:** 8 actions
+- **precombat:** 10 actions
+- **default:** 56 actions; delegates: call_action_list -> cooldown, run_action_list -> meta
+- **cooldown:** 11 actions
 - **meta:** 17 actions
 
 ### APL Variables
 - **tab_target_burning_wound** (precombat): `1`
 - **rg_ds** (precombat): `0`
-- **trinket1_crit** (precombat): `trinket.1.has_cooldown&trinket.1.has_use_damage`
-- **trinket2_crit** (precombat): `trinket.2.has_cooldown&trinket.2.has_use_damage`
-- **trinket1_steroids** (precombat): `trinket.1.has_cooldown&trinket.1.has_use_buff`
-- **trinket2_steroids** (precombat): `trinket.2.has_cooldown&trinket.2.has_use_buff`
+- **trinket1_special** (precombat): `trinket.1.is.algethar_puzzle_box`
+- **trinket2_special** (precombat): `trinket.2.is.algethar_puzzle_box`
+- **trinket1_crit** (precombat): `!variable.trinket1_special&trinket.1.has_cooldown&trinket.1.has_use_damage`
+- **trinket2_crit** (precombat): `!variable.trinket2_special&trinket.2.has_cooldown&trinket.2.has_use_damage`
+- **trinket1_steroids** (precombat): `!variable.trinket1_special&trinket.1.has_cooldown&trinket.1.has_use_buff`
+- **trinket2_steroids** (precombat): `!variable.trinket2_special&trinket.2.has_cooldown&trinket.2.has_use_buff`
 - **rg_inc** (default): `buff.rending_strike.down&buff.glaive_flurry.up&cooldown.blade_dance.up&gcd.re...`
 - **fury_gen_per_sec** (default): `2%(attack_haste*2.6)*0.81*((talent.demonsurge&buff.metamorphosis.up)*3+9.5)+b...`
 - **double_on_use** (default): `variable.trinket1_steroids&trinket.1.cooldown.remains>20|variable.trinket1_st...`

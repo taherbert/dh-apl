@@ -575,7 +575,13 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         const rank = parts[1] ? +parts[1] : node.maxRanks || 1;
         const entry = { rank };
         if (node.type === "choice" || node.type === "subtree") {
-          entry.choiceIndex = sel.get(node.id)?.choiceIndex || 0;
+          // Find which entry the user specified by name
+          const reqName = name;
+          const matchIdx = (node.entries || []).findIndex(
+            (e) => (e.name || "").toLowerCase().replace(/_/g, " ") === reqName,
+          );
+          entry.choiceIndex =
+            matchIdx >= 0 ? matchIdx : sel.get(node.id)?.choiceIndex || 0;
         }
         sel.set(node.id, entry);
         console.error(

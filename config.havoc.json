@@ -37,6 +37,16 @@
       "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYmZmZmZ2mxMzMGzkxMDAAAAAAYWMmtZYmZ2GzgtZmhxwYZmtZwwYbjJZmZGzYBAAAAAAAMzAMAAAAM",
       "source": "wowhead",
       "label": "AR Mythic+"
+    },
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYgZmZMjZmZmhJjZGAAAAAAwsZMbzMmZmtZmx2sNzMMGzYZgtZxMGmNNNMzYYDAAAAAAAgZGMAAAAM",
+      "source": "raidbots",
+      "label": "FS SG+DwF+Inertia+EH apex4"
+    },
+    {
+      "hash": "CEkAAAAAAAAAAAAAAAAAAAAAAYgZmZMjZmZmhJjZGAAAAAAwsZMbzMmZmtZmx2sNPwMMGzYZgtZxMGmNNNmZGDbAAAAAAAAMzgBAAAgB",
+      "source": "raidbots",
+      "label": "FS SG+DwF+Inertia+AFI+EH apex4"
     }
   ],
   "talents": {

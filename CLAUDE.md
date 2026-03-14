@@ -21,7 +21,14 @@ actions+=/call_action_list,name=sub_list,if=condition
 
 Common condition expressions: `fury>=30`, `soul_fragments>=4`, `buff.demon_spikes.up`, `talent.spirit_bomb.enabled`, `cooldown.fiery_brand.ready`, `health.pct<50`, `active_enemies>=3`.
 
+**Min/Max operators (CRITICAL — do not confuse):**
+
+- `<?` is the **MAX** operator: `x<?y` = the **greater** of x and y. Example: `(deficit)<?0` = max(deficit, 0) = clamp non-negative.
+- `>?` is the **MIN** operator: `x>?y` = the **lesser** of x and y. Example: `(time_a)>?(time_b)` = min(time_a, time_b) = take the shorter.
+
 **Apex talents:** Apex talents (pinnacle talents at the bottom of the tree) use `apex.N` where N is the rank number (e.g., `apex.1`, `apex.2`). Do NOT use `talent.apex_name` — always use the `apex.N` syntax.
+
+**Variable `op=ceil`/`op=floor` gotcha:** These operations apply to the variable's current value, NOT the `value=` expression. `variable,name=X,op=ceil,value=expr` ignores `expr`. Must split into two lines: `variable,name=X,value=expr` then `variable,name=X,op=ceil`.
 
 **APL variables:** Use `variable,name=X,value=expr` to extract shared logic out of action conditions. Variables keep action statements focused on "what to cast" while variables handle "is the situation right." If a condition or sub-expression appears in more than one action line, it should be a variable. Computed state (target counts, resource thresholds, buff windows, talent-dependent flags) belongs in variables — not duplicated inline across action conditions.
 

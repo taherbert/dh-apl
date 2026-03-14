@@ -5,6 +5,7 @@ race=night_elf
 timeofday=night
 role=tank
 position=front
+talents=CUkAAAAAAAAAAAAAAAAAAAAAAAAYMzMjhZkZmxY2MzMjBjZGzYGzMDzYmx2YmlxYGAAAAmtZwwYZjJMMzMWAAAAwADgAMzAMAAAAG
 
 flask=flask_of_the_magisters_2
 potion=lights_potential_2
@@ -26,7 +27,7 @@ override.bloodlust=1
 head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983
 neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240983/240983
 shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289,enchant_id=7971
-back=draconic_nullcape,id=249335,ilevel=289
+back=imperators_banner,id=249335,ilevel=289
 chest=maledict_vest,id=251216,ilevel=289,enchant_id=7985
 wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=prismatic_focusing_iris
 hands=devouring_reavers_essence_grips,id=250034,ilevel=289
