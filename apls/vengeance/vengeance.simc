@@ -1,5 +1,17 @@
 input=apls/vengeance/profile.simc
-
+# Aura direct and periodic
+override.spell_data=effect.315250.base_value=10
+override.spell_data=effect.315251.base_value=10
+# Immolation Aura
+override.spell_data=effect.1080959.base_value=60
+# Wounded Quarry
+override.spell_data=effect.1297568.base_value=0
+# Reaver's Glaive
+override.spell_data=effect.1137380.ap_coefficient=3.348
+# Fury of the Aldrachi
+override.spell_data=effect.1297564.base_value=-5
+# Thrill of the Fight
+override.spell_data=effect.1138072.base_value=8
 
 # Target counts
 actions=/variable,name=single_target,value=spell_targets.spirit_bomb=1
@@ -94,8 +106,11 @@ actions.ar+=/variable,name=time_to_next_glaive,value=variable.time_to_next_glaiv
 # Mark applies on fracture, 2 GCDs after RG in refresh order (RG->SC->Frac)
 actions.ar+=/variable,name=time_to_next_rm_application,value=variable.time_to_next_glaive+2*gcd.max
 # Slash/refresh alternation: slash when last refresh is more recent than last slash
-# Times recorded inside ar_glaive_cycle when RS+GF are both up (once per cycle)
 actions.ar+=/variable,name=prio_slashes,value=variable.aoe|(debuff.reavers_mark.up&variable.last_refresh_at>variable.last_slash_at)
+# Record cycle type ONCE when RG first stored (cycle_recorded resets when RG buff drops)
+actions.ar+=/variable,name=last_slash_at,op=setif,value=time,value_else=variable.last_slash_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&variable.prio_slashes
+actions.ar+=/variable,name=last_refresh_at,op=setif,value=time,value_else=variable.last_refresh_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&!variable.prio_slashes
+actions.ar+=/variable,name=cycle_recorded,value=buff.reavers_glaive.up
 # RG imminent: will fire within 1-2 GCDs via spending, overflow at cap, or forced release
 actions.ar+=/variable,name=rg_imminent,value=(buff.reavers_glaive.up&(variable.execute|debuff.reavers_mark.remains<=variable.time_to_next_rm_application|buff.art_of_the_glaive.stack+soul_fragments>=18))|(buff.art_of_the_glaive.stack+soul_fragments>=20)|(soul_fragments>=6&buff.art_of_the_glaive.stack>=(20-variable.frac_souls)&cooldown.fracture.charges>=1)
 # Fiery brand if overcapped or not using fiery demise
@@ -160,9 +175,6 @@ actions.ar_fillers+=/throw_glaive
 # Non-buff damage trinkets off-GCD during cycle (stat buffs already fired before RG)
 actions.ar_glaive_cycle+=/use_item,use_off_gcd=1,slot=trinket1,if=!variable.trinket_1_buffs&(variable.damage_trinket_priority=1|trinket.2.cooldown.remains|trinket.2.cooldown.duration=0)&gcd.remains>0.1
 actions.ar_glaive_cycle+=/use_item,use_off_gcd=1,slot=trinket2,if=!variable.trinket_2_buffs&(variable.damage_trinket_priority=2|trinket.1.cooldown.remains|trinket.1.cooldown.duration=0)&gcd.remains>0.1
-# Record cycle type once per cycle (time guard prevents re-recording from intra-cycle RS+GF regeneration)
-actions.ar_glaive_cycle+=/variable,name=last_slash_at,op=setif,value=time,value_else=variable.last_slash_at,condition=buff.rending_strike.up&buff.glaive_flurry.up&variable.prio_slashes&(time-variable.last_slash_at)>2
-actions.ar_glaive_cycle+=/variable,name=last_refresh_at,op=setif,value=time,value_else=variable.last_refresh_at,condition=buff.rending_strike.up&buff.glaive_flurry.up&!variable.prio_slashes&(time-variable.last_refresh_at)>2
 actions.ar_glaive_cycle+=/call_action_list,name=ar_glaive_cycle_filler,if=(variable.prio_slashes&((cooldown.fracture.charges<1&buff.rending_strike.up&buff.glaive_flurry.up)|fury<10))|(!variable.prio_slashes&((buff.rending_strike.up&buff.glaive_flurry.up&fury<35)|(buff.rending_strike.up&!buff.glaive_flurry.up&cooldown.fracture.charges<1)))
 actions.ar_glaive_cycle+=/potion,use_off_gcd=1
 actions.ar_glaive_cycle+=/invoke_external_buff,name=power_infusion
