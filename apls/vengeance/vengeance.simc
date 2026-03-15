@@ -13,6 +13,11 @@ override.spell_data=effect.1297564.base_value=-5
 # Thrill of the Fight
 override.spell_data=effect.1138072.base_value=8
 
+actions.precombat=snapshot_stats
+actions.precombat+=/sigil_of_flame
+actions.precombat+=/sigil_of_spite,if=hero_tree.aldrachi_reaver
+actions.precombat+=/immolation_aura
+
 # Target counts
 actions=variable,name=single_target,value=spell_targets.spirit_bomb=1
 actions+=/variable,name=aoe,value=spell_targets.spirit_bomb>=3
@@ -43,11 +48,6 @@ actions+=/variable,name=fiery_demise_active,value=talent.fiery_demise&dot.fiery_
 actions+=/variable,name=fire_cd_soon,value=cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<(8+talent.charred_flesh.rank)
 # Fragment target: 3 during Brand, 4 in Meta, 5 baseline
 actions+=/variable,name=fragment_target,op=setif,value=5+apex.2,value_else=5-variable.fiery_demise_active,condition=hero_tree.aldrachi_reaver
-
-actions.precombat=snapshot_stats
-actions.precombat+=/sigil_of_flame
-actions.precombat+=/sigil_of_spite,if=hero_tree.aldrachi_reaver
-actions.precombat+=/immolation_aura
 
 actions+=/auto_attack
 actions+=/retarget_auto_attack,target_if=min:debuff.reavers_mark.remains,if=hero_tree.aldrachi_reaver
@@ -112,7 +112,7 @@ actions.ar+=/variable,name=time_to_next_rm_application,value=variable.time_to_ne
 # RM tracking via variable (debuff.remains unreliable with async stacks)
 actions.ar+=/variable,name=rm_remains,value=(variable.last_rm_applied>0)*(20-(time-variable.last_rm_applied))<?0
 # Slash/refresh alternation: slash after a refresh cycle, refresh after a slash
-actions.ar+=/variable,name=prio_slashes,value=variable.aoe|(variable.rm_remains>0&variable.last_refresh_at>variable.last_slash_at)
+actions.ar+=/variable,name=prio_slashes,value=variable.aoe|variable.execute|(variable.rm_remains>0&variable.last_refresh_at>variable.last_slash_at)
 # Record cycle type once when RG first stored (resets when RG buff drops)
 actions.ar+=/variable,name=last_slash_at,op=setif,value=time,value_else=variable.last_slash_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&variable.prio_slashes
 actions.ar+=/variable,name=last_refresh_at,op=setif,value=time,value_else=variable.last_refresh_at,condition=buff.reavers_glaive.up&!variable.cycle_recorded&!variable.prio_slashes
@@ -138,9 +138,9 @@ actions.ar+=/fiery_brand,if=charges>=2|!variable.fiery_demise_active|variable.ex
 actions.ar+=/sigil_of_spite,if=variable.dung_cd_ok&!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up
 # Emergency consume: not in cycle, close to AotG=20 via spending or overflow
 actions.ar+=/call_action_list,name=ar_quick_consume,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(buff.art_of_the_glaive.stack+soul_fragments>=20)
-actions.ar+=/immolation_aura
+actions.ar+=/immolation_aura,if=in_combat
 # FD: only channel when fury is high, frags are in-flight, and not near RG
-actions.ar+=/fel_devastation,if=fury>85&(soul_fragments.inactive>2|variable.aoe)&!variable.rg_imminent
+actions.ar+=/fel_devastation,if=variable.dung_cd_ok&fury>85&(soul_fragments.inactive>1|variable.aoe)&!variable.rg_imminent
 actions.ar+=/sigil_of_flame
 # SC: 6 fragments; prefer fiery demise window, allow when mark aging or execute
 actions.ar+=/soul_carver,if=variable.dung_cd_ok&(variable.fiery_demise_active|(variable.rm_remains<7&buff.art_of_the_glaive.stack+soul_fragments<20)|variable.execute)
@@ -167,6 +167,8 @@ actions.ar_fillers+=/soul_cleave,if=(fury>=2*action.soul_cleave.cost|cooldown.fr
 actions.ar_fillers+=/fracture
 actions.ar_fillers+=/felblade
 actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=talent.unhindered_assault&!cooldown.felblade.up
+actions.ar_fillers+=/soul_carver
+actions.ar_fillers+=/fel_devastation
 actions.ar_fillers+=/throw_glaive
 
 # Glaive cycle: RS+GF buff alternation after RG fires. Slash (frac first) or refresh (SC first).
