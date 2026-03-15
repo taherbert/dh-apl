@@ -1973,7 +1973,7 @@ function renderTrinketRankings(trinketData) {
   const hasBoth = hasIndividual && hasPairs;
 
   const toggleBtns = hasBoth
-    ? `<div class="report-tabs report-tabs--inline">
+    ? `<div class="report-tabs">
         <button class="report-tab report-tab--active" data-tab="individual">Individual</button>
         <button class="report-tab" data-tab="pairs">Pairs</button>
       </div>`
@@ -1988,7 +1988,8 @@ function renderTrinketRankings(trinketData) {
 
   return `<section>
   <div class="report-card" data-tab-group="trinkets">
-    <div class="card-header-row"><h3>Trinket Rankings</h3>${toggleBtns}</div>
+    <h3>Trinket Rankings</h3>
+    ${toggleBtns}
     ${individualPane}
     ${pairsPane}
   </div>
@@ -3024,26 +3025,6 @@ h4 {
 
 .report-pane { display: none; }
 .report-pane--active { display: block; }
-
-/* Header-inline variant (trinket individual/pairs toggle) */
-.report-tabs--inline {
-  gap: 2px;
-  background: var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 2px;
-  margin-bottom: 0;
-}
-.report-tabs--inline .report-tab {
-  border: none;
-  border-radius: calc(var(--radius-sm) - 1px);
-  background: transparent;
-}
-.report-tabs--inline .report-tab--active {
-  background: var(--surface);
-  color: var(--fg);
-  border-color: transparent;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
 
 /* Heatmap controls */
 .heatmap-scenario-bar {
