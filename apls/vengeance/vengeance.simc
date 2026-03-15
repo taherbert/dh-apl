@@ -15,7 +15,8 @@ override.spell_data=effect.1138072.base_value=8
 
 actions.precombat=snapshot_stats
 actions.precombat+=/sigil_of_flame
-actions.precombat+=/sigil_of_spite,if=hero_tree.aldrachi_reaver
+# AR always, Anni only with Soul Carver (DGB-only builds lose from pre-pull frag misalignment)
+actions.precombat+=/sigil_of_spite,if=hero_tree.aldrachi_reaver|talent.soul_carver
 actions.precombat+=/immolation_aura
 
 # Target counts
@@ -46,8 +47,8 @@ actions+=/variable,name=damage_trinket_priority,op=setif,value=2,value_else=1,co
 actions+=/variable,name=fiery_demise_active,value=talent.fiery_demise&dot.fiery_brand.ticking
 # Fire cooldown available soon
 actions+=/variable,name=fire_cd_soon,value=cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigil_of_spite.remains<(8+talent.charred_flesh.rank)
-# Fragment target: 3 during Brand, 4 in Meta, 5 baseline
-actions+=/variable,name=fragment_target,op=setif,value=5+apex.2,value_else=5-variable.fiery_demise_active,condition=hero_tree.aldrachi_reaver
+# Fragment target: AR uses AotG scaling; Anni uses 3 during Brand, 4 in Meta, 5 baseline
+actions+=/variable,name=fragment_target,op=setif,value=5+apex.2,value_else=variable.fiery_demise_active*3+!variable.fiery_demise_active*(5-buff.metamorphosis.up),condition=hero_tree.aldrachi_reaver
 
 actions+=/auto_attack
 actions+=/retarget_auto_attack,target_if=min:debuff.reavers_mark.remains,if=hero_tree.aldrachi_reaver
@@ -208,7 +209,7 @@ actions.ar_glaive_cycle_filler+=/throw_glaive
 
 
 # This will typically be ~3 GCDs worth of pre-meta actions
-actions.anni+=variable,name=anni_meta_entry_time,value=3*gcd.max
+actions.anni=variable,name=anni_meta_entry_time,value=3*gcd.max
 
 actions.anni+=/potion,use_off_gcd=1,if=variable.execute&(!variable.is_dungeon|in_boss_encounter)
 actions.anni+=/invoke_external_buff,name=power_infusion,if=buff.voidfall_spending.stack=3|variable.execute
@@ -240,8 +241,8 @@ actions.anni+=/felblade
 actions.anni+=/throw_glaive
 
 actions.anni_cooldowns=/spirit_bomb,if=soul_fragments>=variable.fragment_target
-actions.anni_cooldowns+=/soul_carver
-actions.anni_cooldowns+=/sigil_of_spite
+actions.anni_cooldowns+=/soul_carver,if=soul_fragments<=3
+actions.anni_cooldowns+=/sigil_of_spite,if=soul_fragments<=2+talent.soul_sigils
 actions.anni_cooldowns+=/fel_devastation
 actions.anni_cooldowns+=/call_action_list,name=anni_generate_fury,if=cooldown.fel_devastation.up&fury<50
 
@@ -251,9 +252,9 @@ actions.anni_voidfall_spending+=/soul_cleave,if=cooldown.spirit_bomb.remains>gcd
 actions.anni_voidfall_spending+=/spirit_bomb,if=soul_fragments>=variable.fragment_target
 actions.anni_voidfall_spending+=/felblade,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
 actions.anni_voidfall_spending+=/immolation_aura,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
-actions.anni_voidfall_spending+=/soul_carver,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(talent.sigil_of_spite|!action.sigil_of_spite.placed))
-actions.anni_voidfall_spending+=/fel_devastation,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|(talent.sigil_of_spite|!action.sigil_of_spite.placed))
-actions.anni_voidfall_spending+=/immolation_aura,if=variable.aoe&(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(talent.sigil_of_spite|!action.sigil_of_spite.placed)
+actions.anni_voidfall_spending+=/soul_carver,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
+actions.anni_voidfall_spending+=/fel_devastation,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
+actions.anni_voidfall_spending+=/immolation_aura,if=variable.aoe&(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target&(!talent.sigil_of_spite|!action.sigil_of_spite.placed)
 actions.anni_voidfall_spending+=/sigil_of_spite,if=(cooldown.spirit_bomb.remains<=gcd.max)&soul_fragments.total<variable.fragment_target
 actions.anni_voidfall_spending+=/call_action_list,name=anni_filler_no_spend
 
