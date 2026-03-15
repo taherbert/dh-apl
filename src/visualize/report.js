@@ -2090,7 +2090,11 @@ function renderEmbellishmentRankings(embData) {
         const isBest = isActive && i === 0;
         const delta = isBest ? "best" : embDelta(r);
         const barPct = embBarPct(r);
-        const elimCls = r.eliminated === 1 ? " trinket-strip--elim" : "";
+        const elimCls = isActive
+          ? ""
+          : r.eliminated === 1
+            ? " trinket-strip--elim"
+            : "";
         return `<div class="trinket-strip${elimCls}">
         <div class="trinket-strip__rank">${i + 1}</div>
         <div class="trinket-strip__body">
