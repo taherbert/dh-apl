@@ -136,28 +136,31 @@ actions.ar+=/call_action_list,name=ar_glaive_cycle,if=buff.rending_strike.up|buf
 actions.ar+=/fiery_brand,if=charges>=2|!variable.fiery_demise_active|variable.execute
 # IA on CD: generates Fallout fragments passively
 actions.ar+=/sigil_of_spite,if=variable.dung_cd_ok&!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up
-# Emergency consume: not in cycle, close to AotG=20 via spending or overflow
-actions.ar+=/call_action_list,name=ar_quick_consume,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(buff.art_of_the_glaive.stack+soul_fragments>=20)
+# Emergency consume: AotG overflow OR frag cap in AoE (prevents fragment waste)
+actions.ar+=/call_action_list,name=ar_quick_consume,if=!buff.reavers_glaive.up&!buff.rending_strike.up&!buff.glaive_flurry.up&(buff.art_of_the_glaive.stack+soul_fragments>=20|(variable.aoe&soul_fragments>=6))
 actions.ar+=/immolation_aura,if=in_combat
 # FD: only channel when fury is high, frags are in-flight, and not near RG
-actions.ar+=/fel_devastation,if=variable.dung_cd_ok&fury>85&(soul_fragments.inactive>1|variable.aoe)&!variable.rg_imminent
+# AoE skips rg_imminent gate since FelDev AoE value exceeds cycle delay cost
+actions.ar+=/fel_devastation,if=variable.dung_cd_ok&fury>85&(soul_fragments.inactive>1|variable.aoe)&(!variable.rg_imminent|variable.aoe)
 actions.ar+=/sigil_of_flame
 # SC: 6 fragments; prefer fiery demise window, allow when mark aging or execute
 actions.ar+=/soul_carver,if=variable.dung_cd_ok&(variable.fiery_demise_active|(variable.rm_remains<7&buff.art_of_the_glaive.stack+soul_fragments<20)|variable.execute)
 actions.ar+=/call_action_list,name=ar_fillers
 
 # Prio souls: rush to AotG=20 when close. Urgent consume, generate, or fury-gen to push over the edge.
-actions.ar_quick_consume=soul_cleave,if=soul_fragments<3
-actions.ar_quick_consume+=/spirit_bomb,if=soul_fragments>=3
-actions.ar_quick_consume+=/soul_cleave
+# AoE: SpB at 2+ frags (consume sooner); skip trailing SC (save fury for fillers)
+actions.ar_quick_consume=soul_cleave,if=soul_fragments<(3-variable.aoe)
+actions.ar_quick_consume+=/spirit_bomb,if=soul_fragments>=(3-variable.aoe)
+actions.ar_quick_consume+=/soul_cleave,if=!variable.aoe
 
 # Fillers: standard rotation when not in a glaive cycle or emergency
-actions.ar_fillers=spirit_bomb,if=soul_fragments>=variable.fragment_target
+# AoE: fire SpB 1 frag sooner to reduce cap waste
+actions.ar_fillers=spirit_bomb,if=soul_fragments>=(variable.fragment_target-variable.aoe)
 actions.ar_fillers+=/immolation_aura,if=variable.time_to_next_glaive>3*gcd.max
 actions.ar_fillers+=/felblade,if=cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
 actions.ar_fillers+=/vengeful_retreat,use_off_gcd=1,if=!cooldown.felblade.up&talent.unhindered_assault&cooldown.spirit_bomb.remains<gcd.max&soul_fragments.total>=variable.fragment_target&fury<40
-# SC with slash guard (don't consume GF during slash cycle) + deadlock guard (don't bottom out fury + frac)
-actions.ar_fillers+=/soul_cleave,if=(soul_fragments>=5|soul_fragments<=1|fury.deficit<30)&(fury>=2*action.soul_cleave.cost|cooldown.fracture.charges>=1|cooldown.fracture.remains<=gcd.max)&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
+# SC: AoE drops frag>=5 trigger (preserves frags for SpB); ST unchanged
+actions.ar_fillers+=/soul_cleave,if=((soul_fragments>=5&!variable.aoe)|soul_fragments<=1|fury.deficit<30)&(fury>=2*action.soul_cleave.cost|cooldown.fracture.charges>=1|cooldown.fracture.remains<=gcd.max)&(!buff.rending_strike.up|!buff.glaive_flurry.up|!variable.prio_slashes)
 actions.ar_fillers+=/sigil_of_flame,if=variable.aoe
 actions.ar_fillers+=/fracture,if=buff.metamorphosis.up|full_recharge_time<gcd.max|buff.warblades_hunger.stack>=4
 actions.ar_fillers+=/immolation_aura,if=!variable.is_dungeon|in_combat
