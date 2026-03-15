@@ -6,8 +6,14 @@
 //   --skip-sims           Generate from cached DB DPS only (no sims)
 //   --fidelity <tier>     quick|standard|confirm (default: standard)
 
-import { writeFileSync, readFileSync, mkdirSync, existsSync } from "node:fs";
-import { join } from "node:path";
+import {
+  writeFileSync,
+  readFileSync,
+  mkdirSync,
+  existsSync,
+  unlinkSync,
+} from "node:fs";
+import { join, dirname } from "node:path";
 
 import {
   config,
@@ -26,12 +32,18 @@ import {
   ROOT,
 } from "../engine/paths.js";
 import { spawn } from "node:child_process";
-import { loadRoster } from "../sim/build-roster.js";
+import {
+  loadRoster,
+  classifyBuilds,
+  generateDisplayNames,
+} from "../sim/build-roster.js";
 import {
   generateRosterProfilesetContent,
+  resolveInputDirectives,
   runProfilesetAsync,
   profilesetResultsToActorMap,
 } from "../sim/profilesets.js";
+import { runSimAsync } from "../sim/runner.js";
 import {
   getDb,
   getSessionState,
@@ -39,20 +51,11 @@ import {
   updateBuildDps,
   updateBuildSimcDps,
 } from "../util/db.js";
-import { generateDefensiveCostBuilds } from "../model/talent-combos.js";
 import {
   decode as decodeTalentHash,
   removeNodes as removeNodesFromHash,
   loadFullNodeList,
 } from "../util/talent-string.js";
-
-// Severity tiers for defensive talent cost strips, ordered by threshold ascending.
-// Thresholds are fractions of maxCost — resolved at render time via getSeverity().
-const SEVERITY_TIERS = [
-  { threshold: 0.33, cls: "light", color: "var(--positive)" },
-  { threshold: 0.66, cls: "moderate", color: "var(--gold)" },
-  { threshold: Infinity, cls: "heavy", color: "var(--negative)" },
-];
 
 // --- CLI ---
 
@@ -74,6 +77,22 @@ function parseArgs() {
   return opts;
 }
 
+// Parse damage stats from a SimC JSON player stats array into sorted breakdown.
+function parseDamageBreakdown(playerStats) {
+  if (!playerStats) return null;
+  const abilities = playerStats
+    .filter((s) => s.type === "damage" && (s.compound_amount || 0) > 0)
+    .map((s) => ({
+      name: s.name.replace(/_/g, " "),
+      amount: s.compound_amount,
+      school: s.school || "physical",
+    }))
+    .sort((a, b) => b.amount - a.amount);
+  if (abilities.length === 0) return null;
+  const total = abilities.reduce((sum, a) => sum + a.amount, 0);
+  return { abilities, total };
+}
+
 // --- Sim execution (profileset mode) ---
 
 async function runRosterSim(roster, aplPath, scenario, label, fidelityOpts) {
@@ -82,6 +101,84 @@ async function runRosterSim(roster, aplPath, scenario, label, fidelityOpts) {
     simOverrides: { target_error: fidelityOpts.target_error },
   });
   return profilesetResultsToActorMap(results, roster);
+}
+
+// Run single-profile ST sims for the top build of each hero tree.
+// Returns a map of heroTree -> { abilities, total, buildName }.
+async function simBreakdownBuilds(roster, aplPath, heroTrees) {
+  const treeNames = Object.keys(heroTrees);
+  const byTree = {};
+
+  for (const build of roster.builds) {
+    const tree = build.heroTree;
+    if (
+      !tree ||
+      !treeNames.some((k) => normalizeTree(k) === normalizeTree(tree))
+    )
+      continue;
+    if (!byTree[tree]) byTree[tree] = [];
+    byTree[tree].push(build);
+  }
+
+  // Pick the top build per tree (by weighted DPS from DB)
+  const rawBuilds = getRosterBuilds();
+  const dbByHash = new Map(rawBuilds.map((b) => [b.hash, b]));
+
+  const topPerTree = {};
+  for (const [tree, builds] of Object.entries(byTree)) {
+    const sorted = builds
+      .map((b) => ({ ...b, weighted: dbByHash.get(b.hash)?.weighted || 0 }))
+      .sort((a, b) => b.weighted - a.weighted);
+    if (sorted.length > 0 && sorted[0].hash) topPerTree[tree] = sorted[0];
+  }
+
+  const breakdowns = {};
+  const rawApl = readFileSync(aplPath, "utf-8");
+  const resolvedApl = resolveInputDirectives(rawApl, dirname(aplPath));
+
+  for (const [tree, build] of Object.entries(topPerTree)) {
+    const content = resolvedApl.replace(
+      /^\s*talents\s*=.*/m,
+      `talents=${build.hash}`,
+    );
+
+    const tmpPath = join(resultsDir(), `breakdown_${normalizeTree(tree)}.simc`);
+    writeFileSync(tmpPath, content);
+
+    try {
+      console.log(
+        `    ${heroTrees[tree]?.displayName || tree}: ${build.displayName || build.id}`,
+      );
+      await runSimAsync(tmpPath, "st", {
+        simOverrides: { target_error: 1.0 },
+      });
+
+      // Parse stats from the JSON output
+      const jsonPath = join(
+        resultsDir(),
+        `breakdown_${normalizeTree(tree)}_st.json`,
+      );
+      if (existsSync(jsonPath)) {
+        const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
+        const bd = parseDamageBreakdown(data?.sim?.players?.[0]?.stats);
+        if (bd) {
+          breakdowns[tree] = {
+            ...bd,
+            buildName: build.displayName || build.id,
+          };
+        }
+      }
+    } catch (e) {
+      console.warn(`    Breakdown sim failed for ${tree}: ${e.message}`);
+    }
+  }
+
+  return breakdowns;
+}
+
+function normalizeTree(tree) {
+  if (!tree) return "";
+  return tree.replace(/[\s-]+/g, "_").toLowerCase();
 }
 
 // --- Load all report data ---
@@ -524,135 +621,6 @@ function persistSimResults(roster, buildData) {
 }
 
 const sanitize = (s) => s.replace(/\./g, "_").replace(/\s+/g, "_");
-
-// --- Defensive talent cost sims ---
-
-async function simDefensiveCosts(
-  aplPath,
-  fidelityOpts,
-  reportData,
-  specConfig,
-) {
-  const bestBuild = findBest(reportData.builds, "weighted");
-  const archetypeMatch = bestBuild?.archetype?.match(/^Apex (\d+):\s*(.+)$/);
-
-  let refTemplate = null;
-  if (archetypeMatch && specConfig.rosterTemplates) {
-    refTemplate = specConfig.rosterTemplates.find(
-      (t) =>
-        t.name === archetypeMatch[2].trim() &&
-        t.apexRank === Number(archetypeMatch[1]),
-    );
-  }
-
-  if (refTemplate) {
-    console.log(
-      `  Reference: ${bestBuild.displayName} (${bestBuild.archetype})`,
-    );
-  }
-
-  const { references, variants } = generateDefensiveCostBuilds({ refTemplate });
-
-  if (references.length === 0 || variants.length === 0) {
-    console.log("  No defensive talent builds to sim.");
-    return { costs: [], refName: "" };
-  }
-
-  console.log(
-    `  Defensive costs: ${references.length} refs + ${variants.length} variants`,
-  );
-
-  const results = [];
-
-  // Group by hero tree — one profileset per tree per scenario
-  const heroTrees = [...new Set(references.map((r) => r.heroTree))];
-
-  for (const heroTree of heroTrees) {
-    const ref = references.find((r) => r.heroTree === heroTree);
-    if (!ref) continue;
-
-    const treeVariants = variants.filter(
-      (v) => v.heroTree === heroTree && v.hash && v.valid,
-    );
-    if (treeVariants.length === 0) continue;
-
-    const miniRoster = {
-      builds: [
-        { id: ref.name, hash: ref.hash },
-        ...treeVariants.map((v) => ({ id: v.build.name, hash: v.hash })),
-      ],
-    };
-
-    const variantByName = new Map(
-      treeVariants.map((v) => [sanitize(v.build.name), v]),
-    );
-
-    for (const scenario of Object.keys(SCENARIOS)) {
-      console.log(`  ${heroTree} / ${SCENARIOS[scenario].name}...`);
-
-      const content = generateRosterProfilesetContent(miniRoster, aplPath);
-      const psResults = await runProfilesetAsync(
-        content,
-        scenario,
-        `defcost_${heroTree.replace(/\s+/g, "_")}_${scenario}`,
-        { simOverrides: { target_error: fidelityOpts.target_error } },
-      );
-
-      const refDps = psResults.baseline.dps;
-
-      for (const variant of psResults.variants) {
-        const match = variantByName.get(variant.name);
-        if (!match) {
-          console.warn(`  Warning: no match for variant "${variant.name}"`);
-          continue;
-        }
-
-        let entry = results.find(
-          (r) =>
-            r.defensiveName === match.defensiveName && r.heroTree === heroTree,
-        );
-        if (!entry) {
-          entry = {
-            defensiveName: match.defensiveName,
-            heroTree,
-            droppedTalents: match.droppedTalents,
-            pointCost: match.pointCost,
-            dps: {},
-            refDps: {},
-            deltas: {},
-          };
-          results.push(entry);
-        }
-
-        entry.dps[scenario] = variant.dps;
-        entry.refDps[scenario] = refDps;
-        entry.deltas[scenario] =
-          refDps > 0 ? ((variant.dps - refDps) / refDps) * 100 : 0;
-      }
-    }
-  }
-
-  // Compute weighted deltas
-  for (const entry of results) {
-    entry.dps.weighted = computeWeighted(entry.dps);
-    entry.refDps.weighted = computeWeighted(entry.refDps);
-    entry.deltas.weighted =
-      entry.refDps.weighted > 0
-        ? ((entry.dps.weighted - entry.refDps.weighted) /
-            entry.refDps.weighted) *
-          100
-        : 0;
-  }
-
-  // Sort by weighted delta (most costly first)
-  results.sort((a, b) => a.deltas.weighted - b.deltas.weighted);
-
-  const refName = refTemplate
-    ? `${refTemplate.name} (Apex ${refTemplate.apexRank})`
-    : formatBuildName(bestBuild);
-
-  return { costs: results, refName };
-}
 
 // --- Talent ablation sims ---
 
@@ -1164,7 +1132,6 @@ function generateHtml(data) {
     specName,
     builds,
     apexBuilds,
-    defensiveTalentCosts,
     heroTrees,
     trinketData,
     embellishmentData,
@@ -1198,7 +1165,6 @@ function generateHtml(data) {
     renderGearSection(gearData, abilityBreakdown),
     renderTrinketRankings(trinketData),
     renderEmbellishmentRankings(embellishmentData),
-    renderDefensiveCostsSection(defensiveTalentCosts, builds),
     renderFooter(),
   ];
 
@@ -1321,17 +1287,6 @@ function renderGearSection(gearData, abilityBreakdown) {
 </section>`;
 }
 
-function renderDefensiveCostsSection(defensiveTalentCosts, builds) {
-  if (!defensiveTalentCosts?.costs?.length) return "";
-  return `<section>
-  <div class="report-card">
-  <h3>Defensive Talent Costs</h3>
-  <p class="section-desc">DPS cost of each defensive talent vs the reference build</p>
-  ${renderDefensiveTalentCosts(defensiveTalentCosts.costs, defensiveTalentCosts.refName, builds)}
-  </div>
-</section>`;
-}
-
 function renderTalentHeatmap(
   builds,
   talentData,
@@ -1353,10 +1308,10 @@ function renderTalentHeatmap(
 
   // Hero tree toggle
   const heroToggles = [
-    `<button class="heatmap-hero-btn active" data-hero-tree="all">All</button>`,
+    `<button class="report-tab report-tab--active" data-hero-tree="all">All</button>`,
     ...treeNames.map(
       (t) =>
-        `<button class="heatmap-hero-btn" data-hero-tree="${esc(t)}"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)}</button>`,
+        `<button class="report-tab" data-hero-tree="${esc(t)}"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span> ${esc(heroTrees[t].displayName)}</button>`,
     ),
   ].join("\n      ");
 
@@ -1376,7 +1331,7 @@ function renderTalentHeatmap(
   const svgPanel = `<div class="heatmap-spec-panel report-card">
     <h3>Talent Heatmap</h3>
     <p class="section-desc">${methodLabel}</p>
-    <div class="heatmap-hero-bar">${heroToggles}</div>
+    <div class="report-tabs">${heroToggles}</div>
     ${scenarioToggles}
     ${specSvg}
     <div class="heatmap-legend">
@@ -1638,13 +1593,19 @@ function renderApexScaling(apexBuilds, heroTrees) {
     }
   }
 
-  // For each template with a rank 0 baseline, compute % delta at each rank
+  // For each template, compute % delta vs its lowest available rank
   const deltasByTreeRank = {}; // key: "tree|rank" -> [pctDelta, ...]
   for (const { tree, ranks: rDps } of Object.values(templateMap)) {
-    if (!rDps[0]) continue;
+    const availableRanks = Object.keys(rDps)
+      .map(Number)
+      .sort((a, b) => a - b);
+    if (availableRanks.length === 0) continue;
+    const baseRank = availableRanks[0];
+    const baseDps = rDps[baseRank];
+    if (!baseDps) continue;
     for (const rank of ranks) {
       if (rDps[rank] === undefined) continue;
-      const pct = ((rDps[rank] - rDps[0]) / rDps[0]) * 100;
+      const pct = ((rDps[rank] - baseDps) / baseDps) * 100;
       const key = `${tree}|${rank}`;
       (deltasByTreeRank[key] ||= []).push(pct);
     }
@@ -1761,7 +1722,7 @@ function renderApexScaling(apexBuilds, heroTrees) {
 
   return `<div class="apex-panel report-card">
     <h3>Apex Scaling</h3>
-    <p class="section-desc">How much DPS does each build gain or lose by investing in apex talents? Each build is compared to itself at rank 0. Solid line shows the best-scaling build; dashed line shows the average across all builds.</p>
+    <p class="section-desc">How much DPS does each build gain or lose by investing in apex talents? Each build is compared to itself at its lowest available rank. Solid line shows the best-scaling build; dashed line shows the average across all builds.</p>
     <svg class="apex-chart" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
       ${grid}
       ${xAxis}
@@ -1785,42 +1746,6 @@ function renderBuildRankings(builds, heroTrees) {
     (a, b) => (b.dps.weighted || 0) - (a.dps.weighted || 0),
   );
 
-  // Hero tree filter buttons
-  const treeFilters = renderTreeFilterBtns(heroTrees);
-
-  // Table rows
-  let rows = "";
-  for (const b of sorted) {
-    const isTopW = b.id === topWeighted?.id;
-    const wBadge = isTopW ? '<span class="badge">TOP</span>' : "";
-
-    // Baseline tooltip
-    const hasBaseline = b.simcDps && b.simcDps.weighted > 0;
-    let scenarioCells = "";
-    for (const s of scenarios) {
-      const isTop = topPerScenario[s]?.id === b.id;
-      const badge = isTop ? '<span class="badge">TOP</span>' : "";
-      const topCls = isTop ? " top-build" : "";
-      const tip =
-        hasBaseline && b.simcDps[s]
-          ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps[s])}"`
-          : "";
-      scenarioCells += `<td class="dps-cell${topCls} has-tip"${tip}>${fmtDps(b.dps[s] || 0)}${badge}</td>`;
-    }
-
-    const wTip = hasBaseline
-      ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps.weighted)}"`
-      : "";
-    const { cls: bCls, abbr: bAbbr } = treeStyle(b.heroTree);
-    const srcBadge = communitySourceBadge(b);
-    rows += `<tr data-tree="${esc(b.heroTree)}">
-  <td class="build-name">${esc(b.displayName)}${srcBadge}${copyBtn(b.hash)}</td>
-  <td><span class="tree-badge sm ${bCls}">${bAbbr}</span></td>
-  ${scenarioCells}
-  <td class="dps-cell${isTopW ? " top-build" : ""} has-tip"${wTip}>${fmtDps(b.dps.weighted || 0)}${wBadge}</td>
-</tr>`;
-  }
-
   const scenarioHeaders = scenarios
     .map(
       (s) =>
@@ -1835,16 +1760,37 @@ function renderBuildRankings(builds, heroTrees) {
     )
     .join(" · ");
 
-  return `<section id="rankings">
-  <div class="report-card">
-  <h3>Build Rankings</h3>
-  <p class="section-desc">Weighted = ${weightLegend}</p>
-  <div class="filter-bar">
-    <button class="filter-btn active" data-tree="all">All (${builds.length})</button>
-    ${treeFilters}
-  </div>
-  <div class="table-wrap">
-    <table class="roster-table" id="rankings-table">
+  function buildTable(subset, tableId) {
+    let rows = "";
+    for (const b of subset) {
+      const isTopW = b.id === topWeighted?.id;
+      const wBadge = isTopW ? '<span class="badge">TOP</span>' : "";
+      const hasBaseline = b.simcDps && b.simcDps.weighted > 0;
+      let scenarioCells = "";
+      for (const s of scenarios) {
+        const isTop = topPerScenario[s]?.id === b.id;
+        const badge = isTop ? '<span class="badge">TOP</span>' : "";
+        const topCls = isTop ? " top-build" : "";
+        const tip =
+          hasBaseline && b.simcDps[s]
+            ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps[s])}"`
+            : "";
+        scenarioCells += `<td class="dps-cell${topCls} has-tip"${tip}>${fmtDps(b.dps[s] || 0)}${badge}</td>`;
+      }
+      const wTip = hasBaseline
+        ? ` data-tip="SimC baseline: ${fmtDps(b.simcDps.weighted)}"`
+        : "";
+      const { cls: bCls, abbr: bAbbr } = treeStyle(b.heroTree);
+      const srcBadge = communitySourceBadge(b);
+      rows += `<tr data-tree="${esc(b.heroTree)}">
+  <td class="build-name">${esc(b.displayName)}${srcBadge}${copyBtn(b.hash)}</td>
+  <td><span class="tree-badge sm ${bCls}">${bAbbr}</span></td>
+  ${scenarioCells}
+  <td class="dps-cell${isTopW ? " top-build" : ""} has-tip"${wTip}>${fmtDps(b.dps.weighted || 0)}${wBadge}</td>
+</tr>`;
+    }
+    return `<div class="table-wrap">
+    <table class="roster-table" id="${tableId}">
       <thead><tr>
         <th class="sortable" data-col="name">Build</th>
         <th>Tree</th>
@@ -1853,7 +1799,37 @@ function renderBuildRankings(builds, heroTrees) {
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>
+  </div>`;
+  }
+
+  // Tab buttons: All + per-tree
+  const treeKeys = Object.keys(heroTrees);
+  const tabBtns = [
+    `<button class="report-tab report-tab--active" data-tab="all">All (${builds.length})</button>`,
+    ...treeKeys.map(
+      (key) =>
+        `<button class="report-tab" data-tab="${esc(key)}">${esc(heroTrees[key].displayName)}</button>`,
+    ),
+  ].join("\n    ");
+
+  // Panes: All + per-tree
+  const allPane = `<div class="report-pane report-pane--active" data-pane="all">${buildTable(sorted, "rankings-table")}</div>`;
+  const treePanes = treeKeys
+    .map((key) => {
+      const treeBuilds = sorted.filter((b) => b.heroTree === key);
+      return `<div class="report-pane" data-pane="${esc(key)}">${buildTable(treeBuilds, `rankings-table-${key.replace(/\s+/g, "-")}`)}</div>`;
+    })
+    .join("\n  ");
+
+  return `<section id="rankings">
+  <div class="report-card" data-tab-group="rankings">
+  <h3>Build Rankings</h3>
+  <p class="section-desc">Weighted = ${weightLegend}</p>
+  <div class="report-tabs">
+    ${tabBtns}
   </div>
+  ${allPane}
+  ${treePanes}
   </div>
 </section>`;
 }
@@ -1997,21 +1973,21 @@ function renderTrinketRankings(trinketData) {
   const hasBoth = hasIndividual && hasPairs;
 
   const toggleBtns = hasBoth
-    ? `<div class="trinket-tabs">
-        <button class="trinket-tab trinket-tab--active" data-trinket-view="individual">Individual</button>
-        <button class="trinket-tab" data-trinket-view="pairs">Pairs</button>
+    ? `<div class="report-tabs report-tabs--inline">
+        <button class="report-tab report-tab--active" data-tab="individual">Individual</button>
+        <button class="report-tab" data-tab="pairs">Pairs</button>
       </div>`
     : "";
 
   const individualPane = hasIndividual
-    ? `<div class="trinket-pane trinket-pane--active" data-trinket-pane="individual">${individualHtml}</div>`
+    ? `<div class="report-pane report-pane--active" data-pane="individual">${individualHtml}</div>`
     : "";
   const pairsPane = hasPairs
-    ? `<div class="trinket-pane${hasBoth ? "" : " trinket-pane--active"}" data-trinket-pane="pairs">${pairsHtml}</div>`
+    ? `<div class="report-pane${hasBoth ? "" : " report-pane--active"}" data-pane="pairs">${pairsHtml}</div>`
     : "";
 
   return `<section>
-  <div class="report-card">
+  <div class="report-card" data-tab-group="trinkets">
     <div class="card-header-row"><h3>Trinket Rankings</h3>${toggleBtns}</div>
     ${individualPane}
     ${pairsPane}
@@ -2087,11 +2063,12 @@ function renderEmbellishmentRankings(embData) {
   if (!embData?.pairs?.length) return "";
 
   const { pairs, nullEmb } = embData;
-  const allActive = pairs.filter((r) => !r.eliminated);
-  // Show top 5; remainder goes into the "more" section
-  const topActive = allActive.slice(0, 5);
-  const moreActive = allActive.slice(5);
-  const allElim = [...moreActive, ...pairs.filter((r) => r.eliminated)];
+  // Show top 10 by weighted DPS regardless of eliminated status
+  const sorted = [...pairs].sort(
+    (a, b) => (b.weighted || 0) - (a.weighted || 0),
+  );
+  const topActive = sorted.slice(0, 10);
+  const remaining = sorted.slice(10);
 
   function embDelta(r) {
     if (!nullEmb) return `${(r.delta_pct_weighted || 0).toFixed(1)}%`;
@@ -2146,10 +2123,10 @@ function renderEmbellishmentRankings(embData) {
     : "";
 
   const moreHtml =
-    allElim.length > 0
+    remaining.length > 0
       ? `<details class="trinket-details">
-      <summary>More embellishments <span class="detail-count">(${allElim.length})</span></summary>
-      <div class="trinket-list trinket-list--elim">${renderEmbStrips(allElim, false)}</div>
+      <summary>More embellishments <span class="detail-count">(${remaining.length})</span></summary>
+      <div class="trinket-list trinket-list--elim">${renderEmbStrips(remaining, false)}</div>
     </details>`
       : "";
 
@@ -2297,108 +2274,10 @@ function renderTrinketIlvlChart(ilvlRows, tagMap, ilvlTierConfig) {
   </div>`;
 }
 
-function renderDefensiveTalentCosts(costs, refName, builds) {
-  const scenarios = activeScenarios(builds);
-
-  // Group by defensive talent name, average across hero trees
-  const byTalent = {};
-  for (const c of costs) {
-    const group = (byTalent[c.defensiveName] ||= {
-      defensiveName: c.defensiveName,
-      pointCost: c.pointCost,
-      entries: [],
-    });
-    group.entries.push(c);
-  }
-
-  const averaged = Object.values(byTalent).map((group) => {
-    const n = group.entries.length;
-    const avgDeltas = {};
-    for (const key of [...scenarios, "weighted"]) {
-      avgDeltas[key] =
-        group.entries.reduce((sum, e) => sum + (e.deltas[key] || 0), 0) / n;
-    }
-    return { ...group, avgDeltas };
-  });
-
-  // Sort by cost: least costly first (closest to 0)
-  averaged.sort((a, b) => b.avgDeltas.weighted - a.avgDeltas.weighted);
-
-  // Compute max cost for bar scaling
-  const maxCost = Math.max(
-    ...averaged.map((t) => Math.abs(t.avgDeltas.weighted)),
-    1,
-  );
-
-  function getSeverity(pct) {
-    const abs = Math.abs(pct);
-    return (
-      SEVERITY_TIERS.find((t) => abs < maxCost * t.threshold) ||
-      SEVERITY_TIERS[SEVERITY_TIERS.length - 1]
-    );
-  }
-
-  // Extract tree names from entries for column headers
-  const treeNames =
-    averaged.length > 0 && averaged[0].entries.length > 1
-      ? averaged[0].entries.map((e) => e.heroTree)
-      : [];
-  const treeHeaders = treeNames
-    .map(
-      (t) =>
-        `<span class="def-strip__tree-header"><span class="tree-badge sm ${treeClass(t)}">${treeAbbr(t)}</span></span>`,
-    )
-    .join("");
-
-  let html = `<div class="subsection">
-    <p class="section-desc">DPS cost of taking each defensive talent (averaged across hero trees, vs ${esc(refName)}).</p>
-    <div class="def-cost-list">
-    ${treeHeaders ? `<div class="def-strip-header"><div class="def-strip-header__body"><span></span><span></span><span class="def-strip-header__label" style="color:var(--fg)">Avg</span>${treeHeaders}</div></div>` : ""}`;
-
-  for (const t of averaged) {
-    const { cls: sev, color } = getSeverity(t.avgDeltas.weighted);
-    const barPct = (Math.abs(t.avgDeltas.weighted) / maxCost) * 100;
-
-    const treeHtml =
-      t.entries.length > 1
-        ? (() => {
-            const deltas = t.entries.map((e) => e.deltas.weighted);
-            const spread = Math.abs(deltas[0] - deltas[1]);
-            const avgAbs = Math.abs(t.avgDeltas.weighted);
-            const divergent = avgAbs > 0 && spread / avgAbs > 0.3;
-            return t.entries
-              .map((e) => {
-                const isOutlier =
-                  divergent &&
-                  Math.abs(e.deltas.weighted) >
-                    Math.abs(t.avgDeltas.weighted) * 1.15;
-                return `<span class="def-strip__tree${isOutlier ? " def-strip__tree--divergent" : ""}">${fmtDelta(e.deltas.weighted)}</span>`;
-              })
-              .join("");
-          })()
-        : "";
-
-    html += `<div class="def-strip def-strip--${sev}">
-      <div class="def-strip__indicator" style="background:${color}"></div>
-      <div class="def-strip__body">
-        <span class="def-strip__name">${esc(t.defensiveName)}</span>
-        <div class="def-strip__bar-wrap">
-          <div class="def-strip__bar" style="width:${barPct.toFixed(1)}%;background:${color}"></div>
-        </div>
-        <span class="def-strip__cost" style="color:${color}">${fmtDelta(t.avgDeltas.weighted)}</span>
-        ${treeHtml}
-      </div>
-    </div>`;
-  }
-
-  html += `</div></div>`;
-  return html;
-}
-
 function renderAbilityBreakdown(abilityBreakdown) {
-  if (!abilityBreakdown?.abilities?.length) return "";
-
-  const { abilities, total } = abilityBreakdown;
+  // Accepts either a single breakdown { abilities, total } or
+  // a per-tree map { treeName: { abilities, total, buildName } }
+  if (!abilityBreakdown) return "";
 
   const SCHOOL_COLORS = {
     physical: "#b0895f",
@@ -2412,25 +2291,80 @@ function renderAbilityBreakdown(abilityBreakdown) {
     holy: "#fbbf24",
   };
 
-  // Horizontal bars — all abilities, no grouping
-  const bars = abilities
-    .map((a) => {
-      const pct = ((a.amount / total) * 100).toFixed(1);
-      const barW = ((a.amount / abilities[0].amount) * 100).toFixed(1);
-      const color = SCHOOL_COLORS[a.school] || "var(--fg-muted)";
-      const label = toTitleCase(a.name);
-      return `<div class="ab-row">
-        <span class="ab-label">${esc(label)}</span>
-        <div class="ab-track"><div class="ab-fill" style="width:${barW}%;background:${color}"></div></div>
-        <span class="ab-value">${pct}%</span>
+  function renderBars(abilities, total) {
+    if (!abilities?.length || !total) return "";
+    return abilities
+      .map((a) => {
+        const pct = ((a.amount / total) * 100).toFixed(1);
+        const barW = ((a.amount / abilities[0].amount) * 100).toFixed(1);
+        const color = SCHOOL_COLORS[a.school] || "var(--fg-muted)";
+        const label = toTitleCase(a.name);
+        return `<div class="ab-row">
+          <span class="ab-label">${esc(label)}</span>
+          <div class="ab-track"><div class="ab-fill" style="width:${barW}%;background:${color}"></div></div>
+          <span class="ab-value">${pct}%</span>
+        </div>`;
+      })
+      .join("");
+  }
+
+  // Single breakdown (legacy: from report_ours_st.json base profile)
+  if (abilityBreakdown.abilities) {
+    const bars = renderBars(abilityBreakdown.abilities, abilityBreakdown.total);
+    if (!bars) return "";
+    return `<div class="ability-breakdown report-card">
+  <h3>Damage Breakdown</h3>
+  <p class="section-desc">Share of total damage by ability (reference build, single target)</p>
+  <div class="ab-rows">${bars}</div>
+</div>`;
+  }
+
+  // Per-tree breakdown map
+  const trees = Object.entries(abilityBreakdown).filter(
+    ([, v]) => v?.abilities?.length,
+  );
+  if (trees.length === 0) return "";
+
+  // Single tree -- no tabs needed
+  if (trees.length === 1) {
+    const [, data] = trees[0];
+    const bars = renderBars(data.abilities, data.total);
+    if (!bars) return "";
+    const desc = data.buildName
+      ? `Share of total damage by ability (${esc(data.buildName)}, single target)`
+      : `Share of total damage by ability (reference build, single target)`;
+    return `<div class="ability-breakdown report-card">
+  <h3>Damage Breakdown</h3>
+  <p class="section-desc">${desc}</p>
+  <div class="ab-rows">${bars}</div>
+</div>`;
+  }
+
+  // Multiple trees -- tabbed
+  const tabButtons = trees
+    .map(
+      ([tree], i) =>
+        `<button class="report-tab${i === 0 ? " report-tab--active" : ""}" data-tab="${esc(tree)}">${esc(toTitleCase(tree.replace(/_/g, " ")))}</button>`,
+    )
+    .join("");
+
+  const panes = trees
+    .map(([tree, data], i) => {
+      const bars = renderBars(data.abilities, data.total);
+      const desc = data.buildName
+        ? `${esc(data.buildName)}, single target`
+        : `Single target`;
+      return `<div class="report-pane${i === 0 ? " report-pane--active" : ""}" data-pane="${esc(tree)}">
+        <p class="section-desc">${desc}</p>
+        <div class="ab-rows">${bars}</div>
       </div>`;
     })
     .join("");
 
-  return `<div class="ability-breakdown report-card">
+  return `<div class="ability-breakdown report-card" data-tab-group="breakdown">
   <h3>Damage Breakdown</h3>
-  <p class="section-desc">Share of total damage by ability (reference build, single target)</p>
-  <div class="ab-rows">${bars}</div>
+  <div class="report-tabs">${tabButtons}</div>
+  ${panes}
 </div>`;
 }
 
@@ -2674,15 +2608,6 @@ function applyNormalizedWeights(dpsRows) {
 
 function allDpsKeys() {
   return [...Object.keys(SCENARIOS), "weighted"];
-}
-
-function renderTreeFilterBtns(heroTrees) {
-  return Object.entries(heroTrees)
-    .map(
-      ([key, val]) =>
-        `<button class="filter-btn" data-tree="${esc(key)}">${esc(val.displayName)}</button>`,
-    )
-    .join("\n      ");
 }
 
 // --- CSS ---
@@ -3058,21 +2983,23 @@ h4 {
   font-variant-numeric: tabular-nums;
 }
 
-/* Heatmap controls */
-.heatmap-hero-bar {
+/* Unified tab/pane system */
+.report-tabs {
   display: flex;
   gap: 0.35rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
 }
 
-.heatmap-hero-btn {
+.report-tab {
+  font-family: "DM Sans", sans-serif;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--fg-muted);
-  font-size: 0.72rem;
+  font-size: 0.74rem;
   font-weight: 600;
-  padding: 0.3rem 0.65rem;
+  padding: 0.3rem 0.75rem;
   cursor: pointer;
   transition: all 0.15s;
   display: flex;
@@ -3080,17 +3007,41 @@ h4 {
   gap: 0.3rem;
 }
 
-.heatmap-hero-btn:hover {
+.report-tab:hover {
   border-color: var(--fg-muted);
   color: var(--fg);
 }
 
-.heatmap-hero-btn.active {
+.report-tab--active {
   background: var(--surface-alt);
   border-color: var(--accent);
   color: var(--accent);
 }
 
+.report-pane { display: none; }
+.report-pane--active { display: block; }
+
+/* Header-inline variant (trinket individual/pairs toggle) */
+.report-tabs--inline {
+  gap: 2px;
+  background: var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  margin-bottom: 0;
+}
+.report-tabs--inline .report-tab {
+  border: none;
+  border-radius: calc(var(--radius-sm) - 1px);
+  background: transparent;
+}
+.report-tabs--inline .report-tab--active {
+  background: var(--surface);
+  color: var(--fg);
+  border-color: transparent;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Heatmap controls */
 .heatmap-scenario-bar {
   display: flex;
   gap: 0.35rem;
@@ -3343,30 +3294,6 @@ h4 {
 .tree-badge.other { background: rgba(148, 163, 184, 0.13); color: #94a3b8; }
 .tree-badge.sm { font-size: 0.65rem; padding: 0.15em 0.45em; }
 
-/* Filter bar */
-.filter-bar {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-}
-
-.filter-btn {
-  font-family: "DM Sans", sans-serif;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--fg-muted);
-  padding: 0.4em 1em;
-  font-size: 0.78rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.filter-btn:hover { border-color: var(--accent-dim); color: var(--fg); }
-.filter-btn.active { background: var(--accent-dim); border-color: var(--accent); color: var(--fg); }
-
 /* Tables */
 .table-wrap {
   overflow-x: auto;
@@ -3502,105 +3429,6 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 /* Positive / negative */
 .positive { color: var(--positive); font-weight: 600; }
 .negative { color: var(--negative); font-weight: 600; }
-
-/* Defensive cost strips */
-.def-cost-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.def-strip-header {
-  padding-left: 3px;
-}
-
-.def-strip-header__body {
-  display: grid;
-  grid-template-columns: 160px 1fr 75px 90px 90px;
-  gap: 0 0.75rem;
-  padding: 0.35rem 1rem 0.25rem 0.85rem;
-}
-
-.def-strip-header__label,
-.def-strip__tree-header {
-  font-size: 0.68rem;
-  color: var(--fg-muted);
-  font-weight: 600;
-  text-align: right;
-}
-
-.def-strip {
-  display: flex;
-  background: var(--bg-elevated);
-  transition: background 0.15s;
-}
-
-.def-strip:nth-child(even) { background: var(--surface-alt); }
-.def-strip:hover { background: rgba(123, 147, 255, 0.05); }
-
-.def-strip__indicator {
-  flex: 0 0 3px;
-  align-self: stretch;
-}
-
-.def-strip__body {
-  flex: 1;
-  min-width: 0;
-  display: grid;
-  grid-template-columns: 160px 1fr 75px 90px 90px;
-  align-items: center;
-  gap: 0 0.75rem;
-  padding: 0.55rem 1rem 0.55rem 0.85rem;
-}
-
-.def-strip__name {
-  font-family: "Outfit", sans-serif;
-  font-weight: 600;
-  font-size: 0.84rem;
-  color: var(--fg);
-  white-space: nowrap;
-}
-
-.def-strip__bar-wrap {
-  min-width: 0;
-  height: 6px;
-  background: var(--border-subtle);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.def-strip__bar {
-  height: 100%;
-  border-radius: 3px;
-  opacity: 0.7;
-  transition: opacity 0.15s;
-}
-
-.def-strip:hover .def-strip__bar { opacity: 1; }
-
-.def-strip__cost {
-  font-family: "Outfit", sans-serif;
-  font-size: 0.92rem;
-  font-weight: 700;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-}
-
-.def-strip__tree {
-  font-size: 0.72rem;
-  color: var(--fg-dim);
-  font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
-.def-strip__tree--divergent {
-  color: var(--fg);
-  font-weight: 600;
-}
 
 /* Details / collapsible */
 details {
@@ -3777,34 +3605,6 @@ a.gear-name:hover { text-decoration: underline; }
   margin-bottom: 0.5rem;
 }
 .card-header-row h3 { margin: 0; }
-
-.trinket-tabs {
-  display: flex;
-  gap: 2px;
-  background: var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 2px;
-}
-.trinket-tab {
-  padding: 0.3rem 0.75rem;
-  font-size: 0.74rem;
-  font-weight: 600;
-  border: none;
-  border-radius: calc(var(--radius-sm) - 1px);
-  background: transparent;
-  color: var(--fg-muted);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.trinket-tab:hover { color: var(--fg); }
-.trinket-tab--active {
-  background: var(--surface);
-  color: var(--fg);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-}
-
-.trinket-pane { display: none; }
-.trinket-pane--active { display: block; }
 
 /* Trinket rankings */
 .trinket-list {
@@ -4105,10 +3905,8 @@ footer { animation-delay: 0.35s; }
   .tbc-grid { grid-template-columns: 1fr; }
   .hc-row { grid-template-columns: 70px 1fr 60px; gap: 0.5rem; }
   .comparison-grid { grid-template-columns: 1fr; }
-  .def-strip__body, .def-strip-header__body { grid-template-columns: 120px 1fr 65px 75px 75px; gap: 0 0.5rem; }
   table { font-size: 0.72rem; }
   th, td { padding: 0.35rem 0.5rem; }
-  .filter-bar { gap: 0.35rem; }
   .build-name { font-size: 0.7rem; }
 
   .trinket-strip { grid-template-columns: 28px 1fr 55px; gap: 0 0.5rem; padding: 0.45rem 0.75rem; }
@@ -4140,10 +3938,10 @@ const JS = `
   }
 
   // Hero tree toggle
-  section.querySelectorAll('.heatmap-hero-btn').forEach(btn => {
+  section.querySelectorAll('.report-tab[data-hero-tree]').forEach(btn => {
     btn.addEventListener('click', () => {
-      section.querySelectorAll('.heatmap-hero-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      section.querySelectorAll('.report-tab[data-hero-tree]').forEach(b => b.classList.remove('report-tab--active'));
+      btn.classList.add('report-tab--active');
       section.dataset.activeTree = btn.dataset.heroTree;
       updateHeatmapColors();
     });
@@ -4297,35 +4095,6 @@ document.querySelectorAll('th.sortable').forEach(th => {
     });
 
     for (const row of rows) tbody.appendChild(row);
-
-    // Re-apply active hero tree filter after sort
-    const activeFilter = table.closest('section')?.querySelector('.filter-btn.active');
-    if (activeFilter && activeFilter.dataset.tree !== 'all') {
-      const tree = activeFilter.dataset.tree;
-      rows.forEach(row => {
-        row.style.display = row.dataset.tree === tree ? '' : 'none';
-      });
-    }
-  });
-});
-
-// Hero tree filter (rankings section)
-document.querySelectorAll('#rankings .filter-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const tree = btn.dataset.tree;
-    const table = document.getElementById('rankings-table');
-    if (!table) return;
-
-    btn.closest('.filter-bar').querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    table.querySelectorAll('tbody tr').forEach(row => {
-      if (tree === 'all' || row.dataset.tree === tree) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
-    });
   });
 });
 
@@ -4440,20 +4209,19 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
   window.addEventListener('resize', sync);
 })();
 
-// Trinket tab toggle
-(() => {
-  for (const tab of document.querySelectorAll('.trinket-tab')) {
-    tab.addEventListener('click', () => {
-      const card = tab.closest('.report-card');
-      const view = tab.dataset.trinketView;
-      for (const t of card.querySelectorAll('.trinket-tab')) t.classList.remove('trinket-tab--active');
-      tab.classList.add('trinket-tab--active');
-      for (const p of card.querySelectorAll('.trinket-pane')) {
-        p.classList.toggle('trinket-pane--active', p.dataset.trinketPane === view);
-      }
-    });
-  }
-})();
+// Unified tab/pane toggle
+for (const tab of document.querySelectorAll('[data-tab-group] .report-tab[data-tab]')) {
+  tab.addEventListener('click', () => {
+    const group = tab.closest('[data-tab-group]');
+    const view = tab.dataset.tab;
+    for (const t of group.querySelectorAll('.report-tab[data-tab]'))
+      t.classList.remove('report-tab--active');
+    tab.classList.add('report-tab--active');
+    for (const p of group.querySelectorAll('.report-pane[data-pane]')) {
+      p.classList.toggle('report-pane--active', p.dataset.pane === view);
+    }
+  });
+}
 
 `;
 
@@ -4465,7 +4233,7 @@ async function autoRunMissingGearPhases() {
 
   if (!getSessionState("gear_scale_factors")) {
     console.warn(
-      "  Warning: No scale factors found — cannot auto-run gear phases. Run: npm run gear:run",
+      `  Warning: Scale factors required. Run: SPEC=${spec} npm run gear:run --through phase1`,
     );
     return;
   }
@@ -4576,6 +4344,36 @@ async function main() {
 
   console.log(`  Roster: ${roster.builds.length} builds`);
 
+  // Auto-classify builds that lack archetypes
+  const unclassified = roster.builds.filter(
+    (b) => !b.archetype || b.archetype === "Unknown",
+  );
+  if (unclassified.length > 0) {
+    console.log(
+      `  Auto-classifying ${unclassified.length} builds without archetypes...`,
+    );
+    classifyBuilds();
+    // Reload roster to pick up updated archetypes and display names
+    const refreshed = loadRoster();
+    if (refreshed) {
+      roster.builds = refreshed.builds;
+    }
+  }
+
+  // Auto-generate display names for builds that lack them
+  const unnamed = roster.builds.filter((b) => !b.displayName);
+  if (unnamed.length > 0) {
+    console.log(
+      `  Auto-generating display names for ${unnamed.length} builds...`,
+    );
+    const rawBuilds = getRosterBuilds();
+    generateDisplayNames(rawBuilds);
+    const refreshed = loadRoster();
+    if (refreshed) {
+      roster.builds = refreshed.builds;
+    }
+  }
+
   // APL paths
   const oursPath = join(aplsDir(), `${specName}.simc`);
   const baselinePath = join(aplsDir(), "baseline.simc");
@@ -4588,8 +4386,6 @@ async function main() {
 
   // Run sims or use cached data
   let reportData;
-  let defensiveTalentCosts = { costs: [], refName: "" };
-  const defCostPath = join(resultsDir(), "defensive_costs.json");
 
   if (!opts.skipSims) {
     const fidelityOpts =
@@ -4635,20 +4431,6 @@ async function main() {
     console.log(`\n  Results cached to DB.`);
 
     reportData = loadReportData(roster);
-
-    if (specConfig.role === "tank") {
-      console.log(`\n  Running defensive talent cost sims...`);
-      defensiveTalentCosts = await simDefensiveCosts(
-        oursPath,
-        fidelityOpts,
-        reportData,
-        specConfig,
-      );
-      writeFileSync(defCostPath, JSON.stringify(defensiveTalentCosts, null, 2));
-      console.log(
-        `  ${defensiveTalentCosts.costs.length} defensive talent costs computed (vs ${defensiveTalentCosts.refName}).`,
-      );
-    }
   } else {
     console.log("  Loading cached DPS from DB...");
     reportData = loadReportData(roster);
@@ -4661,13 +4443,6 @@ async function main() {
       console.error(
         `\n  WARNING: Only ${withDps}/${reportData.builds.length} builds have DPS data.` +
           `\n  Report will be incomplete. Run without --skip-sims to get full data.\n`,
-      );
-    }
-
-    if (specConfig.role === "tank" && existsSync(defCostPath)) {
-      defensiveTalentCosts = JSON.parse(readFileSync(defCostPath, "utf-8"));
-      console.log(
-        `  ${defensiveTalentCosts.costs?.length || 0} cached defensive costs loaded.`,
       );
     }
   }
@@ -4738,23 +4513,31 @@ async function main() {
         );
         if (ablationData) {
           ablationIntrinsics = computeIntrinsicValues(ablationData);
-          hasAblation = true;
-          writeFileSync(
-            ablationCachePath,
-            JSON.stringify(ablationIntrinsics, null, 2),
-          );
-          const tested = Object.keys(ablationIntrinsics.all || {}).length;
-          console.log(`  Ablation: ${tested} talents tested`);
+          if (ablationIntrinsics) {
+            hasAblation = true;
+            writeFileSync(
+              ablationCachePath,
+              JSON.stringify(ablationIntrinsics, null, 2),
+            );
+            const tested = Object.keys(ablationIntrinsics.all || {}).length;
+            console.log(`  Ablation: ${tested} talents tested`);
+          } else {
+            try {
+              unlinkSync(ablationCachePath);
+            } catch {}
+          }
         }
       } else if (existsSync(ablationCachePath)) {
         ablationIntrinsics = JSON.parse(
           readFileSync(ablationCachePath, "utf-8"),
         );
-        hasAblation = true;
-        const allData = ablationIntrinsics.all || {};
-        console.log(
-          `  Ablation: ${Object.keys(allData).length} cached intrinsic values loaded`,
-        );
+        if (ablationIntrinsics) {
+          hasAblation = true;
+          const allData = ablationIntrinsics.all || {};
+          console.log(
+            `  Ablation: ${Object.keys(allData).length} cached intrinsic values loaded`,
+          );
+        }
       }
 
       nodeContributions = computeNodeContributions(
@@ -4772,30 +4555,62 @@ async function main() {
     console.warn(`  Talent heatmap skipped: ${e.message}`);
   }
 
-  // Ability damage breakdown from reference build (ST scenario)
+  // Ability damage breakdown: per-hero-tree when sims run, else fallback to cached
   let abilityBreakdown = null;
-  try {
-    const stData = JSON.parse(
-      readFileSync(join(resultsDir(), "report_ours_st.json"), "utf-8"),
-    );
-    const playerStats = stData?.sim?.players?.[0]?.stats;
-    if (playerStats) {
-      const abilities = playerStats
-        .filter((s) => s.type === "damage" && (s.compound_amount || 0) > 0)
-        .map((s) => ({
-          name: s.name.replace(/_/g, " "),
-          amount: s.compound_amount,
-          school: s.school || "physical",
-        }))
-        .sort((a, b) => b.amount - a.amount);
-      const total = abilities.reduce((sum, a) => sum + a.amount, 0);
-      abilityBreakdown = { abilities, total };
-      console.log(
-        `  Ability breakdown: ${abilities.length} abilities from ST sim`,
-      );
+  if (!opts.skipSims) {
+    try {
+      console.log(`\n  Running per-tree damage breakdown sims...`);
+      abilityBreakdown = await simBreakdownBuilds(roster, oursPath, heroTrees);
+      const treeCount = Object.keys(abilityBreakdown).length;
+      if (treeCount > 0) {
+        console.log(`  Breakdown: ${treeCount} hero tree(s) simmed`);
+      } else {
+        abilityBreakdown = null;
+      }
+    } catch (e) {
+      console.warn(`  Breakdown sims failed: ${e.message}`);
     }
-  } catch {
-    // Not available
+  }
+
+  // Fallback: load cached per-tree breakdowns or single-profile base
+  if (!abilityBreakdown) {
+    const cachedTrees = {};
+    for (const tree of Object.keys(heroTrees)) {
+      const jsonPath = join(
+        resultsDir(),
+        `breakdown_${normalizeTree(tree)}_st.json`,
+      );
+      try {
+        const data = JSON.parse(readFileSync(jsonPath, "utf-8"));
+        const bd = parseDamageBreakdown(data?.sim?.players?.[0]?.stats);
+        if (bd) cachedTrees[tree] = bd;
+      } catch {
+        // Not available for this tree
+      }
+    }
+    if (Object.keys(cachedTrees).length > 0) {
+      abilityBreakdown = cachedTrees;
+      console.log(
+        `  Ability breakdown: ${Object.keys(cachedTrees).length} cached tree(s) loaded`,
+      );
+    } else {
+      // Final fallback: report_ours_st.json base profile
+      try {
+        const stData = JSON.parse(
+          readFileSync(join(resultsDir(), "report_ours_st.json"), "utf-8"),
+        );
+        abilityBreakdown = parseDamageBreakdown(
+          stData?.sim?.players?.[0]?.stats,
+        );
+        if (abilityBreakdown) {
+          console.log(
+            `  Ability breakdown: ${abilityBreakdown.abilities.length} abilities from cached ST sim`,
+          );
+        }
+      } catch {
+        // Not available
+      }
+    }
   }
 
   // Warn about missing data (non-fatal — partial reports are still useful)
@@ -4815,7 +4630,6 @@ async function main() {
     specName,
     builds: reportData.builds,
     apexBuilds: reportData.apexBuilds,
-    defensiveTalentCosts,
     heroTrees,
     trinketData,
     embellishmentData,

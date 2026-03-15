@@ -101,3 +101,5 @@ Show the user:
 - **Refresh item pools first** if candidates are stale: `SPEC=${SPEC:-vengeance} npm run gear:fetch-candidates`
 - **EP weights** (Phase 1) must complete before EP ranking (Phase 3) — they are saved to `gear_scale_factors` in session_state
 - **Phase 8** re-runs stat allocation only if embellishments changed which crafted slots are in play
+- **Auto-generated embellishments:** `gear-config.json` `embellishments.effects` array defines available emb effects; `builtInItems` lists item IDs that already have a built-in embellishment (excluded from regular pair generation). The pipeline auto-generates all valid 2-emb combinations and picks cheapest displacement slots.
+- **Resume flags:** `--force` re-runs all phases, `--from phase<N>` starts from phase N, `--reset` clears all gear results

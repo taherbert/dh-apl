@@ -77,6 +77,12 @@ Key files: `data/{spec}/gear-candidates.json` (item pools + enchants + gems) and
 
 Use the **`/gear`** skill to run the full pipeline and regenerate the report. Use `npm run gear:status` to inspect pipeline progress. See REFERENCE.md for all individual phase commands.
 
+**Stat ID mapping (WoW ItemStatType):** 32=Crit, 36=Haste, 40=Vers, 49=Mastery. Note that 35 is NOT haste (it's resilience, removed in WoD). Wrong stat IDs silently corrupt all downstream EP/ranking data.
+
+**Embellishment stacking:** Items with built-in embellishments (e.g. crafted items that already have an emb effect) cannot have `embellishment=X` applied -- they already count toward the 2-emb cap. The `builtInItems` array in `gear-config.json` excludes these from the regular crafted pool.
+
+**Pipeline resume flags:** `npm run gear:run -- --force` re-runs all phases. `--from phase<N>` starts from phase N. `--reset` clears all gear results and starts fresh.
+
 ## Key Paths
 
 - **SimC source:** `/Users/tom/Documents/GitHub/simc` (branch: `midnight`)
