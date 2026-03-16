@@ -71,17 +71,23 @@ Use `npm run db:status` to check DB contents. Use `npm run db:dump` for formatte
 
 ## Gear Optimization Pipeline
 
-Gear optimization is **separate from APL optimization** and has its own 12-phase pipeline (`src/sim/gear.js`). It uses EP weights from scale factors to rank stat-stick items without per-item sims, and sim-evaluates proc items, trinkets, rings, and embellishments.
+Gear optimization is **separate from APL optimization** and uses a constraint-based pipeline (`src/sim/gear.js`). It sims components (embellishments, weapons, trinkets, mini-sets), feeds results + EP into a constraint solver (`src/sim/gear-solver.js`) that enumerates valid full gear sets, validates top candidates, and writes the profile from scratch (`src/sim/gear-profile-writer.js`).
 
 Key files: `data/{spec}/gear-candidates.json` (item pools + enchants + gems) and `apls/{spec}/profile.simc` (assembled output). The pipeline writes results to session_state and gear_results in the DB.
 
 Use the **`/gear`** skill to run the full pipeline and regenerate the report. Use `npm run gear:status` to inspect pipeline progress. See REFERENCE.md for all individual phase commands.
 
+**Constraint solver:** `gear-solver.js` enumerates valid 16-slot gear sets subject to hard constraints: exactly 4 tier pieces (from 5 possible), exactly 2 embellishments, at most 2 crafted items, unique-equip restrictions, ring dedup. Scores by summing component sim DPS + EP. Returns top 10 configurations for validation.
+
+**Profile writer:** `gear-profile-writer.js` generates profile.simc from scratch using gear-candidates.json as sole source of truth. Old profile provides only the preamble (talents, consumables, overrides). Includes verification: gem counts match socket counts, emb count = 2, crafted count <= 2.
+
 **Stat ID mapping (WoW ItemStatType):** 32=Crit, 36=Haste, 40=Vers, 49=Mastery. Note that 35 is NOT haste (it's resilience, removed in WoD). Wrong stat IDs silently corrupt all downstream EP/ranking data.
 
 **Embellishment stacking:** Items with built-in embellishments (e.g. crafted items that already have an emb effect) cannot have `embellishment=X` applied -- they already count toward the 2-emb cap. The `builtInItems` array in `gear-config.json` excludes these from the regular crafted pool.
 
-**Pipeline resume flags:** `npm run gear:run -- --force` re-runs all phases. `--from phase<N>` starts from phase N. `--reset` clears all gear results and starts fresh.
+**Pipeline resume flags:** `npm run gear:run -- --reset` clears all gear results and starts fresh. `--from phase<N>` starts from phase N. `--through phase<N>` stops after phase N.
+
+**Profile verification (MANDATORY after every gear run):** The profile writer verifies output automatically. After every run, check: (1) each item's gem count matches gear-candidates.json socket count, (2) total embellishments = 2 (explicit + built-in), (3) total crafted <= 2, (4) DPS sanity check via quick single-profile sim (VDH should be 60-80k ST).
 
 ## Key Paths
 
