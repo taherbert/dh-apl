@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voidfall Proc Rate Analysis -- Vengeance v2</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 2rem auto; padding: 0 1rem; background: #1a1a2e; color: #e0e0e0; }
+  h1 { color: #ef4444; }
+  h2 { color: #f87171; margin-top: 2rem; }
+  .meta { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { padding: 0.5rem 1rem; text-align: right; border: 1px solid #333; }
+  th { background: #2d2d44; color: #f87171; }
+  td:first-child, th:first-child { text-align: left; }
+  .sig { color: #f59e0b; font-weight: bold; }
+  .bar-container { display: flex; align-items: end; gap: 2rem; justify-content: center; margin: 2rem 0; height: 320px; }
+  .bar-group { display: flex; flex-direction: column; align-items: center; }
+  .bar { width: 60px; border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
+  .bar.new { background: #ef4444; }
+  .bar.old { background: #6b7280; opacity: 0.4; }
+  .bar.simc { background: #3b82f6; opacity: 0.5; }
+  .bar-label { margin-top: 0.5rem; font-size: 0.85rem; color: #aaa; }
+  .bar-value { font-size: 0.8rem; color: #fff; margin-bottom: 0.2rem; font-weight: bold; }
+  .ref-line { position: absolute; left: -20px; right: -20px; border-top: 2px dashed #f59e0b; }
+  .ref-label { position: absolute; right: -60px; top: -10px; font-size: 0.75rem; color: #f59e0b; }
+  .legend { display: flex; gap: 1.5rem; justify-content: center; margin: 1rem 0; font-size: 0.85rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-swatch { width: 16px; height: 16px; border-radius: 2px; }
+  .summary-box { background: #2d2d44; padding: 1rem 1.5rem; border-radius: 8px; margin: 1rem 0; }
+  .ci { color: #888; font-size: 0.85rem; }
+  .improvement { background: #1a3a1a; border: 1px solid #2d6b2d; padding: 1rem; border-radius: 8px; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<h1>Voidfall Proc Rate: Vengeance DH (v2)</h1>
+<div class="meta">
+  Generated 2026-03-12 |
+  n=50,116 eligible Fracture casts |
+  147 players |
+  Midnight beta + S1
+</div>
+
+<div class="improvement">
+  <strong>v2 improvements over v1:</strong> Stable sort (casts before building events at same timestamp),
+  event deduplication across pagination pages, attribution delay histogram validation.
+  v1 had a sort-order bug that inflated stack-2 eligible counts, producing the anomalous 10.4% rate.
+</div>
+
+<div class="summary-box">
+  <strong>Overall:</strong> 34.7%
+  <span class="ci">[34.2%, 35.1%]</span>
+  vs expected 35.0% flat |
+  <strong>Current SimC defaults:</strong> 40% / 32% / 27.5%
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div> v2 observed (this run)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#6b7280;opacity:0.4"></div> v1 (old, buggy)</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#3b82f6;opacity:0.5"></div> SimC default</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:none;border:2px dashed #f59e0b;width:12px;height:0"></div> 35% flat</div>
+</div>
+
+<div class="bar-container">
+  <div class="bar-group">
+    <div class="bar-value">40.2%</div>
+    <div style="display:flex;gap:3px;align-items:end;height:280px;">
+      <div class="bar new" style="height:205px;position:relative;">
+        <div class="ref-line" style="bottom:178px;"><span class="ref-label">35%</span></div>
+      </div>
+      <div class="bar old" style="height:220px;" title="v1: 43.3%"></div>
+      <div class="bar simc" style="height:204px;" title="SimC: 40.0%"></div>
+    </div>
+    <div class="bar-label">0 stacks</div>
+  </div>
+  <div class="bar-group">
+    <div class="bar-value">32.1%</div>
+    <div style="display:flex;gap:3px;align-items:end;height:280px;">
+      <div class="bar new" style="height:163px;position:relative;">
+        
+      </div>
+      <div class="bar old" style="height:161px;" title="v1: 31.7%"></div>
+      <div class="bar simc" style="height:163px;" title="SimC: 32.0%"></div>
+    </div>
+    <div class="bar-label">1 stacks</div>
+  </div>
+  <div class="bar-group">
+    <div class="bar-value">28.7%</div>
+    <div style="display:flex;gap:3px;align-items:end;height:280px;">
+      <div class="bar new" style="height:146px;position:relative;">
+        
+      </div>
+      <div class="bar old" style="height:53px;" title="v1: 10.4%"></div>
+      <div class="bar simc" style="height:140px;" title="SimC: 27.5%"></div>
+    </div>
+    <div class="bar-label">2 stacks</div>
+  </div>
+</div>
+
+<h2>Per-Stack Data</h2>
+<table>
+<tr><th>Stacks</th><th>Eligible</th><th>Procs</th><th>v2 Rate</th><th>95% CI</th><th>p vs 35%</th><th>SimC Default</th><th>v1 (old)</th></tr>
+<tr><td>0</td><td>20,697</td><td>8,317</td><td><strong>40.2%</strong></td><td>39.5% - 40.9%</td><td class="sig"><.0001</td><td>40.0%</td><td>43.3%</td></tr>
+<tr><td>1</td><td>17,617</td><td>5,654</td><td><strong>32.1%</strong></td><td>31.4% - 32.8%</td><td class="sig"><.0001</td><td>32.0%</td><td>31.7%</td></tr>
+<tr><td>2</td><td>11,802</td><td>3,385</td><td><strong>28.7%</strong></td><td>27.9% - 29.5%</td><td class="sig"><.0001</td><td>27.5%</td><td>10.4%</td></tr>
+<tr><td><strong>Overall</strong></td><td><strong>50,116</strong></td><td><strong>17,367</strong></td><td><strong>34.7%</strong></td><td>34.2% - 35.1%</td><td></td><td></td><td></td></tr>
+</table>
+
+<h2>Data Quality</h2>
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Visible procs</td><td>14,020</td></tr>
+<tr><td>Hidden conversions</td><td>3,347</td></tr>
+<tr><td>Guaranteed gains (excluded)</td><td>2,564</td></tr>
+<tr><td>During-spending casts (excluded)</td><td>7,600</td></tr>
+</table>
+
+<h2>Attribution Delay Histogram</h2>
+<p>Distance from each building gain to its nearest Fracture cast. Gains beyond 200ms are classified as guaranteed (non-proc) sources.</p>
+<table>
+<tr><th>Delay</th><th>Count</th><th>%</th></tr>
+<tr><td>0ms</td><td>14,954</td><td>75.0%</td></tr>
+<tr><td>1-10ms</td><td>1,780</td><td>8.9%</td></tr>
+<tr><td>11-20ms</td><td>348</td><td>1.7%</td></tr>
+<tr><td>21-50ms</td><td>51</td><td>0.3%</td></tr>
+<tr><td>51-100ms</td><td>41</td><td>0.2%</td></tr>
+<tr><td>101-200ms</td><td>193</td><td>1.0%</td></tr>
+<tr><td>>200ms</td><td>2,564</td><td>12.9%</td></tr>
+</table>
+
+</body>
+</html>

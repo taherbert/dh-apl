@@ -10045,9 +10045,9 @@
       "Not In Spellbook (143)",
       "Do Not Log on Learn (355)"
     ],
-    "description": "Consume Magic generates $278326s2 Fury when a beneficial Magic effect is successfully removed from the target.",
+    "description": "Consume Magic generates $1277738s1 Fury when a beneficial Magic effect is successfully removed from the target.",
     "schoolMask": 1,
-    "resolvedDescription": "Consume Magic generates 1 Fury when a beneficial Magic effect is successfully removed from the target."
+    "resolvedDescription": "Consume Magic generates 20 Fury when a beneficial Magic effect is successfully removed from the target."
   },
   {
     "name": "Infernal Armor",
@@ -18628,6 +18628,7 @@
       "109"
     ],
     "attributes": [
+      "Allow Dead Target (64)",
       "Spell Haste Affects Periodic (173)",
       "Always AOE Line of Sight (186)",
       "Haste Affects Duration (273)",
@@ -18849,6 +18850,7 @@
       "109"
     ],
     "attributes": [
+      "Allow Dead Target (64)",
       "Spell Haste Affects Periodic (173)",
       "Always AOE Line of Sight (186)",
       "Haste Affects Duration (273)",

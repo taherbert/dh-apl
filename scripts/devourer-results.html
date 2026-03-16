@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Voidfall Proc Rate Analysis -- Devourer</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 1000px; margin: 2rem auto; padding: 0 1rem; background: #1a1a2e; color: #e0e0e0; }
+  h1 { color: #a855f7; }
+  h2 { color: #c084fc; margin-top: 2rem; }
+  .meta { color: #888; font-size: 0.9rem; margin-bottom: 2rem; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+  th, td { padding: 0.5rem 1rem; text-align: right; border: 1px solid #333; }
+  th { background: #2d2d44; color: #c084fc; }
+  td:first-child, th:first-child { text-align: left; }
+  .sig { color: #f59e0b; font-weight: bold; }
+  .bar-container { display: flex; align-items: end; gap: 2rem; justify-content: center; margin: 2rem 0; height: 300px; }
+  .bar-group { display: flex; flex-direction: column; align-items: center; }
+  .bar { width: 80px; background: #a855f7; border-radius: 4px 4px 0 0; position: relative; min-height: 2px; }
+  .bar.veng { background: #3b82f6; opacity: 0.5; }
+  .bar-label { margin-top: 0.5rem; font-size: 0.85rem; color: #aaa; }
+  .bar-value { font-size: 0.85rem; color: #fff; margin-bottom: 0.25rem; font-weight: bold; }
+  .ref-line { position: absolute; left: -20px; right: -20px; border-top: 2px dashed #f59e0b; }
+  .ref-label { position: absolute; right: -60px; top: -10px; font-size: 0.75rem; color: #f59e0b; }
+  .legend { display: flex; gap: 1.5rem; justify-content: center; margin: 1rem 0; font-size: 0.85rem; }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+  .legend-swatch { width: 16px; height: 16px; border-radius: 2px; }
+  .summary-box { background: #2d2d44; padding: 1rem 1.5rem; border-radius: 8px; margin: 1rem 0; }
+  .ci { color: #888; font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<h1>Voidfall Proc Rate: Devourer DH</h1>
+<div class="meta">
+  Generated 2026-03-12 |
+  n=50,067 eligible Consume/Devour casts |
+  107 players |
+  Midnight beta + S1
+</div>
+
+<div class="summary-box">
+  <strong>Overall:</strong> 34.9%
+  <span class="ci">[34.4%, 35.3%]</span>
+  vs expected 35.0% flat |
+  <strong>SimC Vengeance rates:</strong> 40% / 32% / 27.5%
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-swatch" style="background:#a855f7"></div> Devourer observed</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:#3b82f6;opacity:0.5"></div> SimC Vengeance default</div>
+  <div class="legend-item"><div class="legend-swatch" style="background:none;border:2px dashed #f59e0b;width:12px;height:0"></div> 35% flat (spell data)</div>
+</div>
+
+<div class="bar-container">
+  <div class="bar-group">
+    <div class="bar-value">41.1%</div>
+    <div style="display:flex;gap:4px;align-items:end;height:280px;">
+      <div class="bar" style="height:209px;position:relative;">
+        <div class="ref-line" style="bottom:178px;"><span class="ref-label">35%</span></div>
+      </div>
+      <div class="bar veng" style="height:204px;" title="SimC Veng: 40.0%"></div>
+    </div>
+    <div class="bar-label">0 stacks</div>
+  </div>
+  <div class="bar-group">
+    <div class="bar-value">34.1%</div>
+    <div style="display:flex;gap:4px;align-items:end;height:280px;">
+      <div class="bar" style="height:173px;position:relative;">
+        
+      </div>
+      <div class="bar veng" style="height:163px;" title="SimC Veng: 32.0%"></div>
+    </div>
+    <div class="bar-label">1 stacks</div>
+  </div>
+  <div class="bar-group">
+    <div class="bar-value">32.3%</div>
+    <div style="display:flex;gap:4px;align-items:end;height:280px;">
+      <div class="bar" style="height:165px;position:relative;">
+        
+      </div>
+      <div class="bar veng" style="height:140px;" title="SimC Veng: 27.5%"></div>
+    </div>
+    <div class="bar-label">2 stacks</div>
+  </div>
+</div>
+
+<h2>Per-Stack Data</h2>
+<table>
+<tr><th>Stacks</th><th>Eligible</th><th>Procs</th><th>Rate</th><th>95% CI</th><th>p vs 35%</th><th>SimC Veng</th></tr>
+<tr><td>0</td><td>9,658</td><td>3,974</td><td><strong>41.1%</strong></td><td>40.2% - 42.1%</td><td class="sig"><.0001</td><td>40.0%</td></tr>
+<tr><td>1</td><td>22,638</td><td>7,712</td><td><strong>34.1%</strong></td><td>33.5% - 34.7%</td><td class="sig">0.0032</td><td>32.0%</td></tr>
+<tr><td>2</td><td>17,771</td><td>5,747</td><td><strong>32.3%</strong></td><td>31.7% - 33.0%</td><td class="sig"><.0001</td><td>27.5%</td></tr>
+<tr><td><strong>Overall</strong></td><td><strong>50,067</strong></td><td><strong>17,451</strong></td><td><strong>34.9%</strong></td><td>34.4% - 35.3%</td><td></td><td></td></tr>
+</table>
+
+<h2>Data Quality</h2>
+<table>
+<tr><th>Metric</th><th>Value</th></tr>
+<tr><td>Consume casts</td><td>23,241</td></tr>
+<tr><td>Devour casts</td><td>37,080</td></tr>
+<tr><td>Visible procs</td><td>11,874</td></tr>
+<tr><td>Hidden conversions</td><td>5,577</td></tr>
+<tr><td>Guaranteed gains (excluded)</td><td>13,837</td></tr>
+<tr><td>During-spending casts (excluded)</td><td>10,254</td></tr>
+</table>
+
+<h2>Attribution Delay Histogram</h2>
+<p>Distance from each building gain to its nearest Consume/Devour cast. Gains beyond 100ms are classified as guaranteed (non-proc) sources.</p>
+<table>
+<tr><th>Delay</th><th>Count</th><th>%</th></tr>
+<tr><td>0ms</td><td>14,014</td><td>44.8%</td></tr>
+<tr><td>1-10ms</td><td>3,092</td><td>9.9%</td></tr>
+<tr><td>11-20ms</td><td>252</td><td>0.8%</td></tr>
+<tr><td>21-50ms</td><td>46</td><td>0.1%</td></tr>
+<tr><td>51-100ms</td><td>47</td><td>0.2%</td></tr>
+<tr><td>101-200ms</td><td>57</td><td>0.2%</td></tr>
+<tr><td>>200ms</td><td>13,780</td><td>44.0%</td></tr>
+</table>
+
+</body>
+</html>

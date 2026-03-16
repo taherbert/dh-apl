@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Voidfall Proc Rate</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 720px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+      canvas {
+        margin: 20px 0;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14px;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 6px 10px;
+        text-align: right;
+      }
+      th {
+        background: #f5f5f5;
+      }
+      td:first-child,
+      th:first-child {
+        text-align: left;
+      }
+      .note {
+        color: #666;
+        font-size: 12px;
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Voidfall Proc Rate by Stack Count</h2>
+    <p>n = 55,865 eligible Fracture casts, 157 players (Midnight beta M+)</p>
+
+    <canvas id="chart" height="280"></canvas>
+
+    <table>
+      <tr>
+        <th>Stacks</th>
+        <th>Casts</th>
+        <th>Procs</th>
+        <th>Rate</th>
+        <th>95% CI</th>
+        <th>p vs 35%</th>
+      </tr>
+      <tr>
+        <td>0</td>
+        <td>23,582</td>
+        <td>10,217</td>
+        <td>43.3%</td>
+        <td>[42.7, 44.0]</td>
+        <td>&lt;.0001</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>19,536</td>
+        <td>6,195</td>
+        <td>31.7%</td>
+        <td>[31.1, 32.4]</td>
+        <td>&lt;.0001</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>12,747</td>
+        <td>1,327</td>
+        <td>10.4%</td>
+        <td>[9.9, 11.0]</td>
+        <td>&lt;.0001</td>
+      </tr>
+      <tr>
+        <td><b>Overall</b></td>
+        <td><b>55,865</b></td>
+        <td><b>17,739</b></td>
+        <td><b>31.8%</b></td>
+        <td><b>[31.4, 32.1]</b></td>
+        <td><b>&lt;.0001</b></td>
+      </tr>
+    </table>
+
+    <p class="note">
+      Chi-squared X²=4136.7 (df=2, p&lt;.0001). Proc rate is stack-dependent,
+      not flat 35%.<br />
+      Tracking spell 1256301 (voidfall_building). Excludes casts during
+      voidfall_spending (1256302).
+    </p>
+
+    <script>
+      const ctx = document.getElementById("chart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: [
+            "0 stacks\n(n=23,582)",
+            "1 stack\n(n=19,536)",
+            "2 stacks\n(n=12,747)",
+          ],
+          datasets: [
+            {
+              label: "Observed proc rate",
+              data: [43.3, 31.7, 10.4],
+              backgroundColor: ["#4a90d9", "#7b68ee", "#e06666"],
+              barPercentage: 0.6,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 50,
+              title: { display: true, text: "Proc rate (%)" },
+            },
+          },
+          plugins: {
+            annotation: undefined,
+            legend: { display: false },
+          },
+        },
+        plugins: [
+          {
+            id: "expectedLine",
+            afterDraw(chart) {
+              const yScale = chart.scales.y;
+              const y = yScale.getPixelForValue(35);
+              const ctx = chart.ctx;
+              ctx.save();
+              ctx.setLineDash([6, 4]);
+              ctx.strokeStyle = "#c00";
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(chart.chartArea.left, y);
+              ctx.lineTo(chart.chartArea.right, y);
+              ctx.stroke();
+              ctx.setLineDash([]);
+              ctx.fillStyle = "#c00";
+              ctx.font = "12px sans-serif";
+              ctx.fillText("Expected 35%", chart.chartArea.right - 80, y - 6);
+              ctx.restore();
+            },
+          },
+        ],
+      });
+    </script>
+  </body>
+</html>
