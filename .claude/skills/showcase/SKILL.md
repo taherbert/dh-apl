@@ -57,15 +57,23 @@ Use `--skip-sims` to regenerate HTML from cached DB data without running new sim
 4. Report the output location: `results/{spec}/report/index.html`
 5. Open in browser if possible: `open results/{spec}/report/index.html`
 
-## Post-checks
+## Post-checks — MANDATORY
 
-After the report generates, verify the output:
+After the report generates, you MUST verify before showing results or publishing:
+
+1. **DPS sanity check**: Top build weighted DPS must be in the expected range (140k-180k for VDH). If DPS is below 50k, the talent hashes are broken (missing hero talents). Do NOT publish.
+
+2. **Section check**:
 
 ```bash
 grep -c 'Build Rankings\|Trinket Rankings\|Talent Heatmap\|Embellishment Rankings' results/${SPEC:-vengeance}/report/index.html
 ```
 
-Expected: at least 3-4 section headers present. If sections are missing, check the console output for warnings.
+Expected: at least 3-4 section headers present.
+
+3. **Profile check** (if gear pipeline ran): Verify `profile.simc` against `gear-candidates.json` — gem counts, item names vs IDs, embellishment count = 2, no built-in emb items with extra embellishment tags.
+
+4. **If ANY check fails**: Do NOT publish. Fix the issue or report it to the user.
 
 ## Publishing
 

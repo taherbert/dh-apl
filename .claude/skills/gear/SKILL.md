@@ -89,12 +89,25 @@ Arguments: $ARGUMENTS
    SPEC=${SPEC:-vengeance} npm run report:publish
    ```
 
-## After the Pipeline
+## After the Pipeline — MANDATORY VERIFICATION
+
+You MUST verify the profile before showing results to the user. Do NOT skip this.
+
+1. **Diff the profile**: `git diff apls/{spec}/profile.simc`
+2. **Check every slot** against `data/{spec}/gear-candidates.json`:
+   - Each item name must match its item ID in gear-candidates
+   - Gem count per item must match socket count in gear-candidates (1 gem_id = 1 socket, NOT `gem_id=X/Y` unless gear-candidates shows 2 sockets)
+   - No `embellishment=X` on items in `builtInItems` (they already count toward the 2-emb cap)
+   - Total embellishments (explicit + built-in) must equal exactly 2
+   - Crafted items (bonus_id=8793) count must be <= 2
+3. **Verify DPS**: Run a quick single-profile sim and confirm DPS is in the expected range (60-80k ST for VDH)
+4. **If ANY check fails**: Do NOT publish. Fix the issue or report it to the user.
 
 Show the user:
 
 - Final pipeline state: `SPEC=${SPEC:-vengeance} node src/sim/gear.js status`
 - A brief diff of `apls/{spec}/profile.simc` showing what gear changed
+- Verification results from the checks above
 - Report location: `results/{spec}/report/index.html`
 
 ## Architecture
