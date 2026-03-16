@@ -296,4 +296,137 @@ describe("solveGearSet", () => {
       }
     }
   });
+
+  it("produces zero configs when no alternatives exist for any tier slot", () => {
+    const result = solveGearSet(
+      baseInput({
+        tierConfig: {
+          setId: 1979,
+          requiredCount: 4,
+          slots: {
+            head: { simc: "head=tier_head,id=1,ilevel=289" },
+            shoulder: { simc: "shoulder=tier_shoulder,id=2,ilevel=289" },
+            chest: { simc: "chest=tier_chest,id=3,ilevel=289" },
+            hands: { simc: "hands=tier_hands,id=4,ilevel=289" },
+            legs: { simc: "legs=tier_legs,id=5,ilevel=289" },
+          },
+          alternatives: {
+            head: [],
+            shoulder: [],
+            chest: [],
+            hands: [],
+            legs: [],
+          },
+        },
+      }),
+    );
+    // No tier slot can be skipped, so no valid 4-of-5 configs exist
+    assert.equal(result.configurations.length, 0);
+  });
+
+  it("produces zero configs when no embellishment results exist", () => {
+    const result = solveGearSet(
+      baseInput({
+        embellishmentResults: [],
+        miniSetResults: [],
+      }),
+    );
+    // Exactly 2 embs required but none available
+    assert.equal(result.configurations.length, 0);
+  });
+
+  it("skips embellishments that claim a tier slot", () => {
+    const result = solveGearSet(
+      baseInput({
+        embellishmentResults: [
+          {
+            candidateId: "emb_on_tier",
+            weightedDps: 999999,
+            slots: ["head", "shoulder"],
+            crafted: true,
+            embCount: 2,
+          },
+          {
+            candidateId: "hunt_hunt",
+            weightedDps: 130000,
+            slots: ["waist", "wrists"],
+            crafted: true,
+            embCount: 2,
+          },
+        ],
+      }),
+    );
+
+    // emb_on_tier claims head+shoulder which are tier slots in most skip configs.
+    // For skip-head: shoulder is tier -> conflict. For skip-chest: both are tier -> conflict.
+    // Only valid if BOTH emb slots are non-tier for the current skip.
+    for (const config of result.configurations) {
+      if (config.embConfig === "emb_on_tier") {
+        // If this emb was used, head and shoulder must NOT be tier
+        assert.ok(!config.slots.head?.isTier || !config.slots.shoulder?.isTier);
+      }
+    }
+
+    // hunt_hunt should still produce valid configs
+    assert.ok(result.configurations.some((c) => c.embConfig === "hunt_hunt"));
+  });
+
+  it("handles mini-set pair where one piece is in a tier slot", () => {
+    const result = solveGearSet(
+      baseInput({
+        miniSetResults: [
+          {
+            setId: 1966,
+            setName: "Murder Row Materials",
+            pairs: [
+              {
+                slot1: "wrists",
+                slot2: "hands",
+                pairDpsBonus: 5000,
+                item1: {
+                  id: "rw_wrists",
+                  simc: "wrists=rw_wrists,id=244612,bonus_id=8793/13454,ilevel=285",
+                  isCrafted: true,
+                  isBuiltInEmb: true,
+                },
+                item2: {
+                  id: "rw_hands",
+                  simc: "hands=rw_hands,id=244613,bonus_id=8793/13454,ilevel=285",
+                  isCrafted: true,
+                  isBuiltInEmb: true,
+                },
+              },
+            ],
+            individuals: [],
+          },
+        ],
+      }),
+    );
+
+    // hands is a tier slot with no alternatives, so the pair can only work
+    // if hands is skippable. Since alternatives.hands = [], the pair cannot
+    // be placed (hands would need to be the skipped tier slot but it has
+    // no alternative). However, the mini-set pair itself replaces the tier
+    // slot directly, so it IS valid when hands is the skipped slot -
+    // but only if there's an alternative for hands or the pair covers it.
+    // Since alternatives.hands = [] AND the pair covers hands, the tier
+    // skip for hands would normally require an alternative, but the pair
+    // fills it directly. The pair occupies both wrists and hands, covering
+    // the skipped slot. This should still produce valid configs.
+    const hasPairConfig = result.configurations.some(
+      (c) =>
+        c.slots.wrists?.id === "rw_wrists" && c.slots.hands?.id === "rw_hands",
+    );
+    // The pair covers the hands tier slot, so it should be valid
+    // even though hands has no alternatives
+    assert.ok(hasPairConfig, "Mini-set pair covering tier slot should work");
+
+    // Verify constraints
+    for (const config of result.configurations) {
+      const tierCount = Object.values(config.slots).filter(
+        (s) => s.isTier,
+      ).length;
+      assert.equal(tierCount, 4);
+    }
+  });
 });

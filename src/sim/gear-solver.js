@@ -91,7 +91,6 @@ export function solveGearSet(input) {
   for (let skipIdx = 0; skipIdx < tierSlotNames.length; skipIdx++) {
     const skipSlot = tierSlotNames[skipIdx];
     const alternatives = tierConfig.alternatives[skipSlot] || [];
-    if (alternatives.length === 0) continue;
 
     // Build tier assignment: 4 tier pieces + 1 alternative
     const tierAssignment = {};
@@ -135,6 +134,7 @@ export function solveGearSet(input) {
 
       // Fill the skipped tier slot with best alternative (unless emb already covers it)
       if (!slotMap[skipSlot]) {
+        if (alternatives.length === 0) continue;
         const bestAlt = alternatives[0];
         const altIsCrafted = isCraftedLine(bestAlt.simc);
         if (altIsCrafted && craftedCount >= maxCrafted) continue;
