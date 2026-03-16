@@ -212,6 +212,17 @@ export function removeNodes(hash, nodeIdsToRemove, allNodes) {
   return encode(specId, allNodes, selections);
 }
 
+export function addNodes(hash, nodeIdsToAdd, allNodes) {
+  const { specId, selections } = decode(hash, allNodes);
+  for (const id of nodeIdsToAdd) {
+    if (!selections.has(id)) {
+      const node = allNodes.find((n) => n.id === id);
+      selections.set(id, { rank: node?.maxRanks || 1 });
+    }
+  }
+  return encode(specId, allNodes, selections);
+}
+
 // --- Helpers for integration with our data model ---
 
 import { readFileSync } from "node:fs";

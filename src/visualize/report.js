@@ -32,11 +32,7 @@ import {
   ROOT,
 } from "../engine/paths.js";
 import { spawn } from "node:child_process";
-import {
-  loadRoster,
-  classifyBuilds,
-  generateDisplayNames,
-} from "../sim/build-roster.js";
+import { loadRoster, generateDisplayNames } from "../sim/build-roster.js";
 import {
   generateRosterProfilesetContent,
   resolveInputDirectives,
@@ -54,6 +50,7 @@ import {
 import {
   decode as decodeTalentHash,
   removeNodes as removeNodesFromHash,
+  addNodes as addNodesToHash,
   loadFullNodeList,
 } from "../util/talent-string.js";
 
@@ -362,7 +359,8 @@ function loadGearData(gearCandidates) {
   const profilePath = join(aplsDir(), "profile.simc");
   if (!existsSync(profilePath)) return null;
 
-  const lines = readFileSync(profilePath, "utf-8").split("\n");
+  const rawContent = readFileSync(profilePath, "utf-8");
+  const lines = rawContent.split("\n");
   const gear = new Map();
   const consumables = {};
 
@@ -440,7 +438,7 @@ function loadGearData(gearCandidates) {
   }
 
   if (gear.size === 0) return null;
-  return { gear, consumables };
+  return { gear, consumables, rawContent };
 }
 
 function parseGearLine(line) {
@@ -769,6 +767,118 @@ async function simTalentAblation(
     return null;
   }
 
+  // --- Insertion ablation for untested nodes ---
+  // For spec talents not present in ANY reference build, measure the DPS cost
+  // of taking them by adding them (dropping the cheapest offensive talent).
+  // These ride along in the same profileset sims as removal variants.
+  const testedNodeIds = new Set(ablationVariants.map((v) => v.nodeId));
+  const insertionVariants = [];
+
+  for (const ref of refs) {
+    const sel = decodedBuilds.get(ref.build.id);
+    if (!sel) continue;
+
+    // Find spec talents NOT in this build
+    const untestedNodes = [];
+    for (const node of [...specNodeMap.values()]) {
+      if (node.id === 90912) continue;
+      if (node.freeNode || node.entryNode) continue;
+      if (sel.has(node.id)) continue;
+      if (testedNodeIds.has(node.id)) continue;
+      untestedNodes.push(node);
+    }
+
+    if (untestedNodes.length === 0) continue;
+
+    // Collect removal costs from this ref's variants to find cheapest talent to drop
+    const refRemovalVariants = ablationVariants
+      .filter((v) => v.refId === ref.build.id && v.orphanedNodes.length === 0)
+      .map((v) => ({ nodeId: v.nodeId, nodeName: v.nodeName }));
+
+    // We'll pick the cheapest to drop after sims run. For now, use the first
+    // leaf-level talent (no orphans) as the drop candidate. The actual DPS cost
+    // comparison happens in computeIntrinsicValues which averages across refs.
+    // For insertion, we need ANY valid hash -- drop the last leaf in the build.
+    const leafVariants = refRemovalVariants;
+    if (leafVariants.length === 0) continue;
+
+    // Pick the leaf at the bottom of the tree (highest posY = deepest)
+    const dropCandidate = leafVariants.reduce((best, curr) => {
+      const bestNode = specNodeMap.get(best.nodeId);
+      const currNode = specNodeMap.get(curr.nodeId);
+      return (currNode?.posY || 0) > (bestNode?.posY || 0) ? curr : best;
+    });
+
+    for (const node of untestedNodes) {
+      // Collect prerequisites not already in the build
+      const prereqsNeeded = [];
+      const visited = new Set();
+      const queue = [node.id];
+      while (queue.length > 0) {
+        const nid = queue.shift();
+        if (visited.has(nid)) continue;
+        visited.add(nid);
+        const n = specNodeMap.get(nid);
+        if (!n) continue;
+        if (!sel.has(nid) && nid !== node.id) prereqsNeeded.push(nid);
+        for (const prevId of n.prev || []) {
+          if (!sel.has(prevId) && specNodeMap.has(prevId)) queue.push(prevId);
+        }
+      }
+
+      // Total points needed = 1 (the node) + unmet prereqs
+      const pointsNeeded = 1 + prereqsNeeded.length;
+
+      // Need enough leaf talents to drop to free pointsNeeded points
+      if (pointsNeeded > leafVariants.length) continue;
+
+      // Build the modified hash: add node (+ prereqs), remove drop candidate(s)
+      const toAdd = [node.id, ...prereqsNeeded];
+      // Drop the N cheapest leaf talents (by tree position -- deepest first)
+      const sortedLeaves = leafVariants
+        .slice()
+        .sort(
+          (a, b) =>
+            (specNodeMap.get(b.nodeId)?.posY || 0) -
+            (specNodeMap.get(a.nodeId)?.posY || 0),
+        );
+      const toDrop = sortedLeaves.slice(0, pointsNeeded).map((v) => v.nodeId);
+
+      try {
+        let newHash = removeNodesFromHash(
+          ref.build.hash,
+          new Set(toDrop),
+          allNodes,
+        );
+        newHash = addNodesToHash(newHash, toAdd, allNodes);
+        const nodeName =
+          node.entries?.[0]?.name || node.name || `Node ${node.id}`;
+        const variant = {
+          refId: ref.build.id,
+          heroTree: ref.heroTree,
+          nodeId: node.id,
+          nodeName,
+          orphanedNodes: [],
+          directOrphans: toDrop, // Dropped talents whose cost gets subtracted to isolate this node's value
+          hash: newHash,
+          variantName: sanitize(`insert_${node.id}_into_${ref.build.id}`),
+          isInsertion: true,
+        };
+        ablationVariants.push(variant);
+        insertionVariants.push(variant);
+        testedNodeIds.add(node.id);
+      } catch {
+        // Skip nodes that produce invalid hashes
+      }
+    }
+  }
+
+  if (insertionVariants.length > 0) {
+    console.log(
+      `  Insertion: ${insertionVariants.length} variants (defensive/utility talents)`,
+    );
+  }
+
   console.log(
     `  Ablation: ${refs.length} refs, ${ablationVariants.length} variants`,
   );
@@ -1061,9 +1171,10 @@ function computeNodeContributions(
 
       if (hasNode.length === 0 || noNode.length === 0) {
         // Universal or untaken — ablation may still have intrinsic data
+        // (removal ablation for universal talents, insertion ablation for untaken)
         const entry = { deltas: null };
 
-        if (ablation && hasNode.length > 0) {
+        if (ablation) {
           entry.deltas = {};
           entry.pct = {};
           for (const s of scenarioKeys) {
@@ -2462,8 +2573,15 @@ function renderGearDisplay(gearData) {
     ? `<div class="gear-cons-bar">${cons.join('<span class="gear-con-sep"></span>')}</div>`
     : "";
 
-  return `<div class="gear-display report-card">
-  <h3>Gear Profile</h3>
+  const profileCopyBtn = gearData.rawContent
+    ? ` <button class="copy-profile" title="Copy profile.simc to clipboard">${COPY_ICON} Copy Profile</button>`
+    : "";
+  const profileData = gearData.rawContent
+    ? ` data-profile="${esc(gearData.rawContent)}"`
+    : "";
+
+  return `<div class="gear-display report-card"${profileData}>
+  <h3>Gear Profile${profileCopyBtn}</h3>
   <p class="section-desc">Equipped gear from profile.simc</p>
   <div class="gear-columns">
     <div class="gear-col">${leftRows}</div>
@@ -3388,6 +3506,25 @@ tr:hover .copy-hash, .build-name:hover .copy-hash,
 .copy-hash.copied { color: var(--positive); opacity: 1; }
 .copy-hash svg { width: 13px; height: 13px; }
 
+.copy-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--fg-muted);
+  cursor: pointer;
+  padding: 0.25em 0.6em;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-left: 0.5em;
+  vertical-align: middle;
+  transition: color 0.15s, border-color 0.15s;
+}
+.copy-profile:hover { color: var(--accent); border-color: var(--accent); }
+.copy-profile.copied { color: var(--positive); border-color: var(--positive); }
+.copy-profile svg { width: 13px; height: 13px; }
+
 /* Badges */
 .badge {
   display: inline-block;
@@ -4126,6 +4263,55 @@ document.querySelectorAll('.copy-hash').forEach(btn => {
   });
 });
 
+// Copy profile.simc to clipboard
+document.querySelectorAll('.copy-profile').forEach(btn => {
+  btn.addEventListener('click', e => {
+    e.stopPropagation();
+    const card = btn.closest('.gear-display');
+    const profile = card?.dataset?.profile;
+    if (!profile) return;
+
+    const doCopy = text => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        });
+      }
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    };
+
+    const origText = btn.textContent;
+    const result = doCopy(profile);
+    const flash = () => {
+      btn.classList.add('copied');
+      btn.querySelector('svg').innerHTML = '<polyline points="4 8.5 6.5 11 12 5" stroke-width="2"/>';
+      const span = btn.childNodes[btn.childNodes.length - 1];
+      if (span) span.textContent = ' Copied!';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.querySelector('svg').innerHTML = '<rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M3 10.5V3a1.5 1.5 0 0 1 1.5-1.5H11"/>';
+        if (span) span.textContent = ' Copy Profile';
+      }, 1500);
+    };
+    if (result && result.then) result.then(flash);
+    else flash();
+  });
+});
+
 // Trinket ilvl chart tooltip
 (() => {
   const chart = document.querySelector('.tc-chart');
@@ -4335,14 +4521,8 @@ async function main() {
   );
   if (unclassified.length > 0) {
     console.log(
-      `  Auto-classifying ${unclassified.length} builds without archetypes...`,
+      `  ${unclassified.length} builds without archetypes (skipping auto-classify).`,
     );
-    classifyBuilds();
-    // Reload roster to pick up updated archetypes and display names
-    const refreshed = loadRoster();
-    if (refreshed) {
-      roster.builds = refreshed.builds;
-    }
   }
 
   // Auto-generate display names for builds that lack them
