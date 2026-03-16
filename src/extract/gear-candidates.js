@@ -233,19 +233,8 @@ function toSimcName(name) {
     .replace(/\s+/g, "_");
 }
 
-// Inventory types that always have a fixed socket count in Midnight,
-// regardless of what Raidbots beta data reports.
-const FORCED_SOCKET_INVENTORY_TYPES = {
-  2: 2, // neck — always 2 sockets in Midnight
-  11: 2, // finger — always 2 sockets in Midnight
-};
-
 function getSocketCount(item) {
-  return (
-    FORCED_SOCKET_INVENTORY_TYPES[item.inventoryType] ??
-    item.socketInfo?.sockets?.length ??
-    0
-  );
+  return item.socketInfo?.sockets?.length ?? 0;
 }
 
 function buildGemString(item, defaultGemId) {

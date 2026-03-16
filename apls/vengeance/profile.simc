@@ -25,7 +25,7 @@ override.bleeding=1
 override.bloodlust=1
 
 head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983
-neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240983/240983
+neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240983
 shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289
 back=imperators_banner,id=249335,ilevel=289
 chest=radiant_clutchtenders_jerkin,id=249322,ilevel=289,enchant_id=7985
@@ -34,8 +34,8 @@ hands=devouring_reavers_essence_grips,id=250034,ilevel=289
 waist=rootwalker_harness,id=251189,ilevel=289
 legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8159
 feet=arctic_explorers_legwraps,id=251153,ilevel=289
-finger1=omission_of_light,id=251093,ilevel=289,gem_id=240983/240983,enchant_id=8025
-finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240983/240983,enchant_id=8025
+finger1=omission_of_light,id=251093,ilevel=289,gem_id=240983,enchant_id=8025
+finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240983,enchant_id=8025
 trinket1=gaze_of_the_alnseer,id=249343,ilevel=289
 trinket2=umbral_plume,id=260235,ilevel=289
 main_hand=lightless_lament,id=260408,ilevel=289
