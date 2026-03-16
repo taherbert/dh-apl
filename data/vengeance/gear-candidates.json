@@ -1047,7 +1047,7 @@
         {
           "id": "chewed_leather_wristguards",
           "label": "Chewed Leather Wristguards",
-          "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289",
+          "simc": "wrist=chewed_leather_wristguards,id=50264,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1059,7 +1059,7 @@
         {
           "id": "frenzyroot_cuffs",
           "label": "Frenzyroot Cuffs",
-          "simc": "wrist=frenzyroot_cuffs,id=193714,ilevel=289",
+          "simc": "wrist=frenzyroot_cuffs,id=193714,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1070,7 +1070,7 @@
         {
           "id": "void_skinned_bracers",
           "label": "Void-Skinned Bracers",
-          "simc": "wrist=void_skinned_bracers,id=249327,ilevel=289",
+          "simc": "wrist=void_skinned_bracers,id=249327,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1082,7 +1082,7 @@
         {
           "id": "devouring_reavers_support_straps",
           "label": "Devouring Reaver's Support Straps",
-          "simc": "wrist=devouring_reavers_support_straps,id=250029,ilevel=289",
+          "simc": "wrist=devouring_reavers_support_straps,id=250029,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1093,7 +1093,7 @@
         {
           "id": "custodial_cuffs",
           "label": "Custodial Cuffs",
-          "simc": "wrist=custodial_cuffs,id=251103,ilevel=289",
+          "simc": "wrist=custodial_cuffs,id=251103,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1105,7 +1105,7 @@
         {
           "id": "fury_fletched_armlets",
           "label": "Fury-fletched Armlets",
-          "simc": "wrist=fury_fletched_armlets,id=251135,ilevel=289",
+          "simc": "wrist=fury_fletched_armlets,id=251135,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1117,7 +1117,7 @@
         {
           "id": "rootwarden_wraps",
           "label": "Rootwarden Wraps",
-          "simc": "wrist=rootwarden_wraps,id=251183,ilevel=289",
+          "simc": "wrist=rootwarden_wraps,id=251183,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1128,7 +1128,7 @@
         {
           "id": "silvermoon_agents_deflectors",
           "label": "Silvermoon Agent's Deflectors",
-          "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889
@@ -1138,7 +1138,7 @@
         {
           "id": "smugglers_leather_wristbands",
           "label": "Smuggler's Leather Wristbands",
-          "simc": "wrist=smugglers_leather_wristbands,id=244586,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "wrist=smugglers_leather_wristbands,id=244586,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889
@@ -1148,7 +1148,7 @@
         {
           "id": "row_walkers_deflectors",
           "label": "Row Walker's Deflectors",
-          "simc": "wrist=row_walkers_deflectors,id=244612,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "wrist=row_walkers_deflectors,id=244612,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1160,7 +1160,7 @@
         {
           "id": "aetherlume_bands",
           "label": "Aetherlume Bands",
-          "simc": "wrist=aetherlume_bands,id=244748,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "wrist=aetherlume_bands,id=244748,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889
@@ -1170,7 +1170,7 @@
         {
           "id": "queldorei_bands",
           "label": "Quel'dorei Bands",
-          "simc": "wrist=queldorei_bands,id=244756,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "wrist=queldorei_bands,id=244756,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889
@@ -1180,7 +1180,7 @@
         {
           "id": "evercore_binding",
           "label": "Evercore Binding",
-          "simc": "wrist=evercore_binding,id=245342,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "wrist=evercore_binding,id=245342,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889
@@ -1194,7 +1194,7 @@
         {
           "id": "flayers_black_belt",
           "label": "Flayer's Black Belt",
-          "simc": "waist=flayers_black_belt,id=49806,ilevel=289",
+          "simc": "waist=flayers_black_belt,id=49806,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1206,7 +1206,7 @@
         {
           "id": "flayers_black_belt",
           "label": "Flayer's Black Belt",
-          "simc": "waist=flayers_black_belt,id=133490,ilevel=289",
+          "simc": "waist=flayers_black_belt,id=133490,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1218,7 +1218,7 @@
         {
           "id": "twisted_twilight_sash",
           "label": "Twisted Twilight Sash",
-          "simc": "waist=twisted_twilight_sash,id=249314,ilevel=289",
+          "simc": "waist=twisted_twilight_sash,id=249314,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1229,7 +1229,7 @@
         {
           "id": "scorn_scarred_shulkas_belt",
           "label": "Scorn-Scarred Shul'ka's Belt",
-          "simc": "waist=scorn_scarred_shulkas_belt,id=249374,ilevel=289",
+          "simc": "waist=scorn_scarred_shulkas_belt,id=249374,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1241,7 +1241,7 @@
         {
           "id": "devouring_reavers_emblem",
           "label": "Devouring Reaver's Emblem",
-          "simc": "waist=devouring_reavers_emblem,id=250030,ilevel=289",
+          "simc": "waist=devouring_reavers_emblem,id=250030,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1253,7 +1253,7 @@
         {
           "id": "snapvine_cinch",
           "label": "Snapvine Cinch",
-          "simc": "waist=snapvine_cinch,id=251082,ilevel=289",
+          "simc": "waist=snapvine_cinch,id=251082,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1264,7 +1264,7 @@
         {
           "id": "falconers_cinch",
           "label": "Falconer's Cinch",
-          "simc": "waist=falconers_cinch,id=251166,ilevel=289",
+          "simc": "waist=falconers_cinch,id=251166,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1276,7 +1276,7 @@
         {
           "id": "rootwalker_harness",
           "label": "Rootwalker Harness",
-          "simc": "waist=rootwalker_harness,id=251189,ilevel=289",
+          "simc": "waist=rootwalker_harness,id=251189,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1288,7 +1288,7 @@
         {
           "id": "gravitic_girdle",
           "label": "Gravitic Girdle",
-          "simc": "waist=gravitic_girdle,id=251235,ilevel=289",
+          "simc": "waist=gravitic_girdle,id=251235,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -1299,7 +1299,7 @@
         {
           "id": "silvermoon_agents_utility_belt",
           "label": "Silvermoon Agent's Utility Belt",
-          "simc": "waist=silvermoon_agents_utility_belt,id=244573,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "waist=silvermoon_agents_utility_belt,id=244573,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889
@@ -1309,7 +1309,7 @@
         {
           "id": "smugglers_reinforced_binding",
           "label": "Smuggler's Reinforced Binding",
-          "simc": "waist=smugglers_reinforced_binding,id=244595,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "waist=smugglers_reinforced_binding,id=244595,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889
@@ -1319,7 +1319,7 @@
         {
           "id": "hexwoven_strand",
           "label": "Hexwoven Strand",
-          "simc": "waist=hexwoven_strand,id=244606,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36",
+          "simc": "waist=hexwoven_strand,id=244606,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,

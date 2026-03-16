@@ -233,10 +233,13 @@ function toSimcName(name) {
     .replace(/\s+/g, "_");
 }
 
-// Jewelry always has at least 1 socket (player-applied via Jeweler's Setting).
-// Some jewelry naturally has more.
+// Slots eligible for a player-applied socket (Jeweler's Setting).
+// Always at least 1 socket; some items naturally have more.
 const SOCKETABLE_INVENTORY_TYPES = new Set([
+  1, // head
   2, // neck
+  6, // waist
+  9, // wrist
   11, // finger
 ]);
 
