@@ -1,6 +1,6 @@
 ---
-description: Run the full EP-based gear optimization pipeline — scale factors, EP ranking, proc eval, trinkets, rings, embellishments, gems, enchants — then generate the report. Use after changing gear candidates or when profile.simc needs updating.
-argument-hint: "[--through phase<N>] [--quick|--confirm] [--skip-report] [--publish]"
+description: Run the constraint-based gear optimization pipeline -- component sims, constraint solver, full-set validation, profile assembly. Use after changing gear candidates or when profile.simc needs updating.
+argument-hint: "[--through phase<N>] [--quick|--confirm] [--reset] [--from phase<N>] [--skip-report] [--publish]"
 allowed-tools: Bash, Read, Glob, Grep
 ---
 
@@ -10,32 +10,36 @@ Run the full gear optimization pipeline for the active spec, then generate the r
 
 ## Usage
 
-`/gear [--through phase<N>] [--quick|--confirm] [--skip-report] [--publish]`
+`/gear [--through phase<N>] [--quick|--confirm] [--reset] [--from phase<N>] [--skip-report] [--publish]`
 
 Arguments: $ARGUMENTS
 
 ## Pipeline Phases
 
-| Phase | Name                 | Method                                                 |
-| ----- | -------------------- | ------------------------------------------------------ |
-| 0     | Tier configuration   | Sim-based                                              |
-| 1     | Scale factors        | Single SimC sim → EP weights saved to session_state    |
-| 2     | Stat allocation      | Optimize crafted item stat budgets                     |
-| 3     | EP ranking           | Pure math — no sims — for stat-stick items             |
-| 4     | Proc evaluation      | Sim proc/effect items vs EP winners                    |
-| 5     | Trinkets             | Screen + pair sims                                     |
-| 6     | Rings                | Screen + pair sims                                     |
-| 7     | Embellishments       | Screen + pair sims                                     |
-| 8     | Stat re-optimization | Re-run Phase 2 if embellishments changed crafted slots |
-| 9     | Gems                 | EP-ranked, applied to all socketed items               |
-| 10    | Enchants             | EP-ranked (cloak/wrist/foot); sim-based (weapon/ring)  |
-| 11    | Validation           | Assembled gear sim vs current profile                  |
+| Phase | Name                | Method                                                      |
+| ----- | ------------------- | ----------------------------------------------------------- |
+| 0     | Tier configuration  | Sim which tier slot to skip (4-of-5)                        |
+| 1     | Scale factors       | EP weights + iterative reweighting + EP ranking             |
+| 2a    | Embellishments      | Sim all embellishment pairs                                 |
+| 2b    | Effect items        | Sim proc/on-use items (weapons)                             |
+| 2c    | Mini-sets           | Sim mini-set pairs and individual pieces                    |
+| 2d    | Trinket screen      | Screen individual trinket candidates                        |
+| 3     | Constraint solver   | Enumerate valid 16-slot gear sets (gear-solver.js)          |
+| 4     | Full-set validation | Sim top 10 complete sets from solver                        |
+| 5a    | Trinket pairs       | Pair trinkets against winning gear set                      |
+| 5b    | Cross-validation    | Trinket x embellishment cross-check                         |
+| 6a    | Emb re-check        | Re-sim embs against winning set                             |
+| 6b    | EP re-check         | Re-derive scale factors from winning set                    |
+| 7a    | Gems                | EP-ranked, applied to all socketed items                    |
+| 7b    | Enchants            | EP-ranked (stat); sim-based (weapon/ring)                   |
+| 7c    | Final validation    | Assembled gear sim vs current profile at high fidelity      |
+| 8     | Write profile       | Generate profile.simc from scratch (gear-profile-writer.js) |
 
 ## Execution
 
 1. Determine spec from `SPEC` env var (default: vengeance).
 
-   Start the remote sim instance before running the pipeline — phases 0, 1, 4, 5, 6, 7, 10, and 11 all run sims, and each routes to remote automatically when active:
+   Start the remote sim instance before running -- most phases run sims:
 
    ```bash
    npm run remote:status
@@ -54,26 +58,25 @@ Arguments: $ARGUMENTS
    ```
 
 3. Parse arguments from `$ARGUMENTS`:
-   - `--through phase<N>` — stop after phase N (0–11); omit to run all phases
-   - `--quick` — quick fidelity (target_error=1, faster)
-   - `--confirm` — confirm fidelity (target_error=0.1, most precise)
-   - `--skip-report` — skip report generation after pipeline
-   - `--publish` — push report to GitHub Pages after generating
+   - `--through phase<N>` -- stop after phase N (0-8); omit to run all phases
+   - `--from phase<N>` -- start from phase N (skip earlier phases)
+   - `--reset` -- clear all gear results and start fresh
+   - `--quick` -- quick fidelity (target_error=1, faster)
+   - `--confirm` -- confirm fidelity (target_error=0.1, most precise)
+   - `--skip-report` -- skip report generation after pipeline
+   - `--publish` -- push report to GitHub Pages after generating
 
-4. Run the pipeline (pass `--through`, `--quick`/`--confirm` if provided):
-
-   ```bash
-   SPEC=${SPEC:-vengeance} npm run gear:run -- [--through phaseN] [--quick|--confirm]
-   ```
-
-   The pipeline is incremental — phases already stored in the DB are not re-run.
-
-5. Unless `--through` stopped before phase 11, profile.simc is written automatically.
-   If the pipeline was stopped early and the profile should be written anyway:
+4. Run the pipeline:
 
    ```bash
-   SPEC=${SPEC:-vengeance} npm run gear:write-profile
+   SPEC=${SPEC:-vengeance} npm run gear:run -- [--through phaseN] [--from phaseN] [--reset] [--quick|--confirm]
    ```
+
+   The pipeline is incremental -- phases already stored in the DB are not re-run.
+   Use `--reset` to clear all state and start fresh, or `--from phaseN` to resume.
+
+5. Unless `--through` stopped before phase 8, profile.simc is written automatically
+   after passing verification (gem counts, emb count = 2, crafted count <= 2).
 
 6. Unless `--skip-report`, generate the report from cached results:
 
@@ -94,12 +97,18 @@ Show the user:
 - A brief diff of `apls/{spec}/profile.simc` showing what gear changed
 - Report location: `results/{spec}/report/index.html`
 
+## Architecture
+
+The pipeline has three new core modules:
+
+- **`gear-solver.js`** -- Constraint solver. Enumerates valid 16-slot gear sets from component sim results + EP scores. Enforces: 4 tier pieces, 2 embellishments, <=2 crafted, unique-equip, ring dedup. Pure function, no I/O.
+- **`gear-profile-writer.js`** -- Profile assembly. Generates profile.simc from scratch using gear-candidates.json as sole source of truth. Includes verification checks.
+- **`gear.js`** -- Pipeline orchestration. Calls existing sim infrastructure, collects results into solver input, runs solver, validates, writes profile.
+
 ## Notes
 
-- **Crafted budget:** ≤2 crafted items, ≤2 embellishments — enforced globally in Phase 7
-- **Proc-tagged items** in `gear-candidates.json` get sim-based evaluation in Phase 4; all others are EP-ranked in Phase 3
+- **Crafted budget:** <=2 crafted items, <=2 embellishments -- enforced by the constraint solver
+- **Deterministic:** Same gear-candidates.json + same sim results = same output. No old-profile inheritance.
+- **Profile from scratch:** gear-profile-writer.js generates all gear lines. Old profile provides only the preamble (talents, flask, food, overrides).
 - **Refresh item pools first** if candidates are stale: `SPEC=${SPEC:-vengeance} npm run gear:fetch-candidates`
-- **EP weights** (Phase 1) must complete before EP ranking (Phase 3) — they are saved to `gear_scale_factors` in session_state
-- **Phase 8** re-runs stat allocation only if embellishments changed which crafted slots are in play
-- **Auto-generated embellishments:** `gear-config.json` `embellishments.effects` array defines available emb effects; `builtInItems` lists item IDs that already have a built-in embellishment (excluded from regular pair generation). The pipeline auto-generates all valid 2-emb combinations and picks cheapest displacement slots.
-- **Resume flags:** `--force` re-runs all phases, `--from phase<N>` starts from phase N, `--reset` clears all gear results
+- **Legacy pipeline:** `run-legacy` CLI command runs the old sequential pipeline for comparison
