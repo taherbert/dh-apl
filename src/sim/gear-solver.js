@@ -33,6 +33,56 @@ export function solveGearSet(input) {
     maxEmbellishments = 2,
   } = input;
 
+  // Convert mini-set pairs into embellishment-format entries so they
+  // participate in the same tier-skip x emb enumeration
+  const allEmbOptions = [...embellishmentResults];
+  const extendedEffectItems = deepCopyEffectItems(effectItemResults);
+
+  for (const miniSet of miniSetResults) {
+    for (const pair of miniSet.pairs) {
+      const item1Emb = pair.item1.isBuiltInEmb ? 1 : 0;
+      const item2Emb = pair.item2.isBuiltInEmb ? 1 : 0;
+      const item1Crafted = pair.item1.isCrafted ? 1 : 0;
+      const item2Crafted = pair.item2.isCrafted ? 1 : 0;
+
+      allEmbOptions.push({
+        candidateId: `miniset_${miniSet.setId}_${pair.slot1}_${pair.slot2}`,
+        weightedDps: pair.pairDpsBonus || 0,
+        slots: [pair.slot1, pair.slot2],
+        crafted: item1Crafted + item2Crafted > 0,
+        embCount: item1Emb + item2Emb,
+        slotSimc: {
+          [pair.slot1]: pair.item1.simc,
+          [pair.slot2]: pair.item2.simc,
+        },
+        slotIds: {
+          [pair.slot1]: pair.item1.id,
+          [pair.slot2]: pair.item2.id,
+        },
+        isMiniSetPair: true,
+        miniSetId: miniSet.setId,
+      });
+    }
+
+    // Add individual mini-set pieces to effect item pool
+    for (const piece of miniSet.individuals || []) {
+      if (!extendedEffectItems[piece.slot]) {
+        extendedEffectItems[piece.slot] = [];
+      }
+      extendedEffectItems[piece.slot].push({
+        candidateId: piece.id,
+        weightedDps: piece.weightedDps,
+        simc: piece.simc,
+        isCrafted: piece.isCrafted,
+        isBuiltInEmb: piece.isBuiltInEmb,
+      });
+      // Re-sort by DPS descending
+      extendedEffectItems[piece.slot].sort(
+        (a, b) => b.weightedDps - a.weightedDps,
+      );
+    }
+  }
+
   const configs = [];
   const tierSlotNames = Object.keys(tierConfig.slots);
 
@@ -56,8 +106,8 @@ export function solveGearSet(input) {
       };
     }
 
-    // For each embellishment configuration
-    for (const emb of embellishmentResults) {
+    // For each embellishment configuration (standard + mini-set pairs)
+    for (const emb of allEmbOptions) {
       const embSlots = emb.slots || [];
 
       // Check if embellishment slots conflict with tier slots
@@ -72,10 +122,10 @@ export function solveGearSet(input) {
       const slotMap = { ...tierAssignment };
       let craftedCount = craftedFromEmb;
 
-      // Place embellishment items
+      // Place embellishment items (mini-set pairs have per-slot IDs)
       for (const slot of embSlots) {
         slotMap[slot] = {
-          id: emb.candidateId,
+          id: emb.slotIds?.[slot] || emb.candidateId,
           simc: emb.slotSimc?.[slot] || "",
           isTier: false,
           isCrafted: true,
@@ -83,21 +133,23 @@ export function solveGearSet(input) {
         };
       }
 
-      // Fill the skipped tier slot with best alternative
-      const bestAlt = alternatives[0];
-      const altIsCrafted = isCraftedLine(bestAlt.simc);
-      if (altIsCrafted && craftedCount >= maxCrafted) continue;
-      slotMap[skipSlot] = {
-        id: bestAlt.id,
-        simc: bestAlt.simc,
-        isTier: false,
-        isCrafted: altIsCrafted,
-        embellishment: null,
-      };
-      if (altIsCrafted) craftedCount++;
+      // Fill the skipped tier slot with best alternative (unless emb already covers it)
+      if (!slotMap[skipSlot]) {
+        const bestAlt = alternatives[0];
+        const altIsCrafted = isCraftedLine(bestAlt.simc);
+        if (altIsCrafted && craftedCount >= maxCrafted) continue;
+        slotMap[skipSlot] = {
+          id: bestAlt.id,
+          simc: bestAlt.simc,
+          isTier: false,
+          isCrafted: altIsCrafted,
+          embellishment: null,
+        };
+        if (altIsCrafted) craftedCount++;
+      }
 
-      // Fill effect item slots
-      for (const [slot, candidates] of Object.entries(effectItemResults)) {
+      // Fill effect item slots (includes individual mini-set pieces)
+      for (const [slot, candidates] of Object.entries(extendedEffectItems)) {
         if (slotMap[slot]) continue;
         if (candidates.length === 0) continue;
         const best = candidates[0];
@@ -174,6 +226,14 @@ function scoreConfiguration(slotMap, embResult) {
     if (slot.epScore) score += slot.epScore;
   }
   return score;
+}
+
+function deepCopyEffectItems(effectItemResults) {
+  const copy = {};
+  for (const [slot, candidates] of Object.entries(effectItemResults)) {
+    copy[slot] = [...candidates];
+  }
+  return copy;
 }
 
 function isCraftedLine(simc) {
