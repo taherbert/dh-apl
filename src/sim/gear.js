@@ -1,41 +1,38 @@
-// EP-based gear optimization pipeline. Derives stat weights from scale factors,
-// EP-ranks stat-stick items (no per-item sims), and sim-evaluates proc items,
-// trinkets, rings, and embellishments. Assembles and validates final profile.
+// Constraint-based gear optimization pipeline. Sims components (embellishments,
+// weapons, trinkets, mini-sets), feeds results + EP into a constraint solver
+// that enumerates valid full gear sets, validates top candidates, and writes
+// the profile from scratch.
 //
-// Phases:
-//   0  tier-config    Tier set selection (sim-based)
-//   1  scale-factors  Per-scenario scale factors weighted by SCENARIO_WEIGHTS
-//  1b  ep-reweight    Iterative EP reweighting using DPS plot curves
-//   2  stat-optimize  Optimize crafted item stat budgets
-//   3  ep-rank        Pure EP scoring for stat-stick items only (proc/on-use/set items excluded)
-//  3b  combo-validate Combinatorial validation of top-2 per EP-ranked slot
-//   4  proc-eval      Sim proc/on-use items vs stat-stick baseline; significance gated
-//   4b set-eval       Set bonus evaluation: A-alone, B-alone, full-set; significance gated
-//   5  trinkets       Screen + pair sims; significance gated
-//   6  (removed — rings are EP-ranked in Phase 3)
-//   7  embellishments Screen + pair sims; significance gated
-//  7.5 resolve-conflicts Ring set vs embellishment conflict resolution
-//   8  stat-re-opt    Re-run Phase 2 if embellishments changed crafted slots
-//   9  gems           EP-rank gems, apply to all sockets
-//  10  enchants       EP-rank cloak/wrist/foot; sim weapon/ring
-//  11  validate       Assembled gear vs current profile at high fidelity
+// Pipeline phases (cmdRun):
+//   0   tier-config       Tier set selection (sim-based)
+//   1   scale-factors     Scale factors + EP reweighting + EP ranking
+//   2a  embellishments    Sim embellishment pairs
+//   2b  effect-items      Sim proc/on-use items (weapons)
+//   2c  mini-sets         Sim mini-set pairs and individual pieces
+//   2d  trinket-screen    Screen individual trinket candidates
+//   3   constraint-solver Enumerate valid gear sets (gear-solver.js)
+//   4   full-set-validate Sim top 10 complete sets from solver
+//   5a  trinket-pairs     Pair trinkets against winning gear set
+//   5b  cross-validation  Trinket x embellishment cross-check
+//   6a  emb-recheck       Re-sim embs against winning set
+//   6b  ep-recheck        Re-derive scale factors from winning set
+//   7a  gems              EP-rank gems
+//   7b  enchants          EP-rank stat enchants, sim weapon/ring enchants
+//   7c  final-validation  Assembled gear vs original at high fidelity
+//   8   write-profile     Generate profile.simc (gear-profile-writer.js)
 //
 // Usage:
-//   SPEC=vengeance node src/sim/gear.js run [--through phase0..phase11] [--fidelity X]
+//   SPEC=vengeance node src/sim/gear.js run [--through phase0..phase8] [--reset] [--from phaseN]
+//   SPEC=vengeance node src/sim/gear.js run-legacy [--through phase0..phase11]
 //   SPEC=vengeance node src/sim/gear.js scale-factors
 //   SPEC=vengeance node src/sim/gear.js ep-rank
 //   SPEC=vengeance node src/sim/gear.js proc-eval
-//   SPEC=vengeance node src/sim/gear.js stat-optimize
-//   SPEC=vengeance node src/sim/gear.js combinations [--type trinkets|rings|embellishments]
-//   SPEC=vengeance node src/sim/gear.js resolve-conflicts
+//   SPEC=vengeance node src/sim/gear.js combinations [--type trinkets|embellishments]
 //   SPEC=vengeance node src/sim/gear.js gems
 //   SPEC=vengeance node src/sim/gear.js enchants
 //   SPEC=vengeance node src/sim/gear.js validate [--fidelity confirm]
-//   SPEC=vengeance node src/sim/gear.js write-profile
 //   SPEC=vengeance node src/sim/gear.js status
 //   SPEC=vengeance node src/sim/gear.js results [--slot X] [--phase N]
-//   SPEC=vengeance node src/sim/gear.js export
-//   SPEC=vengeance node src/sim/gear.js screen [--slot X]  (diagnostic only)
 
 import { getSimCores } from "./remote.js";
 import { readRouteFile, execSimcWithFallback } from "./runner.js";
@@ -313,7 +310,8 @@ function getGearTarget(gearData) {
   return resolve(ROOT, target);
 }
 
-// Reconstruct SimC override lines for a combination candidate ID.
+// DEPRECATED: Used by cmdResolveConflicts and cmdExport. Remove when those
+// are migrated to use solver output directly.
 function resolveComboOverrides(candidateId, gearData) {
   // Null embellishment baseline
   if (candidateId === "__null_emb__") {
@@ -1229,9 +1227,8 @@ function gemColor(gem) {
   return "unknown";
 }
 
-// Build a gem queue (array of item_ids) for a given configuration.
-// If diverse=true, picks one gem of each color (best EP per color) plus
-// the Eversong Diamond in the first slot.
+// DEPRECATED: Used by cmdGems. Remove when cmdGems is migrated to use
+// the profile writer's gem assignment.
 function buildGemQueue(config, allGems, sf, totalSockets) {
   const queue = [];
 
@@ -1280,7 +1277,7 @@ function buildGemQueue(config, allGems, sf, totalSockets) {
   return queue;
 }
 
-// Apply a gem queue to gear lines, producing overrides for socketed slots only.
+// DEPRECATED: Used by cmdGems. Remove when cmdGems uses profile writer.
 function applyGemQueueToLines(gearLines, gemQueue) {
   const overrides = [];
   let gemIdx = 0;
@@ -2638,7 +2635,7 @@ function applyEnchant(line, enchantId) {
   return `${line},enchant_id=${enchantId}`;
 }
 
-// Apply the correct enchant for a given individual slot based on Phase 10 results.
+// DEPRECATED: Used by buildGearLines/cmdWriteProfile. Remove with them.
 function applySlotEnchant(line, slot, enchantMap) {
   const SLOT_ENCHANT = {
     main_hand: "weapon_mh",
@@ -2657,7 +2654,7 @@ function applySlotEnchant(line, slot, enchantMap) {
   return enchantKey ? applyEnchant(line, enchantMap[enchantKey]) : line;
 }
 
-// Apply Phase 2 stat alloc to a crafted_stats simc line.
+// DEPRECATED: Used by cmdCombinatorialValidation and buildGearLines. Remove with them.
 function applyStatAlloc(line, slot) {
   if (!line.includes("crafted_stats=")) return line;
   // Normalize wrist/wrists — gear-candidates uses "wrists" as slot key
@@ -2674,7 +2671,7 @@ function applyStatAlloc(line, slot) {
     : line;
 }
 
-// Build enchant map from Phase 10 results: enchant_slot_key → enchant_id
+// DEPRECATED: Used by buildGearLines/cmdWriteProfile. Remove with them.
 function buildEnchantMap(gearData) {
   const enchantMap = {};
   // Extract baseline enchants from the profile for fallback when "Baseline" wins
@@ -2718,8 +2715,7 @@ function buildEnchantMap(gearData) {
   return enchantMap;
 }
 
-// Reconstruct SimC lines for the selected tier configuration.
-// Returns an array of { slot, simc } objects.
+// DEPRECATED: Used by buildGearLines and cmdExport. Remove with them.
 function getTierLines(gearData) {
   const phase0 = getSessionState("gear_phase0");
   if (!phase0 || !gearData.tier) return [];
@@ -2748,16 +2744,9 @@ function getTierLines(gearData) {
 }
 
 // Collect best gear lines from all pipeline phases.
-// Priority (highest wins, each covers its slots):
-//   Phase 7:  embellishments (conflict-resolved against ring sets)
-//   set_eval: set bonus winners for their slots
-//   Phase 5:  trinkets
-//   Phase 4:  proc eval winners for individual slots
-//   Phase 3:  EP ranking winners for remaining individual slots
-//   Phase 0:  tier config (tier slots)
-// Phase 2 stat alloc applied to crafted_stats lines.
-// Phase 9 gems applied to all socketed items.
-// Phase 10 enchants applied to all relevant slots.
+// DEPRECATED: Replaced by gear-solver.js constraint solver + gear-profile-writer.js.
+// Still used by cmdGems, cmdEnchants, and cmdValidate until those are migrated
+// to use solver output directly.
 function buildGearLines(gearData) {
   const lines = [];
   const coveredSlots = new Set();
@@ -3035,9 +3024,8 @@ function buildGearLines(gearData) {
   return lines;
 }
 
-// Write best gear from all pipeline phases back to profile.simc.
-// For slots where the item hasn't changed, the current line is preserved
-// (keeping existing gem and enchant suffixes). Changed slots use the pipeline result.
+// DEPRECATED: Legacy profile writer. New pipeline uses gear-profile-writer.js.
+// Kept for standalone write-profile CLI command during transition.
 function cmdWriteProfile() {
   const gearData = loadGearCandidates();
   const newLines = buildGearLines(gearData);
@@ -4130,6 +4118,63 @@ function cmdStatus() {
     );
   } else {
     console.log("  not started");
+  }
+
+  // New pipeline phases
+  const solverState = getSessionState("gear_phase3_solver");
+  const phase4Winner = getSessionState("gear_phase4_winner");
+  const phase5a = getSessionState("gear_phase5a");
+  const phase5b = getSessionState("gear_phase5b");
+  const phase6a = getSessionState("gear_phase6a");
+  const phase6b = getSessionState("gear_phase6b");
+
+  if (solverState || phase4Winner) {
+    console.log("\n--- New Pipeline (Constraint Solver) ---");
+
+    console.log("\nPhase 3 (Constraint Solver):");
+    if (solverState) {
+      console.log(
+        `  ${solverState.configCount} configs, top score: ${solverState.topScore?.toFixed(0)} (${solverState.timestamp})`,
+      );
+    } else {
+      console.log("  not started");
+    }
+
+    console.log("\nPhase 4 (Full-Set Validation):");
+    if (phase4Winner) {
+      console.log(
+        `  Winner: ${phase4Winner.candidateId} (${phase4Winner.weightedDps?.toFixed(0)} DPS, ${phase4Winner.fidelity})`,
+      );
+      console.log(
+        `  Tier skip: ${phase4Winner.tierSkip}, Emb: ${phase4Winner.embConfig}`,
+      );
+    } else {
+      console.log("  not started");
+    }
+
+    console.log("\nPhase 5a (Trinket Pairing):");
+    console.log(
+      phase5a
+        ? `  ${phase5a.pairCount} pairs, winner: ${phase5a.winner} (${phase5a.fidelity})`
+        : "  not started",
+    );
+
+    console.log("\nPhase 5b (Cross-Validation):");
+    console.log(
+      phase5b
+        ? `  ${phase5b.trinketPairs}x${phase5b.embConfigs} combos (${phase5b.fidelity})`
+        : "  not started",
+    );
+
+    console.log("\nPhase 6a (Emb Re-check):");
+    console.log(
+      phase6a ? `  completed (${phase6a.fidelity})` : "  not started",
+    );
+
+    console.log("\nPhase 6b (EP Re-check):");
+    console.log(
+      phase6b ? `  completed (${phase6b.fidelity})` : "  not started",
+    );
   }
 }
 
