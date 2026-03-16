@@ -20,6 +20,14 @@ const SLOT_ORDER = [
   "off_hand",
 ];
 
+// Pre-compiled regexes for stripping SimC fields
+const STRIP_REGEXES = {
+  gem_id: /,gem_id=[^,\n]*/g,
+  enchant_id: /,enchant_id=[^,\n]*/g,
+  crafted_stats: /,crafted_stats=[^,\n]*/g,
+  embellishment: /,embellishment=[^,\n]*/g,
+};
+
 export function countSockets(simcLine) {
   const match = simcLine.match(/gem_id=([^,\n]+)/);
   if (!match) return 0;
@@ -34,17 +42,14 @@ export function assembleProfile({
 }) {
   const lines = [];
 
-  // Write preamble (character setup, consumables, overrides)
   for (const line of preamble) {
     lines.push(line);
   }
 
-  // Blank line before gear
   if (lines.length > 0 && lines[lines.length - 1] !== "") {
     lines.push("");
   }
 
-  // Write gear lines in canonical slot order
   for (const slot of SLOT_ORDER) {
     const entry = solverOutput[slot];
     if (!entry) {
@@ -52,30 +57,26 @@ export function assembleProfile({
       continue;
     }
 
-    let line = stripAddons(entry.simc);
+    // Count sockets from the original simc before stripping
+    const socketCount = countSockets(entry.simc);
 
-    // Apply crafted stats
-    if (entry.craftedStats && !line.includes("crafted_stats=")) {
+    // Strip all pipeline-controlled fields, then re-apply from solver output
+    let line = stripAllFields(entry.simc);
+
+    if (entry.craftedStats) {
       line += `,crafted_stats=${entry.craftedStats}`;
     }
 
-    // Apply embellishment
-    if (entry.embellishment && !line.includes("embellishment=")) {
+    if (entry.embellishment) {
       line += `,embellishment=${entry.embellishment}`;
     }
 
-    // Apply gems based on socket count from candidate simc
-    const socketCount = countSockets(entry.simc);
     if (socketCount > 0) {
-      line = stripField(line, "gem_id");
-      const gemIds = buildGemIds(socketCount, gemConfig);
-      line += `,gem_id=${gemIds}`;
+      line += `,gem_id=${buildGemIds(socketCount, gemConfig)}`;
     }
 
-    // Apply enchant
     const enchantId = enchantConfig[slot];
     if (enchantId) {
-      line = stripField(line, "enchant_id");
       line += `,enchant_id=${enchantId}`;
     }
 
@@ -87,24 +88,19 @@ export function assembleProfile({
 
 export function verifyProfile(profileLines, gearCandidates) {
   const errors = [];
-
-  // Count embellishments (explicit embellishment= tags + built-in items)
   let embCount = 0;
   let craftedCount = 0;
 
   for (const line of profileLines) {
     if (!line || line.startsWith("#") || !line.includes("=")) continue;
 
-    // Count explicit embellishments
     const embMatches = line.match(/embellishment=/g);
     if (embMatches) embCount += embMatches.length;
 
-    // Count crafted items
     if (line.includes("bonus_id=8793") || line.includes("crafted_stats=")) {
       craftedCount++;
     }
 
-    // Check gem count against candidates
     const slotMatch = line.match(/^(\w+)=/);
     if (!slotMatch) continue;
     const slot = slotMatch[1];
@@ -137,26 +133,18 @@ export function verifyProfile(profileLines, gearCandidates) {
   return { valid: errors.length === 0, errors };
 }
 
-function stripAddons(simc) {
-  // Remove existing gem_id, enchant_id, crafted_stats, embellishment
-  // so they can be cleanly re-applied
+function stripAllFields(simc) {
   let line = simc;
-  line = stripField(line, "gem_id");
-  line = stripField(line, "enchant_id");
-  line = stripField(line, "crafted_stats");
-  line = stripField(line, "embellishment");
+  for (const re of Object.values(STRIP_REGEXES)) {
+    re.lastIndex = 0;
+    line = line.replace(re, "");
+  }
   return line;
-}
-
-function stripField(line, field) {
-  const regex = new RegExp(`,${field}=[^,\\n]*`, "g");
-  return line.replace(regex, "");
 }
 
 function buildGemIds(socketCount, gemConfig) {
   const { primaryGemId, secondaryGemIds = [] } = gemConfig;
-  const ids = [];
-  ids.push(primaryGemId);
+  const ids = [primaryGemId];
   for (let i = 1; i < socketCount; i++) {
     ids.push(secondaryGemIds[i - 1] || primaryGemId);
   }

@@ -3752,14 +3752,15 @@ async function cmdRun(args) {
           const gemState = getSessionState("gear_gems");
           const preamble = readPreamble(getGearTarget(gearData));
 
+          const defaultGemId = gearData._defaultGem || 240983;
           const profile = assembleProfile({
             preamble,
             solverOutput: winnerConfig.slots,
             gemConfig: {
-              primaryGemId: gemState?.bestGemId || 240983,
+              primaryGemId: gemState?.bestGemId || defaultGemId,
               secondaryGemIds: gemState?.secondaryGemIds || [],
             },
-            enchantConfig: collectEnchantConfig(),
+            enchantConfig: collectEnchantConfig(gearData),
           });
 
           const verification = verifyProfile(profile.split("\n"), gearData);
@@ -3794,27 +3795,30 @@ async function cmdRun(args) {
   cmdStatus();
 }
 
-// Collect enchant winners from Phase 10 results + EP-ranked stat enchants
-function collectEnchantConfig() {
+// Collect enchant winners from Phase 10 results, looking up enchant_id
+// from gear-candidates.json enchant definitions.
+function collectEnchantConfig(gearData) {
   const config = {};
-  const enchantSlots = [
-    "chest",
-    "legs",
-    "shoulder",
-    "back",
-    "main_hand",
-    "off_hand",
-    "finger1",
-    "finger2",
-  ];
-  for (const slot of enchantSlots) {
-    const results = queryGearResults(10, slot, { bestOnly: true });
-    if (results.length > 0) {
-      // Extract enchant_id from the winning candidate's label or simc
-      const winner = results[0];
-      const enchantMatch =
-        winner.label?.match(/(\d+)/) || winner.candidate_id?.match(/(\d+)/);
-      if (enchantMatch) config[slot] = parseInt(enchantMatch[1]);
+  for (const [enchantSlot, enchantData] of Object.entries(
+    gearData?.enchants || {},
+  )) {
+    const results = queryGearResults(10, enchantSlot, { bestOnly: true });
+    if (results.length === 0) continue;
+    const winnerId = results[0].candidate_id;
+    if (winnerId === "__baseline__") continue;
+    // Look up enchant_id from the candidate definition
+    const candidate = enchantData.candidates?.find((c) => c.id === winnerId);
+    if (candidate?.enchant_id) {
+      // Map enchant slot keys to profile slot keys
+      const slotMap = {
+        weapon_mh: "main_hand",
+        weapon_oh: "off_hand",
+        ring: "finger1",
+      };
+      const profileSlot = slotMap[enchantSlot] || enchantSlot;
+      config[profileSlot] = candidate.enchant_id;
+      // Ring enchant applies to both fingers
+      if (enchantSlot === "ring") config.finger2 = candidate.enchant_id;
     }
   }
   return config;

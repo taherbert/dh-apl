@@ -28,7 +28,6 @@ export function solveGearSet(input) {
     effectItemResults = {},
     miniSetResults = [],
     statStickCandidates = {},
-    scaleFactors,
     maxCrafted = 2,
     maxEmbellishments = 2,
   } = input;
@@ -36,7 +35,7 @@ export function solveGearSet(input) {
   // Convert mini-set pairs into embellishment-format entries so they
   // participate in the same tier-skip x emb enumeration
   const allEmbOptions = [...embellishmentResults];
-  const extendedEffectItems = deepCopyEffectItems(effectItemResults);
+  const extendedEffectItems = shallowCopySlotArrays(effectItemResults);
 
   for (const miniSet of miniSetResults) {
     for (const pair of miniSet.pairs) {
@@ -65,6 +64,7 @@ export function solveGearSet(input) {
     }
 
     // Add individual mini-set pieces to effect item pool
+    const piecesToSort = new Set();
     for (const piece of miniSet.individuals || []) {
       if (!extendedEffectItems[piece.slot]) {
         extendedEffectItems[piece.slot] = [];
@@ -76,23 +76,28 @@ export function solveGearSet(input) {
         isCrafted: piece.isCrafted,
         isBuiltInEmb: piece.isBuiltInEmb,
       });
-      // Re-sort by DPS descending
-      extendedEffectItems[piece.slot].sort(
-        (a, b) => b.weightedDps - a.weightedDps,
-      );
+      piecesToSort.add(piece.slot);
+    }
+    for (const slot of piecesToSort) {
+      extendedEffectItems[slot].sort((a, b) => b.weightedDps - a.weightedDps);
     }
   }
 
   const configs = [];
   const tierSlotNames = Object.keys(tierConfig.slots);
+  const tierCount = tierSlotNames.length - 1;
 
-  // Enumerate tier skip options: for each tier slot that has alternatives,
-  // skip it and use the best alternative
+  // Tier count is structurally fixed at tierSlotNames.length - 1 for all skip options.
+  // If that doesn't match requiredCount, no valid configs are possible.
+  if (tierCount !== tierConfig.requiredCount) {
+    return { configurations: [] };
+  }
+
   for (let skipIdx = 0; skipIdx < tierSlotNames.length; skipIdx++) {
     const skipSlot = tierSlotNames[skipIdx];
     const alternatives = tierConfig.alternatives[skipSlot] || [];
 
-    // Build tier assignment: 4 tier pieces + 1 alternative
+    // Build tier assignment: 4 tier pieces
     const tierAssignment = {};
     for (const slot of tierSlotNames) {
       if (slot === skipSlot) continue;
@@ -105,14 +110,11 @@ export function solveGearSet(input) {
       };
     }
 
-    // For each embellishment configuration (standard + mini-set pairs)
     for (const emb of allEmbOptions) {
       const embSlots = emb.slots || [];
 
-      // Check if embellishment slots conflict with tier slots
       if (embSlots.some((s) => tierAssignment[s])) continue;
 
-      // Check crafted + emb limits
       const craftedFromEmb = emb.crafted ? embSlots.length : 0;
       const embFromEmb = emb.embCount || 0;
       if (craftedFromEmb > maxCrafted) continue;
@@ -120,8 +122,8 @@ export function solveGearSet(input) {
 
       const slotMap = { ...tierAssignment };
       let craftedCount = craftedFromEmb;
+      let embCount = embFromEmb;
 
-      // Place embellishment items (mini-set pairs have per-slot IDs)
       for (const slot of embSlots) {
         slotMap[slot] = {
           id: emb.slotIds?.[slot] || emb.candidateId,
@@ -152,12 +154,6 @@ export function solveGearSet(input) {
       const usedItemIds = new Set();
       const usedUniqueGroups = new Set();
 
-      // Seed tracking from already-placed items
-      for (const entry of Object.values(slotMap)) {
-        if (entry.itemId) usedItemIds.add(entry.itemId);
-        if (entry.uniqueEquipped) usedUniqueGroups.add(entry.uniqueEquipped);
-      }
-
       // Fill effect item slots (includes individual mini-set pieces)
       for (const [slot, candidates] of Object.entries(extendedEffectItems)) {
         if (slotMap[slot]) continue;
@@ -166,9 +162,9 @@ export function solveGearSet(input) {
           candidates,
           usedItemIds,
           usedUniqueGroups,
-          "effect",
         );
         if (!best) continue;
+        const itemId = best.itemId;
         slotMap[slot] = {
           id: best.candidateId,
           simc: best.simc,
@@ -177,13 +173,13 @@ export function solveGearSet(input) {
           embellishment: null,
           simDps: best.weightedDps,
           uniqueEquipped: best.uniqueEquipped || null,
-          itemId: best.itemId,
+          itemId,
         };
-        if (best.itemId) usedItemIds.add(best.itemId);
+        if (itemId) usedItemIds.add(itemId);
         if (best.uniqueEquipped) usedUniqueGroups.add(best.uniqueEquipped);
       }
 
-      // Fill stat-stick slots (with ring dedup)
+      // Fill stat-stick slots (with ring dedup via itemId ?? id)
       for (const [slot, candidates] of Object.entries(statStickCandidates)) {
         if (slotMap[slot]) continue;
         if (candidates.length === 0) continue;
@@ -191,7 +187,6 @@ export function solveGearSet(input) {
           candidates,
           usedItemIds,
           usedUniqueGroups,
-          "stat",
         );
         if (!best) continue;
         const itemId = best.itemId ?? best.id;
@@ -220,17 +215,9 @@ export function solveGearSet(input) {
         }
       }
 
-      // Validate hard constraints
-      const totalCrafted = Object.values(slotMap).filter(
-        (s) => s.isCrafted,
-      ).length;
-      const totalEmb = Object.values(slotMap).filter(
-        (s) => s.embellishment,
-      ).length;
-      const totalTier = Object.values(slotMap).filter((s) => s.isTier).length;
-      if (totalCrafted > maxCrafted) continue;
-      if (totalEmb !== maxEmbellishments) continue;
-      if (totalTier !== tierConfig.requiredCount) continue;
+      // Validate constraints not tracked incrementally
+      if (craftedCount > maxCrafted) continue;
+      if (embCount !== maxEmbellishments) continue;
 
       const score = scoreConfiguration(slotMap, emb);
 
@@ -257,9 +244,9 @@ function scoreConfiguration(slotMap, embResult) {
   return score;
 }
 
-function pickBestCandidate(candidates, usedItemIds, usedUniqueGroups, type) {
+function pickBestCandidate(candidates, usedItemIds, usedUniqueGroups) {
   for (const c of candidates) {
-    const itemId = type === "stat" ? (c.itemId ?? c.id) : c.itemId;
+    const itemId = c.itemId ?? c.id;
     if (itemId && usedItemIds.has(itemId)) continue;
     if (c.uniqueEquipped && usedUniqueGroups.has(c.uniqueEquipped)) continue;
     return c;
@@ -267,7 +254,7 @@ function pickBestCandidate(candidates, usedItemIds, usedUniqueGroups, type) {
   return null;
 }
 
-function deepCopyEffectItems(effectItemResults) {
+function shallowCopySlotArrays(effectItemResults) {
   const copy = {};
   for (const [slot, candidates] of Object.entries(effectItemResults)) {
     copy[slot] = [...candidates];
