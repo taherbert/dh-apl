@@ -20,11 +20,11 @@ const SLOT_ORDER = [
   "off_hand",
 ];
 
-// Pre-compiled regexes for stripping SimC fields
+// Pre-compiled regexes for stripping pipeline-controlled SimC fields.
+// crafted_stats is NOT stripped -- it's an intrinsic item property from gear-candidates.json.
 const STRIP_REGEXES = {
   gem_id: /,gem_id=[^,\n]*/g,
   enchant_id: /,enchant_id=[^,\n]*/g,
-  crafted_stats: /,crafted_stats=[^,\n]*/g,
   embellishment: /,embellishment=[^,\n]*/g,
 };
 
@@ -62,10 +62,6 @@ export function assembleProfile({
 
     // Strip all pipeline-controlled fields, then re-apply from solver output
     let line = stripAllFields(entry.simc);
-
-    if (entry.craftedStats) {
-      line += `,crafted_stats=${entry.craftedStats}`;
-    }
 
     if (entry.embellishment) {
       line += `,embellishment=${entry.embellishment}`;

@@ -85,19 +85,21 @@ export function solveGearSet(input) {
 
   const configs = [];
   const tierSlotNames = Object.keys(tierConfig.slots);
-  const tierCount = tierSlotNames.length - 1;
 
-  // Tier count is structurally fixed at tierSlotNames.length - 1 for all skip options.
-  // If that doesn't match requiredCount, no valid configs are possible.
-  if (tierCount !== tierConfig.requiredCount) {
+  if (tierSlotNames.length - 1 !== tierConfig.requiredCount) {
     return { configurations: [] };
   }
 
-  for (let skipIdx = 0; skipIdx < tierSlotNames.length; skipIdx++) {
-    const skipSlot = tierSlotNames[skipIdx];
-    const alternatives = tierConfig.alternatives[skipSlot] || [];
+  // Enumerate tier configurations: no-skip (all tier pieces kept) + each possible skip.
+  // When emb pairs don't conflict with tier slots, no-skip avoids replacing a tier piece
+  // with a weaker alternative for no reason.
+  const skipOptions = [null, ...tierSlotNames];
 
-    // Build tier assignment: 4 tier pieces
+  for (const skipSlot of skipOptions) {
+    const alternatives = skipSlot
+      ? tierConfig.alternatives[skipSlot] || []
+      : [];
+
     const tierAssignment = {};
     for (const slot of tierSlotNames) {
       if (slot === skipSlot) continue;
@@ -125,27 +127,35 @@ export function solveGearSet(input) {
       let embCount = embFromEmb;
 
       for (const slot of embSlots) {
+        const slotSimc = emb.slotSimc?.[slot] || "";
+        const embMatch = slotSimc.match(/embellishment=([^,\n]+)/);
+        const csMatch = slotSimc.match(/crafted_stats=([^,\n]+)/);
         slotMap[slot] = {
           id: emb.slotIds?.[slot] || emb.candidateId,
-          simc: emb.slotSimc?.[slot] || "",
+          simc: slotSimc,
           isTier: false,
           isCrafted: true,
-          embellishment: true,
+          embellishment: embMatch ? embMatch[1] : null,
+          craftedStats: csMatch ? csMatch[1] : null,
         };
       }
 
-      // Fill the skipped tier slot with best alternative (unless emb already covers it)
-      if (!slotMap[skipSlot]) {
+      // Fill the skipped tier slot with best alternative (skip is null when keeping all tier)
+      if (skipSlot && !slotMap[skipSlot]) {
         if (alternatives.length === 0) continue;
         const bestAlt = alternatives[0];
         const altIsCrafted = isCraftedLine(bestAlt.simc);
         if (altIsCrafted && craftedCount >= maxCrafted) continue;
+        const altCsMatch = altIsCrafted
+          ? bestAlt.simc?.match(/crafted_stats=([^,\n]+)/)
+          : null;
         slotMap[skipSlot] = {
           id: bestAlt.id,
           simc: bestAlt.simc,
           isTier: false,
           isCrafted: altIsCrafted,
           embellishment: null,
+          craftedStats: altCsMatch ? altCsMatch[1] : null,
         };
         if (altIsCrafted) craftedCount++;
       }

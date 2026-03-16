@@ -3218,8 +3218,12 @@ function collectEmbResults(gearData) {
       const pairDef = pairDefs.find((p) => p.id === r.candidate_id);
       if (!pairDef) return null;
 
-      // Extract slots from override lines
-      const slots = pairDef.overrides.map((o) => o.split("=")[0]);
+      // Extract slots from override lines, normalizing wrist -> wrists
+      // to match the solver's ALL_SLOTS and profile writer's SLOT_ORDER
+      const normalizeSlot = (s) => (s === "wrist" ? "wrists" : s);
+      const slots = pairDef.overrides.map((o) =>
+        normalizeSlot(o.split("=")[0]),
+      );
       const embCount = pairDef.overrides.filter((o) =>
         o.includes("embellishment="),
       ).length;
@@ -3235,7 +3239,7 @@ function collectEmbResults(gearData) {
         crafted: true,
         embCount: embCount + builtInCount,
         slotSimc: Object.fromEntries(
-          pairDef.overrides.map((o) => [o.split("=")[0], o]),
+          pairDef.overrides.map((o) => [normalizeSlot(o.split("=")[0]), o]),
         ),
       };
     })
@@ -3532,15 +3536,196 @@ async function cmdEmbRecheck(winnerConfig, gearData, fidelity) {
 }
 
 // --- Phase 6b: EP re-check ---
+// Re-derives scale factors from the assembled gear set, then re-ranks
+// stat-stick slots. Fixes stat-weight drift: Phase 1 SFs are computed on
+// baseline gear, but by the time the solver assembles a full set the stat
+// distribution has shifted (e.g., excess crit pushing into diminishing returns).
 
 async function cmdEpRecheck(winnerConfig, gearData, fidelity) {
   console.log(`\nPhase 6b: EP re-derivation from winning set`);
-  // TODO: re-derive scale factors from winning set, re-rank stat sticks
-  setSessionState("gear_phase6b", {
-    fidelity,
+
+  const fidelityConfig = FIDELITY_TIERS[fidelity] || FIDELITY_TIERS.standard;
+  const builds = getRepresentativeBuilds();
+  const topBuild = builds[0];
+  const baseProfile = getBaseProfile(gearData);
+  const statKeys = ["Agi", "Haste", "Crit", "Mastery", "Vers"];
+
+  // Build gear overrides from the solver's assembled set
+  const gearOverrides = [];
+  for (const [, entry] of Object.entries(winnerConfig.slots)) {
+    if (entry.simc) gearOverrides.push(entry.simc);
+  }
+
+  if (gearOverrides.length === 0) {
+    console.log("  No gear overrides from solver. Skipping.");
+    setSessionState("gear_phase6b", {
+      fidelity,
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  const { threadsPerSim } = simConcurrency(1);
+  mkdirSync(resultsDir(), { recursive: true });
+
+  // Run scale factors on assembled gear across all scenarios
+  const perScenario = {};
+  for (const scenario of Object.keys(SCENARIOS)) {
+    const scConfig = SCENARIOS[scenario];
+    const outputPath = resultsFile(`gear_phase6b_sf_${scenario}.json`);
+
+    const simArgs = [
+      baseProfile,
+      `talents=${topBuild.hash}`,
+      ...gearOverrides,
+      "calculate_scale_factors=1",
+      "scale_only=Agi/Haste/Crit/Mastery/Vers",
+      `json2=${outputPath}`,
+      `threads=${threadsPerSim}`,
+      `max_time=${scConfig.maxTime}`,
+      `desired_targets=${scConfig.desiredTargets}`,
+      ...(scConfig.fightStyle ? [`fight_style=${scConfig.fightStyle}`] : []),
+      ...(scConfig.routeFile ? readRouteFile(scConfig.routeFile) : []),
+      ...(scConfig.overrides || []),
+      `target_error=${fidelityConfig.target_error}`,
+      `iterations=${fidelityConfig.iterations || SIM_DEFAULTS.iterations}`,
+    ];
+    if (DATA_ENV === "ptr" || DATA_ENV === "beta") simArgs.unshift("ptr=1");
+
+    console.log(`  ${scConfig.name}...`);
+    await execSimcWithFallback(simArgs, (a) =>
+      execFileAsync(SIMC_BIN, a, {
+        maxBuffer: 100 * 1024 * 1024,
+        timeout: 1800000,
+      }),
+    );
+
+    const data = JSON.parse(readFileSync(outputPath, "utf-8"));
+    perScenario[scenario] = data.sim.players[0].scale_factors;
+    console.log(
+      `    ${statKeys.map((s) => `${s}=${(perScenario[scenario][s] || 0).toFixed(3)}`).join(" ")}`,
+    );
+  }
+
+  // Combine per-scenario scale factors using SCENARIO_WEIGHTS
+  const newSf = {};
+  for (const stat of statKeys) {
+    newSf[stat] = 0;
+    for (const [scenario, weight] of Object.entries(SCENARIO_WEIGHTS)) {
+      newSf[stat] += (perScenario[scenario]?.[stat] || 0) * weight;
+    }
+  }
+
+  // Compare old vs new scale factors
+  const oldSf = getSessionState("gear_scale_factors");
+  console.log("\n  Scale factor comparison (old -> new):");
+  let anyDrift = false;
+  for (const stat of statKeys.filter((s) => s !== "Agi")) {
+    const oldVal = oldSf?.[stat] || 0;
+    const newVal = newSf[stat] || 0;
+    const pctChange =
+      oldVal > 0 ? (((newVal - oldVal) / oldVal) * 100).toFixed(1) : "N/A";
+    const drifted = Math.abs(parseFloat(pctChange)) > 5;
+    if (drifted) anyDrift = true;
+    console.log(
+      `    ${stat.padEnd(8)} ${oldVal.toFixed(2).padStart(8)} -> ${newVal.toFixed(2).padStart(8)} (${pctChange}%)${drifted ? " DRIFTED" : ""}`,
+    );
+  }
+
+  if (!anyDrift) {
+    console.log(
+      "  No significant drift. Keeping current stat-stick selections.",
+    );
+    setSessionState("gear_phase6b", {
+      fidelity,
+      drifted: false,
+      timestamp: new Date().toISOString(),
+    });
+    return;
+  }
+
+  // Re-rank stat-stick slots with corrected scale factors
+  console.log("\n  Re-ranking stat-stick slots with corrected SFs...");
+  const hasEmbellishments = gearData.embellishments?.pairs?.length > 0;
+  const bestGemEp = (gearData.gems || [])
+    .filter((g) => g.stats)
+    .reduce((max, g) => Math.max(max, scoreEp(g.stats, newSf)), 0);
+
+  let changes = 0;
+  let finger1WinnerId = null;
+
+  for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
+    if (ALWAYS_SIM_SLOTS.has(slot)) continue;
+
+    // Skip slots locked by other pipeline phases (tier, emb, effect items, set eval)
+    const current = winnerConfig.slots[slot];
+    if (current && current.isTier) continue;
+    if (current && current.embellishment) continue;
+    if (current && current.simDps) continue; // effect item (sim-ranked)
+    if (current && current.simLocked) continue; // set eval or trinket winner
+
+    let candidates = (slotData.candidates || []).filter(
+      (c) => !hasEmbellishments || !isCraftedSimc(c.simc),
+    );
+
+    if (slot === "finger2" && finger1WinnerId) {
+      candidates = candidates.filter((c) => c.id !== finger1WinnerId);
+    }
+
+    if (candidates.length === 0) continue;
+
+    const ranked = candidates
+      .map((c) => ({
+        ...c,
+        ep: scoreEp(c.stats, newSf) + countSockets(c.simc) * bestGemEp,
+      }))
+      .sort((a, b) => b.ep - a.ep);
+
+    const best = ranked[0];
+    if (slot === "finger1") finger1WinnerId = best?.id ?? null;
+
+    // Check if the winner changed from what the solver picked
+    const currentId = current?.id;
+    if (best && currentId && best.id !== currentId) {
+      console.log(`    ${slot}: ${currentId} -> ${best.id}`);
+      winnerConfig.slots[slot] = {
+        id: best.id,
+        simc: best.simc,
+        isTier: false,
+        isCrafted: false,
+        embellishment: null,
+        epScore: best.ep,
+        itemId: best.itemId,
+      };
+      changes++;
+    }
+  }
+
+  // Update stored scale factors so downstream phases (enchants, gems) use corrected values
+  setSessionState("gear_scale_factors", {
+    ...newSf,
+    perScenario,
+    reweighted: true,
+    phase6b: true,
     timestamp: new Date().toISOString(),
   });
-  return null;
+
+  // Re-save EP rankings with corrected SFs
+  if (changes > 0) {
+    console.log(`\n  ${changes} stat-stick slot(s) changed. Re-ranking EP...`);
+    cmdEpRank(gearData);
+  } else {
+    console.log(
+      "  Scale factors drifted but no stat-stick selections changed.",
+    );
+  }
+
+  setSessionState("gear_phase6b", {
+    fidelity,
+    drifted: anyDrift,
+    changes,
+    timestamp: new Date().toISOString(),
+  });
 }
 
 // --- CLI: run (new constraint-based pipeline) ---
@@ -3720,6 +3905,11 @@ async function cmdRun(args) {
         );
       }
 
+      // Apply set eval and trinket overrides to winnerConfig before
+      // Phase 6 re-evaluation, so that 6b knows which slots are locked
+      // by sim-validated results (not eligible for EP re-ranking).
+      applySimOverrides(winnerConfig, gearData);
+
       // === Phase 6: Re-evaluation ===
       if (maxPhase >= 6) {
         console.log(
@@ -3750,12 +3940,22 @@ async function cmdRun(args) {
           console.log("\n========== PHASE 8: Write Profile ==========\n");
 
           const gemState = getSessionState("gear_gems");
-          const preamble = readPreamble(getGearTarget(gearData));
+          const profilePath = getGearTarget(gearData);
+          const preamble = readPreamble(profilePath);
+
+          // Merge trinkets and old-profile fallbacks into solver output.
+          // The solver leaves trinkets (and possibly other slots) as placeholders.
+          // Fill them from pipeline results or the existing profile.
+          const mergedSlots = mergeSolverSlots(
+            winnerConfig.slots,
+            gearData,
+            profilePath,
+          );
 
           const defaultGemId = gearData._defaultGem || 240983;
           const profile = assembleProfile({
             preamble,
-            solverOutput: winnerConfig.slots,
+            solverOutput: mergedSlots,
             gemConfig: {
               primaryGemId: gemState?.bestGemId || defaultGemId,
               secondaryGemIds: gemState?.secondaryGemIds || [],
@@ -3793,6 +3993,190 @@ async function cmdRun(args) {
 
   console.log("\n========== Pipeline Complete ==========\n");
   cmdStatus();
+}
+
+// Apply set eval and trinket overrides directly to winnerConfig.slots.
+// Called early (before Phase 6) so that Phase 6b's EP recheck knows which
+// slots are locked by sim-validated results and won't re-rank them.
+function applySimOverrides(winnerConfig, gearData) {
+  // Set eval winners (e.g., Omission of Light ring)
+  const resolution = getSessionState("gear_conflict_resolution");
+  const setEvalPairs = getSessionState("gear_set_eval_pairs") || [];
+  for (const pairId of setEvalPairs) {
+    if (
+      resolution?.winner === "embellishment" &&
+      pairId === resolution.ringSetPairId
+    ) {
+      continue;
+    }
+
+    const state = getSessionState(`gear_set_eval_${pairId}`);
+    if (!state?.winner) continue;
+
+    const { member0, member1, slot0, slot1 } = state;
+    const winnerId = state.winner;
+    const includeA = !winnerId.endsWith("_B_alone");
+    const includeB = !winnerId.endsWith("_A_alone");
+
+    if (includeA) {
+      const c0 = gearData.slots[slot0]?.candidates?.find(
+        (c) => c.id === member0,
+      );
+      if (c0) {
+        winnerConfig.slots[slot0] = {
+          simc: c0.simc,
+          isTier: false,
+          isCrafted: false,
+          embellishment: null,
+          simLocked: true, // Locked by set eval -- Phase 6b won't re-rank
+        };
+      }
+    }
+    if (includeB) {
+      const c1 = gearData.slots[slot1]?.candidates?.find(
+        (c) => c.id === member1,
+      );
+      if (c1) {
+        winnerConfig.slots[slot1] = {
+          simc: c1.simc,
+          isTier: false,
+          isCrafted: false,
+          embellishment: null,
+          simLocked: true,
+        };
+      }
+    }
+  }
+
+  // Trinkets from Phase 5 pair results
+  const trinketWinner = getBestGear(5, "trinkets").find(
+    (r) => r.candidate_id !== "__baseline__",
+  );
+  if (trinketWinner) {
+    const overrides = resolveComboOverrides(
+      trinketWinner.candidate_id,
+      gearData,
+    );
+    for (const line of overrides) {
+      const slot = line.split("=")[0];
+      if (
+        winnerConfig.slots[slot]?.id === "__placeholder__" ||
+        !winnerConfig.slots[slot]?.simc
+      ) {
+        winnerConfig.slots[slot] = {
+          simc: line,
+          isTier: false,
+          isCrafted: false,
+          embellishment: null,
+          simLocked: true,
+        };
+      }
+    }
+  }
+}
+
+// Merge pipeline results and old-profile fallbacks into solver slot map.
+// The solver leaves trinkets as __placeholder__ and fills rings from EP
+// (which misses proc effects). This function layers sim-validated results
+// from set eval and trinket pairing on top, then falls back to the old
+// profile for any remaining gaps.
+function mergeSolverSlots(solverSlots, gearData, profilePath) {
+  const merged = { ...solverSlots };
+
+  // 1. Set eval winners override EP-ranked solver picks.
+  // Sim data > EP estimates for proc-heavy items (e.g., ring procs).
+  const resolution = getSessionState("gear_conflict_resolution");
+  const setEvalPairs = getSessionState("gear_set_eval_pairs") || [];
+  for (const pairId of setEvalPairs) {
+    // Skip ring sets that lost emb conflict resolution
+    if (
+      resolution?.winner === "embellishment" &&
+      pairId === resolution.ringSetPairId
+    ) {
+      continue;
+    }
+
+    const state = getSessionState(`gear_set_eval_${pairId}`);
+    if (!state?.winner) continue;
+
+    const { member0, member1, slot0, slot1 } = state;
+    const winnerId = state.winner;
+
+    const includeA = !winnerId.endsWith("_B_alone");
+    const includeB = !winnerId.endsWith("_A_alone");
+
+    if (includeA) {
+      const c0 = gearData.slots[slot0]?.candidates?.find(
+        (c) => c.id === member0,
+      );
+      if (c0) {
+        merged[slot0] = {
+          simc: c0.simc,
+          isTier: false,
+          isCrafted: false,
+          embellishment: null,
+        };
+      }
+    }
+    if (includeB) {
+      const c1 = gearData.slots[slot1]?.candidates?.find(
+        (c) => c.id === member1,
+      );
+      if (c1) {
+        merged[slot1] = {
+          simc: c1.simc,
+          isTier: false,
+          isCrafted: false,
+          embellishment: null,
+        };
+      }
+    }
+  }
+
+  // 2. Trinkets from Phase 5 pair results (same source as buildGearLines)
+  const trinketWinner = getBestGear(5, "trinkets").find(
+    (r) => r.candidate_id !== "__baseline__",
+  );
+  if (trinketWinner) {
+    const overrides = resolveComboOverrides(
+      trinketWinner.candidate_id,
+      gearData,
+    );
+    for (const line of overrides) {
+      const slot = line.split("=")[0];
+      if (merged[slot]?.id === "__placeholder__" || !merged[slot]?.simc) {
+        merged[slot] = {
+          simc: line,
+          isTier: false,
+          isCrafted: false,
+          embellishment: null,
+        };
+      }
+    }
+  }
+
+  // 2. Fall back to old profile lines for any remaining placeholders
+  if (existsSync(profilePath)) {
+    const oldContent = readFileSync(profilePath, "utf-8");
+    const GEAR_RE =
+      /^(head|shoulder|chest|hands|legs|neck|back|wrist|wrists|waist|feet|finger\d|trinket\d|main_hand|off_hand)=/;
+    for (const line of oldContent.split("\n")) {
+      const m = line.match(GEAR_RE);
+      if (!m) continue;
+      // Normalize wrist -> wrists to match solver/profile-writer slot naming
+      const slot = m[1] === "wrist" ? "wrists" : m[1];
+      if (merged[slot]?.id === "__placeholder__" || !merged[slot]?.simc) {
+        merged[slot] = {
+          simc: line,
+          isTier: false,
+          isCrafted: false,
+          embellishment: null,
+        };
+      }
+    }
+  }
+
+  return merged;
 }
 
 // Collect enchant winners from Phase 10 results, looking up enchant_id
