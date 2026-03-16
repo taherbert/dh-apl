@@ -148,11 +148,27 @@ export function solveGearSet(input) {
         if (altIsCrafted) craftedCount++;
       }
 
+      // Track used item IDs for dedup (rings) and unique-equip groups
+      const usedItemIds = new Set();
+      const usedUniqueGroups = new Set();
+
+      // Seed tracking from already-placed items
+      for (const entry of Object.values(slotMap)) {
+        if (entry.itemId) usedItemIds.add(entry.itemId);
+        if (entry.uniqueEquipped) usedUniqueGroups.add(entry.uniqueEquipped);
+      }
+
       // Fill effect item slots (includes individual mini-set pieces)
       for (const [slot, candidates] of Object.entries(extendedEffectItems)) {
         if (slotMap[slot]) continue;
         if (candidates.length === 0) continue;
-        const best = candidates[0];
+        const best = pickBestCandidate(
+          candidates,
+          usedItemIds,
+          usedUniqueGroups,
+          "effect",
+        );
+        if (!best) continue;
         slotMap[slot] = {
           id: best.candidateId,
           simc: best.simc,
@@ -160,14 +176,25 @@ export function solveGearSet(input) {
           isCrafted: false,
           embellishment: null,
           simDps: best.weightedDps,
+          uniqueEquipped: best.uniqueEquipped || null,
+          itemId: best.itemId,
         };
+        if (best.itemId) usedItemIds.add(best.itemId);
+        if (best.uniqueEquipped) usedUniqueGroups.add(best.uniqueEquipped);
       }
 
-      // Fill stat-stick slots
+      // Fill stat-stick slots (with ring dedup)
       for (const [slot, candidates] of Object.entries(statStickCandidates)) {
         if (slotMap[slot]) continue;
         if (candidates.length === 0) continue;
-        const best = candidates[0];
+        const best = pickBestCandidate(
+          candidates,
+          usedItemIds,
+          usedUniqueGroups,
+          "stat",
+        );
+        if (!best) continue;
+        const itemId = best.itemId ?? best.id;
         slotMap[slot] = {
           id: best.id,
           simc: best.simc,
@@ -175,7 +202,9 @@ export function solveGearSet(input) {
           isCrafted: false,
           embellishment: null,
           epScore: best.epScore,
+          itemId,
         };
+        usedItemIds.add(itemId);
       }
 
       // Fill any remaining slots (trinkets, etc.) as placeholders
@@ -226,6 +255,16 @@ function scoreConfiguration(slotMap, embResult) {
     if (slot.epScore) score += slot.epScore;
   }
   return score;
+}
+
+function pickBestCandidate(candidates, usedItemIds, usedUniqueGroups, type) {
+  for (const c of candidates) {
+    const itemId = type === "stat" ? (c.itemId ?? c.id) : c.itemId;
+    if (itemId && usedItemIds.has(itemId)) continue;
+    if (c.uniqueEquipped && usedUniqueGroups.has(c.uniqueEquipped)) continue;
+    return c;
+  }
+  return null;
 }
 
 function deepCopyEffectItems(effectItemResults) {

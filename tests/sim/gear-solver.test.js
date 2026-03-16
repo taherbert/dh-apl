@@ -195,4 +195,105 @@ describe("solveGearSet", () => {
       assert.ok(craftedCount <= 2, "All configs must have at most 2 crafted");
     }
   });
+
+  it("prevents same ring in both finger slots", () => {
+    const result = solveGearSet(
+      baseInput({
+        statStickCandidates: {
+          neck: [
+            { id: "neck1", simc: "neck=neck1,id=20,ilevel=289", epScore: 500 },
+          ],
+          back: [
+            { id: "back1", simc: "back=back1,id=21,ilevel=289", epScore: 480 },
+          ],
+          feet: [
+            { id: "feet1", simc: "feet=feet1,id=22,ilevel=289", epScore: 460 },
+          ],
+          // Same ring ID in both finger slots — solver must not use it twice
+          finger1: [
+            {
+              id: "best_ring",
+              itemId: 999,
+              simc: "finger1=best_ring,id=999,ilevel=289",
+              epScore: 600,
+            },
+            {
+              id: "second_ring",
+              itemId: 998,
+              simc: "finger1=second_ring,id=998,ilevel=289",
+              epScore: 400,
+            },
+          ],
+          finger2: [
+            {
+              id: "best_ring",
+              itemId: 999,
+              simc: "finger2=best_ring,id=999,ilevel=289",
+              epScore: 600,
+            },
+            {
+              id: "third_ring",
+              itemId: 997,
+              simc: "finger2=third_ring,id=997,ilevel=289",
+              epScore: 350,
+            },
+          ],
+        },
+      }),
+    );
+
+    for (const config of result.configurations) {
+      const f1 = config.slots.finger1;
+      const f2 = config.slots.finger2;
+      if (f1.id !== "__placeholder__" && f2.id !== "__placeholder__") {
+        assert.notEqual(
+          f1.itemId ?? f1.id,
+          f2.itemId ?? f2.id,
+          "Same ring must not appear in both finger slots",
+        );
+      }
+    }
+  });
+
+  it("respects unique-equip restrictions", () => {
+    const result = solveGearSet(
+      baseInput({
+        effectItemResults: {
+          main_hand: [
+            {
+              candidateId: "unique_weapon_a",
+              weightedDps: 80000,
+              simc: "main_hand=unique_weapon_a,id=500,ilevel=289",
+              uniqueEquipped: "unique_set_1",
+            },
+          ],
+          off_hand: [
+            {
+              candidateId: "unique_weapon_b",
+              weightedDps: 79000,
+              simc: "off_hand=unique_weapon_b,id=501,ilevel=289",
+              uniqueEquipped: "unique_set_1",
+            },
+            {
+              candidateId: "normal_oh",
+              weightedDps: 74000,
+              simc: "off_hand=normal_oh,id=502,ilevel=289",
+            },
+          ],
+        },
+      }),
+    );
+
+    for (const config of result.configurations) {
+      const mh = config.slots.main_hand;
+      const oh = config.slots.off_hand;
+      if (mh.uniqueEquipped && oh.uniqueEquipped) {
+        assert.notEqual(
+          mh.uniqueEquipped,
+          oh.uniqueEquipped,
+          "Unique-equipped items from same group must not coexist",
+        );
+      }
+    }
+  });
 });
