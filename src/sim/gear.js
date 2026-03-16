@@ -63,6 +63,8 @@ import {
   resultsDir,
 } from "../engine/paths.js";
 import { generateProfileset, runProfilesetAsync } from "./profilesets.js";
+import { solveGearSet } from "./gear-solver.js";
+import { assembleProfile, verifyProfile } from "./gear-profile-writer.js";
 import {
   getDb,
   closeAll,
@@ -3180,9 +3182,659 @@ function cmdWriteProfile() {
   console.log(`  ${finalLines.length} slots written (${numChanged} changed).`);
 }
 
-// --- CLI: run (automated pipeline) ---
+// --- Solver input collectors ---
+
+// Normalize tier config slot names (gear-candidates uses "shoulders", solver expects "shoulder")
+const TIER_SLOT_NORMALIZE = { shoulders: "shoulder" };
+
+function buildTierConfig(gearData) {
+  const tier = gearData.tier;
+  if (!tier) return null;
+
+  const slots = {};
+  const alternatives = {};
+  for (const [key, simc] of Object.entries(tier.items)) {
+    const normalized = TIER_SLOT_NORMALIZE[key] || key;
+    slots[normalized] = { simc };
+    alternatives[normalized] = (tier.alternatives[key] || []).map((alt) => ({
+      id: alt.id,
+      simc: alt.simc,
+      stats: alt.stats || {},
+    }));
+  }
+
+  return {
+    setId: tier.set_id,
+    requiredCount: tier.required_count,
+    slots,
+    alternatives,
+  };
+}
+
+function collectEmbResults(gearData) {
+  const results = queryGearResults(7, "embellishments", { bestOnly: false });
+  if (results.length === 0) return [];
+
+  // Map each candidate back to its pair definition for slot info
+  const pairDefs = gearData.embellishments?.pairs || [];
+  const nullOverrides = gearData.embellishments?.null_overrides || [];
+
+  return results
+    .filter(
+      (r) =>
+        r.candidate_id !== "__baseline__" &&
+        r.candidate_id !== "__null_emb__" &&
+        !r.eliminated,
+    )
+    .map((r) => {
+      const pairDef = pairDefs.find((p) => p.id === r.candidate_id);
+      if (!pairDef) return null;
+
+      // Extract slots from override lines
+      const slots = pairDef.overrides.map((o) => o.split("=")[0]);
+      const embCount = pairDef.overrides.filter((o) =>
+        o.includes("embellishment="),
+      ).length;
+      // Built-in emb items count even without explicit embellishment= tag
+      const builtInCount = pairDef.overrides.filter(
+        (o) => !o.includes("embellishment=") && isCraftedSimc(o),
+      ).length;
+
+      return {
+        candidateId: r.candidate_id,
+        weightedDps: r.weighted,
+        slots,
+        crafted: true,
+        embCount: embCount + builtInCount,
+        slotSimc: Object.fromEntries(
+          pairDef.overrides.map((o) => [o.split("=")[0], o]),
+        ),
+      };
+    })
+    .filter(Boolean);
+}
+
+function collectEffectResults() {
+  const effectResults = {};
+  for (const slot of ALWAYS_SIM_SLOTS) {
+    const results = queryGearResults(4, slot, { bestOnly: false });
+    const filtered = results
+      .filter((r) => r.candidate_id !== "__baseline__" && !r.eliminated)
+      .map((r) => ({
+        candidateId: r.candidate_id,
+        weightedDps: r.weighted,
+        simc: "", // Will be filled from gear-candidates
+      }));
+    if (filtered.length > 0) effectResults[slot] = filtered;
+  }
+  return effectResults;
+}
+
+// Fill simc strings for effect items from gear-candidates.json
+function enrichEffectResults(effectResults, gearData) {
+  for (const [slot, candidates] of Object.entries(effectResults)) {
+    const slotData = gearData.slots?.[slot];
+    if (!slotData) continue;
+    for (const candidate of candidates) {
+      const gcEntry = slotData.candidates?.find(
+        (c) => c.id === candidate.candidateId,
+      );
+      if (gcEntry) candidate.simc = gcEntry.simc;
+    }
+  }
+}
+
+function collectMiniSetResults() {
+  // Mini-set results come from Phase 4b (SET_EVAL_PHASE = 45)
+  // For now, return empty - mini-sets will be wired when cmdEvalSets output is adapted
+  const state = getSessionState("gear_set_eval_pairs");
+  if (!state || !Array.isArray(state)) return [];
+  // TODO: adapt set eval results to solver miniSetResults format
+  return [];
+}
+
+function collectEpRanked(gearData, sf) {
+  const statStickCandidates = {};
+
+  for (const [slot, slotData] of Object.entries(gearData.slots || {})) {
+    if (ALWAYS_SIM_SLOTS.has(slot)) continue;
+
+    const results = queryGearResults(3, slot, { bestOnly: false });
+    if (results.length === 0) continue;
+
+    statStickCandidates[slot] = results
+      .filter((r) => r.candidate_id !== "__baseline__" && !r.eliminated)
+      .slice(0, 5) // Top 5 per slot
+      .map((r) => {
+        const gcEntry = slotData.candidates?.find(
+          (c) => c.id === r.candidate_id,
+        );
+        return {
+          id: r.candidate_id,
+          simc: gcEntry?.simc || `${slot}=${r.candidate_id}`,
+          epScore: r.weighted,
+          itemId: gcEntry?.itemId,
+        };
+      });
+  }
+
+  return statStickCandidates;
+}
+
+// Read preamble (non-gear lines) from profile
+function readPreamble(profilePath) {
+  if (!existsSync(profilePath)) return [];
+  const content = readFileSync(profilePath, "utf-8");
+  const GEAR_SLOT_RE =
+    /^(head|shoulder|chest|hands|legs|neck|back|wrist|wrists|waist|feet|finger\d|trinket\d|main_hand|off_hand)=/;
+  const lines = content.split("\n");
+  const preamble = [];
+  for (const line of lines) {
+    if (GEAR_SLOT_RE.test(line)) break;
+    preamble.push(line);
+  }
+  while (preamble.length > 0 && preamble.at(-1).trim() === "") preamble.pop();
+  return preamble;
+}
+
+// --- Phase 4: Full-set validation ---
+
+async function cmdFullSetValidation(configurations, gearData, fidelity) {
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+
+  console.log(
+    `\nValidating top ${configurations.length} solver configurations at ${fidelity} fidelity...`,
+  );
+
+  // Build a profileset variant for each complete configuration
+  const variants = configurations.map((config, idx) => {
+    const overrides = [];
+    for (const [slot, entry] of Object.entries(config.slots)) {
+      if (entry.simc) overrides.push(entry.simc);
+    }
+    return {
+      name: `config_${idx}_${config.embConfig}_skip_${config.tierSkip}`,
+      overrides,
+    };
+  });
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_fullset_validation",
+  );
+
+  const candidateMeta = variants.map((v, i) => ({
+    id: v.name,
+    label: `Config ${i}: emb=${configurations[i].embConfig} tierSkip=${configurations[i].tierSkip}`,
+  }));
+  const ranked = aggregateGearResults(results, candidateMeta, builds);
+
+  printSlotResults("full_set_validation", ranked, gearData);
+
+  clearGearResults(40, "fullset");
+  saveGearResults(40, "fullset", ranked, fidelity);
+
+  // Select winner
+  const winner = ranked.find((r) => r.id !== "__baseline__");
+  if (!winner) {
+    console.log("  No valid configuration found.");
+    return null;
+  }
+
+  const winnerIdx = parseInt(winner.id.split("_")[1]);
+  const winnerConfig = configurations[winnerIdx];
+
+  setSessionState("gear_phase4_winner", {
+    configIndex: winnerIdx,
+    candidateId: winner.id,
+    weightedDps: winner.weighted,
+    embConfig: winnerConfig.embConfig,
+    tierSkip: winnerConfig.tierSkip,
+    fidelity,
+    timestamp: new Date().toISOString(),
+  });
+
+  console.log(
+    `\nWinning configuration: ${winner.id} (${winner.weighted.toFixed(0)} weighted DPS)`,
+  );
+  console.log(
+    `  Tier skip: ${winnerConfig.tierSkip}, Emb: ${winnerConfig.embConfig}`,
+  );
+
+  return { winnerConfig, winnerRanked: winner, allRanked: ranked };
+}
+
+// --- Phase 5a: Trinket Pairing ---
+
+async function cmdTrinketPairs(winnerConfig, gearData, fidelity) {
+  const screenResults = queryGearResults(5, "trinkets_screen", {
+    bestOnly: false,
+  });
+  if (screenResults.length === 0) {
+    console.log("  No trinket screen results. Skipping trinket pairing.");
+    return null;
+  }
+
+  const advancing = screenResults
+    .filter((r) => r.candidate_id !== "__baseline__" && !r.eliminated)
+    .map((r) => r.candidate_id);
+
+  if (advancing.length < 2) {
+    console.log("  Fewer than 2 trinket candidates. Skipping pairing.");
+    return null;
+  }
+
+  const pairedData = gearData.paired_slots?.trinkets;
+  if (!pairedData) return null;
+
+  const builds = getRepresentativeBuilds();
+  const baseProfile = getBaseProfile(gearData);
+
+  // Build gear overrides from winning config (all non-trinket slots)
+  const gearOverrides = [];
+  for (const [slot, entry] of Object.entries(winnerConfig.slots)) {
+    if (slot === "trinket1" || slot === "trinket2") continue;
+    if (entry.simc) gearOverrides.push(entry.simc);
+  }
+
+  // Generate C(K,2) pairs from advancing candidates
+  const candidateMap = Object.fromEntries(
+    pairedData.candidates.map((c) => [c.id, c]),
+  );
+  const pairs = [];
+  for (let i = 0; i < advancing.length; i++) {
+    for (let j = i + 1; j < advancing.length; j++) {
+      const c1 = candidateMap[advancing[i]];
+      const c2 = candidateMap[advancing[j]];
+      if (!c1 || !c2) continue;
+      pairs.push({
+        id: `${c1.id}__${c2.id}`,
+        label: `${c1.label} + ${c2.label}`,
+        overrides: [`trinket1=${c1.simc_base}`, `trinket2=${c2.simc_base}`],
+      });
+    }
+  }
+
+  if (pairs.length === 0) return null;
+
+  const variants = pairs.map((p) => ({
+    name: p.id,
+    overrides: [...gearOverrides, ...p.overrides],
+  }));
+
+  console.log(
+    `\nPhase 5a: Trinket pairs — ${pairs.length} pairs against winning gear set`,
+  );
+
+  const results = await runBuildScenarioSims(
+    variants,
+    builds,
+    baseProfile,
+    fidelity,
+    "gear_trinket_pairs",
+  );
+
+  const candidateMeta = pairs.map((p) => ({ id: p.id, label: p.label }));
+  const ranked = aggregateGearResults(results, candidateMeta, builds);
+
+  printSlotResults("trinket_pairs", ranked, gearData);
+
+  clearGearResults(50, "trinket_pairs");
+  saveGearResults(50, "trinket_pairs", ranked, fidelity);
+
+  setSessionState("gear_phase5a", {
+    pairCount: pairs.length,
+    winner: ranked[0]?.id,
+    fidelity,
+    timestamp: new Date().toISOString(),
+  });
+
+  return ranked;
+}
+
+// --- Phase 5b: Cross-validation (trinket x emb) ---
+
+async function cmdCrossValidation(
+  winnerConfig,
+  embResults,
+  trinketPairRanked,
+  gearData,
+  fidelity,
+) {
+  if (!trinketPairRanked || trinketPairRanked.length === 0) return null;
+  if (!embResults || embResults.length < 2) return null;
+
+  const topTrinketPairs = trinketPairRanked
+    .filter((r) => r.id !== "__baseline__")
+    .slice(0, 3);
+  const topEmbConfigs = embResults.slice(0, 3);
+
+  if (topTrinketPairs.length === 0 || topEmbConfigs.length === 0) return null;
+
+  console.log(
+    `\nPhase 5b: Cross-validation — ${topTrinketPairs.length} trinket pairs x ${topEmbConfigs.length} emb configs`,
+  );
+
+  // TODO: implement full cross-validation sim
+  // For each (trinket pair, emb config), build a complete 16-slot set and sim
+  setSessionState("gear_phase5b", {
+    trinketPairs: topTrinketPairs.length,
+    embConfigs: topEmbConfigs.length,
+    fidelity,
+    timestamp: new Date().toISOString(),
+  });
+
+  return null;
+}
+
+// --- Phase 6a: Embellishment re-check ---
+
+async function cmdEmbRecheck(winnerConfig, gearData, fidelity) {
+  console.log(`\nPhase 6a: Embellishment re-check against winning set`);
+  // TODO: re-sim top emb pairs against the winning gear set
+  setSessionState("gear_phase6a", {
+    fidelity,
+    timestamp: new Date().toISOString(),
+  });
+  return null;
+}
+
+// --- Phase 6b: EP re-check ---
+
+async function cmdEpRecheck(winnerConfig, gearData, fidelity) {
+  console.log(`\nPhase 6b: EP re-derivation from winning set`);
+  // TODO: re-derive scale factors from winning set, re-rank stat sticks
+  setSessionState("gear_phase6b", {
+    fidelity,
+    timestamp: new Date().toISOString(),
+  });
+  return null;
+}
+
+// --- CLI: run (new constraint-based pipeline) ---
 
 async function cmdRun(args) {
+  const { values } = parseArgs({
+    args,
+    options: {
+      through: { type: "string", default: "phase8" },
+      reset: { type: "boolean", default: false },
+      force: { type: "boolean", default: false },
+      from: { type: "string" },
+    },
+    strict: false,
+  });
+
+  const phaseMatch = values.through.match(/^phase(\d+)$/);
+  const maxPhase = phaseMatch ? parseInt(phaseMatch[1]) : 8;
+  const startPhase = values.from
+    ? parseInt(values.from.replace("phase", ""))
+    : 0;
+
+  if (values.reset) {
+    console.log("Resetting all gear pipeline state...");
+    const db = getDb();
+    const spec = getSpecName();
+    db.prepare("DELETE FROM gear_results WHERE spec = ?").run(spec);
+    db.prepare(
+      "DELETE FROM session_state WHERE spec = ? AND key LIKE 'gear_%'",
+    ).run(spec);
+    console.log("Done.\n");
+  }
+
+  const explicit = parseFidelity(args, null);
+  const fidelityArgs = explicit ? ["--fidelity", explicit] : [];
+  const standardFidelity = explicit || "standard";
+  const quickFidelity = explicit || "quick";
+
+  // === Phase 0: Tier Configuration ===
+  if (maxPhase >= 0 && startPhase <= 0) {
+    console.log("\n========== PHASE 0: Tier Configuration ==========\n");
+    await cmdTierConfig(fidelityArgs);
+  }
+
+  // === Phase 1: Scale Factors ===
+  if (maxPhase >= 1 && startPhase <= 1) {
+    console.log("\n========== PHASE 1: Scale Factors ==========\n");
+    await cmdScaleFactors(fidelityArgs);
+
+    const gearData = loadGearCandidates();
+    console.log("\n========== PHASE 1b: EP Reweighting ==========\n");
+    cmdEpReweight(gearData);
+    console.log("\n========== PHASE 1c: EP Ranking ==========\n");
+    cmdEpRank(gearData);
+  }
+
+  const gearData = loadGearCandidates();
+
+  // === Phase 2: Component Sims ===
+  if (maxPhase >= 2 && startPhase <= 2) {
+    // Phase 2a: Embellishments
+    if (gearData.embellishments?.pairs?.length > 0) {
+      console.log("\n========== PHASE 2a: Embellishments ==========\n");
+      await cmdCombinations(["--type", "embellishments", ...fidelityArgs]);
+    } else {
+      console.log("\nNo embellishment pairs configured, skipping Phase 2a.");
+    }
+
+    // Phase 2b: Effect Items (weapons)
+    console.log("\n========== PHASE 2b: Effect Items (Weapons) ==========\n");
+    await cmdProcEval(fidelityArgs);
+
+    // Phase 2c: Mini-Sets
+    console.log("\n========== PHASE 2c: Mini-Set Evaluation ==========\n");
+    await cmdEvalSets(fidelityArgs);
+
+    // Phase 2d: Trinket Screen
+    console.log("\n========== PHASE 2d: Trinket Screen ==========\n");
+    await cmdCombinations(["--type", "trinkets", ...fidelityArgs]);
+  }
+
+  // === Phase 3: Constraint Assembly ===
+  if (maxPhase >= 3 && startPhase <= 3) {
+    console.log("\n========== PHASE 3: Constraint Assembly ==========\n");
+
+    const sf = getSessionState("gear_scale_factors");
+    if (!sf) {
+      console.error("Scale factors not found. Run from Phase 1.");
+      return;
+    }
+
+    const tierConfig = buildTierConfig(gearData);
+    if (!tierConfig) {
+      console.error("No tier configuration. Cannot run solver.");
+      return;
+    }
+
+    const embResults = collectEmbResults(gearData);
+    const effectResults = collectEffectResults();
+    enrichEffectResults(effectResults, gearData);
+    const miniSetResults = collectMiniSetResults();
+    const statStickCandidates = collectEpRanked(gearData, sf);
+
+    console.log(`Solver inputs:`);
+    console.log(`  Tier slots: ${Object.keys(tierConfig.slots).length}`);
+    console.log(`  Emb configs: ${embResults.length}`);
+    console.log(`  Effect item slots: ${Object.keys(effectResults).length}`);
+    console.log(`  Mini-set results: ${miniSetResults.length}`);
+    console.log(
+      `  Stat-stick slots: ${Object.keys(statStickCandidates).length}`,
+    );
+
+    const solverInput = {
+      tierConfig,
+      embellishmentResults: embResults,
+      effectItemResults: effectResults,
+      miniSetResults,
+      statStickCandidates,
+      scaleFactors: sf,
+    };
+
+    const { configurations } = solveGearSet(solverInput);
+
+    if (configurations.length === 0) {
+      console.error("Solver produced zero valid configurations. Check inputs.");
+      return;
+    }
+
+    console.log(
+      `\nSolver produced ${configurations.length} valid configurations.`,
+    );
+    for (let i = 0; i < Math.min(5, configurations.length); i++) {
+      const c = configurations[i];
+      console.log(
+        `  #${i + 1}: score=${c.score.toFixed(0)} tierSkip=${c.tierSkip} emb=${c.embConfig}`,
+      );
+    }
+
+    setSessionState("gear_phase3_solver", {
+      configCount: configurations.length,
+      topScore: configurations[0]?.score,
+      timestamp: new Date().toISOString(),
+    });
+
+    // === Phase 4: Full-Set Validation ===
+    if (maxPhase >= 4) {
+      console.log("\n========== PHASE 4: Full-Set Validation ==========\n");
+      const validation = await cmdFullSetValidation(
+        configurations,
+        gearData,
+        standardFidelity,
+      );
+
+      if (!validation) {
+        console.error("Full-set validation failed. No winner selected.");
+        return;
+      }
+
+      const { winnerConfig } = validation;
+
+      // === Phase 5: Trinket Pairing ===
+      if (maxPhase >= 5) {
+        console.log("\n========== PHASE 5a: Trinket Pairing ==========\n");
+        const trinketRanked = await cmdTrinketPairs(
+          winnerConfig,
+          gearData,
+          standardFidelity,
+        );
+
+        console.log("\n========== PHASE 5b: Cross-Validation ==========\n");
+        await cmdCrossValidation(
+          winnerConfig,
+          embResults,
+          trinketRanked,
+          gearData,
+          standardFidelity,
+        );
+      }
+
+      // === Phase 6: Re-evaluation ===
+      if (maxPhase >= 6) {
+        console.log(
+          "\n========== PHASE 6a: Embellishment Re-check ==========\n",
+        );
+        await cmdEmbRecheck(winnerConfig, gearData, standardFidelity);
+
+        console.log("\n========== PHASE 6b: EP Re-check ==========\n");
+        await cmdEpRecheck(winnerConfig, gearData, standardFidelity);
+      }
+
+      // === Phase 7: Gems, Enchants, Final Validation ===
+      if (maxPhase >= 7) {
+        console.log("\n========== PHASE 7a: Gems ==========\n");
+        await cmdGems(fidelityArgs, gearData);
+
+        console.log("\n========== PHASE 7b: Enchants ==========\n");
+        await cmdEnchants(fidelityArgs);
+
+        console.log("\n========== PHASE 7c: Final Validation ==========\n");
+        await cmdValidate(fidelityArgs);
+      }
+
+      // === Phase 8: Write Profile ===
+      if (maxPhase >= 8) {
+        const phase11State = getSessionState("gear_phase11");
+        if (phase11State?.validationPassed === true) {
+          console.log("\n========== PHASE 8: Write Profile ==========\n");
+
+          const gemState = getSessionState("gear_gems");
+          const preamble = readPreamble(getGearTarget(gearData));
+
+          const profile = assembleProfile({
+            preamble,
+            solverOutput: winnerConfig.slots,
+            gemConfig: {
+              primaryGemId: gemState?.bestGemId || 240983,
+              secondaryGemIds: gemState?.secondaryGemIds || [],
+            },
+            enchantConfig: collectEnchantConfig(),
+          });
+
+          const verification = verifyProfile(profile.split("\n"), gearData);
+          if (!verification.valid) {
+            console.error("Profile verification FAILED:");
+            for (const err of verification.errors) {
+              console.error(`  - ${err}`);
+            }
+            console.error("Profile NOT written. Fix the issues and retry.");
+            return;
+          }
+
+          writeFileSync(getGearTarget(gearData), profile, "utf-8");
+          console.log(`Profile written: ${getGearTarget(gearData)}`);
+        } else if (phase11State?.validationPassed === false) {
+          console.log(
+            "\n========== PIPELINE BLOCKED: Gear regression detected ==========\n",
+          );
+          console.log(
+            "  Assembled gear is worse than the original profile. profile.simc NOT updated.",
+          );
+        } else {
+          console.log(
+            "\n  Profile not written -- run through Phase 7c to validate.",
+          );
+        }
+      }
+    }
+  }
+
+  console.log("\n========== Pipeline Complete ==========\n");
+  cmdStatus();
+}
+
+// Collect enchant winners from Phase 10 results + EP-ranked stat enchants
+function collectEnchantConfig() {
+  const config = {};
+  const enchantSlots = [
+    "chest",
+    "legs",
+    "shoulder",
+    "back",
+    "main_hand",
+    "off_hand",
+    "finger1",
+    "finger2",
+  ];
+  for (const slot of enchantSlots) {
+    const results = queryGearResults(10, slot, { bestOnly: true });
+    if (results.length > 0) {
+      // Extract enchant_id from the winning candidate's label or simc
+      const winner = results[0];
+      const enchantMatch =
+        winner.label?.match(/(\d+)/) || winner.candidate_id?.match(/(\d+)/);
+      if (enchantMatch) config[slot] = parseInt(enchantMatch[1]);
+    }
+  }
+  return config;
+}
+
+// --- CLI: run (automated pipeline) --- LEGACY (kept for reference during transition)
+
+async function cmdRunLegacy(args) {
   const { values } = parseArgs({
     args,
     options: {
@@ -3858,6 +4510,9 @@ switch (cmd) {
     break;
   case "run":
     await cmdRun(cleanArgs);
+    break;
+  case "run-legacy":
+    await cmdRunLegacy(cleanArgs);
     break;
   case "status":
     cmdStatus();
