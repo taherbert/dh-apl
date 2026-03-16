@@ -703,7 +703,7 @@
         {
           "id": "barbed_ymirheim_choker",
           "label": "Barbed Ymirheim Choker",
-          "simc": "neck=barbed_ymirheim_choker,id=50228,ilevel=289",
+          "simc": "neck=barbed_ymirheim_choker,id=50228,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 11250,
@@ -714,7 +714,7 @@
         {
           "id": "painfully_sharp_choker",
           "label": "Painfully Sharp Choker",
-          "simc": "neck=painfully_sharp_choker,id=133500,ilevel=289",
+          "simc": "neck=painfully_sharp_choker,id=133500,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 4336,
@@ -725,7 +725,7 @@
         {
           "id": "necklace_of_the_twisting_void",
           "label": "Necklace of the Twisting Void",
-          "simc": "neck=necklace_of_the_twisting_void,id=151309,ilevel=289",
+          "simc": "neck=necklace_of_the_twisting_void,id=151309,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 9800,
@@ -736,7 +736,7 @@
         {
           "id": "ribbon_of_coiled_malice",
           "label": "Ribbon of Coiled Malice",
-          "simc": "neck=ribbon_of_coiled_malice,id=249337,ilevel=289",
+          "simc": "neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 13000,
@@ -747,7 +747,7 @@
         {
           "id": "eternal_voidsong_chain",
           "label": "Eternal Voidsong Chain",
-          "simc": "neck=eternal_voidsong_chain,id=249368,ilevel=289",
+          "simc": "neck=eternal_voidsong_chain,id=249368,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 14700
@@ -767,7 +767,7 @@
         {
           "id": "chain_of_the_ancient_watcher",
           "label": "Chain of the Ancient Watcher",
-          "simc": "neck=chain_of_the_ancient_watcher,id=250461,ilevel=276",
+          "simc": "neck=chain_of_the_ancient_watcher,id=250461,ilevel=276,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 11500
@@ -777,7 +777,7 @@
         {
           "id": "pendant_of_aching_grief",
           "label": "Pendant of Aching Grief",
-          "simc": "neck=pendant_of_aching_grief,id=251096,ilevel=289",
+          "simc": "neck=pendant_of_aching_grief,id=251096,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "vers": 10500,
@@ -788,7 +788,7 @@
         {
           "id": "pendant_of_malefic_fury",
           "label": "Pendant of Malefic Fury",
-          "simc": "neck=pendant_of_malefic_fury,id=251142,ilevel=289",
+          "simc": "neck=pendant_of_malefic_fury,id=251142,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 5500
@@ -798,7 +798,7 @@
         {
           "id": "yoke_of_the_charging_bear",
           "label": "Yoke of the Charging Bear",
-          "simc": "neck=yoke_of_the_charging_bear,id=251173,ilevel=289",
+          "simc": "neck=yoke_of_the_charging_bear,id=251173,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 11500,
@@ -809,7 +809,7 @@
         {
           "id": "graft_of_the_domanaar",
           "label": "Graft of the Domanaar",
-          "simc": "neck=graft_of_the_domanaar,id=251234,ilevel=289",
+          "simc": "neck=graft_of_the_domanaar,id=251234,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 11250
@@ -2475,7 +2475,7 @@
         {
           "id": "purloined_wedding_ring",
           "label": "Purloined Wedding Ring",
-          "simc": "finger1=purloined_wedding_ring,id=49812,ilevel=289",
+          "simc": "finger1=purloined_wedding_ring,id=49812,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 10000,
@@ -2487,7 +2487,7 @@
         {
           "id": "ring_of_carnelian_and_bone",
           "label": "Ring of Carnelian and Bone",
-          "simc": "finger1=ring_of_carnelian_and_bone,id=133487,ilevel=289",
+          "simc": "finger1=ring_of_carnelian_and_bone,id=133487,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -2500,7 +2500,7 @@
         {
           "id": "purloined_wedding_ring",
           "label": "Purloined Wedding Ring",
-          "simc": "finger1=purloined_wedding_ring,id=133496,ilevel=289",
+          "simc": "finger1=purloined_wedding_ring,id=133496,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 3924,
@@ -2512,7 +2512,7 @@
         {
           "id": "eredath_seal_of_nobility",
           "label": "Eredath Seal of Nobility",
-          "simc": "finger1=eredath_seal_of_nobility,id=151308,ilevel=289",
+          "simc": "finger1=eredath_seal_of_nobility,id=151308,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 6800,
@@ -2525,7 +2525,7 @@
         {
           "id": "band_of_the_triumvirate",
           "label": "Band of the Triumvirate",
-          "simc": "finger1=band_of_the_triumvirate,id=151311,ilevel=289",
+          "simc": "finger1=band_of_the_triumvirate,id=151311,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 10000,
@@ -2538,7 +2538,7 @@
         {
           "id": "platinum_star_band",
           "label": "Platinum Star Band",
-          "simc": "finger1=platinum_star_band,id=193708,ilevel=289",
+          "simc": "finger1=platinum_star_band,id=193708,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 11500
@@ -2549,7 +2549,7 @@
         {
           "id": "signet_of_the_starved_beast",
           "label": "Signet of the Starved Beast",
-          "simc": "finger1=signet_of_the_starved_beast,id=249336,ilevel=289",
+          "simc": "finger1=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 13750,
@@ -2561,7 +2561,7 @@
         {
           "id": "bond_of_light",
           "label": "Bond of Light",
-          "simc": "finger1=bond_of_light,id=249369,ilevel=289",
+          "simc": "finger1=bond_of_light,id=249369,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 3250
@@ -2572,7 +2572,7 @@
         {
           "id": "sindorei_band_of_hope",
           "label": "Sin'dorei Band of Hope",
-          "simc": "finger1=sindorei_band_of_hope,id=249919,ilevel=289",
+          "simc": "finger1=sindorei_band_of_hope,id=249919,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 14350
@@ -2594,7 +2594,7 @@
         {
           "id": "encroaching_shadow_signet",
           "label": "Encroaching Shadow Signet",
-          "simc": "finger1=encroaching_shadow_signet,id=250460,ilevel=276",
+          "simc": "finger1=encroaching_shadow_signet,id=250460,ilevel=276,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "vers": 12000,
@@ -2606,7 +2606,7 @@
         {
           "id": "omission_of_light",
           "label": "Omission of Light",
-          "simc": "finger1=omission_of_light,id=251093,ilevel=289",
+          "simc": "finger1=omission_of_light,id=251093,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 10250
@@ -2618,7 +2618,7 @@
         {
           "id": "bifurcation_band",
           "label": "Bifurcation Band",
-          "simc": "finger1=bifurcation_band,id=251115,ilevel=289",
+          "simc": "finger1=bifurcation_band,id=251115,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 6500
@@ -2629,7 +2629,7 @@
         {
           "id": "signet_of_snarling_servitude",
           "label": "Signet of Snarling Servitude",
-          "simc": "finger1=signet_of_snarling_servitude,id=251136,ilevel=289",
+          "simc": "finger1=signet_of_snarling_servitude,id=251136,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 10750
@@ -2640,7 +2640,7 @@
         {
           "id": "pilfered_precious_band",
           "label": "Pilfered Precious Band",
-          "simc": "finger1=pilfered_precious_band,id=251148,ilevel=289",
+          "simc": "finger1=pilfered_precious_band,id=251148,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "vers": 10500,
@@ -2652,7 +2652,7 @@
         {
           "id": "lightwardens_bind",
           "label": "Lightwarden's Bind",
-          "simc": "finger1=lightwardens_bind,id=251194,ilevel=289",
+          "simc": "finger1=lightwardens_bind,id=251194,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "vers": 5750
@@ -2663,7 +2663,7 @@
         {
           "id": "occlusion_of_void",
           "label": "Occlusion of Void",
-          "simc": "finger1=occlusion_of_void,id=251217,ilevel=289",
+          "simc": "finger1=occlusion_of_void,id=251217,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 12250,
@@ -2676,7 +2676,7 @@
         {
           "id": "sickening_signet_of_atroxus",
           "label": "Sickening Signet of Atroxus",
-          "simc": "finger1=sickening_signet_of_atroxus,id=252258,ilevel=289",
+          "simc": "finger1=sickening_signet_of_atroxus,id=252258,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 12000
@@ -2733,7 +2733,7 @@
         {
           "id": "purloined_wedding_ring",
           "label": "Purloined Wedding Ring",
-          "simc": "finger2=purloined_wedding_ring,id=49812,ilevel=289",
+          "simc": "finger2=purloined_wedding_ring,id=49812,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 10000,
@@ -2745,7 +2745,7 @@
         {
           "id": "ring_of_carnelian_and_bone",
           "label": "Ring of Carnelian and Bone",
-          "simc": "finger2=ring_of_carnelian_and_bone,id=133487,ilevel=289",
+          "simc": "finger2=ring_of_carnelian_and_bone,id=133487,ilevel=289,gem_id=240983",
           "stats": {
             "agi": 5259,
             "stamina": 7889,
@@ -2758,7 +2758,7 @@
         {
           "id": "purloined_wedding_ring",
           "label": "Purloined Wedding Ring",
-          "simc": "finger2=purloined_wedding_ring,id=133496,ilevel=289",
+          "simc": "finger2=purloined_wedding_ring,id=133496,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 3924,
@@ -2770,7 +2770,7 @@
         {
           "id": "eredath_seal_of_nobility",
           "label": "Eredath Seal of Nobility",
-          "simc": "finger2=eredath_seal_of_nobility,id=151308,ilevel=289",
+          "simc": "finger2=eredath_seal_of_nobility,id=151308,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 6800,
@@ -2783,7 +2783,7 @@
         {
           "id": "band_of_the_triumvirate",
           "label": "Band of the Triumvirate",
-          "simc": "finger2=band_of_the_triumvirate,id=151311,ilevel=289",
+          "simc": "finger2=band_of_the_triumvirate,id=151311,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 10000,
@@ -2796,7 +2796,7 @@
         {
           "id": "platinum_star_band",
           "label": "Platinum Star Band",
-          "simc": "finger2=platinum_star_band,id=193708,ilevel=289",
+          "simc": "finger2=platinum_star_band,id=193708,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 11500
@@ -2807,7 +2807,7 @@
         {
           "id": "signet_of_the_starved_beast",
           "label": "Signet of the Starved Beast",
-          "simc": "finger2=signet_of_the_starved_beast,id=249336,ilevel=289",
+          "simc": "finger2=signet_of_the_starved_beast,id=249336,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 13750,
@@ -2819,7 +2819,7 @@
         {
           "id": "bond_of_light",
           "label": "Bond of Light",
-          "simc": "finger2=bond_of_light,id=249369,ilevel=289",
+          "simc": "finger2=bond_of_light,id=249369,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 3250
@@ -2830,7 +2830,7 @@
         {
           "id": "sindorei_band_of_hope",
           "label": "Sin'dorei Band of Hope",
-          "simc": "finger2=sindorei_band_of_hope,id=249919,ilevel=289",
+          "simc": "finger2=sindorei_band_of_hope,id=249919,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 14350
@@ -2852,7 +2852,7 @@
         {
           "id": "encroaching_shadow_signet",
           "label": "Encroaching Shadow Signet",
-          "simc": "finger2=encroaching_shadow_signet,id=250460,ilevel=276",
+          "simc": "finger2=encroaching_shadow_signet,id=250460,ilevel=276,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "vers": 12000,
@@ -2864,7 +2864,7 @@
         {
           "id": "omission_of_light",
           "label": "Omission of Light",
-          "simc": "finger2=omission_of_light,id=251093,ilevel=289",
+          "simc": "finger2=omission_of_light,id=251093,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 10250
@@ -2876,7 +2876,7 @@
         {
           "id": "bifurcation_band",
           "label": "Bifurcation Band",
-          "simc": "finger2=bifurcation_band,id=251115,ilevel=289",
+          "simc": "finger2=bifurcation_band,id=251115,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 6500
@@ -2887,7 +2887,7 @@
         {
           "id": "signet_of_snarling_servitude",
           "label": "Signet of Snarling Servitude",
-          "simc": "finger2=signet_of_snarling_servitude,id=251136,ilevel=289",
+          "simc": "finger2=signet_of_snarling_servitude,id=251136,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 10750
@@ -2898,7 +2898,7 @@
         {
           "id": "pilfered_precious_band",
           "label": "Pilfered Precious Band",
-          "simc": "finger2=pilfered_precious_band,id=251148,ilevel=289",
+          "simc": "finger2=pilfered_precious_band,id=251148,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "vers": 10500,
@@ -2910,7 +2910,7 @@
         {
           "id": "lightwardens_bind",
           "label": "Lightwarden's Bind",
-          "simc": "finger2=lightwardens_bind,id=251194,ilevel=289",
+          "simc": "finger2=lightwardens_bind,id=251194,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "vers": 5750
@@ -2921,7 +2921,7 @@
         {
           "id": "occlusion_of_void",
           "label": "Occlusion of Void",
-          "simc": "finger2=occlusion_of_void,id=251217,ilevel=289",
+          "simc": "finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "crit": 12250,
@@ -2934,7 +2934,7 @@
         {
           "id": "sickening_signet_of_atroxus",
           "label": "Sickening Signet of Atroxus",
-          "simc": "finger2=sickening_signet_of_atroxus,id=252258,ilevel=289",
+          "simc": "finger2=sickening_signet_of_atroxus,id=252258,ilevel=289,gem_id=240983",
           "stats": {
             "stamina": 7889,
             "mastery": 12000

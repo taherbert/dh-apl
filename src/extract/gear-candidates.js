@@ -233,8 +233,19 @@ function toSimcName(name) {
     .replace(/\s+/g, "_");
 }
 
+// Jewelry always has at least 1 socket (player-applied via Jeweler's Setting).
+// Some jewelry naturally has more.
+const SOCKETABLE_INVENTORY_TYPES = new Set([
+  2, // neck
+  11, // finger
+]);
+
 function getSocketCount(item) {
-  return item.socketInfo?.sockets?.length ?? 0;
+  const natural = item.socketInfo?.sockets?.length ?? 0;
+  if (SOCKETABLE_INVENTORY_TYPES.has(item.inventoryType)) {
+    return Math.max(1, natural);
+  }
+  return natural;
 }
 
 function buildGemString(item, defaultGemId) {
