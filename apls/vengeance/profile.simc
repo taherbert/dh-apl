@@ -25,18 +25,18 @@ override.bleeding=1
 override.bloodlust=1
 
 head=devouring_reavers_intake,id=250033,ilevel=289,gem_id=240983
-neck=ribbon_of_coiled_malice,id=249337,ilevel=289,gem_id=240983
+neck=pendant_of_aching_grief,id=251096,ilevel=289,gem_id=240983
 shoulder=devouring_reavers_exhaustplates,id=250031,ilevel=289
-back=imperators_banner,id=249335,ilevel=289
-chest=radiant_clutchtenders_jerkin,id=249322,ilevel=289,enchant_id=7985
-wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_void,gem_id=240983
+back=cloak_of_the_fallen_cardinal,id=133505,ilevel=289
+chest=devouring_reavers_engine,id=250036,ilevel=289,enchant_id=7985
+wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=prismatic_focusing_iris
 hands=devouring_reavers_essence_grips,id=250034,ilevel=289
 waist=rootwalker_harness,id=251189,ilevel=289,gem_id=240983
 legs=devouring_reavers_pistons,id=250032,ilevel=289,enchant_id=8159
-feet=arctic_explorers_legwraps,id=251153,ilevel=289
-finger1=omission_of_light,id=251093,ilevel=289,gem_id=240983,enchant_id=8025
-finger2=occlusion_of_void,id=251217,ilevel=289,gem_id=240983,enchant_id=8025
+feet=void_claimed_shinkickers,id=249334,ilevel=289
+finger1=omission_of_light,id=251093,ilevel=289,gem_id=240983,enchant_id=7967
+finger2=ring_of_carnelian_and_bone,id=133487,ilevel=289,gem_id=240983,enchant_id=7967
 trinket1=gaze_of_the_alnseer,id=249343,ilevel=289
 trinket2=umbral_plume,id=260235,ilevel=289
-main_hand=lightless_lament,id=260408,ilevel=289
-off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_hunt,enchant_id=7983
+main_hand=lightless_lament,id=260408,ilevel=289,enchant_id=7983
+off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_hunt

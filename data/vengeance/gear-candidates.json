@@ -3746,30 +3746,6 @@
         ]
       },
       {
-        "id": "hunt_blood",
-        "label": "Sigil Hunt + Sigil Blood",
-        "overrides": [
-          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
-          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_blood"
-        ]
-      },
-      {
-        "id": "hunt_void",
-        "label": "Sigil Hunt + Sigil Void",
-        "overrides": [
-          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
-          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_void"
-        ]
-      },
-      {
-        "id": "hunt_rot",
-        "label": "Sigil Hunt + Sigil Rot",
-        "overrides": [
-          "off_hand=everforged_longsword,id=222440,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,enchant_id=7983,embellishment=darkmoon_sigil_hunt",
-          "wrist=silvermoon_agents_deflectors,id=244576,bonus_id=8793/13454,ilevel=285,crafted_stats=32/36,embellishment=darkmoon_sigil_rot"
-        ]
-      },
-      {
         "id": "hunt_arcanoweave",
         "label": "Sigil Hunt + Arcanoweave Lining",
         "overrides": [
