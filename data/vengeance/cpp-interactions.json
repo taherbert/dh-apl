@@ -75,6 +75,18 @@
     {
       "source": "Voidfall",
       "sourceVar": "annihilator.voidfall",
+      "target": "Meteoric Fall",
+      "targetVar": "annihilator.meteoric_fall",
+      "context": "voidfall_spending_trigger_t",
+      "contextAbility": "voidfall_spending",
+      "type": "proc_trigger",
+      "mechanism": "conditional",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium"
+    },
+    {
+      "source": "Voidfall",
+      "sourceVar": "annihilator.voidfall",
       "target": "World Killer",
       "targetVar": "annihilator.world_killer",
       "context": "voidfall_spending_trigger_t",
@@ -89,8 +101,8 @@
       "sourceVar": "annihilator.meteoric_fall",
       "target": "World Killer",
       "targetVar": "annihilator.world_killer",
-      "context": "meteoric_fall_trigger_t",
-      "contextAbility": "meteoric_fall",
+      "context": "voidfall_spending_trigger_t",
+      "contextAbility": "voidfall_spending",
       "type": "proc_trigger",
       "mechanism": "conditional",
       "discoveryMethod": "cpp_scanner",
@@ -597,16 +609,6 @@
       "confidence": "medium"
     },
     {
-      "source": "Keen Engagement",
-      "sourceVar": "aldrachi_reaver.keen_engagement",
-      "target": "Throw Glaive",
-      "context": "reavers_glaive_t",
-      "type": "resource_modifier",
-      "mechanism": "conditional",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium"
-    },
-    {
       "source": "Bladecraft",
       "sourceVar": "aldrachi_reaver.bladecraft",
       "target": "Art of the Glaive",
@@ -702,9 +704,9 @@
     }
   ],
   "scanStats": {
-    "contextsScanned": 124,
-    "talentCrossRefs": 27,
-    "talentAbilityRefs": 30,
+    "contextsScanned": 127,
+    "talentCrossRefs": 28,
+    "talentAbilityRefs": 29,
     "effectScans": 8
   }
 }

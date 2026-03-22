@@ -17,9 +17,9 @@ Run `node src/engine/startup-cli.js` to check config, spec, and simc sync status
 2. Check for upstream simc changes:
 
 ```bash
-git -C /Users/tom/Documents/GitHub/simc fetch origin midnight --quiet
+git -C /Users/tom/Documents/GitHub/simc fetch upstream midnight --quiet
 git -C /Users/tom/Documents/GitHub/simc rev-parse HEAD
-git -C /Users/tom/Documents/GitHub/simc rev-parse origin/midnight
+git -C /Users/tom/Documents/GitHub/simc rev-parse upstream/midnight
 ```
 
 3. If either check shows staleness: `SPEC={spec} npm run refresh`

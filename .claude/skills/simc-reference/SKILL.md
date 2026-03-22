@@ -1,7 +1,7 @@
 ---
 description: Look up SimC syntax, expressions, and mechanics from the wiki reference docs. Use when writing APL conditions, checking expression syntax, or understanding SimC features.
 argument-hint: "[topic: syntax|expressions|dh|equipment|overrides|profilesets|output|stats|enemies|characters|options|developer|all]"
-context: fork
+context: upstream
 agent: Explore
 allowed-tools: Read, Glob, Grep
 ---

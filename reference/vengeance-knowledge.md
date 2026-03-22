@@ -84,43 +84,81 @@
 
 ## APL Structure
 - File: `apls/vengeance/vengeance.simc`
-- Action lists: 15
+- Action lists: 16
 
 ### Action Lists
-- **precombat:** 5 actions
-- **default:** 19 actions; delegates: run_action_list -> ar, run_action_list -> anni
-- **externals:** 1 actions
-- **trinkets:** 2 actions
-- **ar:** 10 actions; delegates: call_action_list -> trinkets, call_action_list -> externals, call_action_list -> ar_glaive_cycle, call_action_list -> ar_cooldowns, call_action_list -> ar_fillers
-- **ar_fillers:** 12 actions
-- **ar_glaive_cycle:** 6 actions
-- **ar_cooldowns:** 6 actions
-- **anni:** 16 actions; delegates: call_action_list -> trinkets, call_action_list -> externals, call_action_list -> anni_voidfall, call_action_list -> anni_meta_entry, call_action_list -> ur_fishing, call_action_list -> anni_meta, call_action_list -> anni_cooldowns, call_action_list -> anni_fillers
-- **anni_voidfall:** 8 actions
-- **anni_meta_entry:** 5 actions
-- **ur_fishing:** 6 actions
-- **anni_meta:** 9 actions
-- **anni_cooldowns:** 5 actions
-- **anni_fillers:** 11 actions
+- **precombat:** 4 actions
+- **default:** 23 actions; delegates: run_action_list -> ar, run_action_list -> anni
+- **ar:** 60 actions; delegates: call_action_list -> trinkets, call_action_list -> ar_glaive_cycle, call_action_list -> ar_quick_consume, call_action_list -> ar_fillers
+- **ar_quick_consume:** 3 actions
+- **ar_fillers:** 16 actions
+- **ar_glaive_cycle:** 11 actions; delegates: call_action_list -> ar_glaive_cycle_filler, call_action_list -> ar_glaive_cycle_filler
+- **ar_glaive_cycle_filler:** 9 actions
+- **anni:** 19 actions; delegates: call_action_list -> anni_voidfall_spending, call_action_list -> anni_voidfall_fishing, call_action_list -> anni_meta_entry, call_action_list -> anni_cooldowns
+- **anni_cooldowns:** 5 actions; delegates: call_action_list -> anni_generate_fury
+- **anni_voidfall_spending:** 10 actions; delegates: call_action_list -> anni_filler_no_spend
+- **anni_meta_entry:** 12 actions; delegates: call_action_list -> trinkets, call_action_list -> anni_pre_meta_spb, call_action_list -> anni_generate_fury, call_action_list -> anni_filler_no_spend
+- **anni_pre_meta_spb:** 7 actions; delegates: call_action_list -> anni_filler_no_spend
+- **anni_voidfall_fishing:** 2 actions; delegates: call_action_list -> anni_generate_fury
+- **anni_generate_fury:** 4 actions
+- **anni_filler_no_spend:** 10 actions
+- **trinkets:** 6 actions
 
 ### APL Variables
-- **trinket_1_buffs** (precombat): `trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery...`
-- **trinket_2_buffs** (precombat): `trinket.2.has_use_buff|(trinket.2.has_buff.agility|trinket.2.has_buff.mastery...`
 - **single_target** (default): `spell_targets.spirit_bomb=1`
 - **aoe** (default): `spell_targets.spirit_bomb>=3`
 - **execute** (default): `fight_remains<20`
 - **is_dungeon** (default): `fight_style.dungeonroute|fight_style.dungeonslice`
-- **hold_for_next_pull** (default): `variable.is_dungeon&raid_event.adds.exists&raid_event.pull.remains<12&(raid_e...`
-- **cd_ready** (default): `variable.execute|!variable.is_dungeon|(variable.pull_ttd>12&!variable.hold_fo...`
-- **meta_ready** (default): `variable.execute|!variable.is_dungeon|(variable.pull_ttd>(15-5*hero_tree.anni...`
+- **dung_next_pull** (default): `variable.is_dungeon&raid_event.adds.exists&raid_event.pull.remains<12&(raid_e...`
+- **dung_cd_ok** (default): `variable.execute|!variable.is_dungeon|(variable.dung_pull_ttd>12&!variable.du...`
+- **dung_meta_ok** (default): `variable.execute|!variable.is_dungeon|(variable.dung_pull_ttd>(15-5*hero_tree...`
+- **trinket_1_buffs** (default): `trinket.1.has_use_buff|(trinket.1.has_buff.agility|trinket.1.has_buff.mastery...`
+- **trinket_2_buffs** (default): `trinket.2.has_use_buff|(trinket.2.has_buff.agility|trinket.2.has_buff.mastery...`
+- **trinket_priority** (default): `2`
+- **damage_trinket_priority** (default): `2`
 - **fiery_demise_active** (default): `talent.fiery_demise&dot.fiery_brand.ticking`
 - **fire_cd_soon** (default): `cooldown.soul_carver.remains>?cooldown.fel_devastation.remains>?cooldown.sigi...`
-- **fragment_target** (default): `variable.fiery_demise_active*3+!variable.fiery_demise_active*(5-buff.metamorp...`
-- **fracture_cap_soon** (default): `cooldown.fracture.full_recharge_time<gcd.max&soul_fragments.total<6`
-- **meta_entry** (anni): `!buff.metamorphosis.up&!buff.voidfall_spending.up&buff.voidfall_building.stac...`
-- **burst_ready** (anni): `variable.meta_entry&cooldown.metamorphosis.ready&(cooldown.spirit_bomb.remain...`
-- **ur_fishing** (anni): `talent.untethered_rage&buff.metamorphosis.up&buff.metamorphosis.remains<6&!bu...`
-- **hold_for_meta** (anni): `!variable.execute&cooldown.metamorphosis.remains<=20&!buff.metamorphosis.up&c...`
+- **fragment_target** (default): `5+apex.2`
+- **frac_souls** (ar): `2+buff.metamorphosis.up`
+- **base_deficit** (ar): `(20-buff.art_of_the_glaive.stack-soul_fragments.total)<?0`
+- **eff_recharge** (ar): `cooldown.fracture.remains+(cooldown.fracture.charges>=2)*cooldown.fracture.du...`
+- **passive_per_sec** (ar): `0.30+(talent.fallout&buff.immolation_aura.up)*0.30*spell_targets.spirit_bomb`
+- **fracs_base** (ar): `variable.base_deficit%variable.frac_souls`
+- **base_gen_time** (ar): `(variable.fracs_base>0)*((variable.fracs_base<=cooldown.fracture.charges)*var...`
+- **sc1** (ar): `talent.soul_carver&cooldown.soul_carver.remains<variable.base_gen_time`
+- **net1** (ar): `(variable.base_deficit-variable.sc1*6)<?0`
+- **fracs1** (ar): `variable.net1%variable.frac_souls`
+- **gt1** (ar): `(variable.fracs1>0)*((variable.fracs1<=cooldown.fracture.charges)*variable.fr...`
+- **sos1** (ar): `talent.sigil_of_spite&cooldown.sigil_of_spite.remains<variable.gt1`
+- **N1** (ar): `(variable.net1-variable.sos1*3)<?0`
+- **fracs_np** (ar): `variable.N1%variable.frac_souls`
+- **gt_np** (ar): `(variable.fracs_np>0)*((variable.fracs_np<=cooldown.fracture.charges)*variabl...`
+- **T1** (ar): `gcd.max+variable.gt_np+variable.sc1*gcd.max+variable.sos1*gcd.max`
+- **sc_prop** (ar): `(talent.soul_carver&cooldown.soul_carver.remains<variable.T1)*((1-cooldown.so...`
+- **net_p** (ar): `(variable.base_deficit-6*variable.sc_prop)<?0`
+- **fracs_p** (ar): `variable.net_p%variable.frac_souls`
+- **gt_p** (ar): `(variable.fracs_p>0)*((variable.fracs_p<=cooldown.fracture.charges)*variable....`
+- **sos_p** (ar): `talent.sigil_of_spite&cooldown.sigil_of_spite.remains<variable.gt_p`
+- **N_p** (ar): `(variable.net_p-variable.sos_p*3)<?0`
+- **adj2** (ar): `(variable.N_p-variable.passive_per_sec*variable.T1)<?0`
+- **fracs_p2** (ar): `variable.adj2%variable.frac_souls`
+- **gt_p2** (ar): `(variable.fracs_p2>0)*((variable.fracs_p2<=cooldown.fracture.charges)*variabl...`
+- **T2** (ar): `gcd.max+variable.gt_p2+(variable.sc_prop>0)*gcd.max+variable.sos_p*gcd.max`
+- **T_avg** (ar): `(variable.T1+variable.T2)%2`
+- **adj_f** (ar): `(variable.N_p-variable.passive_per_sec*variable.T_avg)<?0`
+- **fracs_f** (ar): `variable.adj_f%variable.frac_souls`
+- **gt_f** (ar): `(variable.fracs_f>0)*((variable.fracs_f<=cooldown.fracture.charges)*variable....`
+- **time_to_next_glaive** (ar): `gcd.max+variable.gt_f+(variable.sc_prop>0)*gcd.max+variable.sos_p*gcd.max`
+- **passive_floor** (ar): `variable.N_p%(variable.passive_per_sec*gcd.max)`
+- **time_to_next_rm_application** (ar): `variable.time_to_next_glaive+2*gcd.max`
+- **rm_remains** (ar): `(variable.last_rm_applied>0)*(20-(time-variable.last_rm_applied))<?0`
+- **prio_slashes** (ar): `variable.aoe|variable.execute|(variable.rm_remains>0&variable.last_refresh_at...`
+- **last_slash_at** (ar): `time`
+- **last_refresh_at** (ar): `time`
+- **cycle_recorded** (ar): `buff.reavers_glaive.up`
+- **rg_imminent** (ar): `(buff.reavers_glaive.up&(variable.execute|variable.rm_remains<=variable.time_...`
+- **last_rm_applied** (ar_glaive_cycle): `time`
+- **anni_meta_entry_time** (anni): `3*gcd.max`
 
 ### Delegation Pattern
 - `run_action_list -> ar`: `hero_tree.aldrachi_reaver`

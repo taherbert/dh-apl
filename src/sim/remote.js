@@ -298,7 +298,7 @@ async function getLocalSimcCommit({ fetch = false } = {}) {
     if (!isFetchStale()) {
       console.log("  (skipping git fetch — done within last hour)");
     } else {
-      await execAsync("git", ["fetch", "origin", config.simc.branch], {
+      await execAsync("git", ["fetch", "upstream", config.simc.branch], {
         cwd: config.simc.dir,
         timeout: 30000,
       });
@@ -308,7 +308,7 @@ async function getLocalSimcCommit({ fetch = false } = {}) {
   }
   const { stdout } = await execAsync(
     "git",
-    ["rev-parse", "--short", `origin/${config.simc.branch}`],
+    ["rev-parse", "--short", `upstream/${config.simc.branch}`],
     { cwd: config.simc.dir },
   );
   return stdout.trim();
@@ -985,7 +985,7 @@ async function launchInstance({ instanceType } = {}) {
   console.log("Checking security group access...");
   await ensureSecurityGroupAccess();
 
-  // Ensure AMI + local binary match origin/{branch}
+  // Ensure AMI + local binary match upstream/{branch}
   await ensureAmiCurrent();
   syncLocalSimcBin();
 
@@ -1271,7 +1271,7 @@ async function buildAmi({ buildInstanceType } = {}) {
     // Resolve repo URL and branch HEAD from the local simc checkout
     const { stdout: repoUrlRaw } = await execAsync(
       "git",
-      ["remote", "get-url", "origin"],
+      ["remote", "get-url", "upstream"],
       { cwd: config.simc.dir },
     );
     // Normalize SSH URLs to HTTPS — the EC2 instance has no GitHub SSH keys
@@ -1280,7 +1280,7 @@ async function buildAmi({ buildInstanceType } = {}) {
       .replace(/^git@github\.com:/, "https://github.com/");
     const { stdout: commitRaw } = await execAsync(
       "git",
-      ["rev-parse", "--short", `origin/${config.simc.branch}`],
+      ["rev-parse", "--short", `upstream/${config.simc.branch}`],
       { cwd: config.simc.dir },
     );
     const simcCommit = commitRaw.trim();

@@ -568,10 +568,6 @@
     "school": "Fire",
     "gcd": 0,
     "aoeRadius": 8,
-    "generates": [
-      "4 fury",
-      "2 fury"
-    ],
     "description": "Engulf yourself in flames, radiating ${$258922s1*$d} Chaos damage over $d.$?(s212612 & !s320374)[ |cFFFFFFFFGenerates $<havocFury> Fury.|r][] |cFFFFFFFFGenerates $<vengeFury> Fury over $d.|r"
   },
   {
@@ -619,7 +615,7 @@
     "name": "Swallowed Anger",
     "school": "Physical",
     "passive": true,
-    "description": "Consume Magic generates 1 Fury when a beneficial Magic effect is successfully removed from the target."
+    "description": "Consume Magic generates 20 Fury when a beneficial Magic effect is successfully removed from the target."
   },
   {
     "id": 320331,
@@ -1155,7 +1151,7 @@
     "name": "Reaver's Glaive",
     "school": "Physical",
     "gcd": 1.5,
-    "description": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to 2 additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 0 Fury.|R"
+    "description": "Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to 2 additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates $s2 Fury.|R"
   },
   {
     "id": 442492,
@@ -1212,7 +1208,7 @@
     "name": "Thrill of the Fight",
     "school": "Physical",
     "passive": true,
-    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 8% for 30 sec."
   },
   {
     "id": 442688,
@@ -1220,7 +1216,7 @@
     "school": "Physical",
     "gcd": 0,
     "duration": 30,
-    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 8% for 30 sec."
   },
   {
     "id": 442695,
@@ -1228,7 +1224,7 @@
     "school": "Physical",
     "gcd": 0,
     "duration": 30,
-    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 6% for 30 sec."
+    "description": "After consuming both enhancements, gain Thrill of the Fight, increasing the damage of your next Reaver's Glaive by 30% and increasing Haste by 8% for 30 sec."
   },
   {
     "id": 442714,
@@ -1250,7 +1246,7 @@
     "name": "Fury of the Aldrachi",
     "school": "Physical",
     "passive": true,
-    "description": "When enhanced by Reaver's Glaive, Soul Cleave casts 3 additional glaive slashes to nearby targets. Deals reduced damage beyond 8 targets. If cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast 12 slashes instead."
+    "description": "When enhanced by Reaver's Glaive, Soul Cleave casts 3 additional glaive slashes to nearby targets. Deals reduced damage beyond $444806s2 targets. If cast after $?a212612[Chaos Strike]?s263642[Fracture][Shear], cast 12 slashes instead."
   },
   {
     "id": 442736,
@@ -1264,7 +1260,7 @@
     "name": "Wounded Quarry",
     "school": "Physical",
     "passive": true,
-    "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal 20% of the damage dealt to your marked target as Chaos, and sometimes shatter a Soul Fragment."
+    "description": "Expose weaknesses in the target of your $@spellname442624, causing your Physical damage to any enemy to also deal 25% of the damage dealt to your marked target as Chaos, and sometimes shatter a Soul Fragment."
   },
   {
     "id": 444806,
@@ -1272,7 +1268,7 @@
     "school": "Physical",
     "gcd": 0,
     "aoeRadius": 8,
-    "description": "Consuming 8 Soul Fragments or casting Sigil of Spite converts your next Throw Glaive into Reaver's Glaive. $@spellicon442294 $@spellname442294: Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates 8 Fury.|R"
+    "description": "Consuming $s2 Soul Fragments or casting Sigil of Spite converts your next Throw Glaive into Reaver's Glaive. $@spellicon442294 $@spellname442294: Throw a glaive enhanced with the essence of consumed souls at your target, dealing 0 Physical damage and ricocheting to ${$x1-1} additional $Lenemy:enemies;. Begins a well-practiced pattern of glaivework, enhancing your next $?a212612[Chaos Strike]?s263642[Fracture][Shear] and Soul Cleave. The enhanced ability you cast first deals 10% increased damage, and the second deals 20% increased damage. |CFFffffffGenerates $s2 Fury.|R"
   },
   {
     "id": 444926,

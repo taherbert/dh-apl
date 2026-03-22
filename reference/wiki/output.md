@@ -141,6 +141,7 @@ A successful simulation will result in the CLI executable returning an exit code
 * `61`: Report out error, could not successfully print the report to the console, JSON, HTML, or profile
 * `70`: Invalid sim-scope argument, an issue with an option that applies to the entire sim
 * `71`: Invalid fight style, one of the players does not support the desired fight style and the resulting sim will give incorrect information
+* `72': Unsupported specialization, one of the players has a specialization that's not currently supported
 * `80`: Invalid player-scope argument, an issue with an option that applies to a specific player
 * `81`: Invalid talent string, a talent string (`talents=`, `class_talents=`, `spec_talents=`, `hero_talents=`) has an error
 * `82`: Invalid item string, an item string (`<slot>=<name>,<id>,...`) has an error

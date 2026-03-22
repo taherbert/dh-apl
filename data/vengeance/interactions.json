@@ -11832,48 +11832,6 @@
     },
     {
       "source": {
-        "id": 442497,
-        "name": "Keen Engagement",
-        "isTalent": true,
-        "tree": "hero",
-        "heroSpec": "Aldrachi Reaver"
-      },
-      "target": {
-        "id": 185123,
-        "name": "Throw Glaive"
-      },
-      "type": "resource_modifier",
-      "mechanism": "conditional",
-      "discoveryMethod": "cpp_scanner",
-      "confidence": "medium",
-      "magnitude": {
-        "value": 20,
-        "unit": "percent",
-        "stacking": "multiplicative"
-      },
-      "application": "buff_on_player",
-      "schoolTarget": [
-        "Fire",
-        "Nature"
-      ],
-      "effectDetails": [
-        {
-          "index": 1,
-          "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 2 (12)",
-          "baseValue": 20,
-          "scaledValue": 20,
-          "target": "Self (1)",
-          "schoolMask": 12,
-          "affectedSpells": "Reaver's Glaive (442294), Reaver's Glaive (444686), Reaver's Glaive (444764)",
-          "triggerSpell": null
-        }
-      ],
-      "categories": [
-        "resource"
-      ]
-    },
-    {
-      "source": {
         "id": 1272153,
         "name": "Bladecraft",
         "isTalent": true,
@@ -12251,6 +12209,70 @@
           "type": "Apply Aura (6) | Dummy (4)",
           "baseValue": 1,
           "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
+        "id": 1253304,
+        "name": "Voidfall",
+        "isTalent": true,
+        "tree": "hero",
+        "heroSpec": "Annihilator"
+      },
+      "target": {
+        "id": 1253391,
+        "name": "Meteoric Fall"
+      },
+      "type": "proc_trigger",
+      "mechanism": "conditional",
+      "discoveryMethod": "cpp_scanner",
+      "confidence": "medium",
+      "magnitude": {
+        "value": 1,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "None"
+      ],
+      "procInfo": {
+        "procChance": 100
+      },
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 1,
+          "scaledValue": 1,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 2,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 8,
+          "scaledValue": 8,
+          "target": "Self (1)",
+          "schoolMask": null,
+          "affectedSpells": null,
+          "triggerSpell": null
+        },
+        {
+          "index": 3,
+          "type": "Apply Aura (6) | Dummy (4)",
+          "baseValue": 35,
+          "scaledValue": 35,
           "target": "Self (1)",
           "schoolMask": null,
           "affectedSpells": null,
@@ -14274,6 +14296,47 @@
     },
     {
       "source": {
+        "id": 442497,
+        "name": "Keen Engagement",
+        "isTalent": true,
+        "tree": "hero",
+        "heroSpec": "Aldrachi Reaver"
+      },
+      "target": {
+        "id": 442497,
+        "name": "Keen Engagement"
+      },
+      "type": "damage_modifier",
+      "discoveryMethod": "effect_scan",
+      "confidence": "medium",
+      "magnitude": {
+        "value": 20,
+        "unit": "percent",
+        "stacking": "multiplicative"
+      },
+      "application": "buff_on_player",
+      "schoolTarget": [
+        "Fire",
+        "Nature"
+      ],
+      "effectDetails": [
+        {
+          "index": 1,
+          "type": "Apply Aura (6) | Apply Flat Modifier w/ Label (219): Spell Effect 2 (12)",
+          "baseValue": 20,
+          "scaledValue": 20,
+          "target": "Self (1)",
+          "schoolMask": 12,
+          "affectedSpells": "Reaver's Glaive (442294), Reaver's Glaive (444686), Reaver's Glaive (444764)",
+          "triggerSpell": null
+        }
+      ],
+      "categories": [
+        "offensive"
+      ]
+    },
+    {
+      "source": {
         "id": 1253668,
         "name": "Swift Erasure",
         "isTalent": true,
@@ -14803,27 +14866,6 @@
             "Holy",
             "Fire",
             "Frost"
-          ]
-        },
-        {
-          "source": "Keen Engagement",
-          "sourceId": 442497,
-          "type": "resource_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "resource"
-          ],
-          "schoolTarget": [
-            "Fire",
-            "Nature"
           ]
         },
         {
@@ -24743,27 +24785,6 @@
           ]
         },
         {
-          "source": "Keen Engagement",
-          "sourceId": 442497,
-          "type": "resource_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "discoveryMethod": "cpp_scanner",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player",
-          "categories": [
-            "resource"
-          ],
-          "schoolTarget": [
-            "Fire",
-            "Nature"
-          ]
-        },
-        {
           "source": "Preemptive Strike",
           "sourceId": 444997,
           "type": "proc_trigger",
@@ -30756,6 +30777,32 @@
         }
       ]
     },
+    "442497": {
+      "name": "Keen Engagement",
+      "modifiers": [
+        {
+          "source": "Keen Engagement",
+          "sourceId": 442497,
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
+          "discoveryMethod": "effect_scan",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "Fire",
+            "Nature"
+          ]
+        }
+      ]
+    },
     "442502": {
       "name": "Warblade's Hunger",
       "modifiers": [
@@ -31559,6 +31606,34 @@
           "schoolTarget": [
             "Fire"
           ]
+        }
+      ]
+    },
+    "1253391": {
+      "name": "Meteoric Fall",
+      "modifiers": [
+        {
+          "source": "Voidfall",
+          "sourceId": 1253304,
+          "type": "proc_trigger",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
+          ],
+          "procInfo": {
+            "procChance": 100
+          }
         }
       ]
     },
@@ -36795,10 +36870,10 @@
       "heroSpec": "Aldrachi Reaver",
       "targets": [
         {
-          "spell": "Throw Glaive",
-          "spellId": 185123,
-          "type": "resource_modifier",
-          "discoveryMethod": "cpp_scanner",
+          "spell": "Keen Engagement",
+          "spellId": 442497,
+          "type": "damage_modifier",
+          "discoveryMethod": "effect_scan",
           "magnitude": {
             "value": 20,
             "unit": "percent",
@@ -36806,13 +36881,12 @@
           },
           "application": "buff_on_player",
           "categories": [
-            "resource"
+            "offensive"
           ],
           "schoolTarget": [
             "Fire",
             "Nature"
-          ],
-          "mechanism": "conditional"
+          ]
         }
       ]
     },
@@ -37646,6 +37720,28 @@
       "tree": "hero",
       "heroSpec": "Annihilator",
       "targets": [
+        {
+          "spell": "Meteoric Fall",
+          "spellId": 1253391,
+          "type": "proc_trigger",
+          "discoveryMethod": "cpp_scanner",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player",
+          "categories": [
+            "offensive"
+          ],
+          "schoolTarget": [
+            "None"
+          ],
+          "procInfo": {
+            "procChance": 100
+          },
+          "mechanism": "conditional"
+        },
         {
           "spell": "World Killer",
           "spellId": 1256353,

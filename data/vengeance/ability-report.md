@@ -368,7 +368,6 @@ Haste scales: gcd
 - Reaver's Mark (damage_modifier)
 - Tempered Steel (damage_modifier) [spec]
 - Keen Edge (damage_modifier) [hero:Aldrachi Reaver]
-- Keen Engagement (resource_modifier) [hero:Aldrachi Reaver]
 - Preemptive Strike (proc_trigger) [hero:Aldrachi Reaver]
 
 ### Vengeful Retreat (198793)
@@ -446,7 +445,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
   _$?a212613[Infernal Strike]?s195072[Fel Rush][Shift] gains an additional charge._
 - (4) **Swallowed Anger** (320313) [passive_buff]
   → Consume Magic (resource_modifier)
-  _Consume Magic generates $278326s2 Fury when a beneficial Magic effect is successfully removed from the target._
+  _Consume Magic generates $1277738s1 Fury when a beneficial Magic effect is successfully removed from the target._
 - (5) **Aura of Pain** (207347) [spell_modifier]
   → Aura of Pain (damage_modifier)
   _$?c3[Soul Immolation grants ${$s2*$1241937d} additional Fury over its duration.][Increases the critical strike chance of Immolation Aura by $s1%.]_
@@ -777,7 +776,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
   → Soul Cleave (damage_modifier)
   _$?a212612[Chaos Strike][Soul Cleave] deals $s1% increased damage._
 - (1) **Keen Engagement** (442497) [passive]
-  → Throw Glaive (resource_modifier)
+  → Keen Engagement (damage_modifier)
   _Reaver's Glaive generates $s1 Fury._
 - (1) **Preemptive Strike** (444997) [proc_trigger]
   → Throw Glaive (proc_trigger)
@@ -801,6 +800,7 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 
 **Row 0:**
 - (2) **Voidfall** (1253304) [passive_buff]
+  → Meteoric Fall (proc_trigger)
   → World Killer (proc_trigger)
   _$?a212613[Fracture][Consume] has a $s3% chance to grant $m1 $Lstack:stacks; of Voidfall. Upon reaching $1256301u stacks of Voidfall, $?a212613[Soul Cleave][Reap] consumes a stack to reach into the Voi..._
 
@@ -883,7 +883,6 @@ School: Physical | GCD: off-GCD | CD: 0.5s | Duration: 1s
 - Felblade (213243): 15 Fury
 - Disrupt (218903): 30 Fury
 - Immolation Aura (258920): 20+8 Fury
-- Immolation Aura (258922): 4+2 Fury
 - Fracture (263642): 25 Fury
 - Sigil of Flame (389787): 25 Fury
 - Immolation Aura (427913): 20+8 Fury

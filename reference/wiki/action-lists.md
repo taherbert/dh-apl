@@ -65,6 +65,39 @@ save_full_blizzard_apl=1
 save_actions=filename.simc # example player-scope save option
 ```
 
+# Additional Action Lists
+Multiple action lists can be defined with `actions.<list_name>`. This mostly helps with readability by creating sub-action lists. A sample 'cooldown' action list is below:
+```
+actions.cooldown=metamorphosis
+actions.cooldown+=/potion
+actions.cooldown+=/use_item,name=algethar_puzzle_box
+actions.cooldown+=/the_hunt
+```
+
+## Using Additional Action Lists
+Once additional action lists are defined, there are two ways to utilize them from the default action list.
+
+### call_action_list
+_call\_action\_list_ takes one argument (name=) of the action list to call.  If a usable action is not found in the sub-action list, the APL will go back to the place _call\_action\_list_ was used and continue going down until it finds a usable action.  _call\_action\_list_ effectively inserts the action list into the default APL where it was called. For example, using the cooldown action list from above:
+```
+actions=auto_attack
+actions+=/call_action_list,name=cooldown
+actions+=/immolation_aura
+```
+
+Would be the same as:
+```
+actions=auto_attack
+actions+=/metamorphosis
+actions+=/potion
+actions+=/use_item,name=algethar_puzzle_box
+actions+=/the_hunt
+actions+=/immolation_aura
+```
+
+### run_action_list
+_run\_action\_list_ also requires the name= parameter of the action list to run.  The main difference is if _run\_action\_list_ is called and there are no usable actions in the sub-APL, it will return to the top of the default action list with a delay.
+
 # Behaviour
 Actions lists are priorities lists: periodically, Simulationcraft scans your character's actions list, starting with the first action (the highest priority ) and continuing until an available action is found, or to the end otherwise. Actions that are not possible at the moment (cooldown not ready, execute phase only, conditions not met) are just considered as not available and the applications jumps to the next one.
 
@@ -310,7 +343,7 @@ actions+=/strict_sequence,name=swifty:recklessness:bloodbath:colossus_smash:mort
 
   * _wait_ orders the application to stop processing the actions list for a given time. Auto-attacks and such will still be performed.
 
-    1. _sec_ (default: 1) is the number of seconds to wait. It can be a constant or an expression (see the [conditional expressions](#Conditional_Expressions) section).
+    1. _sec_ (default: 1) is the number of seconds to wait. It can be a constant or an expression (see the [conditional expressions](Action-List-Conditional-Expressions) page).
 ```
 # This orders Simulationcraft to stop processing the actions list for 5s
 actions+=/wait,sec=5
@@ -364,7 +397,7 @@ The following operations also require the _value_ to be set:
     1. _setif_ Requires the additional parameter _value\_else_. If _condition_ evaluates to a non-zero value then sets current value to _value_. Else if _value_ evaluates to 0 then sets current value to _value\_else_
     1. _report_ report changes to the value of the variable as an entry in the Sample Sequence Table in the APL section of the HTML report.
 * _delay_ is the delay (simulation time) before the variable action can be executed again.
-* _if_ allows [Conditional expressions](Conditional-expressions) to control execution of the variable action.
+* _if_ allows [Conditional expressions](Action-List-Conditional-Expressions) to control execution of the variable action.
 * **apl_variable** (scope: current character) is an option that can be used to override the _default_ value of an APL variable.
 ```
 # override the default value of an APL variable called "aoe_threshold" to 5.
@@ -409,7 +442,7 @@ actions+=/agony,target_if=refreshable
 actions+=/agony,target_if=min:remains,if=refreshable
 ```
 
-**Note**: if you are looking for how to check specific buffs/debuffs on a target check the [Conditional Expressions page](https://github.com/simulationcraft/simc/wiki/Conditional-expressions#buffs-and-debuffs).
+**Note**: if you are looking for how to check specific buffs/debuffs on a target check the [Conditional Expressions page](Action-List-Conditional-Expressions#buffs-and-debuffs#buffs-and-debuffs).
 
 ## Usage on specific events only
 
@@ -448,7 +481,7 @@ actions+=/pyroblast,if=prev.fireball
 * _prev\_gcd_ returns only the previous action that used a GCD. This will only include actions such as fireball, but not bloodbath. Use integers to change how many GCDs in the past you are looking at.
 ```
 # Only use whirlwind after mortal strike.
-actions+=/whirlwind,if=prev_gcd.1.whirlwind
+actions+=/whirlwind,if=prev_gcd.1.mortal_strike
 ```
 * _prev\_off\_gcd_ returns all off gcd actions that occurred since the previous gcd was executed. So after a warrior uses raging blow, it will track every off-gcd action until another gcd action is executed, then it is reset.
 ```

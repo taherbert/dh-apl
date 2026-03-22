@@ -138,18 +138,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Keen Engagement",
-          "type": "resource_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Preemptive Strike",
           "type": "proc_trigger",
           "tree": "hero",
@@ -5205,18 +5193,6 @@
           "application": "buff_on_player"
         },
         {
-          "source": "Keen Engagement",
-          "type": "resource_modifier",
-          "tree": "hero",
-          "heroSpec": "Aldrachi Reaver",
-          "magnitude": {
-            "value": 20,
-            "unit": "percent",
-            "stacking": "multiplicative"
-          },
-          "application": "buff_on_player"
-        },
-        {
           "source": "Preemptive Strike",
           "type": "proc_trigger",
           "tree": "hero",
@@ -8195,6 +8171,23 @@
         }
       ]
     },
+    "442497": {
+      "name": "Keen Engagement",
+      "modifiers": [
+        {
+          "source": "Keen Engagement",
+          "type": "damage_modifier",
+          "tree": "hero",
+          "heroSpec": "Aldrachi Reaver",
+          "magnitude": {
+            "value": 20,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "application": "buff_on_player"
+        }
+      ]
+    },
     "442502": {
       "name": "Warblade's Hunger",
       "modifiers": [
@@ -8698,6 +8691,26 @@
             "value": -200,
             "unit": "flat",
             "stacking": "additive"
+          },
+          "application": "buff_on_player"
+        }
+      ]
+    },
+    "1253391": {
+      "name": "Meteoric Fall",
+      "modifiers": [
+        {
+          "source": "Voidfall",
+          "type": "proc_trigger",
+          "tree": "hero",
+          "heroSpec": "Annihilator",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "procInfo": {
+            "procChance": 100
           },
           "application": "buff_on_player"
         }
@@ -11329,8 +11342,8 @@
       "heroSpec": "Aldrachi Reaver",
       "targets": [
         {
-          "spell": "Throw Glaive",
-          "type": "resource_modifier",
+          "spell": "Keen Engagement",
+          "type": "damage_modifier",
           "magnitude": {
             "value": 20,
             "unit": "percent",
@@ -11834,6 +11847,18 @@
       "tree": "hero",
       "heroSpec": "Annihilator",
       "targets": [
+        {
+          "spell": "Meteoric Fall",
+          "type": "proc_trigger",
+          "magnitude": {
+            "value": 1,
+            "unit": "percent",
+            "stacking": "multiplicative"
+          },
+          "procInfo": {
+            "procChance": 100
+          }
+        },
         {
           "spell": "World Killer",
           "type": "proc_trigger",

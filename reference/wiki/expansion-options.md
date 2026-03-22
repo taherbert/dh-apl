@@ -5,6 +5,18 @@ Source: https://github.com/simulationcraft/simc/wiki/ExpansionOptions
 
 Note that expansion-specific options may disappear from Simulationcraft versions intended for newer expansions than what is defined here.
 
+## Midnight
+
+| Option | Default | Range | Notes |
+| --- | --- | --- | --- |
+| midnight.darkmoon_hunt_race | raid_random | raid_random, random, none, or a valid race string | Controls the race used for Darkmoon Deck/Embellishment: Hunt stat buff selection. `raid_random` picks a random race from current raid bosses each iteration. `random` picks from all valid races. `none` uses the target's actual race. Valid race strings: aberration, beast, demon, dragonkin, elemental, giant, humanoid, mechanical, undead, not_specified. Dungeon Route fight style forces actual target race regardless of setting. |
+| midnight.sealed_chaos_urn_dispell | 0 | 0 or 1 | Set to 1 if you expect a healer to dispel the Sealed Chaos Urn fear effect. When 0, the full fear duration is used. |
+| midnight.sealed_chaos_urn_dispell_time | 2.5 | 0.5 - 5.0 | Average time (in seconds) after the Sealed Chaos Urn fear is applied before a healer dispels it. Only used when sealed_chaos_urn_dispell=1. Uses a gaussian distribution with 1s stddev, clamped to 0.5s - 4.5s. |
+| midnight.refueling_orb_heal_chance | 0.10 | 0.0 - 1.0 | Chance that a Refueling Orb proc counts as healing instead of damage. |
+| midnight.crucible_of_erratic_energies_violence | 0 | 0 or 1 | Enable the Violence protocol for Crucible of Erratic Energies. When enabled, the trinket procs at its full RPPM.|
+| midnight.crucible_of_erratic_energies_sustenance | 0 | 0 or 1 | Enable the Sustenance protocol for Crucible of Erratic Energies. When enabled, the crit buff duration is doubled. |
+| midnight.crucible_of_erratic_energies_predation | 0 | 0 or 1 | Enable the Predation protocol for Crucible of Erratic Energies. When enabled, the crit rating provided by the buff is increased. |
+
 ## The War Within
 All options are player scoped unless otherwise noted.
 ### Crafted Gear / Embellishments
