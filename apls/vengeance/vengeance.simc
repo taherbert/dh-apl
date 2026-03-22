@@ -230,9 +230,11 @@ actions.anni_cooldowns+=/fel_devastation
 actions.anni_cooldowns+=/call_action_list,name=anni_generate_fury,if=cooldown.fel_devastation.up&fury<50
 
 actions.anni_voidfall_spending=fiery_brand,if=charges>=2|!variable.fiery_demise_active
+# Felblade to bridge fury into fracture bridge range (30+15=45)
+actions.anni_voidfall_spending+=/felblade,if=buff.voidfall_spending.stack=buff.voidfall_spending.max_stack&cooldown.spirit_bomb.ready&soul_fragments.total>=variable.fragment_target&fury>=30&fury<45&cooldown.fracture.charges>=1
 # Fracture to bridge fury for SB+SC combo when 1 fracture away (45+30=75)
 actions.anni_voidfall_spending+=/fracture,if=buff.voidfall_spending.stack=buff.voidfall_spending.max_stack&cooldown.spirit_bomb.ready&soul_fragments.total>=variable.fragment_target&fury>=45&fury<75
-actions.anni_voidfall_spending+=/soul_cleave,if=cooldown.spirit_bomb.remains>gcd.max*3
+actions.anni_voidfall_spending+=/soul_cleave,if=cooldown.spirit_bomb.remains>gcd.max*4
 actions.anni_voidfall_spending+=/spirit_bomb,if=soul_fragments>=variable.fragment_target
 actions.anni_voidfall_spending+=/felblade,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
 actions.anni_voidfall_spending+=/immolation_aura,if=(fury<40&cooldown.spirit_bomb.remains<=gcd.max)|(fury<25&cooldown.spirit_bomb.remains>gcd.max)
